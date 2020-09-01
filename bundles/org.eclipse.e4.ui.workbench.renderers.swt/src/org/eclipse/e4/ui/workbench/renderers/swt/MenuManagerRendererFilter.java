@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 IBM Corporation and others.
+ * Copyright (c) 2010, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 488978
+ *     Karsten Thoms <karsten.thoms@karakun.com> - Bug 566541
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -76,35 +77,28 @@ public class MenuManagerRendererFilter implements Listener {
 
 	private HashMap<Menu, Runnable> pendingCleanup = new HashMap<>();
 
-	private class SafeWrapper implements ISafeRunnable {
-		Event event;
-
-		@Override
-		public void handleException(Throwable e) {
-			if (e instanceof Error) {
-				// errors are deadly, we shouldn't ignore these
-				throw (Error) e;
-			}
-			// log exceptions otherwise
-			if (logger != null) {
-				logger.error(e);
-			}
-		}
-
-		@Override
-		public void run() throws Exception {
-			safeHandleEvent(event);
-		}
-	}
-
-	private SafeWrapper safeWrapper = new SafeWrapper();
-
 	@Override
 	public void handleEvent(final Event event) {
 		// wrap the handling in a SafeRunner so that exceptions do not prevent
 		// the menu from being shown
-		safeWrapper.event = event;
-		SafeRunner.run(safeWrapper);
+		SafeRunner.run(new ISafeRunnable() {
+			@Override
+			public void handleException(Throwable e) {
+				if (e instanceof Error) {
+					// errors are deadly, we shouldn't ignore these
+					throw (Error) e;
+				}
+				// log exceptions otherwise
+				if (logger != null) {
+					logger.error(e);
+				}
+			}
+
+			@Override
+			public void run() throws Exception {
+				safeHandleEvent(event);
+			}
+		});
 	}
 
 	private void safeHandleEvent(Event event) {
