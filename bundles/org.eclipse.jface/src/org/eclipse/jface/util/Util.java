@@ -28,6 +28,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Monitor;
+import org.eclipse.swt.widgets.Widget;
 
 /**
  * <p>
@@ -692,5 +693,16 @@ public final class Util {
 		}
 
 		return result;
+	}
+
+	/**
+	 * Helper method to check if a widget is not null and not disposed
+	 *
+	 * @param widget
+	 * @return true if widget is not disposed or null, false otherwise
+	 * @since 3.22
+	 */
+	public static boolean isValid(Widget widget) {
+		return widget != null && !widget.isDisposed();
 	}
 }
