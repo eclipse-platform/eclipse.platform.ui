@@ -71,7 +71,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 		int right= array.length - 1;
 		int median;
 		do {
-			median= (left + right) / 2;
+			median= (left + right) >>> 1;
 			if (number > array[median])
 				right= median - 1;
 			else
