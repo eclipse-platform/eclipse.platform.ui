@@ -1,1 +1,2 @@
 # To force a version qualifier update add the bug here
+Bug 566668 - Comparator errors in I20200904-0210
