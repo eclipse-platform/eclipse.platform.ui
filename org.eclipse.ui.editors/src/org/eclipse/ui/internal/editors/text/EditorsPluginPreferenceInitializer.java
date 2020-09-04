@@ -42,7 +42,6 @@ public class EditorsPluginPreferenceInitializer extends AbstractPreferenceInitia
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store= EditorsPlugin.getDefault().getPreferenceStore();
 		TextEditorPreferenceConstants.initializeDefaultValues(store);
-		migrateOverviewRulerPreference(store);
 		AnnotationCodeMiningPreferenceConstants.initializeDefaultValues(store);
 	}
 
@@ -127,24 +126,4 @@ public class EditorsPluginPreferenceInitializer extends AbstractPreferenceInitia
 		return defaultRGB;
 	}
 
-
-	/**
-	 * Migrates the overview ruler preference by re-enabling it.
-	 *
-	 * @param store the preference store to migrate
-	 * @since 3.1
-	 */
-	private void migrateOverviewRulerPreference(IPreferenceStore store) {
-		String preference= AbstractDecoratedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER;
-		String postfix= "_migration"; //$NON-NLS-1$
-		String MIGRATED= "migrated_3.1"; //$NON-NLS-1$
-		String migrationKey= preference + postfix;
-
-		String migrationValue= store.getString(migrationKey);
-		if (!MIGRATED.equals(migrationValue)) {
-			store.putValue(migrationKey, MIGRATED);
-			if (!store.getBoolean(preference))
-				store.putValue(preference, Boolean.TRUE.toString());
-		}
-	}
 }
