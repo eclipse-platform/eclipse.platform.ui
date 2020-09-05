@@ -579,7 +579,7 @@ public class ResourceRefactoringUndoTests {
 		}
 	}
 
-	class MarkerSnapshot {
+	static class MarkerSnapshot {
 		String type;
 
 		Map<String, Object> attributes;
