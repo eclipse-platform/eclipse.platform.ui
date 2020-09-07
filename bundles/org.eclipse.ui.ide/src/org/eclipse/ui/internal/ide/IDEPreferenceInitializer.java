@@ -24,7 +24,6 @@ import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.handlers.ShowInSystemExplorerHandler;
 import org.eclipse.ui.internal.ide.registry.SystemEditorOrTextEditorStrategy;
-import org.eclipse.ui.internal.views.markers.MarkerSupportInternalUtilities;
 
 /**
  * The IDEPreferenceInitializer is the preference initializer for the IDE
@@ -76,11 +75,6 @@ public class IDEPreferenceInitializer extends AbstractPreferenceInitializer {
 
 		node.put(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_TYPE, ""); //$NON-NLS-1$
 		node.putBoolean(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_RELATIVE, true);
-
-		//Filter migration
-		node.putBoolean(MarkerSupportInternalUtilities.MIGRATE_BOOKMARK_FILTERS, false);
-		node.putBoolean(MarkerSupportInternalUtilities.MIGRATE_TASK_FILTERS, false);
-		node.putBoolean(MarkerSupportInternalUtilities.MIGRATE_PROBLEM_FILTERS, false);
 
 		node.put(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE, IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_PROMPT);
 		node.put(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_VIRTUAL_FOLDER_MODE, IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_PROMPT);

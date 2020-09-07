@@ -69,7 +69,6 @@ public class MarkerContentGenerator {
 	private static final String TAG_FILTERS_SECTION = "filterGroups"; //$NON-NLS-1$
 	private static final String TAG_GROUP_ENTRY = "filterGroup"; //$NON-NLS-1$
 	private static final String TAG_AND = "andFilters"; //$NON-NLS-1$
-	private static final String TAG_LEGACY_FILTER_ENTRY = "filter"; //$NON-NLS-1$
 	private static final String TAG_MARKER_LIMIT = "markerLimit"; //$NON-NLS-1$
 	private static final String TAG_MARKER_LIMIT_ENABLED = "markerLimitEnabled"; //$NON-NLS-1$
 
@@ -451,21 +450,6 @@ public class MarkerContentGenerator {
 		return filterList;
 	}
 
-	/**
-	 * Get the name of the filters preference for the receiver,
-	 *
-	 * @return String
-	 */
-	private String getLegacyFiltersPreferenceName() {
-		if (viewId != null && viewId.equals(IPageLayout.ID_BOOKMARKS)) {
-			return IDEInternalPreferences.BOOKMARKS_FILTERS;
-		}
-		if (viewId != null && viewId.equals(IPageLayout.ID_TASK_LIST)) {
-			return IDEInternalPreferences.TASKS_FILTERS;
-		}
-		return IDEInternalPreferences.PROBLEMS_FILTERS;
-
-	}
 
 	private void loadLimitSettings(IMemento memento) {
 		if (memento == null) {
@@ -536,19 +520,6 @@ public class MarkerContentGenerator {
 	 */
 	private void loadFiltersPreference() {
 		loadFiltersFrom(IDEWorkbenchPlugin.getDefault().getPreferenceStore().getString(getMementoPreferenceName()));
-
-		String legacyFilters = getLegacyFiltersPreferenceName();
-		String migrationPreference = legacyFilters + MarkerSupportInternalUtilities.MIGRATE_PREFERENCE_CONSTANT;
-
-		if (IDEWorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(migrationPreference)) {
-			return;// Already migrated
-		}
-
-		// Load any defined in a pre 3.4 workbench
-		loadLegacyFiltersFrom(IDEWorkbenchPlugin.getDefault().getPreferenceStore().getString(legacyFilters));
-
-		// Mark as migrated
-		IDEWorkbenchPlugin.getDefault().getPreferenceStore().setValue(migrationPreference, true);
 	}
 
 	/**
@@ -579,35 +550,6 @@ public class MarkerContentGenerator {
 		return false;
 	}
 
-	/**
-	 * Load the legacy filter into the system.
-	 *
-	 * @param child
-	 */
-	private void loadLegacyFilter(IMemento child) {
-		MarkerFieldFilterGroup newGroup = new MarkerFieldFilterGroup(null, this);
-		newGroup.legacyLoadSettings(child);
-		getAllFilters().add(newGroup);
-	}
-
-	/**
-	 * Load the pre-3.4 filters.
-	 *
-	 * @param mementoString
-	 */
-	private void loadLegacyFiltersFrom(String mementoString) {
-		if (mementoString.equals(IPreferenceStore.STRING_DEFAULT_DEFAULT)) {
-			return;
-		}
-		IMemento memento;
-		try {
-			memento = XMLMemento.createReadRoot(new StringReader(mementoString));
-			restoreLegacyFilters(memento);
-		} catch (WorkbenchException e) {
-			StatusManager.getManager().handle(e.getStatus());
-			return;
-		}
-	}
 
 	/**
 	 * Load the user supplied filter
@@ -618,25 +560,6 @@ public class MarkerContentGenerator {
 		MarkerFieldFilterGroup newGroup = new MarkerFieldFilterGroup(null, this);
 		newGroup.loadSettings(child);
 		getAllFilters().add(newGroup);
-	}
-
-	/**
-	 * Restore the pre-3.4 filters.
-	 *
-	 * @param memento
-	 */
-	private void restoreLegacyFilters(IMemento memento) {
-		IMemento[] sections = null;
-		if (memento != null) {
-			sections = memento.getChildren(TAG_LEGACY_FILTER_ENTRY);
-		}
-
-		for (IMemento child : sections) {
-			String id = child.getString(IMemento.TAG_ID);
-			if (id == null)
-				continue;
-			loadLegacyFilter(child);
-		}
 	}
 
 	private void writeFiltersPreference() {

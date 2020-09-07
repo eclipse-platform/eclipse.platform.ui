@@ -34,7 +34,6 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.Policy;
@@ -110,29 +109,6 @@ public class MarkerSupportInternalUtilities {
 	 * The markers quick fix decoration.
 	 */
 	public static final String IMG_MARKERS_QUICK_FIX_DECORATION_PATH = "markers/contassist_ovr.png"; //$NON-NLS-1$
-
-	/**
-	 * A constant to map migration to the filter being migrated
-	 */
-	public static final String MIGRATE_PREFERENCE_CONSTANT = "_MIGRATE"; //$NON-NLS-1$
-
-	/**
-	 * Constant for the bookmark filters migration.
-	 */
-	public static final String MIGRATE_BOOKMARK_FILTERS = IDEInternalPreferences.BOOKMARKS_FILTERS
-			+ MIGRATE_PREFERENCE_CONSTANT;
-
-	/**
-	 * Constant for the problem filters migration.
-	 */
-	public static final String MIGRATE_PROBLEM_FILTERS = IDEInternalPreferences.PROBLEMS_FILTERS
-			+ MIGRATE_PREFERENCE_CONSTANT;
-
-	/**
-	 * Constant for the task filters migration.
-	 */
-	public static final String MIGRATE_TASK_FILTERS = IDEInternalPreferences.TASKS_FILTERS
-			+ MIGRATE_PREFERENCE_CONSTANT;
 
 	/**
 	 * The string value of the false value for a boolean attribute.
