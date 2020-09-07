@@ -36,9 +36,7 @@ public final class Messages extends NLS {
 	public static String BundleGroupProvider;
 	public static String ConfigurationActivator_initialize;
 	public static String ConfigurationActivator_createConfig;
-	public static String ConfigurationActivator_uninstallBundle;
 	public static String ConfigurationParser_cannotLoadSharedInstall;
-	public static String ConfigurationActivator_installBundle;
 	public static String PluginEntry_versionError;
 	public static String IniFileReader_MissingDesc;
 	public static String IniFileReader_OpenINIError;
@@ -52,7 +50,6 @@ public final class Messages extends NLS {
 	public static String PlatformConfiguration_expectingPlatformXMLorDirectory;
 	public static String PlatformConfiguration_cannotBackupConfig;
 	public static String PlatformConfiguration_cannotCloseStream;
-	public static String PlatformConfiguration_cannotCloseTempFile;
 	public static String PlatformConfiguration_cannotRenameTempFile;
 	public static String PlatformConfiguration_cannotLoadConfig;
 	public static String PlatformConfiguration_cannotLoadDefaultSite;
