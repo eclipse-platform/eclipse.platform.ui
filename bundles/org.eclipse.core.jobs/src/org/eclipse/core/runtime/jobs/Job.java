@@ -148,10 +148,12 @@ public abstract class Job extends InternalJob {
 	}
 
 	/**
-	 * Creates a new Job that will execute the provided function
-	 * when it runs.
+	 * Creates a new Job that will execute the provided function when it runs.
 	 *
-	 * @param name The name of the job
+	 * Prefer using {@link Job#create(String, ICoreRunnable)} as this does not
+	 * require to call done on the monitor and relies on OperationCanceledException
+	 *
+	 * @param name     The name of the job
 	 * @param function The function to execute
 	 * @return A job that encapsulates the provided function
 	 * @see IJobFunction
@@ -196,10 +198,11 @@ public abstract class Job extends InternalJob {
 	 * Creates a new system {@link Job} with the given name that will execute the
 	 * provided function when it runs.
 	 *
-	 * @param name
-	 *            the name of the job
-	 * @param function
-	 *            The function to execute
+	 * Prefer using {@link Job#createSystem(String, ICoreRunnable)} as this does not
+	 * require to call done on the monitor and relies on OperationCanceledException
+	 *
+	 * @param name     the name of the job
+	 * @param function The function to execute
 	 * @return a job that encapsulates the provided function
 	 * @see IJobFunction
 	 * @see Job#setSystem(boolean)
