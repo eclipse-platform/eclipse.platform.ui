@@ -448,7 +448,7 @@ public class ModelServiceImpl implements EModelService {
 
 	@Override
 	public MUIElement find(String id, MUIElement searchRoot) {
-		if (id == null || id.length() == 0) {
+		if (id == null || id.isEmpty()) {
 			return null;
 		}
 
@@ -525,7 +525,7 @@ public class ModelServiceImpl implements EModelService {
 	@Override
 	public MUIElement cloneSnippet(MSnippetContainer snippetContainer, String snippetId,
 			MWindow refWin) {
-		if (snippetContainer == null || snippetId == null || snippetId.length() == 0) {
+		if (snippetContainer == null || snippetId == null || snippetId.isEmpty()) {
 			return null;
 		}
 
@@ -592,7 +592,7 @@ public class ModelServiceImpl implements EModelService {
 
 	@Override
 	public MUIElement findSnippet(MSnippetContainer snippetContainer, String id) {
-		if (snippetContainer == null || id == null || id.length() == 0) {
+		if (snippetContainer == null || id == null || id.isEmpty()) {
 			return null;
 		}
 

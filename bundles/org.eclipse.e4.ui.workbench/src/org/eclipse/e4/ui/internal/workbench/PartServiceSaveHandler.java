@@ -37,7 +37,7 @@ public class PartServiceSaveHandler implements ISaveHandler {
 		if (logger == null) {
 			return;
 		}
-		if (id == null || id.length() == 0) {
+		if (id == null || id.isEmpty()) {
 			logger.error(e, unidentifiedMessage);
 		} else {
 			logger.error(e, NLS.bind(identifiedMessage, id));

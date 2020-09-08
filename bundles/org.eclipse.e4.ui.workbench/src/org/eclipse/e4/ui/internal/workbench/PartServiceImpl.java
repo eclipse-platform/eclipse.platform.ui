@@ -199,7 +199,7 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	private void log(String unidentifiedMessage, String identifiedMessage, String id, Exception e) {
-		if (id == null || id.length() == 0) {
+		if (id == null || id.isEmpty()) {
 			logger.error(e, unidentifiedMessage);
 		} else {
 			logger.error(e, NLS.bind(identifiedMessage, id));

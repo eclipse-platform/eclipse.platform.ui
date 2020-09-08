@@ -82,7 +82,7 @@ public final class ContributionsAnalyzer {
 	public static void gatherTrimContributions(MTrimBar trimModel,
 			List<MTrimContribution> trimContributions, String elementId,
 			ArrayList<MTrimContribution> toContribute, ExpressionContext eContext) {
-		if (elementId == null || elementId.length() == 0) {
+		if (elementId == null || elementId.isEmpty()) {
 			return;
 		}
 		for (MTrimContribution contribution : trimContributions) {
@@ -98,7 +98,7 @@ public final class ContributionsAnalyzer {
 	public static void XXXgatherToolBarContributions(final MToolBar toolbarModel,
 			final List<MToolBarContribution> toolbarContributionList, final String id,
 			final ArrayList<MToolBarContribution> toContribute) {
-		if (id == null || id.length() == 0) {
+		if (id == null || id.isEmpty()) {
 			return;
 		}
 		for (MToolBarContribution toolBarContribution : toolbarContributionList) {
@@ -113,7 +113,7 @@ public final class ContributionsAnalyzer {
 	public static void gatherToolBarContributions(final MToolBar toolbarModel,
 			final List<MToolBarContribution> toolbarContributionList, final String id,
 			final ArrayList<MToolBarContribution> toContribute, final ExpressionContext eContext) {
-		if (id == null || id.length() == 0) {
+		if (id == null || id.isEmpty()) {
 			return;
 		}
 		for (MToolBarContribution toolBarContribution : toolbarContributionList) {
@@ -129,7 +129,7 @@ public final class ContributionsAnalyzer {
 			final List<MMenuContribution> menuContributionList, final String id,
 			final ArrayList<MMenuContribution> toContribute, final ExpressionContext eContext,
 			boolean includePopups) {
-		if (id == null || id.length() == 0) {
+		if (id == null || id.isEmpty()) {
 			return;
 		}
 		ArrayList<String> popupIds = new ArrayList<>();
@@ -173,7 +173,7 @@ public final class ContributionsAnalyzer {
 			final List<MMenuContribution> menuContributionList, final String id,
 			final ArrayList<MMenuContribution> toContribute, final ExpressionContext eContext,
 			boolean includePopups) {
-		if (id == null || id.length() == 0) {
+		if (id == null || id.isEmpty()) {
 			return;
 		}
 		boolean menuBar = (((MUIElement) ((EObject) menuModel).eContainer()) instanceof MWindow);
@@ -777,7 +777,7 @@ public final class ContributionsAnalyzer {
 	}
 
 	public static int indexForId(MElementContainer<MMenuElement> parentMenu, String id) {
-		if (id == null || id.length() == 0) {
+		if (id == null || id.isEmpty()) {
 			return -1;
 		}
 		int i = 0;
