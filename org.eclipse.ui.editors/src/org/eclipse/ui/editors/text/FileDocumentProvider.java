@@ -90,13 +90,6 @@ import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 public class FileDocumentProvider extends StorageDocumentProvider {
 
 	/**
-	 * Qualified name for the encoding key.
-	 *
-	 * @since 2.1
-	 */
-	private static final QualifiedName ENCODING_KEY = new QualifiedName(EditorsUI.PLUGIN_ID, "encoding"); //$NON-NLS-1$
-
-	/**
 	 * The runnable context for that provider.
 	 * @since 3.0
 	 */
@@ -1016,37 +1009,10 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 */
 	@Override
 	protected String getPersistedEncoding(Object element) {
-		if (element instanceof IFileEditorInput) {
-			IFileEditorInput editorInput= (IFileEditorInput)element;
-			IFile file= editorInput.getFile();
-			if (file != null) {
-				String encoding= null;
-				try {
-					encoding= file.getPersistentProperty(ENCODING_KEY);
-				} catch (CoreException x) {
-					// we ignore exceptions here because we support the ENCODING_KEY property only for compatibility reasons
-				}
-				if (encoding != null) {
-					// if we found an old encoding property, we try to migrate it to the new core.resources encoding support
-					try {
-						file.setCharset(encoding, getProgressMonitor());
-						// if successful delete old property
-						file.setPersistentProperty(ENCODING_KEY, null);
-					} catch (CoreException ex) {
-						handleCoreException(ex, TextEditorMessages.FileDocumentProvider_getPersistedEncoding);
-					}
-				} else {
-					try {
-						encoding= file.getCharset();
-					} catch (CoreException e) {
-						return null;
-					}
-				}
-				return encoding;
-			}
-		}
 		return super.getPersistedEncoding(element);
 	}
+
+
 
 	/**
 	 * Persists the given encoding for the given element.
