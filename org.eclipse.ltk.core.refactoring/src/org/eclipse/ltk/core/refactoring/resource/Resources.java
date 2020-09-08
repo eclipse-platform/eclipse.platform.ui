@@ -133,7 +133,7 @@ public class Resources {
 	private static Map<IFile, Long> createModificationStampMap(List<IFile> files){
 		Map<IFile, Long> map= new HashMap<>();
 		for (IFile file : files) {
-			map.put(file, Long.valueOf(file.getModificationStamp()));
+			map.put(file, file.getModificationStamp());
 		}
 		return map;
 	}

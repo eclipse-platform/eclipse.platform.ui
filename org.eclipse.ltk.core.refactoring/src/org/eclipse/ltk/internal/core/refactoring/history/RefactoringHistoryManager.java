@@ -267,7 +267,7 @@ public final class RefactoringHistoryManager {
 				final int index= line.indexOf(DELIMITER_COMPONENT);
 				if (index > 0) {
 					try {
-						final long stamp= Long.valueOf(line.substring(0, index)).longValue();
+						final long stamp= Long.parseLong(line.substring(0, index));
 						if (stamp >= start && stamp <= end)
 							list.add(new DefaultRefactoringDescriptorProxy(unescapeString(line.substring(index + 1)), project, stamp));
 					} catch (NumberFormatException exception) {

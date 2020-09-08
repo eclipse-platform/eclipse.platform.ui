@@ -100,7 +100,7 @@ public class ParticipantDescriptor {
 		String attr= fConfigurationElement.getAttribute(PROCESS_ON_CANCEL);
 		if (attr == null)
 			return false;
-		return Boolean.valueOf(attr).booleanValue();
+		return Boolean.parseBoolean(attr);
 	}
 
 	private boolean convert(EvaluationResult eval) {

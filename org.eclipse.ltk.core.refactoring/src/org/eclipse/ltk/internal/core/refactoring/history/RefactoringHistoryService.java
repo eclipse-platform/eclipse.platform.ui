@@ -199,7 +199,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		final IScopeContext[] contexts= new IScopeContext[] { new ProjectScope(project)};
 		final String preference= Platform.getPreferencesService().getString(RefactoringCorePlugin.getPluginId(), RefactoringPreferenceConstants.PREFERENCE_SHARED_REFACTORING_HISTORY, Boolean.FALSE.toString(), contexts);
 		if (preference != null)
-			return Boolean.valueOf(preference).booleanValue();
+			return Boolean.parseBoolean(preference);
 		return false;
 	}
 

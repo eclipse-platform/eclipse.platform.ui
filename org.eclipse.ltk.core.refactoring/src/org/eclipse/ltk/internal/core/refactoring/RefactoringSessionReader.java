@@ -238,7 +238,7 @@ public final class RefactoringSessionReader extends DefaultHandler {
 				}
 			}
 			try {
-				descriptor.setTimeStamp(Long.valueOf(stamp).longValue());
+				descriptor.setTimeStamp(Long.parseLong(stamp));
 			} catch (NumberFormatException exception) {
 				// Do nothing
 			}

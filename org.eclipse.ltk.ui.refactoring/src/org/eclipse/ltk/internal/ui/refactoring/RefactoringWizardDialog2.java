@@ -423,7 +423,7 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 		if (w != null) {
 			Boolean b = (Boolean) h.get(key);
 			if (b != null)
-				w.setEnabled(b.booleanValue());
+				w.setEnabled(b);
 		}
 	}
 
