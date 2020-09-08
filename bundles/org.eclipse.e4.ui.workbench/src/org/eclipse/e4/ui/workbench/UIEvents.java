@@ -372,8 +372,9 @@ public class UIEvents {
 			return false;
 
 		Object uiElement = argMap.get(EventTags.ELEMENT);
-		if (uiElement == null || !(uiElement instanceof MUIElement))
+		if (!(uiElement instanceof MUIElement)) {
 			return false;
+		}
 
 		IEclipseContext context = uiElement instanceof MApplication ? ((MApplication) uiElement)
 				.getContext() : ModelUtils.getContainingContext((MUIElement) uiElement);
