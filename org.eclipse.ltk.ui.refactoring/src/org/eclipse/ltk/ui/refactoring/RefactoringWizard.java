@@ -181,7 +181,7 @@ public abstract class RefactoringWizard extends Wizard {
 	 *
 	 * @param refactoring the refactoring the wizard is presenting
 	 * @param flags flags specifying the behavior of the wizard. If neither
-	 *  <code>WIZARD_BASED_USER_INTERFACE</code> nor <code>DIALOG_BASED_UESR_INTERFACE</code>
+	 *  <code>WIZARD_BASED_USER_INTERFACE</code> nor <code>DIALOG_BASED_USER_INTERFACE</code>
 	 *  is specified then <code>WIZARD_BASED_USER_INTERFACE</code> will be
 	 *  taken as a default.
 	 */
@@ -195,7 +195,7 @@ public abstract class RefactoringWizard extends Wizard {
 	 *
 	 * @param refactoringContext the refactoringContext the wizard is presenting
 	 * @param flags flags specifying the behavior of the wizard. If neither
-	 *  <code>WIZARD_BASED_USER_INTERFACE</code> nor <code>DIALOG_BASED_UESR_INTERFACE</code>
+	 *  <code>WIZARD_BASED_USER_INTERFACE</code> nor <code>DIALOG_BASED_USER_INTERFACE</code>
 	 *  is specified then <code>WIZARD_BASED_USER_INTERFACE</code> will be
 	 *  taken as a default.
 	 * @since 3.7
