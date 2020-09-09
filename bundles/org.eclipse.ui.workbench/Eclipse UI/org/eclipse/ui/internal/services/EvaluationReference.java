@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.internal.services;
 
+import static org.osgi.service.log.LogLevel.ERROR;
+
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -22,16 +24,18 @@ import org.eclipse.e4.core.commands.ExpressionContext;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.ui.internal.workbench.Activator;
+import org.eclipse.e4.ui.internal.workbench.Policy;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.services.IEvaluationReference;
-import org.osgi.service.log.LogService;
 
 /**
  * @since 3.3
  *
  */
 public class EvaluationReference extends RunAndTrack implements IEvaluationReference {
+	private static final int THROTTLE_MAX = 100;
+	private static final int THROTTLE_VALUE = 3;
 	final IEclipseContext context;
 	final Expression expression;
 	final IPropertyChangeListener listener;
@@ -41,6 +45,7 @@ public class EvaluationReference extends RunAndTrack implements IEvaluationRefer
 	boolean participating = true;
 	boolean postingChanges = true;
 	boolean hasRun = false;
+	static LogThrottle logThrottle = new LogThrottle(THROTTLE_MAX, THROTTLE_VALUE);
 
 	public EvaluationReference(IEclipseContext context, Expression expression, IPropertyChangeListener listener,
 			String property) {
@@ -73,7 +78,11 @@ public class EvaluationReference extends RunAndTrack implements IEvaluationRefer
 			try {
 				cache = expression.evaluate(context) != EvaluationResult.FALSE;
 			} catch (CoreException e) {
-				Activator.log(LogService.LOG_ERROR, "Failed to evaluate: " + expression, e); //$NON-NLS-1$
+				String message = "Failed to evaluate: " + expression; //$NON-NLS-1$
+				boolean logged = logThrottle.log(ERROR.ordinal(), message, e);
+				if (!logged && Policy.DEBUG_CMDS) {
+					Activator.trace(Policy.DEBUG_CMDS_FLAG, message, e);
+				}
 				return false;
 			}
 		}
