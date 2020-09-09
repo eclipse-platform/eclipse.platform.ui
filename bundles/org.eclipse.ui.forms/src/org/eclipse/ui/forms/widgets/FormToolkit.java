@@ -512,7 +512,9 @@ public class FormToolkit {
 		composite.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
-				((Control) e.widget).setFocus();
+				if (!e.widget.isDisposed()) {
+					((Control) e.widget).setFocus();
+				}
 			}
 		});
 		if (composite.getParent() != null)
