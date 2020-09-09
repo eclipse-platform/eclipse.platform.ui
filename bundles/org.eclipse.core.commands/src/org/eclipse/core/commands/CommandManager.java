@@ -674,7 +674,7 @@ public final class CommandManager extends HandleObjectManager implements
 	private Parameterization[] getParameterizations(String serializedParameters, final IParameter[] parameters)
 			throws SerializationException {
 
-		if (serializedParameters == null || (serializedParameters.length() == 0)) {
+		if (serializedParameters == null || (serializedParameters.isEmpty())) {
 			return null;
 		}
 

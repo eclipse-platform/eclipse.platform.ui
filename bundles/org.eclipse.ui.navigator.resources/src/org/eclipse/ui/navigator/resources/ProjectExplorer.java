@@ -235,7 +235,7 @@ public final class ProjectExplorer extends CommonNavigator implements ISecondary
 		if (rootMode == PROJECTS) {
 			if (workingSetLabel == null)
 				return result;
-			if (result.length() == 0)
+			if (result.isEmpty())
 				return NLS.bind(WorkbenchNavigatorMessages.ProjectExplorer_toolTip, new String[] { workingSetLabel });
 			return NLS.bind(WorkbenchNavigatorMessages.ProjectExplorer_toolTip2,
 					new String[] { result, workingSetLabel });

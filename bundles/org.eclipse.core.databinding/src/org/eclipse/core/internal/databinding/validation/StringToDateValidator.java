@@ -40,7 +40,7 @@ public class StringToDateValidator implements IValidator<String> {
 
 	@Override
 	public IStatus validate(String value) {
-		if (value.trim().length() == 0) {
+		if (value.trim().isEmpty()) {
 			return Status.OK_STATUS;
 		}
 		Date convertedValue = converter.convert(value);

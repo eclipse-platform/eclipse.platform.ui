@@ -179,7 +179,7 @@ public final class OpenLogDialog extends TrayDialog {
 				if (line == null)
 					break;
 				line = line.trim();
-				if (line.length() == 0)
+				if (line.isEmpty())
 					continue;
 				if (!hasStarted && (line.startsWith("!ENTRY") || line.startsWith(LogSession.SESSION))) //$NON-NLS-1$
 					hasStarted = true;

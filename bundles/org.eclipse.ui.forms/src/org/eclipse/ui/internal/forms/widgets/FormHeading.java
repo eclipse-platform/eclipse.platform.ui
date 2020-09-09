@@ -113,7 +113,7 @@ public class FormHeading extends Canvas {
 			if (messageRegion != null)
 				messageRegion.updateToolTip(details);
 			if (getMessageType() > 0
-					&& (details == null || details.length() == 0))
+					&& (details == null || details.isEmpty()))
 				details = getMessage();
 			titleRegion.updateToolTip(details);
 		}

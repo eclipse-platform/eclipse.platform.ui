@@ -61,7 +61,7 @@ public class ModelUtils {
 	}
 
 	public static MApplicationElement findElementById(MApplicationElement element, String id) {
-		if (id == null || id.length() == 0) {
+		if (id == null || id.isEmpty()) {
 			return null;
 		}
 		// is it me?

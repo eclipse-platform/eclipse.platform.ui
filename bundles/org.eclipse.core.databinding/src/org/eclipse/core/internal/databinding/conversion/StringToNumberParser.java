@@ -57,7 +57,7 @@ public class StringToNumberParser {
 
 		String source = (String) value;
 		ParseResult result = new ParseResult();
-		if (!primitive && source.trim().length() == 0) {
+		if (!primitive && source.trim().isEmpty()) {
 			return result;
 		}
 

@@ -92,7 +92,7 @@ public class BrowserExt implements IBrowserExt {
 	protected BrowserFactory getDelegate() {
 		if (delegate == null) {
 			if (element.getAttribute(ATTR_FACTORY_CLASS) == null
-					|| element.getAttribute(ATTR_FACTORY_CLASS).length() == 0)
+					|| element.getAttribute(ATTR_FACTORY_CLASS).isEmpty())
 				return null;
 
 			try {
@@ -118,7 +118,7 @@ public class BrowserExt implements IBrowserExt {
 	@Override
 	public boolean isAvailable() {
 		if (delegate == null && (element.getAttribute(ATTR_FACTORY_CLASS) == null
-				|| element.getAttribute(ATTR_FACTORY_CLASS).length() == 0))
+				|| element.getAttribute(ATTR_FACTORY_CLASS).isEmpty()))
 			return true;
 
 		try {

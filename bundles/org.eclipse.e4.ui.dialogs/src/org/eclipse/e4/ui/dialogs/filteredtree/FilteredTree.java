@@ -449,7 +449,7 @@ public class FilteredTree extends Composite {
 			@Override
 			public void getName(AccessibleEvent e) {
 				String filterTextString = filterText.getText();
-				if (filterTextString.length() == 0 || filterTextString.equals(initialText)) {
+				if (filterTextString.isEmpty() || filterTextString.equals(initialText)) {
 					e.result = initialText;
 				} else {
 					e.result = NLS.bind(E4DialogMessages.FilteredTree_AccessibleListenerFiltered,

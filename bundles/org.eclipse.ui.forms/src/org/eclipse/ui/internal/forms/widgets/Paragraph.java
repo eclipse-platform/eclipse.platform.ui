@@ -67,7 +67,7 @@ public class Paragraph {
 
 	public void parseRegularText(String text, boolean expandURLs, boolean wrapAllowed,
 			HyperlinkSettings settings, String fontId, String colorId) {
-		if (text.length() == 0)
+		if (text.isEmpty())
 			return;
 		if (expandURLs) {
 			int loc = findUrl(text,0);
