@@ -53,7 +53,7 @@ public class MockRefactoringDescriptor extends RefactoringDescriptor {
 		final StringBuffer buffer= new StringBuffer(128);
 
 		buffer.append(getClass().getName());
-		if (getID().equals(ID_UNKNOWN))
+		if (ID_UNKNOWN.equals(getID()))
 			buffer.append("[unknown refactoring]"); //$NON-NLS-1$
 		else {
 			buffer.append("[timeStamp="); //$NON-NLS-1$

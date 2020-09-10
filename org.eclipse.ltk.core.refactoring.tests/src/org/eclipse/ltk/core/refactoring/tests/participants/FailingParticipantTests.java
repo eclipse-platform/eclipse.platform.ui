@@ -18,10 +18,6 @@ package org.eclipse.ltk.core.refactoring.tests.participants;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
-import org.junit.Assert;
-
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -29,6 +25,8 @@ import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
+
+import junit.framework.TestCase;
 
 public class FailingParticipantTests extends TestCase {
 
@@ -72,10 +70,10 @@ public class FailingParticipantTests extends TestCase {
 			exception= true;
 		}
 
-		Assert.assertEquals(1, fLogEntries.size());
+		assertEquals(1, fLogEntries.size());
 		IStatus status= fLogEntries.get(0);
-		Assert.assertTrue("Exception wrong", status.getException().getClass().equals(FailingParticipant.Exception.class));
-		Assert.assertTrue("No exception generated", exception);
+		assertEquals("Exception wrong", status.getException().getClass(), FailingParticipant.Exception.class);
+		assertTrue("No exception generated", exception);
 
 		resetLog();
 
@@ -93,10 +91,10 @@ public class FailingParticipantTests extends TestCase {
 			exception= true;
 		}
 
-		Assert.assertEquals(1, fLogEntries.size());
+		assertEquals(1, fLogEntries.size());
 		status= fLogEntries.get(0);
-		Assert.assertTrue("Exception wrong", status.getException().getClass().equals(FailingParticipant2.Exception.class));
-		Assert.assertTrue("No exception generated", exception);
+		assertEquals("Exception wrong", status.getException().getClass(), FailingParticipant2.Exception.class);
+		assertTrue("No exception generated", exception);
 
 		resetLog();
 
@@ -109,8 +107,8 @@ public class FailingParticipantTests extends TestCase {
 		change= fRefactoring.createChange(new NullProgressMonitor());
 		change.perform(new NullProgressMonitor());
 
-		Assert.assertEquals(0, fLogEntries.size());
-		Assert.assertTrue("Working participant not executed", ElementRenameProcessor.fHistory.contains(ElementRenameProcessor.WORKING_EXEC));
+		assertEquals(0, fLogEntries.size());
+		assertTrue("Working participant not executed", ElementRenameProcessor.fHistory.contains(ElementRenameProcessor.WORKING_EXEC));
 	}
 
 	// If the main refactoring fails to execute, disable any participants contributing preChanges
@@ -131,23 +129,23 @@ public class FailingParticipantTests extends TestCase {
 		}
 
 		//System.out.println(fLogEntries);
-		Assert.assertEquals(2, fLogEntries.size());
+		assertEquals(2, fLogEntries.size());
 		IStatus status= fLogEntries.get(0);
-		Assert.assertTrue("Exception wrong", status.getException().getClass().equals(RuntimeException.class));
-		Assert.assertEquals("Status code wrong", IRefactoringCoreStatusCodes.REFACTORING_EXCEPTION_DISABLED_PARTICIPANTS, status.getCode());
+		assertEquals("Exception wrong", status.getException().getClass(), RuntimeException.class);
+		assertEquals("Status code wrong", IRefactoringCoreStatusCodes.REFACTORING_EXCEPTION_DISABLED_PARTICIPANTS, status.getCode());
 		status= fLogEntries.get(1);
-		Assert.assertEquals("Exception wrong", null, status.getException());
-		Assert.assertEquals("Status code wrong", IRefactoringCoreStatusCodes.PARTICIPANT_DISABLED, status.getCode());
-		Assert.assertTrue("No exception generated", exception);
+		assertNull("Exception wrong", status.getException());
+		assertEquals("Status code wrong", IRefactoringCoreStatusCodes.PARTICIPANT_DISABLED, status.getCode());
+		assertTrue("No exception generated", exception);
 
 		//System.out.println(ElementRenameProcessor.fHistory);
 
-		Assert.assertTrue("Working participant not created", ElementRenameProcessor.fHistory.contains(ElementRenameProcessor.WORKING_CREATE));
-		Assert.assertFalse("Working participant executed", ElementRenameProcessor.fHistory.contains(ElementRenameProcessor.WORKING_EXEC));
-		Assert.assertTrue("Working participant pre not created pre", ElementRenameProcessor.fHistory.contains(ElementRenameProcessor.WORKINGPRE_CREATEPRE));
-		Assert.assertTrue("Working participant pre not created", ElementRenameProcessor.fHistory.contains(ElementRenameProcessor.WORKINGPRE_CREATE));
-		Assert.assertTrue("Working participant pre not executed pre", ElementRenameProcessor.fHistory.contains(ElementRenameProcessor.WORKINGPRE_EXECPRE));
-		Assert.assertFalse("Working participant pre executed", ElementRenameProcessor.fHistory.contains(ElementRenameProcessor.WORKINGPRE_EXEC));
+		assertTrue("Working participant not created", ElementRenameProcessor.fHistory.contains(ElementRenameProcessor.WORKING_CREATE));
+		assertFalse("Working participant executed", ElementRenameProcessor.fHistory.contains(ElementRenameProcessor.WORKING_EXEC));
+		assertTrue("Working participant pre not created pre", ElementRenameProcessor.fHistory.contains(ElementRenameProcessor.WORKINGPRE_CREATEPRE));
+		assertTrue("Working participant pre not created", ElementRenameProcessor.fHistory.contains(ElementRenameProcessor.WORKINGPRE_CREATE));
+		assertTrue("Working participant pre not executed pre", ElementRenameProcessor.fHistory.contains(ElementRenameProcessor.WORKINGPRE_EXECPRE));
+		assertFalse("Working participant pre executed", ElementRenameProcessor.fHistory.contains(ElementRenameProcessor.WORKINGPRE_EXEC));
 
 
 		// Now try it again and the working participant should not be called at all,
@@ -161,14 +159,14 @@ public class FailingParticipantTests extends TestCase {
 		change= fRefactoring.createChange(new NullProgressMonitor());
 		change.perform(new NullProgressMonitor());
 
-		Assert.assertEquals(0, fLogEntries.size());
+		assertEquals(0, fLogEntries.size());
 
-		Assert.assertTrue("Working participant not created", ElementRenameProcessor.fHistory.contains(ElementRenameProcessor.WORKING_CREATE));
-		Assert.assertTrue("Working participant not executed", ElementRenameProcessor.fHistory.contains(ElementRenameProcessor.WORKING_EXEC));
-		Assert.assertFalse("Working participant pre created pre", ElementRenameProcessor.fHistory.contains(ElementRenameProcessor.WORKINGPRE_CREATEPRE));
-		Assert.assertFalse("Working participant pre created", ElementRenameProcessor.fHistory.contains(ElementRenameProcessor.WORKINGPRE_CREATE));
-		Assert.assertFalse("Working participant pre executed", ElementRenameProcessor.fHistory.contains(ElementRenameProcessor.WORKINGPRE_EXEC));
-		Assert.assertFalse("Working participant pre executed pre", ElementRenameProcessor.fHistory.contains(ElementRenameProcessor.WORKINGPRE_EXECPRE));
+		assertTrue("Working participant not created", ElementRenameProcessor.fHistory.contains(ElementRenameProcessor.WORKING_CREATE));
+		assertTrue("Working participant not executed", ElementRenameProcessor.fHistory.contains(ElementRenameProcessor.WORKING_EXEC));
+		assertFalse("Working participant pre created pre", ElementRenameProcessor.fHistory.contains(ElementRenameProcessor.WORKINGPRE_CREATEPRE));
+		assertFalse("Working participant pre created", ElementRenameProcessor.fHistory.contains(ElementRenameProcessor.WORKINGPRE_CREATE));
+		assertFalse("Working participant pre executed", ElementRenameProcessor.fHistory.contains(ElementRenameProcessor.WORKINGPRE_EXEC));
+		assertFalse("Working participant pre executed pre", ElementRenameProcessor.fHistory.contains(ElementRenameProcessor.WORKINGPRE_EXECPRE));
 
 	}
 }
