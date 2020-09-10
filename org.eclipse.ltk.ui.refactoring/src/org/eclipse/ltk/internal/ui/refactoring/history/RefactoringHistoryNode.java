@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
+import java.util.Objects;
+
 /**
  * Node of a refactoring history.
  *
@@ -64,11 +66,9 @@ public abstract class RefactoringHistoryNode {
 		if (object instanceof RefactoringHistoryNode) {
 			final RefactoringHistoryNode node= (RefactoringHistoryNode) object;
 			final RefactoringHistoryNode parent= getParent();
-			if (parent != null) {
-				if (!parent.equals(node.getParent()))
-					return false;
-			} else if (node.getParent() != null)
+			if (!Objects.equals(parent, node.getParent())) {
 				return false;
+			}
 			return getKind() == node.getKind();
 		}
 		return false;
