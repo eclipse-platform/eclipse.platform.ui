@@ -16,9 +16,10 @@
 
 Form {
 	/* Bug 465148: Additional styling for the Form */
-	text-background-color: '#COLOR-TITLE-BACKGROUND-GRADIENT';
+	color: '#COLOR-TITLE-BACKGROUND';
+	text-background-color:'#COLOR-TITLE-FOREGROUND';
 
-	tb-toggle-hover-color: '#COLOR-TITLE-FOREGROUND';
+	tb-toggle-hover-color: '#COLOR-TITLE-FOREGROUND-GRAD';
 	tb-toggle-color: '#COLOR-TITLE-FOREGROUND';
 	h-hover-full-color: '#COLOR-TITLE-FOREGROUND';
 	h-hover-light-color: '#COLOR-TITLE-FOREGROUND';
@@ -29,6 +30,7 @@ Form {
 
 Section {
   	background-color-titlebar: '#COLOR-TITLE-BACKGROUND-GRADIENT';
+	swt-titlebar-color:'#COLOR-TITLE-FOREGROUND';
   	background-color-gradient-titlebar: '#COLOR-TITLE-BACKGROUND-GRADIENT';
   	border-color-titlebar: '#COLOR-TITLE-BACKGROUND-GRADIENT';
 }
