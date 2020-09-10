@@ -267,7 +267,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		public void done() {
 			info.clearTaskInfo();
 			info.clearChildren();
-			monitors.forEach(IProgressMonitor::done);
+			monitors.forEach(t -> t.done());
 		}
 
 		@Override
