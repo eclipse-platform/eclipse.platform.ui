@@ -22,6 +22,8 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.core.runtime.Adapters;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
@@ -161,20 +163,29 @@ public class ProcessPropertyPage extends PropertyPage {
 
 	/**
 	 * Gets the process from the selected element
-	 * @return the process or null if the element is not a process
+	 *
+	 * @return the process or null if the element does not implement or adapt
+	 *         IProcess
 	 *
 	 * @since 3.2
 	 */
 	private IProcess getProcess() {
-		IProcess proc = null;
-		Object obj = getElement();
-		if (obj instanceof IDebugElement) {
-			obj = ((IDebugElement)obj).getDebugTarget().getProcess();
+		IAdaptable element = getElement();
+		if (element instanceof IProcess) {
+			return ((IProcess) element);
 		}
-		if (obj instanceof IProcess) {
-			proc = ((IProcess)obj);
+		if (element instanceof IDebugElement) {
+			return ((IDebugElement)element).getDebugTarget().getProcess();
 		}
-		return proc;
+		Object adapted = Adapters.adapt(element, IProcess.class, true);
+		if (adapted != null) {
+			return ((IProcess) adapted);
+		}
+		adapted = Adapters.adapt(element, IDebugElement.class, true);
+		if (adapted != null) {
+			return ((IDebugElement) adapted).getDebugTarget().getProcess();
+		}
+		return null;
 	}
 
 	/**
