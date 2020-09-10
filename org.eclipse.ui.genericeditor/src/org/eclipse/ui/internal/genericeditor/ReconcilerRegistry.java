@@ -54,17 +54,11 @@ public class ReconcilerRegistry {
 	 * Creates the registry and binds it to the extension point.
 	 */
 	public ReconcilerRegistry() {
-		Platform.getExtensionRegistry().addRegistryChangeListener(event -> {
-			outOfSync = true;
-		}, EXTENSION_POINT_ID);
-
-		Platform.getExtensionRegistry().addRegistryChangeListener(event -> {
-			highlightOutOfSync = true;
-		}, HIGHLIGHT_EXTENSION_POINT_ID);
-
-		Platform.getExtensionRegistry().addRegistryChangeListener(event -> {
-			foldingOutOfSync = true;
-		}, FOLDING_EXTENSION_POINT_ID);
+		Platform.getExtensionRegistry().addRegistryChangeListener(event -> outOfSync = true, EXTENSION_POINT_ID);
+		Platform.getExtensionRegistry().addRegistryChangeListener(event -> highlightOutOfSync = true,
+				HIGHLIGHT_EXTENSION_POINT_ID);
+		Platform.getExtensionRegistry().addRegistryChangeListener(event -> foldingOutOfSync = true,
+				FOLDING_EXTENSION_POINT_ID);
 	}
 
 	/**
@@ -82,12 +76,12 @@ public class ReconcilerRegistry {
 		if (this.outOfSync) {
 			sync();
 		}
-		List<IReconciler> reconcilers = this.extensions.values().stream()
-				.filter(ext -> contentTypes.contains(ext.targetContentType))
-				.filter(ext -> ext.matches(sourceViewer, editor))
-				.sorted(new ContentTypeSpecializationComparator<IReconciler>().reversed())
-				.map(GenericContentTypeRelatedExtension<IReconciler>::createDelegate).collect(Collectors.toList());
-		return reconcilers;
+		return this.extensions.values().stream() //
+				.filter(ext -> contentTypes.contains(ext.targetContentType)) //
+				.filter(ext -> ext.matches(sourceViewer, editor)) //
+				.sorted(new ContentTypeSpecializationComparator<IReconciler>().reversed()) //
+				.map(GenericContentTypeRelatedExtension<IReconciler>::createDelegate) //
+				.collect(Collectors.toList());
 	}
 
 	/**
@@ -106,12 +100,12 @@ public class ReconcilerRegistry {
 		if (this.highlightOutOfSync) {
 			syncHighlight();
 		}
-		List<IReconciler> highlightReconcilers = this.highlightExtensions.values().stream()
-				.filter(ext -> contentTypes.contains(ext.targetContentType))
-				.filter(ext -> ext.matches(sourceViewer, editor))
-				.sorted(new ContentTypeSpecializationComparator<IReconciler>().reversed())
-				.map(GenericContentTypeRelatedExtension<IReconciler>::createDelegate).collect(Collectors.toList());
-		return highlightReconcilers;
+		return this.highlightExtensions.values().stream() //
+				.filter(ext -> contentTypes.contains(ext.targetContentType)) //
+				.filter(ext -> ext.matches(sourceViewer, editor)) //
+				.sorted(new ContentTypeSpecializationComparator<IReconciler>().reversed()) //
+				.map(GenericContentTypeRelatedExtension<IReconciler>::createDelegate) //
+				.collect(Collectors.toList());
 	}
 
 	/**
@@ -130,12 +124,12 @@ public class ReconcilerRegistry {
 		if (this.foldingOutOfSync) {
 			syncFolding();
 		}
-		List<IReconciler> foldingReconcilers = this.foldingExtensions.values().stream()
-				.filter(ext -> contentTypes.contains(ext.targetContentType))
-				.filter(ext -> ext.matches(sourceViewer, editor))
-				.sorted(new ContentTypeSpecializationComparator<IReconciler>().reversed())
-				.map(GenericContentTypeRelatedExtension<IReconciler>::createDelegate).collect(Collectors.toList());
-		return foldingReconcilers;
+		return this.foldingExtensions.values().stream() //
+				.filter(ext -> contentTypes.contains(ext.targetContentType)) //
+				.filter(ext -> ext.matches(sourceViewer, editor)) //
+				.sorted(new ContentTypeSpecializationComparator<IReconciler>().reversed()) //
+				.map(GenericContentTypeRelatedExtension<IReconciler>::createDelegate) //
+				.collect(Collectors.toList());
 	}
 
 	private void sync() {
@@ -145,7 +139,7 @@ public class ReconcilerRegistry {
 			toRemoveExtensions.remove(extension);
 			if (!this.extensions.containsKey(extension)) {
 				try {
-					this.extensions.put(extension, new GenericContentTypeRelatedExtension<IReconciler>(extension));
+					this.extensions.put(extension, new GenericContentTypeRelatedExtension<>(extension));
 				} catch (Exception ex) {
 					GenericEditorPlugin.getDefault().getLog()
 							.log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, ex.getMessage(), ex));
@@ -165,8 +159,7 @@ public class ReconcilerRegistry {
 			toRemoveExtensions.remove(extension);
 			if (!this.highlightExtensions.containsKey(extension)) {
 				try {
-					this.highlightExtensions.put(extension,
-							new GenericContentTypeRelatedExtension<IReconciler>(extension));
+					this.highlightExtensions.put(extension, new GenericContentTypeRelatedExtension<>(extension));
 				} catch (Exception ex) {
 					GenericEditorPlugin.getDefault().getLog()
 							.log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, ex.getMessage(), ex));
@@ -186,8 +179,7 @@ public class ReconcilerRegistry {
 			toRemoveExtensions.remove(extension);
 			if (!this.foldingExtensions.containsKey(extension)) {
 				try {
-					this.foldingExtensions.put(extension,
-							new GenericContentTypeRelatedExtension<IReconciler>(extension));
+					this.foldingExtensions.put(extension, new GenericContentTypeRelatedExtension<>(extension));
 				} catch (Exception ex) {
 					GenericEditorPlugin.getDefault().getLog()
 							.log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, ex.getMessage(), ex));

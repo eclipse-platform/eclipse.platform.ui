@@ -58,13 +58,15 @@ import org.eclipse.ui.internal.genericeditor.markers.MarkerResoltionQuickAssistP
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
- * The configuration of the {@link ExtensionBasedTextEditor}. It registers the proxy composite for hover, completion, syntax highlighting, and then those proxy take care of resolving to the right
- * extensions on-demand.
+ * The configuration of the {@link ExtensionBasedTextEditor}. It registers the
+ * proxy composite for hover, completion, syntax highlighting, and then those
+ * proxy take care of resolving to the right extensions on-demand.
  *
  * @since 1.0
  */
 @SuppressWarnings("restriction")
-public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewerConfiguration implements IDocumentPartitioningListener {
+public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewerConfiguration
+		implements IDocumentPartitioningListener {
 
 	private ITextEditor editor;
 	private Set<IContentType> contentTypes;
@@ -75,10 +77,8 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 
 	/**
 	 *
-	 * @param editor
-	 *            the editor we're creating.
-	 * @param preferenceStore
-	 *            the preference store.
+	 * @param editor          the editor we're creating.
+	 * @param preferenceStore the preference store.
 	 */
 	public ExtensionBasedTextViewerConfiguration(ITextEditor editor, IPreferenceStore preferenceStore) {
 		super(preferenceStore);
@@ -89,21 +89,12 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		if (this.contentTypes == null) {
 			this.contentTypes = new LinkedHashSet<>();
 			String fileName = null;
-			if (this.editor != null) {
-				fileName = editor.getEditorInput().getName();
-			} else {
-				IDocument document = viewer.getDocument();
-				if (document != null) {
-					ITextFileBuffer buffer = FileBuffers.getTextFileBufferManager().getTextFileBuffer(document);
-					if (buffer != null) {
-						fileName = buffer.getLocation().lastSegment();
-					}
-				}
-			}
+			fileName = getCurrentFileName(viewer);
 			if (fileName == null) {
 				return Collections.emptySet();
 			}
-			Queue<IContentType> types = new LinkedList<>(Arrays.asList(Platform.getContentTypeManager().findContentTypesFor(fileName)));
+			Queue<IContentType> types = new LinkedList<>(
+					Arrays.asList(Platform.getContentTypeManager().findContentTypesFor(fileName)));
 			while (!types.isEmpty()) {
 				IContentType type = types.poll();
 				this.contentTypes.add(type);
@@ -116,8 +107,27 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		return this.contentTypes;
 	}
 
-	@Override public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
-		List<ITextHover> hovers = GenericEditorPlugin.getDefault().getHoverRegistry().getAvailableHovers(sourceViewer, editor, getContentTypes(sourceViewer));
+	private String getCurrentFileName(ISourceViewer viewer) {
+		String fileName = null;
+		if (this.editor != null) {
+			fileName = editor.getEditorInput().getName();
+		}
+		if (fileName == null) {
+			IDocument viewerDocument = viewer.getDocument();
+			if (document != null) {
+				ITextFileBuffer buffer = FileBuffers.getTextFileBufferManager().getTextFileBuffer(viewerDocument);
+				if (buffer != null) {
+					fileName = buffer.getLocation().lastSegment();
+				}
+			}
+		}
+		return fileName;
+	}
+
+	@Override
+	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
+		List<ITextHover> hovers = GenericEditorPlugin.getDefault().getHoverRegistry().getAvailableHovers(sourceViewer,
+				editor, getContentTypes(sourceViewer));
 		if (hovers == null || hovers.isEmpty()) {
 			return null;
 		} else if (hovers.size() == 1) {
@@ -127,11 +137,12 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		}
 	}
 
-	@Override public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
+	@Override
+	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 		ContentAssistProcessorRegistry registry = GenericEditorPlugin.getDefault().getContentAssistProcessorRegistry();
 		contentAssistant = new ContentAssistant(true);
-		contentAssistant.setContextInformationPopupOrientation(ContentAssistant.CONTEXT_INFO_BELOW);
-		contentAssistant.setProposalPopupOrientation(ContentAssistant.PROPOSAL_REMOVE);
+		contentAssistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_BELOW);
+		contentAssistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_REMOVE);
 		contentAssistant.setAutoActivationDelay(0);
 		contentAssistant.enableColoredLabels(true);
 		contentAssistant.enableAutoActivation(true);
@@ -146,7 +157,8 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 			associateTokenContentTypes(this.document);
 		}
 		contentAssistant.setInformationControlCreator(new AbstractReusableInformationControlCreator() {
-			@Override protected IInformationControl doCreateInformationControl(Shell parent) {
+			@Override
+			protected IInformationControl doCreateInformationControl(Shell parent) {
 				return new DefaultInformationControl(parent);
 			}
 		});
@@ -154,9 +166,11 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		return contentAssistant;
 	}
 
-	@Override public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
+	@Override
+	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 		PresentationReconcilerRegistry registry = GenericEditorPlugin.getDefault().getPresentationReconcilerRegistry();
-		List<IPresentationReconciler> reconciliers = registry.getPresentationReconcilers(sourceViewer, editor, getContentTypes(sourceViewer));
+		List<IPresentationReconciler> reconciliers = registry.getPresentationReconcilers(sourceViewer, editor,
+				getContentTypes(sourceViewer));
 		if (!reconciliers.isEmpty()) {
 			return reconciliers.get(0);
 		}
@@ -177,7 +191,8 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		}
 	}
 
-	@Override public void documentPartitioningChanged(IDocument document) {
+	@Override
+	public void documentPartitioningChanged(IDocument document) {
 		associateTokenContentTypes(document);
 	}
 
@@ -192,30 +207,38 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		}
 	}
 
-	@Override public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer) {
+	@Override
+	public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer) {
 		QuickAssistAssistant quickAssistAssistant = new QuickAssistAssistant();
 		List<IQuickAssistProcessor> quickAssistProcessors = new ArrayList<>();
 		quickAssistProcessors.add(new MarkerResoltionQuickAssistProcessor());
-		quickAssistProcessors.addAll(GenericEditorPlugin.getDefault().getQuickAssistProcessorRegistry().getQuickAssistProcessors(sourceViewer, editor, getContentTypes(sourceViewer)));
-		CompositeQuickAssistProcessor compQuickAssistProcessor = new CompositeQuickAssistProcessor(quickAssistProcessors);
+		quickAssistProcessors.addAll(GenericEditorPlugin.getDefault().getQuickAssistProcessorRegistry()
+				.getQuickAssistProcessors(sourceViewer, editor, getContentTypes(sourceViewer)));
+		CompositeQuickAssistProcessor compQuickAssistProcessor = new CompositeQuickAssistProcessor(
+				quickAssistProcessors);
 		quickAssistAssistant.setQuickAssistProcessor(compQuickAssistProcessor);
-		quickAssistAssistant.setRestoreCompletionProposalSize(EditorsPlugin.getDefault().getDialogSettingsSection("quick_assist_proposal_size")); //$NON-NLS-1$
-		quickAssistAssistant.setInformationControlCreator(parent -> new DefaultInformationControl(parent, EditorsPlugin.getAdditionalInfoAffordanceString()));
+		quickAssistAssistant.setRestoreCompletionProposalSize(
+				EditorsPlugin.getDefault().getDialogSettingsSection("quick_assist_proposal_size")); //$NON-NLS-1$
+		quickAssistAssistant.setInformationControlCreator(
+				parent -> new DefaultInformationControl(parent, EditorsPlugin.getAdditionalInfoAffordanceString()));
 		return quickAssistAssistant;
 	}
 
-	@Override public IReconciler getReconciler(ISourceViewer sourceViewer) {
+	@Override
+	public IReconciler getReconciler(ISourceViewer sourceViewer) {
 		ReconcilerRegistry registry = GenericEditorPlugin.getDefault().getReconcilerRegistry();
 		List<IReconciler> reconcilers = registry.getReconcilers(sourceViewer, editor, getContentTypes(sourceViewer));
 		// Fill with highlight reconcilers
-		List<IReconciler> highlightReconcilers = registry.getHighlightReconcilers(sourceViewer, editor, getContentTypes(sourceViewer));
+		List<IReconciler> highlightReconcilers = registry.getHighlightReconcilers(sourceViewer, editor,
+				getContentTypes(sourceViewer));
 		if (!highlightReconcilers.isEmpty()) {
 			reconcilers.addAll(highlightReconcilers);
 		} else {
 			reconcilers.add(new DefaultWordHighlightReconciler());
 		}
 		// Fill with folding reconcilers
-		List<IReconciler> foldingReconcilers = registry.getFoldingReconcilers(sourceViewer, editor, getContentTypes(sourceViewer));
+		List<IReconciler> foldingReconcilers = registry.getFoldingReconcilers(sourceViewer, editor,
+				getContentTypes(sourceViewer));
 		if (!foldingReconcilers.isEmpty()) {
 			reconcilers.addAll(foldingReconcilers);
 		} else {
@@ -228,16 +251,19 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		return null;
 	}
 
-	@Override public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {
+	@Override
+	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {
 		AutoEditStrategyRegistry registry = GenericEditorPlugin.getDefault().getAutoEditStrategyRegistry();
-		List<IAutoEditStrategy> editStrategies = registry.getAutoEditStrategies(sourceViewer, editor, getContentTypes(sourceViewer));
+		List<IAutoEditStrategy> editStrategies = registry.getAutoEditStrategies(sourceViewer, editor,
+				getContentTypes(sourceViewer));
 		if (!editStrategies.isEmpty()) {
 			return editStrategies.toArray(new IAutoEditStrategy[editStrategies.size()]);
 		}
 		return super.getAutoEditStrategies(sourceViewer, contentType);
 	}
 
-	@Override protected Map<String, IAdaptable> getHyperlinkDetectorTargets(ISourceViewer sourceViewer) {
+	@Override
+	protected Map<String, IAdaptable> getHyperlinkDetectorTargets(ISourceViewer sourceViewer) {
 		Map<String, IAdaptable> targets = super.getHyperlinkDetectorTargets(sourceViewer);
 		targets.put(ExtensionBasedTextEditor.GENERIC_EDITOR_ID, editor);
 		return targets;

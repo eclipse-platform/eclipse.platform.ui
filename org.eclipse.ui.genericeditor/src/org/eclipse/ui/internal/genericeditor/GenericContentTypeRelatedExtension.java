@@ -18,6 +18,7 @@ import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
@@ -28,10 +29,12 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
- * This class wraps and proxies an instance of T provided through extensions and loads it lazily when it can contribute to the editor, then delegates all operations to actual instance.
+ * This class wraps and proxies an instance of T provided through extensions and
+ * loads it lazily when it can contribute to the editor, then delegates all
+ * operations to actual instance.
  *
- * @param <T>
- *            the actual type to proxy, typically the one defined on the extension point.
+ * @param <T> the actual type to proxy, typically the one defined on the
+ *            extension point.
  */
 public class GenericContentTypeRelatedExtension<T> {
 	private static final String ID_ATTRIBUTE = "id"; //$NON-NLS-1$
@@ -45,35 +48,39 @@ public class GenericContentTypeRelatedExtension<T> {
 
 	public GenericContentTypeRelatedExtension(IConfigurationElement element) throws Exception {
 		this.extension = element;
-		this.targetContentType = Platform.getContentTypeManager().getContentType(element.getAttribute(CONTENT_TYPE_ATTRIBUTE));
+		this.targetContentType = Platform.getContentTypeManager()
+				.getContentType(element.getAttribute(CONTENT_TYPE_ATTRIBUTE));
 		this.enabledWhen = buildEnabledWhen(element);
 	}
 
-	@SuppressWarnings("unchecked") public T createDelegate() {
+	@SuppressWarnings("unchecked")
+	public T createDelegate() {
 		try {
 			return (T) extension.createExecutableExtension(CLASS_ATTRIBUTE);
 		} catch (CoreException e) {
-			GenericEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, e.getMessage(), e));
+			GenericEditorPlugin.getDefault().getLog()
+					.log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, e.getMessage(), e));
 		}
 		return null;
 	}
 
 	/**
-	 * Returns the expression {@link Expression} declared in the <code>enabledWhen</code> element.
+	 * Returns the expression {@link Expression} declared in the
+	 * <code>enabledWhen</code> element.
 	 *
-	 * @param configElement
-	 *            the configuration element
-	 * @return the expression {@link Expression} declared in the enabledWhen element.
-	 * @throws CoreException
-	 *             when enabledWhen expression is not valid.
+	 * @param configElement the configuration element
+	 * @return the expression {@link Expression} declared in the enabledWhen
+	 *         element.
+	 * @throws CoreException when enabledWhen expression is not valid.
 	 */
 	private static Expression buildEnabledWhen(IConfigurationElement configElement) throws CoreException {
 		final IConfigurationElement[] children = configElement.getChildren(ENABLED_WHEN_ATTRIBUTE);
 		if (children.length > 0) {
 			IConfigurationElement[] subChildren = children[0].getChildren();
 			if (subChildren.length != 1) {
-				throw new CoreException(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, "One <enabledWhen> element is accepted. Disabling " //$NON-NLS-1$
-						+ configElement.getAttribute(ID_ATTRIBUTE)));
+				throw new CoreException(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID,
+						"One <enabledWhen> element is accepted. Disabling " //$NON-NLS-1$
+								+ configElement.getAttribute(ID_ATTRIBUTE)));
 			}
 			final ElementHandler elementHandler = ElementHandler.getDefault();
 			final ExpressionConverter converter = ExpressionConverter.getDefault();
@@ -83,13 +90,13 @@ public class GenericContentTypeRelatedExtension<T> {
 	}
 
 	/**
-	 * Returns true if the given viewer, editor matches the enabledWhen expression and false otherwise.
+	 * Returns true if the given viewer, editor matches the enabledWhen expression
+	 * and false otherwise.
 	 *
-	 * @param viewer
-	 *            the viewer
-	 * @param editor
-	 *            the editor
-	 * @return true if the given viewer, editor matches the enabledWhen expression and false otherwise.
+	 * @param viewer the viewer
+	 * @param editor the editor
+	 * @return true if the given viewer, editor matches the enabledWhen expression
+	 *         and false otherwise.
 	 */
 	public boolean matches(ISourceViewer viewer, ITextEditor editor) {
 		if (enabledWhen == null) {
@@ -100,15 +107,17 @@ public class GenericContentTypeRelatedExtension<T> {
 		context.addVariable("viewer", viewer); //$NON-NLS-1$
 		if (viewer.getDocument() != null) {
 			context.addVariable("document", viewer.getDocument()); //$NON-NLS-1$
+		} else {
+			context.addVariable("document", IEvaluationContext.UNDEFINED_VARIABLE); //$NON-NLS-1$
 		}
-		if (editor != null) {
-			context.addVariable("editor", editor); //$NON-NLS-1$
-			context.addVariable("editorInput", editor.getEditorInput()); //$NON-NLS-1$
-		}
+		context.addVariable("editor", editor != null ? editor : IEvaluationContext.UNDEFINED_VARIABLE); //$NON-NLS-1$
+		context.addVariable("editorInput", //$NON-NLS-1$
+				editor != null ? editor.getEditorInput() : IEvaluationContext.UNDEFINED_VARIABLE);
 		try {
 			return enabledWhen.evaluate(context) == EvaluationResult.TRUE;
 		} catch (CoreException e) {
-			GenericEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, "Error while 'enabledWhen' evaluation", e)); //$NON-NLS-1$
+			GenericEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID,
+					"Error while 'enabledWhen' evaluation", e)); //$NON-NLS-1$
 			return false;
 		}
 	}
