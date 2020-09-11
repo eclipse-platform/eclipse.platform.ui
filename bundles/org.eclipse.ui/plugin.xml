@@ -2123,21 +2123,12 @@
    <extension
          point="org.eclipse.core.expressions.definitions">
       <definition id="org.eclipse.ui.workbenchWindow.isPerspectiveOpen.enabledWhen">
-         <and>
-            <with
-                  variable="activeWorkbenchWindow">
-               <test
-                     property="org.eclipse.ui.workbenchWindow.isPerspectiveOpen">
-               </test>
-            </with>
-            <!-- this is a workaround to evaluate the expression -->
-            <with
-                  variable="activePart">
-               <instanceof
-                     value="org.eclipse.ui.IWorkbenchPart">
-               </instanceof>
-            </with>
-         </and>
+         <with
+               variable="activeWorkbenchWindow">
+            <test
+                  property="org.eclipse.ui.workbenchWindow.isPerspectiveOpen">
+            </test>
+         </with>
       </definition>
    </extension>
    <extension
