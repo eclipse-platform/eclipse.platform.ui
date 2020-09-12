@@ -190,7 +190,7 @@ public final class MoveResourcesDescriptor extends RefactoringDescriptor {
 		}
 
 		IResource destination= root.findMember(destinationPath);
-		if (!(destination instanceof IFolder || destination instanceof IProject) || !destination.exists()) {
+		if ((!(destination instanceof IFolder) && !(destination instanceof IProject)) || !destination.exists()) {
 			status.addFatalError(Messages.format(RefactoringCoreMessages.MoveResourcesDescriptor_error_destination_not_exists, BasicElementLabels.getPathLabel(destinationPath, false)));
 			return null;
 		}
@@ -214,7 +214,7 @@ public final class MoveResourcesDescriptor extends RefactoringDescriptor {
 				status.addFatalError(Messages.format(RefactoringCoreMessages.MoveResourcesDescriptor_error_moved_not_exists, BasicElementLabels.getPathLabel(path, false)));
 				return null;
 			}
-			if (!(resource instanceof IFile || resource instanceof IFolder)) {
+			if (!(resource instanceof IFile) && !(resource instanceof IFolder)) {
 				status.addFatalError(Messages.format(RefactoringCoreMessages.MoveResourcesDescriptor_error_moved_not_file_or_folder, BasicElementLabels.getPathLabel(path, false)));
 				return null;
 			}

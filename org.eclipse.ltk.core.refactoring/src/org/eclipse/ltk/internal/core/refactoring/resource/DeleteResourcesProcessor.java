@@ -111,7 +111,7 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		// allow only projects or only non-projects to be selected;
 		// note that the selection may contain multiple types of resource
-		if (!(Resources.containsOnlyProjects(fResources) || Resources.containsOnlyNonProjects(fResources))) {
+		if (!Resources.containsOnlyProjects(fResources) && !Resources.containsOnlyNonProjects(fResources)) {
 			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.DeleteResourcesProcessor_delete_error_mixed_types);
 		}
 

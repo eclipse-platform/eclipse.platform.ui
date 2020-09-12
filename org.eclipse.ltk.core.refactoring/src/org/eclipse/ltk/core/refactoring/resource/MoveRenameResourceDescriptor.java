@@ -232,7 +232,7 @@ public final class MoveRenameResourceDescriptor extends RefactoringDescriptor {
 
 		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 		IResource destination= root.findMember(destinationPath);
-		if (!(destination instanceof IFolder || destination instanceof IProject) || !destination.exists()) {
+		if ((!(destination instanceof IFolder) && !(destination instanceof IProject)) || !destination.exists()) {
 			status.addFatalError(Messages.format(RefactoringCoreMessages.MoveResourcesDescriptor_error_destination_not_exists, BasicElementLabels.getPathLabel(destinationPath, false)));
 			return null;
 		}
