@@ -62,7 +62,7 @@ public final class RefactoringHistoryEditHelper {
 		 *            the progress monitor to use
 		 * @return the refactoring history
 		 */
-		public RefactoringHistory getRefactoringHistory(IProgressMonitor monitor);
+		RefactoringHistory getRefactoringHistory(IProgressMonitor monitor);
 	}
 
 	/**

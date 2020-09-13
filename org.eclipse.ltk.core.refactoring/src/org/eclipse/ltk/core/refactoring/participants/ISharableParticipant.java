@@ -46,5 +46,5 @@ public interface ISharableParticipant {
 	 * @param element the element to add
 	 * @param arguments the corresponding arguments
 	 */
-	public void addElement(Object element, RefactoringArguments arguments);
+	void addElement(Object element, RefactoringArguments arguments);
 }

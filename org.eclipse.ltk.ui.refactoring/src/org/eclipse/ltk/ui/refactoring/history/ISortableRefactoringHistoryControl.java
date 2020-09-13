@@ -48,7 +48,7 @@ public interface ISortableRefactoringHistoryControl extends IRefactoringHistoryC
 	 * @return <code>true</code> if it is enabled, <code>false</code>
 	 *         otherwise
 	 */
-	public boolean isSortByDate();
+	boolean isSortByDate();
 
 	/**
 	 * Is sorting by projects enabled?
@@ -56,15 +56,15 @@ public interface ISortableRefactoringHistoryControl extends IRefactoringHistoryC
 	 * @return <code>true</code> if it is enabled, <code>false</code>
 	 *         otherwise
 	 */
-	public boolean isSortByProjects();
+	boolean isSortByProjects();
 
 	/**
 	 * Sorts the refactorings by date.
 	 */
-	public void sortByDate();
+	void sortByDate();
 
 	/**
 	 * Sorts the refactorings by projects.
 	 */
-	public void sortByProjects();
+	void sortByProjects();
 }

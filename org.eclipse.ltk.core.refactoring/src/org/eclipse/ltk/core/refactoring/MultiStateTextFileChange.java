@@ -98,21 +98,21 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 
 		private List<TextEditBasedChangeGroup> fGroups;
 
-		private final TextEdit getEdit() {
+		private TextEdit getEdit() {
 			return fEdit;
 		}
 
-		private final List<TextEditBasedChangeGroup> getGroups() {
+		private List<TextEditBasedChangeGroup> getGroups() {
 			return fGroups;
 		}
 
-		private final void setEdit(final TextEdit edit) {
+		private void setEdit(final TextEdit edit) {
 			Assert.isNotNull(edit);
 
 			fEdit= edit;
 		}
 
-		private final void setGroups(final List<TextEditBasedChangeGroup> groups) {
+		private void setGroups(final List<TextEditBasedChangeGroup> groups) {
 			Assert.isNotNull(groups);
 
 			fGroups= groups;
@@ -132,7 +132,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 			}
 		}
 
-		private final void cacheEdit(final TextEdit edit) {
+		private void cacheEdit(final TextEdit edit) {
 			fEdits.add(edit);
 
 			final TextEdit[] edits= edit.getChildren();
@@ -141,11 +141,11 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 			}
 		}
 
-		private final boolean containsEdit(final TextEdit edit) {
+		private boolean containsEdit(final TextEdit edit) {
 			return fEdits.contains(edit);
 		}
 
-		private final Set<TextEdit> getCachedEdits() {
+		private Set<TextEdit> getCachedEdits() {
 			return fEdits;
 		}
 	}
@@ -154,11 +154,11 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 
 		private String fText;
 
-		private final String getText() {
+		private String getText() {
 			return fText;
 		}
 
-		private final void setText(final String text) {
+		private void setText(final String text) {
 			Assert.isNotNull(text);
 
 			fText= text;
@@ -173,15 +173,15 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 
 		private ReplaceEdit fUndo;
 
-		private final ComposableBufferChangeGroup getGroup() {
+		private ComposableBufferChangeGroup getGroup() {
 			return fGroup;
 		}
 
-		private final TextEdit getOriginal() {
+		private TextEdit getOriginal() {
 			return fOriginal;
 		}
 
-		private final String getOriginalText() {
+		private String getOriginalText() {
 			if (fOriginal instanceof ReplaceEdit) {
 				return ((ReplaceEdit) getOriginal()).getText();
 			} else if (fOriginal instanceof InsertEdit) {
@@ -190,21 +190,21 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 			return ""; //$NON-NLS-1$
 		}
 
-		private final ReplaceEdit getUndo() {
+		private ReplaceEdit getUndo() {
 			return fUndo;
 		}
 
-		private final void setGroup(final ComposableBufferChangeGroup group) {
+		private void setGroup(final ComposableBufferChangeGroup group) {
 			Assert.isNotNull(group);
 
 			fGroup= group;
 		}
 
-		private final void setOriginal(final TextEdit edit) {
+		private void setOriginal(final TextEdit edit) {
 			fOriginal= edit;
 		}
 
-		private final void setUndo(final ReplaceEdit undo) {
+		private void setUndo(final ReplaceEdit undo) {
 			Assert.isNotNull(undo);
 
 			fUndo= undo;

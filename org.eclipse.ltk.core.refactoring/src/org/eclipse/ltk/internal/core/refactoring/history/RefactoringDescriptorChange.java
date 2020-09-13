@@ -36,7 +36,7 @@ public final class RefactoringDescriptorChange extends CompositeChange {
 	}
 
 	@Override
-	public final ChangeDescriptor getDescriptor() {
+	public ChangeDescriptor getDescriptor() {
 		final ChangeDescriptor descriptor= super.getDescriptor();
 		if (descriptor == null) {
 			return new RefactoringChangeDescriptor(new UnknownRefactoringDescriptor(getChildren()[0].getName()));

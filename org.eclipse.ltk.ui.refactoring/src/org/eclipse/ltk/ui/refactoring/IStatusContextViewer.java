@@ -48,7 +48,7 @@ public interface IStatusContextViewer {
 	 *
 	 * @see #getControl()
 	 */
-	public void createControl(Composite parent);
+	void createControl(Composite parent);
 
 	/**
 	 * Returns the status context viewer's SWT control.
@@ -56,13 +56,13 @@ public interface IStatusContextViewer {
 	 * @return the status context viewer's SWT control or <code>null</code>
 	 *  is the widget hierarchy hasn't been created yet
 	 */
-	public Control getControl();
+	Control getControl();
 
 	/**
 	 * Sets the status context viewer's input element.
 	 *
 	 * @param input the input element
 	 */
-	public void setInput(RefactoringStatusContext input);
+	void setInput(RefactoringStatusContext input);
 }
 

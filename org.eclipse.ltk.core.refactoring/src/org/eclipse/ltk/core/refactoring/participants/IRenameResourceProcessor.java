@@ -27,35 +27,35 @@ public interface IRenameResourceProcessor {
 	 *
 	 * @return the resource to rename
 	 */
-	public IResource getResource();
+	IResource getResource();
 
 	/**
 	 * Returns the new resource name
 	 *
 	 * @return the new resource name
 	 */
-	public String getNewResourceName();
+	String getNewResourceName();
 
 	/**
 	 * Sets the new resource name
 	 *
 	 * @param newName the new resource name
 	 */
-	public void setNewResourceName(String newName);
+	void setNewResourceName(String newName);
 
 	/**
 	 * Returns <code>true</code> if the refactoring processor also updates references
 	 *
 	 * @return <code>true</code> if the refactoring processor also updates references
 	 */
-	public boolean isUpdateReferences();
+	boolean isUpdateReferences();
 
 	/**
 	 * Specifies if the refactoring processor also updates references.
 	 *
 	 * @param updateReferences <code>true</code> if the refactoring processor should also updates references
 	 */
-	public void setUpdateReferences(boolean updateReferences);
+	void setUpdateReferences(boolean updateReferences);
 
 	/**
 	 * Validates if the a name is valid.
@@ -63,5 +63,5 @@ public interface IRenameResourceProcessor {
 	 * @param newName the name to validate
 	 * @return returns the resulting status of the validation
 	 */
-	public RefactoringStatus validateNewElementName(String newName);
+	RefactoringStatus validateNewElementName(String newName);
 }

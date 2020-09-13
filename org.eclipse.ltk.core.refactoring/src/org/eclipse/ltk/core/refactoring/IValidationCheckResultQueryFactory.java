@@ -36,5 +36,5 @@ public interface IValidationCheckResultQueryFactory {
 	 *
 	 * @return the new query
 	 */
-	public IValidationCheckResultQuery create(IAdaptable context);
+	IValidationCheckResultQuery create(IAdaptable context);
 }

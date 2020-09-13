@@ -51,7 +51,7 @@ public interface IUndoManager {
 	 *
 	 * @param listener the listener to be added to the undo manager
 	 */
-	public void addListener(IUndoManagerListener listener);
+	void addListener(IUndoManagerListener listener);
 
 	/**
 	 * Removes the given listener from this undo manager. Does nothing if
@@ -59,7 +59,7 @@ public interface IUndoManager {
 	 *
 	 * @param listener the listener to be removed
 	 */
-	public void removeListener(IUndoManagerListener listener);
+	void removeListener(IUndoManagerListener listener);
 
 	/**
 	 * The infrastructure is going to perform the given change. If a
@@ -78,7 +78,7 @@ public interface IUndoManager {
 	 *
 	 * @param change the change to be performed.
 	 */
-	public void aboutToPerformChange(Change change);
+	void aboutToPerformChange(Change change);
 
 	/**
 	 * The infrastructure has performed the given change.
@@ -88,7 +88,7 @@ public interface IUndoManager {
 	 * @deprecated use #changePerformed(Change, boolean) instead
 	 */
 	@Deprecated
-	public void changePerformed(Change change);
+	void changePerformed(Change change);
 
 	/**
 	 * The infrastructure has performed the given change.
@@ -99,7 +99,7 @@ public interface IUndoManager {
 	 *
 	 * @since 3.1
 	 */
-	public void changePerformed(Change change, boolean successful);
+	void changePerformed(Change change, boolean successful);
 
 	/**
 	 * Adds a new undo change to this undo manager.
@@ -108,7 +108,7 @@ public interface IUndoManager {
 	 *  undo change. The name must be human readable.
 	 * @param change the undo change
 	 */
-	public void addUndo(String name, Change change);
+	void addUndo(String name, Change change);
 
 	/**
 	 * Returns <code>true</code> if there is anything to undo, otherwise
@@ -117,7 +117,7 @@ public interface IUndoManager {
 	 * @return <code>true</code> if there is anything to undo, otherwise
 	 *  <code>false</code>
 	 */
-	public boolean anythingToUndo();
+	boolean anythingToUndo();
 
 	/**
 	 * Returns the name of the top most undo.
@@ -125,7 +125,7 @@ public interface IUndoManager {
 	 * @return the top most undo name. Returns <code>null</code> if there
 	 * aren't any changes to undo.
 	 */
-	public String peekUndoName();
+	String peekUndoName();
 
 	/**
 	 * Undo the top most undo change.
@@ -139,7 +139,7 @@ public interface IUndoManager {
 	 *
 	 * @throws CoreException if performing the undo caused an exception
 	 */
-	public void performUndo(IValidationCheckResultQuery query, IProgressMonitor pm) throws CoreException;
+	void performUndo(IValidationCheckResultQuery query, IProgressMonitor pm) throws CoreException;
 
 	/**
 	 * Returns <code>true</code> if there is anything to redo, otherwise
@@ -148,7 +148,7 @@ public interface IUndoManager {
 	 * @return <code>true</code> if there is anything to redo, otherwise
 	 *  <code>false</code>
 	 */
-	public boolean anythingToRedo();
+	boolean anythingToRedo();
 
 	/**
 	 * Returns the name of the top most redo.
@@ -156,7 +156,7 @@ public interface IUndoManager {
 	 * @return the top most redo name. Returns <code>null</code> if there
 	 * are no any changes to redo.
 	 */
-	public String peekRedoName();
+	String peekRedoName();
 
 	/**
 	 * Redo the top most redo change.
@@ -170,15 +170,15 @@ public interface IUndoManager {
 	 *
 	 * @throws CoreException if performing the redo caused an exception
 	 */
-	public void performRedo(IValidationCheckResultQuery query, IProgressMonitor pm) throws CoreException;
+	void performRedo(IValidationCheckResultQuery query, IProgressMonitor pm) throws CoreException;
 
 	/**
 	 * Flushes the undo manager's undo and redo stacks.
 	 */
-	public void flush();
+	void flush();
 
 	/**
 	 * Shut down the undo manager.
 	 */
-	public void shutdown();
+	void shutdown();
 }

@@ -41,7 +41,7 @@ public interface IValidationCheckResultQuery {
 	 * @return <code>true</code> if the undo should proceed; <code>false</code>
 	 *  otherwise
 	 */
-	public boolean proceed(RefactoringStatus status);
+	boolean proceed(RefactoringStatus status);
 
 	/**
 	 * Called when the validation check returned a fatal error. In this case the
@@ -50,5 +50,5 @@ public interface IValidationCheckResultQuery {
 	 *
 	 * @param status the refactoring status returned from {@link Change#isValid(IProgressMonitor)}
 	 */
-	public void stopped(RefactoringStatus status);
+	void stopped(RefactoringStatus status);
 }

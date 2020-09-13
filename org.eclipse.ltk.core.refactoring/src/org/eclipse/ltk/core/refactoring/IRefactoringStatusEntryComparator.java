@@ -50,5 +50,5 @@ public interface IRefactoringStatusEntryComparator {
 	 * @return a negative integer, zero, or a positive integer as the first
 	 *         status entry is less than, equal to, or greater than the second.
 	 */
-	public int compare(RefactoringStatusEntry entry1, RefactoringStatusEntry entry2);
+	int compare(RefactoringStatusEntry entry1, RefactoringStatusEntry entry2);
 }

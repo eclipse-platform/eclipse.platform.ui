@@ -31,6 +31,6 @@ public interface IRefactoringUIStatusCodes {
 	/**
 	 * Status code (value 10000) indicating an internal error.
 	 */
-	public static final int INTERNAL_ERROR= 10000;
+	int INTERNAL_ERROR= 10000;
 
 }
