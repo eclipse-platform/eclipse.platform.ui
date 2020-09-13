@@ -46,7 +46,7 @@ public interface IChangePreviewViewer {
 	 *
 	 * @see #getControl()
 	 */
-	public void createControl(Composite parent);
+	void createControl(Composite parent);
 
 	/**
 	 * Returns the preview viewer's SWT control.
@@ -54,13 +54,13 @@ public interface IChangePreviewViewer {
 	 * @return the preview viewer's SWT control or <code>null</code>
 	 *  is the widget hierarchy hasn't been created yet
 	 */
-	public Control getControl();
+	Control getControl();
 
 	/**
 	 * Sets the preview viewer's input element.
 	 *
 	 * @param input the input element
 	 */
-	public void setInput(ChangePreviewViewerInput input);
+	void setInput(ChangePreviewViewerInput input);
 }
 

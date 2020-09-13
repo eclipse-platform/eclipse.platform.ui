@@ -33,7 +33,7 @@ public interface IRefactoringDescriptorDeleteQuery {
 	 * @return <code>true</code> if any descriptors have been deleted,
 	 *         <code>true</code> otherwise
 	 */
-	public boolean hasDeletions();
+	boolean hasDeletions();
 
 	/**
 	 * Returns whether the current delete operation can be executed.
@@ -49,5 +49,5 @@ public interface IRefactoringDescriptorDeleteQuery {
 	 *            the refactoring descriptor proxy to delete
 	 * @return a refactoring status describing the outcome of the user prompt
 	 */
-	public RefactoringStatus proceed(RefactoringDescriptorProxy proxy);
+	RefactoringStatus proceed(RefactoringDescriptorProxy proxy);
 }

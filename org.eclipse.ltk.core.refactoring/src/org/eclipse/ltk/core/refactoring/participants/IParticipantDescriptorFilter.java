@@ -26,13 +26,13 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 public interface IParticipantDescriptorFilter {
 
 	/** A constant indicating a param element (value: <code>param</code>) */
-	public static final String PARAM= "param"; //$NON-NLS-1$
+	String PARAM= "param"; //$NON-NLS-1$
 
 	/** A constant indicating a name attribute (value: <code>name</code>) */
-	public static final String NAME= "name"; //$NON-NLS-1$
+	String NAME= "name"; //$NON-NLS-1$
 
 	/** A constant indicating a value attribute (value: <code>value</code>) */
-	public static final String VALUE= "value";  //$NON-NLS-1$
+	String VALUE= "value";  //$NON-NLS-1$
 
 	/**
      * Returns whether the given element makes it through this filter.
@@ -45,5 +45,5 @@ public interface IParticipantDescriptorFilter {
      * @return <code>true</code> if element is included, and
      *  <code>false</code> if excluded
 	 */
-	public boolean select(IConfigurationElement element, RefactoringStatus status);
+	boolean select(IConfigurationElement element, RefactoringStatus status);
 }

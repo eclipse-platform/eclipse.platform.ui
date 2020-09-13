@@ -59,7 +59,7 @@ public interface IRefactoringHistoryControl {
 	 * @param listener
 	 *            the listener to register
 	 */
-	public void addCheckStateListener(ICheckStateListener listener);
+	void addCheckStateListener(ICheckStateListener listener);
 
 	/**
 	 * Registers the specified selection changed listener with this control.
@@ -71,7 +71,7 @@ public interface IRefactoringHistoryControl {
 	 * @param listener
 	 *            the listener to register
 	 */
-	public void addSelectionChangedListener(ISelectionChangedListener listener);
+	void addSelectionChangedListener(ISelectionChangedListener listener);
 
 	/**
 	 * Creates the refactoring history control.
@@ -83,7 +83,7 @@ public interface IRefactoringHistoryControl {
 	 *
 	 * @see #getControl()
 	 */
-	public void createControl();
+	void createControl();
 
 	/**
 	 * Returns the checked refactoring descriptors.
@@ -98,7 +98,7 @@ public interface IRefactoringHistoryControl {
 	 * @see IRefactoringHistoryControl#getSelectedDescriptors()
 	 * @see RefactoringHistoryControlConfiguration#isCheckableViewer()
 	 */
-	public RefactoringDescriptorProxy[] getCheckedDescriptors();
+	RefactoringDescriptorProxy[] getCheckedDescriptors();
 
 	/**
 	 * Returns the SWT control of this refactoring history control.
@@ -106,14 +106,14 @@ public interface IRefactoringHistoryControl {
 	 * @return the SWT control, or <code>null</code> if the control's widget
 	 *         hierarchy has not yet been created
 	 */
-	public Control getControl();
+	Control getControl();
 
 	/**
 	 * Returns the selected refactoring descriptors.
 	 *
 	 * @return the selected refactoring descriptors, or an empty array.
 	 */
-	public RefactoringDescriptorProxy[] getSelectedDescriptors();
+	RefactoringDescriptorProxy[] getSelectedDescriptors();
 
 	/**
 	 * Unregisters the specified check state listener with this control.
@@ -124,7 +124,7 @@ public interface IRefactoringHistoryControl {
 	 * @param listener
 	 *            the listener to unregister
 	 */
-	public void removeCheckStateListener(ICheckStateListener listener);
+	void removeCheckStateListener(ICheckStateListener listener);
 
 	/**
 	 * Unregisters the specified selection changed listener with this control.
@@ -135,7 +135,7 @@ public interface IRefactoringHistoryControl {
 	 * @param listener
 	 *            the listener to unregister
 	 */
-	public void removeSelectionChangedListener(ISelectionChangedListener listener);
+	void removeSelectionChangedListener(ISelectionChangedListener listener);
 
 	/**
 	 * Sets the checked refactoring descriptors.
@@ -151,7 +151,7 @@ public interface IRefactoringHistoryControl {
 	 * @see IRefactoringHistoryControl#setSelectedDescriptors(RefactoringDescriptorProxy[])
 	 * @see RefactoringHistoryControlConfiguration#isCheckableViewer()
 	 */
-	public void setCheckedDescriptors(RefactoringDescriptorProxy[] descriptors);
+	void setCheckedDescriptors(RefactoringDescriptorProxy[] descriptors);
 
 	/**
 	 * Sets the refactoring history of this control.
@@ -160,7 +160,7 @@ public interface IRefactoringHistoryControl {
 	 *            the refactoring history, or <code>null</code> to clear the
 	 *            viewer input
 	 */
-	public void setInput(RefactoringHistory history);
+	void setInput(RefactoringHistory history);
 
 	/**
 	 * Sets the selected refactoring descriptors.
@@ -168,5 +168,5 @@ public interface IRefactoringHistoryControl {
 	 * @param descriptors
 	 *            the refactoring descriptors to select, or an empty array
 	 */
-	public void setSelectedDescriptors(RefactoringDescriptorProxy[] descriptors);
+	void setSelectedDescriptors(RefactoringDescriptorProxy[] descriptors);
 }

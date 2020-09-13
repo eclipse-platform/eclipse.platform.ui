@@ -23,7 +23,7 @@ import org.eclipse.ltk.core.refactoring.Change;
 public interface IPreviewWizardPage extends IWizardPage {
 
 	/** The page's name */
-	public static final String PAGE_NAME= "PreviewPage"; //$NON-NLS-1$
+	String PAGE_NAME= "PreviewPage"; //$NON-NLS-1$
 
 	/**
 	 * Returns the change that is displayed.
@@ -31,7 +31,7 @@ public interface IPreviewWizardPage extends IWizardPage {
 	 * @return the change, or <code>null</code>
 	 * @since 3.2
 	 */
-	public Change getChange();
+	Change getChange();
 
 	/**
 	 * Sets that change for which the page is supposed to display a preview.
@@ -39,5 +39,5 @@ public interface IPreviewWizardPage extends IWizardPage {
 	 * @param change
 	 *            the new change, or <code>null</code>
 	 */
-	public void setChange(Change change);
+	void setChange(Change change);
 }

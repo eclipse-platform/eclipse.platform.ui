@@ -41,5 +41,5 @@ public interface IConditionChecker {
 	 * @throws CoreException if an error occurred during condition
 	 *  checking. The check is interpreted as failed if this happens
 	 */
-	public RefactoringStatus check(IProgressMonitor monitor) throws CoreException;
+	RefactoringStatus check(IProgressMonitor monitor) throws CoreException;
 }

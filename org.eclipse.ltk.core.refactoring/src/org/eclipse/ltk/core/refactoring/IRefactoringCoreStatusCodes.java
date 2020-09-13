@@ -33,7 +33,7 @@ public interface IRefactoringCoreStatusCodes {
 	/**
 	 * Status code (value 10000) indicating an internal error.
 	 */
-	public static final int INTERNAL_ERROR= 10000;
+	int INTERNAL_ERROR= 10000;
 
 	/**
 	 * Status code (value 10001) indicating that a bad location exception has
@@ -41,19 +41,19 @@ public interface IRefactoringCoreStatusCodes {
 	 *
 	 * @see org.eclipse.jface.text.BadLocationException
 	 */
-	public static final int BAD_LOCATION= 10001;
+	int BAD_LOCATION= 10001;
 
 	/**
 	 * Status code (value 10002) indicating that an validateEdit call has
 	 * changed the content of a file on disk.
 	 */
-	public static final int VALIDATE_EDIT_CHANGED_CONTENT= 10002;
+	int VALIDATE_EDIT_CHANGED_CONTENT= 10002;
 
 	/**
 	 * Status code (value 10003) indicating that a condition checker already
 	 * exists in a shared condition checking context.
 	 */
-	public static final int CHECKER_ALREADY_EXISTS_IN_CONTEXT= 10003;
+	int CHECKER_ALREADY_EXISTS_IN_CONTEXT= 10003;
 
 	/**
 	 * Status code (value 10004) indicating that a refactoring history has been
@@ -61,7 +61,7 @@ public interface IRefactoringCoreStatusCodes {
 	 *
 	 * @since 3.2
 	 */
-	public static final int MISSING_REFACTORING_HISTORY_VERSION= 10004;
+	int MISSING_REFACTORING_HISTORY_VERSION= 10004;
 
 	/**
 	 * Status code (value 10005) indicating that a refactoring history with an
@@ -69,7 +69,7 @@ public interface IRefactoringCoreStatusCodes {
 	 *
 	 * @since 3.2
 	 */
-	public static final int UNSUPPORTED_REFACTORING_HISTORY_VERSION= 10005;
+	int UNSUPPORTED_REFACTORING_HISTORY_VERSION= 10005;
 
 	/**
 	 * Status code (value 10006) indicating that a general error has occurred
@@ -77,7 +77,7 @@ public interface IRefactoringCoreStatusCodes {
 	 *
 	 * @since 3.2
 	 */
-	public static final int REFACTORING_HISTORY_IO_ERROR= 10006;
+	int REFACTORING_HISTORY_IO_ERROR= 10006;
 
 	/**
 	 * Status code (value 10007) indicating that the format of a refactoring
@@ -85,7 +85,7 @@ public interface IRefactoringCoreStatusCodes {
 	 *
 	 * @since 3.2
 	 */
-	public static final int REFACTORING_HISTORY_FORMAT_ERROR= 10007;
+	int REFACTORING_HISTORY_FORMAT_ERROR= 10007;
 
 	/**
 	 *
@@ -94,7 +94,7 @@ public interface IRefactoringCoreStatusCodes {
 	 *
 	 * @since 3.4
 	 */
-	public static final int REFACTORING_EXCEPTION_DISABLED_PARTICIPANTS= 10008;
+	int REFACTORING_EXCEPTION_DISABLED_PARTICIPANTS= 10008;
 
 	/**
 	 *
@@ -103,7 +103,7 @@ public interface IRefactoringCoreStatusCodes {
 	 *
 	 * @since 3.4
 	 */
-	public static final int PARTICIPANT_DISABLED= 10009;
+	int PARTICIPANT_DISABLED= 10009;
 
 
 }

@@ -25,14 +25,14 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 public interface IErrorWizardPage extends IWizardPage {
 
 	/** The page's name */
-	public static final String PAGE_NAME= "ErrorPage"; //$NON-NLS-1$
+	String PAGE_NAME= "ErrorPage"; //$NON-NLS-1$
 
 	/**
 	 * Returns the page's refactoring status.
 	 *
 	 * @return the refactoring status
 	 */
-	public RefactoringStatus getStatus();
+	RefactoringStatus getStatus();
 
 	/**
 	 * Sets the page's refactoring status to the given value.
@@ -40,5 +40,5 @@ public interface IErrorWizardPage extends IWizardPage {
 	 * @param status
 	 *            the refactoring status
 	 */
-	public void setStatus(RefactoringStatus status);
+	void setStatus(RefactoringStatus status);
 }

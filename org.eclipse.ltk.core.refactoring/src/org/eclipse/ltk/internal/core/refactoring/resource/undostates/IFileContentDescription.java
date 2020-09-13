@@ -34,7 +34,7 @@ public interface IFileContentDescription {
 	 * @throws CoreException
 	 *             any CoreException encountered retrieving the contents
 	 */
-	public InputStream getContents() throws CoreException;
+	InputStream getContents() throws CoreException;
 
 	/**
 	 * Returns whether this file content description still exists. If it does
@@ -43,7 +43,7 @@ public interface IFileContentDescription {
 	 * @return <code>true</code> if this description exists, and
 	 *         <code>false</code> if it does not
 	 */
-	public boolean exists();
+	boolean exists();
 
 	/**
 	 * Returns the name of a charset encoding to be used when decoding the
@@ -56,5 +56,5 @@ public interface IFileContentDescription {
 	 *             set
 	 *
 	 */
-	public String getCharset() throws CoreException;
+	String getCharset() throws CoreException;
 }

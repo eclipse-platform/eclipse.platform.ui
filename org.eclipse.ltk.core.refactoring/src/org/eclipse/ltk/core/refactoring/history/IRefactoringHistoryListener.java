@@ -44,5 +44,5 @@ public interface IRefactoringHistoryListener {
 	 * @param event
 	 *            the refactoring history event
 	 */
-	public void historyNotification(RefactoringHistoryEvent event);
+	void historyNotification(RefactoringHistoryEvent event);
 }

@@ -70,7 +70,7 @@ public interface IRefactoringHistoryService {
 	 * @param listener
 	 *            the listener to add
 	 */
-	public void addExecutionListener(IRefactoringExecutionListener listener);
+	void addExecutionListener(IRefactoringExecutionListener listener);
 
 	/**
 	 * Adds the specified refactoring history listener to this service.
@@ -81,7 +81,7 @@ public interface IRefactoringHistoryService {
 	 * @param listener
 	 *            the listener to add
 	 */
-	public void addHistoryListener(IRefactoringHistoryListener listener);
+	void addHistoryListener(IRefactoringHistoryListener listener);
 
 	/**
 	 * Connects the refactoring history service to the workbench's operation
@@ -94,7 +94,7 @@ public interface IRefactoringHistoryService {
 	 * call to {@link #disconnect()}.
 	 * </p>
 	 */
-	public void connect();
+	void connect();
 
 	/**
 	 * Disconnects the refactoring history service from the workbench's
@@ -109,7 +109,7 @@ public interface IRefactoringHistoryService {
 	 * call to {@link #connect()}.
 	 * </p>
 	 */
-	public void disconnect();
+	void disconnect();
 
 	/**
 	 * Returns a project refactoring history for the specified project.
@@ -125,7 +125,7 @@ public interface IRefactoringHistoryService {
 	 *            progress monitoring or cancelation is desired
 	 * @return the project refactoring history
 	 */
-	public RefactoringHistory getProjectHistory(IProject project, IProgressMonitor monitor);
+	RefactoringHistory getProjectHistory(IProject project, IProgressMonitor monitor);
 
 	/**
 	 * Returns a project refactoring history for the specified project.
@@ -157,7 +157,7 @@ public interface IRefactoringHistoryService {
 	 *            progress monitoring or cancelation is desired
 	 * @return the project refactoring history
 	 */
-	public RefactoringHistory getProjectHistory(IProject project, long start, long end, int flags, IProgressMonitor monitor);
+	RefactoringHistory getProjectHistory(IProject project, long start, long end, int flags, IProgressMonitor monitor);
 
 	/**
 	 * Returns the combined refactoring history for the specified projects.
@@ -173,7 +173,7 @@ public interface IRefactoringHistoryService {
 	 *            progress monitoring or cancelation is desired
 	 * @return the combined refactoring history
 	 */
-	public RefactoringHistory getRefactoringHistory(IProject[] projects, IProgressMonitor monitor);
+	RefactoringHistory getRefactoringHistory(IProject[] projects, IProgressMonitor monitor);
 
 	/**
 	 * Returns the combined refactoring history for the specified projects.
@@ -205,7 +205,7 @@ public interface IRefactoringHistoryService {
 	 *            progress monitoring or cancelation is desired
 	 * @return the combined refactoring history
 	 */
-	public RefactoringHistory getRefactoringHistory(IProject[] projects, long start, long end, int flags, IProgressMonitor monitor);
+	RefactoringHistory getRefactoringHistory(IProject[] projects, long start, long end, int flags, IProgressMonitor monitor);
 
 	/**
 	 * Returns the workspace refactoring history.
@@ -219,7 +219,7 @@ public interface IRefactoringHistoryService {
 	 *            progress monitoring or cancelation is desired
 	 * @return the workspace refactoring history
 	 */
-	public RefactoringHistory getWorkspaceHistory(IProgressMonitor monitor);
+	RefactoringHistory getWorkspaceHistory(IProgressMonitor monitor);
 
 	/**
 	 * Returns the workspace refactoring history.
@@ -237,7 +237,7 @@ public interface IRefactoringHistoryService {
 	 *            progress monitoring or cancelation is desired
 	 * @return the workspace refactoring history
 	 */
-	public RefactoringHistory getWorkspaceHistory(long start, long end, IProgressMonitor monitor);
+	RefactoringHistory getWorkspaceHistory(long start, long end, IProgressMonitor monitor);
 
 	/**
 	 * Reads a refactoring history from the input stream.
@@ -277,7 +277,7 @@ public interface IRefactoringHistoryService {
 	 * @see IRefactoringCoreStatusCodes#UNSUPPORTED_REFACTORING_HISTORY_VERSION
 	 * @see IRefactoringCoreStatusCodes#MISSING_REFACTORING_HISTORY_VERSION
 	 */
-	public RefactoringHistory readRefactoringHistory(InputStream stream, int flags) throws CoreException;
+	RefactoringHistory readRefactoringHistory(InputStream stream, int flags) throws CoreException;
 
 	/**
 	 * Removes the specified refactoring execution listener from this service.
@@ -288,7 +288,7 @@ public interface IRefactoringHistoryService {
 	 * @param listener
 	 *            the listener to remove
 	 */
-	public void removeExecutionListener(IRefactoringExecutionListener listener);
+	void removeExecutionListener(IRefactoringExecutionListener listener);
 
 	/**
 	 * Removes the specified refactoring history listener from this service.
@@ -299,7 +299,7 @@ public interface IRefactoringHistoryService {
 	 * @param listener
 	 *            the listener to remove
 	 */
-	public void removeHistoryListener(IRefactoringHistoryListener listener);
+	void removeHistoryListener(IRefactoringHistoryListener listener);
 
 	/**
 	 * Writes the specified refactoring descriptor proxies to the output stream.
@@ -340,7 +340,7 @@ public interface IRefactoringHistoryService {
 	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_FORMAT_ERROR
 	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_IO_ERROR
 	 */
-	public void writeRefactoringDescriptors(RefactoringDescriptorProxy[] proxies, OutputStream stream, int flags, boolean time, IProgressMonitor monitor) throws CoreException;
+	void writeRefactoringDescriptors(RefactoringDescriptorProxy[] proxies, OutputStream stream, int flags, boolean time, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Writes the specified refactoring session descriptor to the output stream.
@@ -369,5 +369,5 @@ public interface IRefactoringHistoryService {
 	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_FORMAT_ERROR
 	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_IO_ERROR
 	 */
-	public void writeRefactoringSession(RefactoringSessionDescriptor descriptor, OutputStream stream, boolean time) throws CoreException;
+	void writeRefactoringSession(RefactoringSessionDescriptor descriptor, OutputStream stream, boolean time) throws CoreException;
 }

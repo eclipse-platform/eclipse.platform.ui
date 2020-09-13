@@ -44,5 +44,5 @@ public interface IRefactoringExecutionListener {
 	 * @param event
 	 *            the refactoring execution event
 	 */
-	public void executionNotification(RefactoringExecutionEvent event);
+	void executionNotification(RefactoringExecutionEvent event);
 }
