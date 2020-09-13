@@ -582,11 +582,9 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 						if (offset > eventOldEndOffset) {
 							// position comes way after change - shift
 							position.setOffset(offset + deltaLength);
-						} else if (end < eventOffset) {
-							// position comes way before change - leave
-							// alone
-						} else if (offset == eventOffset) {
-							// leave alone, since the edits are overlapping
+						} else if ((end < eventOffset) // Position comes way before change - leave
+								// alone
+								|| (offset == eventOffset)) { // Leave alone, since the edits are overlapping
 						} else if (offset <= eventOffset && end >= eventOldEndOffset) {
 							// event completely internal to the position
 							// -

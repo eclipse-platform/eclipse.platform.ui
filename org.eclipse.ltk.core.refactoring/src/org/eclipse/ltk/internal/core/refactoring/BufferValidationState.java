@@ -77,14 +77,10 @@ public abstract class BufferValidationState {
 			return new ModificationStampValidationState(file);
 		} else {
 			IDocument document= buffer.getDocument();
-			if (document instanceof IDocumentExtension4) {
+			if (document instanceof IDocumentExtension4 || !buffer.isDirty()) {
 				return new ModificationStampValidationState(file);
 			} else {
-				if (buffer.isDirty()) {
-					return new NoStampValidationState(file);
-				} else {
-					return new ModificationStampValidationState(file);
-				}
+				return new NoStampValidationState(file);
 			}
 		}
 	}
