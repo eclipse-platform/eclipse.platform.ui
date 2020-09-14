@@ -18,6 +18,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.application;
 
+import static org.eclipse.jface.util.Util.isValid;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -263,7 +265,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 		boolean force = false;
 
 		boolean parentShellVisible = false;
-		if (isValidShell(shell)) {
+		if (isValid(shell)) {
 			parentShellVisible = shell.getVisible();
 			// bug 455162, bug 427393: hide the splash if the workspace
 			// prompt dialog should be opened
@@ -422,13 +424,6 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 	}
 
 	/**
-	 * @return true if the shell is not <code>null</code> and not disposed
-	 */
-	static boolean isValidShell(Shell shell) {
-		return shell != null && !shell.isDisposed();
-	}
-
-	/**
 	 * Result of the {@link IDEApplication#checkValidWorkspace(Shell, URL)}
 	 * operation
 	 */
@@ -506,7 +501,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 				}
 			};
 			// hide splash if any
-			if (isValidShell(shell)) {
+			if (isValid(shell)) {
 				shell.setVisible(false);
 			}
 
