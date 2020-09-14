@@ -15,6 +15,8 @@
 package org.eclipse.jface.internal.text.link.contentassist;
 
 
+import static org.eclipse.jface.util.Util.isValid;
+
 import java.util.Stack;
 
 import org.eclipse.swt.SWT;
@@ -238,7 +240,7 @@ class ContextInformationPopup2 implements IContentAssistListener2 {
 	 * Creates the context information popup. This is the tooltip like overlay window.
 	 */
 	private void createContextInfoPopup() {
-		if (Helper2.okToUse(fContextInfoPopup))
+		if (isValid(fContextInfoPopup))
 			return;
 
 		Control control= fViewer.getTextWidget();
@@ -279,7 +281,7 @@ class ContextInformationPopup2 implements IContentAssistListener2 {
 	 */
 	private void hideContextInfoPopup() {
 
-		if (Helper2.okToUse(fContextInfoPopup)) {
+		if (isValid(fContextInfoPopup)) {
 
 			int size= fContextFrameStack.size();
 			if (size > 0) {
@@ -314,7 +316,7 @@ class ContextInformationPopup2 implements IContentAssistListener2 {
 	 * at a given offset.
 	 */
 	private void createContextSelector() {
-		if (Helper2.okToUse(fContextSelectorShell))
+		if (isValid(fContextSelectorShell))
 			return;
 
 		Control control= fViewer.getTextWidget();
@@ -383,7 +385,7 @@ class ContextInformationPopup2 implements IContentAssistListener2 {
 	 * @param contexts the possible contexts
 	 */
 	private void setContexts(IContextInformation[] contexts) {
-		if (Helper2.okToUse(fContextSelectorTable)) {
+		if (isValid(fContextSelectorTable)) {
 
 			fContextSelectorInput= contexts;
 
@@ -417,7 +419,7 @@ class ContextInformationPopup2 implements IContentAssistListener2 {
 	 * Hodes the context selector.
 	 */
 	private void hideContextSelector() {
-		if (Helper2.okToUse(fContextSelectorShell)) {
+		if (isValid(fContextSelectorShell)) {
 			fContentAssistant.removeContentAssistListener(this, ContentAssistant2.CONTEXT_SELECTOR);
 
 			fPopupCloser.uninstall();
@@ -426,7 +428,7 @@ class ContextInformationPopup2 implements IContentAssistListener2 {
 			fContextSelectorShell= null;
 		}
 
-		if (!Helper2.okToUse(fContextInfoPopup))
+		if (!isValid(fContextInfoPopup))
 			fContentAssistant.contextInformationClosed();
 	}
 
@@ -436,7 +438,7 @@ class ContextInformationPopup2 implements IContentAssistListener2 {
 	 * @return <code>true</code> if teh context selector has the focus
 	 */
 	public boolean hasFocus() {
-		if (Helper2.okToUse(fContextSelectorShell))
+		if (isValid(fContextSelectorShell))
 			return (fContextSelectorShell.isFocusControl() || fContextSelectorTable.isFocusControl());
 
 		return false;
@@ -457,14 +459,14 @@ class ContextInformationPopup2 implements IContentAssistListener2 {
 	 * @return <code>true</code> if the context selector is active
 	 */
 	public boolean isActive() {
-		return (Helper2.okToUse(fContextInfoPopup) || Helper2.okToUse(fContextSelectorShell));
+		return (isValid(fContextInfoPopup) || isValid(fContextSelectorShell));
 	}
 
 	@Override
 	public boolean verifyKey(VerifyEvent e) {
-		if (Helper2.okToUse(fContextSelectorShell))
+		if (isValid(fContextSelectorShell))
 			return contextSelectorKeyPressed(e);
-		if (Helper2.okToUse(fContextInfoPopup))
+		if (isValid(fContextInfoPopup))
 			return contextInfoPopupKeyPressed(e);
 		return true;
 	}
@@ -573,9 +575,9 @@ class ContextInformationPopup2 implements IContentAssistListener2 {
 
 	@Override
 	public void processEvent(VerifyEvent event) {
-		if (Helper2.okToUse(fContextSelectorShell))
+		if (isValid(fContextSelectorShell))
 			contextSelectorProcessEvent(event);
-		if (Helper2.okToUse(fContextInfoPopup))
+		if (isValid(fContextInfoPopup))
 			contextInfoPopupProcessEvent(event);
 	}
 
@@ -620,7 +622,7 @@ class ContextInformationPopup2 implements IContentAssistListener2 {
 
 			@Override
 			public void run() {
-				if (Helper2.okToUse(fContextInfoPopup) && fFrame == fContextFrameStack.peek()) {
+				if (isValid(fContextInfoPopup) && fFrame == fContextFrameStack.peek()) {
 					int offset= fViewer.getSelectedRange().x;
 					if (fFrame.fValidator == null || !fFrame.fValidator.isContextInformationValid(offset)) {
 						hideContextInfoPopup();

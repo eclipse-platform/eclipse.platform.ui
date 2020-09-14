@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.text.link.contentassist;
 
+import static org.eclipse.jface.util.Util.isValid;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -126,8 +128,8 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 
 		@Override
 		public boolean ownsFocusShell() {
-			return Helper2.okToUse(fProposalShell) && fProposalShell.isFocusControl()
-					|| Helper2.okToUse(fProposalTable) && fProposalTable.isFocusControl();
+			return isValid(fProposalShell) && fProposalShell.isFocusControl()
+					|| isValid(fProposalTable) && fProposalTable.isFocusControl();
 		}
 
 	};
@@ -177,7 +179,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 			fKeyListener= new KeyListener() {
 				@Override
 				public void keyPressed(KeyEvent e) {
-					if (!Helper2.okToUse(fProposalShell))
+					if (!isValid(fProposalShell))
 						return;
 
 					if (e.character == 0 && e.keyCode == SWT.CTRL) {
@@ -190,7 +192,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 
 				@Override
 				public void keyReleased(KeyEvent e) {
-					if (!Helper2.okToUse(fProposalShell))
+					if (!isValid(fProposalShell))
 						return;
 
 					if (e.character == 0 && e.keyCode == SWT.CTRL) {
@@ -268,7 +270,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 	 * Creates the proposal selector.
 	 */
 	private void createProposalSelector() {
-		if (Helper2.okToUse(fProposalShell))
+		if (isValid(fProposalShell))
 			return;
 
 		Control control= fViewer.getTextWidget();
@@ -468,7 +470,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 	 * @return <code>true</code> if the popup has the focus
 	 */
 	public boolean hasFocus() {
-		if (Helper2.okToUse(fProposalShell))
+		if (isValid(fProposalShell))
 			return (fProposalShell.isFocusControl() || fProposalTable.isFocusControl());
 
 		return false;
@@ -486,7 +488,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 			registry.unregister(fFocusEditingSupport);
 		}
 
-		if (Helper2.okToUse(fProposalShell)) {
+		if (isValid(fProposalShell)) {
 			fContentAssistant.removeContentAssistListener(this, ContentAssistant2.PROPOSAL_SELECTOR);
 
 			fPopupCloser.uninstall();
@@ -543,7 +545,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 	 * @param proposals the proposals
 	 */
 	private void setProposals(ICompletionProposal[] proposals) {
-		if (Helper2.okToUse(fProposalTable)) {
+		if (isValid(fProposalTable)) {
 
 			ICompletionProposal oldProposal= getSelectedProposal();
 			if (oldProposal instanceof ICompletionProposalExtension2)
@@ -704,7 +706,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 			// see bug 47511: setVisible may run the event loop on GTK
 			// and trigger a rentrant call - have to check whether we are still
 			// visible
-			if (!Helper2.okToUse(fProposalShell))
+			if (!isValid(fProposalShell))
 				return;
 
 
@@ -717,7 +719,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 
 		@Override
 		public boolean verifyKey(VerifyEvent e) {
-			if (!Helper2.okToUse(fProposalShell))
+			if (!isValid(fProposalShell))
 				return true;
 
 			char key= e.character;
@@ -977,7 +979,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 	 * @since 3.0
 	 */
 	public void setFocus() {
-		if (Helper2.okToUse(fProposalShell))
+		if (isValid(fProposalShell))
 			fProposalShell.setFocus();
 	}
 }

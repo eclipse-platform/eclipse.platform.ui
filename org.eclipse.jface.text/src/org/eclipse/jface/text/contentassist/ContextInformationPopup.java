@@ -15,6 +15,8 @@
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
+import static org.eclipse.jface.util.Util.isValid;
+
 import java.util.Stack;
 
 import org.eclipse.swt.SWT;
@@ -412,7 +414,7 @@ class ContextInformationPopup implements IContentAssistListener {
 	 * Creates the context information popup. This is the tool tip like overlay window.
 	 */
 	private void createContextInfoPopup() {
-		if (Helper.okToUse(fContextInfoPopup))
+		if (isValid(fContextInfoPopup))
 			return;
 
 		Control control= fContentAssistSubjectControlAdapter.getControl();
@@ -467,7 +469,7 @@ class ContextInformationPopup implements IContentAssistListener {
 	 */
 	private void hideContextInfoPopup(boolean all) {
 
-		if (Helper.okToUse(fContextInfoPopup)) {
+		if (isValid(fContextInfoPopup)) {
 
 			int size= fContextFrameStack.size();
 			while (size > 0) {
@@ -508,7 +510,7 @@ class ContextInformationPopup implements IContentAssistListener {
 	 * at a given offset.
 	 */
 	private void createContextSelector() {
-		if (Helper.okToUse(fContextSelectorShell))
+		if (isValid(fContextSelectorShell))
 			return;
 
 		Control control= fContentAssistSubjectControlAdapter.getControl();
@@ -599,7 +601,7 @@ class ContextInformationPopup implements IContentAssistListener {
 	 */
 	int getMinimalHeight() {
 		int height= 0;
-		if (Helper.okToUse(fContextSelectorTable)) {
+		if (isValid(fContextSelectorTable)) {
 			int items= fContextSelectorTable.getItemHeight() * 10;
 			Rectangle trim= fContextSelectorTable.computeTrim(0, 0, SWT.DEFAULT, items);
 			height= trim.height;
@@ -638,7 +640,7 @@ class ContextInformationPopup implements IContentAssistListener {
 	 * @param selectionIndex the index of the proposal to select
 	 */
 	private void setContexts(IContextInformation[] contexts, int selectionIndex) {
-		if (Helper.okToUse(fContextSelectorTable)) {
+		if (isValid(fContextSelectorTable)) {
 
 			fContextSelectorInput= contexts;
 
@@ -672,7 +674,7 @@ class ContextInformationPopup implements IContentAssistListener {
 	 * Hides the context selector.
 	 */
 	private void hideContextSelector() {
-		if (Helper.okToUse(fContextSelectorShell)) {
+		if (isValid(fContextSelectorShell)) {
 			fContentAssistant.storeContextSelectorPopupSize();
 			fContentAssistant.removeContentAssistListener(this, ContentAssistant.CONTEXT_SELECTOR);
 
@@ -682,7 +684,7 @@ class ContextInformationPopup implements IContentAssistListener {
 			fContextSelectorShell= null;
 		}
 
-		if (!Helper.okToUse(fContextInfoPopup))
+		if (!isValid(fContextInfoPopup))
 			fContentAssistant.contextInformationClosed();
 	}
 
@@ -692,7 +694,7 @@ class ContextInformationPopup implements IContentAssistListener {
 	 * @return <code>true</code> if the context selector has the focus
 	 */
 	public boolean hasFocus() {
-		if (Helper.okToUse(fContextSelectorShell))
+		if (isValid(fContextSelectorShell))
 			return fContextSelectorShell.getDisplay().getActiveShell() == fContextSelectorShell;
 
 		return false;
@@ -713,14 +715,14 @@ class ContextInformationPopup implements IContentAssistListener {
 	 * @return <code>true</code> if the context selector is active
 	 */
 	public boolean isActive() {
-		return (Helper.okToUse(fContextInfoPopup) || Helper.okToUse(fContextSelectorShell));
+		return (isValid(fContextInfoPopup) || isValid(fContextSelectorShell));
 	}
 
 	@Override
 	public boolean verifyKey(VerifyEvent e) {
-		if (Helper.okToUse(fContextSelectorShell))
+		if (isValid(fContextSelectorShell))
 			return contextSelectorKeyPressed(e);
-		if (Helper.okToUse(fContextInfoPopup))
+		if (isValid(fContextInfoPopup))
 			return contextInfoPopupKeyPressed(e);
 		return true;
 	}
@@ -831,9 +833,9 @@ class ContextInformationPopup implements IContentAssistListener {
 
 	@Override
 	public void processEvent(VerifyEvent event) {
-		if (Helper.okToUse(fContextSelectorShell))
+		if (isValid(fContextSelectorShell))
 			contextSelectorProcessEvent(event);
-		if (Helper.okToUse(fContextInfoPopup))
+		if (isValid(fContextInfoPopup))
 			contextInfoPopupProcessEvent(event);
 	}
 
@@ -872,7 +874,7 @@ class ContextInformationPopup implements IContentAssistListener {
 		 * Otherwise, we'd validate the context information based on the
 		 * pre-key-stroke state.
 		 */
-		if (!Helper.okToUse(fContextInfoPopup))
+		if (!isValid(fContextInfoPopup))
 			return;
 
 		fContextInfoPopup.getDisplay().asyncExec(new Runnable() {
@@ -886,7 +888,7 @@ class ContextInformationPopup implements IContentAssistListener {
 					int offset= fContentAssistSubjectControlAdapter.getSelectedRange().x;
 
 					// iterate all contexts on the stack
-					while (Helper.okToUse(fContextInfoPopup) && !fContextFrameStack.isEmpty()) {
+					while (isValid(fContextInfoPopup) && !fContextFrameStack.isEmpty()) {
 						ContextFrame top= fContextFrameStack.peek();
 						if (top.fValidator == null || !top.fValidator.isContextInformationValid(offset)) {
 							hideContextInfoPopup(false); // loop variant: reduces the number of contexts on the stack

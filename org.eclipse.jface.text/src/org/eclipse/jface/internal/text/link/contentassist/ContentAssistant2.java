@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.text.link.contentassist;
 
+import static org.eclipse.jface.util.Util.isValid;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -92,7 +94,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 		 */
 		protected void install() {
 			Control w= fViewer.getTextWidget();
-			if (Helper2.okToUse(w)) {
+			if (isValid(w)) {
 
 				Shell shell= w.getShell();
 				fShell= shell;
@@ -117,11 +119,11 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 		protected void uninstall() {
 			Shell shell= fShell;
 			fShell= null;
-			if (Helper2.okToUse(shell))
+			if (isValid(shell))
 				shell.removeControlListener(this);
 
 			Control w= fViewer.getTextWidget();
-			if (Helper2.okToUse(w)) {
+			if (isValid(w)) {
 
 				w.removeMouseListener(this);
 				w.removeFocusListener(this);
@@ -375,14 +377,14 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 			switch (type) {
 				case LAYOUT_PROPOSAL_SELECTOR:
 					if (fContextType == LAYOUT_CONTEXT_SELECTOR &&
-							Helper2.okToUse(fShells[LAYOUT_CONTEXT_SELECTOR])) {
+							isValid(fShells[LAYOUT_CONTEXT_SELECTOR])) {
 						// Restore event notification to the tip popup.
 						addContentAssistListener((IContentAssistListener2) fPopups[LAYOUT_CONTEXT_SELECTOR], CONTEXT_SELECTOR);
 					}
 					break;
 
 				case LAYOUT_CONTEXT_SELECTOR:
-					if (Helper2.okToUse(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
+					if (isValid(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
 						if (fProposalPopupOrientation == PROPOSAL_STACKED)
 							layout(LAYOUT_PROPOSAL_SELECTOR, getSelectionOffset());
 						// Restore event notification to the proposal popup.
@@ -392,7 +394,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 					break;
 
 				case LAYOUT_CONTEXT_INFO_POPUP:
-					if (Helper2.okToUse(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
+					if (isValid(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
 						if (fContextInfoPopupOrientation == CONTEXT_INFO_BELOW)
 							layout(LAYOUT_PROPOSAL_SELECTOR, getSelectionOffset());
 					}
@@ -426,13 +428,13 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 		protected void layoutProposalSelector(int offset) {
 			if (fContextType == LAYOUT_CONTEXT_INFO_POPUP &&
 					fContextInfoPopupOrientation == CONTEXT_INFO_BELOW &&
-					Helper2.okToUse(fShells[LAYOUT_CONTEXT_INFO_POPUP])) {
+					isValid(fShells[LAYOUT_CONTEXT_INFO_POPUP])) {
 				// Stack proposal selector beneath the tip box.
 				Shell shell= fShells[LAYOUT_PROPOSAL_SELECTOR];
 				Shell parent= fShells[LAYOUT_CONTEXT_INFO_POPUP];
 				shell.setLocation(getStackedLocation(shell, parent));
 			} else if (fContextType != LAYOUT_CONTEXT_SELECTOR ||
-						!Helper2.okToUse(fShells[LAYOUT_CONTEXT_SELECTOR])) {
+					!isValid(fShells[LAYOUT_CONTEXT_SELECTOR])) {
 				// There are no other presentations to be concerned with,
 				// so place the proposal selector beneath the cursor line.
 				Shell shell= fShells[LAYOUT_PROPOSAL_SELECTOR];
@@ -469,7 +471,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 			Shell shell= fShells[LAYOUT_CONTEXT_SELECTOR];
 			shell.setLocation(getBelowLocation(shell, offset));
 
-			if (Helper2.okToUse(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
+			if (isValid(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
 				switch (fProposalPopupOrientation) {
 					case PROPOSAL_REMOVE:
 						// Remove the proposal selector.
@@ -503,7 +505,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 					// Place the popup beneath the cursor line.
 					Shell parent= fShells[LAYOUT_CONTEXT_INFO_POPUP];
 					parent.setLocation(getBelowLocation(parent, offset));
-					if (Helper2.okToUse(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
+					if (isValid(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
 						// Stack the proposal selector beneath the context info popup.
 						Shell shell= fShells[LAYOUT_PROPOSAL_SELECTOR];
 						shell.setLocation(getStackedLocation(shell, parent));
@@ -582,12 +584,12 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 			switch (type) {
 				case LAYOUT_PROPOSAL_SELECTOR:
 					if (fContextType == LAYOUT_CONTEXT_SELECTOR &&
-							Helper2.okToUse(fShells[LAYOUT_CONTEXT_SELECTOR]))
+							isValid(fShells[LAYOUT_CONTEXT_SELECTOR]))
 						// Disable event notification to the tip selector.
 						removeContentAssistListener((IContentAssistListener2) fPopups[LAYOUT_CONTEXT_SELECTOR], CONTEXT_SELECTOR);
 					break;
 				case LAYOUT_CONTEXT_SELECTOR:
-					if (Helper2.okToUse(fShells[LAYOUT_PROPOSAL_SELECTOR]))
+					if (isValid(fShells[LAYOUT_PROPOSAL_SELECTOR]))
 						// Disable event notification to the proposal selector.
 						removeContentAssistListener((IContentAssistListener2) fPopups[LAYOUT_PROPOSAL_SELECTOR], PROPOSAL_SELECTOR);
 					break;
@@ -826,7 +828,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 					extension.appendVerifyKeyListener(fAutoAssistListener);
 				} else {
 					StyledText textWidget= fViewer.getTextWidget();
-					if (Helper2.okToUse(textWidget))
+					if (isValid(textWidget))
 						textWidget.addVerifyKeyListener(fAutoAssistListener);
 				}
 			}
@@ -838,7 +840,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 				extension.removeVerifyKeyListener(fAutoAssistListener);
 			} else {
 				StyledText textWidget= fViewer.getTextWidget();
-				if (Helper2.okToUse(textWidget))
+				if (isValid(textWidget))
 					textWidget.removeVerifyKeyListener(fAutoAssistListener);
 			}
 
@@ -1146,7 +1148,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	private void installKeyListener() {
 		if (!fKeyListenerHooked) {
 			StyledText text= fViewer.getTextWidget();
-			if (Helper2.okToUse(text)) {
+			if (isValid(text)) {
 
 				if (fViewer instanceof ITextViewerExtension) {
 					ITextViewerExtension e= (ITextViewerExtension) fViewer;
@@ -1214,7 +1216,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	private void uninstallKeyListener() {
 		if (fKeyListenerHooked) {
 			StyledText text= fViewer.getTextWidget();
-			if (Helper2.okToUse(text)) {
+			if (isValid(text)) {
 
 				if (fViewer instanceof ITextViewerExtension) {
 					ITextViewerExtension e= (ITextViewerExtension) fViewer;

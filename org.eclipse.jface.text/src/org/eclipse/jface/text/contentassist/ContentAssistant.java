@@ -18,6 +18,8 @@
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
+import static org.eclipse.jface.util.Util.isValid;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -133,7 +135,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		protected void install() {
 			Control control= fContentAssistSubjectControlAdapter.getControl();
 			fControl= control;
-			if (Helper.okToUse(control)) {
+			if (isValid(control)) {
 
 				Shell shell= control.getShell();
 				fShell= shell;
@@ -158,12 +160,12 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		protected void uninstall() {
 			Control shell= fShell;
 			fShell= null;
-			if (Helper.okToUse(shell))
+			if (isValid(shell))
 				shell.removeControlListener(this);
 
 			Control control= fControl;
 			fControl= null;
-			if (Helper.okToUse(control)) {
+			if (isValid(control)) {
 
 				control.removeMouseListener(this);
 				control.removeFocusListener(this);
@@ -210,7 +212,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		@Override
 		public void focusLost(FocusEvent e) {
 			Control control= fControl;
-			if (Helper.okToUse(control)) {
+			if (isValid(control)) {
 				Display d= control.getDisplay();
 				if (d != null) {
 					d.asyncExec(() -> {
@@ -444,14 +446,14 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			switch (type) {
 				case LAYOUT_PROPOSAL_SELECTOR:
 					if (fContextType == LAYOUT_CONTEXT_SELECTOR &&
-							Helper.okToUse(fShells[LAYOUT_CONTEXT_SELECTOR])) {
+							isValid(fShells[LAYOUT_CONTEXT_SELECTOR])) {
 						// Restore event notification to the tip popup.
 						addContentAssistListener((IContentAssistListener) fPopups[LAYOUT_CONTEXT_SELECTOR], CONTEXT_SELECTOR);
 					}
 					break;
 
 				case LAYOUT_CONTEXT_SELECTOR:
-					if (Helper.okToUse(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
+					if (isValid(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
 						if (fProposalPopupOrientation == PROPOSAL_STACKED)
 							layout(LAYOUT_PROPOSAL_SELECTOR, getSelectionOffset());
 						// Restore event notification to the proposal popup.
@@ -461,7 +463,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 					break;
 
 				case LAYOUT_CONTEXT_INFO_POPUP:
-					if (Helper.okToUse(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
+					if (isValid(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
 						if (fContextInfoPopupOrientation == CONTEXT_INFO_BELOW)
 							layout(LAYOUT_PROPOSAL_SELECTOR, getSelectionOffset());
 					}
@@ -501,13 +503,13 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		protected void layoutProposalSelector(int offset) {
 			if (fContextType == LAYOUT_CONTEXT_INFO_POPUP &&
 					fContextInfoPopupOrientation == CONTEXT_INFO_BELOW &&
-					Helper.okToUse(fShells[LAYOUT_CONTEXT_INFO_POPUP])) {
+					isValid(fShells[LAYOUT_CONTEXT_INFO_POPUP])) {
 				// Stack proposal selector beneath the tip box.
 				Shell shell= fShells[LAYOUT_PROPOSAL_SELECTOR];
 				Shell parent= fShells[LAYOUT_CONTEXT_INFO_POPUP];
 				shell.setLocation(getStackedLocation(shell, parent));
 			} else if (fContextType != LAYOUT_CONTEXT_SELECTOR ||
-						!Helper.okToUse(fShells[LAYOUT_CONTEXT_SELECTOR])) {
+					!isValid(fShells[LAYOUT_CONTEXT_SELECTOR])) {
 				// There are no other presentations to be concerned with,
 				// so place the proposal selector beneath the cursor line.
 				Shell shell= fShells[LAYOUT_PROPOSAL_SELECTOR];
@@ -546,7 +548,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			Shell shell= fShells[LAYOUT_CONTEXT_SELECTOR];
 			shell.setBounds(computeBoundsBelowAbove(shell, shell.getSize(), offset, null));
 
-			if (Helper.okToUse(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
+			if (isValid(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
 				switch (fProposalPopupOrientation) {
 					case PROPOSAL_REMOVE:
 						// Remove the proposal selector.
@@ -580,7 +582,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 					// Place the popup beneath the cursor line.
 					Shell parent= fShells[LAYOUT_CONTEXT_INFO_POPUP];
 					parent.setBounds(computeBoundsBelowAbove(parent, parent.getSize(), offset, null));
-					if (Helper.okToUse(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
+					if (isValid(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
 						// Stack the proposal selector beneath the context info popup.
 						Shell shell= fShells[LAYOUT_PROPOSAL_SELECTOR];
 						shell.setLocation(getStackedLocation(shell, parent));
@@ -739,12 +741,12 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			switch (type) {
 				case LAYOUT_PROPOSAL_SELECTOR:
 					if (fContextType == LAYOUT_CONTEXT_SELECTOR &&
-							Helper.okToUse(fShells[LAYOUT_CONTEXT_SELECTOR]))
+							isValid(fShells[LAYOUT_CONTEXT_SELECTOR]))
 						// Disable event notification to the tip selector.
 						removeContentAssistListener((IContentAssistListener) fPopups[LAYOUT_CONTEXT_SELECTOR], CONTEXT_SELECTOR);
 					break;
 				case LAYOUT_CONTEXT_SELECTOR:
-					if (Helper.okToUse(fShells[LAYOUT_PROPOSAL_SELECTOR]))
+					if (isValid(fShells[LAYOUT_PROPOSAL_SELECTOR]))
 						// Disable event notification to the proposal selector.
 						removeContentAssistListener((IContentAssistListener) fPopups[LAYOUT_PROPOSAL_SELECTOR], PROPOSAL_SELECTOR);
 					break;
@@ -1541,7 +1543,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		registerHandler(SELECT_NEXT_PROPOSAL_COMMAND_ID, fProposalPopup.createProposalSelectionHandler(CompletionProposalPopup.ProposalSelectionHandler.SELECT_NEXT));
 		registerHandler(SELECT_PREVIOUS_PROPOSAL_COMMAND_ID, fProposalPopup.createProposalSelectionHandler(CompletionProposalPopup.ProposalSelectionHandler.SELECT_PREVIOUS));
 
-		if (Helper.okToUse(fContentAssistSubjectControlAdapter.getControl())) {
+		if (isValid(fContentAssistSubjectControlAdapter.getControl())) {
 			fContentAssistSubjectControlShell= fContentAssistSubjectControlAdapter.getControl().getShell();
 			fCASCSTraverseListener= e -> {
 				if (e.detail == SWT.TRAVERSE_ESCAPE && isProposalPopupActive())
@@ -1577,7 +1579,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			fCloser= null;
 		}
 
-		if (Helper.okToUse(fContentAssistSubjectControlShell))
+		if (isValid(fContentAssistSubjectControlShell))
 			fContentAssistSubjectControlShell.removeTraverseListener(fCASCSTraverseListener);
 		fCASCSTraverseListener= null;
 		fContentAssistSubjectControlShell= null;
@@ -1730,7 +1732,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 */
 	private void installKeyListener() {
 		if (!fVerifyKeyListenerHooked) {
-			if (Helper.okToUse(fContentAssistSubjectControlAdapter.getControl())) {
+			if (isValid(fContentAssistSubjectControlAdapter.getControl())) {
 				fVerifyKeyListenerHooked= fContentAssistSubjectControlAdapter.prependVerifyKeyListener(fInternalListener);
 			}
 		}
@@ -1792,7 +1794,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 */
 	private void uninstallVerifyKeyListener() {
 		if (fVerifyKeyListenerHooked) {
-			if (Helper.okToUse(fContentAssistSubjectControlAdapter.getControl()))
+			if (isValid(fContentAssistSubjectControlAdapter.getControl()))
 				fContentAssistSubjectControlAdapter.removeVerifyKeyListener(fInternalListener);
 			fVerifyKeyListenerHooked= false;
 		}
@@ -2396,7 +2398,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			return null;
 
 		Rectangle maxBounds= null;
-		if (fContentAssistSubjectControl != null && Helper.okToUse(fContentAssistSubjectControl.getControl()))
+		if (fContentAssistSubjectControl != null && isValid(fContentAssistSubjectControl.getControl()))
 			maxBounds= fContentAssistSubjectControl.getControl().getDisplay().getBounds();
 		else {
 			// fallback

@@ -15,6 +15,8 @@
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
+import static org.eclipse.jface.util.Util.isValid;
+
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.KeyListener;
@@ -166,7 +168,7 @@ class ContentAssistSubjectControlAdapter implements IContentAssistSubjectControl
 		} else {
 
 			StyledText textWidget= fViewer.getTextWidget();
-			if (Helper.okToUse(textWidget)) {
+			if (isValid(textWidget)) {
 				textWidget.addVerifyKeyListener(verifyKeyListener);
 				return true;
 			}
@@ -184,7 +186,7 @@ class ContentAssistSubjectControlAdapter implements IContentAssistSubjectControl
 			return true;
 		} else {
 			StyledText textWidget= fViewer.getTextWidget();
-			if (Helper.okToUse(textWidget)) {
+			if (isValid(textWidget)) {
 				textWidget.addVerifyKeyListener(verifyKeyListener);
 				return true;
 			}
@@ -201,7 +203,7 @@ class ContentAssistSubjectControlAdapter implements IContentAssistSubjectControl
 			extension.removeVerifyKeyListener(verifyKeyListener);
 		} else {
 			StyledText textWidget= fViewer.getTextWidget();
-			if (Helper.okToUse(textWidget))
+			if (isValid(textWidget))
 				textWidget.removeVerifyKeyListener(verifyKeyListener);
 		}
 	}

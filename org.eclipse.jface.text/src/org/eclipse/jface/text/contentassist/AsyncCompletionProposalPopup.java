@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
+import static org.eclipse.jface.util.Util.isValid;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -154,7 +156,7 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 
 		final Control control= fContentAssistSubjectControlAdapter.getControl();
 
-		if (!Helper.okToUse(fProposalShell) && control != null && !control.isDisposed()) {
+		if (!isValid(fProposalShell) && control != null && !control.isDisposed()) {
 			// add the listener before computing the proposals so we don't move the caret
 			// when the user types fast.
 			fContentAssistSubjectControlAdapter.addKeyListener(fKeyListener);
@@ -243,7 +245,7 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 								&& fComputedProposals.size() == 1
 								&& remaining.get() == 0
 								&& canAutoInsert(fComputedProposals.get(0))) {
-							if (Helper.okToUse(fProposalShell)) {
+							if (isValid(fProposalShell)) {
 								insertProposal(fComputedProposals.get(0), (char) 0, 0, offset);
 								hide();
 							}
@@ -268,7 +270,7 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 	@Override
 	public String incrementalComplete() {
 		cancelFutures();
-		if (Helper.okToUse(fProposalShell) && fFilteredProposals != null) {
+		if (isValid(fProposalShell) && fFilteredProposals != null) {
 			return super.incrementalComplete();
 		}
 		final Control control= fContentAssistSubjectControlAdapter.getControl();
@@ -276,7 +278,7 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 		if (fKeyListener == null)
 			fKeyListener= new ProposalSelectionListener();
 
-		if (!Helper.okToUse(fProposalShell) && !control.isDisposed())
+		if (!isValid(fProposalShell) && !control.isDisposed())
 			fContentAssistSubjectControlAdapter.addKeyListener(fKeyListener);
 
 		fInvocationOffset= fContentAssistSubjectControlAdapter.getSelectedRange().x;

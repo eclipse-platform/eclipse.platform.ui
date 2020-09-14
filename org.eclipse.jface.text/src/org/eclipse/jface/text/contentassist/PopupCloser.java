@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
+import static org.eclipse.jface.util.Util.isValid;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -92,7 +94,7 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 		fTable= table;
 		fAdditionalInfoController= additionalInfoController;
 
-		if (Helper.okToUse(fTable)) {
+		if (isValid(fTable)) {
 			fShell= fTable.getShell();
 			fDisplay= fShell.getDisplay();
 
@@ -115,12 +117,12 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 	 */
 	public void uninstall() {
 		fContentAssistant= null;
-		if (Helper.okToUse(fShell))
+		if (isValid(fShell))
 			fShell.removeShellListener(this);
 		fShell= null;
-		if (Helper.okToUse(fScrollbar))
+		if (isValid(fScrollbar))
 			fScrollbar.removeSelectionListener(this);
-		if (Helper.okToUse(fTable))
+		if (isValid(fTable))
 			fTable.removeFocusListener(this);
 		if (fDisplay != null && ! fDisplay.isDisposed()) {
 			fDisplay.removeFilter(SWT.Activate, this);
@@ -150,7 +152,7 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 		fScrollbarClicked= false;
 		Display d= fTable.getDisplay();
 		d.asyncExec(() -> {
-			if (Helper.okToUse(fTable) && !fTable.isFocusControl() && !fScrollbarClicked && fContentAssistant != null)
+			if (isValid(fTable) && !fTable.isFocusControl() && !fScrollbarClicked && fContentAssistant != null)
 				fContentAssistant.popupFocusLost(e);
 		});
 	}
