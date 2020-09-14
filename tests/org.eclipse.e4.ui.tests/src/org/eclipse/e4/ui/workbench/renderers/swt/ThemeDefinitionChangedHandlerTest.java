@@ -38,7 +38,6 @@ import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.workbench.renderers.swt.WBWRenderer.ThemeDefinitionChangedHandler;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Resource;
 import org.junit.Test;
@@ -79,8 +78,7 @@ public class ThemeDefinitionChangedHandlerTest {
 
 		SWTResourcesRegistry registry = mock(SWTResourcesRegistry.class);
 		doReturn(removedResources).when(registry)
-				.removeResourcesByKeyTypeAndType(ResourceByDefinitionKey.class,
-						Font.class, Color.class);
+				.removeResourcesByKeyTypeAndType(ResourceByDefinitionKey.class, Font.class);
 
 		CSSEngine engine = mock(CSSEngine.class);
 		doReturn(registry).when(engine).getResourcesRegistry();

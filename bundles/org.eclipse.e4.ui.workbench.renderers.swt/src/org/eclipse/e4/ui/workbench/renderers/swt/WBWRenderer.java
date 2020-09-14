@@ -74,7 +74,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.ShellListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
@@ -879,8 +878,7 @@ public class WBWRenderer extends SWTPartRenderer {
 			if (registry instanceof SWTResourcesRegistry) {
 				return ((SWTResourcesRegistry) registry)
 						.removeResourcesByKeyTypeAndType(
-								ResourceByDefinitionKey.class, Font.class,
-								Color.class);
+								ResourceByDefinitionKey.class, Font.class);
 			}
 			return Collections.emptyList();
 		}
