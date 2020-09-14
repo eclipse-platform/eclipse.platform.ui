@@ -698,7 +698,7 @@ public final class Util {
 	/**
 	 * Helper method to check if a widget is not null and not disposed
 	 *
-	 * @param widget
+	 * @param widget to be checked
 	 * @return true if widget is not disposed or null, false otherwise
 	 * @since 3.22
 	 */
