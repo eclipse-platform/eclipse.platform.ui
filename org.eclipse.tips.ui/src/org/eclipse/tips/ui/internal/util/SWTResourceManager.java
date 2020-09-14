@@ -103,9 +103,6 @@ public class SWTResourceManager {
 	 * Dispose of all the cached {@link Color}'s.
 	 */
 	public static void disposeColors() {
-		for (Color color : m_colorMap.values()) {
-			color.dispose();
-		}
 		m_colorMap.clear();
 	}
 
