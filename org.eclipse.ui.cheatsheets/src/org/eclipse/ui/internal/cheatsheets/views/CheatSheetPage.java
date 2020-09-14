@@ -121,17 +121,6 @@ public class CheatSheetPage extends Page implements IMenuContributor {
 	@Override
 	public void dispose() {
 		super.dispose();
-
-		if (getInactiveColor1() != null)
-			getInactiveColor1().dispose();
-		if (getInactiveColor2() != null)
-			getInactiveColor2().dispose();
-
-		if (activeColor != null)
-			activeColor.dispose();
-
-		if (introColor != null)
-			introColor.dispose();
 		inactiveColor1 = null;
 		inactiveColor2 = null;
 		activeColor = null;
