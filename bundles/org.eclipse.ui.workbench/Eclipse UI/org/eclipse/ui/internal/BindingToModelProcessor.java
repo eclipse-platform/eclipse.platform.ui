@@ -97,7 +97,7 @@ public class BindingToModelProcessor {
 		if (table == null) {
 			table = createTable(application, binding.getContextId());
 		}
-		MKeyBinding model = BindingService.createORupdateMKeyBinding(application, table, binding);
+		MKeyBinding model = BindingService.createOrUpdateMKeyBinding(application, table, binding);
 		keys.remove(model);
 	}
 

@@ -515,7 +515,7 @@ public final class BindingService implements IBindingService {
 	 */
 	public void addBinding(final Binding binding) {
 		MBindingTable table = getMTable(binding.getContextId());
-		createORupdateMKeyBinding(application, table, binding);
+		createOrUpdateMKeyBinding(application, table, binding);
 	}
 
 	/**
@@ -581,7 +581,7 @@ public final class BindingService implements IBindingService {
 	// Add some sort of timestamp on the source files and update
 	// only when it changes
 	// TBD placement: this should be in the "3.x bridge" code
-	static public MKeyBinding createORupdateMKeyBinding(MApplication application, MBindingTable table,
+	static public MKeyBinding createOrUpdateMKeyBinding(MApplication application, MBindingTable table,
 			Binding binding) {
 		boolean addToTable = false;
 
