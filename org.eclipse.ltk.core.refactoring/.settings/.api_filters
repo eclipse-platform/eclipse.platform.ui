@@ -16,4 +16,12 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/ltk/core/refactoring/TextFileChange.java" type="org.eclipse.ltk.core.refactoring.TextFileChange">
+        <filter id="576778288">
+            <message_arguments>
+                <message_argument value="TextChange"/>
+                <message_argument value="TextFileChange"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>
