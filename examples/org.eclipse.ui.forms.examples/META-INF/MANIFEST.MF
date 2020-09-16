@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.ui.forms.examples; singleton:=true
-Bundle-Version: 3.2.400
+Bundle-Version: 3.2.500.qualifier
 Bundle-ClassPath: .
 Bundle-Activator: org.eclipse.ui.forms.examples.internal.ExamplesPlugin
 Bundle-Vendor: Eclipse.org
