@@ -22,9 +22,9 @@
   <packaging>eclipse-test-plugin</packaging>
 
   <properties>
-  	<!-- All test classes are not mentioned to be executed stand-alone.
-  	     They only make sense, if they are used by other tests. -->
-  	<skipTests>true</skipTests>
+    <!-- All test classes are not mentioned to be executed stand-alone.
+         They only make sense, if they are used by other tests. -->
+    <skipTests>true</skipTests>
   </properties>
 
 </project>

@@ -24,20 +24,20 @@
   <packaging>eclipse-test-plugin</packaging>
 
   <build>
-  	<plugins>
-  		<plugin>
-  			<groupId>org.eclipse.tycho</groupId>
-  			<artifactId>tycho-surefire-plugin</artifactId>
-  			<version>${tycho.version}</version>
-			<configuration>
-				 <includes>
-            		<include>**/org/eclipse/e4/ui/tests/UIAllTests.java</include>
-          		</includes>
-				<useUIHarness>false</useUIHarness>
-				<useUIThread>false</useUIThread>
-			</configuration>
-  		</plugin>
-  	</plugins>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-surefire-plugin</artifactId>
+        <version>${tycho.version}</version>
+      <configuration>
+        <includes>
+          <include>**/org/eclipse/e4/ui/tests/UIAllTests.java</include>
+        </includes>
+        <useUIHarness>false</useUIHarness>
+        <useUIThread>false</useUIThread>
+      </configuration>
+      </plugin>
+    </plugins>
   </build>
   
 </project>

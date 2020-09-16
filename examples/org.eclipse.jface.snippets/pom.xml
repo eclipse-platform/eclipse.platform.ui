@@ -25,6 +25,6 @@
   <properties>
     <code.ignoredWarnings>-warn:-deprecation,raw,unchecked</code.ignoredWarnings>
     <skipAPIAnalysis>true</skipAPIAnalysis> <!-- Not in baseline -->
-  </properties>	
+  </properties>
 
 </project>

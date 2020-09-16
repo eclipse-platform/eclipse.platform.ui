@@ -23,7 +23,7 @@
   <packaging>eclipse-test-plugin</packaging>
 
   <properties>
-  	<code.ignoredWarnings>${tests.ignoredWarnings}</code.ignoredWarnings>
+    <code.ignoredWarnings>${tests.ignoredWarnings}</code.ignoredWarnings>
   </properties>
 
 </project>

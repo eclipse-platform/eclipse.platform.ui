@@ -30,23 +30,23 @@
 
    <build>
     <plugins>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>target-platform-configuration</artifactId>
-				<configuration>
-					<dependency-resolution>
-						<!-- Behavioral dependency for test to succeed -->
-						<!-- Wouldn't it be better to have it in MANIFEST? -->
-						<extraRequirements>
-							<requirement>
-								<type>eclipse-plugin</type>
-								<id>org.eclipse.jdt.ui</id>
-								<versionRange>0.0.0</versionRange>
-							</requirement>
-						</extraRequirements>
-					</dependency-resolution>
-				</configuration>
-			</plugin>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>target-platform-configuration</artifactId>
+        <configuration>
+          <dependency-resolution>
+            <!-- Behavioral dependency for test to succeed -->
+            <!-- Wouldn't it be better to have it in MANIFEST? -->
+            <extraRequirements>
+              <requirement>
+                <type>eclipse-plugin</type>
+                <id>org.eclipse.jdt.ui</id>
+                <versionRange>0.0.0</versionRange>
+              </requirement>
+            </extraRequirements>
+          </dependency-resolution>
+        </configuration>
+      </plugin>
     </plugins>
  </build>
 

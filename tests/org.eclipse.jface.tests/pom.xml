@@ -22,18 +22,18 @@
   <packaging>eclipse-test-plugin</packaging>
 
   <build>
-  	<plugins>
-  		<plugin>
-  			<groupId>org.eclipse.tycho</groupId>
-  			<artifactId>tycho-surefire-plugin</artifactId>
-  			<version>${tycho.version}</version>
-			<configuration>
-				<testClass>org.eclipse.jface.tests.AllTests</testClass>
-				<useUIHarness>true</useUIHarness>
-				<useUIThread>true</useUIThread>
-			</configuration>
-  		</plugin>
-  	</plugins>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-surefire-plugin</artifactId>
+        <version>${tycho.version}</version>
+        <configuration>
+          <testClass>org.eclipse.jface.tests.AllTests</testClass>
+          <useUIHarness>true</useUIHarness>
+          <useUIThread>true</useUIThread>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 
 </project>

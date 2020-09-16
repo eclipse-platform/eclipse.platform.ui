@@ -23,6 +23,6 @@
   <version>3.8.200-SNAPSHOT</version>
   <packaging>eclipse-test-plugin</packaging>
   <properties>
-  	<testClass>org.eclipse.ui.tests.forms.AllFormsTests</testClass>
+    <testClass>org.eclipse.ui.tests.forms.AllFormsTests</testClass>
   </properties>
 </project>

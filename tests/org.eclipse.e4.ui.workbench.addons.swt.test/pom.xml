@@ -27,23 +27,23 @@
   </properties>
 
   <build>
-  	<plugins>
-  		<plugin>
-  			<groupId>org.eclipse.tycho</groupId>
-  			<artifactId>tycho-surefire-plugin</artifactId>
-  			<version>${tycho.version}</version>
-  			<configuration>
-  				<useUIHarness>true</useUIHarness>
-  				<useUIThread>true</useUIThread>
-  				<dependencies>
-					<dependency>
-						<type>eclipse-plugin</type>
-						<artifactId>org.eclipse.e4.ui.workbench.addons.swt</artifactId>
-						<version>0.0.0</version>
-					</dependency>
-  				</dependencies>
-  			</configuration>
-  		</plugin>
-  	</plugins>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-surefire-plugin</artifactId>
+        <version>${tycho.version}</version>
+        <configuration>
+          <useUIHarness>true</useUIHarness>
+          <useUIThread>true</useUIThread>
+          <dependencies>
+          <dependency>
+            <type>eclipse-plugin</type>
+            <artifactId>org.eclipse.e4.ui.workbench.addons.swt</artifactId>
+            <version>0.0.0</version>
+          </dependency>
+          </dependencies>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 </project>

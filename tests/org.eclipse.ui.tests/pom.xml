@@ -27,34 +27,34 @@
   </properties>
 
   <build>
-  	<plugins>
-  		<plugin>
-  			<groupId>org.eclipse.tycho</groupId>
-  			<artifactId>tycho-surefire-plugin</artifactId>
-  			<version>${tycho.version}</version>
-			<configuration>
-				<testClass>org.eclipse.ui.tests.UiTestSuite</testClass>
-				<useUIHarness>true</useUIHarness>
-				<useUIThread>true</useUIThread>
-	  			<dependencies>
-	  				<dependency>
-	  					<type>eclipse-plugin</type>
-	  					<artifactId>org.eclipse.equinox.event</artifactId>
-	  					<version>0.0.0</version>
-	  				</dependency>
-	  				<dependency>
-	  					<type>eclipse-plugin</type>
-	  					<artifactId>org.eclipse.osgi.compatibility.state</artifactId>
-	  					<version>0.0.0</version>
-	  				</dependency>
-					<dependency>
-						<type>eclipse-plugin</type>
-						<artifactId>org.eclipse.jdt.ui</artifactId>
-						<version>0.0.0</version>
-					</dependency>
-	  			</dependencies>
-			</configuration>
-  		</plugin>
-  	</plugins>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-surefire-plugin</artifactId>
+        <version>${tycho.version}</version>
+      <configuration>
+        <testClass>org.eclipse.ui.tests.UiTestSuite</testClass>
+        <useUIHarness>true</useUIHarness>
+        <useUIThread>true</useUIThread>
+          <dependencies>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.equinox.event</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.osgi.compatibility.state</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+          <dependency>
+            <type>eclipse-plugin</type>
+            <artifactId>org.eclipse.jdt.ui</artifactId>
+            <version>0.0.0</version>
+          </dependency>
+          </dependencies>
+      </configuration>
+      </plugin>
+    </plugins>
   </build>
 </project>
