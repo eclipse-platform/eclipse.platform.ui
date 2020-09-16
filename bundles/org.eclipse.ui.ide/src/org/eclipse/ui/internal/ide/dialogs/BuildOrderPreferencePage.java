@@ -533,7 +533,7 @@ public class BuildOrderPreferencePage extends PreferencePage implements
 				String elementToMove = this.buildList.getItem(currentIndex);
 				this.buildList.remove(currentIndex);
 				this.buildList.add(elementToMove, currentIndex + 1);
-				this.buildList.select(currentIndex + 1);
+				this.buildList.setSelection(currentIndex + 1);
 			}
 		}
 	}
@@ -550,7 +550,7 @@ public class BuildOrderPreferencePage extends PreferencePage implements
 			String elementToMove = this.buildList.getItem(currentIndex);
 			this.buildList.remove(currentIndex);
 			this.buildList.add(elementToMove, currentIndex - 1);
-			this.buildList.select(currentIndex - 1);
+			this.buildList.setSelection(currentIndex - 1);
 		}
 	}
 
