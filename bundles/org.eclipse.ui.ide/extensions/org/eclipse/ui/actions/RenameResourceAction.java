@@ -458,7 +458,7 @@ public class RenameResourceAction extends WorkspaceAction {
 				null);
 		boolean dialogMode = IWorkbenchPreferenceConstants.RESOURCE_RENAME_MODE_DIALOG.equals(renameMode);
 
-		if (LTKLauncher.isCompositeRename(getStructuredSelection()) || this.navigatorTree == null || dialogMode) {
+		if (this.navigatorTree == null || dialogMode || LTKLauncher.isCompositeRename(getStructuredSelection())) {
 			if (!LTKLauncher.openRenameWizard(getStructuredSelection())) {
 				// LTK Launcher couldn't rename the resource
 				if (!checkReadOnlyAndNull(currentResource)) {
