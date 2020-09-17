@@ -44,32 +44,22 @@ import org.eclipse.ui.forms.HyperlinkGroup;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
 
-public class HelpView extends ViewPart implements IPartListener2,
-		ISelectionChangedListener, IPageChangedListener {
+public class HelpView extends ViewPart implements IPartListener2, ISelectionChangedListener, IPageChangedListener {
 	private FormToolkit toolkit;
 
 	private String firstPageId;
 
 	private ReusableHelpPart reusableHelpPart;
 
-	//private Hashtable pageRecs;
-
 	private IWorkbenchPart monitoredPart;
 
 	private boolean visible;
-
-	/**
-	 *
-	 */
-	public HelpView() {
-	}
 
 	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = new FormToolkit(parent.getDisplay());
 		toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(
 				HyperlinkGroup.UNDERLINE_HOVER);
-		// toolkit.setBackground(toolkit.getColors().createNoContentBackground());
 		toolkit.getColors().initializeSectionToolBarColors();
 		reusableHelpPart.createControl(parent, toolkit);
 		reusableHelpPart.setDefaultContextHelpText(Messages.HelpView_defaultText);
@@ -315,11 +305,6 @@ public class HelpView extends ViewPart implements IPartListener2,
 		getSite().getShell().getDisplay().asyncExec(this::updateActivePart);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.help.ui.internal.views.BaseHelpView#getFirstPage()
-	 */
 	protected String getFirstPage() {
 		if (firstPageId!=null)
 			return firstPageId;
@@ -350,11 +335,6 @@ public class HelpView extends ViewPart implements IPartListener2,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.help.ui.internal.views.BaseHelpView#getHelpPartStyle()
-	 */
 	protected int getHelpPartStyle() {
 		return ReusableHelpPart.getDefaultStyle();
 	}
