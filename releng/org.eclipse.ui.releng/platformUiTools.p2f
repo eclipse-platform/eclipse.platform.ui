@@ -234,7 +234,7 @@
     </iu>
     <iu id='com.yourkit.profiler.feature.group' name='Yourkit' version='0.0.0'>
         <repositories size='1'>
-            <repository location='https://www.yourkit.com/download/yjp2019_8_for_eclipse'/>
+            <repository location='https://www.yourkit.com/download/yjp2020_9_for_eclipse/>
         </repositories>
     </iu>
   </ius>
