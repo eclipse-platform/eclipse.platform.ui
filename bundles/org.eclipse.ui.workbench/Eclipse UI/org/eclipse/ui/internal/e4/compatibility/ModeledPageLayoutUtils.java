@@ -68,29 +68,29 @@ public class ModeledPageLayoutUtils {
 			case SWT.LEFT:
 				psc.getChildren().add((MPartSashContainerElement) toInsert);
 				psc.getChildren().add((MPartSashContainerElement) relTo);
-				toInsert.setContainerData("" + ratio); //$NON-NLS-1$
-				relTo.setContainerData("" + (10000 - ratio)); //$NON-NLS-1$
+				toInsert.setContainerData(Integer.toString(ratio));
+				relTo.setContainerData(Integer.toString((10000 - ratio)));
 				psc.setHorizontal(true);
 				break;
 			case SWT.RIGHT:
 				psc.getChildren().add((MPartSashContainerElement) relTo);
 				psc.getChildren().add((MPartSashContainerElement) toInsert);
-				relTo.setContainerData("" + ratio); //$NON-NLS-1$
-				toInsert.setContainerData("" + (10000 - ratio)); //$NON-NLS-1$
+				relTo.setContainerData(Integer.toString(ratio));
+				toInsert.setContainerData(Integer.toString((10000 - ratio)));
 				psc.setHorizontal(true);
 				break;
 			case SWT.TOP:
 				psc.getChildren().add((MPartSashContainerElement) toInsert);
 				psc.getChildren().add((MPartSashContainerElement) relTo);
-				toInsert.setContainerData("" + ratio); //$NON-NLS-1$
-				relTo.setContainerData("" + (10000 - ratio)); //$NON-NLS-1$
+				toInsert.setContainerData(Integer.toString(ratio));
+				relTo.setContainerData(Integer.toString((10000 - ratio)));
 				psc.setHorizontal(false);
 				break;
 			case SWT.BOTTOM:
 				psc.getChildren().add((MPartSashContainerElement) relTo);
 				psc.getChildren().add((MPartSashContainerElement) toInsert);
-				relTo.setContainerData("" + ratio); //$NON-NLS-1$
-				toInsert.setContainerData("" + (10000 - ratio)); //$NON-NLS-1$
+				relTo.setContainerData(Integer.toString(ratio));
+				toInsert.setContainerData(Integer.toString((10000 - ratio)));
 				psc.setHorizontal(false);
 				break;
 			}

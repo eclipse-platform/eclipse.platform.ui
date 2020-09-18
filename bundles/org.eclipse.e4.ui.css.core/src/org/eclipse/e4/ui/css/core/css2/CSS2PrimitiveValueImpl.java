@@ -120,9 +120,9 @@ public class CSS2PrimitiveValueImpl implements CSSPrimitiveValue {
 		if (s != null)
 			return s;
 		if (v != -9999)
-			return v + "";
+			return Float.toString(v);
 		if (i != -9999)
-			return i + "";
+			return Integer.toString(i);
 		return super.toString();
 	}
 }

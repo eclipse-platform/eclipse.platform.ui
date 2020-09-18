@@ -467,7 +467,7 @@ public class MessageManager implements IMessageManager {
 			if (peers.size() > 1)
 				messageText = NLS.bind(
 						MULTIPLE_MESSAGE_SUMMARY_KEYS[maxType],
-						new String[] { peers.size() + "" }); //$NON-NLS-1$
+						new String[] { Integer.toString(peers.size()) });
 			else
 				messageText = SINGLE_MESSAGE_SUMMARY_KEYS[maxType];
 			form.setMessage(messageText, maxType, array);

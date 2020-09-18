@@ -47,7 +47,7 @@ public class CSS2FontHelper {
 	 * @return
 	 */
 	public static String getFontSize(int size) {
-		return size + "";
+		return Integer.toString(size);
 	}
 
 	/**

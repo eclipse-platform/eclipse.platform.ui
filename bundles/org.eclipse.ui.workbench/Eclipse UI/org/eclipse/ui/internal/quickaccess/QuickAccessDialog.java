@@ -361,7 +361,7 @@ public class QuickAccessDialog extends PopupDialog {
 				orderedElements[i] = quickAccessElement.getId();
 				orderedProviders[i] = contents.getProviderFor(quickAccessElement).getId();
 				arrayList.addAll(elementText);
-				textEntries[i] = elementText.size() + ""; //$NON-NLS-1$
+				textEntries[i] = Integer.toString(elementText.size());
 			}
 			String[] textArray = arrayList.toArray(new String[arrayList.size()]);
 			dialogSettings.put(ORDERED_ELEMENTS, orderedElements);

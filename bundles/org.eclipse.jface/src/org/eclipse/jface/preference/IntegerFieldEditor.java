@@ -110,8 +110,8 @@ public class IntegerFieldEditor extends StringFieldEditor {
 		Text text = getTextControl();
 		if (text != null) {
 			int value = getPreferenceStore().getInt(getPreferenceName());
-			text.setText("" + value);//$NON-NLS-1$
-			oldValue = "" + value; //$NON-NLS-1$
+			text.setText(Integer.toString(value));
+			oldValue = Integer.toString(value);
 		}
 
 	}
@@ -121,7 +121,7 @@ public class IntegerFieldEditor extends StringFieldEditor {
 		Text text = getTextControl();
 		if (text != null) {
 			int value = getPreferenceStore().getDefaultInt(getPreferenceName());
-			text.setText("" + value);//$NON-NLS-1$
+			text.setText(Integer.toString(value));
 		}
 		valueChanged();
 	}

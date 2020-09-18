@@ -67,10 +67,10 @@ public class CommonImages {
 	 */
 	public static Image getImage(ImageDescriptor imageDescriptor) {
 		ImageRegistry imageRegistry = getImageRegistry();
-		Image image = imageRegistry.get("" + imageDescriptor.hashCode()); //$NON-NLS-1$
+		Image image = imageRegistry.get(Integer.toString(imageDescriptor.hashCode()));
 		if (image == null) {
 			image = imageDescriptor.createImage(true);
-			imageRegistry.put("" + imageDescriptor.hashCode(), image); //$NON-NLS-1$
+			imageRegistry.put(Integer.toString(imageDescriptor.hashCode()), image);
 		}
 		return image;
 	}

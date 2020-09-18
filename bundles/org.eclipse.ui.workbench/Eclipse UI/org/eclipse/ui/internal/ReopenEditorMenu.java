@@ -98,7 +98,7 @@ public class ReopenEditorMenu extends ContributionItem {
 		StringBuilder nm = new StringBuilder();
 		nm.append(mnemonic);
 		if (mnemonic <= MAX_MNEMONIC_SIZE) {
-			nm.insert(nm.length() - (mnemonic + "").length(), '&'); //$NON-NLS-1$
+			nm.insert(nm.length() - (Integer.toString(mnemonic)).length(), '&');
 		}
 //        sb.append(" "); //$NON-NLS-1$
 
