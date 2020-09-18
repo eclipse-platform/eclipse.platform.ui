@@ -23,15 +23,13 @@ import org.eclipse.swt.widgets.Composite;
 
 /**
  * This class provides a convenient shorthand for creating and initializing
- * {@link Button}. This offers several benefits over creating Button normal way:
+ * {@link Button}. This offers several benefits over creating with widget the
+ * normal way:
  *
  * <ul>
- * <li>The same factory can be used many times to create several Button
- * instances</li>
- * <li>The setters on ButtonFactory all return "this", allowing them to be
- * chained</li>
- * <li>ButtonFactory accepts a Lambda for {@link SelectionEvent} (see
- * {@link #onSelect})</li>
+ * <li>The same factory can be used many times to create several instances</li>
+ * <li>The setters all return "this", allowing them to be chained</li>
+ * <li>The {@link #onSelect}) accepts a Lambda for {@link SelectionEvent}</li>
  * </ul>
  *
  * Example usage:
@@ -59,7 +57,7 @@ import org.eclipse.swt.widgets.Composite;
  * <p>
  * The above example creates three buttons using the same instance of
  * ButtonFactory. Note the layout method. A Supplier is used to create unique
- * GridData for every single button.
+ * GridData for every single widget.
  * </p>
  *
  * @since 3.18
