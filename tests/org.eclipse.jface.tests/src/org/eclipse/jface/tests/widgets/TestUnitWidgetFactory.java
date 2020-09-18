@@ -49,7 +49,7 @@ public class TestUnitWidgetFactory extends AbstractFactoryTest {
 
 	@Test
 	public void setsData() {
-		String data = new String("myData");
+		String data = "myData";
 		Label testLabel = LabelFactory.newLabel(SWT.NONE).data(data).create(shell);
 
 		assertEquals(data, testLabel.getData());
