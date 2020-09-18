@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
+import static org.eclipse.jface.util.Util.isValid;
+
 import org.eclipse.help.IContext;
 import org.eclipse.help.IContextProvider;
 import org.eclipse.help.IHelpResource;
@@ -58,14 +60,12 @@ public class HelpView extends ViewPart implements IPartListener2, ISelectionChan
 	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = new FormToolkit(parent.getDisplay());
-		toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(
-				HyperlinkGroup.UNDERLINE_HOVER);
+		toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(HyperlinkGroup.UNDERLINE_HOVER);
 		toolkit.getColors().initializeSectionToolBarColors();
 		reusableHelpPart.createControl(parent, toolkit);
 		reusableHelpPart.setDefaultContextHelpText(Messages.HelpView_defaultText);
 		reusableHelpPart.showPage(getFirstPage());
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
-			 "org.eclipse.help.ui.helpView"); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.help.ui.helpView"); //$NON-NLS-1$
 		IWorkbenchWindow window = getSite().getPage().getWorkbenchWindow();
 		if (window == null)
 			return;
@@ -195,15 +195,12 @@ public class HelpView extends ViewPart implements IPartListener2, ISelectionChan
 	}
 
 	private void updateActivePart() {
-		if (reusableHelpPart == null)
+		if (reusableHelpPart == null || !reusableHelpPart.isMonitoringContextHelp() || monitoredPart == null) {
 			return;
-		if (!reusableHelpPart.isMonitoringContextHelp())
-			return;
-		if (monitoredPart == null)
-			return;
-		Control c = monitoredPart.getSite().getShell().getDisplay()
-				.getFocusControl();
-		if (c != null && c.isDisposed() == false && visible) {
+		}
+		Control c = monitoredPart.getSite().getShell().getDisplay().getFocusControl();
+
+		if (isValid(c) && visible) {
 			IContextProvider provider = monitoredPart.getAdapter(IContextProvider.class);
 			if (provider != null)
 				reusableHelpPart.update(provider, null, monitoredPart, c, false);
