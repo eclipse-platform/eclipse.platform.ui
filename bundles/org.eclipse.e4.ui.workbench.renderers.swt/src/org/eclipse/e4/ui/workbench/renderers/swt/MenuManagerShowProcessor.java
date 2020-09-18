@@ -86,7 +86,7 @@ public class MenuManagerShowProcessor implements IMenuListener2 {
 			cleanUp(menuModel, menuManager);
 		}
 		if (menuModel instanceof MPopupMenu) {
-			showPopup(menu, (MPopupMenu) menuModel, menuManager);
+			showPopup((MPopupMenu) menuModel);
 		}
 		AbstractPartRenderer obj = rendererFactory.getRenderer(menuModel,
 				menu.getParent());
@@ -109,10 +109,9 @@ public class MenuManagerShowProcessor implements IMenuListener2 {
 		}
 		MenuManager menuManager = (MenuManager) manager;
 		final MMenu menuModel = renderer.getMenuModel(menuManager);
-		final Menu menu = menuManager.getMenu();
 		if (menuModel != null) {
 			processDynamicElements(menuModel, menuManager);
-			showMenu(menu, menuModel, menuManager);
+			showMenu(menuModel, menuManager);
 		}
 	}
 
@@ -234,8 +233,7 @@ public class MenuManagerShowProcessor implements IMenuListener2 {
 		}
 	}
 
-	private void showPopup(final Menu menu, final MPopupMenu menuModel,
-			MenuManager menuManager) {
+	private void showPopup(final MPopupMenu menuModel) {
 		// System.err.println("showPopup: " + menuModel + "\n\t" + menu);
 		// we need some context foolery here
 		final IEclipseContext popupContext = menuModel.getContext();
@@ -246,7 +244,7 @@ public class MenuManagerShowProcessor implements IMenuListener2 {
 				originalChild);
 	}
 
-	private void showMenu(final Menu menu, final MMenu menuModel,
+	private void showMenu(final MMenu menuModel,
 			MenuManager menuManager) {
 
 		final IEclipseContext evalContext;

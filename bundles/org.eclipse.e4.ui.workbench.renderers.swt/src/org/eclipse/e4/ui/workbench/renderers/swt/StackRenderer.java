@@ -603,7 +603,7 @@ public class StackRenderer extends LazyStackRenderer {
 		int styleOverride = getStyleOverride(pStack);
 		int style = styleOverride == -1 ? SWT.BORDER : styleOverride;
 		final CTabFolder tabFolder = new CTabFolder(parentComposite, style);
-		tabFolder.setMRUVisible(getMRUValue(tabFolder));
+		tabFolder.setMRUVisible(getMRUValue());
 
 		// Adjust the minimum chars based on the location
 		int location = modelService.getElementLocation(element);
@@ -623,7 +623,7 @@ public class StackRenderer extends LazyStackRenderer {
 		return tabFolder;
 	}
 
-	private boolean getMRUValue(Control control) {
+	private boolean getMRUValue() {
 		return getMRUValueFromPreferences();
 	}
 
@@ -633,7 +633,7 @@ public class StackRenderer extends LazyStackRenderer {
 	}
 
 	private void updateMRUValue(CTabFolder tabFolder) {
-		boolean actualMRUValue = getMRUValue(tabFolder);
+		boolean actualMRUValue = getMRUValue();
 		tabFolder.setMRUVisible(actualMRUValue);
 	}
 

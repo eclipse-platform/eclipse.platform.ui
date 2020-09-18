@@ -59,7 +59,7 @@ public class MenuManagerHideProcessor implements IMenuListener2 {
 		final MMenu menuModel = renderer.getMenuModel(menuManager);
 		final Menu menu = menuManager.getMenu();
 		if (menuModel instanceof MPopupMenu) {
-			hidePopup(menu, (MPopupMenu) menuModel, menuManager);
+			hidePopup(menu, (MPopupMenu) menuModel);
 		}
 		if (menuModel != null && menu != null)
 			processDynamicElements((MenuManager) manager, menu, menuModel);
@@ -127,8 +127,7 @@ public class MenuManagerHideProcessor implements IMenuListener2 {
 	public void menuAboutToHide(IMenuManager manager) {
 	}
 
-	private void hidePopup(Menu menu, MPopupMenu menuModel,
-			MenuManager menuManager) {
+	private void hidePopup(Menu menu, MPopupMenu menuModel) {
 		final IEclipseContext popupContext = menuModel.getContext();
 		final IEclipseContext originalChild = (IEclipseContext) popupContext
 				.get(MenuManagerRendererFilter.TMP_ORIGINAL_CONTEXT);

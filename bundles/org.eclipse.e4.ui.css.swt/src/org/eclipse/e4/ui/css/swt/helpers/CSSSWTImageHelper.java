@@ -18,7 +18,6 @@ import java.net.URL;
 import org.eclipse.e4.ui.css.core.util.resources.IResourcesLocatorManager;
 import org.eclipse.e4.ui.css.core.utils.StringUtils;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
@@ -46,12 +45,12 @@ public class CSSSWTImageHelper {
 		switch (primitiveValue.getPrimitiveType()) {
 		case CSSPrimitiveValue.CSS_URI:
 			String path = primitiveValue.getStringValue();
-			return loadImageFromURL(display, path, manager);
+			return loadImageFromURL(path, manager);
 		}
 		return null;
 	}
 
-	private static Image loadImageFromURL(Device device, String path,
+	private static Image loadImageFromURL(String path,
 			IResourcesLocatorManager manager) throws Exception {
 		Image result = null;
 
