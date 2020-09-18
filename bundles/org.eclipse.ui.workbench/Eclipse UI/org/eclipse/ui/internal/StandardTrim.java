@@ -47,7 +47,7 @@ public class StandardTrim {
 		if (toolControl.getElementId().equals("org.eclipse.ui.StatusLine")) { //$NON-NLS-1$
 			createStatusLine(parent, toolControl);
 		} else if (toolControl.getElementId().equals("org.eclipse.ui.HeapStatus")) { //$NON-NLS-1$
-			createHeapStatus(parent, toolControl);
+			createHeapStatus(parent);
 		} else if (toolControl.getElementId().equals("org.eclipse.ui.ProgressBar")) { //$NON-NLS-1$
 			createProgressBar(parent, toolControl);
 		}
@@ -99,9 +99,8 @@ public class StandardTrim {
 
 	/**
 	 * @param parent
-	 * @param toolControl
 	 */
-	private void createHeapStatus(Composite parent, MToolControl toolControl) {
+	private void createHeapStatus(Composite parent) {
 		new HeapStatus(parent, PrefUtil.getInternalPreferenceStore());
 	}
 

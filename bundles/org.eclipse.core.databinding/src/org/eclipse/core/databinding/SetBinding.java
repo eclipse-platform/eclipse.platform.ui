@@ -51,13 +51,13 @@ public class SetBinding<M, T> extends Binding {
 
 	private ISetChangeListener<T> targetChangeListener = event -> {
 		if (!updatingTarget) {
-			doUpdate(target, model, event.diff, targetToModel, false, false);
+			doUpdate(model, event.diff, targetToModel, false, false);
 		}
 	};
 
 	private ISetChangeListener<M> modelChangeListener = event -> {
 		if (!updatingModel) {
-			doUpdate(model, target, event.diff, modelToTarget, false, false);
+			doUpdate(target, event.diff, modelToTarget, false, false);
 		}
 	};
 
@@ -125,7 +125,7 @@ public class SetBinding<M, T> extends Binding {
 	public void updateModelToTarget() {
 		execAfterDisposalCheck(model, () -> {
 			SetDiff<M> diff = Diffs.computeSetDiff(Collections.emptySet(), model);
-			doUpdate(model, target, diff, modelToTarget, true, true);
+			doUpdate(target, diff, modelToTarget, true, true);
 		});
 	}
 
@@ -133,7 +133,7 @@ public class SetBinding<M, T> extends Binding {
 	public void updateTargetToModel() {
 		execAfterDisposalCheck(target, () -> {
 			SetDiff<T> diff = Diffs.computeSetDiff(Collections.emptySet(), target);
-			doUpdate(target, model, diff, targetToModel, true, true);
+			doUpdate(model, diff, targetToModel, true, true);
 		});
 	}
 
@@ -151,7 +151,7 @@ public class SetBinding<M, T> extends Binding {
 	 * This method may be moved to UpdateSetStrategy in the future if clients
 	 * need more control over how the two sets are kept in sync.
 	 */
-	private <S, D1, D2 extends D1> void doUpdate(final IObservableSet<S> source, final IObservableSet<D1> destination,
+	private <S, D1, D2 extends D1> void doUpdate(final IObservableSet<D1> destination,
 			final SetDiff<? extends S> diff, final UpdateSetStrategy<? super S, D2> updateSetStrategy,
 			final boolean explicit, final boolean clearDestination) {
 

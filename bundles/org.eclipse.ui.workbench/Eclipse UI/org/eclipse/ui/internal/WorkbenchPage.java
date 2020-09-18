@@ -936,7 +936,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public WorkbenchPage(WorkbenchWindow w, IAdaptable input) throws WorkbenchException {
 		super();
-		init(w, null, input, false);
+		init(w, input);
 	}
 
 	/**
@@ -2618,11 +2618,9 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * Initialize the page.
 	 *
 	 * @param w          the parent window
-	 * @param layoutID   may be <code>null</code> if restoring from file
 	 * @param input      the page input
-	 * @param openExtras whether to process the perspective extras preference
 	 */
-	private void init(WorkbenchWindow w, String layoutID, IAdaptable input, boolean openExtras) {
+	private void init(WorkbenchWindow w, IAdaptable input) {
 		// Save args.
 		this.legacyWindow = w;
 		this.input = input;

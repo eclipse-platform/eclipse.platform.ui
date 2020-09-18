@@ -352,7 +352,7 @@ public class PopupMenuExtender implements IMenuListener2, IRegistryChangeListene
 			}
 		}
 
-		addMenuContributions(mgr);
+		addMenuContributions();
 
 		readStaticActions();
 		// test for additions removed to comply with menu contributions
@@ -370,10 +370,8 @@ public class PopupMenuExtender implements IMenuListener2, IRegistryChangeListene
 
 	/**
 	 * well, this goes to the renderer.
-	 *
-	 * @param mgr
 	 */
-	private void addMenuContributions(IMenuManager mgr) {
+	private void addMenuContributions() {
 		IRendererFactory factory = modelPart.getContext().get(IRendererFactory.class);
 		AbstractPartRenderer obj = factory.getRenderer(menuModel, null);
 		if (obj instanceof MenuManagerRenderer) {

@@ -267,8 +267,7 @@ public final class EvaluationService implements IEvaluationService {
 		context.remove(pokeVar);
 		context.set(pokeVar, "link"); //$NON-NLS-1$
 
-		String[] sourceNames = new String[] { propertyName };
-		startSourceChange(sourceNames);
+		startSourceChange();
 		for (EvaluationReference ref : refs) {
 			Expression expr = ref.getExpression();
 			if (expr != null) {
@@ -294,24 +293,18 @@ public final class EvaluationService implements IEvaluationService {
 				}
 			}
 		}
-		endSourceChange(sourceNames);
+		endSourceChange();
 		eventBroker.send(UIEvents.REQUEST_ENABLEMENT_UPDATE_TOPIC, UIEvents.ALL_ELEMENT_ID);
 	}
 
-	/**
-	 * @param sourceNames
-	 */
-	private void startSourceChange(final String[] sourceNames) {
+	private void startSourceChange() {
 		notifying++;
 		if (notifying == 1) {
 			fireServiceChange(IEvaluationService.PROP_NOTIFYING, Boolean.FALSE, Boolean.TRUE);
 		}
 	}
 
-	/**
-	 * @param sourceNames
-	 */
-	private void endSourceChange(final String[] sourceNames) {
+	private void endSourceChange() {
 		if (notifying == 1) {
 			fireServiceChange(IEvaluationService.PROP_NOTIFYING, Boolean.TRUE, Boolean.FALSE);
 		}

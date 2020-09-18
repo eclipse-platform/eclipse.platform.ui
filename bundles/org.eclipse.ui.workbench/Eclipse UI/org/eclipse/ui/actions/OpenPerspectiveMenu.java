@@ -131,22 +131,21 @@ public class OpenPerspectiveMenu extends PerspectiveMenu {
 	 */
 	@Override
 	protected void run(IPerspectiveDescriptor desc) {
-		openPage(desc, 0);
+		openPage(desc);
 	}
 
 	/**
-	 * Runs an action for a particular perspective. Check for shift or control
-	 * events to decide which event to run.
+	 * Runs an action for a particular perspective.
 	 *
 	 * @param desc  the selected perspective
 	 * @param event the event sent along with the selection callback
 	 */
 	@Override
 	protected void run(IPerspectiveDescriptor desc, SelectionEvent event) {
-		openPage(desc, event.stateMask);
+		openPage(desc);
 	}
 
-	private void openPage(IPerspectiveDescriptor desc, int keyStateMask) {
+	private void openPage(IPerspectiveDescriptor desc) {
 		// Verify page input.
 		if (pageInput == null) {
 			StatusUtil.handleStatus(PAGE_PROBLEMS_TITLE + ": " + PAGE_PROBLEMS_MESSAGE, StatusManager.SHOW); //$NON-NLS-1$

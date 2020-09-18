@@ -51,12 +51,12 @@ public class ListBinding<M, T> extends Binding {
 
 	private IListChangeListener<T> targetChangeListener = event -> {
 		if (!updatingTarget) {
-			doUpdate(target, model, event.diff, targetToModel, false, false);
+			doUpdate(model, event.diff, targetToModel, false, false);
 		}
 	};
 	private IListChangeListener<M> modelChangeListener = event -> {
 		if (!updatingModel) {
-			doUpdate(model, target, event.diff, modelToTarget, false, false);
+			doUpdate(target, event.diff, modelToTarget, false, false);
 		}
 	};
 
@@ -125,7 +125,7 @@ public class ListBinding<M, T> extends Binding {
 	public void updateModelToTarget() {
 		execAfterDisposalCheck(model, () -> {
 			ListDiff<M> diff = Diffs.computeListDiff(Collections.emptyList(), model);
-			doUpdate(model, target, diff, modelToTarget, true, true);
+			doUpdate(target, diff, modelToTarget, true, true);
 		});
 	}
 
@@ -133,7 +133,7 @@ public class ListBinding<M, T> extends Binding {
 	public void updateTargetToModel() {
 		execAfterDisposalCheck(target, () -> {
 			ListDiff<T> diff = Diffs.computeListDiff(Collections.emptyList(), target);
-			doUpdate(target, model, diff, targetToModel, true, true);
+			doUpdate(model, diff, targetToModel, true, true);
 		});
 	}
 
@@ -151,8 +151,7 @@ public class ListBinding<M, T> extends Binding {
 	 * This method may be moved to UpdateListStrategy in the future if clients
 	 * need more control over how the two lists are kept in sync.
 	 */
-	private <S, D1, D2 extends D1> void doUpdate(final IObservableList<S> source,
-			final IObservableList<D1> destination, final ListDiff<? extends S> diff,
+	private <S, D1, D2 extends D1> void doUpdate(final IObservableList<D1> destination, final ListDiff<? extends S> diff,
 			final UpdateListStrategy<? super S, D2> updateListStrategy,
 			final boolean explicit, final boolean clearDestination) {
 
