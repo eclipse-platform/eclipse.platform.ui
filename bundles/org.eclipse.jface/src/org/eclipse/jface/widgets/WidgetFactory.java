@@ -17,6 +17,7 @@ package org.eclipse.jface.widgets;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Shell;
@@ -108,6 +109,17 @@ public final class WidgetFactory {
 	 */
 	public static CompositeFactory composite(int style) {
 		return CompositeFactory.newComposite(style);
+	}
+
+	/**
+	 * @param style SWT style applicable for DateTime. Refer to
+	 *              {@link DateTime#DateTime(Composite, int)} for supported styles.
+	 * @return DateTimeFactory
+	 *
+	 * @since 3.22
+	 */
+	public static DateTimeFactory dateTime(int style) {
+		return DateTimeFactory.newDateTime(style);
 	}
 
 	/**
