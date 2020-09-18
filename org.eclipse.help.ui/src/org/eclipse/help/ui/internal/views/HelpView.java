@@ -259,10 +259,6 @@ public class HelpView extends ViewPart implements IPartListener2, ISelectionChan
 	}
 
 	@Override
-	public void partInputChanged(IWorkbenchPartReference partRef) {
-	}
-
-	@Override
 	public void partOpened(IWorkbenchPartReference partRef) {
 		if (isThisPart(partRef)) {
 			visible = true;
