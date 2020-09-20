@@ -141,8 +141,7 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 					try {
 						stream= new BufferedInputStream(new FileInputStream(file));
 						final RefactoringDescriptorProxy[] existing= RefactoringCore.getHistoryService().readRefactoringHistory(stream, RefactoringDescriptor.NONE).getDescriptors();
-						final Set<RefactoringDescriptorProxy> set= new HashSet<>();
-						set.addAll(Arrays.asList(existing));
+						final Set<RefactoringDescriptorProxy> set= new HashSet<>(Arrays.asList(existing));
 						set.addAll(Arrays.asList(fRefactoringDescriptors));
 						writable= new RefactoringDescriptorProxy[set.size()];
 						set.toArray(writable);

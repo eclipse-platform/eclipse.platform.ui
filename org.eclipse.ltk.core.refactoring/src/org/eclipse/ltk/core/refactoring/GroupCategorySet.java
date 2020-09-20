@@ -72,8 +72,7 @@ public class GroupCategorySet {
 		if (two == NONE)
 			return one;
 
-		Set<GroupCategory> combined= new HashSet<>();
-		combined.addAll(one.asList());
+		Set<GroupCategory> combined= new HashSet<>(one.asList());
 		combined.addAll(two.asList());
 		return new GroupCategorySet(combined);
 	}

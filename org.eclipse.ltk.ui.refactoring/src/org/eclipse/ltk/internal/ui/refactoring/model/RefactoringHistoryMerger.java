@@ -100,8 +100,7 @@ public final class RefactoringHistoryMerger implements IStorageMerger {
 	private void performMerge(final OutputStream output, final InputStream target, final InputStream source) throws CoreException {
 		final DefaultRefactoringDescriptor[] sourceDescriptors= RefactoringHistoryManager.readRefactoringDescriptors(source);
 		final DefaultRefactoringDescriptor[] targetDescriptors= RefactoringHistoryManager.readRefactoringDescriptors(target);
-		final Set<DefaultRefactoringDescriptor> set= new HashSet<>();
-		set.addAll(Arrays.asList(sourceDescriptors));
+		final Set<DefaultRefactoringDescriptor> set= new HashSet<>(Arrays.asList(sourceDescriptors));
 		set.addAll(Arrays.asList(targetDescriptors));
 		final RefactoringDescriptor[] outputDescriptors= new RefactoringDescriptor[set.size()];
 		set.toArray(outputDescriptors);
