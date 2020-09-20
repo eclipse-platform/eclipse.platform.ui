@@ -103,9 +103,13 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 			beingDisposed = true;
 			WorkbenchPartReference reference = getReference();
 			// notify the workbench we're being closed
-			((WorkbenchPage) reference.getPage()).firePartDeactivatedIfActive(part);
-			((WorkbenchPage) reference.getPage()).firePartHidden(part);
-			((WorkbenchPage) reference.getPage()).firePartClosed(CompatibilityPart.this);
+			WorkbenchPage page = (WorkbenchPage) reference.getPage();
+			if (page == null) {
+				return;
+			}
+			page.firePartDeactivatedIfActive(part);
+			page.firePartHidden(part);
+			page.firePartClosed(CompatibilityPart.this);
 		}
 	};
 
