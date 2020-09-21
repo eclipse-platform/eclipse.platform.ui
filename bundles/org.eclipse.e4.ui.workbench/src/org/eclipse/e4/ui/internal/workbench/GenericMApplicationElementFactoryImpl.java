@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryEventListener;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
@@ -34,7 +35,6 @@ import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.osgi.service.log.LogService;
 
 /**
  * A factory which is able to build the EMF based EObjects for the given {@link MApplicationElement}
@@ -302,9 +302,7 @@ final class GenericMApplicationElementFactoryImpl {
 							EClass previousEntry = mapping.put(instanceClass, eClass);
 
 							if (previousEntry != null) {
-								Activator
-										.log(LogService.LOG_WARNING,
-												instanceClass
+								Platform.getLog(getClass()).warn(instanceClass
 														+ " is mapped to multiple EClasses (" + eClass.getName() + ", " + previousEntry.getName() + ")!"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 							}
 						}
