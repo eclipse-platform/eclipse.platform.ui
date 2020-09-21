@@ -217,6 +217,22 @@ public class ResourceItemLabelTest extends UITestCase {
 		compareStyleRanges(withDigits, ranges, "file", withFolder ? "/folder" : "");
 	}
 
+	/**
+	 * Test for Bug 566858 - java.lang.StringIndexOutOfBoundsException in
+	 * FilteredResourcesSelectionDialog with leading whitespace in resource names
+	 */
+	@Test
+	public void testBug566858_leadingWhitespace() throws Exception {
+		Position[] pos = new Position[] { new Position(0, 5) };
+		compareStyleRanges(pos, getStyleRanges(" test", " test.txt"), " test.txt", "");
+
+		pos = new Position[] { new Position(1, 4) };
+		compareStyleRanges(pos, getStyleRanges("?test", " test.txt"), " test.txt", "");
+
+		pos = new Position[] { new Position(5, 4) };
+		compareStyleRanges(pos, getStyleRanges("*.txt", " test.txt"), " test.txt", "");
+	}
+
 	private void compareStyleRanges(Position[] expected, StyleRange[] actual, String fileName, String fileParentPath) {
 		assertEquals("Length of StyleRanges is incorrect: " + printStyleRanges(actual), expected.length + 1,
 				actual.length);

@@ -662,7 +662,7 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 		}
 
 		private StyledString styleResourceExtensionMatch(IResource resource, String matchingString, Styler styler) {
-			StyledString str = new StyledString(resource.getName().trim());
+			StyledString str = new StyledString(resource.getName());
 			String resourceExtension = resource.getFileExtension();
 			int lastDotIndex = matchingString.lastIndexOf('.');
 			if (lastDotIndex == -1 || resourceExtension == null) {
