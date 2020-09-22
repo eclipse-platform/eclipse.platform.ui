@@ -1100,7 +1100,6 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 				gc.setLineWidth(2);
 				gc.drawRectangle(0, 0, dimensions, dimensions);
 				gc.dispose();
-				color.dispose();
 				colorPreviewImages.add(image);
 				return image;
 			}
