@@ -19,6 +19,6 @@
   </parent>
   <groupId>org.eclipse.e4</groupId>
   <artifactId>org.eclipse.e4.core.services</artifactId>
-  <version>2.2.400-SNAPSHOT</version>
+  <version>2.2.500-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>

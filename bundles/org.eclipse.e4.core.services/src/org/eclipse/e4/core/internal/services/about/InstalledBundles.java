@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2019 ArSysOp and others.
+ *  Copyright (c) 2019, 2020 ArSysOp and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -43,7 +43,11 @@ public class InstalledBundles implements ISystemInformation {
 	}
 
 	private String name(Bundle bundle) {
-		return bundle.getHeaders(null).get(Constants.BUNDLE_NAME);
+		String name = bundle.getHeaders(null).get(Constants.BUNDLE_NAME);
+		// Bug 567113: do not return null names because the used Collectors.toMap does
+		// not accept null values for whatever reason.
+		// And empty string is better for the used purpose anyway.
+		return name != null ? name : ""; //$NON-NLS-1$
 	}
 
 	private void writeBundleInfo(PrintWriter writer, Bundle bundle) {
