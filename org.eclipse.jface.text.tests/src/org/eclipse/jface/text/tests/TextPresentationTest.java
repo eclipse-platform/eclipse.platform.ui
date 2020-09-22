@@ -88,11 +88,6 @@ public class TextPresentationTest {
 
 	@After
 	public void tearDown() {
-		for (Color c : fColors) {
-			if (c != null && !c.isDisposed()) {
-				c.dispose();
-			}
-		}
 		fColors.clear();
 		fDisplay.dispose();
 	}
