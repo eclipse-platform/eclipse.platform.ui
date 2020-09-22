@@ -56,10 +56,4 @@ public class ColorManager implements ISharedTextColors {
 		return color;
 	}
 
-	@Override
-	public void dispose() {
-		for (Color color : fColorTable.values()) {
-			color.dispose();
-		}
-	}
 }
