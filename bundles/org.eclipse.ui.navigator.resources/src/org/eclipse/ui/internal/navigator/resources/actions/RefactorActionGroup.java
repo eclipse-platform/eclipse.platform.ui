@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -28,12 +28,12 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.actions.MoveResourceAction;
 import org.eclipse.ui.actions.RenameResourceAction;
+import org.eclipse.ui.actions.TextActionHandler;
 import org.eclipse.ui.ide.ResourceSelectionUtil;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
 
 /**
- * This is the action group for refactor actions, including global action
- * handlers for copy, paste and delete.
+ * This is the action group for refactor actions.
  *
  * @since 2.0
  */
@@ -46,6 +46,8 @@ public class RefactorActionGroup extends ActionGroup {
 	private Shell shell;
 
 	private Tree tree;
+
+	private TextActionHandler textActionHandler;
 
 	/**
 	 *
@@ -75,8 +77,12 @@ public class RefactorActionGroup extends ActionGroup {
 
 	@Override
 	public void fillActionBars(IActionBars actionBars) {
+		if (textActionHandler != null) {
+			textActionHandler.dispose();
+		}
+		textActionHandler = new TextActionHandler(actionBars, true);
+		renameAction.setTextActionHandler(textActionHandler);
 
-		// renameAction.setTextActionHandler(textActionHandler);
 		updateActionBars();
 
 		actionBars.setGlobalActionHandler(ActionFactory.MOVE.getId(), moveAction);
@@ -119,4 +125,12 @@ public class RefactorActionGroup extends ActionGroup {
 		renameAction.selectionChanged(selection);
 	}
 
+	@Override
+	public void dispose() {
+		if (textActionHandler != null) {
+			textActionHandler.dispose();
+		}
+		textActionHandler = null;
+		super.dispose();
+	}
 }

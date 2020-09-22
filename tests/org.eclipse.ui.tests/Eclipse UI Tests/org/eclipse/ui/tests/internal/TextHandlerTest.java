@@ -22,14 +22,16 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.URLTransfer;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.actions.TextActionHandler;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 /**
- * @since 3.5
+ * Test for {@link TextActionHandler}.
  *
+ * @since 3.5
  */
 @RunWith(JUnit4.class)
 public class TextHandlerTest extends UITestCase {

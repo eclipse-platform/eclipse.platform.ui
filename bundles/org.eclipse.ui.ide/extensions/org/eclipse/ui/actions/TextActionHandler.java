@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Paul Pazderski  - Add automated delegate mode to fix bug 560027
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
@@ -96,6 +97,18 @@ public class TextActionHandler {
 
 	private IActionBars actionBars;
 
+	/**
+	 * If <code>true</code> the actions (copy, past, ...) are populated from the
+	 * currently active actionBars global action handles every time a text control
+	 * is activated.
+	 * <p>
+	 * This way a user of TextActionHandler no longer has to provide the actions
+	 * which should be applied when the inline text control is inactive but
+	 * TextActionHandler will automatically use what is already registered as
+	 * respective action.
+	 */
+	private boolean autoMode = false;
+
 	private MouseAdapter mouseAdapter = new MouseAdapter() {
 		@Override
 		public void mouseUp(MouseEvent e) {
@@ -117,6 +130,7 @@ public class TextActionHandler {
 			case SWT.Activate:
 				activeTextControl = (Text) event.widget;
 				updateActionsEnableState();
+				injectTextActionHandles();
 				break;
 			case SWT.Deactivate:
 				activeTextControl = null;
@@ -371,9 +385,31 @@ public class TextActionHandler {
 	 * 	  and Select All
 	 */
 	public TextActionHandler(IActionBars actionBar) {
+		this(actionBar, false);
+	}
+
+	/**
+	 * Creates a <code>Text</code> control action handler for the global Cut, Copy,
+	 * Paste, Delete, and Select All of the action bar.
+	 *
+	 * @param actionBar the action bar to register global action handlers for Cut,
+	 *                  Copy, Paste, Delete, and Select All
+	 * @param autoMode  If <code>true</code> the actions (copy, past, ...) to use
+	 *                  while no text widget is active are automatically populated
+	 *                  from the actionBars global action handles which are active
+	 *                  at the time an inline text control is activated.
+	 *                  <p>
+	 *                  The set<em>Xxx</em>Action methods have no use if
+	 *                  <em>autoMode</em> is <code>true</code>.
+	 * @since 3.18
+	 */
+	public TextActionHandler(IActionBars actionBar, boolean autoMode) {
 		super();
-		actionBars = actionBar;
-		updateActionBars();
+		this.actionBars = actionBar;
+		this.autoMode = autoMode;
+		if (!autoMode) {
+			updateActionBars();
+		}
 	}
 
 	/**
@@ -412,13 +448,14 @@ public class TextActionHandler {
 
 		// We really want a selection listener but it is not supported so we
 		// use a key listener and a mouse listener to know when selection changes
-		// may have occured
+		// may have occurred
 		textControl.addKeyListener(keyAdapter);
 		textControl.addMouseListener(mouseAdapter);
 
 		if (textControl.isFocusControl()) {
 			activeTextControl = textControl;
 			updateActionsEnableState();
+			injectTextActionHandles();
 		}
 	}
 
@@ -596,5 +633,40 @@ public class TextActionHandler {
 		textPasteAction.updateEnabledState();
 		textSelectAllAction.updateEnabledState();
 		textDeleteAction.updateEnabledState();
+	}
+
+	/**
+	 * Replace the currently active copy, paste, etc. actions with our redirecting
+	 * text handling actions and set the redirection target to the previous active
+	 * action.
+	 * <p>
+	 * Has no function if <em>autoMode</em> is <code>false</code> because the
+	 * actions are explicit set then.
+	 */
+	private void injectTextActionHandles() {
+		if (autoMode) {
+			IAction action = actionBars.getGlobalActionHandler(ActionFactory.CUT.getId());
+			if (action != textCutAction) {
+				setCutAction(action);
+			}
+			action = actionBars.getGlobalActionHandler(ActionFactory.COPY.getId());
+			if (action != textCopyAction) {
+				setCopyAction(action);
+			}
+			action = actionBars.getGlobalActionHandler(ActionFactory.PASTE.getId());
+			if (action != textPasteAction) {
+				setPasteAction(action);
+			}
+			action = actionBars.getGlobalActionHandler(ActionFactory.SELECT_ALL.getId());
+			if (action != textSelectAllAction) {
+				setSelectAllAction(action);
+			}
+			action = actionBars.getGlobalActionHandler(ActionFactory.DELETE.getId());
+			if (action != textDeleteAction) {
+				setDeleteAction(action);
+			}
+
+			updateActionBars();
+		}
 	}
 }
