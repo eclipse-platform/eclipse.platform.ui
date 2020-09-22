@@ -548,8 +548,6 @@ public class SearchResultViewer extends TableViewer {
 	 * Updates the foreground color for potential matches.
 	 */
 	void updatedPotentialMatchFgColor() {
-		if (fPotentialMatchFgColor != null)
-			fPotentialMatchFgColor.dispose();
 		fPotentialMatchFgColor= null;
 		if (SearchPreferencePage.arePotentialMatchesEmphasized())
 			fPotentialMatchFgColor= new Color(SearchPlugin.getActiveWorkbenchShell().getDisplay(), SearchPreferencePage.getPotentialMatchForegroundColor());
