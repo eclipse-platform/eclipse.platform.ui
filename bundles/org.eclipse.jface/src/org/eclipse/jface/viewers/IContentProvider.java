@@ -31,7 +31,7 @@ public interface IContentProvider {
 	 * The default implementation does nothing.
 	 * </p>
 	 */
-	default public void dispose() {
+	default void dispose() {
 	}
 
 	/**
@@ -57,6 +57,6 @@ public interface IContentProvider {
 	 * @param newInput the new input element, or <code>null</code> if the viewer
 	 *   does not have an input
 	 */
-	default public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+	default void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 	}
 }
