@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -50,20 +50,20 @@ public class TextEditorPluginTest {
 		assertEquals(0, history.getSize());
 		history.addOrReplace(10);
 		assertEquals(1, history.getSize());
-		assertTrue(10 == history.getCurrentBrowsePoint());
+		assertEquals(10, history.getCurrentBrowsePoint().intValue());
 
 		history.addOrReplace(20);
 		assertEquals(2, history.getSize());
-		assertTrue(20 == history.getCurrentBrowsePoint());
+		assertEquals(20, history.getCurrentBrowsePoint().intValue());
 
 		history.addOrReplace(30);
 		assertEquals(3, history.getSize());
-		assertTrue(30 == history.getCurrentBrowsePoint());
+		assertEquals(30, history.getCurrentBrowsePoint().intValue());
 
 		checkContent(history, new Integer[] { 10, 20, 30 });
 
 
-		int replaced = history.addOrReplace(40);
+		int replaced= history.addOrReplace(40).intValue();
 		assertEquals(3, history.getSize());
 		assertEquals(10, replaced);
 		assertEquals(Integer.valueOf(40), history.getCurrentBrowsePoint());
@@ -88,17 +88,17 @@ public class TextEditorPluginTest {
 		assertTrue(history.contains(31));
 		assertFalse(history.contains(30));
 		assertEquals(30, replaced);
-		assertTrue(31 == history.getCurrentBrowsePoint());
+		assertEquals(31, history.getCurrentBrowsePoint().intValue());
 		checkContent(history, new Integer[] { 40, 22, 31 });
 
 		replaced = history.addOrReplace(60);
 		assertTrue(history.contains(60));
-		assertTrue(60 == history.getCurrentBrowsePoint());
+		assertEquals(60, history.getCurrentBrowsePoint().intValue());
 		assertEquals(3, history.getSize());
 		checkContent(history, new Integer[] { 22, 31, 60 });
 
-		assertTrue(31 == history.browseBackward());
-		assertTrue(31 == history.getCurrentBrowsePoint());
+		assertEquals(31, history.browseBackward().intValue());
+		assertEquals(31, history.getCurrentBrowsePoint().intValue());
 		assertEquals(3, history.getSize());
 
 		//consuming size times should bring you full circle back to origin
@@ -135,17 +135,17 @@ public class TextEditorPluginTest {
 		assertEquals(0, history.getSize());
 		history.addOrReplace(10);
 		assertEquals(1, history.getSize());
-		assertTrue(10 == history.getCurrentBrowsePoint());
+		assertEquals(10, history.getCurrentBrowsePoint().intValue());
 
 		history.addOrReplace(20);
 		assertEquals(2, history.getSize());
-		assertTrue(20 == history.getCurrentBrowsePoint());
+		assertEquals(20, history.getCurrentBrowsePoint().intValue());
 
 		history.addOrReplace(30);
 		assertEquals(3, history.getSize());
-		assertTrue(30 == history.getCurrentBrowsePoint());
+		assertEquals(30, history.getCurrentBrowsePoint().intValue());
 
-		int replaced = history.addOrReplace(22);
+		int replaced= history.addOrReplace(22).intValue();
 		assertEquals(3, history.getSize());
 		assertEquals(20, replaced);
 		assertEquals(Integer.valueOf(22), history.getCurrentBrowsePoint());
@@ -167,15 +167,15 @@ public class TextEditorPluginTest {
 		assertEquals(0, history.getSize());
 		history.addOrReplace(10);
 		assertEquals(1, history.getSize());
-		assertTrue(10 == history.getCurrentBrowsePoint());
+		assertEquals(10, history.getCurrentBrowsePoint().intValue());
 
 		history.addOrReplace(10);
 		assertEquals(1, history.getSize());
-		assertTrue(10 == history.getCurrentBrowsePoint());
+		assertEquals(10, history.getCurrentBrowsePoint().intValue());
 
 		history.addOrReplace(11);
 		assertEquals(1, history.getSize());
-		assertTrue(11 == history.getCurrentBrowsePoint());
+		assertEquals(11, history.getCurrentBrowsePoint().intValue());
 	}
 
 	@Test
@@ -217,15 +217,15 @@ public class TextEditorPluginTest {
 		assertEquals(0, history.getSize());
 		history.addOrReplace(10);
 		assertEquals(1, history.getSize());
-		assertTrue(10 == history.getCurrentBrowsePoint());
+		assertEquals(10, history.getCurrentBrowsePoint().intValue());
 
 		history.addOrReplace(20);
 		assertEquals(2, history.getSize());
-		assertTrue(20 == history.getCurrentBrowsePoint());
+		assertEquals(20, history.getCurrentBrowsePoint().intValue());
 
 		history.addOrReplace(30);
 		assertEquals(3, history.getSize());
-		assertTrue(30 == history.getCurrentBrowsePoint());
+		assertEquals(30, history.getCurrentBrowsePoint().intValue());
 
 		int replaced = history.addOrReplace(22);
 		assertEquals(3, history.getSize());
@@ -253,7 +253,7 @@ public class TextEditorPluginTest {
 		history.addOrReplace(20);
 		history.addOrReplace(30);
 
-		int replaced = history.addOrReplace(22);
+		int replaced= history.addOrReplace(22).intValue();
 		assertEquals(3, history.getSize());
 		assertEquals(20, replaced);
 		assertEquals(Integer.valueOf(22), history.getCurrentBrowsePoint());
