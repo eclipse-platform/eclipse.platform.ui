@@ -13,14 +13,16 @@
  *******************************************************************************/
 package org.eclipse.debug.core.model;
 
-
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
@@ -33,7 +35,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
 import org.eclipse.debug.internal.core.NullStreamsProxy;
 import org.eclipse.debug.internal.core.StreamsProxy;
-
 
 /**
  * Standard implementation of an <code>IProcess</code> that wrappers a system
@@ -203,11 +204,21 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	public void terminate() throws DebugException {
 		if (!isTerminated()) {
 			if (fStreamsProxy instanceof StreamsProxy) {
-				((StreamsProxy)fStreamsProxy).kill();
+				((StreamsProxy) fStreamsProxy).kill();
 			}
 			Process process = getSystemProcess();
 			if (process != null) {
+
+				List<ProcessHandle> descendants; // only a snapshot!
+				try {
+					descendants = process.descendants().collect(Collectors.toList());
+				} catch (UnsupportedOperationException e) {
+					// JVM may not support toHandle() -> assume no descendants
+					descendants = Collections.emptyList();
+				}
+
 				process.destroy();
+				descendants.forEach(ProcessHandle::destroy);
 			}
 			int attempts = 0;
 			while (attempts < MAX_WAIT_FOR_DEATH_ATTEMPTS) {

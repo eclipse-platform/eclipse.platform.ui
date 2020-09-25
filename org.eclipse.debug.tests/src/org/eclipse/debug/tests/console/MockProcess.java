@@ -18,9 +18,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -65,6 +65,9 @@ public class MockProcess extends Process {
 	private long endTime;
 	/** The simulated exit code. */
 	private int exitCode = 0;
+
+	/** The child/sub mock-processes of this mock-process. */
+	private Optional<MockProcessHandle> handle = Optional.of(new MockProcessHandle(this));
 
 	/**
 	 * Create new silent mockup process which runs for a given amount of time.
@@ -166,6 +169,15 @@ public class MockProcess extends Process {
 	}
 
 	@Override
+	public ProcessHandle toHandle() {
+		if (handle.isPresent()) {
+			return handle.get();
+		}
+		// let super implementation throw the UnsupportedOperationException
+		return super.toHandle();
+	}
+
+	@Override
 	public int waitFor() throws InterruptedException {
 		synchronized (waitForTerminationLock) {
 			while (!isTerminated()) {
@@ -242,6 +254,16 @@ public class MockProcess extends Process {
 	 */
 	public void setExitValue(int exitCode) {
 		this.exitCode = exitCode;
+	}
+
+	/**
+	 * Set the {@link ProcessHandle} of the process. A null value indices that
+	 * this process does not support {@link Process#toHandle()}.
+	 *
+	 * @param handle new process handle
+	 */
+	public void setHandle(MockProcessHandle handle) {
+		this.handle = Optional.ofNullable(handle);
 	}
 
 	/**
