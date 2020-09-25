@@ -1614,7 +1614,7 @@
             categoryId="org.eclipse.ui.presentation.default"
             id="org.eclipse.ui.workbench.TREE_TABLE_FONT">
          <description>
-            %FontsPreference.TitleFontDescription
+            %FontsPreference.TreeTableFontDescription
          </description>
       </fontDefinition>
       <colorDefinition
