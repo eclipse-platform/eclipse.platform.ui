@@ -19,6 +19,7 @@
 
 package org.eclipse.e4.ui.internal.workbench;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -472,20 +473,23 @@ public class ModelAssembler {
 
 					final EObject interalTarget = o;
 					final EStructuralFeature internalFeature = feature;
-					final MApplicationElement internalElment = el;
+					final MApplicationElement internalElement = el;
 					final EObject internalImportObject = importObject;
 
 					commands.add(() -> {
 						if (internalFeature.isMany()) {
-							logger.error("Replacing"); //$NON-NLS-1$
+							logger.error(MessageFormat.format(
+									"Replacing in {0}.\n\nFeature={1}.\n\nInternalElement={2} contributed by {3}.\n\nImportObject={4}", //$NON-NLS-1$
+									interalTarget, internalFeature.getName(), internalElement.getElementId(),
+									internalElement.getContributorURI(), internalImportObject));
 							@SuppressWarnings("unchecked")
 							List<Object> l = (List<Object>) interalTarget.eGet(internalFeature);
 							int index = l.indexOf(internalImportObject);
 							if (index >= 0) {
-								l.set(index, internalElment);
+								l.set(index, internalElement);
 							}
 						} else {
-							interalTarget.eSet(internalFeature, internalElment);
+							interalTarget.eSet(internalFeature, internalElement);
 						}
 					});
 				}
