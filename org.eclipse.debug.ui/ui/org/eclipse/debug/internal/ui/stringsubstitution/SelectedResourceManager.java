@@ -13,9 +13,20 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.stringsubstitution;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
 import java.util.Iterator;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.text.ITextSelection;
@@ -23,6 +34,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IWorkbenchPage;
@@ -37,8 +49,15 @@ import org.eclipse.ui.IWorkbenchWindow;
  */
 public class SelectedResourceManager  {
 
+	// Limit in seconds to wait on UI for accessing data
+	private static final int MAX_UI_WAIT_TIME = 10;
+
 	// singleton
 	private static SelectedResourceManager fgDefault;
+
+	// Used to avoid deadlocks while accessing UI thread from non UI code
+	private static ExecutorService executor = Executors.newSingleThreadExecutor();
+
 
 	/**
 	 * Returns the singleton resource selection manager
@@ -69,14 +88,11 @@ public class SelectedResourceManager  {
 	 * @since 3.3
 	 */
 	public IStructuredSelection getCurrentSelection() {
-		if(DebugUIPlugin.getStandardDisplay().getThread().equals(Thread.currentThread())) {
-			return getCurrentSelection0();
+		IStructuredSelection selection = getFromUI(this::getCurrentSelection0);
+		if (selection == null) {
+			selection = StructuredSelection.EMPTY;
 		}
-		else {
-			final IStructuredSelection[] selection = new IStructuredSelection[1];
-			DebugUIPlugin.getStandardDisplay().syncExec(() -> selection[0] = getCurrentSelection0());
-			return selection[0];
-		}
+		return selection;
 	}
 
 	/**
@@ -85,7 +101,7 @@ public class SelectedResourceManager  {
 	 *
 	 * @since 3.4
 	 */
-	private IStructuredSelection getCurrentSelection0() {
+	IStructuredSelection getCurrentSelection0() {
 		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
 		if(window != null) {
 			IWorkbenchPage page  = window.getActivePage();
@@ -119,14 +135,8 @@ public class SelectedResourceManager  {
 	 * @return selected resource or <code>null</code>
 	 */
 	public IResource getSelectedResource() {
-		if(DebugUIPlugin.getStandardDisplay().getThread().equals(Thread.currentThread())) {
-			return getSelectedResource0();
-		}
-		else {
-			final IResource[] resource = new IResource[1];
-			DebugUIPlugin.getStandardDisplay().syncExec(() -> resource[0] = getSelectedResource0());
-			return resource[0];
-		}
+		IResource resource = getFromUI(this::getSelectedResource0);
+		return resource;
 	}
 
 	/**
@@ -177,14 +187,8 @@ public class SelectedResourceManager  {
 	 * @return the current text selection as a <code>String</code> or <code>null</code>
 	 */
 	public String getSelectedText() {
-		if(DebugUIPlugin.getStandardDisplay().getThread().equals(Thread.currentThread())) {
-			return getSelectedText0();
-		}
-		else {
-			final String[] text = new String[1];
-			DebugUIPlugin.getStandardDisplay().syncExec(() -> text[0] = getSelectedText0());
-			return text[0];
-		}
+		String text = getFromUI(this::getSelectedText0);
+		return text;
 	}
 
 	/**
@@ -224,14 +228,81 @@ public class SelectedResourceManager  {
 	 * @since 3.2
 	 */
 	public IWorkbenchWindow getActiveWindow() {
-		if(DebugUIPlugin.getStandardDisplay().getThread().equals(Thread.currentThread())) {
-			return DebugUIPlugin.getActiveWorkbenchWindow();
-		}
-		else {
-			final IWorkbenchWindow[] window = new IWorkbenchWindow[1];
-			DebugUIPlugin.getStandardDisplay().syncExec(() -> window[0] = DebugUIPlugin.getActiveWorkbenchWindow());
-			return window[0];
+		IWorkbenchWindow window = getFromUI(DebugUIPlugin::getActiveWorkbenchWindow);
+		return window;
+	}
+
+	private <T> T getFromUI(Callable<T> call) {
+		try {
+			if (Display.getCurrent() != null) {
+				return call.call();
+			} else {
+				return runInUIThreadWithTimeout(call, MAX_UI_WAIT_TIME, TimeUnit.SECONDS);
+			}
+		} catch (TimeoutException e) {
+			reportTimeout();
+			return null;
+		} catch (Exception e) {
+			DebugUIPlugin.log(e);
+			return null;
 		}
 	}
 
+	/**
+	 * Tries to run the task in the UI thread, and gives up if UI thread does not
+	 * answer after given timeout
+	 *
+	 * @param timeout to wait for the UI lock
+	 * @return may return null
+	 * @throws Exception
+	 */
+	static <V> V runInUIThreadWithTimeout(Callable<V> callable, long timeout, TimeUnit units) throws Exception {
+		FutureTask<V> task = new FutureTask<>(() -> syncExec(callable));
+		executor.execute(task);
+		return task.get(timeout, units);
+	}
+
+	static <V> V syncExec(Callable<V> callable) throws Exception {
+		AtomicReference<V> ref = new AtomicReference<>();
+		AtomicReference<Exception> ex = new AtomicReference<>();
+		DebugUIPlugin.getStandardDisplay().syncExec(() -> {
+			try {
+				ref.set(callable.call());
+			} catch (Exception e) {
+				ex.set(e);
+			}
+		});
+		if (ex.get() != null) {
+			throw ex.get();
+		}
+		return ref.get();
+	}
+
+	/**
+	 * Reports an error the log with thread stack information for current and UI threads
+	 */
+	private static void reportTimeout() {
+		Thread nonUiThread = Thread.currentThread();
+
+		String msg = "To avoid deadlock while executing Display.syncExec() from a non UI thread '" //$NON-NLS-1$
+				+ nonUiThread.getName() + "', operation was cancelled."; //$NON-NLS-1$
+		MultiStatus main = new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, msg, null);
+
+		ThreadInfo[] threads = ManagementFactory.getThreadMXBean().getThreadInfo(
+				new long[] { nonUiThread.getId(), Display.getDefault().getThread().getId() }, true, true);
+
+		for (ThreadInfo info : threads) {
+			String childMsg;
+			if (info.getThreadId() == nonUiThread.getId()) {
+				childMsg = nonUiThread.getName() + " thread probably holding a lock and trying to acquire UI lock"; //$NON-NLS-1$
+			} else {
+				childMsg = "UI thread waiting on a job or lock."; //$NON-NLS-1$
+			}
+			Exception childEx = new IllegalStateException("Call stack for thread " + info.getThreadName()); //$NON-NLS-1$
+			childEx.setStackTrace(info.getStackTrace());
+			main.add(DebugUIPlugin.newErrorStatus(childMsg, childEx));
+		}
+
+		DebugUIPlugin.log(main);
+	}
 }
