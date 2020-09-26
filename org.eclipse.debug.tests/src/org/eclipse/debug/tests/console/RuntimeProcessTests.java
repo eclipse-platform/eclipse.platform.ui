@@ -10,9 +10,12 @@
  *
  * Contributors:
  *     Paul Pazderski - initial API and implementation
+ *     Hannes Wellmann - add tests regarding termination of descendants and timeout
  *******************************************************************************/
 package org.eclipse.debug.tests.console;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
@@ -22,11 +25,14 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.RuntimeProcess;
+import org.eclipse.debug.internal.core.DebugCoreMessages;
 import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.debug.tests.TestUtil;
 import org.junit.Test;
+import org.junit.function.ThrowingRunnable;
 
 public class RuntimeProcessTests extends AbstractDebugTest {
 
@@ -139,5 +145,42 @@ public class RuntimeProcessTests extends AbstractDebugTest {
 		runtimeProcess.terminate(); // must not throw, even toHandle() does
 
 		TestUtil.waitWhile(p -> !p.isTerminated(), runtimeProcess, 1000, p -> "RuntimePocess not terminated.");
+	}
+
+	/**
+	 * Test {@link RuntimeProcess} terminating the wrapped process which does
+	 * only terminate with a delay.
+	 */
+	@Test
+	public void testTerminateProcessWithTimeoutExeedingTermination() {
+
+		MockProcess mockProcess = new MockProcess(MockProcess.RUN_FOREVER);
+		mockProcess.setTerminationDelay(6000);
+
+		RuntimeProcess runtimeProcess = mockProcess.toRuntimeProcess();
+		ThrowingRunnable termianteProcess = () -> runtimeProcess.terminate();
+
+		DebugException timeoutException = assertThrows(DebugException.class, termianteProcess);
+		assertThat(timeoutException.getMessage(), is(DebugCoreMessages.RuntimeProcess_terminate_failed));
+	}
+
+	/**
+	 * Test {@link RuntimeProcess} terminating the wrapped process which does
+	 * only terminate with a delay.
+	 */
+	@Test
+	public void testTerminateProcessWithDescendentExceedingTimeoutForTermination() {
+
+		MockProcess childProcess = new MockProcess(MockProcess.RUN_FOREVER);
+		childProcess.setTerminationDelay(6000);
+
+		MockProcess mockProcess = new MockProcess(MockProcess.RUN_FOREVER);
+		mockProcess.setHandle(new MockProcessHandle(mockProcess, List.of(childProcess)));
+
+		RuntimeProcess runtimeProcess = mockProcess.toRuntimeProcess();
+		ThrowingRunnable termianteProcess = () -> runtimeProcess.terminate();
+
+		DebugException timeoutException = assertThrows(DebugException.class, termianteProcess);
+		assertThat(timeoutException.getMessage(), is(DebugCoreMessages.RuntimeProcess_terminate_failed));
 	}
 }

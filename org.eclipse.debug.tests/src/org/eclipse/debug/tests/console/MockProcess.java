@@ -69,6 +69,9 @@ public class MockProcess extends Process {
 	/** The child/sub mock-processes of this mock-process. */
 	private Optional<MockProcessHandle> handle = Optional.of(new MockProcessHandle(this));
 
+	/** The delay after a call to destroy() until actual termination. */
+	private int terminationDelay = 0;
+
 	/**
 	 * Create new silent mockup process which runs for a given amount of time.
 	 * Does not read input or produce any output.
@@ -191,6 +194,7 @@ public class MockProcess extends Process {
 				}
 			}
 		}
+		handle.ifPresent(MockProcessHandle::setTerminated);
 		return exitCode;
 	}
 
@@ -208,6 +212,9 @@ public class MockProcess extends Process {
 				remainingMs = timeoutMs - System.currentTimeMillis();
 			}
 		}
+		if (isTerminated()) {
+			handle.ifPresent(MockProcessHandle::setTerminated);
+		}
 		return isTerminated();
 	}
 
@@ -222,7 +229,7 @@ public class MockProcess extends Process {
 
 	@Override
 	public void destroy() {
-		destroy(0);
+		destroy(terminationDelay);
 	}
 
 	/**
@@ -235,6 +242,9 @@ public class MockProcess extends Process {
 		synchronized (waitForTerminationLock) {
 			endTime = System.currentTimeMillis() + delay;
 			waitForTerminationLock.notifyAll();
+			if (delay <= 0) {
+				handle.ifPresent(MockProcessHandle::setTerminated);
+			}
 		}
 	}
 
@@ -264,6 +274,16 @@ public class MockProcess extends Process {
 	 */
 	public void setHandle(MockProcessHandle handle) {
 		this.handle = Optional.ofNullable(handle);
+	}
+
+	/**
+	 * Set the delay between a call to destroy and the termination of this
+	 * process.
+	 *
+	 * @param delay the delay after a call to destroy() until actual termination
+	 */
+	public void setTerminationDelay(int delay) {
+		this.terminationDelay = delay;
 	}
 
 	/**

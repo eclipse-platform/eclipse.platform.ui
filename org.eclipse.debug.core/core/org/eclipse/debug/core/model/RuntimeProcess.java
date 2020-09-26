@@ -21,7 +21,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.IStatus;
@@ -52,8 +54,7 @@ import org.eclipse.debug.internal.core.StreamsProxy;
  */
 public class RuntimeProcess extends PlatformObject implements IProcess {
 
-	private static final int MAX_WAIT_FOR_DEATH_ATTEMPTS = 10;
-	private static final int TIME_TO_WAIT_FOR_THREAD_DEATH = 500; // ms
+	private static final int TERMINATION_TIMEOUT = 5000; // ms
 
 	/**
 	 * The launch this process is contained in
@@ -207,39 +208,34 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 				((StreamsProxy) fStreamsProxy).kill();
 			}
 			Process process = getSystemProcess();
-			if (process != null) {
-
-				List<ProcessHandle> descendants; // only a snapshot!
-				try {
-					descendants = process.descendants().collect(Collectors.toList());
-				} catch (UnsupportedOperationException e) {
-					// JVM may not support toHandle() -> assume no descendants
-					descendants = Collections.emptyList();
-				}
-
-				process.destroy();
-				descendants.forEach(ProcessHandle::destroy);
+			if (process == null) {
+				return;
 			}
-			int attempts = 0;
-			while (attempts < MAX_WAIT_FOR_DEATH_ATTEMPTS) {
-				try {
-					process = getSystemProcess();
-					if (process != null) {
-						fExitValue = process.exitValue(); // throws exception if process not exited
-					}
-					return;
-				} catch (IllegalThreadStateException ie) {
-				}
-				try {
-					if (process != null) {
-						process.waitFor(TIME_TO_WAIT_FOR_THREAD_DEATH, TimeUnit.MILLISECONDS);
-					} else {
-						Thread.sleep(TIME_TO_WAIT_FOR_THREAD_DEATH);
-					}
-				} catch (InterruptedException e) {
-				}
-				attempts++;
+
+			List<ProcessHandle> descendants; // only a snapshot!
+			try {
+				descendants = process.descendants().collect(Collectors.toList());
+			} catch (UnsupportedOperationException e) {
+				// JVM may not support toHandle() -> assume no descendants
+				descendants = Collections.emptyList();
 			}
+
+			process.destroy();
+			descendants.forEach(ProcessHandle::destroy);
+
+			// await termination of process and descendants
+			try { // (in total don't wait longer than TERMINATION_TIMEOUT)
+				long waitStart = System.currentTimeMillis();
+				if (process.waitFor(TERMINATION_TIMEOUT, TimeUnit.MILLISECONDS)) {
+					fExitValue = process.exitValue();
+					if (waitFor(descendants, waitStart)) {
+						return;
+					}
+				}
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
+
 			// clean-up
 			if (fMonitor != null) {
 				fMonitor.killThread();
@@ -247,6 +243,36 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 			}
 			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.TARGET_REQUEST_FAILED, DebugCoreMessages.RuntimeProcess_terminate_failed, null);
 			throw new DebugException(status);
+		}
+	}
+
+	/**
+	 * Awaits the termination of the processes of the given ProcessHandles.
+	 * <p>
+	 * If all of the specified processes terminate before {@code waitStart} +
+	 * {@link #TERMINATION_TIMEOUT} this methods returns {@code true}. If any
+	 * process has not terminated until the so specified timeout this methods
+	 * aborts waiting and returns {@code false}.
+	 * </p>
+	 *
+	 * @param descendants the list of handles to the processes to await
+	 * @param waitStart the time when await of the process termination started
+	 * @return true if each process has terminated (before timeout), else false
+	 * @throws InterruptedException if the current thread was interrupted while
+	 *             waiting
+	 */
+	private boolean waitFor(List<ProcessHandle> descendants, long waitStart) throws InterruptedException {
+		try {
+			for (ProcessHandle handle : descendants) {
+				long remainingTime = TERMINATION_TIMEOUT - (System.currentTimeMillis() - waitStart);
+				// await termination of this descendant
+				handle.onExit().get(remainingTime, TimeUnit.MILLISECONDS);
+			}
+			return true;
+		} catch (ExecutionException e) { // should not happen
+			throw new IllegalStateException(e.getCause());
+		} catch (TimeoutException e) {
+			return false; // any sub-processes timed out
 		}
 	}
 

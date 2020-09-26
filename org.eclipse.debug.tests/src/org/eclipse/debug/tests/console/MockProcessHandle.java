@@ -28,6 +28,7 @@ public class MockProcessHandle implements ProcessHandle {
 
 	private final MockProcess process;
 	private final Collection<ProcessHandle> children;
+	private final CompletableFuture<ProcessHandle> onExit = new CompletableFuture<>();
 
 	/**
 	 * Create new mockup process handle for a process without children.
@@ -60,6 +61,11 @@ public class MockProcessHandle implements ProcessHandle {
 	}
 
 	@Override
+	public CompletableFuture<ProcessHandle> onExit() {
+		return onExit; // onExit must be completed by process
+	}
+
+	@Override
 	public boolean supportsNormalTermination() {
 		return true;
 	}
@@ -85,6 +91,15 @@ public class MockProcessHandle implements ProcessHandle {
 		return Long.compare(pid(), ((MockProcessHandle) other).pid());
 	}
 
+	/**
+	 * Notify this handle that this mock-process has terminated. If this is not
+	 * called handles of descendant processes do not know about the termination
+	 * (and for descendants only the handle is queried, not the process itself).
+	 */
+	void setTerminated() {
+		onExit.complete(this);
+	}
+
 	// not yet implemented methods
 
 	@Override
@@ -99,11 +114,6 @@ public class MockProcessHandle implements ProcessHandle {
 
 	@Override
 	public Info info() {
-		throw new UnsupportedOperationException("Not yet implemented");
-	}
-
-	@Override
-	public CompletableFuture<ProcessHandle> onExit() {
 		throw new UnsupportedOperationException("Not yet implemented");
 	}
 }
