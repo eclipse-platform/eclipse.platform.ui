@@ -38,12 +38,14 @@ import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.ui.dialogs.filteredtree.FilteredTree;
 import org.eclipse.e4.ui.dialogs.filteredtree.PatternFilter;
+import org.eclipse.equinox.log.ExtendedLogEntry;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.framework.log.FrameworkLogEntry;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -825,7 +827,7 @@ public class LogView extends ViewPart implements LogListener {
 		return elements.toArray(new AbstractEntry[elements.size()]);
 	}
 
-	protected void handleClear() {
+	public void handleClear() {
 		BusyIndicator.showWhile(fTree.getDisplay(), () -> {
 			elements.clear();
 			groups.clear();
@@ -1060,12 +1062,21 @@ public class LogView extends ViewPart implements LogListener {
 
 	@Override
 	public void logged(org.osgi.service.log.LogEntry input) {
-		if (!isPlatformLogOpen())
+		if (!isPlatformLogOpen()) {
 			return;
+		}
+		FrameworkLogEntry betterInput = null;
+		if (input instanceof ExtendedLogEntry) {
+			ExtendedLogEntry logEntry = (ExtendedLogEntry) input;
+			Object context = logEntry.getContext();
+			if (context instanceof FrameworkLogEntry) {
+				betterInput = (FrameworkLogEntry) context;
+			}
+		}
 
 		if (batchEntries) {
 			// create LogEntry immediately to don't loose IStatus creation date.
-			LogEntry entry = createLogEntry(input);
+			LogEntry entry = betterInput != null ? createLogEntry(betterInput) : createLogEntry(input);
 			batchedEntries.add(entry);
 			return;
 		}
@@ -1075,7 +1086,7 @@ public class LogView extends ViewPart implements LogListener {
 			asyncRefresh(true);
 			fFirstEvent = false;
 		} else {
-			LogEntry entry = createLogEntry(input);
+			LogEntry entry = betterInput != null ? createLogEntry(betterInput) : createLogEntry(input);
 
 			if (!batchedEntries.isEmpty()) {
 				// batch new entry as well, to have only one asyncRefresh()
@@ -1119,7 +1130,6 @@ public class LogView extends ViewPart implements LogListener {
 				entry.addChild(childEntry);
 			}
 		}
-
 		return entry;
 	}
 
@@ -1144,6 +1154,20 @@ public class LogView extends ViewPart implements LogListener {
 		IStatus status = new Status(severity, input.getBundle().getSymbolicName(), input.getMessage(),
 				input.getException());
 		return createLogEntry(status);
+	}
+
+	private LogEntry createLogEntry(FrameworkLogEntry input) {
+		// create a status from OSGi LogEntry
+		IStatus status = new Status(input.getSeverity(), input.getEntry(), input.getMessage(), input.getThrowable());
+		LogEntry logEntry = createLogEntry(status);
+		FrameworkLogEntry[] children = input.getChildren();
+		if (children != null) {
+			for (FrameworkLogEntry child : children) {
+				LogEntry entry = createLogEntry(child);
+				logEntry.addChild(entry);
+			}
+		}
+		return logEntry;
 	}
 
 	private synchronized void pushEntry(LogEntry entry) {

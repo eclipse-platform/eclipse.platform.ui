@@ -21,6 +21,7 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
@@ -28,7 +29,13 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.views.log.AbstractEntry;
+import org.eclipse.ui.internal.views.log.LogEntry;
+import org.eclipse.ui.internal.views.log.LogView;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,12 +49,30 @@ public class SyncExecWhileUIThreadWaitsForLock {
 
 	private List<IStatus> reportedErrors;
 	private ILogListener listener;
+	private LogView logView;
+	private IWorkbenchPage activePage;
+	private boolean shouldClose;
 
 	@Before
 	public void setUp() throws Exception {
+		UITestCase.processEvents();
 		reportedErrors = new ArrayList<>();
 		listener = (status, plugin) -> reportedErrors.add(status);
+		activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		String viewId = "org.eclipse.pde.runtime.LogView";
+		logView = (LogView) activePage.findView(viewId);
+		if (logView == null) {
+			shouldClose = true;
+			logView = (LogView) activePage.showView(viewId);
+		}
+		UITestCase.processEvents();
+		WorkbenchPlugin.log("Log for test: init log view");
+		UITestCase.waitForJobs(100, 10000);
 		WorkbenchPlugin.getDefault().getLog().addLogListener(listener);
+
+		logView.handleClear();
+		UITestCase.waitForJobs(100, 10000);
+		UITestCase.processEventsUntil(() -> logView.getElements().length == 0, 30000);
 	}
 
 	@After
@@ -55,10 +80,13 @@ public class SyncExecWhileUIThreadWaitsForLock {
 		if (listener != null) {
 			WorkbenchPlugin.getDefault().getLog().removeLogListener(listener);
 		}
+		if (shouldClose && logView != null) {
+			activePage.hideView(logView);
+		}
 	}
 
 	@Test
-	public void testDeadlock() {
+	public void testDeadlock() throws Exception {
 		if (Thread.interrupted()) {
 			fail("Thread was interrupted at start of test");
 		}
@@ -113,7 +141,7 @@ public class SyncExecWhileUIThreadWaitsForLock {
 				display.sleep();
 			}
 			//if we waited too long, fail the test
-			if (System.currentTimeMillis()-waitStart > 60000) {
+			if (System.currentTimeMillis() - waitStart > 60000) {
 				assertTrue("Deadlock occurred", false);
 			}
 		}
@@ -123,6 +151,19 @@ public class SyncExecWhileUIThreadWaitsForLock {
 		MultiStatus status = (MultiStatus) reportedErrors.get(0);
 		assertEquals("Unexpected child status count reported: " + Arrays.toString(status.getChildren()), 2,
 				status.getChildren().length);
+
+		UITestCase.processEvents();
+		UITestCase.processEventsUntil(() -> logView.getElements().length > 0, 30000);
+		AbstractEntry[] elements = logView.getElements();
+		List<AbstractEntry> list = Arrays.asList(elements).stream()
+				.filter(x -> ((LogEntry) x).getMessage().startsWith("To avoid deadlock")).collect(Collectors.toList());
+		assertEquals("Unexpected list content: " + list, 1, list.size());
+		AbstractEntry[] children = list.get(0).getChildren(list.get(0));
+		assertEquals("Unexpected children content: " + Arrays.toString(children), 2, children.length);
+		String label = ((LogEntry) children[0]).getMessage();
+		assertTrue("Unexpected: " + label, label.startsWith("UI thread"));
+		label = ((LogEntry) children[1]).getMessage();
+		assertTrue("Unexpected: " + label, label.startsWith("SyncExec"));
 		if (Thread.interrupted()) {
 			// TODO: re-enable this check after bug 505920 is fixed
 			// fail("Thread was interrupted at end of test");

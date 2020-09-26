@@ -47,7 +47,8 @@ Require-Bundle: org.eclipse.core.resources,
  org.hamcrest.core;bundle-version="1.3.0",
  org.hamcrest.library;bundle-version="1.3.0",
  org.mockito;bundle-version="2.13.0",
- org.eclipse.jface;bundle-version="[3.18.0,4.0.0)"
+ org.eclipse.jface;bundle-version="[3.18.0,4.0.0)",
+ org.eclipse.ui.views.log;bundle-version="1.2.1300"
 Import-Package: javax.annotation,
  javax.inject
 Eclipse-AutoStart: true
