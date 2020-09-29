@@ -78,15 +78,6 @@
       </command>
    </extension>
    <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            name="%PreferencePage.externalToolsPreferences"
-            category="org.eclipse.debug.ui.DebugPreferencePage"
-            class="org.eclipse.ui.externaltools.internal.ui.ExternalToolsPreferencePage"
-            id="org.eclipse.ui.externaltools.ExternalToolsPreferencePage">
-      </page>
-   </extension>
-   <extension
          point="org.eclipse.ui.propertyPages">
       <page
             name="%PropertyPage.externalToolsBuilders"
@@ -198,9 +189,5 @@
             id="org.eclipse.ui.externaltools.workingSetComparator">
       </launchConfigurationComparator>
    </extension>
-   
-   	<extension point="org.eclipse.core.runtime.preferences">
-		<initializer class="org.eclipse.ui.externaltools.internal.model.ExternalToolsPreferenceInitializer"/>
-	</extension>
 
 </plugin>

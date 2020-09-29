@@ -82,20 +82,6 @@ public class BuilderUtils {
 	}
 
 	/**
-	 * Returns whether the given configuration is an "unmigrated" builder.
-	 * Unmigrated builders are external tools that are stored in an old format
-	 * but have not been migrated by the user. Old format builders are always
-	 * translated into launch config working copies in memory, but they're not
-	 * considered "migrated" until the config has been saved and the project spec
-	 * updated.
-	 * @param config the config to examine
-	 * @return whether the given config represents an unmigrated builder
-	 */
-	public static boolean isUnmigratedConfig(ILaunchConfiguration config) {
-		return BuilderCoreUtils.isUnmigratedConfig(config);
-	}
-
-	/**
 	 * Converts the given config to a build command which is stored in the
 	 * given command.
 	 *
@@ -154,25 +140,6 @@ public class BuilderUtils {
 		return newWorkingCopy.doSave();
 	}
 
-	/**
-	 * Migrates the launch configuration working copy, which is based on an old-
-	 * style external tool builder, to a new, saved launch configuration. The
-	 * returned launch configuration will contain the same attributes as the
-	 * given working copy with the exception of the configuration name, which
-	 * may be changed during the migration. The name of the configuration will
-	 * only be changed if the current name is not a valid name for a saved
-	 * config.
-	 *
-	 * @param workingCopy the launch configuration containing attributes from an
-	 * old-style project builder.
-	 * @return ILaunchConfiguration a new, saved launch configuration whose
-	 * attributes match those of the given working copy as well as possible
-	 * @throws CoreException if an exception occurs while attempting to save the
-	 * new launch configuration
-	 */
-	public static ILaunchConfiguration migrateBuilderConfiguration(IProject project, ILaunchConfigurationWorkingCopy workingCopy) throws CoreException {
-		return BuilderCoreUtils.migrateBuilderConfiguration(project, workingCopy);
-	}
 
 	/**
 	 * Converts the build types string into an array of
