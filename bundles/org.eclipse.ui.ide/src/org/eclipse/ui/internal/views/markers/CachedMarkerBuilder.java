@@ -15,6 +15,7 @@
 package org.eclipse.ui.internal.views.markers;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -627,9 +628,7 @@ public class CachedMarkerBuilder {
 	 * Reset change flags to false
 	 */
 	void resetChangeFlags() {
-		for (int i = 0; i < changeFlags.length; i++) {
-			this.changeFlags[i] = false;
-		}
+		Arrays.fill(this.changeFlags, false);
 	}
 
 	/**

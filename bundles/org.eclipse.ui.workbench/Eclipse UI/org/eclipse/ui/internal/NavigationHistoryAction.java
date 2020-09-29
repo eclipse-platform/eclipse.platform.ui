@@ -103,9 +103,7 @@ public class NavigationHistoryAction extends PageEventAction {
 			entries = history.getBackwardEntries();
 		}
 		int entriesCount[] = new int[entries.length];
-		for (int i = 0; i < entriesCount.length; i++) {
-			entriesCount[i] = 1;
-		}
+		Arrays.fill(entriesCount, 1);
 		entries = collapseEntries(entries, entriesCount);
 		for (int i = 0; i < entries.length; i++) {
 			if (i > MAX_HISTORY_LENGTH) {

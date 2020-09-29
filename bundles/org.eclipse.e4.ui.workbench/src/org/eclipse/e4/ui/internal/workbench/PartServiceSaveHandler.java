@@ -17,6 +17,7 @@
 package org.eclipse.e4.ui.internal.workbench;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -116,9 +117,7 @@ public class PartServiceSaveHandler implements ISaveHandler {
 	@Override
 	public Save[] promptToSave(Collection<MPart> dirtyParts) {
 		Save[] rc = new Save[dirtyParts.size()];
-		for (int i = 0; i < rc.length; i++) {
-			rc[i] = Save.YES;
-		}
+		Arrays.fill(rc, Save.YES);
 		return rc;
 	}
 
