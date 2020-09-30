@@ -12,6 +12,8 @@
      IBM Corporation - initial API and implementation
 --%>
 <%@ page import="org.eclipse.help.internal.webapp.data.*" errorPage="/advanced/err.jsp" contentType="text/html; charset=UTF-8"%>
+<%@ page import="java.util.Scanner" %>
+<%@ page import="java.net.URL" %>
 <%
 	request.setCharacterEncoding("UTF-8");
 	ServerState.webappStarted(application,request, response);	
@@ -33,7 +35,34 @@
 </body>
 </html>	
 <%
-	}else {
-		request.getRequestDispatcher("/advanced/index.jsp" + data.getQuery()).forward(request, response);
+	} else {
+
+		// Experimental UI: see bug 501718
+		String experimentalUi = System.getProperty("org.eclipse.help.webapp.experimental.ui");
+		if (request.getParameter("legacy") == null && experimentalUi != null) {
+			try {
+				// In a JSP forwarding to non JSP resources does not work
+				// (page is shown, but "java.lang.IllegalStateException: STREAM" is thrown)
+				// so read from URL instead:
+				URL baseUrl = new URL(request.getRequestURL().toString());
+				URL forwardUrl = new URL(baseUrl, experimentalUi);
+				// Same-origin policy
+				if (!baseUrl.getProtocol().equals(forwardUrl.getProtocol())
+					|| !baseUrl.getHost().equals(forwardUrl.getHost())
+					|| baseUrl.getPort() != forwardUrl.getPort()) throw new Exception();
+				// Read it as InputStream and convert it to a String
+				// (by using a Scanner with a delimiter that cannot be found: \A - start of input)
+				Scanner scanAll = new Scanner(forwardUrl.openStream()).useDelimiter("\\A");
+				response.getWriter().write(scanAll.hasNext() ? scanAll.next() : "");
+			} catch (Exception e) {
+				// Experimental UI resource not found, so fall back to legacy UI
+				request.getRequestDispatcher("/advanced/index.jsp" + data.getQuery()).forward(request, response);
+			}
+
+		// legacy UI
+		} else {
+			request.getRequestDispatcher("/advanced/index.jsp" + data.getQuery()).forward(request, response);
+		}
+
 	}
 %>

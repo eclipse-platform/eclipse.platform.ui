@@ -36,6 +36,11 @@
             base-name="/advanced"
             httpcontextId="help">
       </resource>
+      <resource
+            alias="/m"
+            base-name="/m"
+            httpcontextId="help">
+      </resource>
       <serviceSelector
             filter="(other.info=org.eclipse.help)">
       </serviceSelector>
