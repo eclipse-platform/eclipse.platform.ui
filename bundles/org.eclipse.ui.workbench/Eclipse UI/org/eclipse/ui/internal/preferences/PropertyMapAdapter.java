@@ -15,6 +15,7 @@ package org.eclipse.ui.internal.preferences;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Set;
 
 /**
  * @since 3.1
@@ -109,7 +110,24 @@ public abstract class PropertyMapAdapter implements IDynamicPropertyMap {
 
 	@Override
 	public boolean equals(Object toCompare) {
-		return toCompare instanceof IPropertyMap && PropertyUtil.isEqual(this, (IPropertyMap) toCompare);
+		return toCompare instanceof IPropertyMap && isEqual(this, (IPropertyMap) toCompare);
+	}
+
+	private static boolean isEqual(IPropertyMap map1, IPropertyMap map2) {
+		Set<String> map1Keys = map1.keySet();
+		Set<String> map2Keys = map2.keySet();
+
+		if (!map1Keys.equals(map2Keys)) {
+			return false;
+		}
+
+		for (String next : map1Keys) {
+			if (!map1.getValue(next, Object.class).equals(map2.getValue(next, Object.class))) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	protected abstract void attachListener();
