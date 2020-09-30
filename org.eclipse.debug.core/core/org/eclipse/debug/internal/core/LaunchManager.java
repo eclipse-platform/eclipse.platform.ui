@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -31,6 +31,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -527,13 +528,14 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	}
 
 	/**
-	 * Serializes a XML document into a string - encoded in UTF8 format,
-	 * with platform line separators.
+	 * Serializes a XML document into a string - encoded in UTF8 format, with
+	 * platform line separators.
 	 *
 	 * @param doc document to serialize
 	 * @return the document as a string
-	 * @throws TransformerException if an unrecoverable error occurs during the serialization
-	 * @throws IOException if the encoding attempted to be used is not supported
+	 * @throws TransformerException if an unrecoverable error occurs during the
+	 *             serialization
+	 * @throws IOException if I/O error occurs
 	 */
 	public static String serializeDocument(Document doc) throws TransformerException, IOException {
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
@@ -544,7 +546,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		DOMSource source = new DOMSource(doc);
 		StreamResult outputTarget = new StreamResult(s);
 		transformer.transform(source, outputTarget);
-		return s.toString("UTF8"); //$NON-NLS-1$
+		return s.toString(StandardCharsets.UTF_8);
 	}
 
 	/**
