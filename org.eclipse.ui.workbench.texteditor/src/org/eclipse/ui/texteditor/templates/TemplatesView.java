@@ -16,8 +16,8 @@ package org.eclipse.ui.texteditor.templates;
 
 import org.eclipse.swt.widgets.Composite;
 
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
@@ -133,7 +133,7 @@ public final class TemplatesView extends PageBookView {
 		// Try to get template page.
 		ITemplatesPage page= part.getAdapter(ITemplatesPage.class);
 		if (page == null)
-			page= Platform.getAdapterManager().getAdapter(part, ITemplatesPage.class);
+			page = Adapters.adapt(part, ITemplatesPage.class);
 		if (page == null)
 			return null; // There is no template page
 
