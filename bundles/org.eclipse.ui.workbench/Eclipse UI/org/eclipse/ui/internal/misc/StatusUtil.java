@@ -36,13 +36,13 @@ public class StatusUtil {
 	/**
 	 * Answer a flat collection of the passed status and its recursive children
 	 */
-	protected static List flatten(IStatus aStatus) {
-		List result = new ArrayList();
+	protected static List<IStatus> flatten(IStatus aStatus) {
+		List<IStatus> result = new ArrayList<>();
 
 		if (aStatus.isMultiStatus()) {
 			for (IStatus status : aStatus.getChildren()) {
 				if (status.isMultiStatus()) {
-					Iterator childStatiiEnum = flatten(status).iterator();
+					Iterator<IStatus> childStatiiEnum = flatten(status).iterator();
 					while (childStatiiEnum.hasNext()) {
 						result.add(childStatiiEnum.next());
 					}
@@ -141,13 +141,13 @@ public class StatusUtil {
 	 *
 	 * Utility method for creating status.
 	 */
-	public static IStatus newStatus(List children, String message, Throwable exception) {
+	public static IStatus newStatus(List<IStatus> children, String message, Throwable exception) {
 
-		List flatStatusCollection = new ArrayList();
-		Iterator iter = children.iterator();
+		List<IStatus> flatStatusCollection = new ArrayList<>();
+		Iterator<IStatus> iter = children.iterator();
 		while (iter.hasNext()) {
-			IStatus currentStatus = (IStatus) iter.next();
-			Iterator childrenIter = flatten(currentStatus).iterator();
+			IStatus currentStatus = iter.next();
+			Iterator<IStatus> childrenIter = flatten(currentStatus).iterator();
 			while (childrenIter.hasNext()) {
 				flatStatusCollection.add(childrenIter.next());
 			}
