@@ -375,7 +375,6 @@ public abstract class QuickAccessContents {
 		final String finalFilter = filter;
 
 		// collect matching elements
-		@SuppressWarnings("unchecked")
 		LinkedHashMap<QuickAccessProvider, List<QuickAccessElement>> elementsForProviders = new LinkedHashMap<>(
 				providers.length);
 		for (QuickAccessProvider provider : providers) {

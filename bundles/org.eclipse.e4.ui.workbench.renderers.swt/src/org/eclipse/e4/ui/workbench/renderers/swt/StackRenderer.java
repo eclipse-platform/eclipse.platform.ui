@@ -1641,7 +1641,6 @@ public class StackRenderer extends LazyStackRenderer {
 	@SuppressWarnings("javadoc")
 	public class TabStateHandler implements EventHandler {
 
-		@SuppressWarnings("restriction")
 		@Override
 		public void handleEvent(Event event) {
 			Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
@@ -1711,7 +1710,6 @@ public class StackRenderer extends LazyStackRenderer {
 		}
 	}
 
-	@SuppressWarnings("restriction")
 	static boolean isCssEngineActive(CTabItem cti) {
 		return WidgetElement.getEngine(cti.getParent()) != null;
 	}

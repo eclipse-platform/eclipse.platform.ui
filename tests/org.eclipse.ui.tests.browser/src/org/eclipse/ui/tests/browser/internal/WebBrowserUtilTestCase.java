@@ -21,7 +21,6 @@ import static org.junit.Assert.assertEquals;
 import org.eclipse.ui.internal.browser.WebBrowserUtil;
 import org.junit.Test;
 
-@SuppressWarnings("restriction")
 public class WebBrowserUtilTestCase {
 
 	private static final String URL = "http://127.0.0.1:3873/help/index.jsp";

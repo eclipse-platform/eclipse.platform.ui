@@ -113,7 +113,6 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 		engine.setClassnameAndId(widget, builder.toString(), id);
 	}
 
-	@SuppressWarnings("restriction")
 	protected void reapplyStyles(Widget widget) {
 		CSSEngine engine = WidgetElement.getEngine(widget);
 		if (engine != null) {
