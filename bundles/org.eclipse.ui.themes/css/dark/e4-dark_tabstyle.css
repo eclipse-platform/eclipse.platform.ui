@@ -52,12 +52,12 @@ CTabFolder[style~='SWT.DOWN'][style~='SWT.BOTTOM'] {
 CTabFolder.MArea {
     swt-tab-renderer: url('bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering');
     padding: 0px;
-    background-color: #515658;
-    swt-selected-tab-fill: #515658;
-    swt-unselected-tabs-color: #515658;
-    swt-outer-keyline-color: #515658;
-    swt-inner-keyline-color: #515658;
-    swt-tab-outline: #515658;
+    background-color: '#org-eclipse-ui-workbench-DARK_BACKGROUND'; 
+    swt-selected-tab-fill: '#org-eclipse-ui-workbench-DARK_BACKGROUND'; 
+    swt-unselected-tabs-color: '#org-eclipse-ui-workbench-DARK_BACKGROUND'; 
+    swt-outer-keyline-color: '#org-eclipse-ui-workbench-DARK_BACKGROUND'; 
+    swt-inner-keyline-color: '#org-eclipse-ui-workbench-DARK_BACKGROUND'; 
+    swt-tab-outline: '#org-eclipse-ui-workbench-DARK_BACKGROUND'; 
 }
 
 CTabFolder.active {
@@ -96,7 +96,7 @@ CTabFolder > Composite#ToolbarComposite {
 
 CTabFolder.MArea CTabItem, 
 CTabFolder.MArea CTabItem CLabel {
-    background-color: #515658; /* Disable HACK for background of CTabFolder inner Toolbars */
+    background-color: '#org-eclipse-ui-workbench-DARK_BACKGROUND';  /* Disable HACK for background of CTabFolder inner Toolbars */
 }
 
 CTabItem.busy {
