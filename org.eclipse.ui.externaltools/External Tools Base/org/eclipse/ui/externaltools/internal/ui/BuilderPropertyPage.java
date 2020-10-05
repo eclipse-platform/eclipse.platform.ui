@@ -939,9 +939,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		IProgressService service= PlatformUI.getWorkbench().getProgressService();
 		try {
 			service.busyCursorWhile(runnable);
-		} catch (InvocationTargetException e) {
-			return false;
-		} catch (InterruptedException e) {
+		} catch (InvocationTargetException | InterruptedException e) {
 			return false;
 		}
 		return super.performOk();
