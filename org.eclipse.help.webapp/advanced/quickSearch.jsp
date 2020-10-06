@@ -36,7 +36,8 @@ HTML, BODY {
 }
 
 BODY {
-    font:<%=prefs.getViewFont()%>;
+	font:<%=prefs.getViewFont()%>;
+	font-size:.875rem;
 	background-color: <%=prefs.getToolbarBackground()%>;
 	color:WindowText; 	
 }
@@ -67,8 +68,8 @@ TD, TR {
 
 BUTTON {
 	font:<%=prefs.getViewFont()%>;
+	font-size:.875rem;
 	margin:5px;
-    font-size:1.0em; 
 }
 
 FORM {

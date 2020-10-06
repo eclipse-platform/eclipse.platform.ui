@@ -62,6 +62,7 @@ TD, TR{
 
 BUTTON {
 	font:<%=prefs.getViewFont()%>;
+	font-size:.875rem;
 }
 
 </style>

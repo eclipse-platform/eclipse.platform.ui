@@ -44,6 +44,7 @@ BODY {
 
 TABLE {
 	font: <%=prefs.getToolbarFont()%>;
+	font-size: .875rem;
 	background:<%=prefs.getToolbarBackground()%>;
 	margin: 0px;
 	padding: 0px;
@@ -58,10 +59,10 @@ FORM {
 
 INPUT {
 	font: <%=prefs.getToolbarFont()%>;
+	font-size: .875rem;
 	margin:0px;
 	padding:0px;
 }
-
 
 #searchTable {
 	padding-<%=isRTL?"right":"left"%>:5;

@@ -15,6 +15,7 @@
 BODY {
 	color:WindowText;
 	font: <%=prefs.getViewFont()%>;
+	font-size: .875rem;
 	margin-top:5px;
 	margin-<%=isRTL?"right":"left"%>:5px;
 	padding:0;
@@ -42,6 +43,7 @@ IMG {
 
 TABLE {
 	font: <%=prefs.getViewFont()%>;
+	font-size: .875rem;
 	width:100%;
 }
 

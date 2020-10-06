@@ -14,6 +14,7 @@
 
 BODY {
 	font: <%=prefs.getViewFont()%>;
+	font-size: .875rem;
 	margin-top:5px;
 	margin-<%=isRTL?"right":"left"%>:5px;
 	padding:0;

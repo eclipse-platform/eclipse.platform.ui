@@ -18,6 +18,7 @@
 BODY {
     <%=prefs.getViewBackgroundStyle()%>
 	font:<%=prefs.getViewFont()%>;
+	font-size:.875rem;
 	margin-top:5px;
 	margin-<%=isRTL?"right":"left"%>:5px;
 	padding:0px;
@@ -34,6 +35,7 @@ TABLE, TR, TD, P {
 
 TABLE {
 	font:<%=prefs.getViewFont()%>;
+	font-size:.875rem;
 	width:100%;
 }
 
@@ -44,6 +46,7 @@ TR {
 
 INPUT {
 	font:<%=prefs.getViewFont()%>;
+	font-size:.875rem;
 	margin:0;
 	padding:0;
 	border:1px solid ThreeDShadow;

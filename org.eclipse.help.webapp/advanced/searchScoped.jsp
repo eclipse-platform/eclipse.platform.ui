@@ -45,6 +45,7 @@ BODY {
 TABLE {
 	background:<%=prefs.getToolbarBackground()%>;
 	font: <%=prefs.getToolbarFont()%>;
+	font-size: .875rem;
 	margin: 0px;
 	padding: 0px;
 	height:100%;
@@ -58,12 +59,9 @@ FORM {
 
 INPUT {
 	font: <%=prefs.getToolbarFont()%>;
+	font-size: .875rem;
 	margin:0px;
 	padding:0px;
-}
-
-INPUT {
-    font-size: 1.0em;
 }
 
 A {

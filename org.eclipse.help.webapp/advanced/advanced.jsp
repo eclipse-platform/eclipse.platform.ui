@@ -39,6 +39,7 @@ HTML {
  
 BODY {
 	font: <%=prefs.getViewFont()%>;
+	font-size: .875rem;
 	background:<%=prefs.getToolbarBackground()%>;
 	border:1px solid ThreeDShadow;
 	padding:0px;
@@ -47,6 +48,7 @@ BODY {
 
 TABLE {
 	font:<%=prefs.getViewFont()%>;
+	font-size: .875rem;
 	background:<%=prefs.getToolbarBackground()%>;
 }
 
@@ -73,6 +75,7 @@ FORM {
 	border:1px solid ThreeDShadow;
 	width:100%;
 	font:icon;
+	font-size:.875rem;
 }
 
 #booksContainer {
@@ -89,6 +92,7 @@ FORM {
 
 .button {
 	font:<%=prefs.getViewFont()%>;
+	font-size: .875rem;
 }
 
 <%

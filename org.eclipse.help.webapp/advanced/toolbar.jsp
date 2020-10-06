@@ -324,6 +324,7 @@ function menu(button, param) {
 		menu.style.top = "0px";
 		menu.style.background = "<%=prefs.getToolbarBackground()%>";
 		menu.style.font = "<%=prefs.getToolbarFont()%>";
+		menu.style.fontSize = ".875rem";
 		menu.style.border<%=isRTL ? "Right" : "Left"%> = "1px solid ThreeDShadow";
 		menu.style.borderBottom = "1px solid ThreeDShadow";
 
@@ -452,8 +453,8 @@ if(buttons.length > 0){
 <table id="container" width="100%" border="0" cellspacing="0" cellpadding="0" height="100%" style='padding-<%=isRTL?"right":"left"%>:<%=data.isIE()?"5px":"8px"%>;'>
 
 	<tr>
-		<td nowrap style="font: <%=prefs.getToolbarFont()%>" valign="middle">
-			<div id="titleTextTableDiv" style="overflow:hidden; height:22px;"><table><tr><td nowrap style="font:<%=prefs.getToolbarFont()%>"><div id="titleText" >&nbsp;<%=UrlUtil.htmlEncode(data.getTitle())%></div></td></tr></table>
+		<td nowrap style="font: <%=prefs.getToolbarFont()%>; font-size: .875rem" valign="middle">
+			<div id="titleTextTableDiv" style="overflow:hidden; height:22px;"><table><tr><td nowrap style="font:<%=prefs.getToolbarFont()%>;font-size:1em"><div id="titleText" >&nbsp;<%=UrlUtil.htmlEncode(data.getTitle())%></div></td></tr></table>
 			</div>
 		
 		

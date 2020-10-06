@@ -43,12 +43,14 @@ HTML, BODY {
  
 BODY {
 	font: <%=prefs.getViewFont()%>;
+	font-size: .875rem;
 	background:<%=prefs.getToolbarBackground()%>;
 	color: WindowText;
 }
 
 TABLE {
 	font:<%=prefs.getViewFont()%>;
+	font-size:.875rem;
 	background:<%=prefs.getToolbarBackground()%>;
 }
 
@@ -60,6 +62,7 @@ TD, TR {
 
 INPUT {
     font:<%=prefs.getViewFont()%>;
+    font-size:.875rem;
 }
 
 #workingSet {
@@ -132,10 +135,7 @@ if (data.isMozilla()) {
 
 BUTTON {
 	font:<%=prefs.getViewFont()%>;
-}
-
-BUTTON {	
-	font-size:1.0em; 
+	font-size:.875rem;
 }
 
 .expanded {

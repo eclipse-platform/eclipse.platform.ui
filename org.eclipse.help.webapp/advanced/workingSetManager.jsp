@@ -44,6 +44,7 @@ HTML, BODY {
 
 BODY {
     font:<%=prefs.getViewFont()%>;
+    font-size:.875rem;
 	background-color: <%=prefs.getToolbarBackground()%>;
 	color:WindowText; 	
 }
@@ -65,11 +66,8 @@ TD.radio {
 
 BUTTON {
 	font:<%=prefs.getViewFont()%>;
+	font-size:.875rem;
 	margin:5px;
-}
-
-BUTTON {
-    font-size:1.0em; 
 }
 
 FORM {
@@ -273,7 +271,7 @@ function sizeList() {
 
 <body dir="<%=direction%>" onload="onloadHandler()" onunload="closeWorkingSetDialog()" onresize = "sizeList()">
 <form onsubmit="selectWorkingSet();return false;">
-  	<table id="filterTable" cellspacing=0 cellpadding=0 border=0 align=center  style="background:<%=prefs.getToolbarBackground()%>; font:<%=prefs.getToolbarFont()%>;margin-top:5px;width:100%;">
+  	<table id="filterTable" cellspacing=0 cellpadding=0 border=0 align=center  style="background:<%=prefs.getToolbarBackground()%>; font:<%=prefs.getToolbarFont()%>;font-size:.875rem;margin-top:5px;width:100%;">
 		<tr><td class="radio">
 			<input id="alldocs" type="radio" name="workingSet" onclick="enableButtons()"><label for="alldocs" accesskey="<%=ServletResources.getAccessKey("selectAll", request)%>"><%=ServletResources.getLabel("selectAll", request)%></label>
 		</td></tr>
