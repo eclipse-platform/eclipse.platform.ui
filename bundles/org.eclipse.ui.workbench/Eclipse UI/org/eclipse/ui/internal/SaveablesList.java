@@ -771,7 +771,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 				case ISaveablePart2.CANCEL: // cancel
 					return true;
 				}
-			} else {
+			} else if (!modelsToSave.isEmpty()) {
 				MyListSelectionDialog dlg = new MyListSelectionDialog(shellProvider.getShell(), modelsToSave,
 						ArrayContentProvider.getInstance(), new WorkbenchPartLabelProvider(),
 						stillOpenElsewhere ? WorkbenchMessages.EditorManager_saveResourcesOptionallyMessage
