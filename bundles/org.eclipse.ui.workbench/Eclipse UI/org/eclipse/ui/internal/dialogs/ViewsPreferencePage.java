@@ -270,7 +270,10 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 
 		IEclipsePreferences prefs = getSwtRendererPreferences();
 		prefs.putBoolean(StackRenderer.MRU_KEY, enableMru.getSelection());
+		boolean themingEnabledChanged = prefs.getBoolean(PartRenderingEngine.ENABLED_THEME_KEY, true) != themingEnabled
+				.getSelection();
 		prefs.putBoolean(PartRenderingEngine.ENABLED_THEME_KEY, themingEnabled.getSelection());
+
 		prefs.putBoolean(CTabRendering.USE_ROUND_TABS, useRoundTabs.getSelection());
 		try {
 			prefs.flush();
@@ -301,6 +304,11 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 					notificationPopUp = new NotificationPopUp(getShell().getDisplay());
 					notificationPopUp.open();
 				}
+			}
+		} else if (themingEnabledChanged) {
+			if (notificationPopUp == null) {
+				notificationPopUp = new NotificationPopUp(getShell().getDisplay());
+				notificationPopUp.open();
 			}
 		}
 
