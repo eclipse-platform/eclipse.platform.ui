@@ -16,6 +16,8 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import java.text.MessageFormat;
+
 import javax.inject.Inject;
 
 import org.eclipse.core.databinding.UpdateValueStrategy;
@@ -222,10 +224,11 @@ public class HandlerEditor extends AbstractComponentEditor<MHandler> {
 	public String getDetailLabel(Object element) {
 		final MHandler handler = (MHandler) element;
 		if (handler.getCommand() != null && handler.getCommand().getCommandName() != null && handler.getCommand().getCommandName().trim().length() > 0) {
-			return handler.getCommand().getCommandName();
+			return MessageFormat.format("{0} -> {1}", handler.getElementId(), //$NON-NLS-1$
+					translate(handler.getCommand().getCommandName()));
 		}
-
-		return null;
+		return MessageFormat.format("{0} -> {1}", handler.getElementId(), //$NON-NLS-1$
+				(handler.getCommand() != null ? handler.getCommand().getElementId() : handler.getCommand()));
 	}
 
 	@Override

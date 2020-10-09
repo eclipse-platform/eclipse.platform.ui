@@ -245,7 +245,7 @@ public class CommandEditor extends AbstractComponentEditor<MCommand> {
 		if (cmd.getCommandName() != null && cmd.getCommandName().trim().length() > 0) {
 			return translate(cmd.getCommandName());
 		}
-		return null;
+		return cmd.getElementId();
 	}
 
 	@Override
