@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,8 +10,10 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Fabio Zadrozny - Bug 305336 - Ability to open a file from command line
- *                      at a specific line/col
+ *     Fabio Zadrozny  - Bug 305336 - Ability to open a file from command line
+ *                       at a specific line/col
+ *     Nitin Dahyabhai - Bug 567708 - Support for MultiPageEditorParts
+ *                       containing a TextEditor page
  ******************************************************************************/
 
 package org.eclipse.ui.internal.ide.application;
@@ -25,6 +27,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -44,6 +47,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.wizards.datatransfer.SmartImportWizard;
 import org.eclipse.urischeme.IUriSchemeProcessor;
+import org.osgi.framework.Bundle;
 
 /**
  * Helper class used to process delayed events. Events currently supported:
@@ -55,6 +59,9 @@ import org.eclipse.urischeme.IUriSchemeProcessor;
  */
 @SuppressWarnings("restriction")
 public class DelayedEventsProcessor implements Listener {
+
+	private static final String TEXTEDITOR_BUNDLE_NAME = "org.eclipse.ui.workbench.texteditor"; //$NON-NLS-1$
+	private static final String TEXTEDITOR_CLASS_NAME = "org.eclipse.ui.texteditor.ITextEditor"; //$NON-NLS-1$
 
 	private ArrayList<String> filesToOpen = new ArrayList<>(1);
 	private ArrayList<Event> urlsToOpen = new ArrayList<>(1);
@@ -207,8 +214,22 @@ public class DelayedEventsProcessor implements Listener {
 
 						if (details.line >= 1) {
 							try {
-								// Do things with reflection to avoid having to
-								// rely on the text editor plugins.
+								/*
+								 * Do things with reflection to avoid having to rely on the text editor
+								 * plug-ins.
+								 */
+								Bundle textEditorBundle = Platform.getBundle(TEXTEDITOR_BUNDLE_NAME);
+								if (textEditorBundle != null) {
+									Class<?> textEditorClass = textEditorBundle.loadClass(TEXTEDITOR_CLASS_NAME);
+									if (textEditorClass != null) {
+										Object textEditor = invoke(openEditor, "getAdapter", //$NON-NLS-1$
+												new Class[] { Class.class }, new Object[] { textEditorClass });
+										if (textEditor != null) {
+											openEditor = (IEditorPart) textEditor;
+										}
+									}
+								}
+
 								Object documentProvider = invoke(openEditor, "getDocumentProvider"); //$NON-NLS-1$
 
 								Object editorInput = invoke(openEditor, "getEditorInput"); //$NON-NLS-1$
@@ -235,7 +256,7 @@ public class DelayedEventsProcessor implements Listener {
 								invoke(openEditor, "selectAndReveal", new Class[] { int.class, int.class }, //$NON-NLS-1$
 										new Object[] { offset, 0 });
 							} catch (Exception e) {
-								// Ignore (not an ITextEditor).
+								// Ignore (not an ITextEditor nor adaptable to one).
 							}
 						}
 					} catch (PartInitException e) {
