@@ -204,27 +204,22 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 	}
 
 	/**
-	 * Prepares the given style range before it is applied to the label. This method makes sure that
-	 * no colors are drawn when the element is selected.
-	 * The current version of the {@link StyledCellLabelProvider} will also ignore all font settings on the
-	 * style range. Clients can override.
+	 * Prepares the given style range before it is applied to the label. This method
+	 * makes sure that no colors are drawn when the element is selected. Clients can
+	 * override.
 	 *
-	 * @param styleRange
-	 *               the style range to prepare. the style range element must not be modified
-	 * @param applyColors
-	 *               specifies if colors should be applied.
-	 * @return
-	 *               returns the style range to use on the label
+	 * @param styleRange  the style range to prepare. the style range element must
+	 *                    not be modified
+	 * @param applyColors specifies if colors should be applied.
+	 * @return returns the style range to use on the label
 	 */
 	protected StyleRange prepareStyleRange(StyleRange styleRange, boolean applyColors) {
 		// if no colors apply or font is set, create a clone and clear the
 		// colors and font
 		if (!applyColors && (styleRange.foreground != null || styleRange.background != null)) {
 			styleRange = (StyleRange) styleRange.clone();
-			if (!applyColors) {
-				styleRange.foreground = null;
-				styleRange.background = null;
-			}
+			styleRange.foreground = null;
+			styleRange.background = null;
 		}
 		return styleRange;
 	}
