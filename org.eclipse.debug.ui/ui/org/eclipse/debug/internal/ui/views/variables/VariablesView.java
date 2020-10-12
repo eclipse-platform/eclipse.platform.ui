@@ -76,6 +76,7 @@ import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.contexts.IDebugContextService;
+import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -85,6 +86,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.LocalSelectionTransfer;
@@ -108,6 +110,7 @@ import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -115,6 +118,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IActionBars;
@@ -128,6 +132,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.handlers.CollapseAllHandler;
@@ -145,10 +150,14 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		IViewerUpdateListener, IDetailPaneContainer2, ISaveablePart2 {
 
 	private static final String COLLAPSE_ALL = "CollapseAll"; //$NON-NLS-1$
+	/**
+	 * Unique ID of variables view tree viewer used for CSS styling
+	 */
+	private static final String CSS_VARIABLES_VIEWER_ID = "VariablesViewer"; //$NON-NLS-1$
 
 	/**
-	 * Selection provider wrapping an exchangeable active selection provider.
-	 * Sends out a selection changed event when the active selection provider changes.
+	 * Selection provider wrapping an exchangeable active selection provider. Sends
+	 * out a selection changed event when the active selection provider changes.
 	 * Forwards all selection changed events of the active selection provider.
 	 */
 	private static class SelectionProviderWrapper implements ISelectionProvider {
@@ -386,6 +395,10 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 */
 	private IPresentationContext fPresentationContext;
 
+	private Font variablesTreeFont;
+
+	private TreeModelViewer variablesViewer;
+
 	/**
 	 * Remove myself as a selection listener
 	 * and preference change listener.
@@ -413,6 +426,9 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		}
 		fInputService.dispose();
 		fSelectionProvider.dispose();
+		if (variablesTreeFont != null) {
+			variablesTreeFont.dispose();
+		}
 		super.dispose();
 	}
 
@@ -459,7 +475,11 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		if (propertyName.equals(IDebugUIConstants.PREF_CHANGED_DEBUG_ELEMENT_COLOR) ||
 				propertyName.equals(IDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND) ||
 				propertyName.equals(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT)) {
-			getViewer().refresh();
+			Viewer viewer = getViewer();
+			if (viewer == variablesViewer) {
+				setVariablesViewerTreeFont(variablesViewer);
+			}
+			viewer.refresh();
 		}
 	}
 
@@ -476,10 +496,12 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 		JFaceResources.getFontRegistry().addListener(this);
 
-		TreeModelViewer variablesViewer = createTreeViewer(fSashForm);
+		variablesViewer = createTreeViewer(fSashForm);
 		fInputService = new ViewerInputService(variablesViewer, fRequester);
 
 		fSashForm.setMaximizedControl(variablesViewer.getControl());
+		setVariablesViewerTreeFont(variablesViewer);
+
 		fDetailsAnchor = SWTFactory.createComposite(fSashForm, parent.getFont(), 1, 1, GridData.FILL_BOTH, 0, 0);
 		fSashForm.setWeights(getLastSashWeights());
 
@@ -508,6 +530,21 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		initDragAndDrop(variablesViewer);
 
 		return variablesViewer;
+	}
+
+	private void setVariablesViewerTreeFont(TreeModelViewer variablesViewer) {
+		Tree tree = variablesViewer.getTree();
+		FontDescriptor fontDescriptor = JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT);
+		Font oldVariablesTreeFont = variablesTreeFont;
+		variablesTreeFont = fontDescriptor.createFont(tree.getDisplay());
+		tree.setFont(variablesTreeFont); // needed when themes are disabled
+		if (oldVariablesTreeFont != null) {
+			oldVariablesTreeFont.dispose();
+		}
+		IStylingEngine engine = PlatformUI.getWorkbench().getService(IStylingEngine.class);
+		if (engine != null) {
+			engine.setId(tree, CSS_VARIABLES_VIEWER_ID);
+		}
 	}
 
 	/**
@@ -616,7 +653,6 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		int style = getViewerStyle();
 		fPresentationContext = new DebugModelPresentationContext(getPresentationContextId(), this, fModelPresentation);
 		final TreeModelViewer variablesViewer = new TreeModelViewer(parent, style, fPresentationContext);
-
 		variablesViewer.getControl().addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent e) {

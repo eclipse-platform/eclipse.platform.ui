@@ -9,19 +9,6 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 
-#DebugBreadcrumbComposite
-#DebugBreadcrumbComposite > Composite,
-#DebugBreadcrumbItemComposite,
-#DebugBreadcrumbItemDetailComposite,
-#DebugBreadcrumbItemDetailTextComposite,
-#DebugBreadcrumbItemDetailImageComposite,
-#DebugBreadcrumbItemDetailTextLabel,
-#DebugBreadcrumbItemDetailImageLabel,
-#DebugBreadcrumbItemDropDownToolBar
-{
-    background-color:COLOR-WIDGET-LIGHT-SHADOW;
-}
-
 #VariablesViewer {
     font-family: '#org-eclipse-debug-ui-VariableTextFont';
 }

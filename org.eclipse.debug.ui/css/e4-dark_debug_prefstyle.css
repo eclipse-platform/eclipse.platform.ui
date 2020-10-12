@@ -46,3 +46,7 @@ IEclipsePreferences#org-eclipse-debug-ui {
     background-color:#515658;
     color: white;
 }
+
+#VariablesViewer {
+    font-family: '#org-eclipse-debug-ui-VariableTextFont';
+}
