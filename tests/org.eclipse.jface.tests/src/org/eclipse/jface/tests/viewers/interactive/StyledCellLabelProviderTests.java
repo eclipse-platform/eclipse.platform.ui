@@ -31,6 +31,7 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -86,6 +87,7 @@ public class StyledCellLabelProviderTests {
 	}
 
 	protected boolean useBold;
+	protected boolean useItalicViaFontStyleAttribute;
 	protected TableViewerColumn column;
 
 	public StyledCellLabelProviderTests() {
@@ -116,7 +118,10 @@ public class StyledCellLabelProviderTests {
 		stylingButton.setSelection(true);
 
 		final Button boldButton = new Button(composite, SWT.CHECK);
-		boldButton.setText("use bold");
+		boldButton.setText("use bold (using TextStyle.font)");
+
+		final Button italicViaFontStyleButton = new Button(composite, SWT.CHECK);
+		italicViaFontStyleButton.setText("use bold + italic (using StyleRange.fontStyle)");
 
 		final Button leftButton = new Button(composite, SWT.RADIO);
 		leftButton.setText("align left");
@@ -138,6 +143,14 @@ public class StyledCellLabelProviderTests {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				useBold = boldButton.getSelection();
+				tableViewer.refresh();
+			}
+		});
+
+		italicViaFontStyleButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				useItalicViaFontStyleAttribute = italicViaFontStyleButton.getSelection();
 				tableViewer.refresh();
 			}
 		});
@@ -237,12 +250,19 @@ public class StyledCellLabelProviderTests {
 	private class ExampleLabelProvider extends StyledCellLabelProvider {
 
 		private final Styler fBoldStyler;
+		private final Styler fItalicStylerViaFontStyle;
 
 		public ExampleLabelProvider(final Font boldFont) {
 			fBoldStyler= new Styler() {
 				@Override
 				public void applyStyles(TextStyle textStyle) {
 					textStyle.font= boldFont;
+				}
+			};
+			fItalicStylerViaFontStyle = new Styler() {
+				@Override
+				public void applyStyles(TextStyle textStyle) {
+					((StyleRange) textStyle).fontStyle = SWT.BOLD | SWT.ITALIC;
 				}
 			};
 		}
@@ -254,7 +274,16 @@ public class StyledCellLabelProviderTests {
 			if (element instanceof File) {
 				File file= (File) element;
 
-				Styler style= file.isDirectory() && useBold ? fBoldStyler: null;
+				Styler style = null;
+				if (file.isDirectory()) {
+					if (useBold) {
+						style = fBoldStyler;
+					}
+				} else {
+					if (useItalicViaFontStyleAttribute) {
+						style = fItalicStylerViaFontStyle;
+					}
+				}
 				StyledString styledString= new StyledString(file.getName(), style);
 				String decoration = MessageFormat.format(" ({0} bytes)", Long.valueOf(file.length())); //$NON-NLS-1$
 				styledString.append(decoration, StyledString.COUNTER_STYLER);

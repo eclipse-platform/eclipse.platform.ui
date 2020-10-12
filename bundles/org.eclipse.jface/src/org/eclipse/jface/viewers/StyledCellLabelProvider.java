@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,14 +12,21 @@
  *     IBM Corporation - initial API and implementation
  *     Michael Krkoska - initial API and implementation (bug 188333)
  *     Pawel Piech - Bug 291245 - [Viewers] StyledCellLabelProvider.paint(...) does not respect column alignment
+ *     SAP SE - Bug 350041 - StyledCellLabelProvider ignores fontStyle parameter of StyleRange
  *******************************************************************************/
 package org.eclipse.jface.viewers;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Device;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
@@ -74,6 +81,8 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 	private ViewerColumn column;
 
 	private int deltaOfLastMeasure;
+
+	private final HashMap<Font, Map<Integer /* style */, Font>> styledFonts = new HashMap<>();
 
 	/**
 	 * Creates a new StyledCellLabelProvider. By default, owner draw is enabled, focus is drawn and no
@@ -174,6 +183,14 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 
 		this.viewer= null;
 		this.column= null;
+
+		this.styledFonts.forEach((font, styledFonts) -> {
+			styledFonts.forEach((style, styledFont) -> {
+				styledFont.dispose();
+			});
+			styledFonts.clear();
+		});
+		this.styledFonts.clear();
 
 		super.dispose();
 	}
@@ -283,6 +300,7 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 		if (styleRanges != null) { // user didn't fill styled ranges
 			for (StyleRange styleRange : styleRanges) {
 				StyleRange curr = prepareStyleRange(styleRange, applyColors);
+				curr = transformFontStyleToFont(layout.getDevice(), cell.getFont(), curr);
 				layout.setStyle(curr, curr.start, curr.start + curr.length - 1);
 				if (curr.font != null) {
 					containsOtherFont= true;
@@ -294,6 +312,25 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 			textWidthDelta = layout.getBounds().width - originalTextWidth;
 		}
 		return textWidthDelta;
+	}
+
+	private StyleRange transformFontStyleToFont(Device layoutDevice, Font cellFont, StyleRange styleRange) {
+		// as per the StyleRange contract, only consider fontStyle if font is not
+		// already set
+		if (styleRange.font == null && styleRange.fontStyle > 0) {
+			Font baseFont = cellFont != null ? cellFont : layoutDevice.getSystemFont();
+			StyleRange newRange = (StyleRange) styleRange.clone();
+			newRange.font = styledFonts.computeIfAbsent(baseFont, f -> new HashMap<>())
+					.computeIfAbsent(Integer.valueOf(styleRange.fontStyle), s -> {
+						FontData[] fontDatas = baseFont.getFontData();
+						for (FontData fontData : fontDatas) {
+							fontData.setStyle(styleRange.fontStyle);
+						}
+						return new Font(baseFont.getDevice(), fontDatas);
+					});
+			return newRange;
+		}
+		return styleRange;
 	}
 
 	@Override
