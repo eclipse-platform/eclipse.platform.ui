@@ -25,8 +25,7 @@ import org.eclipse.swt.widgets.Text;
  *
  * @since 3.2
  */
-public class TextContentAdapter implements IControlContentAdapter,
-		IControlContentAdapter2 {
+public class TextContentAdapter implements IControlContentAdapter, IControlContentAdapter2 {
 
 	@Override
 	public String getControlContents(Control control) {
@@ -34,15 +33,13 @@ public class TextContentAdapter implements IControlContentAdapter,
 	}
 
 	@Override
-	public void setControlContents(Control control, String text,
-			int cursorPosition) {
+	public void setControlContents(Control control, String text, int cursorPosition) {
 		((Text) control).setText(text);
 		((Text) control).setSelection(cursorPosition, cursorPosition);
 	}
 
 	@Override
-	public void insertControlContents(Control control, String text,
-			int cursorPosition) {
+	public void insertControlContents(Control control, String text, int cursorPosition) {
 		Point selection = ((Text) control).getSelection();
 		((Text) control).insert(text);
 		// Insert will leave the cursor at the end of the inserted text. If this
