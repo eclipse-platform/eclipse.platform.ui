@@ -1866,25 +1866,27 @@ public class ContentProposalAdapter {
 	}
 
 	/**
-	 * Open the proposal popup and display the proposals provided by the
-	 * proposal provider. This method returns immediately. That is, it does not
-	 * wait for a proposal to be selected. This method is used by subclasses to
-	 * explicitly invoke the opening of the popup. If there are no proposals to
-	 * show, the popup will not open and a beep will be sounded.
+	 * Open the proposal popup and display the proposals provided by the proposal
+	 * provider. This method returns immediately. That is, it does not wait for a
+	 * proposal to be selected. This method is used to explicitly invoke the opening
+	 * of the popup. If there are no proposals to show, the popup will not open and
+	 * a beep will be sounded.
+	 *
+	 * @since 3.22
 	 */
-	protected void openProposalPopup() {
+	public void openProposalPopup() {
 		openProposalPopup(false);
 	}
 
 	/**
-	 * Close the proposal popup without accepting a proposal. This method
-	 * returns immediately, and has no effect if the proposal popup was not
-	 * open. This method is used by subclasses to explicitly close the popup
-	 * based on additional logic.
+	 * Close the proposal popup without accepting a proposal. This method returns
+	 * immediately, and has no effect if the proposal popup was not open. This
+	 * method is used by subclasses to explicitly close the popup based on
+	 * additional logic.
 	 *
-	 * @since 3.3
+	 * @since 3.22
 	 */
-	protected void closeProposalPopup() {
+	public void closeProposalPopup() {
 		if (popup != null) {
 			popup.close();
 		}
