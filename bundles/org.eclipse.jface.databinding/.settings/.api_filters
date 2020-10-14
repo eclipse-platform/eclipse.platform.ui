@@ -32,11 +32,315 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/jface/databinding/swt/SWTObservables.java" type="org.eclipse.jface.databinding.swt.SWTObservables">
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.SWTObservables"/>
+                <message_argument value="getRealm(Display)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.SWTObservables"/>
+                <message_argument value="observeBackground(Control)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.SWTObservables"/>
+                <message_argument value="observeBounds(Control)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.SWTObservables"/>
+                <message_argument value="observeDelayedValue(int, ISWTObservableValue)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.SWTObservables"/>
+                <message_argument value="observeEditable(Control)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.SWTObservables"/>
+                <message_argument value="observeEnabled(Control)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.SWTObservables"/>
+                <message_argument value="observeEnabled(Widget)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.SWTObservables"/>
+                <message_argument value="observeFocus(Control)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.SWTObservables"/>
+                <message_argument value="observeFont(Control)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.SWTObservables"/>
+                <message_argument value="observeForeground(Control)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.SWTObservables"/>
+                <message_argument value="observeImage(Widget)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.SWTObservables"/>
+                <message_argument value="observeItems(Control)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.SWTObservables"/>
+                <message_argument value="observeLocation(Control)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.SWTObservables"/>
+                <message_argument value="observeMax(Control)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.SWTObservables"/>
+                <message_argument value="observeMessage(Widget)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.SWTObservables"/>
+                <message_argument value="observeMin(Control)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.SWTObservables"/>
+                <message_argument value="observeSelection(Control)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.SWTObservables"/>
+                <message_argument value="observeSelection(Widget)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.SWTObservables"/>
+                <message_argument value="observeSingleSelectionIndex(Control)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.SWTObservables"/>
+                <message_argument value="observeSize(Control)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.SWTObservables"/>
+                <message_argument value="observeText(Control)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.SWTObservables"/>
+                <message_argument value="observeText(Control, int)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.SWTObservables"/>
+                <message_argument value="observeText(Control, int[])"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.SWTObservables"/>
+                <message_argument value="observeText(Widget)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.SWTObservables"/>
+                <message_argument value="observeTooltipText(Control)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.SWTObservables"/>
+                <message_argument value="observeTooltipText(Widget)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.SWTObservables"/>
+                <message_argument value="observeVisible(Control)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338948223">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.SWTObservables"/>
+                <message_argument value="SWTObservables()"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/jface/databinding/swt/WidgetListProperty.java" type="org.eclipse.jface.databinding.swt.WidgetListProperty">
         <filter comment="Extending interface in accordance with the API specification." id="576725006">
             <message_arguments>
                 <message_argument value="IWidgetListProperty&lt;S, E&gt;"/>
                 <message_argument value="WidgetListProperty&lt;S, E&gt;"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/jface/databinding/swt/WidgetProperties.java" type="org.eclipse.jface.databinding.swt.WidgetProperties">
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="background()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="bounds()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="editable()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="enabled()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="focused()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="font()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="foreground()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="image()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="items()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="location()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="maximum()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="message()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="minimum()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="selection()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="singleSelectionIndex()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="size()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="text()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="text(int)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="text(int[])"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="tooltipText()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="visible()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338948223">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="WidgetProperties()"/>
             </message_arguments>
         </filter>
     </resource>
@@ -112,6 +416,56 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/jface/databinding/viewers/ViewerProperties.java" type="org.eclipse.jface.databinding.viewers.ViewerProperties">
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.viewers.ViewerProperties"/>
+                <message_argument value="checkedElements(Object)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.viewers.ViewerProperties"/>
+                <message_argument value="filters()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.viewers.ViewerProperties"/>
+                <message_argument value="input()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.viewers.ViewerProperties"/>
+                <message_argument value="multiplePostSelection()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.viewers.ViewerProperties"/>
+                <message_argument value="multipleSelection()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.viewers.ViewerProperties"/>
+                <message_argument value="singlePostSelection()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.viewers.ViewerProperties"/>
+                <message_argument value="singleSelection()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338948223">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.viewers.ViewerProperties"/>
+                <message_argument value="ViewerProperties()"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/jface/databinding/viewers/ViewerSetProperty.java" type="org.eclipse.jface.databinding.viewers.ViewerSetProperty">
         <filter comment="Extending interface in accordance with the API specification." id="576725006">
             <message_arguments>
@@ -125,6 +479,98 @@
             <message_arguments>
                 <message_argument value="IViewerValueProperty&lt;S, T&gt;"/>
                 <message_argument value="ViewerValueProperty&lt;S, T&gt;"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/jface/databinding/viewers/ViewersObservables.java" type="org.eclipse.jface.databinding.viewers.ViewersObservables">
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.viewers.ViewersObservables"/>
+                <message_argument value="observeCheckedElements(CheckboxTableViewer, Object)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.viewers.ViewersObservables"/>
+                <message_argument value="observeCheckedElements(CheckboxTreeViewer, Object)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.viewers.ViewersObservables"/>
+                <message_argument value="observeCheckedElements(ICheckable, Object)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.viewers.ViewersObservables"/>
+                <message_argument value="observeDelayedValue(int, IViewerObservableValue&lt;T&gt;)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.viewers.ViewersObservables"/>
+                <message_argument value="observeFilters(StructuredViewer)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.viewers.ViewersObservables"/>
+                <message_argument value="observeInput(Viewer)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.viewers.ViewersObservables"/>
+                <message_argument value="observeMultiPostSelection(IPostSelectionProvider)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.viewers.ViewersObservables"/>
+                <message_argument value="observeMultiPostSelection(StructuredViewer)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.viewers.ViewersObservables"/>
+                <message_argument value="observeMultiSelection(ISelectionProvider)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.viewers.ViewersObservables"/>
+                <message_argument value="observeMultiSelection(Viewer)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.viewers.ViewersObservables"/>
+                <message_argument value="observeSinglePostSelection(IPostSelectionProvider)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.viewers.ViewersObservables"/>
+                <message_argument value="observeSinglePostSelection(StructuredViewer)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.viewers.ViewersObservables"/>
+                <message_argument value="observeSingleSelection(ISelectionProvider)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.viewers.ViewersObservables"/>
+                <message_argument value="observeSingleSelection(Viewer)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338948223">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.viewers.ViewersObservables"/>
+                <message_argument value="ViewersObservables()"/>
             </message_arguments>
         </filter>
     </resource>
