@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2019 IBM Corporation and others.
+ * Copyright (c) 2013, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,15 +10,24 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Christoph Läubrich - add testcase for Bug #551587
+ *     Christoph Läubrich - add testcase for Bug #551587 and #567905
  ******************************************************************************/
 
 package org.eclipse.jface.tests.action;
 
+import java.util.Arrays;
+
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -110,6 +119,108 @@ public class ToolBarManagerTest extends JFaceActionTest {
 			if (!(item.getData() instanceof ControlContribution)) {
 				fail("ToolItem data is not set to ControlContribution");
 			}
+		}
+	}
+
+	public void testDefaultImageIsGray() {
+		boolean oldState = ActionContributionItem.getUseColorIconsInToolbars();
+		try {
+			ActionContributionItem.setUseColorIconsInToolbars(false);
+			ToolBarManager manager = new ToolBarManager();
+			Action action = new Action("Button with Hover") {
+			};
+			ImageDescriptor descriptor = JFaceResources.getImageRegistry().getDescriptor(Dialog.DLG_IMG_MESSAGE_INFO);
+			ImageDescriptor hoverDescriptor = JFaceResources.getImageRegistry()
+					.getDescriptor(Dialog.DLG_IMG_MESSAGE_ERROR);
+			ImageDescriptor disabledDescriptor = JFaceResources.getImageRegistry()
+					.getDescriptor(Dialog.DLG_IMG_MESSAGE_WARNING);
+			action.setImageDescriptor(descriptor);
+			action.setHoverImageDescriptor(hoverDescriptor);
+			action.setDisabledImageDescriptor(disabledDescriptor);
+			manager.add(action);
+			ToolBar toolBar = manager.createControl(createComposite());
+			ToolItem[] items = toolBar.getItems();
+			assertEquals(1, items.length);
+
+			ToolItem item = items[0];
+			assertTrue(
+					Arrays.equals(hoverDescriptor.getImageData(100).data, item.getHotImage().getImageData(100).data));
+			assertTrue(Arrays.equals(disabledDescriptor.getImageData(100).data,
+					item.getDisabledImage().getImageData(100).data));
+			ImageData imageData = item.getImage().getImageData(100);
+			for (int x = 0; x < imageData.width; x++) {
+				for (int y = 0; y < imageData.height; y++) {
+					if (imageData.getAlpha(x, y) == 255) {
+						int rgb = imageData.getPixel(x, y);
+						int r = rgb & 0xFF;
+						int g = (rgb >> 8) & 0xFF;
+						int b = (rgb >> 16) & 0xFF;
+						assertEquals(r, g);
+						assertEquals(g, b);
+					}
+				}
+
+			}
+		} finally {
+			ActionContributionItem.setUseColorIconsInToolbars(oldState);
+		}
+	}
+
+	public void testActionImagesAreSet() {
+		boolean oldState = ActionContributionItem.getUseColorIconsInToolbars();
+		try {
+			ActionContributionItem.setUseColorIconsInToolbars(true);
+			ToolBarManager manager = new ToolBarManager();
+			Action action = new Action("Button with Hover") {
+			};
+			ImageDescriptor descriptor = JFaceResources.getImageRegistry().getDescriptor(Dialog.DLG_IMG_MESSAGE_INFO);
+			ImageDescriptor hoverDescriptor = JFaceResources.getImageRegistry()
+					.getDescriptor(Dialog.DLG_IMG_MESSAGE_ERROR);
+			ImageDescriptor disabledDescriptor = JFaceResources.getImageRegistry()
+					.getDescriptor(Dialog.DLG_IMG_MESSAGE_WARNING);
+			action.setImageDescriptor(descriptor);
+			action.setHoverImageDescriptor(hoverDescriptor);
+			action.setDisabledImageDescriptor(disabledDescriptor);
+			manager.add(action);
+			ToolBar toolBar = manager.createControl(createComposite());
+			ToolItem[] items = toolBar.getItems();
+			assertEquals(1, items.length);
+
+			ToolItem item = items[0];
+			assertTrue(Arrays.equals(descriptor.getImageData(100).data, item.getImage().getImageData(100).data));
+			assertTrue(
+					Arrays.equals(hoverDescriptor.getImageData(100).data, item.getHotImage().getImageData(100).data));
+			assertTrue(Arrays.equals(disabledDescriptor.getImageData(100).data,
+					item.getDisabledImage().getImageData(100).data));
+		} finally {
+			ActionContributionItem.setUseColorIconsInToolbars(oldState);
+		}
+	}
+
+	public void testMissingIsSet() {
+		boolean oldState = ActionContributionItem.getUseColorIconsInToolbars();
+		try {
+			ActionContributionItem.setUseColorIconsInToolbars(true);
+			ToolBarManager manager = new ToolBarManager();
+			Action action = new Action("Button with Missing") {
+			};
+			action.setDisabledImageDescriptor(
+					JFaceResources.getImageRegistry().getDescriptor(Dialog.DLG_IMG_MESSAGE_WARNING));
+			manager.add(action);
+			ToolBar toolBar = manager.createControl(createComposite());
+			ToolItem[] items = toolBar.getItems();
+			assertEquals(1, items.length);
+
+			ToolItem item = items[0];
+			assertNotNull(item.getImage());
+			Image img = ImageDescriptor.getMissingImageDescriptor().createImage();
+			byte[] data = img.getImageData().data;
+			img.dispose();
+			assertTrue(Arrays.equals(data, item.getImage().getImageData(100).data));
+			assertNull(item.getHotImage());
+			assertNotNull(item.getDisabledImage());
+		} finally {
+			ActionContributionItem.setUseColorIconsInToolbars(oldState);
 		}
 	}
 

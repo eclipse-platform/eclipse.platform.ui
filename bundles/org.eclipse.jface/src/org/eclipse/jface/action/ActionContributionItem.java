@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jan-Ove Weichel <janove.weichel@vogella.com> - Bug 475879
+ *     Christoph Läubrich - Bug 567905 - [JFace] ActionContributionItem violates IAction API contract for images
  *******************************************************************************/
 package org.eclipse.jface.action;
 
@@ -989,74 +990,36 @@ public class ActionContributionItem extends ContributionItem {
 		ResourceManager parentResourceManager = JFaceResources.getResources();
 
 		if (widget instanceof ToolItem) {
-			if (USE_COLOR_ICONS) {
-				ImageDescriptor image = action.getHoverImageDescriptor();
-				if (image == null) {
-					image = action.getImageDescriptor();
-				}
-				ImageDescriptor disabledImage = action
-						.getDisabledImageDescriptor();
-
-				// Make sure there is a valid image.
-				if (image == null && forceImage) {
-					image = ImageDescriptor.getMissingImageDescriptor();
-				}
-
-				LocalResourceManager localManager = new LocalResourceManager(
-						parentResourceManager);
-
-				// performance: more efficient in SWT to set disabled and hot
-				// image before regular image
-				((ToolItem) widget)
-						.setDisabledImage(disabledImage == null ? null
-								: localManager
-										.createImageWithDefault(disabledImage));
-				((ToolItem) widget).setImage(image == null ? null
-						: localManager.createImageWithDefault(image));
-
-				disposeOldImages();
-				imageManager = localManager;
-
-				return image != null;
-			}
 			ImageDescriptor image = action.getImageDescriptor();
 			ImageDescriptor hoverImage = action.getHoverImageDescriptor();
 			ImageDescriptor disabledImage = action.getDisabledImageDescriptor();
-
-			// If there is no regular image, but there is a hover image,
-			// convert the hover image to gray and use it as the regular image.
-			if (image == null && hoverImage != null) {
-				image = ImageDescriptor.createWithFlags(action
-						.getHoverImageDescriptor(), SWT.IMAGE_GRAY);
-			} else {
-				// If there is no hover image, use the regular image as the
-				// hover image,
-				// and convert the regular image to gray
-				if (hoverImage == null && image != null) {
-					hoverImage = image;
-					image = ImageDescriptor.createWithFlags(action
-							.getImageDescriptor(), SWT.IMAGE_GRAY);
-				}
-			}
-
-			// Make sure there is a valid image.
-			if (hoverImage == null && image == null && forceImage) {
+			// Make sure there is a valid image in case images are forced.
+			if (image == null && forceImage) {
 				image = ImageDescriptor.getMissingImageDescriptor();
 			}
-
+			// in grayscale mode, use the regular image if no explicit hover is given
+			if (hoverImage == null && !USE_COLOR_ICONS) {
+				hoverImage = image;
+			}
+			// If there is no disabled image, but there is a regular image generate a
+			// disabled one
+			if (disabledImage == null && image != null) {
+				disabledImage = ImageDescriptor.createWithFlags(image, SWT.IMAGE_GRAY);
+			}
+			if (image != null && !USE_COLOR_ICONS) {
+				image = ImageDescriptor.createWithFlags(image, SWT.IMAGE_GRAY);
+			}
 			// Create a local resource manager to remember the images we've
 			// allocated for this tool item
-			LocalResourceManager localManager = new LocalResourceManager(
-					parentResourceManager);
+			LocalResourceManager localManager = new LocalResourceManager(parentResourceManager);
 
 			// performance: more efficient in SWT to set disabled and hot image
 			// before regular image
-			((ToolItem) widget).setDisabledImage(disabledImage == null ? null
-					: localManager.createImageWithDefault(disabledImage));
-			((ToolItem) widget).setHotImage(hoverImage == null ? null
-					: localManager.createImageWithDefault(hoverImage));
-			((ToolItem) widget).setImage(image == null ? null : localManager
-					.createImageWithDefault(image));
+			((ToolItem) widget).setDisabledImage(
+					disabledImage == null ? null : localManager.createImageWithDefault(disabledImage));
+			((ToolItem) widget)
+					.setHotImage(hoverImage == null ? null : localManager.createImageWithDefault(hoverImage));
+			((ToolItem) widget).setImage(image == null ? null : localManager.createImageWithDefault(image));
 
 			// Now that we're no longer referencing the old images, clear them
 			// out.
