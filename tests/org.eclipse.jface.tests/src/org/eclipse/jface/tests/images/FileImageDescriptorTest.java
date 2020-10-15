@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     Karsten Stoeckmann <ngc2997@gmx.net> - Test case for Bug 220766
  *     		[JFace] ImageRegistry.get does not work as expected (crashes with NullPointerException)
+ *     Christoph Läubrich - Bug 567898 - [JFace][HiDPI] ImageDescriptor support alternative naming scheme for high dpi 
  ******************************************************************************/
 
 package org.eclipse.jface.tests.images;
@@ -26,6 +27,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
@@ -127,6 +129,26 @@ public class FileImageDescriptorTest extends TestCase {
 
 		Image image = descriptor.createImage(true);
 		assertTrue("Did not find default image", image != null);
+	}
+
+	public void testGetxName() {
+		ImageDescriptor descriptor = ImageDescriptor.createFromFile(FileImageDescriptorTest.class,
+				"/icons/imagetests/zoomIn.png");
+		ImageData imageData = descriptor.getImageData(100);
+		assertNotNull(imageData);
+		ImageData imageDataZoomed = descriptor.getImageData(200);
+		assertNotNull(imageDataZoomed);
+		assertEquals(imageData.width * 2, imageDataZoomed.width);
+	}
+
+	public void testGetxPath() {
+		ImageDescriptor descriptor = ImageDescriptor.createFromFile(FileImageDescriptorTest.class,
+				"/icons/imagetests/16x16/zoomIn.png");
+		ImageData imageData = descriptor.getImageData(100);
+		assertNotNull(imageData);
+		ImageData imageDataZoomed = descriptor.getImageData(200);
+		assertNotNull(imageDataZoomed);
+		assertEquals(imageData.width * 2, imageDataZoomed.width);
 	}
 
 }

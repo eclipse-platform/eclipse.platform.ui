@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 483465
+ *     Christoph Läubrich - Bug 567898 - [JFace][HiDPI] ImageDescriptor support alternative naming scheme for high dpi 
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
@@ -74,7 +75,17 @@ class URLImageDescriptor extends ImageDescriptor {
 			if (tempURL != null) {
 				URL xUrl = getxURL(tempURL, zoom);
 				if (xUrl != null) {
-					return URLImageDescriptor.getImageData(xUrl);
+					ImageData xdata = URLImageDescriptor.getImageData(xUrl);
+					if (xdata != null) {
+						return xdata;
+					}
+				}
+				String xpath = FileImageDescriptor.getxPath(url, zoom);
+				if (xpath != null) {
+					URL xPathUrl = getURL(xpath);
+					if (xPathUrl != null) {
+						return URLImageDescriptor.getImageData(xPathUrl);
+					}
 				}
 			}
 			return null;

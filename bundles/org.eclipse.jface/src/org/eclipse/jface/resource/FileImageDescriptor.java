@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Christoph Läubrich - Bug 567898 - [JFace][HiDPI] ImageDescriptor support alternative naming scheme for high dpi
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
@@ -20,6 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IStatus;
@@ -38,6 +41,8 @@ import org.eclipse.swt.graphics.ImageFileNameProvider;
  * An image descriptor that loads its image information from a file.
  */
 class FileImageDescriptor extends ImageDescriptor {
+
+	private static final Pattern XPATH_PATTERN = Pattern.compile("(\\d+)x(\\d+)"); //$NON-NLS-1$
 
 	private class ImageProvider implements ImageFileNameProvider {
 		@Override
@@ -94,31 +99,24 @@ class FileImageDescriptor extends ImageDescriptor {
 	 * <p>
 	 * The FileImageDescriptor implementation of this method is not used by
 	 * {@link ImageDescriptor#createImage(boolean, Device)} as of version
-	 * 3.4 so that the SWT OS optimised loading can be used.
+	 * 3.4 so that the SWT OS optimized loading can be used.
 	 */
 	@Override
 	public ImageData getImageData(int zoom) {
 		InputStream in = getStream(zoom);
-		ImageData result = null;
 		if (in != null) {
-			try {
-				result = new ImageData(in);
+			try (BufferedInputStream stream = new BufferedInputStream(in)) {
+				return new ImageData(stream);
 			} catch (SWTException e) {
 				if (e.code != SWT.ERROR_INVALID_IMAGE) {
 					throw e;
 					// fall through otherwise
 				}
-			} finally {
-				try {
-					in.close();
-				} catch (IOException e) {
-					// System.err.println(getClass().getName()+".getImageData():
-					// "+
-					// "Exception while closing InputStream : "+e);
-				}
+			} catch (IOException ioe) {
+				// fall through
 			}
 		}
-		return result;
+		return null;
 	}
 
 	/**
@@ -130,33 +128,62 @@ class FileImageDescriptor extends ImageDescriptor {
 	 *         file cannot be found
 	 */
 	private InputStream getStream(int zoom) {
-		String xName = getxName(name, zoom);
-		if (xName == null) {
-			return null;
+		if (zoom == 100) {
+			return getStream(name);
 		}
-		InputStream is = null;
 
-		if (location != null) {
-			is = location.getResourceAsStream(xName);
+		InputStream xstream = getStream(getxName(name, zoom));
+		if (xstream != null) {
+			return xstream;
+		}
 
-		} else {
+		InputStream xpath = getStream(getxPath(name, zoom));
+		if (xpath != null) {
+			return xpath;
+		}
+
+		return null;
+	}
+
+	/**
+	 * try to obtain a stream for a given name, if the name does not match a valid
+	 * resource null is returned
+	 *
+	 * @param fileName the filename to check
+	 * @return an {@link InputStream} to read from, or <code>null</code> if fileName
+	 *         does not denotes an existing resource
+	 */
+	private InputStream getStream(String fileName) {
+		if (fileName != null) {
+			if (location != null) {
+				return location.getResourceAsStream(fileName);
+			}
 			try {
-				is = new FileInputStream(xName);
+				return new FileInputStream(fileName);
 			} catch (FileNotFoundException e) {
 				return null;
 			}
 		}
-		if (is == null) {
-			return null;
+		return null;
+	}
+
+	static String getxPath(String name, int zoom) {
+		Matcher matcher = XPATH_PATTERN.matcher(name);
+		if (matcher.find()) {
+			try {
+				int current = Integer.parseInt(matcher.group(1));
+				int desired = (int) ((zoom / 100d) * current);
+				String lead = name.substring(0, matcher.start(1));
+				String tail = name.substring(matcher.end(2));
+				return lead + desired + "x" + desired + tail; //$NON-NLS-1$
+			} catch (RuntimeException e) {
+				// should never happen but if then we can't use the alternative name...
+			}
 		}
-		return new BufferedInputStream(is);
+		return null;
 	}
 
 	static String getxName(String name, int zoom) {
-		// see also URLImageDescriptor#getxURL(URL, int)
-		if (zoom == 100) {
-			return name;
-		}
 		int dot = name.lastIndexOf('.');
 		if (dot != -1 && (zoom == 150 || zoom == 200)) {
 			String lead = name.substring(0, dot);
