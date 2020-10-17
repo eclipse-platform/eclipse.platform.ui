@@ -77,6 +77,7 @@ public class ThemeEngine implements IThemeEngine {
 	private List<IResourceLocator> globalSourceLocators = new ArrayList<>();
 
 	private HashMap<String, List<String>> stylesheets = new HashMap<>();
+	private HashMap<String, List<String>> stylesheetPluginExtensions = new HashMap<>();
 	private HashMap<String, List<String>> modifiedStylesheets = new HashMap<>();
 	private HashMap<String, List<IResourceLocator>> sourceLocators = new HashMap<>();
 
@@ -264,7 +265,7 @@ public class ThemeEngine implements IThemeEngine {
 			theme.setOsVersion(osVersion);
 		}
 		themes.add(theme);
-		registerStyle(id, basestylesheetURI);
+		registerStyle(id, basestylesheetURI, false);
 		return theme;
 	}
 
@@ -280,7 +281,7 @@ public class ThemeEngine implements IThemeEngine {
 			globalStyles.add(uri);
 		} else {
 			for (String t : themes) {
-				registerStyle(t, uri);
+				registerStyle(t, uri, true);
 			}
 		}
 	}
@@ -302,16 +303,33 @@ public class ThemeEngine implements IThemeEngine {
 		}
 	}
 
-	private void registerStyle(String id, String stylesheet) {
+	private void registerStyle(String id, String stylesheet, boolean isStyleSheetPluginExtension) {
 		List<String> s = stylesheets.get(id);
 		if (s == null) {
 			s = new ArrayList<>();
 			stylesheets.put(id, s);
 		}
 		s.add(stylesheet);
+		if (isStyleSheetPluginExtension) {
+			s = stylesheetPluginExtensions.get(id);
+			if (s == null) {
+				s = new ArrayList<>();
+				stylesheetPluginExtensions.put(id, s);
+			}
+			s.add(stylesheet);
+		}
 	}
 
-	private List<String> getAllStyles(String id) {
+	private List<String> getAllStyles(ITheme theme) {
+		String id = theme.getId();
+		String idWithoutVersion = null;
+		if (theme instanceof Theme) {
+			Theme th = (Theme) theme;
+			String osVersion = th.getOsVersion();
+			if (osVersion != null && osVersion.length() > 0 && id.endsWith(osVersion)) {
+				idWithoutVersion = id.substring(0, id.length() - osVersion.length());
+			}
+		}
 		// check for any modifications first
 		List<String> m = modifiedStylesheets.get(id);
 		if (m != null) {
@@ -319,16 +337,26 @@ public class ThemeEngine implements IThemeEngine {
 			m.addAll(globalStyles);
 			return m;
 		}
-
 		List<String> s = stylesheets.get(id);
 		if (s == null) {
 			s = Collections.emptyList();
 		}
+		if (idWithoutVersion != null) { // stylesheetPluginExtensions don't have a os_version; ensure that they will
+			// always taken; independent from current os_version
+			List<String> stylesheetPluginExtensionList = stylesheetPluginExtensions.get(idWithoutVersion);
+			if (stylesheetPluginExtensionList != null && stylesheetPluginExtensionList.size() > 0) {
+				s = new ArrayList<>(s);
+				for (String styleSheet : stylesheetPluginExtensionList) {
+					if (s.contains(styleSheet) == false) {
+						s.add(styleSheet);
+					}
+				}
 
+			}
+		}
 		s = new ArrayList<>(s);
 		s.addAll(globalStyles);
 		return s;
-
 	}
 
 	private List<IResourceLocator> getResourceLocators(String id) {
@@ -431,7 +459,7 @@ public class ThemeEngine implements IThemeEngine {
 					.registerResourceLocator(l);
 				}
 			}
-			for (String stylesheet : getAllStyles(theme.getId())) {
+			for (String stylesheet : getAllStyles(theme)) {
 				URL url;
 				InputStream stream = null;
 				try {
