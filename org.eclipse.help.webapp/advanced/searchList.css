@@ -97,5 +97,17 @@ a:hover {
 .description {
 	display: <%=data.isShowDescriptions() ? "block" : "none"%>;
 }
+.location {
+	display: <%=data.isShowLocations() ? "block" : "none"%>;
+	font-size:80%;
+	overflow:visible;
+	white-space:nowrap;
+}
+.location, .location a {
+	color:#006633;
+}
+.active .location, .active .location a {
+	color:HighlightText;
+}
 
 <%@ include file="darkTheme.css"%>

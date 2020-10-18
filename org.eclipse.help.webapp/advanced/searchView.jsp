@@ -11,6 +11,9 @@
  Contributors:
      IBM Corporation - initial API and implementation
 --%>
+<%@ page import="org.eclipse.help.internal.search.SearchHit" %>
+<%@ page import="org.eclipse.help.IUAElement" %>
+<%@ page import="org.eclipse.help.IHelpResource" %>
 <%@ include file="header.jsp"%>
 
 <% 
@@ -45,9 +48,14 @@ function refresh() {
 	window.location.replace("searchView.jsp?<%=UrlUtil.JavaScriptEncode(request.getQueryString())%>");
 }
 
+function isShowLocations() {
+	var value = getCookie("showLocations");
+	return value ? value == "true" : <%=data.isShowLocations()%>;
+}
+
 function isShowDescriptions() {
 	var value = getCookie("showDescriptions");
-	return value ? value == "true" : true;
+	return value ? value == "true" : <%=data.isShowDescriptions()%>;
 }
 
 function setShowCategories(value) { 	    
@@ -56,6 +64,17 @@ function setShowCategories(value) {
 	    window.location="searchView.jsp?searchWord=" + encodeURIComponent(searchWord) 
 	       + "&showSearchCategories=" + value +
 	       "&scope=" + encodeURIComponent(scope);    
+}
+
+function setShowLocations(value) {
+	setCookie("showLocations", value);
+	var newValue = isShowLocations();
+	parent.searchToolbarFrame.setButtonState("show_locations", newValue);
+	if (value != newValue) {
+		alert(cookiesRequired);
+	} else {
+		setCSSRule(".location", "display", value ? "block" : "none");
+	}
 }
 
 function setShowDescriptions(value) {
@@ -71,6 +90,10 @@ function setShowDescriptions(value) {
 
 function toggleShowCategories() {
 	setShowCategories(!showCategories);
+}
+
+function toggleShowLocations() {
+	setShowLocations(!isShowLocations());
 }
 
 function toggleShowDescriptions() {
@@ -226,8 +249,49 @@ setTimeout('refresh()', 2000);
         <%=label%></a>
 	</td>
 </tr>
-
 <%
+			// location breadcrumb
+			%><tr><td class='icon'></td><td><div class="location"><%
+			SearchHit hit = data.getResults()[topic];
+
+			// book
+			if (!data.isShowCategories()) {
+				%><a href="<%=UrlUtil.htmlEncode(data.getCategoryHref(topic))%>"><%=UrlUtil.htmlEncode(hit.getToc().getLabel())%></a> &#8250; <%
+			}
+
+			// chapters
+			String href = hit.getHref();
+			int queryPartStart = href.indexOf('?');
+			if (queryPartStart >= 0) {
+				href = href.substring(0, queryPartStart);
+			}
+			int[] path = UrlUtil.getTopicPath("/topic" + href,
+			                                  ServletResources.getString("locale", request));
+			IUAElement node = hit.getToc();
+			for (int i = 1; path != null && i < path.length - 1; i++) {
+				node = node.getChildren()[path[i]];
+				if (node instanceof IHelpResource) {
+					IHelpResource breadcrumbItem = (IHelpResource) node;
+					if (i > 1) {
+						%> &#8250; <%
+					}
+					String itemHref = breadcrumbItem.getHref();
+					if (itemHref == null) {
+						itemHref = "../nav/";
+						for (int j = 0; j <= i; j++) {
+							if (j > 0) {
+								itemHref += "_";
+							}
+							itemHref += path[j];
+						}
+					} else {
+						itemHref = UrlUtil.getHelpURL(itemHref);
+					}
+					%><a href="<%=UrlUtil.htmlEncode(itemHref)%>"><%=UrlUtil.htmlEncode(breadcrumbItem.getLabel())%></a><%
+				}
+			}
+			%></div></td></tr><%
+
 		String desc = data.getTopicDescription(topic);
 		if (desc!=null) {
 %>

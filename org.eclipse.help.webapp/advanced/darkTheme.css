@@ -53,4 +53,8 @@
 	img:hover {
 		opacity: 1;
 	}
+
+	.location, .location a {
+		color:#00cc66;
+	}
 }

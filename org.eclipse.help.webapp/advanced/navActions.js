@@ -43,6 +43,13 @@ function toggleShowCategories(button){
 	}
 }
 
+function toggleShowLocations(button){
+	parent.searchViewFrame.toggleShowLocations();
+	if (button && document.getElementById(button)){
+		document.getElementById(button).blur();
+	}
+}
+
 function toggleShowDescriptions(button){
 	parent.searchViewFrame.toggleShowDescriptions();
 	if (button && document.getElementById(button)){

@@ -37,6 +37,7 @@ public interface IHelpBaseConstants {
 	String P_KEY_REMOTE_HELP_PORT = "remoteHelpPort"; //$NON-NLS-1$
 	String P_KEY_REMOTE_HELP_ICEnabled = "remoteHelpICEnabled"; //$NON-NLS-1$
 	String P_KEY_SHOW_SEARCH_DESCRIPTION = "showSearchDescription"; //$NON-NLS-1$
+	String P_KEY_SHOW_SEARCH_LOCATION = "showSearchLocation"; //$NON-NLS-1$
 	String P_KEY_SHOW_SEARCH_CATEGORIES = "showSearchCategories"; //$NON-NLS-1$
 	String P_SHOW_BREADCRUMBS = "showBreadcrumbs"; //$NON-NLS-1$
 	String P_PAGE_NOT_FOUND = "page_not_found"; //$NON-NLS-1$

@@ -37,6 +37,13 @@
 	<jsp:param name="param"    value=""/>
 	<jsp:param name="state"    value="<%=((new SearchData(application, request, response)).isShowCategories() ? ON : OFF)%>"/>
 
+	<jsp:param name="name"     value="show_locations"/>
+	<jsp:param name="tooltip"  value='show_locations'/>
+	<jsp:param name="image"    value="show_locations.svg"/>
+	<jsp:param name="action"   value="toggleShowLocations"/>
+	<jsp:param name="param"    value=""/>
+	<jsp:param name="state"    value="<%=((new SearchData(application, request, response)).isShowLocations() ? ON : OFF)%>"/>
+
 	<jsp:param name="name"     value="show_descriptions"/>
 	<jsp:param name="tooltip"  value='show_descriptions'/>
 	<jsp:param name="image"    value="show_descriptions.svg"/>

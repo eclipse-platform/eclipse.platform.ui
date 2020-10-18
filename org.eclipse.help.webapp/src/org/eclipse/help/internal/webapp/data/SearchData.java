@@ -325,6 +325,20 @@ public class SearchData extends ActivitiesData {
 		return showCategories;
 	}
 
+	public boolean isShowLocations() {
+		Cookie[] cookies = request.getCookies();
+		if (cookies != null) {
+				for (int i=0;i<cookies.length;++i) {
+					if ("showLocations".equals(cookies[i].getName())) { //$NON-NLS-1$
+						return String.valueOf(true).equals(cookies[i].getValue());
+					}
+				}
+		}
+		// get default from preferences
+		return Platform.getPreferencesService().getBoolean
+				(HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_SHOW_SEARCH_LOCATION, true, null);
+	}
+
 	public boolean isShowDescriptions() {
 		Cookie[] cookies = request.getCookies();
 		if (cookies != null) {
