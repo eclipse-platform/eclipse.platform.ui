@@ -1,5 +1,5 @@
 /***************************************************************************************************
- * Copyright (c) 2005, 2019 IBM Corporation and others.
+ * Copyright (c) 2005, 2020 IBM Corporation and others.
  *
  * This program and the
  * accompanying materials are made available under the terms of the Eclipse Public License 2.0
@@ -226,7 +226,7 @@ public class IntroLaunchBar {
 
 	private static SideValue determineLocation(IntroLaunchBarElement element) {
 		// Try restoring to the same location if moved previously
-		IDialogSettings settings = IntroPlugin.getDefault().getDialogSettings();
+		IDialogSettings settings =  PlatformUI.getDialogSettingsProvider(IntroPlugin.getDefault().getBundle()).getDialogSettings();
 		try {
 			int storedLocation = settings.getInt(S_STORED_LOCATION);
 			if (storedLocation > 0)
@@ -285,7 +285,7 @@ public class IntroLaunchBar {
 	}
 
 	private void storeLocation() {
-		IDialogSettings settings = IntroPlugin.getDefault().getDialogSettings();
+		IDialogSettings settings = PlatformUI.getDialogSettingsProvider(IntroPlugin.getDefault().getBundle()).getDialogSettings();
 		settings.put(S_STORED_LOCATION, toSWT(getLocation()));
 	}
 
