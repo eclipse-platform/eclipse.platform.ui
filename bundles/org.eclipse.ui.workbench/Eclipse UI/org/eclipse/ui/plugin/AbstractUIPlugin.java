@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.IDialogSettingsProvider;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -173,7 +174,8 @@ public abstract class AbstractUIPlugin extends Plugin {
 
 	/**
 	 * @return the dialog settings
-	 * @deprecated @see {@link PlatformUI#getDialogSettingsProvider(Bundle)}
+	 * @deprecated
+	 * @see PlatformUI#getDialogSettingsProvider(Bundle)
 	 */
 	@Deprecated
 	public IDialogSettings getDialogSettings() {
@@ -344,7 +346,8 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 * This framework method may be overridden, although this is typically
 	 * unnecessary.
 	 *
-	 * @deprecated see {@link PlatformUI#getDialogSettingsProvider(Bundle)}
+	 * @deprecated
+	 * @see PlatformUI#getDialogSettingsProvider(Bundle)
 	 */
 	@Deprecated
 	protected void loadDialogSettings() {
@@ -395,7 +398,8 @@ public abstract class AbstractUIPlugin extends Plugin {
 	/**
 	 * Dialog settings are saved automatically when the workbench stops.
 	 *
-	 * @deprecated @see DialogSettingsService
+	 * @deprecated
+	 * @see IDialogSettingsProvider#saveDialogSettings()
 	 */
 	@Deprecated
 	protected void saveDialogSettings() {
