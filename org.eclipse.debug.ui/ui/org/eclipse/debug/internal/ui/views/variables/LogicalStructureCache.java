@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.variables;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -22,6 +24,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILogicalStructureType;
+import org.eclipse.debug.core.model.ILogicalStructureTypeDelegate3;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 
@@ -59,9 +62,13 @@ public class LogicalStructureCache {
 	 * Clears the cache of all evaluated values.
 	 */
 	public void clear(){
+		Collection<LogicalStructureTypeCache> caches;
 		synchronized (fCacheForType) {
+			caches = new ArrayList<>(fCacheForType.values());
 			fCacheForType.clear();
 		}
+
+		caches.forEach(LogicalStructureTypeCache::dispose);
 	}
 
 	/**
@@ -144,6 +151,16 @@ public class LogicalStructureCache {
 					fPendingValues.remove(value);
 					fPendingValues.notifyAll();
 				}
+			}
+		}
+
+		public void dispose() {
+			if (!(fType instanceof ILogicalStructureTypeDelegate3)) {
+				return;
+			}
+			ILogicalStructureTypeDelegate3 typeDelegate = (ILogicalStructureTypeDelegate3) fType;
+			synchronized (fKnownValues) {
+				fKnownValues.values().forEach(typeDelegate::releaseValue);
 			}
 		}
 

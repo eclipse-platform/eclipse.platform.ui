@@ -39,6 +39,7 @@ import org.eclipse.debug.tests.launching.LaunchHistoryTests;
 import org.eclipse.debug.tests.launching.LaunchManagerTests;
 import org.eclipse.debug.tests.launching.LaunchTests;
 import org.eclipse.debug.tests.launching.RefreshTabTests;
+import org.eclipse.debug.tests.logicalstructure.LogicalStructureCacheTest;
 import org.eclipse.debug.tests.sourcelookup.SourceLookupFacilityTests;
 import org.eclipse.debug.tests.statushandlers.StatusHandlerTests;
 import org.eclipse.debug.tests.stepfilters.StepFiltersTests;
@@ -85,7 +86,7 @@ import org.junit.runners.Suite;
 		FilterTransformTests.class,
 		ChildrenUpdateTests.class,
 		PresentationContextTests.class,
-		
+
 		// Memory view
 		MemoryRenderingTests.class,
 
@@ -122,6 +123,9 @@ import org.junit.runners.Suite;
 
 		// Launch Groups
 		LaunchGroupTests.class,
+
+		// Logical structure
+		LogicalStructureCacheTest.class,
 })
 public class AutomatedSuite {
 }

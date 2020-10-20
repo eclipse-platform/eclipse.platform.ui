@@ -134,4 +134,12 @@
             id="org.eclipse.debug.tests">
       </debugModelPresentation>
    </extension>
+   <extension
+         point="org.eclipse.debug.core.logicalStructureTypes">
+      <logicalStructureType
+            class="org.eclipse.debug.tests.logicalstructure.TestLogicalStructureTypeDelegate"
+            id="org.eclipse.debug.tests.logicalStructureType1"
+            modelIdentifier="org.eclipse.debug.tests">
+      </logicalStructureType>
+   </extension>
 </plugin>

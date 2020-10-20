@@ -23,6 +23,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILogicalStructureType;
 import org.eclipse.debug.core.model.ILogicalStructureTypeDelegate;
 import org.eclipse.debug.core.model.ILogicalStructureTypeDelegate2;
+import org.eclipse.debug.core.model.ILogicalStructureTypeDelegate3;
 import org.eclipse.debug.core.model.IValue;
 
 /**
@@ -30,7 +31,7 @@ import org.eclipse.debug.core.model.IValue;
  *
  * @see IConfigurationElementConstants
  */
-public class LogicalStructureType implements ILogicalStructureType {
+public class LogicalStructureType implements ILogicalStructureType, ILogicalStructureTypeDelegate3 {
 
 	private IConfigurationElement fConfigurationElement;
 	private ILogicalStructureTypeDelegate fDelegate;
@@ -106,6 +107,14 @@ public class LogicalStructureType implements ILogicalStructureType {
 			return getDelegate().providesLogicalStructure(value);
 		}
 		return false;
+	}
+
+	@Override
+	public void releaseValue(IValue logicalStructure) {
+		ILogicalStructureTypeDelegate delegate = getDelegate();
+		if (delegate instanceof ILogicalStructureTypeDelegate3) {
+			((ILogicalStructureTypeDelegate3) delegate).releaseValue(logicalStructure);
+		}
 	}
 
 	/**
