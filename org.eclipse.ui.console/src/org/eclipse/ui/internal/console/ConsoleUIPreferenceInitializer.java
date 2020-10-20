@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Andrey Loskutov <loskutov@gmx.de> and others.
+ * Copyright (c) 2018, 2020 Andrey Loskutov <loskutov@gmx.de> and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -28,6 +28,7 @@ public class ConsoleUIPreferenceInitializer extends AbstractPreferenceInitialize
 	public void initializeDefaultPreferences() {
 		IPreferenceStore prefs = ConsolePlugin.getDefault().getPreferenceStore();
 		prefs.setDefault(IConsoleConstants.P_CONSOLE_AUTO_SCROLL_LOCK, true);
+		prefs.setDefault(IConsoleConstants.P_CONSOLE_WORD_WRAP, false);
 	}
 
 }

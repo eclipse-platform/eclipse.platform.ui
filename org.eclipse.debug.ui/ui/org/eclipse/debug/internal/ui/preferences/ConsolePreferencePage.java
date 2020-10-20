@@ -82,6 +82,8 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	private ConsoleIntegerFieldEditor fTabSizeEditor;
 	private BooleanFieldEditor autoScrollLockEditor;
 
+	private BooleanFieldEditor2 fWordWrapEditor;
+
 	private BooleanFieldEditor2 fInterpretControlCharactersEditor;
 	private BooleanFieldEditor2 fInterpretCrAsControlCharacterEditor;
 
@@ -149,6 +151,11 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 
 		autoScrollLockEditor = new BooleanFieldEditor(IConsoleConstants.P_CONSOLE_AUTO_SCROLL_LOCK, DebugPreferencesMessages.ConsolePreferencePage_Show__Console_View_enable_auto_scroll_lock, SWT.NONE, getFieldEditorParent());
 		addField(autoScrollLockEditor);
+
+		fWordWrapEditor = new BooleanFieldEditor2(IConsoleConstants.P_CONSOLE_WORD_WRAP,
+				DebugPreferencesMessages.ConsolePreferencePage_Enable_Word_Wrap_text, SWT.NONE, getFieldEditorParent());
+		addField(fWordWrapEditor);
+
 		addField(new BooleanFieldEditor(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT, DebugPreferencesMessages.ConsolePreferencePage_Show__Console_View_when_there_is_program_output_3, SWT.NONE, getFieldEditorParent()));
 		addField(new BooleanFieldEditor(IDebugPreferenceConstants.CONSOLE_OPEN_ON_ERR, DebugPreferencesMessages.ConsolePreferencePage_Show__Console_View_when_there_is_program_error_3, SWT.NONE, getFieldEditorParent()));
 
@@ -203,6 +210,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		updateAutoScrollLockEditor();
 		updateBufferSizeEditor();
 		updateInterpretCrAsControlCharacterEditor();
+		updateWordWrapEditorFromConsolePreferences();
 	}
 
 	/**
@@ -239,6 +247,14 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	protected void updateInterpretCrAsControlCharacterEditor() {
 		Button b = fInterpretControlCharactersEditor.getChangeControl(getFieldEditorParent());
 		fInterpretCrAsControlCharacterEditor.getChangeControl(getFieldEditorParent()).setEnabled(b.getSelection());
+	}
+
+	/**
+	 * Update enablement of word wrapping from Console plugin preference store.
+	 */
+	protected void updateWordWrapEditorFromConsolePreferences() {
+		fWordWrapEditor.setPreferenceStore(ConsolePlugin.getDefault().getPreferenceStore());
+		fWordWrapEditor.load();
 	}
 
 	/**

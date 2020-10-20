@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -155,6 +155,13 @@ public interface IConsoleConstants {
 	 *  @since 3.3
 	 */
 	String P_BACKGROUND_COLOR = ConsolePlugin.getUniqueIdentifier()  + ".P_BACKGROUND_COLOR";	 //$NON-NLS-1$
+
+	/**
+	 * Property constant indicating the user preference for word wrap enabling.
+	 *
+	 * @since 3.10
+	 */
+	String P_CONSOLE_WORD_WRAP = ConsolePlugin.getUniqueIdentifier() + ".P_CONSOLE_WORD_WRAP"; //$NON-NLS-1$
 
 	/**
 	 * The default tab size for text consoles.
