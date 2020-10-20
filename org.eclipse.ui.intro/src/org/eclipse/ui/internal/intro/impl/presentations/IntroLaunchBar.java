@@ -62,6 +62,7 @@ import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.intro.config.IIntroURL;
 import org.eclipse.ui.intro.config.IntroURLFactory;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * This class is responsible for creating the intro launch bar in the provided parent. It creates
@@ -226,7 +227,7 @@ public class IntroLaunchBar {
 
 	private static SideValue determineLocation(IntroLaunchBarElement element) {
 		// Try restoring to the same location if moved previously
-		IDialogSettings settings =  PlatformUI.getDialogSettingsProvider(IntroPlugin.getDefault().getBundle()).getDialogSettings();
+		IDialogSettings settings =  PlatformUI.getDialogSettingsProvider(FrameworkUtil.getBundle(IntroLaunchBar.class)).getDialogSettings();
 		try {
 			int storedLocation = settings.getInt(S_STORED_LOCATION);
 			if (storedLocation > 0)
@@ -285,7 +286,7 @@ public class IntroLaunchBar {
 	}
 
 	private void storeLocation() {
-		IDialogSettings settings = PlatformUI.getDialogSettingsProvider(IntroPlugin.getDefault().getBundle()).getDialogSettings();
+		IDialogSettings settings = PlatformUI.getDialogSettingsProvider(FrameworkUtil.getBundle(IntroLaunchBar.class)).getDialogSettings();
 		settings.put(S_STORED_LOCATION, toSWT(getLocation()));
 	}
 
