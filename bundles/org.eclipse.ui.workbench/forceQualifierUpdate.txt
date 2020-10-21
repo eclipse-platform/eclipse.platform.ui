@@ -9,3 +9,4 @@ Bug 559861 - Unanticipated comparator errors in I20200205-0030
 Bug 562167 - Comparator errors in I20200415-0620
 Bug 565905 - Comparator Errors Found in I20200807-1800
 Bug 566668 - Comparator errors in I20200904-0210
+Bug 568058 - Comparator errors in I20201020-1800
