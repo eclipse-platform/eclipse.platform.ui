@@ -62,5 +62,6 @@
     <module>org.eclipse.debug.ui</module>
     <module>org.eclipse.ui.console</module>
     <module>org.eclipse.ui.externaltools</module>
+    <module>org.eclipse.unittest.ui</module>
   </modules>
 </project>
