@@ -23,7 +23,6 @@
 .MPartStack {
     font-family: '#org-eclipse-ui-workbench-TAB_TEXT_FONT';
     swt-tab-renderer: url('bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering');
-    padding: 2px 2px;
     swt-shadow-visible: false;
 }
 
@@ -31,7 +30,6 @@ CTabFolder {
     /* Set the styles for the inner tabs: */
     color: '#org-eclipse-ui-workbench-INACTIVE_TAB_TEXT_COLOR';
     swt-tab-renderer: url('bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering');
-    padding: 2px 2px;
     swt-tab-outline: '#org-eclipse-ui-workbench-ACTIVE_TAB_OUTLINE_COLOR'; /* border color for selected tab */
     swt-outer-keyline-color: '#org-eclipse-ui-workbench-ACTIVE_TAB_OUTER_KEYLINE_COLOR'; /* border color for whole tabs container */
     swt-unselected-tabs-color: '#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_START' '#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_END' 100% 100%; /* title background for unselected tab */

@@ -213,7 +213,6 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 					height += 3;
 				}
 			}
-
 			break;
 		default:
 			if (0 <= part && part < parent.getItemCount()) {
@@ -425,7 +424,7 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 	private int[] computeSquareTabOutline(boolean onBottom, int startX, int endX, int bottomY,
 			Rectangle bounds, Point parentSize) {
 		int index = 0;
-		int outlineY = onBottom ? bottomY + bounds.height : bottomY - bounds.height;
+		int outlineY = onBottom ? bottomY + bounds.height : bounds.y;
 		int[] points = new int[20];
 
 		int margin = shadowEnabled ? SIDE_DROP_WIDTH
@@ -563,11 +562,16 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 		selectionX2 = endX - 1;
 		selectionY2 = bottomY;
 
+		Rectangle outlineBounds = new Rectangle( //
+				Objects.equals(outerKeyline, tabOutlineColor) ? bounds.x - 1 /* superimpose lines */ : bounds.x,
+				!onBottom && Objects.equals(outerKeyline, tabOutlineColor) ? bounds.y - 1
+						/* superimpose lines */ : bounds.y,
+				bounds.width, bounds.height);
 		if (cornerSize == SQUARE_CORNER) {
-			tabOutlinePoints = computeSquareTabOutline(onBottom, startX, endX, bottomY, bounds, parentSize);
+			tabOutlinePoints = computeSquareTabOutline(onBottom, startX, endX, bottomY, outlineBounds, parentSize);
 			gc.fillRectangle(bounds);
 		} else {
-			tabOutlinePoints = computeRoundTabOutline(itemIndex, onBottom, bottomY, bounds, parentSize);
+			tabOutlinePoints = computeRoundTabOutline(itemIndex, onBottom, bottomY, outlineBounds, parentSize);
 			gc.fillPolygon(tabOutlinePoints);
 		}
 
