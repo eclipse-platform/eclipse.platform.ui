@@ -59,7 +59,7 @@ TabFolder > Composite > * > * { /* [style~='SWT.NO_BACKGROUND'] <- generate E4 n
 
 /* Toolbar should inherit the colors of its container to avoid drawing artifacts*/
 ToolBar {
-	background-color:inherit;
+	background-color:inherit;	
 }
 
 Combo,
@@ -191,7 +191,6 @@ WebSite {
 
 Form,
 FormHeading {
-    background: #505f70;
     background-color: #505F70;
     color: #9AC9D8;
 }
