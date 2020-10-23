@@ -322,8 +322,6 @@ public class OpenWithMenu extends ContributionItem {
 						: editorDescriptor.getId();
 
 				page.openEditor(new FileEditorInput(file), editorId, true, MATCH_BOTH);
-				// only remember the default editor if the open succeeds
-				IDE.setDefaultEditor(file, editorId);
 			}
 		} catch (PartInitException e) {
 			DialogUtil.openError(page.getWorkbenchWindow().getShell(),
