@@ -1424,6 +1424,17 @@ public final class Platform {
 	 * highest version. Note that clients may want to filter the results based on
 	 * the state of the bundles.
 	 * </p>
+	 * <p>
+	 * Note that looking up a Bundle by its symbolic name is less efficient than
+	 * looking up a Bundle by a class loaded by that bundle. Callers should consider
+	 * whether or not it is more appropriate to use
+	 * {@link FrameworkUtil#getBundle(Class)} instead.
+	 * </p>
+	 * <p>
+	 * Note also that if the purpose of looking up the Bundle in order to log a
+	 * message, then it would be more appropriate to use the direct
+	 * {@link #getLog(Class)} instead
+	 * </p>
 	 *
 	 * @param symbolicName the symbolic name of the bundle to be returned.
 	 * @return the bundle that has the specified symbolic name with the highest
