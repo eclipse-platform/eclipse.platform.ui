@@ -44,7 +44,7 @@ public class RefactoringLocationControl extends Composite {
 	protected final IWizard fWizard;
 
 	/** The maximum size of the history private static final int */
-	protected final int MAX_HISTORY_SIZE= 5;
+	protected static final int MAX_HISTORY_SIZE= 5;
 
 	/**
 	 * Creates a new refactoring location control.
