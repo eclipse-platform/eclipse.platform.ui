@@ -562,16 +562,19 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 		selectionX2 = endX - 1;
 		selectionY2 = bottomY;
 
-		Rectangle outlineBounds = new Rectangle( //
+		Rectangle outlineBoundsForOutline = new Rectangle( //
 				Objects.equals(outerKeyline, tabOutlineColor) ? bounds.x - 1 /* superimpose lines */ : bounds.x,
 				!onBottom && Objects.equals(outerKeyline, tabOutlineColor) ? bounds.y - 1
 						/* superimpose lines */ : bounds.y,
 				bounds.width, bounds.height);
 		if (cornerSize == SQUARE_CORNER) {
-			tabOutlinePoints = computeSquareTabOutline(onBottom, startX, endX, bottomY, outlineBounds, parentSize);
-			gc.fillRectangle(bounds);
+			tabOutlinePoints = computeSquareTabOutline(onBottom, startX, endX, bottomY, outlineBoundsForOutline,
+					parentSize);
+			outlineBoundsForOutline.height++; // increase area to fill by outline thickness
+			gc.fillRectangle(outlineBoundsForOutline);
 		} else {
-			tabOutlinePoints = computeRoundTabOutline(itemIndex, onBottom, bottomY, outlineBounds, parentSize);
+			tabOutlinePoints = computeRoundTabOutline(itemIndex, onBottom, bottomY, outlineBoundsForOutline,
+					parentSize);
 			gc.fillPolygon(tabOutlinePoints);
 		}
 
