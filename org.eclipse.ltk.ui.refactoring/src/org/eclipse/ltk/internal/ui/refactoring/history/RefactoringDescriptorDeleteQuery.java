@@ -86,7 +86,7 @@ public final class RefactoringDescriptorDeleteQuery implements IRefactoringDescr
 			if (!store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE)) {
 				fShell.getDisplay().syncExec(() -> {
 					if (!fShell.isDisposed()) {
-						final String count= Integer.valueOf(fCount).toString();
+						final String count= Integer.toString(fCount);
 						String message= null;
 						if (fProject != null) {
 							if (fCount == 1) {

@@ -300,7 +300,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		}
 		fSettings.put(SETTING_SORT, fHistoryControl.isSortByProjects());
 
-		setPreference(fManager, new ProjectScope(project), RefactoringPreferenceConstants.PREFERENCE_SHARED_REFACTORING_HISTORY, Boolean.valueOf(fShareHistoryButton.getSelection()).toString());
+		setPreference(fManager, new ProjectScope(project), RefactoringPreferenceConstants.PREFERENCE_SHARED_REFACTORING_HISTORY, Boolean.toString(fShareHistoryButton.getSelection()));
 		try {
 			fManager.applyChanges();
 			final boolean history= RefactoringHistoryService.hasSharedRefactoringHistory(project);
