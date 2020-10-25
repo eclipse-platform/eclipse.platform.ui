@@ -69,7 +69,7 @@ public class RefactoringHistorySerializationTests extends TestCase {
 				assertEquals("Expected refactoring descriptor is not equal to actual one:", expectedDescriptor.toString(), actualDescriptor.toString());
 			}
 		} catch (UnsupportedEncodingException exception) {
-			assertFalse("Unsupported encoding for ByteArrayOutputStream.", false);
+			fail("Unsupported encoding for ByteArrayOutputStream.");
 		}
 	}
 
@@ -79,7 +79,7 @@ public class RefactoringHistorySerializationTests extends TestCase {
 		try {
 			assertEquals("The refactoring descriptor has not been correctly serialized:", convertLineDelimiters(xml), stream.toString("utf-8"));
 		} catch (UnsupportedEncodingException exception) {
-			assertFalse("Unsupported encoding for ByteArrayOutputStream.", false);
+			fail("Unsupported encoding for ByteArrayOutputStream.");
 		}
 	}
 
