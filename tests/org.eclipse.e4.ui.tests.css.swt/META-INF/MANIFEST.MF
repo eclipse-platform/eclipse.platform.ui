@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: e4 css swt tests (Incubation)
 Bundle-SymbolicName: org.eclipse.e4.ui.tests.css.swt; singleton:=true
-Bundle-Version: 0.10.1000.qualifier
+Bundle-Version: 0.11.0.qualifier
 Require-Bundle: org.junit,
  org.eclipse.swt,
  org.eclipse.e4.ui.css.core,
@@ -16,7 +16,7 @@ Require-Bundle: org.junit,
  org.eclipse.ui.forms,
  org.eclipse.ui.views.properties.tabbed
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Import-Package: org.eclipse.core.runtime;version="3.5.0",
  org.osgi.framework;version="1.7.0";resolution:=optional,
  org.osgi.service.event;version="1.3.0";resolution:=optional
