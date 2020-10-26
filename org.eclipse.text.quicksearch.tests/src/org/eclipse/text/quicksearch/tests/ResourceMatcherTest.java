@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Pivotal, Inc.
+ * Copyright (c) 2019, 2020 Pivotal, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
 package org.eclipse.text.quicksearch.tests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.eclipse.core.runtime.Path;
@@ -31,8 +32,21 @@ public class ResourceMatcherTest {
 
 	@Test
 	public void commaSeparatedPaths() throws Exception {
-		assertMatch(true, "*.java,*.properties", "/myproject/something/nested/foo.java");
-		assertMatch(true, "*.java,*.properties", "/myproject/something/nested/application.properties");
+		String[] patterns = new String[] { //
+				"*.java,*.properties", //
+				"*.java, *.properties", //
+				"*.java ,*.properties", //
+				"*.java , *.properties", //
+				" *.java  ,  *.properties ", //
+				" *.java  ,,  *.properties ", //
+				" *.java  ,  ,  *.properties ", //
+				" *.java  ,*.foo,  *.properties ", //
+		};
+		for (String pattern : patterns) {
+			assertMatch(true, pattern, "/myproject/something/nested/foo.java");
+			assertMatch(true, pattern, "/myproject/something/nested/application.properties");
+			assertMatch(false, pattern, "/myproject/something/nested/test.log");
+		}
 	}
 
 	@Test
@@ -50,6 +64,9 @@ public class ResourceMatcherTest {
 	private void assertMatch(boolean expectedMatch, String patterns, String path) {
 		assertTrue(new Path(path).isAbsolute());
 		ResourceMatcher matcher = ResourceMatchers.commaSeparatedPaths(patterns);
-		assertEquals(expectedMatch, matcher.matches(new MockResource(path)));
+		assertEquals("Wrong match with pattern: '" + patterns + "'", expectedMatch, matcher.matches(new MockResource(path)));
+
+		// Most ResourceMatchers have a custom toString. Do a quick test to check for thrown exceptions.
+		assertNotNull(matcher.toString());
 	}
 }
