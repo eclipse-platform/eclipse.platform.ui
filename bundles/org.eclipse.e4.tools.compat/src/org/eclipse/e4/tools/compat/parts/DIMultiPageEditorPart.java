@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 EclipseSource and others.
+ * Copyright (c) 2013, 2020 EclipseSource and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,10 +21,11 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.MultiPageEditorPart;
 
 public abstract class DIMultiPageEditorPart extends MultiPageEditorPart
-		implements IDirtyProviderService {
+implements IDirtyProviderService {
 
 	public <T> int addPage(Class<T> clazz) throws PartInitException {
-		DIEditorPart<T> part = new DIEditorPart<T>(clazz) {};
+		DIEditorPart<T> part = new DIEditorPart<>(clazz) {
+		};
 		return addPage(part, getEditorInput());
 
 	}
