@@ -6,3 +6,4 @@ Bug 565342 - 4.17 I-Build: I20200719-2010 - BUILD FAILED
 Bug 565618 - Comparator errors in I20200728-1800
 Comparator errors in I20200818-0900
 Comparator errors in I20201006-0600
+Bug 567461 - Please update felix gogo shell to 1.1.4 due to bug in 1.1.0
