@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui.views.properties.tabbed;singleton:=true
-Bundle-Version: 3.8.1000.qualifier
+Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.ui.internal.views.properties.tabbed;x-internal:=true,
@@ -17,5 +17,5 @@ Require-Bundle: org.eclipse.ui.forms;bundle-version="[3.3.0,4.0.0)";visibility:=
  org.eclipse.e4.ui.css.core;bundle-version="0.12.100",
  org.eclipse.e4.ui.css.swt,
  org.eclipse.jface;bundle-version="[3.18.0,4.0.0)"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Automatic-Module-Name: org.eclipse.ui.views.properties.tabbed
