@@ -129,6 +129,14 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 
 	private ILock lock;
 
+	/**
+	 * {@code true} if we can exit inner build loop cycle early after
+	 * rebuildRequested is set by one build config and before following build
+	 * configs are executed. Default is {@code false} to keep legacy behavior.
+	 */
+	private static final boolean EARLY_EXIT_FROM_INNER_BUILD_LOOP_ALLOWED = System
+			.getProperty("org.eclipse.core.resources.allowEarlyInnerBuildLoopExit") != null; //$NON-NLS-1$
+
 	//used for the build cycle looping mechanism
 	private boolean rebuildRequested = false;
 
@@ -256,6 +264,11 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		try {
 			for (int i = 0; i < commands.length; i++) {
 				checkCanceled(trigger, monitor);
+				if (EARLY_EXIT_FROM_INNER_BUILD_LOOP_ALLOWED && rebuildRequested) {
+					// Don't build following configs if one of the predecessors
+					// requested rebuild anyway, just start from scratch
+					break;
+				}
 				BuildCommand command = (BuildCommand) commands[i];
 				IProgressMonitor sub = Policy.subMonitorFor(monitor, 1);
 				IncrementalProjectBuilder builder = getBuilder(buildConfiguration, command, i, status, context);
