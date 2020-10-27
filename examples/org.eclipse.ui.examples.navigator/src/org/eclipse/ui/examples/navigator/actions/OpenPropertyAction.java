@@ -15,6 +15,7 @@
 package org.eclipse.ui.examples.navigator.actions;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
@@ -30,7 +31,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.examples.navigator.PropertiesTreeData;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.examples.navigator.Activator;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -103,7 +103,7 @@ public class OpenPropertyAction extends Action {
 						((ITextEditor)editor).selectAndReveal(region.getOffset(), region.getLength());
 
 					} catch (BadLocationException e) {
-						Activator.logError(0, "Could not open property!", e); //$NON-NLS-1$
+						Platform.getLog(OpenPropertyAction.class).error("Could not open property!", e); //$NON-NLS-1$
 						MessageDialog.openError(Display.getDefault().getActiveShell(),
 								"Error Opening Property",  //$NON-NLS-1$
 								"Could not open property!");   //$NON-NLS-1$
@@ -112,7 +112,7 @@ public class OpenPropertyAction extends Action {
 				}
 			}
 		} catch (PartInitException e) {
-			Activator.logError(0, "Could not open property!", e); //$NON-NLS-1$
+			Platform.getLog(OpenPropertyAction.class).error("Could not open property!", e); //$NON-NLS-1$
 			MessageDialog.openError(Display.getDefault().getActiveShell(),
 					"Error Opening Property",  //$NON-NLS-1$
 					"Could not open property!");   //$NON-NLS-1$

@@ -23,6 +23,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -33,7 +34,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionDelegate;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.examples.navigator.PropertiesTreeData;
-import org.eclipse.ui.internal.examples.navigator.Activator;
 
 /**
  * A sample action that can delete a PropertiesTreeData item from a property file.
@@ -94,7 +94,7 @@ public class DeletePropertyAction extends ActionDelegate {
 									monitor.worked(1);
 								} catch (IOException e) {
 									// handle error gracefully
-									Activator.logError(0, "Could not delete property!", e); //$NON-NLS-1$
+									Platform.getLog(DeletePropertyAction.class).error("Could not delete property!", e); //$NON-NLS-1$
 									MessageDialog.openError(Display.getDefault().getActiveShell(),
 											"Error Deleting Property",  //$NON-NLS-1$
 											"Could not delete property!");   //$NON-NLS-1$
@@ -122,7 +122,7 @@ public class DeletePropertyAction extends ActionDelegate {
 			PlatformUI.getWorkbench().getProgressService().run(true, false, deletePropertyOperation);
 		} catch (InvocationTargetException | InterruptedException e) {
 			// handle error gracefully
-			Activator.logError(0, "Could not delete property!", e); //$NON-NLS-1$
+			Platform.getLog(DeletePropertyAction.class).error("Could not delete property!", e); //$NON-NLS-1$
 			MessageDialog.openError(Display.getDefault().getActiveShell(),
 					"Error Deleting Property",  //$NON-NLS-1$
 					"Could not delete property!");   //$NON-NLS-1$
