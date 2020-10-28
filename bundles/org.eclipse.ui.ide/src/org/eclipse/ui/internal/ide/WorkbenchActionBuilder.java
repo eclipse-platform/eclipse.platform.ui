@@ -81,7 +81,7 @@ import org.eclipse.ui.menus.CommandContributionItemParameter;
 /**
  * Adds actions to a workbench window.
  */
-public final class WorkbenchActionBuilder extends ActionBarAdvisor {
+public class WorkbenchActionBuilder extends ActionBarAdvisor {
 
 	private final IWorkbenchWindow window;
 
@@ -1156,8 +1156,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 		buildProjectAction = IDEActionFactory.BUILD_PROJECT.create(window);
 		register(buildProjectAction);
 
-		openWorkspaceAction = IDEActionFactory.OPEN_WORKSPACE
-				.create(window);
+		openWorkspaceAction = makeOpenWorkspaceAction(window);
 		register(openWorkspaceAction);
 
 		projectPropertyDialogAction = IDEActionFactory.OPEN_PROJECT_PROPERTIES
@@ -1205,6 +1204,14 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 			arrangeWindowsItem = new CommandContributionItem(arrangeWindowsParam);
 		}
 
+	}
+
+	/**
+	 * @param window the workbench window
+	 * @return Creates a new open workspace action for the given workbench window.
+	 */
+	protected IWorkbenchAction makeOpenWorkspaceAction(final IWorkbenchWindow window) {
+		return IDEActionFactory.OPEN_WORKSPACE.create(window);
 	}
 
 	/**

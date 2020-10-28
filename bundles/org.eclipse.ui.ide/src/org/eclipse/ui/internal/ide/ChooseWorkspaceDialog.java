@@ -81,6 +81,8 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 
 	private Form recentWorkspacesForm;
 
+	private Button defaultButton;
+
 	/**
 	 * Create a modal dialog on the argument shell, using and updating the
 	 * argument data object.
@@ -475,7 +477,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 	 *
 	 * @return closest parent that exists or an empty string
 	 */
-	private String getInitialBrowsePath() {
+	protected String getInitialBrowsePath() {
 		File dir = new File(getWorkspaceLocation());
 		while (dir != null && !dir.exists()) {
 			dir = dir.getParentFile();
@@ -521,10 +523,10 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 		data.verticalAlignment = GridData.END;
 		panel.setLayoutData(data);
 
-		Button button = new Button(panel, SWT.CHECK);
-		button.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_useDefaultMessage);
-		button.setSelection(!launchData.getShowDialog());
-		button.addSelectionListener(new SelectionAdapter() {
+		defaultButton = new Button(panel, SWT.CHECK);
+		defaultButton.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_useDefaultMessage);
+		defaultButton.setSelection(!launchData.getShowDialog());
+		defaultButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				launchData.toggleShowDialog();
@@ -560,7 +562,30 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 		return section;
 	}
 
+	/**
+	 * Get the "Workspace" path combo box or null if not initialized.
+	 *
+	 * @return Combo
+	 */
 	public Combo getCombo() {
 		return text;
+	}
+
+	/**
+	 * Get the "Recent Workspaces" form or null if not initialized.
+	 *
+	 * @return Form
+	 */
+	public Form getRecentWorkspacesForm() {
+		return recentWorkspacesForm;
+	}
+
+	/**
+	 * Get the "Use this as default..." check box or null if not initialized.
+	 *
+	 * @return Button
+	 */
+	public Button getDefaultButton() {
+		return defaultButton;
 	}
 }

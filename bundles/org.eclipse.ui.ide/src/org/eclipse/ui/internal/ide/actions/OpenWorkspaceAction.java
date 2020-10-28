@@ -215,7 +215,7 @@ public class OpenWorkspaceAction extends Action implements ActionFactory.IWorkbe
 	 * @param workspacePath the new workspace location
 	 * @since 3.3
 	 */
-	private void restart(String workspacePath) {
+	public void restart(String workspacePath) {
 		Object result = Workbench.setRestartArguments(workspacePath);
 		if (result == IApplication.EXIT_RELAUNCH) {
 			window.getWorkbench().restart();
@@ -231,9 +231,7 @@ public class OpenWorkspaceAction extends Action implements ActionFactory.IWorkbe
 		// get the current workspace as the default
 		ChooseWorkspaceData data = new ChooseWorkspaceData(Platform
 				.getInstanceLocation().getURL());
-		ChooseWorkspaceDialog dialog = new ChooseWorkspaceWithSettingsDialog(
-				window.getShell(), data, true, false);
-		dialog.prompt(true);
+		showChooseWorkspaceDialog(data);
 
 		// return null if the user changed their mind
 		String selection = data.getSelection();
@@ -244,6 +242,15 @@ public class OpenWorkspaceAction extends Action implements ActionFactory.IWorkbe
 		// otherwise store the new selection and return the selection
 		data.writePersistedData();
 		return selection;
+	}
+
+	/**
+	 * @param data the launch data from past launches
+	 */
+	protected void showChooseWorkspaceDialog(ChooseWorkspaceData data) {
+		ChooseWorkspaceDialog dialog = new ChooseWorkspaceWithSettingsDialog(
+				window.getShell(), data, true, false);
+		dialog.prompt(true);
 	}
 
 	@Override

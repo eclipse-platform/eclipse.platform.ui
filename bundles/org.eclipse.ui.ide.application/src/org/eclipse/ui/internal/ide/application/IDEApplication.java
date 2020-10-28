@@ -362,15 +362,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 		URL url = null;
 
 		do {
-			new ChooseWorkspaceDialog(shell, launchData, false, true) {
-				@Override
-				protected Shell getParentShell() {
-					// Bug 429308: Make workspace selection dialog visible
-					// in the task manager of the OS
-					return null;
-				}
-
-			}.prompt(force);
+			showChooseWorkspaceDialog(shell, launchData, force);
 
 			String instancePath = launchData.getSelection();
 			if (instancePath == null) {
@@ -421,6 +413,25 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 			}
 			return url;
 		} while (true);
+	}
+
+	/**
+	 * Show the choose workspace dialog to the user (if needed).
+	 * @param shell      parentShell the parent shell for this dialog
+	 * @param launchData launchData the launch data from past launches
+	 * @param force      true if the dialog should be opened regardless of the value
+	 *                   of the show dialog checkbox
+	 */
+	protected void showChooseWorkspaceDialog(Shell shell, ChooseWorkspaceData launchData, boolean force) {
+		new ChooseWorkspaceDialog(shell, launchData, false, true) {
+			@Override
+			protected Shell getParentShell() {
+				// Bug 429308: Make workspace selection dialog visible
+				// in the task manager of the OS
+				return null;
+			}
+
+		}.prompt(force);
 	}
 
 	/**
