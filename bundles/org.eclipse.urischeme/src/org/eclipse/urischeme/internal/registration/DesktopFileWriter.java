@@ -16,6 +16,7 @@ package org.eclipse.urischeme.internal.registration;
 import static java.util.stream.Collectors.joining;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -172,6 +173,9 @@ public class DesktopFileWriter {
 	 * @return The minimal file content as list (one entry = one file line)
 	 */
 	public static List<String> getMinimalDesktopFileContent(String eclipseExecutableLocation, String productName) {
+		if (eclipseExecutableLocation == null || eclipseExecutableLocation.isEmpty()) {
+			return Collections.emptyList();
+		}
 		String executable = escapeSpaces(eclipseExecutableLocation);
 		return Arrays.asList(//
 				"[Desktop Entry]", //$NON-NLS-1$

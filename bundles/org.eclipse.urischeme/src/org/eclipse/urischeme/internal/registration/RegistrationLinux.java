@@ -70,12 +70,13 @@ public class RegistrationLinux implements IOperatingSystemRegistration {
 	public List<ISchemeInformation> getSchemesInformation(Collection<IScheme> schemes) throws Exception {
 		List<ISchemeInformation> returnList = new ArrayList<>();
 
+		String eclipseLauncher = getEclipseLauncher();
 		for (IScheme scheme : schemes) {
 			SchemeInformation schemeInfo = new SchemeInformation(scheme.getName(),
 					scheme.getDescription());
 
 			String location = determineHandlerLocation(scheme.getName());
-			if (location.equals(getEclipseLauncher())) {
+			if (location.equals(eclipseLauncher)) {
 				schemeInfo.setHandled(true);
 			}
 			schemeInfo.setHandlerLocation(location);
@@ -96,6 +97,9 @@ public class RegistrationLinux implements IOperatingSystemRegistration {
 			String desktopFilePath) throws IOException {
 
 		List<String> lines = readFileOrGetInitialContent(desktopFilePath);
+		if (lines.isEmpty()) {
+			return;
+		}
 
 		DesktopFileWriter writer = new DesktopFileWriter(lines);
 		for (IScheme scheme : toAdd) {
@@ -152,12 +156,19 @@ public class RegistrationLinux implements IOperatingSystemRegistration {
 
 	@Override
 	public String getEclipseLauncher() {
-		return System.getProperty("eclipse.launcher"); //$NON-NLS-1$
+		String property = System.getProperty("eclipse.launcher"); //$NON-NLS-1$
+		if (property == null) {
+			return getEclipseHomeLocation() + "eclipse"; //$NON-NLS-1$
+		}
+		return property;
 	}
 
 	private String getEclipseHomeLocation() {
-		String homeLocationProperty = System.getProperty("eclipse.home.location"); //$NON-NLS-1$
-		return homeLocationProperty.replaceAll("file:(.*)", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
+		String homeLocationProperty = System.getProperty("eclipse.home.location", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		if (homeLocationProperty.startsWith("file:")) { //$NON-NLS-1$
+			return homeLocationProperty.substring("file:".length()); //$NON-NLS-1$
+		}
+		return homeLocationProperty;
 	}
 
 	/**
