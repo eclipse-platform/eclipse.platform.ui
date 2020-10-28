@@ -463,13 +463,13 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 						if (document.getDocumentPartitioner() != null) {
 							String message= NLSUtility.format(FileBuffersMessages.TextFileBufferManager_warning_documentSetupInstallsDefaultPartitioner, participant.getClass());
 							IStatus status= new Status(IStatus.WARNING, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, message, null);
-							FileBuffersPlugin.getDefault().getLog().log(status);
+							Platform.getLog(ResourceTextFileBufferManager.class).log(status);
 						}
 					}
 					@Override
 					public void handleException(Throwable t) {
 						IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.TextFileBufferManager_error_documentSetupFailed, t);
-						FileBuffersPlugin.getDefault().getLog().log(status);
+						Platform.getLog(ResourceTextFileBufferManager.class).log(status);
 					}
 				};
 				SafeRunner.run(runnable);
@@ -502,7 +502,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 					@Override
 					public void handleException(Throwable t) {
 						IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.TextFileBufferManager_error_documentFactoryFailed, t);
-						FileBuffersPlugin.getDefault().getLog().log(status);
+						Platform.getLog(ResourceTextFileBufferManager.class).log(status);
 					}
 				};
 				SafeRunner.run(runnable);

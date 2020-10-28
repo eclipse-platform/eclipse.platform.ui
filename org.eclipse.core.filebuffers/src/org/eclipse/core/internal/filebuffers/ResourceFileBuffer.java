@@ -19,12 +19,12 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -85,7 +85,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 				try {
 					execute();
 				} catch (Exception x) {
-					FileBuffersPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, "Exception when synchronizing", x)); //$NON-NLS-1$
+					Platform.getLog(ResourceFileBuffer.class).error("Exception when synchronizing", x); //$NON-NLS-1$
 					fManager.fireStateChangeFailed(ResourceFileBuffer.this);
 				}
 			}
@@ -451,8 +451,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	 * @param exception the exception to be logged
 	 */
 	protected void handleCoreException(CoreException exception) {
-		ILog log= FileBuffersPlugin.getDefault().getLog();
-		log.log(exception.getStatus());
+		Platform.getLog(ResourceFileBuffer.class).log(exception.getStatus());
 	}
 
 	@Override

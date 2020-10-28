@@ -3,8 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.core.filebuffers; singleton:=true
 Bundle-Version: 3.6.1100.qualifier
-Bundle-Activator: org.eclipse.core.internal.filebuffers.FileBuffersPlugin
-Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: 

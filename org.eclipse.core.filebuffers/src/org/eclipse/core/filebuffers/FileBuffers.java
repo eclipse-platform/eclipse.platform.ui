@@ -82,8 +82,7 @@ public final class FileBuffers {
 	 * @return the text file buffer manager or <code>null</code>
 	 */
 	public static ITextFileBufferManager getTextFileBufferManager()  {
-		FileBuffersPlugin plugin= FileBuffersPlugin.getDefault();
-		return plugin != null ? plugin.getFileBufferManager() : null;
+		return FileBuffersPlugin.getFileBufferManager();
 	}
 
 	/**

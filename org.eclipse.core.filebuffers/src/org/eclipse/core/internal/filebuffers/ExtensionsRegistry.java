@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -176,8 +175,7 @@ public class ExtensionsRegistry {
 	 * @param status the status to log
 	 */
 	private void log(IStatus status) {
-		ILog log= FileBuffersPlugin.getDefault().getLog();
-		log.log(status);
+		Platform.getLog(ExtensionsRegistry.class).log(status);
 	}
 
 	/**

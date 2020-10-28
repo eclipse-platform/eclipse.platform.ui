@@ -40,7 +40,7 @@ public interface ITextFileBufferManager extends IFileBufferManager {
 	 * The default text file buffer manager.
 	 * @since 3.3
 	 */
-	ITextFileBufferManager DEFAULT= FileBuffersPlugin.getDefault().getFileBufferManager();
+	ITextFileBufferManager DEFAULT= FileBuffersPlugin.getFileBufferManager();
 
 	/**
 	 * Returns the text file buffer managed for the file at the given location
