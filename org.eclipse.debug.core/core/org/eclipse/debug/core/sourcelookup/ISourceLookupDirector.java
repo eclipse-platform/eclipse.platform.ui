@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.debug.core.sourcelookup;
 
+import java.util.Objects;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
@@ -181,5 +183,21 @@ public interface ISourceLookupDirector extends IPersistableSourceLocator2 {
 	 * @return an object representing a source element.
 	 */
 	 Object getSourceElement(Object element);
+
+	/**
+	 * Answers if the objects should be considered as same source elements (e.g.
+	 * resulting in the physically same storage element), independently if in
+	 * the modelled world they may be different views on same data.
+	 *
+	 * @param element1 first source element
+	 * @param element2 second source element
+	 * @return Returns {@code true} if two source elements represent physically
+	 *         same data. Default implementation just delegates to
+	 *         {@link Objects#equals(Object, Object)}.
+	 * @since 3.17
+	 */
+	default boolean equalSourceElements(Object element1, Object element2) {
+		return Objects.equals(element1, element2);
+	}
 
 }

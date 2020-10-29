@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.debug.core" version="2">
+    <resource path="core/org/eclipse/debug/core/sourcelookup/ISourceLookupDirector.java" type="org.eclipse.debug.core.sourcelookup.ISourceLookupDirector">
+        <filter comment="565462#c15" id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.debug.core.sourcelookup.ISourceLookupDirector"/>
+                <message_argument value="equalSourceElements(Object, Object)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="core/org/eclipse/debug/internal/core/groups/GroupLaunch.java" type="org.eclipse.debug.internal.core.groups.GroupLaunch">
         <filter comment="Bug 548841 - Mark internal package as x-internal in manifest" id="305365105">
             <message_arguments>

@@ -534,7 +534,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 			return false;
 		}
 		for (Object obj : sources) {
-			if (obj.equals(sourceToAdd)) {
+			if (equalSourceElements(obj, sourceToAdd)) {
 				return true;
 			}
 		}
