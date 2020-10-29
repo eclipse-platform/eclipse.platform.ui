@@ -155,13 +155,20 @@ public class TestUnitRegistrationLinux {
 	}
 
 	@Test
+	public void returnsFallbackIfEclipseLauncherIsNotSet() throws Exception {
+		System.clearProperty(ECLIPSE_LAUNCHER);
+		String eclipseLauncher = registration.getEclipseLauncher();
+		assertEquals("/home/myuser/Eclipse/" + "eclipse", eclipseLauncher);
+	}
+
+	@Test
 	public void givesSchemeInfoForHandledScheme() throws Exception {
 		fileProvider.fileExistsAnswers.put(PATH_OWN_DESKTOP_FILE, true);
 		fileProvider.readAnswers.put(PATH_OWN_DESKTOP_FILE,
 				getFileLines(OWN_EXECUTABLE_PATH, "MimeType=x-scheme-handler/adt;"));
 
 		processStub.result = OWN_DESKTOP_FILE; // this is returned by xdg-mime query default
-																// x-scheme-handler/adt
+		// x-scheme-handler/adt
 
 		List<ISchemeInformation> registeredSchemes = registration.getSchemesInformation(Arrays.asList(ADT_SCHEME));
 
