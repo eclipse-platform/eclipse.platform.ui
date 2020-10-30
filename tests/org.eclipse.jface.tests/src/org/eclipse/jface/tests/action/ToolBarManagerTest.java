@@ -143,24 +143,9 @@ public class ToolBarManagerTest extends JFaceActionTest {
 			assertEquals(1, items.length);
 
 			ToolItem item = items[0];
-			assertTrue(
-					Arrays.equals(hoverDescriptor.getImageData(100).data, item.getHotImage().getImageData(100).data));
-			assertTrue(Arrays.equals(disabledDescriptor.getImageData(100).data,
-					item.getDisabledImage().getImageData(100).data));
-			ImageData imageData = item.getImage().getImageData(100);
-			for (int x = 0; x < imageData.width; x++) {
-				for (int y = 0; y < imageData.height; y++) {
-					if (imageData.getAlpha(x, y) == 255) {
-						int rgb = imageData.getPixel(x, y);
-						int r = rgb & 0xFF;
-						int g = (rgb >> 8) & 0xFF;
-						int b = (rgb >> 16) & 0xFF;
-						assertEquals(r, g);
-						assertEquals(g, b);
-					}
-				}
-
-			}
+			assertImageEqualsDescriptor(hoverDescriptor, item.getHotImage());
+			assertImageEqualsDescriptor(disabledDescriptor, item.getDisabledImage());
+			assertImageEqualsDescriptor(ImageDescriptor.createWithFlags(descriptor, SWT.IMAGE_GRAY), item.getImage());
 		} finally {
 			ActionContributionItem.setUseColorIconsInToolbars(oldState);
 		}
@@ -187,13 +172,32 @@ public class ToolBarManagerTest extends JFaceActionTest {
 			assertEquals(1, items.length);
 
 			ToolItem item = items[0];
-			assertTrue(Arrays.equals(descriptor.getImageData(100).data, item.getImage().getImageData(100).data));
-			assertTrue(
-					Arrays.equals(hoverDescriptor.getImageData(100).data, item.getHotImage().getImageData(100).data));
-			assertTrue(Arrays.equals(disabledDescriptor.getImageData(100).data,
-					item.getDisabledImage().getImageData(100).data));
+			assertImageEqualsDescriptor(descriptor, item.getImage());
+			assertImageEqualsDescriptor(hoverDescriptor, item.getHotImage());
+			assertImageEqualsDescriptor(disabledDescriptor, item.getDisabledImage());
 		} finally {
 			ActionContributionItem.setUseColorIconsInToolbars(oldState);
+		}
+	}
+
+	private static void assertImageEqualsDescriptor(ImageDescriptor descriptor, Image image) {
+		Image createImage = descriptor.createImage();
+		try {
+			assertImageDataEquals(createImage.getImageData(), image.getImageData());
+		} finally {
+			createImage.dispose();
+		}
+	}
+
+	private static void assertImageDataEquals(ImageData im1, ImageData im2) {
+		assertNotNull("ImageData 1 is null", im1);
+		assertNotNull("ImageData 2 is null", im2);
+		assertEquals("ImageData width missmatch", im1.width, im2.width);
+		assertEquals("ImageData height missmatch", im1.height, im2.height);
+		for (int x = 0; x < im1.width; x++) {
+			for (int y = 0; y < im1.height; y++) {
+				assertEquals("pixel (" + x + "," + y + ") are not equal", im1.getPixel(x, y), im2.getPixel(x, y));
+			}
 		}
 	}
 

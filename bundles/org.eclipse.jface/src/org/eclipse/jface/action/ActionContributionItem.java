@@ -1004,7 +1004,7 @@ public class ActionContributionItem extends ContributionItem {
 			// If there is no disabled image, but there is a regular image generate a
 			// disabled one
 			if (disabledImage == null && image != null) {
-				disabledImage = ImageDescriptor.createWithFlags(image, SWT.IMAGE_GRAY);
+				disabledImage = ImageDescriptor.createWithFlags(image, SWT.IMAGE_DISABLE);
 			}
 			if (image != null && !USE_COLOR_ICONS) {
 				image = ImageDescriptor.createWithFlags(image, SWT.IMAGE_GRAY);
