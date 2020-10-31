@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.tips.core.ITipManager;
 import org.eclipse.tips.core.Tip;
 import org.eclipse.tips.core.TipProvider;
@@ -41,6 +42,8 @@ import org.eclipse.tips.core.internal.TipManager;
 import org.eclipse.tips.ui.internal.DefaultTipManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.services.IEvaluationService;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -106,7 +109,9 @@ public class IDETipManager extends DefaultTipManager {
 			evaluationService.addSourceProvider(fSourceProvider);
 			fSourceProviderAdded = true;
 		}
-		return super.open(startUp, Plugin.getInstance().getDialogSettings());
+		Bundle bundle = FrameworkUtil.getBundle(IDETipManager.class);
+		IDialogSettings settings = PlatformUI.getDialogSettingsProvider(bundle).getDialogSettings();
+		return super.open(startUp, settings);
 	}
 
 	/**
