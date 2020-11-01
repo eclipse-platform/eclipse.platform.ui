@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2018 IBM Corporation and others.
+ * Copyright (c) 2003, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -209,6 +209,8 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 			return EXIT_OK;
 		}
 
+		boolean force = false;
+
 		// -data "/valid/path", workspace already set
 		if (instanceLoc.isSet()) {
 			// make sure the meta data version is compatible (or the user has
@@ -256,13 +258,14 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 				}
 				return EXIT_OK;
 			}
+			if (result == ReturnCode.INVALID) {
+				force = true;
+			}
 		}
 
 		// -data @noDefault or -data not specified => prompt and set
 		// -data is specified but invalid according to checkValidWorkspace(): re-launch
 		ChooseWorkspaceData launchData = new ChooseWorkspaceData(instanceLoc.getDefault());
-
-		boolean force = false;
 
 		boolean parentShellVisible = false;
 		if (isValid(shell)) {
@@ -283,6 +286,11 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 				} catch (OperationCanceledException e) {
 					// Chosen workspace location was not compatible, select default one
 					launchData = new ChooseWorkspaceData(instanceLoc.getDefault());
+
+					// Bug 551260: ignore 'use default location' setting on retries. If the user has
+					// no opportunity to set another location it would only fail again and again and
+					// again.
+					force = true;
 					continue;
 				}
 			}
