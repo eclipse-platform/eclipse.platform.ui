@@ -562,11 +562,12 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 		selectionX2 = endX - 1;
 		selectionY2 = bottomY;
 
+		boolean superimposeKeylineOutline = Objects.equals(outerKeyline, tabOutlineColor);
 		Rectangle outlineBoundsForOutline = new Rectangle( //
-				Objects.equals(outerKeyline, tabOutlineColor) ? bounds.x - 1 /* superimpose lines */ : bounds.x,
-				!onBottom && Objects.equals(outerKeyline, tabOutlineColor) ? bounds.y - 1
-						/* superimpose lines */ : bounds.y,
-				bounds.width, bounds.height);
+				superimposeKeylineOutline ? bounds.x - 1 : bounds.x,
+				!onBottom && superimposeKeylineOutline ? bounds.y - 1 : bounds.y,
+				superimposeKeylineOutline ? bounds.width + 1 : bounds.width, //
+				bounds.height);
 		if (cornerSize == SQUARE_CORNER) {
 			tabOutlinePoints = computeSquareTabOutline(onBottom, startX, endX, bottomY, outlineBoundsForOutline,
 					parentSize);
