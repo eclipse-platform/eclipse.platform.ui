@@ -43,12 +43,6 @@ public class BrowserManager {
 	public static final String BROWSER_ID_FIREFOX = HelpBasePlugin.PLUGIN_ID
 	+ ".firefox"; //$NON-NLS-1$
 
-	public static final String BROWSER_ID_MOZILLA = HelpBasePlugin.PLUGIN_ID
-	+ ".mozilla"; //$NON-NLS-1$
-
-	public static final String BROWSER_ID_NETSCAPE = HelpBasePlugin.PLUGIN_ID
-			+ ".netscape"; //$NON-NLS-1$
-
 	public static final String BROWSER_ID_MAC_SYSTEM = HelpBasePlugin.PLUGIN_ID
 			+ ".defaultBrowserMacOSX"; //$NON-NLS-1$
 
@@ -101,17 +95,8 @@ public class BrowserManager {
 		if (defaultBrowserDesc == null) {
 			if (Constants.WS_WIN32.equalsIgnoreCase(os)) {
 				setDefaultBrowserID(BROWSER_ID_SYSTEM);
-			} else if (Constants.OS_AIX.equalsIgnoreCase(os)
-					|| (Constants.OS_HPUX.equalsIgnoreCase(os))
-					|| (Constants.OS_LINUX.equalsIgnoreCase(os))
-					|| (Constants.OS_SOLARIS.equalsIgnoreCase(os))) {
-				setDefaultBrowserID(BROWSER_ID_MOZILLA);
-				if (defaultBrowserDesc == null) {
-					setDefaultBrowserID(BROWSER_ID_FIREFOX);
-				}
-				if (defaultBrowserDesc == null) {
-					setDefaultBrowserID(BROWSER_ID_NETSCAPE);
-				}
+			} else if (Constants.OS_LINUX.equalsIgnoreCase(os)) {
+				setDefaultBrowserID(BROWSER_ID_FIREFOX);
 			} else if (Constants.OS_MACOSX.equalsIgnoreCase(os)) {
 				setDefaultBrowserID(BROWSER_ID_MAC_SYSTEM);
 			}
