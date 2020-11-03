@@ -13,7 +13,7 @@ public class Snippet080TitleAreaDialogWithClippedMessage {
 		};
 		dialog.create();
 		dialog.setTitle("Test Dialog");
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < 20; i++) {
 			sb.append("Hello World ! ");
 		}
