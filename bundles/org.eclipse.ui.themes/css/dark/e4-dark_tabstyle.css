@@ -47,16 +47,6 @@ CTabFolder[style~='SWT.DOWN'][style~='SWT.BOTTOM'] {
     swt-selected-highlight-top: false;
 }
 
-CTabFolder.MArea {
-    swt-tab-renderer: url('bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering');
-    padding: 0px;
-    background-color: '#org-eclipse-ui-workbench-DARK_BACKGROUND'; 
-    swt-selected-tab-fill: '#org-eclipse-ui-workbench-DARK_BACKGROUND'; 
-    swt-unselected-tabs-color: '#org-eclipse-ui-workbench-DARK_BACKGROUND'; 
-    swt-outer-keyline-color: '#org-eclipse-ui-workbench-DARK_BACKGROUND'; 
-    swt-inner-keyline-color: '#org-eclipse-ui-workbench-DARK_BACKGROUND'; 
-    swt-tab-outline: '#org-eclipse-ui-workbench-DARK_BACKGROUND'; 
-}
 
 CTabFolder.active {
     swt-selected-tab-highlight: #316c9b;
