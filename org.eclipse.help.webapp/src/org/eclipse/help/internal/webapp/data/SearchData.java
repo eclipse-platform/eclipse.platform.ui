@@ -705,7 +705,9 @@ public class SearchData extends ActivitiesData {
 			catOrder.put(order.get(i), Integer.valueOf(i));
 		}
 
-		Arrays.sort(toSort, (c1, c2) -> {
+		Arrays.sort(toSort, (hit1, hit2) -> {
+			IHelpResource c1 = hit1.getCategory();
+			IHelpResource c2 = hit2.getCategory();
 			if (c1 == null && c2 == null) return 0;
 			if (c1 == null) return 1;
 			if (c2 == null) return -1;
