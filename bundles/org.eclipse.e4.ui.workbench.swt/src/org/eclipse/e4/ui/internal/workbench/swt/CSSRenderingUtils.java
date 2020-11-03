@@ -165,7 +165,6 @@ public class CSSRenderingUtils {
 		gc.drawImage(image, 0, 0);
 		gc.dispose();
 		t.dispose();
-		offRed.dispose();
 		ImageData alphaData = rotatedImage.getImageData();
 		rotatedImage.dispose();
 		int transparentPix = alphaData.palette.getPixel(rgb);

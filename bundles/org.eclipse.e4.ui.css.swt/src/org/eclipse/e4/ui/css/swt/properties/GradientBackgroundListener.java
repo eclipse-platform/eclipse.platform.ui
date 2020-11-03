@@ -166,9 +166,6 @@ public class GradientBackgroundListener implements Listener {
 			fillGradient(gc, new Rectangle(0, 0, x, y), colors,
 					CSSSWTColorHelper.getPercents(grad), grad.getVerticalGradient());
 			gc.dispose();
-			for (Color c : colors) {
-				c.dispose(); // Dispose colors too.
-			}
 		}
 		if (gradientImage != null) {
 			control.setBackgroundImage(gradientImage);
