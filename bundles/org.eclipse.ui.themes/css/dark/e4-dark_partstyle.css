@@ -129,12 +129,7 @@
 /* ------------------------------------------------------------- */
 
 #org-eclipse-e4-ui-compatibility-editor Canvas {
-    background-color: #262626;
-}
-
-#org-eclipse-e4-ui-compatibility-editor CTabItem {
-    color: #EEEEEE;
-    font-weight: normal;
+	background-color: inherit;
 }
 
 #org-eclipse-e4-ui-compatibility-editor LayoutCanvas {
