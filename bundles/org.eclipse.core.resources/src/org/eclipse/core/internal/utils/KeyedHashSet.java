@@ -149,11 +149,11 @@ public class KeyedHashSet {
 	}
 
 	private int hash(KeyedElement key) {
-		return Math.abs(key.getKeyHashCode()) % elements.length;
+		return (key.getKeyHashCode() & 0x7FFF_FFFF) % elements.length;
 	}
 
 	private int keyHash(Object key) {
-		return Math.abs(key.hashCode()) % elements.length;
+		return (key.hashCode() & 0x7FFF_FFFF) % elements.length;
 	}
 
 	/**
