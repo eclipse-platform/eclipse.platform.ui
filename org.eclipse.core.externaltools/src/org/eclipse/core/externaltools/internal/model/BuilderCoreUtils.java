@@ -23,9 +23,12 @@ import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugPlugin;
@@ -243,6 +246,44 @@ public class BuilderCoreUtils {
 		return folder;
 	}
 
+	/**
+	 * Migrates the launch configuration working copy, which is based on an old-
+	 * style external tool builder, to a new, saved launch configuration. The
+	 * returned launch configuration will contain the same attributes as the
+	 * given working copy with the exception of the configuration name, which
+	 * may be changed during the migration. The name of the configuration will
+	 * only be changed if the current name is not a valid name for a saved
+	 * config.
+	 *
+	 * @param workingCopy
+	 *            the launch configuration containing attributes from an
+	 *            old-style project builder.
+	 * @return ILaunchConfiguration a new, saved launch configuration whose
+	 *         attributes match those of the given working copy as well as
+	 *         possible
+	 * @throws CoreException
+	 *             if an exception occurs while attempting to save the new
+	 *             launch configuration
+	 */
+	public static ILaunchConfiguration migrateBuilderConfiguration(
+			IProject project, ILaunchConfigurationWorkingCopy workingCopy)
+			throws CoreException {
+		workingCopy.setContainer(getBuilderFolder(project, true));
+		// Before saving, make sure the name is valid
+		String name = workingCopy.getName();
+		name = name.replace('/', '.');
+		if (name.charAt(0) == ('.')) {
+			name = name.substring(1);
+		}
+		IStatus status = ResourcesPlugin.getWorkspace().validateName(name,
+				IResource.FILE);
+		if (!status.isOK()) {
+			name = "ExternalTool"; //$NON-NLS-1$
+		}
+		name = DebugPlugin.getDefault().getLaunchManager().generateLaunchConfigurationName(name);
+		workingCopy.rename(name);
+		return workingCopy.doSave();
+	}
 
 	/**
 	 * Converts the build types string into an array of build kinds.
