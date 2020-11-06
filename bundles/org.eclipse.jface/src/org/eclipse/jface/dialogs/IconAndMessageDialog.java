@@ -211,9 +211,9 @@ public abstract class IconAndMessageDialog extends Dialog {
 	 * Get the number of columns in the layout of the Shell of the dialog.
 	 *
 	 * @return int
-	 * @since 3.3
+	 * @since 3.22
 	 */
-	int getColumnCount() {
+	protected int getColumnCount() {
 		return 2;
 	}
 

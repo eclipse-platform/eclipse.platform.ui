@@ -753,8 +753,11 @@ public class ErrorDialog extends IconAndMessageDialog {
 		}
 	}
 
+	/**
+	 * @since 3.22
+	 */
 	@Override
-	int getColumnCount() {
+	protected int getColumnCount() {
 		if (Policy.getErrorSupportProvider() == null)
 			return 2;
 		return 3;
