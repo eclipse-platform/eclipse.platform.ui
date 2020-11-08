@@ -26,10 +26,9 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.jface.databinding.conformance.MutableObservableSetContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
+import org.eclipse.jface.databinding.conformance.util.TestCollection;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.junit.Test;
-
-import junit.framework.TestSuite;
 
 /**
  */
@@ -43,8 +42,8 @@ public class WritableSetTest extends AbstractDefaultRealmTestCase {
 		assertEquals(elementType, set.getElementType());
 	}
 
-	public static void addConformanceTest(TestSuite suite) {
-		suite.addTest(MutableObservableSetContractTest.suite(new Delegate()));
+	public static void addConformanceTest(TestCollection suite) {
+		suite.addTest(MutableObservableSetContractTest.class, new Delegate());
 	}
 
 	private static class Delegate extends

@@ -26,6 +26,9 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
+import java.lang.annotation.Annotation;
+import java.util.List;
+
 import org.eclipse.core.tests.databinding.observable.AbstractObservableTest;
 import org.eclipse.core.tests.databinding.observable.list.AbstractObservableListTest;
 import org.eclipse.core.tests.databinding.observable.list.ComputedListTest;
@@ -65,6 +68,7 @@ import org.eclipse.core.tests.internal.databinding.observable.masterdetail.Detai
 import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableSetTest;
 import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableValueTest;
 import org.eclipse.core.tests.internal.databinding.observable.masterdetail.ListDetailValueObservableListTest;
+import org.eclipse.jface.databinding.conformance.util.TestCollection;
 import org.eclipse.jface.tests.internal.databinding.swt.ButtonObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.CComboObservableValueSelectionTest;
 import org.eclipse.jface.tests.internal.databinding.swt.CComboObservableValueTextTest;
@@ -93,15 +97,25 @@ import org.eclipse.jface.tests.internal.databinding.swt.TextObservableValueModif
 import org.eclipse.jface.tests.internal.databinding.viewers.ObservableViewerElementSetTest;
 import org.eclipse.jface.tests.internal.databinding.viewers.ViewerInputObservableValueTest;
 import org.junit.runner.RunWith;
-import org.junit.runners.AllTests;
+import org.junit.runner.Runner;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.TestClass;
+import org.junit.runners.parameterized.BlockJUnit4ClassRunnerWithParameters;
+import org.junit.runners.parameterized.ParametersRunnerFactory;
+import org.junit.runners.parameterized.TestWithParameters;
 
-import junit.framework.TestSuite;
+@RunWith(Parameterized.class)
+@Parameterized.UseParametersRunnerFactory(ConformanceTestSuite.RunnerFactory.class)
+public class ConformanceTestSuite {
 
-@RunWith(AllTests.class)
-public class BindingTestSuiteJunit3 {
-
-	public static TestSuite suite() {
-		TestSuite suite = new TestSuite("Contract Tests");
+	/**
+	 * Returns a list of all test classes and delegates.
+	 */
+	@Parameters
+	public static Iterable<Object[]> data() {
+		TestCollection suite = new TestCollection();
 		AbstractObservableListTest.addConformanceTest(suite);
 		AbstractObservableSetTest.addConformanceTest(suite);
 		AbstractObservableTest.addConformanceTest(suite);
@@ -168,6 +182,30 @@ public class BindingTestSuiteJunit3 {
 		WritableListTest.addConformanceTest(suite);
 		WritableSetTest.addConformanceTest(suite);
 		WritableValueTest.addConformanceTest(suite);
-		return suite;
+		return suite.getDataForParameterizedRunner();
+	}
+
+	/**
+	 * Creates a test runner from each entry in the list that is returned from
+	 * {@link #data}.
+	 */
+	public static class RunnerFactory implements ParametersRunnerFactory {
+		@Override
+		public Runner createRunnerForTestWithParameters(TestWithParameters test) throws InitializationError {
+			Class<?> testClass = (Class<?>) test.getParameters().get(0);
+			List<Object> parameters = test.getParameters().subList(1, test.getParameters().size());
+			String testName = testClass.getSimpleName() + " for " + parameters.get(0);
+			return new BlockJUnit4ClassRunnerWithParameters(
+					new TestWithParameters(testName, new TestClass(testClass), parameters)) {
+				@Override
+				protected Annotation[] getRunnerAnnotations() {
+					/*
+					 * The overridden method expects the test class to have at least one annotation,
+					 * otherwise the Array will be created with a negative length.
+					 */
+					return new Annotation[0];
+				}
+			};
+		}
 	}
 }

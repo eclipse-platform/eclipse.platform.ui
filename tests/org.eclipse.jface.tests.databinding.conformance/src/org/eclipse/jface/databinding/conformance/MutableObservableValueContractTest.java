@@ -16,15 +16,16 @@
 
 package org.eclipse.jface.databinding.conformance;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.delegate.IObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
-
-import junit.framework.Test;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Mutability tests for IObservableValue.
@@ -39,32 +40,24 @@ import junit.framework.Test;
  *
  * @since 3.2
  */
-public class MutableObservableValueContractTest extends ObservableDelegateTest {
+public class MutableObservableValueContractTest extends ObservableValueContractTest {
 	private IObservableValueContractDelegate delegate;
 
 	private IObservableValue observable;
 
-	/**
-	 * @param delegate
-	 */
-	public MutableObservableValueContractTest(
-			IObservableValueContractDelegate delegate) {
-		this(null, delegate);
-	}
-
-	public MutableObservableValueContractTest(String testName,
-			IObservableValueContractDelegate delegate) {
-		super(testName, delegate);
+	public MutableObservableValueContractTest(IObservableValueContractDelegate delegate) {
+		super(delegate);
 		this.delegate = delegate;
 	}
 
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
-
 		this.observable = (IObservableValue) getObservable();
 	}
 
+	@Test
 	public void testSetValue_SetsValue() throws Exception {
 		Object value = delegate.createValue(observable);
 
@@ -74,6 +67,7 @@ public class MutableObservableValueContractTest extends ObservableDelegateTest {
 				value, observable.getValue());
 	}
 
+	@Test
 	public void testSetValue_ChangeEvent() throws Exception {
 		ChangeEventTracker listener = ChangeEventTracker.observe(observable);
 
@@ -89,6 +83,7 @@ public class MutableObservableValueContractTest extends ObservableDelegateTest {
 				observable, listener.event.getObservable());
 	}
 
+	@Test
 	public void testSetValue_SameValue() throws Exception {
 		// invoke change to ensure observable has a value
 		delegate.change(observable);
@@ -108,16 +103,9 @@ public class MutableObservableValueContractTest extends ObservableDelegateTest {
 				0, changeListener.count);
 	}
 
+	@Test
 	public void testSetValue_RealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(() -> observable.setValue(delegate.createValue(observable)),
 				(CurrentRealm) observable.getRealm());
-	}
-
-	public static Test suite(IObservableValueContractDelegate delegate) {
-		return new SuiteBuilder()
-				.addObservableContractTest(
-						MutableObservableValueContractTest.class, delegate)
-				.addObservableContractTest(ObservableValueContractTest.class,
-						delegate).build();
 	}
 }

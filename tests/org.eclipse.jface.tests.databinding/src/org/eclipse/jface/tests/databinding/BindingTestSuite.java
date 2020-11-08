@@ -228,7 +228,7 @@ import org.junit.runners.Suite.SuiteClasses;
 		BeanObservableSetDecoratorTest.class, BeanObservableValueDecoratorTest.class, BeanPropertiesTest.class,
 		BeanPropertyHelperTest.class, BeanPropertyListenerSupportTest.class, BeanPropertyListenerTest.class,
 		BeansObservablesTest.class, BeanValuePropertyTest.class, BidiObservableMapTest.class, BindingMessagesTest.class,
-		BindingScenariosTestSuite.class, BindingStatusTest.class, BindingTest.class, BindingTestSuiteJunit3.class,
+		BindingScenariosTestSuite.class, BindingStatusTest.class, BindingTest.class, ConformanceTestSuite.class,
 		ButtonObservableValueTest.class, CComboObservableValueSelectionTest.class, CComboObservableValueTest.class,
 		CComboObservableValueTextTest.class, CComboSingleSelectionObservableValueTest.class,
 		CComboSingleSelectionObservableValueTest.class, ChangeSupportTest.class,

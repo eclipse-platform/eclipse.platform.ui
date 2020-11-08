@@ -21,11 +21,9 @@ import org.eclipse.core.internal.databinding.observable.ConstantObservableValue;
 import org.eclipse.jface.databinding.conformance.ObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.delegate.IObservableValueContractDelegate;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
+import org.eclipse.jface.databinding.conformance.util.TestCollection;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.junit.Test;
-
-import junit.framework.TestSuite;
 
 /**
  * Tests for ConstantObservableValue
@@ -39,9 +37,8 @@ public class ConstantObservableValueTest extends AbstractDefaultRealmTestCase {
 		new ConstantObservableValue<>(null, null, null);
 	}
 
-	public static void addConformanceTest(TestSuite suite) {
-		suite.addTest(new SuiteBuilder()
-				.addObservableContractTest(UnchangeableObservableValueContractTest.class, new Delegate()).build());
+	public static void addConformanceTest(TestCollection suite) {
+		suite.addTest(UnchangeableObservableValueContractTest.class, new Delegate());
 	}
 
 	private static class Delegate extends
@@ -62,9 +59,8 @@ public class ConstantObservableValueTest extends AbstractDefaultRealmTestCase {
 	 */
 	public static class UnchangeableObservableValueContractTest extends
 			ObservableValueContractTest {
-		public UnchangeableObservableValueContractTest(String name,
-				IObservableValueContractDelegate delegate) {
-			super(name, delegate);
+		public UnchangeableObservableValueContractTest(IObservableValueContractDelegate delegate) {
+			super(delegate);
 		}
 
 		@Override

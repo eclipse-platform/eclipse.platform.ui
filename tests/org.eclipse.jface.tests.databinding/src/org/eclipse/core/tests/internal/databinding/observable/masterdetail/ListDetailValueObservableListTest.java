@@ -39,12 +39,11 @@ import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.internal.databinding.observable.masterdetail.ListDetailValueObservableList;
 import org.eclipse.jface.databinding.conformance.ObservableListContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
+import org.eclipse.jface.databinding.conformance.util.TestCollection;
 import org.eclipse.jface.databinding.conformance.util.ListChangeEventTracker;
 import org.eclipse.jface.examples.databinding.model.SimplePerson;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.junit.Test;
-
-import junit.framework.TestSuite;
 
 /**
  * @since 1.3
@@ -52,8 +51,8 @@ import junit.framework.TestSuite;
 public class ListDetailValueObservableListTest extends
 		AbstractDefaultRealmTestCase {
 
-	public static void addConformanceTest(TestSuite suite) {
-		suite.addTest(ObservableListContractTest.suite(new Delegate()));
+	public static void addConformanceTest(TestCollection suite) {
+		suite.addTest(ObservableListContractTest.class, new Delegate());
 	}
 
 	@Test

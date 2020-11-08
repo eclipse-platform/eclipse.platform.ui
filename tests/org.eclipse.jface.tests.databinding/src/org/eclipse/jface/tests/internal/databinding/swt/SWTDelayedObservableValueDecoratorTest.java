@@ -25,6 +25,8 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
+import org.eclipse.jface.databinding.conformance.swt.SWTObservableValueContractTest;
+import org.eclipse.jface.databinding.conformance.util.TestCollection;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
@@ -38,8 +40,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import junit.framework.TestSuite;
 
 /**
  * Tests for DelayedObservableValue
@@ -102,8 +102,9 @@ public class SWTDelayedObservableValueDecoratorTest extends
 		assertEquals(newValue, tracker.event.diff.getNewValue());
 	}
 
-	public static void addConformanceTest(TestSuite suite) {
-		suite.addTest(SWTMutableObservableValueContractTest.suite(new Delegate()));
+	public static void addConformanceTest(TestCollection suite) {
+		suite.addTest(SWTMutableObservableValueContractTest.class, new Delegate());
+		suite.addTest(SWTObservableValueContractTest.class, new Delegate());
 	}
 
 	static class Delegate extends AbstractObservableValueContractDelegate {

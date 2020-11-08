@@ -27,14 +27,16 @@ import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.internal.databinding.validation.ValidatedObservableList;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.conformance.MutableObservableListContractTest;
+import org.eclipse.jface.databinding.conformance.ObservableListContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
+import org.eclipse.jface.databinding.conformance.util.TestCollection;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
-import junit.framework.TestSuite;
-
 public class ValidatedObservableListTest extends AbstractDefaultRealmTestCase {
-	public static void addConformanceTest(TestSuite suite) {
-		suite.addTest(MutableObservableListContractTest.suite(new Delegate()));
+	public static void addConformanceTest(TestCollection suite) {
+		suite.addTest(MutableObservableListContractTest.class, new Delegate());
+		suite.addTest(ObservableListContractTest.class, new Delegate());
+
 	}
 
 	static class Delegate extends AbstractObservableCollectionContractDelegate {

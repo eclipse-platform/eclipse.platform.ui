@@ -16,14 +16,16 @@
 
 package org.eclipse.jface.databinding.conformance;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.databinding.conformance.delegate.IObservableContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
-
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
 
 /**
  * TestCase that provides the standard behavior expected for delegating test
@@ -31,7 +33,7 @@ import junit.framework.TestCase;
  *
  * @since 3.2
  */
-public class ObservableDelegateTest extends TestCase {
+public class ObservableDelegateTest {
 	private IObservableContractDelegate delegate;
 
 	private Realm previousRealm;
@@ -40,28 +42,19 @@ public class ObservableDelegateTest extends TestCase {
 	private String debugInfo;
 
 	public ObservableDelegateTest(IObservableContractDelegate delegate) {
-		this(null, delegate);
-	}
-
-	public ObservableDelegateTest(String testName,
-			IObservableContractDelegate delegate) {
-		super(testName);
 		this.delegate = delegate;
 	}
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		previousRealm = Realm.getDefault();
 
 		delegate.setUp();
 		observable = doCreateObservable();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-
+	@After
+	public void tearDown() throws Exception {
 		delegate.tearDown();
 		observable.dispose();
 		observable = null;

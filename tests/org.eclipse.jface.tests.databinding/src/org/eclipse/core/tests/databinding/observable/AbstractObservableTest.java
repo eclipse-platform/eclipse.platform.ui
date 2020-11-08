@@ -32,14 +32,13 @@ import org.eclipse.jface.databinding.conformance.ObservableContractTest;
 import org.eclipse.jface.databinding.conformance.ObservableStaleContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
+import org.eclipse.jface.databinding.conformance.util.TestCollection;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
 import org.eclipse.jface.databinding.conformance.util.StaleEventTracker;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.junit.Before;
 import org.junit.Test;
-
-import junit.framework.TestSuite;
 
 /**
  * Tests for AbstractObservable.
@@ -236,10 +235,10 @@ public class AbstractObservableTest extends AbstractDefaultRealmTestCase {
 		assertTrue(observable.lastListenerRemoved);
 	}
 
-	public static void addConformanceTest(TestSuite suite) {
+	public static void addConformanceTest(TestCollection suite) {
 		Delegate delegate = new Delegate();
-		suite.addTest(ObservableContractTest.suite(delegate));
-		suite.addTest(ObservableStaleContractTest.suite(delegate));
+		suite.addTest(ObservableContractTest.class, delegate);
+		suite.addTest(ObservableStaleContractTest.class, delegate);
 	}
 
 	/* package */static class Delegate extends

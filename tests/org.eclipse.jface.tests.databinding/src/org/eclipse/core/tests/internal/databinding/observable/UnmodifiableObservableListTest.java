@@ -36,13 +36,12 @@ import org.eclipse.core.internal.databinding.observable.UnmodifiableObservableLi
 import org.eclipse.jface.databinding.conformance.ObservableListContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
+import org.eclipse.jface.databinding.conformance.util.TestCollection;
 import org.eclipse.jface.databinding.conformance.util.ListChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.StaleEventTracker;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.junit.Before;
 import org.junit.Test;
-
-import junit.framework.TestSuite;
 
 public class UnmodifiableObservableListTest extends
 		AbstractDefaultRealmTestCase {
@@ -156,8 +155,8 @@ public class UnmodifiableObservableListTest extends
 		}
 	}
 
-	public static void addConformanceTest(TestSuite suite) {
-		suite.addTest(ObservableListContractTest.suite(new Delegate()));
+	public static void addConformanceTest(TestCollection suite) {
+		suite.addTest(ObservableListContractTest.class, new Delegate());
 	}
 
 	private static class Delegate extends

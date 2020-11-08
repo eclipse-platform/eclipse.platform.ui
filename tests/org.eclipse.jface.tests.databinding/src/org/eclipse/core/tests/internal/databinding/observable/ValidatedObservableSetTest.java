@@ -28,13 +28,12 @@ import org.eclipse.core.internal.databinding.validation.ValidatedObservableSet;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.conformance.MutableObservableSetContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
+import org.eclipse.jface.databinding.conformance.util.TestCollection;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
-import junit.framework.TestSuite;
-
 public class ValidatedObservableSetTest extends AbstractDefaultRealmTestCase {
-	public static void addConformanceTest(TestSuite suite) {
-		suite.addTest(MutableObservableSetContractTest.suite(new Delegate()));
+	public static void addConformanceTest(TestCollection suite) {
+		suite.addTest(MutableObservableSetContractTest.class, new Delegate());
 	}
 
 	static class Delegate extends AbstractObservableCollectionContractDelegate {

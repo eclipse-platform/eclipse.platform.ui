@@ -37,13 +37,12 @@ import org.eclipse.core.internal.databinding.observable.UnmodifiableObservableSe
 import org.eclipse.jface.databinding.conformance.ObservableCollectionContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
+import org.eclipse.jface.databinding.conformance.util.TestCollection;
 import org.eclipse.jface.databinding.conformance.util.SetChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.StaleEventTracker;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.junit.Before;
 import org.junit.Test;
-
-import junit.framework.TestSuite;
 
 public class UnmodifiableObservableSetTest extends AbstractDefaultRealmTestCase {
 	UnmodifiableObservableSet unmodifiable;
@@ -155,8 +154,8 @@ public class UnmodifiableObservableSetTest extends AbstractDefaultRealmTestCase 
 		}
 	}
 
-	public static void addConformanceTest(TestSuite suite) {
-		suite.addTest(ObservableCollectionContractTest.suite(new Delegate()));
+	public static void addConformanceTest(TestCollection suite) {
+		suite.addTest(ObservableCollectionContractTest.class, new Delegate());
 	}
 
 	private static class Delegate extends

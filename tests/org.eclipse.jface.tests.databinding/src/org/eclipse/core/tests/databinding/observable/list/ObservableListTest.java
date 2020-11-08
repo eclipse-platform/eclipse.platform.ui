@@ -31,13 +31,12 @@ import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.databinding.observable.list.ObservableList;
 import org.eclipse.jface.databinding.conformance.ObservableListContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
+import org.eclipse.jface.databinding.conformance.util.TestCollection;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import junit.framework.TestSuite;
 
 /**
  * @since 3.2
@@ -106,8 +105,8 @@ public class ObservableListTest {
 		assertEquals(element0, list.get(1));
 	}
 
-	public static void addConformanceTest(TestSuite suite) {
-		suite.addTest(ObservableListContractTest.suite(new Delegate()));
+	public static void addConformanceTest(TestCollection suite) {
+		suite.addTest(ObservableListContractTest.class, new Delegate());
 	}
 
 	/* package */ static class Delegate extends AbstractObservableCollectionContractDelegate<String> {

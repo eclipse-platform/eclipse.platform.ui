@@ -24,7 +24,9 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
+import org.eclipse.jface.databinding.conformance.swt.SWTObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
+import org.eclipse.jface.databinding.conformance.util.TestCollection;
 import org.eclipse.jface.databinding.conformance.util.StaleEventTracker;
 import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
@@ -33,14 +35,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.junit.Test;
 
-import junit.framework.TestSuite;
-
 /**
  * Tests for the FocusOut version of TextObservableValue.
  */
 public class TextObservableValueFocusOutTest extends AbstractSWTTestCase {
-	public static void addConformanceTest(TestSuite suite) {
-		suite.addTest(SWTMutableObservableValueContractTest.suite(new Delegate()));
+	public static void addConformanceTest(TestCollection suite) {
+		suite.addTest(SWTMutableObservableValueContractTest.class, new Delegate());
+		suite.addTest(SWTObservableValueContractTest.class, new Delegate());
 	}
 
 	@Test

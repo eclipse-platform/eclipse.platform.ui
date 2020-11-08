@@ -23,19 +23,20 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
+import org.eclipse.jface.databinding.conformance.swt.SWTObservableValueContractTest;
+import org.eclipse.jface.databinding.conformance.util.TestCollection;
 import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Shell;
 
-import junit.framework.TestSuite;
-
 /**
  * Tests for the DefaultSelection version of StyledTextObservableValue.
  */
 public class StyledTextObservableValueDefaultSelectionTest {
-	public static void addConformanceTest(TestSuite suite) {
-		suite.addTest(SWTMutableObservableValueContractTest.suite(new Delegate()));
+	public static void addConformanceTest(TestCollection suite) {
+		suite.addTest(SWTMutableObservableValueContractTest.class, new Delegate());
+		suite.addTest(SWTObservableValueContractTest.class, new Delegate());
 	}
 
 	/* package */static class Delegate extends

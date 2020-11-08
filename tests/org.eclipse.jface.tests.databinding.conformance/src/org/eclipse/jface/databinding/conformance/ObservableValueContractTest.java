@@ -16,6 +16,9 @@
 
 package org.eclipse.jface.databinding.conformance;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,10 +31,9 @@ import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.jface.databinding.conformance.delegate.IObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
-
-import junit.framework.Test;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @since 3.2
@@ -45,22 +47,14 @@ public class ObservableValueContractTest extends ObservableContractTest {
 		this.delegate = delegate;
 	}
 
-	/**
-	 * @param testName
-	 * @param delegate
-	 */
-	public ObservableValueContractTest(String testName,
-			IObservableValueContractDelegate delegate) {
-		super(testName, delegate);
-		this.delegate = delegate;
-	}
-
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		observable = (IObservableValue) getObservable();
 	}
 
+	@Test
 	public void testChange_ValueChangeEvent() throws Exception {
 		ValueChangeEventTracker listener = ValueChangeEventTracker
 				.observe(observable);
@@ -71,12 +65,14 @@ public class ObservableValueContractTest extends ObservableContractTest {
 				1, listener.count);
 	}
 
+	@Test
 	public void testGetValueType_ExpectedType() throws Exception {
 		assertEquals(
 				formatFail("Type of the value should be returned from getType()."),
 				delegate.getValueType(observable), observable.getValueType());
 	}
 
+	@Test
 	public void testChange_OrderOfNotifications() throws Exception {
 		final List<IObservablesListener> listeners = new ArrayList<>();
 		IChangeListener changeListener = new IChangeListener() {
@@ -111,6 +107,7 @@ public class ObservableValueContractTest extends ObservableContractTest {
 				valueChangeListener, listeners.get(1));
 	}
 
+	@Test
 	public void testChange_ValueChangeEventDiff() throws Exception {
 		ValueChangeEventTracker listener = ValueChangeEventTracker
 				.observe(observable);
@@ -131,6 +128,7 @@ public class ObservableValueContractTest extends ObservableContractTest {
 				observable.getValue(), event.diff.getNewValue());
 	}
 
+	@Test
 	public void testChange_ValueChangeEventFiredAfterValueIsSet()
 			throws Exception {
 		class ValueChangeListener implements IValueChangeListener {
@@ -150,6 +148,7 @@ public class ObservableValueContractTest extends ObservableContractTest {
 				listener.value, observable.getValue());
 	}
 
+	@Test
 	public void testRemoveValueChangeListener_RemovesListener()
 			throws Exception {
 		ValueChangeEventTracker listener = ValueChangeEventTracker
@@ -169,16 +168,13 @@ public class ObservableValueContractTest extends ObservableContractTest {
 				1, listener.count);
 	}
 
+	@Test
 	public void testGetValue_GetterCalled() throws Exception {
 		assertGetterCalled(() -> observable.getValue(), formatFail("IObservableValue.getValue()"), observable);
 	}
 
+	@Test
 	public void testGetValue_RealmCheck() throws Exception {
 		RealmTester.exerciseCurrent(() -> observable.getValue(), (CurrentRealm) observable.getRealm());
-	}
-
-	public static Test suite(IObservableValueContractDelegate delegate) {
-		return new SuiteBuilder().addObservableContractTest(
-				ObservableValueContractTest.class, delegate).build();
 	}
 }

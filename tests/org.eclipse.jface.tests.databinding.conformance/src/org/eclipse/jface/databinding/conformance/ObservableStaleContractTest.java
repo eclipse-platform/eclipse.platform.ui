@@ -16,13 +16,17 @@
 
 package org.eclipse.jface.databinding.conformance;
 
-import junit.framework.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.jface.databinding.conformance.delegate.IObservableContractDelegate;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @since 3.3
@@ -32,28 +36,25 @@ public class ObservableStaleContractTest extends ObservableDelegateTest {
 	private IObservable observable;
 
 	public ObservableStaleContractTest(IObservableContractDelegate delegate) {
-		this(null, delegate);
-	}
-
-	public ObservableStaleContractTest(String testName,
-			IObservableContractDelegate delegate) {
-		super(testName, delegate);
+		super(delegate);
 		this.delegate = delegate;
 	}
 
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
-
 		observable = getObservable();
 	}
 
+	@Test
 	public void testIsStale_TrueWhenStale() throws Exception {
 		delegate.setStale(observable, true);
 		assertTrue(formatFail("When stale isStale() should return true."),
 				observable.isStale());
 	}
 
+	@Test
 	public void testIsStale_FalseWhenNotStale() throws Exception {
 		delegate.setStale(observable, false);
 		assertFalse(
@@ -61,6 +62,7 @@ public class ObservableStaleContractTest extends ObservableDelegateTest {
 				observable.isStale());
 	}
 
+	@Test
 	public void testBecomingStaleFiresStaleEvent() throws Exception {
 		StaleListener listener = new StaleListener();
 
@@ -75,6 +77,7 @@ public class ObservableStaleContractTest extends ObservableDelegateTest {
 				1, listener.count);
 	}
 
+	@Test
 	public void testStaleEventObservable() throws Exception {
 		StaleListener listener = new StaleListener();
 
@@ -91,6 +94,7 @@ public class ObservableStaleContractTest extends ObservableDelegateTest {
 				observable, event.getObservable());
 	}
 
+	@Test
 	public void testRemoveStaleListener_RemovesListener() throws Exception {
 		StaleListener listener = new StaleListener();
 
@@ -111,6 +115,7 @@ public class ObservableStaleContractTest extends ObservableDelegateTest {
 				1, listener.count);
 	}
 
+	@Test
 	public void testStaleListenersAreNotNotifiedWhenObservableIsNoLongerStale()
 			throws Exception {
 		ensureStale(observable, true);
@@ -124,6 +129,7 @@ public class ObservableStaleContractTest extends ObservableDelegateTest {
 				0, listener.count);
 	}
 
+	@Test
 	public void testObservableRealmIsCurrentOnStale() throws Exception {
 		ensureStale(observable, false);
 
@@ -165,10 +171,5 @@ public class ObservableStaleContractTest extends ObservableDelegateTest {
 			this.isCurrentRealm = staleEvent.getObservable().getRealm()
 					.isCurrent();
 		}
-	}
-
-	public static Test suite(IObservableContractDelegate delegate) {
-		return new SuiteBuilder().addObservableContractTest(
-				ObservableStaleContractTest.class, delegate).build();
 	}
 }

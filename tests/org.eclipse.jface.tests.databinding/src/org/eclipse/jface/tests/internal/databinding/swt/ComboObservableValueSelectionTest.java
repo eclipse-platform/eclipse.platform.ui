@@ -22,6 +22,8 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
+import org.eclipse.jface.databinding.conformance.swt.SWTObservableValueContractTest;
+import org.eclipse.jface.databinding.conformance.util.TestCollection;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.ISWTObservable;
@@ -33,8 +35,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import junit.framework.TestSuite;
 
 /**
  * @since 3.2
@@ -70,8 +70,9 @@ public class ComboObservableValueSelectionTest {
 		assertEquals("Observable was not notified.", 1, listener.count);
 	}
 
-	public static void addConformanceTest(TestSuite suite) {
-		suite.addTest(SWTMutableObservableValueContractTest.suite(new Delegate()));
+	public static void addConformanceTest(TestCollection suite) {
+		suite.addTest(SWTMutableObservableValueContractTest.class, new Delegate());
+		suite.addTest(SWTObservableValueContractTest.class, new Delegate());
 	}
 
 	/* package */static class Delegate extends

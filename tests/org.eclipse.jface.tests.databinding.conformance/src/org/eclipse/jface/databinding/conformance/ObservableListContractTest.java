@@ -19,9 +19,8 @@ package org.eclipse.jface.databinding.conformance;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.jface.databinding.conformance.delegate.IObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
-
-import junit.framework.Test;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for IObservableList that don't require mutating the collection.
@@ -50,37 +49,36 @@ public class ObservableListContractTest extends
 		this.delegate = delegate;
 	}
 
-	public ObservableListContractTest(String testName,
-			IObservableCollectionContractDelegate delegate) {
-		super(testName, delegate);
-		this.delegate = delegate;
-	}
-
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
-
 		list = (IObservableList) getObservable();
 	}
 
+	@Test
 	public void testListIterator_GetterCalled() throws Exception {
 		assertGetterCalled(() -> list.listIterator(), "List.listIterator()", list);
 	}
 
+	@Test
 	public void testGet_GetterCalled() throws Exception {
 		list = (IObservableList) delegate.createObservableCollection(
 				new CurrentRealm(true), 1);
 		assertGetterCalled(() -> list.get(0), "List.get(int)", list);
 	}
 
+	@Test
 	public void testIndexOf_GetterCalled() throws Exception {
 		assertGetterCalled(() -> list.indexOf(delegate.createElement(list)), "List.indexOf(int)", list);
 	}
 
+	@Test
 	public void testLastIndexOf_GetterCalled() throws Exception {
 		assertGetterCalled(() -> list.lastIndexOf(delegate.createElement(list)), "List.lastIndexOf(Object)", list);
 	}
 
+	@Test
 	public void testListIteratorAtIndex_GetterCalled() throws Exception {
 		// Create a new list instead of adding an item because the list might
 		// not be mutable
@@ -89,14 +87,11 @@ public class ObservableListContractTest extends
 		assertGetterCalled(() -> list.listIterator(0), "List.listIterator(int)", list);
 	}
 
+	@Test
 	public void testSubList_GetterCalled() throws Exception {
 		list = (IObservableList) delegate.createObservableCollection(
 				new CurrentRealm(true), 1);
 		assertGetterCalled(() -> list.subList(0, 1), "List.subList(int, int)", list);
 	}
 
-	public static Test suite(IObservableCollectionContractDelegate delegate) {
-		return new SuiteBuilder().addObservableContractTest(
-				ObservableListContractTest.class, delegate).build();
-	}
 }

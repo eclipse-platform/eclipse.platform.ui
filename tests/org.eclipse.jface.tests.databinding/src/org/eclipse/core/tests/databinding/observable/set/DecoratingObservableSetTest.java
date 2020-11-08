@@ -27,16 +27,15 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.jface.databinding.conformance.MutableObservableCollectionContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
-
-import junit.framework.TestSuite;
+import org.eclipse.jface.databinding.conformance.util.TestCollection;
 
 /**
  * @since 3.2
  *
  */
 public class DecoratingObservableSetTest {
-	public static void addConformanceTest(TestSuite suite) {
-		suite.addTest(MutableObservableCollectionContractTest.suite(new Delegate()));
+	public static void addConformanceTest(TestCollection suite) {
+		suite.addTest(MutableObservableCollectionContractTest.class, new Delegate());
 	}
 
 	static class Delegate extends AbstractObservableCollectionContractDelegate<Object> {

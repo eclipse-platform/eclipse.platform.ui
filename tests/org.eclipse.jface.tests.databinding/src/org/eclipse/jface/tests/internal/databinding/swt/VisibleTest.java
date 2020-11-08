@@ -1,6 +1,5 @@
 package org.eclipse.jface.tests.internal.databinding.swt;
 
-import static org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest.suite;
 import static org.junit.Assert.fail;
 
 import java.util.function.Function;
@@ -9,6 +8,9 @@ import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
+import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
+import org.eclipse.jface.databinding.conformance.swt.SWTObservableValueContractTest;
+import org.eclipse.jface.databinding.conformance.util.TestCollection;
 import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.swt.SWT;
@@ -20,18 +22,25 @@ import org.eclipse.swt.widgets.Tracker;
 import org.eclipse.swt.widgets.Widget;
 import org.junit.Test;
 
-import junit.framework.TestSuite;
-
 /**
  * Test for {@link WidgetProperties#visible}.
  */
 public class VisibleTest extends AbstractDefaultRealmTestCase {
-	public static void addConformanceTest(TestSuite suite) {
-		suite.addTest(suite(new Delegate<>(shell -> shell)));
-		suite.addTest(suite(new Delegate<>(Menu::new)));
-		suite.addTest(suite(new Delegate<>(shell -> new ToolTip(shell, SWT.BALLOON))));
-		suite.addTest(suite(new Delegate<>(shell -> new ToolBar(shell, SWT.HORIZONTAL))));
-		suite.addTest(suite(new Delegate<>(Shell::getHorizontalBar)));
+	public static void addConformanceTest(TestCollection suite) {
+		suite.addTest(SWTMutableObservableValueContractTest.class, new Delegate<>(shell -> shell));
+		suite.addTest(SWTMutableObservableValueContractTest.class, new Delegate<>(Menu::new));
+		suite.addTest(SWTMutableObservableValueContractTest.class,
+				new Delegate<>(shell -> new ToolTip(shell, SWT.BALLOON)));
+		suite.addTest(SWTMutableObservableValueContractTest.class,
+				new Delegate<>(shell -> new ToolBar(shell, SWT.HORIZONTAL)));
+		suite.addTest(SWTMutableObservableValueContractTest.class, new Delegate<>(Shell::getHorizontalBar));
+
+		suite.addTest(SWTObservableValueContractTest.class, new Delegate<>(shell -> shell));
+		suite.addTest(SWTObservableValueContractTest.class, new Delegate<>(Menu::new));
+		suite.addTest(SWTObservableValueContractTest.class, new Delegate<>(shell -> new ToolTip(shell, SWT.BALLOON)));
+		suite.addTest(SWTObservableValueContractTest.class,
+				new Delegate<>(shell -> new ToolBar(shell, SWT.HORIZONTAL)));
+		suite.addTest(SWTObservableValueContractTest.class, new Delegate<>(Shell::getHorizontalBar));
 	}
 
 	@Test

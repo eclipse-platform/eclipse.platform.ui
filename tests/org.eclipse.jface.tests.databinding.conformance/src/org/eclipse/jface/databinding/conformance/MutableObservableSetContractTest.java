@@ -16,6 +16,9 @@
 
 package org.eclipse.jface.databinding.conformance;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,9 +30,8 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.jface.databinding.conformance.delegate.IObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.SetChangeEventTracker;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
-
-import junit.framework.Test;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  */
@@ -39,30 +41,25 @@ public class MutableObservableSetContractTest extends
 
 	private IObservableSet set;
 
-	public MutableObservableSetContractTest(String testName,
-			IObservableCollectionContractDelegate delegate) {
-		super(testName, delegate);
-		this.delegate = delegate;
-	}
-
-	/**
-	 * @param delegate
-	 */
 	public MutableObservableSetContractTest(
 			IObservableCollectionContractDelegate delegate) {
 		super(delegate);
+		this.delegate = delegate;
 	}
 
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		set = (IObservableSet) getObservable();
 	}
 
+	@Test
 	public void testAdd_SetChangeEvent() throws Exception {
 		assertSetChangeEventFired(() -> set.add(delegate.createElement(set)), "Set.add(Object)", set);
 	}
 
+	@Test
 	public void testAdd_SetDiffEntry() throws Exception {
 		set.add(delegate.createElement(set));
 		final Object element = delegate.createElement(set);
@@ -70,15 +67,18 @@ public class MutableObservableSetContractTest extends
 		assertAddDiffEntry(() -> set.add(element), "Set.add(Object)", set, element);
 	}
 
+	@Test
 	public void testAdd_GetterCalled() throws Exception {
 		assertGetterCalled(() -> set.add(delegate.createElement(set)), "Set.add(Object)", set);
 	}
 
+	@Test
 	public void testAddAll_SetChangeEvent() throws Exception {
 		assertSetChangeEventFired(() -> set.addAll(Arrays.asList(new Object[] { delegate.createElement(set) })),
 				"Set.addAll(Collection", set);
 	}
 
+	@Test
 	public void testAddAll_SetDiffEntry() throws Exception {
 		final Object element = delegate.createElement(set);
 
@@ -86,11 +86,13 @@ public class MutableObservableSetContractTest extends
 				element);
 	}
 
+	@Test
 	public void testAddAll_GetterCalled() throws Exception {
 		assertGetterCalled(() -> set.addAll(Collections.singleton(delegate.createElement(set))),
 				"Set.addAll(Collection)", set);
 	}
 
+	@Test
 	public void testRemove_SetChangeEvent() throws Exception {
 		final Object element = delegate.createElement(set);
 		set.add(element);
@@ -98,6 +100,7 @@ public class MutableObservableSetContractTest extends
 		assertSetChangeEventFired(() -> set.remove(element), "Set.remove(Object)", set);
 	}
 
+	@Test
 	public void testRemove_SetDiffEntry() throws Exception {
 		set.add(delegate.createElement(set));
 		final Object element = delegate.createElement(set);
@@ -106,12 +109,14 @@ public class MutableObservableSetContractTest extends
 		assertRemoveDiffEntry(() -> set.remove(element), "Set.remove(Object)", set, element);
 	}
 
+	@Test
 	public void testRemove_GetterCalled() throws Exception {
 		final Object element = delegate.createElement(set);
 		set.add(element);
 		assertGetterCalled(() -> set.remove(element), "Set.remove(Object)", set);
 	}
 
+	@Test
 	public void testRemoveAll_SetChangeEvent() throws Exception {
 		final Object element = delegate.createElement(set);
 		set.add(element);
@@ -120,6 +125,7 @@ public class MutableObservableSetContractTest extends
 				"Set.removeAll(Collection)", set);
 	}
 
+	@Test
 	public void testRemoveAll_SetDiffEntry() throws Exception {
 		final Object element = delegate.createElement(set);
 		set.add(element);
@@ -128,12 +134,14 @@ public class MutableObservableSetContractTest extends
 				set, element);
 	}
 
+	@Test
 	public void testRemoveAll_GetterCalled() throws Exception {
 		final Object element = delegate.createElement(set);
 		set.add(element);
 		assertGetterCalled(() -> set.removeAll(Collections.singleton(element)), "Set.removeAll(Collection)", set);
 	}
 
+	@Test
 	public void testRetainAll_SetChangeEvent() throws Exception {
 		final Object element1 = delegate.createElement(set);
 		set.add(element1);
@@ -143,6 +151,7 @@ public class MutableObservableSetContractTest extends
 				"Set.retainAll(Collection", set);
 	}
 
+	@Test
 	public void testRetainAll_SetDiffEntry() throws Exception {
 		final Object element1 = delegate.createElement(set);
 		set.add(element1);
@@ -153,17 +162,20 @@ public class MutableObservableSetContractTest extends
 				"Set.retainAll(Collection)", set, element2);
 	}
 
+	@Test
 	public void testRetainAll_GetterCalled() throws Exception {
 		set.add(delegate.createElement(set));
 		assertGetterCalled(() -> set.retainAll(Collections.EMPTY_SET), "Set.retainAll(Collection)", set);
 	}
 
+	@Test
 	public void testClear_SetChangeEvent() throws Exception {
 		set.add(delegate.createElement(set));
 
 		assertSetChangeEventFired(() -> set.clear(), "Set.clear()", set);
 	}
 
+	@Test
 	public void testClear_SetDiffEntry() throws Exception {
 		Object element = delegate.createElement(set);
 		set.add(element);
@@ -171,6 +183,7 @@ public class MutableObservableSetContractTest extends
 		assertRemoveDiffEntry(() -> set.clear(), "Set.clear()", set, element);
 	}
 
+	@Test
 	public void testClear_GetterCalled() throws Exception {
 		set.add(delegate.createElement(set));
 		assertGetterCalled(() -> set.clear(), "Set.clear()", set);
@@ -263,14 +276,5 @@ public class MutableObservableSetContractTest extends
 		assertTrue(formatFail(methodName
 				+ " should result in a diff entry that is a removal."),
 				entries.contains(element));
-	}
-
-	public static Test suite(IObservableCollectionContractDelegate delegate) {
-		return new SuiteBuilder()
-				.addObservableContractTest(
-						MutableObservableSetContractTest.class, delegate)
-				.addObservableContractTest(
-						ObservableCollectionContractTest.class, delegate)
-				.build();
 	}
 }

@@ -22,6 +22,8 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
+import org.eclipse.jface.databinding.conformance.swt.SWTObservableValueContractTest;
+import org.eclipse.jface.databinding.conformance.util.TestCollection;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
@@ -30,8 +32,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import junit.framework.TestSuite;
 
 /**
  * Tests for ShellObservableValue
@@ -104,8 +104,9 @@ public class ShellObservableValueTest extends AbstractDefaultRealmTestCase {
 		assertEquals(0, tracker.count);
 	}
 
-	public static void addConformanceTest(TestSuite suite) {
-		suite.addTest(SWTMutableObservableValueContractTest.suite(new Delegate()));
+	public static void addConformanceTest(TestCollection suite) {
+		suite.addTest(SWTMutableObservableValueContractTest.class, new Delegate());
+		suite.addTest(SWTObservableValueContractTest.class, new Delegate());
 	}
 
 	static class Delegate extends AbstractObservableValueContractDelegate {

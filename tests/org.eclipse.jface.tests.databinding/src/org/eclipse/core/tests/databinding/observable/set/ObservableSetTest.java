@@ -27,15 +27,14 @@ import org.eclipse.core.databinding.observable.set.ObservableSet;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.jface.databinding.conformance.ObservableCollectionContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
-
-import junit.framework.TestSuite;
+import org.eclipse.jface.databinding.conformance.util.TestCollection;
 
 /**
  * @since 1.1
  */
 public class ObservableSetTest {
-	public static void addConformanceTest(TestSuite suite) {
-		suite.addTest(ObservableCollectionContractTest.suite(new Delegate()));
+	public static void addConformanceTest(TestCollection suite) {
+		suite.addTest(ObservableCollectionContractTest.class, new Delegate());
 	}
 
 	private static class Delegate extends AbstractObservableCollectionContractDelegate<String> {

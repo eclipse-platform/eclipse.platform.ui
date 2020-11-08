@@ -21,10 +21,8 @@ import org.eclipse.core.internal.databinding.observable.EmptyObservableList;
 import org.eclipse.jface.databinding.conformance.ObservableListContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.delegate.IObservableCollectionContractDelegate;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
+import org.eclipse.jface.databinding.conformance.util.TestCollection;
 import org.junit.Test;
-
-import junit.framework.TestSuite;
 
 /**
  * @since 3.2
@@ -32,9 +30,8 @@ import junit.framework.TestSuite;
  */
 public class EmptyObservableListTest {
 
-	public static void addConformanceTest(TestSuite suite) {
-		suite.addTest(new SuiteBuilder()
-				.addObservableContractTest(ImmutableObservableListContractTest.class, new Delegate()).build());
+	public static void addConformanceTest(TestCollection suite) {
+		suite.addTest(ImmutableObservableListContractTest.class, new Delegate());
 	}
 
 	public static class ImmutableObservableListContractTest extends
@@ -43,11 +40,6 @@ public class EmptyObservableListTest {
 		public ImmutableObservableListContractTest(
 				IObservableCollectionContractDelegate delegate) {
 			super(delegate);
-		}
-
-		public ImmutableObservableListContractTest(String name,
-				IObservableCollectionContractDelegate delegate) {
-			super(name, delegate);
 		}
 
 		@Override

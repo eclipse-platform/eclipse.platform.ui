@@ -16,6 +16,12 @@
 
 package org.eclipse.jface.databinding.conformance;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
@@ -25,9 +31,8 @@ import org.eclipse.jface.databinding.conformance.delegate.IObservableContractDel
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.DisposeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
-
-import junit.framework.Test;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for IObservable that don't require mutating the observable.
@@ -47,22 +52,18 @@ public class ObservableContractTest extends ObservableDelegateTest {
 	private IObservableContractDelegate delegate;
 
 	public ObservableContractTest(IObservableContractDelegate delegate) {
-		this(null, delegate);
-	}
-
-	public ObservableContractTest(String testName,
-			IObservableContractDelegate delegate) {
-		super(testName, delegate);
-
+		super(delegate);
 		this.delegate = delegate;
 	}
 
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		observable = getObservable();
 	}
 
+	@Test
 	public void testConstruction_CallsObservableCreated() {
 		final IObservable[] created = new IObservable[1];
 		IObservable[] collected = ObservableTracker
@@ -78,11 +79,13 @@ public class ObservableContractTest extends ObservableDelegateTest {
 		assertTrue(wasCollected);
 	}
 
+	@Test
 	public void testGetRealm_NotNull() throws Exception {
 		assertNotNull(formatFail("The observable's realm should not be null."),
 				observable.getRealm());
 	}
 
+	@Test
 	public void testChange_ChangeEvent() throws Exception {
 		ChangeListener listener = new ChangeListener();
 
@@ -94,6 +97,7 @@ public class ObservableContractTest extends ObservableDelegateTest {
 				1, listener.count);
 	}
 
+	@Test
 	public void testChange_EventObservable() throws Exception {
 		ChangeListener listener = new ChangeListener();
 
@@ -108,10 +112,12 @@ public class ObservableContractTest extends ObservableDelegateTest {
 				observable, event.getObservable());
 	}
 
+	@Test
 	public void testChange_RealmCheck() throws Exception {
 		RealmTester.exerciseCurrent(() -> delegate.change(observable), (CurrentRealm) observable.getRealm());
 	}
 
+	@Test
 	public void testChange_ObservableRealmIsTheCurrentRealm() throws Exception {
 		ChangeListener listener = new ChangeListener();
 		observable.addChangeListener(listener);
@@ -122,6 +128,7 @@ public class ObservableContractTest extends ObservableDelegateTest {
 				listener.isCurrentRealm);
 	}
 
+	@Test
 	public void testRemoveChangeListener_RemovesListener() throws Exception {
 		ChangeListener listener = new ChangeListener();
 
@@ -140,6 +147,7 @@ public class ObservableContractTest extends ObservableDelegateTest {
 				1, listener.count);
 	}
 
+	@Test
 	public void testIsStale_NotStale() throws Exception {
 		delegate.setStale(observable, false);
 		assertFalse(
@@ -147,20 +155,24 @@ public class ObservableContractTest extends ObservableDelegateTest {
 				observable.isStale());
 	}
 
+	@Test
 	public void testIsStale_RealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(() -> observable.isStale(), (CurrentRealm) observable.getRealm());
 	}
 
+	@Test
 	public void testIsStale_GetterCalled() throws Exception {
 		assertGetterCalled(() -> observable.isStale(), "isStale", observable);
 	}
 
+	@Test
 	public void testIsDisposed() throws Exception {
 		assertFalse(observable.isDisposed());
 		observable.dispose();
 		assertTrue(observable.isDisposed());
 	}
 
+	@Test
 	public void testAddDisposeListener_HandleDisposeInvoked() {
 		DisposeEventTracker tracker = DisposeEventTracker.observe(observable);
 		assertEquals(0, tracker.count);
@@ -169,6 +181,7 @@ public class ObservableContractTest extends ObservableDelegateTest {
 		assertSame(observable, tracker.event.getSource());
 	}
 
+	@Test
 	public void testHandleDispose_IsDisposedTrue() {
 		// Ensures observable.isDisposed() == true before
 		// the dispose listeners are called
@@ -176,6 +189,7 @@ public class ObservableContractTest extends ObservableDelegateTest {
 		observable.dispose();
 	}
 
+	@Test
 	public void testDispose_RemovesListeners() throws Exception {
 		ChangeListener disposedObservableListener = new ChangeListener();
 		Realm realm = observable.getRealm();
@@ -192,6 +206,7 @@ public class ObservableContractTest extends ObservableDelegateTest {
 				0, disposedObservableListener.count);
 	}
 
+	@Test
 	public void testDispose_PreservesRealm() throws Exception {
 		Realm realm = observable.getRealm();
 
@@ -213,10 +228,5 @@ public class ObservableContractTest extends ObservableDelegateTest {
 			this.event = event;
 			this.isCurrentRealm = event.getObservable().getRealm().isCurrent();
 		}
-	}
-
-	public static Test suite(IObservableContractDelegate delegate) {
-		return new SuiteBuilder().addObservableContractTest(
-				ObservableContractTest.class, delegate).build();
 	}
 }

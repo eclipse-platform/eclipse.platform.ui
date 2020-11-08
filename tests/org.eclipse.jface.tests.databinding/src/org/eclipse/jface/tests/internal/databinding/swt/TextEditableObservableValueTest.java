@@ -15,20 +15,22 @@
 
 package org.eclipse.jface.tests.internal.databinding.swt;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.ObservableDelegateTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
+import org.eclipse.jface.databinding.conformance.swt.SWTObservableValueContractTest;
+import org.eclipse.jface.databinding.conformance.util.TestCollection;
 import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.junit.Before;
 import org.junit.Test;
-
-import junit.framework.TestSuite;
 
 /**
  * @since 1.1
@@ -40,11 +42,7 @@ public class TextEditableObservableValueTest extends ObservableDelegateTest {
 	private IObservableValue observable;
 
 	public TextEditableObservableValueTest() {
-		this(null);
-	}
-
-	public TextEditableObservableValueTest(String testName) {
-		super(testName, new Delegate());
+		super(new Delegate());
 	}
 
 	@Override
@@ -81,8 +79,9 @@ public class TextEditableObservableValueTest extends ObservableDelegateTest {
 		assertEquals(Boolean.FALSE, Boolean.valueOf(text.getEditable()));
 	}
 
-	public static void addConformanceTest(TestSuite suite) {
-		suite.addTest(SWTMutableObservableValueContractTest.suite(new Delegate()));
+	public static void addConformanceTest(TestCollection suite) {
+		suite.addTest(SWTMutableObservableValueContractTest.class, new Delegate());
+		suite.addTest(SWTObservableValueContractTest.class, new Delegate());
 	}
 
 	/* package */static class Delegate extends
