@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -40,7 +40,7 @@ import org.eclipse.ui.console.IHyperlink;
 
 public class SeparateVMTests extends AbstractAntUIBuildTest {
 
-	protected static final String PLUGIN_VERSION = "org.apache.ant_1.10.8"; //$NON-NLS-1$
+	protected static final String PLUGIN_VERSION = "org.apache.ant_1.10.9"; //$NON-NLS-1$
 
 	public SeparateVMTests(String name) {
 		super(name);
@@ -49,7 +49,7 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 	/**
 	 * Checks that the expected line count has been reached and if not dump out what
 	 * was tracked to System.err
-	 * 
+	 *
 	 * @param expectedLines
 	 * @since 3.8.200
 	 */
@@ -113,11 +113,11 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 		assertTrue("Incorrect message. Should start with [null] Testing Ant in Eclipse with a custom task2. Message: " //$NON-NLS-1$
 				+ ConsoleLineTracker.getMessage(2),
 				ConsoleLineTracker.getMessage(2).trim()
-						.startsWith("[null] Testing Ant in Eclipse with a custom task2")); //$NON-NLS-1$
+				.startsWith("[null] Testing Ant in Eclipse with a custom task2")); //$NON-NLS-1$
 		assertTrue("Incorrect message. Should start with [null] Testing Ant in Eclipse with a custom task2. Message: " //$NON-NLS-1$
 				+ ConsoleLineTracker.getMessage(3),
 				ConsoleLineTracker.getMessage(3).trim()
-						.startsWith("[null] Testing Ant in Eclipse with a custom task2")); //$NON-NLS-1$
+				.startsWith("[null] Testing Ant in Eclipse with a custom task2")); //$NON-NLS-1$
 	}
 
 	/**
@@ -130,7 +130,7 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 		assertTrue("Incorrect message. Should start with [echo] Ensure that an extension point defined type. Message: " //$NON-NLS-1$
 				+ ConsoleLineTracker.getMessage(2),
 				ConsoleLineTracker.getMessage(2).trim()
-						.startsWith("[echo] Ensure that an extension point defined type")); //$NON-NLS-1$
+				.startsWith("[echo] Ensure that an extension point defined type")); //$NON-NLS-1$
 	}
 
 	/**
@@ -224,7 +224,7 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 
 	/**
 	 * Tests specifying the XmlLogger as a listener (bug 80435)
-	 * 
+	 *
 	 * @throws FileNotFoundException
 	 */
 	public void testXmlLoggerListener() throws CoreException, FileNotFoundException {
