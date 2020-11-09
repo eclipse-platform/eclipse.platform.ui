@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -351,7 +351,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 	 * @param parent the parent composite to contain the dialog area
 	 */
 	protected void createTable(Composite parent) {
-		final Text filterText = new Text(parent, SWT.BORDER | SWT.SEARCH | SWT.ICON_CANCEL);
+		final Text filterText = new Text(parent, SWT.BORDER | SWT.SEARCH | SWT.ICON_CANCEL | SWT.ICON_SEARCH);
 		filterText.setLayoutData(GridDataFactory.fillDefaults().create());
 		filterText.setMessage(WorkbenchMessages.AboutPluginsDialog_filterTextMessage);
 		filterText.setFocus();
