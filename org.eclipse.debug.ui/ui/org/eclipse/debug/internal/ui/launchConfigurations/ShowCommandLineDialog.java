@@ -93,8 +93,8 @@ public class ShowCommandLineDialog extends Dialog {
 		GridLayout topLayout = new GridLayout();
 		group.setLayout(topLayout);
 		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.heightHint = convertHeightInCharsToPixels(15);
-		gd.widthHint = convertWidthInCharsToPixels(50);
+		gd.heightHint = convertHeightInCharsToPixels(20);
+		gd.widthHint = convertWidthInCharsToPixels(90);
 		group.setLayoutData(gd);
 		group.setFont(font);
 
