@@ -406,7 +406,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 	}
 
 	/** The proposal table. */
-	private Table fProposalTable;
+	private volatile Table fProposalTable;
 	/** The table selection listener */
 	private SelectionListener fSelectionListener= new TableSelectionListener();
 	/** The delay after which additional information is displayed */
@@ -415,13 +415,15 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 	 * The timer thread.
 	 * @since 3.2
 	 */
-	private Timer fTimer;
+	private volatile Timer fTimer;
+
 	/**
 	 * The proposal most recently set by {@link #showInformation(ICompletionProposal, Object)},
 	 * possibly <code>null</code>.
 	 * @since 3.2
 	 */
-	private ICompletionProposal fProposal;
+	private volatile ICompletionProposal fProposal;
+
 	/**
 	 * The information most recently set by {@link #showInformation(ICompletionProposal, Object)},
 	 * possibly <code>null</code>.
@@ -455,20 +457,19 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 
 	@Override
 	public void install(Control control) {
-
 		if (fProposalTable == control) {
 			// already installed
 			return;
 		}
+		Assert.isTrue(control instanceof Table);
 
 		super.install(control.getShell());
 
-		Assert.isTrue(control instanceof Table);
 		fProposalTable= (Table) control;
-		fProposalTable.addSelectionListener(fSelectionListener);
-		getInternalAccessor().getInformationControlReplacer().install(fProposalTable);
+		((Table) control).addSelectionListener(fSelectionListener);
+		getInternalAccessor().getInformationControlReplacer().install(control);
 
-		fTimer= new Timer(fProposalTable.getDisplay(), fDelay) {
+		fTimer= new Timer(control.getDisplay(), fDelay) {
 			@Override
 			protected void showInformation(ICompletionProposal proposal, Object info) {
 				InformationControlReplacer replacer= getInternalAccessor().getInformationControlReplacer();
@@ -482,18 +483,20 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 	@Override
 	public void disposeInformationControl() {
 
-		if (fTimer !=null) {
-			fTimer.terminate();
+		Timer timer= fTimer;
+		if (timer !=null) {
+			timer.terminate();
 			fTimer= null;
+		}
+
+		Table table= fProposalTable;
+		if (table != null && !table.isDisposed()) {
+			table.removeSelectionListener(fSelectionListener);
+			fProposalTable= null;
 		}
 
 		fProposal= null;
 		fInformation= null;
-
-		if (fProposalTable != null && !fProposalTable.isDisposed()) {
-			fProposalTable.removeSelectionListener(fSelectionListener);
-			fProposalTable= null;
-		}
 
 		super.disposeInformationControl();
 	}
@@ -502,9 +505,9 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 	 *Handles a change of the line selected in the associated selector.
 	 */
 	public void handleTableSelectionChanged() {
-
-		if (fProposalTable != null && !fProposalTable.isDisposed() && fProposalTable.isVisible()) {
-			TableItem[] selection= fProposalTable.getSelection();
+		Table table= fProposalTable;
+		if (table != null && !table.isDisposed() && table.isVisible()) {
+			TableItem[] selection= table.getSelection();
 			if (selection != null && selection.length > 0) {
 
 				TableItem item= selection[0];
@@ -512,18 +515,26 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 				Object d= item.getData();
 				if (d instanceof ICompletionProposal) {
 					ICompletionProposal p= (ICompletionProposal) d;
-					fTimer.reset(p);
+					Timer timer= fTimer;
+					if (timer != null) {
+						timer.reset(p);
+					}
 				}
 			}
 		}
 	}
 
 	void showInformation(ICompletionProposal proposal, Object info) {
-		if (fProposalTable == null || fProposalTable.isDisposed())
+		ICompletionProposal oldProposal= fProposal;
+		Object oldInformation= fInformation;
+		Table table= fProposalTable;
+		if (table == null || table.isDisposed()) {
 			return;
+		}
 
-		if (fProposal == proposal && ((info == null && fInformation == null) || (info != null && info.equals(fInformation))))
+		if (oldProposal == proposal && ((info == null && oldInformation == null) || (info != null && info.equals(oldInformation)))) {
 			return;
+		}
 
 		fInformation= info;
 		fProposal= proposal;
@@ -532,17 +543,25 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 
 	@Override
 	protected void computeInformation() {
-		if (fProposalTable == null || fProposalTable.isDisposed()) {
+		Table table= fProposalTable;
+		if (table == null || table.isDisposed()) {
 			return;
 		}
 
-		if (fProposal instanceof ICompletionProposalExtension3)
-			setCustomInformationControlCreator(((ICompletionProposalExtension3) fProposal).getInformationControlCreator());
-		else
+		ICompletionProposal proposal= fProposal;
+		if (proposal instanceof ICompletionProposalExtension3) {
+			setCustomInformationControlCreator(((ICompletionProposalExtension3) proposal).getInformationControlCreator());
+		} else {
 			setCustomInformationControlCreator(null);
+		}
+
+		table= fProposalTable;
+		if (table == null || table.isDisposed()) {
+			return;
+		}
 
 		// compute subject area
-		Point size= fProposalTable.getShell().getSize();
+		Point size= table.getShell().getSize();
 
 		// set information & subject area
 		setInformation(fInformation, new Rectangle(0, 0, size.x, size.y));
@@ -552,12 +571,16 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 	protected Point computeLocation(Rectangle subjectArea, Point controlSize, Anchor anchor) {
 		Point location= super.computeLocation(subjectArea, controlSize, anchor);
 
+		Table table= fProposalTable;
+		if (table == null) {
+			return location;
+		}
 		/*
 		 * The location is computed using subjectControl.toDisplay(), which does not include the
 		 * trim of the subject control. As we want the additional info popup aligned with the outer
 		 * coordinates of the proposal popup, adjust this here
 		 */
-		Rectangle trim= fProposalTable.getShell().computeTrim(0, 0, 0, 0);
+		Rectangle trim= table.getShell().computeTrim(0, 0, 0, 0);
 		location.x += trim.x;
 		location.y += trim.y;
 
@@ -589,8 +612,10 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 	@Override
 	protected void hideInformationControl() {
 		super.hideInformationControl();
-		if (fTimer != null)
-			fTimer.reset(null);
+		Timer timer= fTimer;
+		if (timer != null) {
+			timer.reset(null);
+		}
 	}
 
 	@Override
