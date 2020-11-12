@@ -97,25 +97,25 @@ public class DeleteResourceChange extends ResourceChange {
 	@Override
 	public String getName() {
 		IPath path= fResourcePath.makeRelative();
-		String label= Messages.format(
+		StringBuilder label= new StringBuilder(Messages.format(
 				RefactoringCoreMessages.DeleteResourceChange_name,
-				BasicElementLabels.getPathLabel(path, false));
+				BasicElementLabels.getPathLabel(path, false)));
 
 		if (path.segmentCount() == 1) {
 			IResource resource= getResource();
 			if (resource != null) {
 				IPath location= resource.getLocation();
 				if (location != null) {
-					label= label + BasicElementLabels.CONCAT_STRING + BasicElementLabels.getPathLabel(location, true);
+					label.append(BasicElementLabels.CONCAT_STRING).append(BasicElementLabels.getPathLabel(location, true));
 				} else {
 					URI uri= resource.getLocationURI();
 					if (uri != null) {
-						label= label + BasicElementLabels.CONCAT_STRING + BasicElementLabels.getURLPart(uri.toString());
+						label.append(BasicElementLabels.CONCAT_STRING).append(BasicElementLabels.getURLPart(uri.toString()));
 					}
 				}
 			}
 		}
-		return label;
+		return label.toString();
 	}
 
 	@Override
