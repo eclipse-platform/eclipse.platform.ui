@@ -279,10 +279,8 @@ public class StyledCellLabelProviderTests {
 					if (useBold) {
 						style = fBoldStyler;
 					}
-				} else {
-					if (useItalicViaFontStyleAttribute) {
-						style = fItalicStylerViaFontStyle;
-					}
+				} else if (useItalicViaFontStyleAttribute) {
+					style = fItalicStylerViaFontStyle;
 				}
 				StyledString styledString= new StyledString(file.getName(), style);
 				String decoration = MessageFormat.format(" ({0} bytes)", Long.valueOf(file.length())); //$NON-NLS-1$

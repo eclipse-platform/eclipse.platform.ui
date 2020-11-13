@@ -3617,12 +3617,10 @@ public class EPartServiceTest extends UITest {
 				} else {
 					testSavePart(ISaveHandler.Save.YES, confirm, beforeDirty, false, true, true, throwException);
 				}
+			} else if (confirm) {
+				testSavePart(ISaveHandler.Save.YES, confirm, beforeDirty, false, true, false, throwException);
 			} else {
-				if (confirm) {
-					testSavePart(ISaveHandler.Save.YES, confirm, beforeDirty, false, true, false, throwException);
-				} else {
-					testSavePart(ISaveHandler.Save.YES, confirm, beforeDirty, false, true, false, throwException);
-				}
+				testSavePart(ISaveHandler.Save.YES, confirm, beforeDirty, false, true, false, throwException);
 			}
 			break;
 		case NO:
@@ -3644,12 +3642,10 @@ public class EPartServiceTest extends UITest {
 				} else {
 					testSavePart(ISaveHandler.Save.NO, confirm, beforeDirty, false, true, true, throwException);
 				}
+			} else if (confirm) {
+				testSavePart(ISaveHandler.Save.NO, confirm, beforeDirty, false, true, false, throwException);
 			} else {
-				if (confirm) {
-					testSavePart(ISaveHandler.Save.NO, confirm, beforeDirty, false, true, false, throwException);
-				} else {
-					testSavePart(ISaveHandler.Save.NO, confirm, beforeDirty, false, true, false, throwException);
-				}
+				testSavePart(ISaveHandler.Save.NO, confirm, beforeDirty, false, true, false, throwException);
 			}
 			break;
 		case CANCEL:
@@ -3672,12 +3668,10 @@ public class EPartServiceTest extends UITest {
 				} else {
 					testSavePart(ISaveHandler.Save.CANCEL, confirm, beforeDirty, false, true, true, throwException);
 				}
+			} else if (confirm) {
+				testSavePart(ISaveHandler.Save.CANCEL, confirm, beforeDirty, false, true, false, throwException);
 			} else {
-				if (confirm) {
-					testSavePart(ISaveHandler.Save.CANCEL, confirm, beforeDirty, false, true, false, throwException);
-				} else {
-					testSavePart(ISaveHandler.Save.CANCEL, confirm, beforeDirty, false, true, false, throwException);
-				}
+				testSavePart(ISaveHandler.Save.CANCEL, confirm, beforeDirty, false, true, false, throwException);
 			}
 			break;
 		default:

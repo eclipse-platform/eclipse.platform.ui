@@ -112,10 +112,8 @@ public class LabelProviderTest extends NavigatorTestBase {
 			if (blank) {
 				if (!lpText.isEmpty())
 					fail("Wrong text from ILabelProvider: " + lpText);
-			} else {
-				if (lpText != null)
-					fail("Wrong text from ILabelProvider: " + lpText);
-			}
+			} else if (lpText != null)
+				fail("Wrong text from ILabelProvider: " + lpText);
 		} else {
 			if (!rootItems[0].getText().startsWith(checkColor))
 				fail("Wrong text: " + rootItems[0].getText());

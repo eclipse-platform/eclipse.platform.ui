@@ -1003,12 +1003,10 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 						+ " should be in the workspace location: "
 						+ rootLocation.toOSString());
 			}
-		} else {
-			if (isProjectInWorkspace) {
-				fail(project.getName()
-						+ " should not be in the workspace location: "
-						+ rootLocation.toOSString());
-			}
+		} else if (isProjectInWorkspace) {
+			fail(project.getName()
+					+ " should not be in the workspace location: "
+					+ rootLocation.toOSString());
 		}
 		StringBuilder filesNotImported = new StringBuilder();
 		// make sure the files in the project were imported
