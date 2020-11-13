@@ -41,32 +41,30 @@ public class CSSPropertyTabRendererSWTHandler extends AbstractCSSPropertySWTHand
 				Bundle bundle = Platform.getBundle(uri.authority());
 				if (bundle == null) {
 					Platform.getLog(getClass()).error("Failed to get bundle for: " + rendURL); //$NON-NLS-1$
+				} else if (uri.segmentCount() > 1) {
+					//TODO: handle this case?
 				} else {
-					if (uri.segmentCount() > 1) {
-						//TODO: handle this case?
-					} else {
-						String clazz = uri.segment(0);
-						try {
-							Class<?> targetClass = bundle.loadClass(clazz);
-							//check to see if the folder already has an instance of the same renderer
+					String clazz = uri.segment(0);
+					try {
+						Class<?> targetClass = bundle.loadClass(clazz);
+						//check to see if the folder already has an instance of the same renderer
 
-							CTabFolderRenderer renderer = ((CTabFolder) control).getRenderer();
-							if (renderer != null && renderer.getClass() == targetClass) {
-								return;
-							}
-							Constructor<?> constructor = targetClass
-									.getConstructor(CTabFolder.class);
-							if (constructor != null) {
-								Object rend = constructor.newInstance(control);
-								if (rend != null && rend instanceof CTabFolderRenderer) {
-									((CTabFolder) control).setRenderer((CTabFolderRenderer)rend);
-								}
-							}
-						} catch (ClassNotFoundException e) {
-							String message = "Unable to load class '" + clazz + "' from bundle '" //$NON-NLS-1$ //$NON-NLS-2$
-									+ bundle.getBundleId() + "'"; //$NON-NLS-1$
-							Platform.getLog(getClass()).error(message);
+						CTabFolderRenderer renderer = ((CTabFolder) control).getRenderer();
+						if (renderer != null && renderer.getClass() == targetClass) {
+							return;
 						}
+						Constructor<?> constructor = targetClass
+								.getConstructor(CTabFolder.class);
+						if (constructor != null) {
+							Object rend = constructor.newInstance(control);
+							if (rend != null && rend instanceof CTabFolderRenderer) {
+								((CTabFolder) control).setRenderer((CTabFolderRenderer)rend);
+							}
+						}
+					} catch (ClassNotFoundException e) {
+						String message = "Unable to load class '" + clazz + "' from bundle '" //$NON-NLS-1$ //$NON-NLS-2$
+								+ bundle.getBundleId() + "'"; //$NON-NLS-1$
+						Platform.getLog(getClass()).error(message);
 					}
 				}
 			} else {

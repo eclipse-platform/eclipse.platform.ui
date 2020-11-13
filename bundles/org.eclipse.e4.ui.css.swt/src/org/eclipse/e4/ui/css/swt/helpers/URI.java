@@ -2101,17 +2101,13 @@ public final class URI
 				if (preserveRootParents) {
 				stack[sp++] = segment;
 			}
-			}
-			else
-			{
-				// unless we're already accumulating root parent references,
-				// parent references simply pop the last segment descended
-				if (SEGMENT_PARENT.equals(stack[sp - 1])) {
-				stack[sp++] = segment;
-			} else {
-				sp--;
-			}
-			}
+			} else // unless we're already accumulating root parent references,
+			// parent references simply pop the last segment descended
+			if (SEGMENT_PARENT.equals(stack[sp - 1])) {
+			stack[sp++] = segment;
+} else {
+			sp--;
+}
 		}
 		else if (!SEGMENT_EMPTY.equals(segment) && !SEGMENT_SELF.equals(segment))
 		{

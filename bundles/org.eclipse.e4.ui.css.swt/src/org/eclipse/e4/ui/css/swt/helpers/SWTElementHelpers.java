@@ -89,13 +89,11 @@ public class SWTElementHelpers {
 	public static Control getControl(Object element) {
 		if (element instanceof Control) {
 			return (Control) element;
-		} else {
-			if (element instanceof CSSStylableElement) {
-				CSSStylableElement elt = (CSSStylableElement) element;
-				Object widget = elt.getNativeWidget();
-				if (widget instanceof Control) {
-					return (Control) widget;
-				}
+		} else if (element instanceof CSSStylableElement) {
+			CSSStylableElement elt = (CSSStylableElement) element;
+			Object widget = elt.getNativeWidget();
+			if (widget instanceof Control) {
+				return (Control) widget;
 			}
 		}
 		return null;
@@ -110,13 +108,11 @@ public class SWTElementHelpers {
 	public static Widget getWidget(Object element) {
 		if (element instanceof Widget) {
 			return (Widget) element;
-		} else {
-			if (element instanceof CSSStylableElement) {
-				CSSStylableElement elt = (CSSStylableElement) element;
-				Object widget = elt.getNativeWidget();
-				if (widget instanceof Widget) {
-					return (Widget) widget;
-				}
+		} else if (element instanceof CSSStylableElement) {
+			CSSStylableElement elt = (CSSStylableElement) element;
+			Object widget = elt.getNativeWidget();
+			if (widget instanceof Widget) {
+				return (Widget) widget;
 			}
 		}
 		return null;

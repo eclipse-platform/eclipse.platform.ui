@@ -110,11 +110,9 @@ implements ICSSPropertyHandler2 {
 				}
 				return applied;
 			}
-		} else {
-			if (element instanceof CSS2FontProperties) {
-				return super.applyCSSProperty(element, property, value, pseudo,
-						engine);
-			}
+		} else if (element instanceof CSS2FontProperties) {
+			return super.applyCSSProperty(element, property, value, pseudo,
+					engine);
 		}
 		return false;
 	}

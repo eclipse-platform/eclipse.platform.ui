@@ -61,11 +61,9 @@ AbstractCSSPropertyBorderHandler implements ICSSPropertyHandler2 {
 				}
 			}
 			return true;
-		} else {
-			if (element instanceof CSSBorderProperties) {
-				return super.applyCSSProperty(element, property, value, pseudo,
-						engine);
-			}
+		} else if (element instanceof CSSBorderProperties) {
+			return super.applyCSSProperty(element, property, value, pseudo,
+					engine);
 		}
 		return false;
 

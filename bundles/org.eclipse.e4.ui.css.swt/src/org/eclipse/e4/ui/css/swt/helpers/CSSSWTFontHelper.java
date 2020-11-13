@@ -251,10 +251,8 @@ public class CSSSWTFontHelper {
 			String style = cssFontStyle.getStringValue();
 			if ("italic".equals(style)) {
 				fontStyle = fontStyle | SWT.ITALIC;
-			} else {
-				if (fontStyle == (fontStyle | SWT.ITALIC)) {
-					fontStyle = fontStyle ^ SWT.ITALIC;
-				}
+			} else if (fontStyle == (fontStyle | SWT.ITALIC)) {
+				fontStyle = fontStyle ^ SWT.ITALIC;
 			}
 		}
 		// CSS font-weight
@@ -263,10 +261,8 @@ public class CSSSWTFontHelper {
 			String weight = cssFontWeight.getStringValue();
 			if ("bold".equals(weight.toLowerCase())) {
 				fontStyle = fontStyle | SWT.BOLD;
-			} else {
-				if (fontStyle == (fontStyle | SWT.BOLD)) {
-					fontStyle = fontStyle ^ SWT.BOLD;
-				}
+			} else if (fontStyle == (fontStyle | SWT.BOLD)) {
+				fontStyle = fontStyle ^ SWT.BOLD;
 			}
 		}
 		return fontStyle;
