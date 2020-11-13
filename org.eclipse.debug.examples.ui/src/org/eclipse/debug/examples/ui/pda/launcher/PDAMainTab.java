@@ -178,10 +178,8 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 			if (member == null) {
 				setErrorMessage("Specified program does not exist"); //$NON-NLS-1$
 				return false;
-			} else {
-				if (member.getType() != IResource.FILE) {
-					setWarningMessage("Specified program is not a file."); //$NON-NLS-1$
-				}
+			} else if (member.getType() != IResource.FILE) {
+				setWarningMessage("Specified program is not a file."); //$NON-NLS-1$
 			}
 		} else {
 			setMessage("Specify a program"); //$NON-NLS-1$

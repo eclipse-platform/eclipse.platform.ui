@@ -54,11 +54,9 @@ public class PDAToggleWatchpointsTarget extends PDABreakpointAdapter {
 	public boolean canToggleWatchpoints(IWorkbenchPart part, ISelection selection) {
 		if (super.canToggleWatchpoints(part, selection)) {
 			return true;
-		} else {
-			if (selection instanceof IStructuredSelection) {
-				IStructuredSelection ss = (IStructuredSelection)selection;
-				return ss.getFirstElement() instanceof PDAVariable;
-			}
+		} else if (selection instanceof IStructuredSelection) {
+			IStructuredSelection ss = (IStructuredSelection)selection;
+			return ss.getFirstElement() instanceof PDAVariable;
 		}
 		return false;
 	}

@@ -175,37 +175,35 @@ public class StringSubstitutionEngine {
 						VariableReference tos = fStack.peek();
 						tos.append(expression.substring(pos));
 						pos = expression.length();
+					} else if (start >= 0 && start < end) {
+						// start of a nested variable
+						int length = start - pos;
+						if (length > 0) {
+							VariableReference tos = fStack.peek();
+							tos.append(expression.substring(pos, start));
+						}
+						pos = start + 2;
+						fStack.push(new VariableReference());
 					} else {
-						if (start >= 0 && start < end) {
-							// start of a nested variable
-							int length = start - pos;
-							if (length > 0) {
-								VariableReference tos = fStack.peek();
-								tos.append(expression.substring(pos, start));
-							}
-							pos = start + 2;
-							fStack.push(new VariableReference());
-						} else {
-							// end of variable reference
-							VariableReference tos = fStack.pop();
-							String substring = expression.substring(pos, end);
-							tos.append(substring);
-							resolvedVariables.add(substring);
+						// end of variable reference
+						VariableReference tos = fStack.pop();
+						String substring = expression.substring(pos, end);
+						tos.append(substring);
+						resolvedVariables.add(substring);
 
-							pos = end + 1;
-							String value= resolve(tos, reportUndefinedVariables, resolveVariables, manager);
-							if (value == null) {
-								value = ""; //$NON-NLS-1$
-							}
-							if (fStack.isEmpty()) {
-								// append to result
-								fResult.append(value);
-								state = SCAN_FOR_START;
-							} else {
-								// append to previous variable
-								tos = fStack.peek();
-								tos.append(value);
-							}
+						pos = end + 1;
+						String value= resolve(tos, reportUndefinedVariables, resolveVariables, manager);
+						if (value == null) {
+							value = ""; //$NON-NLS-1$
+						}
+						if (fStack.isEmpty()) {
+							// append to result
+							fResult.append(value);
+							state = SCAN_FOR_START;
+						} else {
+							// append to previous variable
+							tos = fStack.peek();
+							tos.append(value);
 						}
 					}
 					break;

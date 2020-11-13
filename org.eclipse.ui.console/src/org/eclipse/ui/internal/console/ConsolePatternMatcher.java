@@ -276,12 +276,10 @@ public class ConsolePatternMatcher implements IDocumentListener {
 					for (CompiledPatternMatchListener notifier : fPatterns) {
 						notifier.end = 0;
 					}
-				} else {
-					if (event.fOffset == 0) {
-						//document was trimmed
-						for (CompiledPatternMatchListener notifier : fPatterns) {
-							notifier.end = notifier.end > event.fLength ? notifier.end - event.fLength : 0;
-						}
+				} else if (event.fOffset == 0) {
+					//document was trimmed
+					for (CompiledPatternMatchListener notifier : fPatterns) {
+						notifier.end = notifier.end > event.fLength ? notifier.end - event.fLength : 0;
 					}
 				}
 			}

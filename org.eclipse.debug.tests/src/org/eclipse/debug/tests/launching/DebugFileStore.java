@@ -158,13 +158,11 @@ public class DebugFileStore extends FileStore {
 			IFileStore parent = getParent();
 			if (parent.fetchInfo().exists()) {
 				DebugFileSystem.getDefault().setContents(toURI(), DebugFileSystem.DIRECTORY_BYTES);
+			} else if ((options & EFS.SHALLOW) > 0) {
+				throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.jdt.debug.tests", //$NON-NLS-1$
+				"mkdir failed - parent does not exist: " + toURI())); //$NON-NLS-1$
 			} else {
-				if ((options & EFS.SHALLOW) > 0) {
-					throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.jdt.debug.tests", //$NON-NLS-1$
-					"mkdir failed - parent does not exist: " + toURI())); //$NON-NLS-1$
-				} else {
-					parent.mkdir(EFS.NONE, null);
-				}
+				parent.mkdir(EFS.NONE, null);
 			}
 		}
 		return this;

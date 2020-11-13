@@ -232,17 +232,15 @@ public class ExternalToolsBuildTab extends AbstractLaunchConfigurationTab {
 			// select the workspace by default
 			fBuildButton.setSelection(true);
 			fWorkspaceButton.setSelection(true);
-		} else {
-			if (scope.equals("${none}")) { //$NON-NLS-1$
-				fBuildButton.setSelection(false);
-			} else if (scope.equals("${project}")) { //$NON-NLS-1$
-				fProjectButton.setSelection(true);
-			} else if (scope.startsWith("${projects:")) { //$NON-NLS-1$
-				fSpecificProjectsButton.setSelection(true);
-				IProject[] projects = getBuildProjects(configuration, IExternalToolConstants.ATTR_BUILD_SCOPE);
-				fProjects = new ArrayList<>(projects.length);
-				Collections.addAll(fProjects, projects);
-			}
+		} else if (scope.equals("${none}")) { //$NON-NLS-1$
+			fBuildButton.setSelection(false);
+		} else if (scope.equals("${project}")) { //$NON-NLS-1$
+			fProjectButton.setSelection(true);
+		} else if (scope.startsWith("${projects:")) { //$NON-NLS-1$
+			fSpecificProjectsButton.setSelection(true);
+			IProject[] projects = getBuildProjects(configuration, IExternalToolConstants.ATTR_BUILD_SCOPE);
+			fProjects = new ArrayList<>(projects.length);
+			Collections.addAll(fProjects, projects);
 		}
 	}
 	@Override
