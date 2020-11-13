@@ -233,10 +233,8 @@ public class WBWRenderer extends SWTPartRenderer {
 				boundsJob = new WindowSizeUpdateJob();
 				boundsJob.windowsToUpdate.add(windowModel);
 				theShell.getDisplay().asyncExec(boundsJob);
-			} else {
-				if (!boundsJob.windowsToUpdate.contains(windowModel)) {
-					boundsJob.windowsToUpdate.add(windowModel);
-				}
+			} else if (!boundsJob.windowsToUpdate.contains(windowModel)) {
+				boundsJob.windowsToUpdate.add(windowModel);
 			}
 		}
 	}

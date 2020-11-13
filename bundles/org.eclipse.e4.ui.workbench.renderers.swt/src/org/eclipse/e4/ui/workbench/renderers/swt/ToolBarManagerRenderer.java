@@ -304,12 +304,10 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		Selector s;
 		if (v instanceof Selector) {
 			s = (Selector) v;
+		} else if (v == null || UIEvents.ALL_ELEMENT_ID.equals(v)) {
+			s = ALL_SELECTOR;
 		} else {
-			if (v == null || UIEvents.ALL_ELEMENT_ID.equals(v)) {
-				s = ALL_SELECTOR;
-			} else {
-				s = element -> v.equals(element.getElementId());
-			}
+			s = element -> v.equals(element.getElementId());
 		}
 
 		getUpdater().updateContributionItems(s);
@@ -735,10 +733,8 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		if (itemModel.isVisible() && !itemModel.getTags().contains(MenuManagerRenderer.GROUP_MARKER)) {
 			marker = new Separator();
 			marker.setId(itemModel.getElementId());
-		} else {
-			if (itemModel.getElementId() != null) {
-				marker = new GroupMarker(itemModel.getElementId());
-			}
+		} else if (itemModel.getElementId() != null) {
+			marker = new GroupMarker(itemModel.getElementId());
 		}
 		if (marker != null) {
 			addToManager(parentManager, itemModel, marker);

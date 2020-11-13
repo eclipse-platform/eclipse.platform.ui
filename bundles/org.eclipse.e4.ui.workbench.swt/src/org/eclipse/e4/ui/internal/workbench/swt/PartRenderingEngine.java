@@ -316,10 +316,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 							ctrl.requestLayout();
 						}
 					}
-				} else {
-					if (renderer != null && added.isToBeRendered()) {
-						renderer.childRendered(changedElement, added);
-					}
+				} else if (renderer != null && added.isToBeRendered()) {
+					renderer.childRendered(changedElement, added);
 				}
 
 				// If the element being added is a placeholder, check to see if it's 'globally
@@ -685,15 +683,13 @@ public class PartRenderingEngine implements IPresentationEngine {
 					parentRenderer.childRendered(parentElement, element);
 				}
 			}
-		} else {
-			// failed to create the widget, dispose its context if necessary
-			if (element instanceof MContext) {
-				MContext ctxt = (MContext) element;
-				IEclipseContext lclContext = ctxt.getContext();
-				if (lclContext != null) {
-					lclContext.dispose();
-					ctxt.setContext(null);
-				}
+		} else // failed to create the widget, dispose its context if necessary
+		if (element instanceof MContext) {
+			MContext ctxt = (MContext) element;
+			IEclipseContext lclContext = ctxt.getContext();
+			if (lclContext != null) {
+				lclContext.dispose();
+				ctxt.setContext(null);
 			}
 		}
 
@@ -795,10 +791,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 			if (returnValue == defaultValue) {
 				// No @Focus method, force the focus
 				renderer.forceFocus(element);
-			} else {
-				if (Policy.DEBUG_FOCUS) {
-					WorkbenchSWTActivator.trace(Policy.DEBUG_FOCUS_FLAG, "Focused GUI on element: " + element, null); //$NON-NLS-1$
-				}
+			} else if (Policy.DEBUG_FOCUS) {
+				WorkbenchSWTActivator.trace(Policy.DEBUG_FOCUS_FLAG, "Focused GUI on element: " + element, null); //$NON-NLS-1$
 			}
 		} catch (InjectionException e) {
 			log("Failed to grant focus to element", "Failed to grant focus to element ({0})", //$NON-NLS-1$ //$NON-NLS-2$
@@ -1131,10 +1125,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 							StatusReporter statusReporter = appContext.get(StatusReporter.class);
 							if (statusReporter != null) {
 								statusReporter.show(StatusReporter.ERROR, "Internal Error", exception);
-							} else {
-								if (logger != null) {
-									logger.error(exception);
-								}
+							} else if (logger != null) {
+								logger.error(exception);
 							}
 						}
 					};

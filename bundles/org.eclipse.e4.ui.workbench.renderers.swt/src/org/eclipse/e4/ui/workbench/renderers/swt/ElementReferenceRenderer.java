@@ -72,10 +72,8 @@ public class ElementReferenceRenderer extends SWTPartRenderer {
 				ref.setToBeRendered(true);
 				refWidget = (Control) renderingEngine.createGui(ref, newComp,
 						getContextForParent(ref));
-			} else {
-				if (refWidget.getParent() != newComp) {
-					refWidget.setParent(newComp);
-				}
+			} else if (refWidget.getParent() != newComp) {
+				refWidget.setParent(newComp);
 			}
 
 			if (ref instanceof MContext) {
@@ -114,71 +112,69 @@ public class ElementReferenceRenderer extends SWTPartRenderer {
 
 			renderingEngine.removeGui(refElement);
 			renderedMap.remove(refElement);
-		} else {
-			// Ensure that the dispose of the element reference doesn't cascade
-			// to dispose the 'real' part
-			if (refCtrl != null && !refCtrl.isDisposed()) {
-				MPlaceholder currentRef = refElement.getCurSharedRef();
-				if (currentRef == ph) {
-					// Find another *rendered* ref to pass the part on to
-					for (MPlaceholder aPH : refs) {
-						Composite phComp = (Composite) aPH.getWidget();
-						if (phComp == null || phComp.isDisposed())
-							continue;
-
-						// Reparent the context(s) (if any)
-						IEclipseContext newParentContext = modelService
-								.getContainingContext(aPH);
-						List<MContext> allContexts = modelService.findElements(refElement, null, MContext.class);
-						for (MContext ctxtElement : allContexts) {
-							IEclipseContext theContext = ctxtElement
-									.getContext();
-							// this may be null if it hasn't been rendered yet
-							if (theContext != null) {
-								if (theContext.getParent() == curContext) {
-									// about to reparent the context, if we're
-									// the active child of the current parent,
-									// deactivate ourselves first
-									if (curContext.getActiveChild() == theContext) {
-										theContext.deactivate();
-									}
-									theContext.setParent(newParentContext);
-								}
-							}
-						}
-
-						// reset the 'cur' ref
-						refElement.setCurSharedRef(aPH);
-
-						// Reparent the widget
-						refCtrl.setParent(phComp);
-						break;
-					}
-				} else if (currentRef != null) {
-					Composite phComp = (Composite) currentRef.getWidget();
-					if (phComp == null || phComp.isDisposed()) {
-						super.disposeWidget(element);
-						return;
-					}
+		} else // Ensure that the dispose of the element reference doesn't cascade
+		// to dispose the 'real' part
+		if (refCtrl != null && !refCtrl.isDisposed()) {
+			MPlaceholder currentRef = refElement.getCurSharedRef();
+			if (currentRef == ph) {
+				// Find another *rendered* ref to pass the part on to
+				for (MPlaceholder aPH : refs) {
+					Composite phComp = (Composite) aPH.getWidget();
+					if (phComp == null || phComp.isDisposed())
+						continue;
 
 					// Reparent the context(s) (if any)
 					IEclipseContext newParentContext = modelService
-							.getContainingContext(currentRef);
-					List<MContext> allContexts = modelService.findElements(
-							refElement, null, MContext.class);
+							.getContainingContext(aPH);
+					List<MContext> allContexts = modelService.findElements(refElement, null, MContext.class);
 					for (MContext ctxtElement : allContexts) {
-						IEclipseContext theContext = ctxtElement.getContext();
+						IEclipseContext theContext = ctxtElement
+								.getContext();
 						// this may be null if it hasn't been rendered yet
-						if (theContext != null
-								&& theContext.getParent() == curContext) {
-							// about to reparent the context, if we're the
-							// active child of the current parent, deactivate
-							// ourselves first
-							if (curContext.getActiveChild() == theContext) {
-								theContext.deactivate();
+						if (theContext != null) {
+							if (theContext.getParent() == curContext) {
+								// about to reparent the context, if we're
+								// the active child of the current parent,
+								// deactivate ourselves first
+								if (curContext.getActiveChild() == theContext) {
+									theContext.deactivate();
+								}
+								theContext.setParent(newParentContext);
 							}
-							theContext.setParent(newParentContext);
 						}
+					}
+
+					// reset the 'cur' ref
+					refElement.setCurSharedRef(aPH);
+
+					// Reparent the widget
+					refCtrl.setParent(phComp);
+					break;
+				}
+			} else if (currentRef != null) {
+				Composite phComp = (Composite) currentRef.getWidget();
+				if (phComp == null || phComp.isDisposed()) {
+					super.disposeWidget(element);
+					return;
+				}
+
+				// Reparent the context(s) (if any)
+				IEclipseContext newParentContext = modelService
+						.getContainingContext(currentRef);
+				List<MContext> allContexts = modelService.findElements(
+						refElement, null, MContext.class);
+				for (MContext ctxtElement : allContexts) {
+					IEclipseContext theContext = ctxtElement.getContext();
+					// this may be null if it hasn't been rendered yet
+					if (theContext != null
+							&& theContext.getParent() == curContext) {
+						// about to reparent the context, if we're the
+						// active child of the current parent, deactivate
+						// ourselves first
+						if (curContext.getActiveChild() == theContext) {
+							theContext.deactivate();
+						}
+						theContext.setParent(newParentContext);
 					}
 				}
 			}

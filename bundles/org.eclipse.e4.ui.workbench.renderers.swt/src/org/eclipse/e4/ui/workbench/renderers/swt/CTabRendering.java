@@ -611,10 +611,8 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 			} else {
 				gc.drawPolyline(shape);
 			}
-		} else {
-			if (!onBottom) {
-				gc.drawLine(startX, 0, endX, 0);
-			}
+		} else if (!onBottom) {
+			gc.drawLine(startX, 0, endX, 0);
 		}
 
 		if (selectedTabHighlightColor != null) {
@@ -1266,12 +1264,10 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 					}
 				}
 			}
-		} else {
-			// draw a solid background using default background in shape
-			if ((parent.getStyle() & SWT.NO_BACKGROUND) != 0 || !defaultBackground.equals(parent.getBackground())) {
-				gc.setBackground(defaultBackground);
-				gc.fillRectangle(x, y, width, height);
-			}
+		} else // draw a solid background using default background in shape
+		if ((parent.getStyle() & SWT.NO_BACKGROUND) != 0 || !defaultBackground.equals(parent.getBackground())) {
+			gc.setBackground(defaultBackground);
+			gc.fillRectangle(x, y, width, height);
 		}
 	}
 
