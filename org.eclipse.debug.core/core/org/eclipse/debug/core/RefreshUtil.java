@@ -183,14 +183,12 @@ public class RefreshUtil {
 			if (resource == null) {
 				// empty selection
 				return new IResource[]{};
-			} else {
-				if (memento.equals(MEMENTO_SELECTED_RESOURCE)) {
-					return new IResource[] { resource };
-				} else if (memento.equals(MEMENTO_SELECTED_CONTAINER)) {
-					return new IResource[] {resource.getParent()};
-				} else if (memento.equals(MEMENTO_SELECTED_PROJECT)) {
-					return new IResource[] {resource.getProject()};
-				}
+			} else if (memento.equals(MEMENTO_SELECTED_RESOURCE)) {
+				return new IResource[] { resource };
+			} else if (memento.equals(MEMENTO_SELECTED_CONTAINER)) {
+				return new IResource[] {resource.getParent()};
+			} else if (memento.equals(MEMENTO_SELECTED_PROJECT)) {
+				return new IResource[] {resource.getProject()};
 			}
 		}
 		throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), MessageFormat.format(DebugCoreMessages.RefreshUtil_0, memento)));

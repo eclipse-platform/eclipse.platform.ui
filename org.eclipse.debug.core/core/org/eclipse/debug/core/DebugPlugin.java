@@ -937,12 +937,10 @@ public class DebugPlugin extends Plugin {
 					}
 				}
 				p = pb.start();
+			} else if (workingDirectory == null) {
+				p = Runtime.getRuntime().exec(cmdLine, envp);
 			} else {
-				if (workingDirectory == null) {
-					p = Runtime.getRuntime().exec(cmdLine, envp);
-				} else {
-					p = Runtime.getRuntime().exec(cmdLine, envp, workingDirectory);
-				}
+				p = Runtime.getRuntime().exec(cmdLine, envp, workingDirectory);
 			}
 		} catch (IOException e) {
 			Status status = new Status(IStatus.ERROR, getUniqueIdentifier(), ERROR, DebugCoreMessages.DebugPlugin_0, e);

@@ -267,13 +267,11 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 					} catch (DebugException e) {
 						status.merge(e.getStatus());
 					}
-				} else {
-					if (target.canDisconnect()) {
-						try {
-							target.disconnect();
-						} catch (DebugException de) {
-							status.merge(de.getStatus());
-						}
+				} else if (target.canDisconnect()) {
+					try {
+						target.disconnect();
+					} catch (DebugException de) {
+						status.merge(de.getStatus());
 					}
 				}
 			}

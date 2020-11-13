@@ -126,10 +126,8 @@ public class GroupLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 					// loop detected. report as appropriate and die.
 					IStatusHandler cycleHandler = DebugPlugin.getDefault().getStatusHandler(GROUP_CYCLE);
 					cycleHandler.handleStatus(GROUP_CYCLE, conf.getName());
-				} else {
-					if (!launchChild(progress.newChild(1000 / launches.size()), group, le, conf, localMode, (i == launches.size() - 1))) {
-						break;
-					}
+				} else if (!launchChild(progress.newChild(1000 / launches.size()), group, le, conf, localMode, (i == launches.size() - 1))) {
+					break;
 				}
 
 				// in case the group has been terminated while waiting in the

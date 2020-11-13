@@ -913,10 +913,8 @@ public class LaunchConfigurationInfo {
 			if (strAttr1 == null && strAttr2 == null && !attr1.equals(attr2)) {
 				return false;
 			}
-		} else {
-			if (comp.compare(attr1, attr2) != 0) {
-				return false;
-			}
+		} else if (comp.compare(attr1, attr2) != 0) {
+			return false;
 		}
 		return true;
 	}

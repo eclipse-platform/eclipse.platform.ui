@@ -681,12 +681,10 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 				String memento = getAttribute(ATTR_SOURCE_LOCATOR_MEMENTO, (String)null);
 				if (memento == null) {
 					locator.initializeDefaults(this);
+				} else if(locator instanceof IPersistableSourceLocator2) {
+					((IPersistableSourceLocator2)locator).initializeFromMemento(memento, this);
 				} else {
-					if(locator instanceof IPersistableSourceLocator2) {
-						((IPersistableSourceLocator2)locator).initializeFromMemento(memento, this);
-					} else {
-						locator.initializeFromMemento(memento);
-					}
+					locator.initializeFromMemento(memento);
 				}
 				launch.setSourceLocator(locator);
 			}
@@ -744,13 +742,11 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			}
 			if (launch == null) {
 				launch = new Launch(this, mode, null);
-			} else {
-				// ensure the launch mode is valid
-				if (!mode.equals(launch.getLaunchMode())) {
-					IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR,
-							MessageFormat.format(DebugCoreMessages.LaunchConfiguration_14, mode, launch.getLaunchMode()), null);
-					throw new CoreException(status);
-				}
+			} else // ensure the launch mode is valid
+			if (!mode.equals(launch.getLaunchMode())) {
+				IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR,
+						MessageFormat.format(DebugCoreMessages.LaunchConfiguration_14, mode, launch.getLaunchMode()), null);
+				throw new CoreException(status);
 			}
 			launch.setAttribute(DebugPlugin.ATTR_LAUNCH_TIMESTAMP, Long.toString(System.currentTimeMillis()));
 			boolean captureOutput = getAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, true);

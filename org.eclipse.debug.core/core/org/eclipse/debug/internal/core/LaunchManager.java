@@ -284,12 +284,10 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 								if (registered != null) {
 									registered.add(fNotifierLaunches[j]);
 								}
-							} else {
-								if (registered == null) {
-									registered = new ArrayList<>(fNotifierLaunches.length);
-									for (int k = 0; k < j; k++) {
-										registered.add(fNotifierLaunches[k]);
-									}
+							} else if (registered == null) {
+								registered = new ArrayList<>(fNotifierLaunches.length);
+								for (int k = 0; k < j; k++) {
+									registered.add(fNotifierLaunches[k]);
 								}
 							}
 						}
@@ -1366,13 +1364,11 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 					}
 				}
 
+			} else if (store != null){
+				throw createDebugException(MessageFormat.format(DebugCoreMessages.LaunchManager_does_not_exist, new Object[] {
+						config.getName(), store.toURI().toString() }), null);
 			} else {
-				if (store != null){
-					throw createDebugException(MessageFormat.format(DebugCoreMessages.LaunchManager_does_not_exist, new Object[] {
-							config.getName(), store.toURI().toString() }), null);
-				} else {
-					throw createDebugException(MessageFormat.format(DebugCoreMessages.LaunchManager_does_not_exist_no_store_found, new Object[] { config.getName() }), null);
-				}
+				throw createDebugException(MessageFormat.format(DebugCoreMessages.LaunchManager_does_not_exist_no_store_found, new Object[] { config.getName() }), null);
 			}
 		}
 		return info;
