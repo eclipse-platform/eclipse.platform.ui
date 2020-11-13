@@ -119,11 +119,9 @@ public class CSS2FontPropertiesHelpers {
 				CSSValue value2 = valueList.item(i);
 				updateCSSPropertyFontComposite(font, value2);
 			}
-		} else {
-			if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-				String property = CSS2FontHelper.getCSSFontPropertyName((CSSPrimitiveValue) value);
-				updateCSSPropertyFont(font, property, value);
-			}
+		} else if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+			String property = CSS2FontHelper.getCSSFontPropertyName((CSSPrimitiveValue) value);
+			updateCSSPropertyFont(font, property, value);
 		}
 	}
 

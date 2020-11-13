@@ -1221,10 +1221,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 				if (addToHistory) {
 					add(endedComposite);
 				}
-			} else {
-				if (mode == EXECUTE) {
-					notifyNotOK(endedComposite);
-				}
+			} else if (mode == EXECUTE) {
+				notifyNotOK(endedComposite);
 			}
 		}
 	}

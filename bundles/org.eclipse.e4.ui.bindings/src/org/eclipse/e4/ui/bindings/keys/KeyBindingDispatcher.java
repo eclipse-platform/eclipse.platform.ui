@@ -315,30 +315,28 @@ public class KeyBindingDispatcher {
 								"Execution exception for: " + parameterizedCommand + " in " //$NON-NLS-1$//$NON-NLS-2$
 										+ describe(context));
 					}
-				} else {
-					if (isTracingEnabled()) {
-						logger.trace((Throwable) commandException,
-								"Command exception for: " + parameterizedCommand + " in " //$NON-NLS-1$ //$NON-NLS-2$
-										+ describe(context));
-						if (handlerService instanceof HandlerServiceImpl) {
-							HandlerServiceImpl serviceImpl = (HandlerServiceImpl) handlerService;
-							IEclipseContext serviceContext = serviceImpl.getContext();
-							if (serviceContext != null) {
-								StringBuilder sb = new StringBuilder("\n\tExecution context: "); //$NON-NLS-1$
-								sb.append(describe(serviceContext));
-								sb.append("\n\tHandler: "); //$NON-NLS-1$
-								sb.append(obj);
-								logger.trace(sb.toString());
-							}
+				} else if (isTracingEnabled()) {
+					logger.trace((Throwable) commandException,
+							"Command exception for: " + parameterizedCommand + " in " //$NON-NLS-1$ //$NON-NLS-2$
+									+ describe(context));
+					if (handlerService instanceof HandlerServiceImpl) {
+						HandlerServiceImpl serviceImpl = (HandlerServiceImpl) handlerService;
+						IEclipseContext serviceContext = serviceImpl.getContext();
+						if (serviceContext != null) {
+							StringBuilder sb = new StringBuilder("\n\tExecution context: "); //$NON-NLS-1$
+							sb.append(describe(serviceContext));
+							sb.append("\n\tHandler: "); //$NON-NLS-1$
+							sb.append(obj);
+							logger.trace(sb.toString());
 						}
-						ContextManager contextManager = context.get(ContextManager.class);
-						if (contextManager != null) {
-							Set<?> activeContextIds = contextManager.getActiveContextIds();
-							if (activeContextIds != null && !activeContextIds.isEmpty()) {
-								StringBuilder sb = new StringBuilder("\n\tAll active contexts: "); //$NON-NLS-1$
-								sb.append(activeContextIds);
-								logger.trace(sb.toString());
-							}
+					}
+					ContextManager contextManager = context.get(ContextManager.class);
+					if (contextManager != null) {
+						Set<?> activeContextIds = contextManager.getActiveContextIds();
+						if (activeContextIds != null && !activeContextIds.isEmpty()) {
+							StringBuilder sb = new StringBuilder("\n\tAll active contexts: "); //$NON-NLS-1$
+							sb.append(activeContextIds);
+							logger.trace(sb.toString());
 						}
 					}
 				}
@@ -426,11 +424,9 @@ public class KeyBindingDispatcher {
 					}
 				}
 
-			} else {
-				if (!outOfOrderListener.isActive(event.time)) {
-					widget.addListener(SWT.KeyDown, outOfOrderListener);
-					outOfOrderListener.setActive(event.time);
-				}
+			} else if (!outOfOrderListener.isActive(event.time)) {
+				widget.addListener(SWT.KeyDown, outOfOrderListener);
+				outOfOrderListener.setActive(event.time);
 			}
 
 			/*
@@ -611,11 +607,9 @@ public class KeyBindingDispatcher {
 						if (isTracingEnabled()) {
 							logger.trace("Error matches for key: " + sequenceAfterKeyStroke + ", :" + errorMatches); //$NON-NLS-1$//$NON-NLS-2$
 						}
-					} else {
-						if (isTracingEnabled() && !Character.isLetterOrDigit(event.character)) {
-							logger.trace("No binding for keys: " + sequenceBeforeKeyStroke + " " //$NON-NLS-1$//$NON-NLS-2$
-									+ sequenceAfterKeyStroke + " in " + describe(context)); //$NON-NLS-1$
-						}
+					} else if (isTracingEnabled() && !Character.isLetterOrDigit(event.character)) {
+						logger.trace("No binding for keys: " + sequenceBeforeKeyStroke + " " //$NON-NLS-1$//$NON-NLS-2$
+								+ sequenceAfterKeyStroke + " in " + describe(context)); //$NON-NLS-1$
 					}
 				}
 			}

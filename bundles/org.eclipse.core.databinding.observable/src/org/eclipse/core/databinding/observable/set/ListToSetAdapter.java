@@ -54,11 +54,9 @@ public class ListToSetAdapter<E> extends ObservableSet<E> {
 					if (!removed.remove(element))
 						added.add(element);
 				}
-			} else {
-				if (wrappedSet.remove(element)) {
-					removed.add(element);
-					added.remove(element);
-				}
+			} else if (wrappedSet.remove(element)) {
+				removed.add(element);
+				added.remove(element);
 			}
 		}
 		fireSetChange(Diffs.createSetDiff(added, removed));

@@ -257,14 +257,11 @@ public class CollectionPointer extends NodePointer {
 				}
 				buffer.append("[").append(index + 1).append(']');
 			}
+		} else if (index != WHOLE_COLLECTION) {
+			buffer.append("/.[").append(index + 1).append(']');
 		}
 		else {
-			if (index != WHOLE_COLLECTION) {
-				buffer.append("/.[").append(index + 1).append(']');
-			}
-			else {
-				buffer.append("/");
-			}
+			buffer.append("/");
 		}
 		return buffer.toString();
 	}
