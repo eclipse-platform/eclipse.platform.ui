@@ -134,10 +134,8 @@ public class JobInfo extends JobTreeElement {
 			if (!job2.isUser()) {
 				return -1;
 			}
-		} else {
-			if (job2.isUser()) {
-				return 1;
-			}
+		} else if (job2.isUser()) {
+			return 1;
 		}
 
 		// Show the blocked ones last.
@@ -145,10 +143,8 @@ public class JobInfo extends JobTreeElement {
 			if (!jobInfo.isBlocked()) {
 				return 1;
 			}
-		} else {
-			if (jobInfo.isBlocked()) {
-				return -1;
-			}
+		} else if (jobInfo.isBlocked()) {
+			return -1;
 		}
 
 		int thisPriority = job.getPriority();

@@ -158,13 +158,11 @@ public class Activator implements BundleActivator, DebugOptionsListener {
 		LogService logService = null;
 		if (logTracker != null) {
 			logService = logTracker.getService();
-		} else {
-			if (context != null) {
-				logTracker = new ServiceTracker<>(context,
-						LogService.class.getName(), null);
-				logTracker.open();
-				logService = logTracker.getService();
-			}
+		} else if (context != null) {
+			logTracker = new ServiceTracker<>(context,
+					LogService.class.getName(), null);
+			logTracker.open();
+			logService = logTracker.getService();
 		}
 		if (logService == null) {
 			throw new IllegalStateException("No LogService is available."); //$NON-NLS-1$

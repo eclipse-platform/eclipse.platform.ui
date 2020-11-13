@@ -334,26 +334,24 @@ public class TrimStack {
 			for (ToolItem item : trimStackTB.getItems()) {
 				item.setSelection(false);
 			}
+		} else if (isEditorStack() || minimizedElement instanceof MPlaceholder) {
+			trimStackTB.getItem(1).setSelection(true);
+		} else if (isPerspectiveStack()) {
+			MPerspectiveStack pStack = (MPerspectiveStack) minimizedElement;
+			MUIElement selElement = pStack.getSelectedElement();
+			for (ToolItem item : trimStackTB.getItems()) {
+				item.setSelection(item.getData() == selElement);
+			}
 		} else {
-			if (isEditorStack() || minimizedElement instanceof MPlaceholder) {
-				trimStackTB.getItem(1).setSelection(true);
-			} else if (isPerspectiveStack()) {
-				MPerspectiveStack pStack = (MPerspectiveStack) minimizedElement;
-				MUIElement selElement = pStack.getSelectedElement();
-				for (ToolItem item : trimStackTB.getItems()) {
-					item.setSelection(item.getData() == selElement);
-				}
-			} else {
-				MPartStack partStack = (MPartStack) minimizedElement;
-				MUIElement selElement = partStack.getSelectedElement();
-				if (selElement instanceof MPlaceholder) {
-					selElement = ((MPlaceholder) selElement).getRef();
-				}
+			MPartStack partStack = (MPartStack) minimizedElement;
+			MUIElement selElement = partStack.getSelectedElement();
+			if (selElement instanceof MPlaceholder) {
+				selElement = ((MPlaceholder) selElement).getRef();
+			}
 
-				for (ToolItem item : trimStackTB.getItems()) {
-					boolean isSel = item.getData() == selElement;
-					item.setSelection(isSel);
-				}
+			for (ToolItem item : trimStackTB.getItems()) {
+				boolean isSel = item.getData() == selElement;
+				item.setSelection(isSel);
 			}
 		}
 	}
