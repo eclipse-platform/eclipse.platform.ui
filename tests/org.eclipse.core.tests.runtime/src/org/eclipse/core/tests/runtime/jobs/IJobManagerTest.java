@@ -1619,10 +1619,8 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			int state = family2[i].getState();
 			if (state == Job.RUNNING) {
 				runningCount++;
-			} else {
-				if (state != Job.WAITING) {
-					assertTrue("4.2." + i + ": expected state: " + printState(Job.WAITING) + " actual state: " + printState(state), false);
-				}
+			} else if (state != Job.WAITING) {
+				assertTrue("4.2." + i + ": expected state: " + printState(Job.WAITING) + " actual state: " + printState(state), false);
 			}
 		}
 		//ensure only one job is running (it is possible that none have started yet)
@@ -1651,10 +1649,8 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			int state = family1[i].getState();
 			if (state == Job.RUNNING) {
 				runningCount++;
-			} else {
-				if (state != Job.WAITING) {
-					assertTrue("7.1." + i + ": expected state: " + printState(Job.WAITING) + " actual state: " + printState(state), false);
-				}
+			} else if (state != Job.WAITING) {
+				assertTrue("7.1." + i + ": expected state: " + printState(Job.WAITING) + " actual state: " + printState(state), false);
 			}
 		}
 		//ensure only one job is running (it is possible that none have started yet)

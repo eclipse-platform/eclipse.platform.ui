@@ -102,11 +102,11 @@ class ThreadJob extends Job {
 		if (top >= 0 && top < ruleStack.length) {
 			buf.append(", does not match most recent begin: "); //$NON-NLS-1$
 			buf.append(ruleStack[top]);
-		} else {
-			if (top < 0)
-				buf.append(", but there was no matching beginRule"); //$NON-NLS-1$
-			else
-				buf.append(", but the rule stack was out of bounds: " + top); //$NON-NLS-1$
+		} else if (top < 0) {
+			buf.append(", but there was no matching beginRule"); //$NON-NLS-1$
+		}
+		else {
+			buf.append(", but the rule stack was out of bounds: " + top); //$NON-NLS-1$
 		}
 		buf.append(".  See log for trace information if rule tracing is enabled."); //$NON-NLS-1$
 		String msg = buf.toString();
@@ -191,8 +191,9 @@ class ThreadJob extends Job {
 	 * @throws OperationCanceledException if this job was canceled before it was started.
 	 */
 	static ThreadJob joinRun(ThreadJob threadJob, IProgressMonitor monitor) {
-		if (isCanceled(monitor))
+		if (isCanceled(monitor)) {
 			throw new OperationCanceledException();
+		}
 		// check if there is a blocking thread before waiting
 		InternalJob blockingJob = manager.findBlockingJob(threadJob);
 		Thread blocker = blockingJob == null ? null : blockingJob.getThread();
@@ -200,8 +201,9 @@ class ThreadJob extends Job {
 		boolean interruptedDuringWaitForRun;
 		try {
 			// just return if lock listener decided to grant immediate access
-			if (manager.getLockManager().aboutToWait(blocker))
+			if (manager.getLockManager().aboutToWait(blocker)) {
 				return threadJob;
+			}
 			result = waitForRun(threadJob, monitor, blockingJob);
 		} finally {
 			// We need to check for interruption unconditionally in order to
@@ -257,8 +259,9 @@ class ThreadJob extends Job {
 			// to respond to cancellation, register this monitor with the internal JobManager
 			// worker thread. The worker thread will check for cancellation and will interrupt
 			// this thread when the monitor is canceled. T
-			if (canBlock)
+			if (canBlock) {
 				manager.beginMonitoring(threadJob, monitor);
+			}
 			final Thread currentThread = Thread.currentThread();
 
 			// Ultimately, this loop will wait until the job "runs" (acquires the rule)
@@ -273,9 +276,10 @@ class ThreadJob extends Job {
 			// 4) Monitor is canceled.
 			while (true) {
 				// monitor is foreign code so do not hold locks while calling into monitor
-				if (interrupted || isCanceled(monitor))
+				if (interrupted || isCanceled(monitor)) {
 					// Condition #4.
 					throw new OperationCanceledException();
+				}
 				// Try to run the job. If result is null, this job was allowed to run.
 				// If the result is successful, atomically release thread from waiting
 				// status.
@@ -299,9 +303,10 @@ class ThreadJob extends Job {
 					return result;
 				}
 				// just return if lock listener decided to grant immediate access
-				if (manager.getLockManager().aboutToWait(blocker))
+				if (manager.getLockManager().aboutToWait(blocker)) {
 					// Condition #2.
 					return threadJob;
+				}
 
 				// Notify the lock manager that we're about to block waiting for the scheduling rule
 				manager.getLockManager().addLockWaitThread(currentThread, threadJob.getRule());
@@ -312,10 +317,11 @@ class ThreadJob extends Job {
 						// this while loop
 						int state = blockingJob.getState();
 						//ensure we don't wait forever if the blocker is waiting, because it might have yielded to me
-						if (state == Job.RUNNING && canBlock)
+						if (state == Job.RUNNING && canBlock) {
 							blockingJob.jobStateLock.wait();
-						else if (state != Job.NONE)
+						} else if (state != Job.NONE) {
 							blockingJob.jobStateLock.wait(250);
+						}
 					} catch (InterruptedException e) {
 						// This thread may be interrupted via two common scenarios. 1) If
 						// the UISynchronizer is in use and this thread is a UI thread
@@ -349,8 +355,9 @@ class ThreadJob extends Job {
 			}
 			waitEnd(threadJob, updateLockState, monitor);
 			if (canStopWaiting) {
-				if (waiting)
+				if (waiting) {
 					manager.implicitJobs.removeWaiting(threadJob);
+				}
 			}
 			if (canBlock) {
 				// must unregister monitoring this job
@@ -365,8 +372,9 @@ class ThreadJob extends Job {
 	 * 	@GuardedBy("JobManager.implicitJobs")
 	 */
 	boolean pop(ISchedulingRule rule) {
-		if (top < 0 || ruleStack[top] != rule)
+		if (top < 0 || ruleStack[top] != rule) {
 			illegalPop(rule);
+		}
 		ruleStack[top--] = null;
 		return top < 0;
 	}
@@ -385,11 +393,13 @@ class ThreadJob extends Job {
 			ruleStack = newStack;
 		}
 		ruleStack[top] = rule;
-		if (JobManager.DEBUG_BEGIN_END)
+		if (JobManager.DEBUG_BEGIN_END) {
 			lastPush = (RuntimeException) new RuntimeException().fillInStackTrace();
+		}
 		//check for containment last because we don't want to fail again on endRule
-		if (baseRule != null && rule != null && !(baseRule.contains(rule) && baseRule.isConflicting(rule)))
+		if (baseRule != null && rule != null && !(baseRule.contains(rule) && baseRule.isConflicting(rule))) {
 			illegalPush(rule, baseRule);
+		}
 	}
 
 	/**
@@ -399,17 +409,19 @@ class ThreadJob extends Job {
 	 */
 	boolean recycle() {
 		//don't recycle if still running for any reason
-		if (getState() != Job.NONE)
+		if (getState() != Job.NONE) {
 			return false;
+		}
 		//clear and reset all fields
 		acquireRule = isRunning = isBlocked = false;
 		realJob = null;
 		setRule(null);
 		setThread(null);
-		if (ruleStack.length != 2)
+		if (ruleStack.length != 2) {
 			ruleStack = new ISchedulingRule[2];
-		else
+		} else {
 			ruleStack[0] = ruleStack[1] = null;
+		}
 		top = -1;
 		return true;
 	}
@@ -455,8 +467,9 @@ class ThreadJob extends Job {
 		buf.append('[');
 		for (int i = 0; i <= top && i < ruleStack.length; i++) {
 			buf.append(ruleStack[i]);
-			if (i != top)
+			if (i != top) {
 				buf.append(',');
+			}
 		}
 		buf.append(']');
 		return buf.toString();

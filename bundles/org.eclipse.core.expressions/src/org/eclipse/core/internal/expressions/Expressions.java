@@ -316,12 +316,10 @@ public class Expressions {
 			if (ch == '\'') {
 				if (!inString) {
 					inString= true;
+				} else if (i + 1 < str.length() && str.charAt(i + 1) == '\'') {
+					i++;
 				} else {
-					if (i + 1 < str.length() && str.charAt(i + 1) == '\'') {
-						i++;
-					} else {
-						inString= false;
-					}
+					inString= false;
 				}
 			} else if (ch == ',' && !inString) {
 				return i;

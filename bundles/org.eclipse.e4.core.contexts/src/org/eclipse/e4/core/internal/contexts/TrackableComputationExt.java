@@ -93,20 +93,16 @@ public class TrackableComputationExt extends Computation {
 					result = ((RunAndTrackExt) runnable).update(event.getContext(), event.getEventType(), event.getArguments());
 					if (eventType != ContextChangeEvent.DISPOSE && eventType != ContextChangeEvent.UNINJECTED)
 						cachedEvent = null;
-				} else {
-					if (eventType != ContextChangeEvent.DISPOSE && eventType != ContextChangeEvent.UNINJECTED) {
-						result = runnable.changed(originatingContext);
-						cachedEvent = null;
-					}
+				} else if (eventType != ContextChangeEvent.DISPOSE && eventType != ContextChangeEvent.UNINJECTED) {
+					result = runnable.changed(originatingContext);
+					cachedEvent = null;
 				}
 			}
 			if (eventType != ContextChangeEvent.UPDATE) {
 				if (runnable instanceof RunAndTrackExt)
 					result = ((RunAndTrackExt) runnable).update(event.getContext(), event.getEventType(), event.getArguments());
-				else {
-					if (eventType != ContextChangeEvent.DISPOSE && eventType != ContextChangeEvent.UNINJECTED)
-						result = runnable.changed(originatingContext);
-				}
+				else if (eventType != ContextChangeEvent.DISPOSE && eventType != ContextChangeEvent.UNINJECTED)
+					result = runnable.changed(originatingContext);
 			}
 		} finally {
 			((EclipseContext) originatingContext).popComputation(this);

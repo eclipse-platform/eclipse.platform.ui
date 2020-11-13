@@ -80,8 +80,9 @@ public class ExpressionInfo {
 	 * @return the set of accessed variables
 	 */
 	public String[] getAccessedVariableNames() {
-		if (fAccessedVariableNames == null)
+		if (fAccessedVariableNames == null) {
 			return new String[0];
+		}
 		return fAccessedVariableNames.toArray(new String[fAccessedVariableNames.size()]);
 	}
 
@@ -94,9 +95,8 @@ public class ExpressionInfo {
 		if (fAccessedVariableNames == null) {
 			fAccessedVariableNames= new ArrayList<>(5);
 			fAccessedVariableNames.add(name);
-		} else {
-			if (!fAccessedVariableNames.contains(name))
-				fAccessedVariableNames.add(name);
+		} else if (!fAccessedVariableNames.contains(name)) {
+			fAccessedVariableNames.add(name);
 		}
 	}
 
@@ -109,8 +109,9 @@ public class ExpressionInfo {
 	 * @since 3.4
 	 */
 	public String[] getAccessedPropertyNames() {
-		if (fAccessedPropertyNames == null)
+		if (fAccessedPropertyNames == null) {
 			return new String[0];
+		}
 		return fAccessedPropertyNames.toArray(new String[fAccessedPropertyNames.size()]);
 	}
 
@@ -128,9 +129,9 @@ public class ExpressionInfo {
 		if (fAccessedPropertyNames == null) {
 			fAccessedPropertyNames= new ArrayList<>(5);
 			fAccessedPropertyNames.add(name);
-		} else {
-			if (!fAccessedPropertyNames.contains(name))
-				fAccessedPropertyNames.add(name);
+		} else if (!fAccessedPropertyNames.contains(name))
+		{
+			fAccessedPropertyNames.add(name);
 		}
 	}
 
@@ -145,8 +146,9 @@ public class ExpressionInfo {
 	 *  <code>computeReevaluationInfo</code> method, or <code>null</code> if all do
 	 */
 	public Class<?>[] getMisbehavingExpressionTypes() {
-		if (fMisbehavingExpressionTypes == null)
+		if (fMisbehavingExpressionTypes == null) {
 			return null;
+		}
 		return fMisbehavingExpressionTypes.toArray(new Class[fMisbehavingExpressionTypes.size()]);
 	}
 
@@ -159,9 +161,8 @@ public class ExpressionInfo {
 		if (fMisbehavingExpressionTypes == null) {
 			fMisbehavingExpressionTypes= new ArrayList<>(2);
 			fMisbehavingExpressionTypes.add(clazz);
-		} else {
-			if (!fMisbehavingExpressionTypes.contains(clazz))
-				fMisbehavingExpressionTypes.add(clazz);
+		} else if (!fMisbehavingExpressionTypes.contains(clazz)) {
+			fMisbehavingExpressionTypes.add(clazz);
 		}
 	}
 
@@ -219,11 +220,10 @@ public class ExpressionInfo {
 	private void mergeAccessedVariableNames(ExpressionInfo other) {
 		if (fAccessedVariableNames == null) {
 			fAccessedVariableNames= other.fAccessedVariableNames; //TODO: shares the two lists! Can propagate further additions up into sibling branches.
-		} else {
-			if (other.fAccessedVariableNames != null) {
-				for (String variableName : other.fAccessedVariableNames) {
-					if (!fAccessedVariableNames.contains(variableName))
-						fAccessedVariableNames.add(variableName);
+		} else if (other.fAccessedVariableNames != null) {
+			for (String variableName : other.fAccessedVariableNames) {
+				if (!fAccessedVariableNames.contains(variableName)) {
+					fAccessedVariableNames.add(variableName);
 				}
 			}
 		}
@@ -239,11 +239,10 @@ public class ExpressionInfo {
 	private void mergeAccessedPropertyNames(ExpressionInfo other) {
 		if (fAccessedPropertyNames == null) {
 			fAccessedPropertyNames= other.fAccessedPropertyNames; //TODO: shares the two lists!
-		} else {
-			if (other.fAccessedPropertyNames != null) {
-				for (String variableName : other.fAccessedPropertyNames) {
-					if (!fAccessedPropertyNames.contains(variableName))
-						fAccessedPropertyNames.add(variableName);
+		} else if (other.fAccessedPropertyNames != null) {
+			for (String variableName : other.fAccessedPropertyNames) {
+				if (!fAccessedPropertyNames.contains(variableName)) {
+					fAccessedPropertyNames.add(variableName);
 				}
 			}
 		}
@@ -257,11 +256,10 @@ public class ExpressionInfo {
 	private void mergeMisbehavingExpressionTypes(ExpressionInfo other) {
 		if (fMisbehavingExpressionTypes == null) {
 			fMisbehavingExpressionTypes= other.fMisbehavingExpressionTypes; //TODO: shares the two lists!
-		} else  {
-			if (other.fMisbehavingExpressionTypes != null) {
-				for (Class<?> clazz : other.fMisbehavingExpressionTypes) {
-					if (!fMisbehavingExpressionTypes.contains(clazz))
-						fMisbehavingExpressionTypes.add(clazz);
+		} else if (other.fMisbehavingExpressionTypes != null) {
+			for (Class<?> clazz : other.fMisbehavingExpressionTypes) {
+				if (!fMisbehavingExpressionTypes.contains(clazz)) {
+					fMisbehavingExpressionTypes.add(clazz);
 				}
 			}
 		}

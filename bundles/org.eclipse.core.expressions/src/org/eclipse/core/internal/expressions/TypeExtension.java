@@ -93,27 +93,25 @@ public class TypeExtension {
 				// we don't have to support stop in 3.2. If we have to in the future we have to
 				// reactivate the stopped plug-in if we are in forcePluginActivation mode.
 				return extender;
-			} else {
-				if (extender.isDeclaringPluginActive() || forcePluginActivation) {
-					try {
-						PropertyTesterDescriptor descriptor= (PropertyTesterDescriptor)extender;
-						IPropertyTester inst= descriptor.instantiate();
-						((PropertyTester)inst).internalInitialize(descriptor);
-						fExtenders[i]= extender= inst;
-						return extender;
-					} catch (CoreException e) {
-						fExtenders[i]= null;
-						throw e;
-					} catch (ClassCastException e) {
-						fExtenders[i]= null;
-						throw new CoreException(new ExpressionStatus(
-							ExpressionStatus.TYPE_EXTENDER_INCORRECT_TYPE,
-							ExpressionMessages.TypeExtender_incorrectType,
-							e));
-					}
-				} else {
+			} else if (extender.isDeclaringPluginActive() || forcePluginActivation) {
+				try {
+					PropertyTesterDescriptor descriptor= (PropertyTesterDescriptor)extender;
+					IPropertyTester inst= descriptor.instantiate();
+					((PropertyTester)inst).internalInitialize(descriptor);
+					fExtenders[i]= extender= inst;
 					return extender;
+				} catch (CoreException e) {
+					fExtenders[i]= null;
+					throw e;
+				} catch (ClassCastException e) {
+					fExtenders[i]= null;
+					throw new CoreException(new ExpressionStatus(
+						ExpressionStatus.TYPE_EXTENDER_INCORRECT_TYPE,
+						ExpressionMessages.TypeExtender_incorrectType,
+						e));
 				}
+			} else {
+				return extender;
 			}
 		}
 

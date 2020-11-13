@@ -207,12 +207,10 @@ public class IterateExpression extends CompositeExpression {
 			}
 			if (count > 0) {
 				return result;
+			} else if (fEmptyResult == null) {
+				return fOperator == AND ? EvaluationResult.TRUE : EvaluationResult.FALSE;
 			} else {
-				if (fEmptyResult == null) {
-					return fOperator == AND ? EvaluationResult.TRUE : EvaluationResult.FALSE;
-				} else {
-					return fEmptyResult.booleanValue() ? EvaluationResult.TRUE : EvaluationResult.FALSE;
-				}
+				return fEmptyResult.booleanValue() ? EvaluationResult.TRUE : EvaluationResult.FALSE;
 			}
 		}
 	}

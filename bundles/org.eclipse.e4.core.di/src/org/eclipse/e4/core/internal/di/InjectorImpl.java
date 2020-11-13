@@ -210,18 +210,16 @@ public class InjectorImpl implements IInjector {
 				if (unresolved == -1) {
 					requestor.setResolvedArgs(actualArgs);
 					requestor.execute();
-				} else {
-					if (requestor.isOptional())
-						requestor.setResolvedArgs(null);
-					else if (shouldDebug) {
-						StringBuilder tmp = new StringBuilder();
-						tmp.append("Uninjecting object \""); //$NON-NLS-1$
-						tmp.append(object.toString());
-						tmp.append("\": dependency on \""); //$NON-NLS-1$
-						tmp.append(requestor.getDependentObjects()[unresolved].toString());
-						tmp.append("\" is not optional."); //$NON-NLS-1$
-						LogHelper.logError(tmp.toString(), null);
-					}
+				} else if (requestor.isOptional())
+					requestor.setResolvedArgs(null);
+				else if (shouldDebug) {
+					StringBuilder tmp = new StringBuilder();
+					tmp.append("Uninjecting object \""); //$NON-NLS-1$
+					tmp.append(object.toString());
+					tmp.append("\": dependency on \""); //$NON-NLS-1$
+					tmp.append(requestor.getDependentObjects()[unresolved].toString());
+					tmp.append("\" is not optional."); //$NON-NLS-1$
+					LogHelper.logError(tmp.toString(), null);
 				}
 			}
 		} catch (NoClassDefFoundError | NoSuchMethodError e) {
@@ -426,13 +424,11 @@ public class InjectorImpl implements IInjector {
 		int unresolved = unresolved(actualArgs);
 		if (unresolved == -1)
 			internalRequestor.setResolvedArgs(actualArgs);
+		else if (internalRequestor.isOptional())
+			internalRequestor.setResolvedArgs(null);
 		else {
-			if (internalRequestor.isOptional())
-				internalRequestor.setResolvedArgs(null);
-			else {
-				String msg = resolutionError(internalRequestor, unresolved);
-				LogHelper.logError(msg, null);
-			}
+			String msg = resolutionError(internalRequestor, unresolved);
+			LogHelper.logError(msg, null);
 		}
 	}
 

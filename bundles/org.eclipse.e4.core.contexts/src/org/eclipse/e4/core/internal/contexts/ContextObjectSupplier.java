@@ -166,14 +166,12 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 			} else { // we do track if this is done inside a computation, but don't create another runnable
 				fillArgs(actualArgs, keys, active);
 			}
-		} else {
-			if (descriptors.length > 0) {
-				pauseRecording();
-				try {
-					fillArgs(actualArgs, keys, active);
-				} finally {
-					resumeRecording();
-				}
+		} else if (descriptors.length > 0) {
+			pauseRecording();
+			try {
+				fillArgs(actualArgs, keys, active);
+			} finally {
+				resumeRecording();
 			}
 		}
 	}

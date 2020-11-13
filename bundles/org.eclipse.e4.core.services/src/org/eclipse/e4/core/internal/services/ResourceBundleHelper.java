@@ -185,10 +185,8 @@ public class ResourceBundleHelper {
 			// remove the leading /
 			if (uri.getPath() != null && !uri.getPath().isEmpty()) {
 				classPath = uri.getPath().substring(1);
-			} else {
-				if (logger != null) {
-					logger.error("Called with invalid contribution URI: {}", contributionURI); //$NON-NLS-1$
-				}
+			} else if (logger != null) {
+				logger.error("Called with invalid contribution URI: {}", contributionURI); //$NON-NLS-1$
 			}
 		}
 
