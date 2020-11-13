@@ -308,14 +308,12 @@ public class OpenStrategy {
 					fireDefaultSelectionEvent(event);
 					if (CURRENT_METHOD == DOUBLE_CLICK) {
 						fireOpenEvent(event);
+					} else if (enterKeyDown) {
+						fireOpenEvent(event);
+						enterKeyDown = false;
+						defaultSelectionPendent = null;
 					} else {
-						if (enterKeyDown) {
-							fireOpenEvent(event);
-							enterKeyDown = false;
-							defaultSelectionPendent = null;
-						} else {
-							defaultSelectionPendent = event;
-						}
+						defaultSelectionPendent = event;
 					}
 					return;
 				}

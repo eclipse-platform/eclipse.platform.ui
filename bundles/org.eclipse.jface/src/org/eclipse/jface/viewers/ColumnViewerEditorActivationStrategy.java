@@ -99,12 +99,10 @@ public class ColumnViewerEditorActivationStrategy {
 				};
 				viewer.getControl().addKeyListener(keyboardActivationListener);
 			}
-		} else {
-			if (keyboardActivationListener != null) {
-				viewer.getControl().removeKeyListener(
-						keyboardActivationListener);
-				keyboardActivationListener = null;
-			}
+		} else if (keyboardActivationListener != null) {
+			viewer.getControl().removeKeyListener(
+					keyboardActivationListener);
+			keyboardActivationListener = null;
 		}
 	}
 

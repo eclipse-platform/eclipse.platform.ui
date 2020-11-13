@@ -624,50 +624,48 @@ public final class BindingManager extends HandleObjectManager implements
 					}
 				}
 
-			} else {
-				// We are building the flat map of trigger to commands.
-				if (match instanceof Binding) {
-					final Binding binding = (Binding) match;
-					bindingsByTrigger.put(trigger, binding);
-					addReverseLookup(triggersByCommandId, binding
-							.getParameterizedCommand(), trigger);
+			} else // We are building the flat map of trigger to commands.
+			if (match instanceof Binding) {
+				final Binding binding = (Binding) match;
+				bindingsByTrigger.put(trigger, binding);
+				addReverseLookup(triggersByCommandId, binding
+						.getParameterizedCommand(), trigger);
 
-				} else if (match instanceof Collection) {
-					final Binding winner = resolveConflicts((Collection) match,
-							activeContextTree);
-					if (winner == null) {
-						// warn once ... so as not to flood the logs
-						conflictsByTrigger.put(trigger, match);
-						if (triggerConflicts.add(trigger)) {
-							final StringWriter sw = new StringWriter();
-							final BufferedWriter buffer = new BufferedWriter(sw);
-							try {
-								buffer.write("A conflict occurred for "); //$NON-NLS-1$
-								buffer.write(trigger.toString());
-								buffer.write(':');
-								Iterator i = ((Collection) match).iterator();
-								while (i.hasNext()) {
-									buffer.newLine();
-									buffer.write(i.next().toString());
-								}
-								buffer.flush();
-							} catch (IOException e) {
-								// we should not get this
+			} else if (match instanceof Collection) {
+				final Binding winner = resolveConflicts((Collection) match,
+						activeContextTree);
+				if (winner == null) {
+					// warn once ... so as not to flood the logs
+					conflictsByTrigger.put(trigger, match);
+					if (triggerConflicts.add(trigger)) {
+						final StringWriter sw = new StringWriter();
+						final BufferedWriter buffer = new BufferedWriter(sw);
+						try {
+							buffer.write("A conflict occurred for "); //$NON-NLS-1$
+							buffer.write(trigger.toString());
+							buffer.write(':');
+							Iterator i = ((Collection) match).iterator();
+							while (i.hasNext()) {
+								buffer.newLine();
+								buffer.write(i.next().toString());
 							}
-							conflicts.add(new Status(IStatus.WARNING,
-									"org.eclipse.jface", //$NON-NLS-1$
-									sw.toString()));
+							buffer.flush();
+						} catch (IOException e) {
+							// we should not get this
 						}
-						if (DEBUG) {
-							Tracing.printTrace("BINDINGS", //$NON-NLS-1$
-									"A conflict occurred for " + trigger); //$NON-NLS-1$
-							Tracing.printTrace("BINDINGS", "    " + match); //$NON-NLS-1$ //$NON-NLS-2$
-						}
-					} else {
-						bindingsByTrigger.put(trigger, winner);
-						addReverseLookup(triggersByCommandId, winner
-								.getParameterizedCommand(), trigger);
+						conflicts.add(new Status(IStatus.WARNING,
+								"org.eclipse.jface", //$NON-NLS-1$
+								sw.toString()));
 					}
+					if (DEBUG) {
+						Tracing.printTrace("BINDINGS", //$NON-NLS-1$
+								"A conflict occurred for " + trigger); //$NON-NLS-1$
+						Tracing.printTrace("BINDINGS", "    " + match); //$NON-NLS-1$ //$NON-NLS-2$
+					}
+				} else {
+					bindingsByTrigger.put(trigger, winner);
+					addReverseLookup(triggersByCommandId, winner
+							.getParameterizedCommand(), trigger);
 				}
 			}
 		}

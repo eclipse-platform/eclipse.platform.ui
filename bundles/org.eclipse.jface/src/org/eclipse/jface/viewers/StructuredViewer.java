@@ -689,10 +689,8 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 				}
 				if (add) {
 					filtered.add(element);
-				} else {
-					if (associateListener != null)
-						associateListener.filteredOut(element);
-				}
+				} else if (associateListener != null)
+					associateListener.filteredOut(element);
 			}
 			return filtered.toArray();
 		}

@@ -150,10 +150,8 @@ public class StructuredSelection implements IStructuredSelection {
 				if (!comparer.equals(elements[i], s2.elements[i])) {
 					return false;
 				}
-			} else {
-				if (!elements[i].equals(s2.elements[i])) {
-					return false;
-				}
+			} else if (!elements[i].equals(s2.elements[i])) {
+				return false;
 			}
 		}
 		return true;

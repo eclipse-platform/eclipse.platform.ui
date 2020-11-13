@@ -262,10 +262,8 @@ public class DecoratedField {
 				if (!hoverShell.isVisible()) {
 					hoverShell.setVisible(true);
 				}
-			} else {
-				if (hoverShell.isVisible()) {
-					hoverShell.setVisible(false);
-				}
+			} else if (hoverShell.isVisible()) {
+				hoverShell.setVisible(false);
 			}
 		}
 

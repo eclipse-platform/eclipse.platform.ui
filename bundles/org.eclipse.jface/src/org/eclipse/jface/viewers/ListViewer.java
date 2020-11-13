@@ -187,26 +187,24 @@ public class ListViewer extends AbstractListViewer {
 	protected void setSelectionToWidget(@SuppressWarnings("rawtypes") List in, boolean reveal) {
 		if( reveal ) {
 			super.setSelectionToWidget(in, reveal);
+		} else if (in == null || in.isEmpty()) { // clear selection
+			list.deselectAll();
 		} else {
-			if (in == null || in.isEmpty()) { // clear selection
-				list.deselectAll();
-			} else {
-				int n = in.size();
-				int[] ixs = new int[n];
-				int count = 0;
-				for (int i = 0; i < n; ++i) {
-					Object el = in.get(i);
-					int ix = getElementIndex(el);
-					if (ix >= 0) {
-						ixs[count++] = ix;
-					}
+			int n = in.size();
+			int[] ixs = new int[n];
+			int count = 0;
+			for (int i = 0; i < n; ++i) {
+				Object el = in.get(i);
+				int ix = getElementIndex(el);
+				if (ix >= 0) {
+					ixs[count++] = ix;
 				}
-				if (count < n) {
-					System.arraycopy(ixs, 0, ixs = new int[count], 0, count);
-				}
-				list.deselectAll();
-				list.select(ixs);
 			}
+			if (count < n) {
+				System.arraycopy(ixs, 0, ixs = new int[count], 0, count);
+			}
+			list.deselectAll();
+			list.select(ixs);
 		}
 	}
 

@@ -258,12 +258,10 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 					if (item.getData() != null) {
 						disassociate(item);
 						item.dispose();
+					} else if (needDummy && !haveDummy) {
+						haveDummy = true;
 					} else {
-						if (needDummy && !haveDummy) {
-							haveDummy = true;
-						} else {
-							item.dispose();
-						}
+						item.dispose();
 					}
 				}
 				// append a dummy if necessary
@@ -2842,12 +2840,10 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			if (child.getData() != null) {
 				disassociate(child);
 				child.dispose();
+			} else if (needDummy && !haveDummy) {
+				haveDummy = true;
 			} else {
-				if (needDummy && !haveDummy) {
-					haveDummy = true;
-				} else {
-					child.dispose();
-				}
+				child.dispose();
 			}
 		}
 		if (needDummy && !haveDummy) {

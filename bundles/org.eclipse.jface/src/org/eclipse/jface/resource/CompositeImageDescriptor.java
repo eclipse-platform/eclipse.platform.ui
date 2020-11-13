@@ -286,9 +286,7 @@ public abstract class CompositeImageDescriptor extends ImageDescriptor {
 						if (srcAlpha == 0) {
 							srcAlpha = srcMask.getPixel(srcX, srcY) != 0 ? 255 : 0;
 						}
-					} else {
-						if (srcMask.getPixel(srcX, srcY) == 0) srcAlpha = 0;
-					}
+					} else if (srcMask.getPixel(srcX, srcY) == 0) srcAlpha = 0;
 				} else if (src.transparentPixel != -1) {
 					if (src.transparentPixel == srcPixel) srcAlpha = 0;
 				} else if (src.alpha != -1) {

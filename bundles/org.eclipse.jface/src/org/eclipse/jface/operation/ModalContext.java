@@ -366,10 +366,8 @@ public class ModalContext {
 					if (listenerException == null) {
 						t.start();
 						t.block();
-					} else {
-						if (t.throwable == null)
-							t.throwable = listenerException;
-					}
+					} else if (t.throwable == null)
+						t.throwable = listenerException;
 					Throwable throwable = t.throwable;
 					if (throwable != null) {
 						if (debug

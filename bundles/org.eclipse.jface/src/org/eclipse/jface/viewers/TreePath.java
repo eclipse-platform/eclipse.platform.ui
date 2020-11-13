@@ -158,10 +158,8 @@ public final class TreePath {
 				if (!segments[i].equals(otherPath.segments[i])) {
 					return false;
 				}
-			} else {
-				if (!comparer.equals(segments[i], otherPath.segments[i])) {
-					return false;
-				}
+			} else if (!comparer.equals(segments[i], otherPath.segments[i])) {
+				return false;
 			}
 		}
 		return true;
@@ -194,10 +192,8 @@ public final class TreePath {
 				if (!otherSegment.equals(segments[i])) {
 					return false;
 				}
-			} else {
-				if (!comparer.equals(otherSegment, segments[i])) {
-					return false;
-				}
+			} else if (!comparer.equals(otherSegment, segments[i])) {
+				return false;
 			}
 		}
 		return true;

@@ -836,16 +836,14 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 
 				setDirty(false);
 			}
-		} else {
-			// I am not dirty. Check if I must recursivly walk down the hierarchy.
-			if (recursive) {
-				IContributionItem[] items = getItems();
-				for (IContributionItem ci : items) {
-					if (ci instanceof IMenuManager) {
-						IMenuManager mm = (IMenuManager) ci;
-						if (isChildVisible(mm)) {
-							mm.updateAll(force);
-						}
+		} else // I am not dirty. Check if I must recursivly walk down the hierarchy.
+		if (recursive) {
+			IContributionItem[] items = getItems();
+			for (IContributionItem ci : items) {
+				if (ci instanceof IMenuManager) {
+					IMenuManager mm = (IMenuManager) ci;
+					if (isChildVisible(mm)) {
+						mm.updateAll(force);
 					}
 				}
 			}

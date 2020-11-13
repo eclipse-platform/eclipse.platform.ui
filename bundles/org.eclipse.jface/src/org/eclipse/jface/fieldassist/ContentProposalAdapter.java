@@ -736,12 +736,9 @@ public class ContentProposalAdapter {
 				// Default to the first selection if there is content.
 				if (newProposals.length > 0) {
 					selectProposal(0);
-				} else {
-					// No selection, close the secondary popup if it was open
-					if (infoPopup != null) {
-						infoPopup.close();
-					}
-
+				} else // No selection, close the secondary popup if it was open
+				if (infoPopup != null) {
+					infoPopup.close();
 				}
 			}
 		}
@@ -1808,22 +1805,20 @@ public class ContentProposalAdapter {
 							if (isControlContentEmpty()) {
 								// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=192633
 								closeProposalPopup();
+							} else // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=147377
+							// Given that we will close the popup when there are
+							// no valid proposals, we must consider reopening it on any
+							// content change when there are no particular autoActivation
+							// characters
+							if (autoActivateString == null) {
+								autoActivate();
 							} else {
-								// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=147377
-								// Given that we will close the popup when there are
-								// no valid proposals, we must consider reopening it on any
-								// content change when there are no particular autoActivation
-								// characters
-								if (autoActivateString == null) {
-									autoActivate();
-								} else {
-									// Autoactivation characters are defined, but this
-									// modify event does not involve one of them.  See
-									// if any of the autoactivation characters are left
-									// in the content and close the popup if none remain.
-									if (!shouldPopupRemainOpen())
-										closeProposalPopup();
-								}
+								// Autoactivation characters are defined, but this
+								// modify event does not involve one of them.  See
+								// if any of the autoactivation characters are left
+								// in the content and close the popup if none remain.
+								if (!shouldPopupRemainOpen())
+									closeProposalPopup();
 							}
 						}
 						break;

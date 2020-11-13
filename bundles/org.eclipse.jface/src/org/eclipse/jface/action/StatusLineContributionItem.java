@@ -172,15 +172,13 @@ public class StatusLineContributionItem extends ContributionItem {
 					contributionManager.update(true);
 				}
 			}
-		} else {
-			// Always update if using 'CALC_TRUE_WIDTH'
-			if (!isVisible() || charWidth == CALC_TRUE_WIDTH) {
-				setVisible(true);
-				IContributionManager contributionManager = getParent();
+		} else // Always update if using 'CALC_TRUE_WIDTH'
+		if (!isVisible() || charWidth == CALC_TRUE_WIDTH) {
+			setVisible(true);
+			IContributionManager contributionManager = getParent();
 
-				if (contributionManager != null) {
-					contributionManager.update(true);
-				}
+			if (contributionManager != null) {
+				contributionManager.update(true);
 			}
 		}
 	}

@@ -246,14 +246,12 @@ public class ToolBarContributionItem extends ContributionItem implements IToolBa
 		int[] adjustedWrapIndices;
 		if (wraps.length == 0) {
 			adjustedWrapIndices = new int[] { 0 };
+		} else if (wraps[0] != 0) {
+			adjustedWrapIndices = new int[wraps.length + 1];
+			adjustedWrapIndices[0] = 0;
+			System.arraycopy(wraps, 0, adjustedWrapIndices, 1, wraps.length);
 		} else {
-			if (wraps[0] != 0) {
-				adjustedWrapIndices = new int[wraps.length + 1];
-				adjustedWrapIndices[0] = 0;
-				System.arraycopy(wraps, 0, adjustedWrapIndices, 1, wraps.length);
-			} else {
-				adjustedWrapIndices = wraps;
-			}
+			adjustedWrapIndices = wraps;
 		}
 		return adjustedWrapIndices;
 	}

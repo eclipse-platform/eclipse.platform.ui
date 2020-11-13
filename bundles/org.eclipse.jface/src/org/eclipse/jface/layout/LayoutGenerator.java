@@ -160,7 +160,6 @@ import org.eclipse.swt.widgets.Scrollable;
 		// with a constant
 		if (hScroll) {
 			hHint = defaultSize.x;
-		} else {
 			// For wrapping controls, there are two cases.
 			// 1. For controls that contain text (like wrapping labels,
 			// read-only text boxes,
@@ -170,12 +169,10 @@ import org.eclipse.swt.widgets.Scrollable;
 			// 2. For non-text controls (like wrapping toolbars), assume that
 			// their non-wrapped
 			// size is best.
-
-			if (wrapping) {
-				if (containsText) {
-					hHint = wrapSize;
-					grabHorizontal = true;
-				}
+		} else if (wrapping) {
+			if (containsText) {
+				hHint = wrapSize;
+				grabHorizontal = true;
 			}
 		}
 

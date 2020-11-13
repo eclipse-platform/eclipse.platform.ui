@@ -151,29 +151,27 @@ public class TreeViewerRow extends ViewerRow {
 			} else if (item.getExpanded() && item.getItemCount() > 0) {
 				return new TreeViewerRow(item.getItem(0));
 			}
-		} else {
-			if (sameLevel || !item.getExpanded()) {
-				TreeItem parentItem = item.getParentItem();
+		} else if (sameLevel || !item.getExpanded()) {
+			TreeItem parentItem = item.getParentItem();
 
-				int nextIndex = parentItem.indexOf(item) + 1;
-				int totalIndex = parentItem.getItemCount();
+			int nextIndex = parentItem.indexOf(item) + 1;
+			int totalIndex = parentItem.getItemCount();
 
-				TreeItem itemAfter;
+			TreeItem itemAfter;
 
-				// This would mean that it was the last item
-				if (nextIndex == totalIndex) {
-					itemAfter = findNextItem(parentItem);
-				} else {
-					itemAfter = parentItem.getItem(nextIndex);
-				}
-
-				if (itemAfter != null) {
-					return new TreeViewerRow(itemAfter);
-				}
-
-			} else if (item.getExpanded() && item.getItemCount() > 0) {
-				return new TreeViewerRow(item.getItem(0));
+			// This would mean that it was the last item
+			if (nextIndex == totalIndex) {
+				itemAfter = findNextItem(parentItem);
+			} else {
+				itemAfter = parentItem.getItem(nextIndex);
 			}
+
+			if (itemAfter != null) {
+				return new TreeViewerRow(itemAfter);
+			}
+
+		} else if (item.getExpanded() && item.getItemCount() > 0) {
+			return new TreeViewerRow(item.getItem(0));
 		}
 
 		return null;
@@ -254,12 +252,10 @@ public class TreeViewerRow extends ViewerRow {
 			if (item.getParentItem() != null) {
 				rv = findNextItem(item.getParentItem());
 			}
+		} else if (parentItem == null) {
+			rv = tree.getItem(nextIndex);
 		} else {
-			if (parentItem == null) {
-				rv = tree.getItem(nextIndex);
-			} else {
-				rv = parentItem.getItem(nextIndex);
-			}
+			rv = parentItem.getItem(nextIndex);
 		}
 
 		return rv;
