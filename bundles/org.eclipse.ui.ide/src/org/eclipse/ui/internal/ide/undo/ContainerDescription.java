@@ -107,25 +107,23 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 			if (resource != null) {
 				// parent already exists, no need to create a description for it
 				currentContainer = (IContainer) resource;
+			} else if (i == 0) {
+				// parent does not exist and it is a project
+				firstCreatedParent = new ProjectDescription(root
+						.getProject(currentSegment));
+				currentContainerDescription = firstCreatedParent;
 			} else {
-				if (i == 0) {
-					// parent does not exist and it is a project
-					firstCreatedParent = new ProjectDescription(root
-							.getProject(currentSegment));
-					currentContainerDescription = firstCreatedParent;
-				} else {
-					IFolder folderHandle = currentContainer.getFolder(new Path(
-							currentSegment));
-					ContainerDescription currentFolder;
-					currentFolder = new FolderDescription(folderHandle, usingVirtualFolder);
-					currentContainer = folderHandle;
-					if (currentContainerDescription != null) {
-						currentContainerDescription.addMember(currentFolder);
-					}
-					currentContainerDescription = currentFolder;
-					if (firstCreatedParent == null) {
-						firstCreatedParent = currentFolder;
-					}
+				IFolder folderHandle = currentContainer.getFolder(new Path(
+						currentSegment));
+				ContainerDescription currentFolder;
+				currentFolder = new FolderDescription(folderHandle, usingVirtualFolder);
+				currentContainer = folderHandle;
+				if (currentContainerDescription != null) {
+					currentContainerDescription.addMember(currentFolder);
+				}
+				currentContainerDescription = currentFolder;
+				if (firstCreatedParent == null) {
+					firstCreatedParent = currentFolder;
 				}
 			}
 		}

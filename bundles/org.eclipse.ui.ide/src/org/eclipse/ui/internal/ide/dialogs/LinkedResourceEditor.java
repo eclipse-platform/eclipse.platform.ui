@@ -936,12 +936,10 @@ public class LinkedResourceEditor {
 			TreeMap<String, IResource> container = null;
 			if (isBroken)
 				container = fBrokenResources;
-			else {
-				if (isAbsolute(resource))
-					container = fAbsoluteResources;
-				else
-					container = fFixedResources;
-			}
+			else if (isAbsolute(resource))
+				container = fAbsoluteResources;
+			else
+				container = fFixedResources;
 			String fullPath = resource.getFullPath().toPortableString();
 
 			if (!container.containsKey(fullPath)) {

@@ -95,16 +95,14 @@ public class CachedMarkerBuilder {
 			String categoryGroupID = m.getString(TAG_CATEGORY_GROUP);
 			if (categoryGroupID == null) {
 				setDefaultCategoryGroup(getGenerator());
+			} else if (categoryGroupID.equals(VALUE_NONE)) {
+				this.categoryGroup = null;
 			} else {
-				if (categoryGroupID.equals(VALUE_NONE)) {
-					this.categoryGroup = null;
+				MarkerGroup newGroup = getGenerator().getMarkerGroup(categoryGroupID);
+				if (newGroup == null) {
+					setDefaultCategoryGroup(getGenerator());
 				} else {
-					MarkerGroup newGroup = getGenerator().getMarkerGroup(categoryGroupID);
-					if (newGroup == null) {
-						setDefaultCategoryGroup(getGenerator());
-					} else {
-						this.categoryGroup = newGroup;
-					}
+					this.categoryGroup = newGroup;
 				}
 			}
 		}

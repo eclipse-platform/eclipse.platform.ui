@@ -144,10 +144,8 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 				dialog.updateMessage(MessageFormat.format(MSG_FATAL_ERROR,
 						MSG_FATAL_ERROR_Recursive));
 				dialog.getShell().forceActive();
-			} else {
-				if (openQuestionDialog(t)) {
-					closeWorkbench();
-				}
+			} else if (openQuestionDialog(t)) {
+				closeWorkbench();
 			}
 		} finally {
 			exceptionCount--;
@@ -169,13 +167,11 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 				msg = MSG_VirtualMachineError;
 			} else if (t instanceof SWTError) {
 				msg = MSG_SWTError;
+			} else if (t.getMessage() == null) {
+				msg = IDEWorkbenchMessages.InternalErrorNoArg;
 			} else {
-				if (t.getMessage() == null) {
-					msg = IDEWorkbenchMessages.InternalErrorNoArg;
-				} else {
-					msg = NLS.bind(IDEWorkbenchMessages.InternalErrorOneArg, t
-							.getMessage());
-				}
+				msg = NLS.bind(IDEWorkbenchMessages.InternalErrorOneArg, t
+						.getMessage());
 			}
 
 			// Always open the dialog in case of major error but do not show the

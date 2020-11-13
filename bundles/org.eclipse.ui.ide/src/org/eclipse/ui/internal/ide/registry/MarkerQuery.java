@@ -107,10 +107,8 @@ public class MarkerQuery {
 					if(!marker.isSubtypeOf(type)) {
 						return null;
 					}
-				} else {
-					if(!type.equals(marker.getType())) {
-						return null;
-					}
+				} else if(!type.equals(marker.getType())) {
+					return null;
 				}
 			}
 		} catch (CoreException e) {

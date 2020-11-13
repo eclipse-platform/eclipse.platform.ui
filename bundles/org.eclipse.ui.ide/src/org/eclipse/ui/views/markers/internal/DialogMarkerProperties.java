@@ -522,10 +522,8 @@ public class DialogMarkerProperties extends TrayDialog {
 				return;
 			}
 			op = new CreateMarkersOperation(type, attrs, resource, getCreateOperationTitle());
-		} else {
-			if (isDirty()) {
-				op = new UpdateMarkersOperation(marker, attrs, getModifyOperationTitle(), true);
-			}
+		} else if (isDirty()) {
+			op = new UpdateMarkersOperation(marker, attrs, getModifyOperationTitle(), true);
 		}
 		if (op != null) {
 			try {

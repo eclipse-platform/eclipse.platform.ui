@@ -227,15 +227,13 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 		if (showAll) {
 			previouslyChecked = configsTable.getCheckedElements();
 			configsTable.setAllChecked(false);
+		} else if (previouslyChecked != null && previouslyChecked.length > 0) {
+			configsTable.setCheckedElements(previouslyChecked);
 		} else {
-			if (previouslyChecked != null && previouslyChecked.length > 0) {
-				configsTable.setCheckedElements(previouslyChecked);
-			} else {
-				// make the first entry checked
-				if (filterGroups.size() > 0) {
-					Object group = filterGroups.iterator().next();
-					configsTable.setChecked(group, true);
-				}
+			// make the first entry checked
+			if (filterGroups.size() > 0) {
+				Object group = filterGroups.iterator().next();
+				configsTable.setChecked(group, true);
 			}
 		}
 	}

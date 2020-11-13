@@ -922,12 +922,10 @@ public class ExtendedMarkersView extends ViewPart {
 				}
 				filteredCount += childCount;
 			}
+		} else if(markerLimitsEnabled) {
+			filteredCount = markerLimit;
 		} else {
-			if(markerLimitsEnabled) {
-				filteredCount = markerLimit;
-			} else {
-				filteredCount = -1;
-			}
+			filteredCount = -1;
 		}
 
 		// Any errors or warnings? If not then send the filtering message
@@ -1165,10 +1163,8 @@ public class ExtendedMarkersView extends ViewPart {
 					if (provider instanceof ILazyTreeContentProvider) {
 						((ILazyTreeContentProvider) provider).updateElement(builder.getMarkers(), i);
 						viewer.setExpandedState(items[i], true);
-					} else {
-						if (!viewer.getExpandedState(items[i])) {
-							viewer.expandToLevel(items[i], 2);
-						}
+					} else if (!viewer.getExpandedState(items[i])) {
+						viewer.expandToLevel(items[i], 2);
 					}
 				}
 			}
@@ -1631,11 +1627,9 @@ public class ExtendedMarkersView extends ViewPart {
 			if (part instanceof IEditorPart) {
 				IEditorPart editor = (IEditorPart) part;
 				objectsToAdapt.add(editor.getEditorInput());
-			} else {
-				if (selection instanceof IStructuredSelection) {
-					for (Object object : (IStructuredSelection) selection) {
-						objectsToAdapt.add(object);
-					}
+			} else if (selection instanceof IStructuredSelection) {
+				for (Object object : (IStructuredSelection) selection) {
+					objectsToAdapt.add(object);
 				}
 			}
 			// try to adapt them in resources and add it to the

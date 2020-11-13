@@ -229,13 +229,11 @@ public class ProjectContentsLocationArea {
 
 		if (defaultEnabled) {
 			locationPathField.setText(TextProcessor.process(getDefaultPathDisplayString()));
+		} else if (existingProject == null) {
+			locationPathField.setText(IDEResourceInfoUtils.EMPTY_STRING);
 		} else {
-			if (existingProject == null) {
-				locationPathField.setText(IDEResourceInfoUtils.EMPTY_STRING);
-			} else {
-				locationPathField.setText(TextProcessor.process(existingProject
-						.getLocation().toOSString()));
-			}
+			locationPathField.setText(TextProcessor.process(existingProject
+					.getLocation().toOSString()));
 		}
 
 		locationPathField.addModifyListener(e -> errorReporter.reportError(checkValidLocation(), false));

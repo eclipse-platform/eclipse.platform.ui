@@ -455,37 +455,35 @@ public class CopyFilesAndFoldersOperation {
 					delete(existing, iterationMonitor.split(10));
 					resource.copy(destinationPath, IResource.SHALLOW, iterationMonitor.split(90));
 				}
-			} else {
-				if (existing != null) {
-					if (homogenousResources(resource, existing)) {
-						copyExisting(resource, existing, iterationMonitor.split(100));
-					} else {
-						// Copying a linked resource over unlinked or vice
-						// versa.
-						// Can't use setContents here. Fixes bug 28772.
-						delete(existing, iterationMonitor.split(10));
-						iterationMonitor.setWorkRemaining(100);
+			} else if (existing != null) {
+				if (homogenousResources(resource, existing)) {
+					copyExisting(resource, existing, iterationMonitor.split(100));
+				} else {
+					// Copying a linked resource over unlinked or vice
+					// versa.
+					// Can't use setContents here. Fixes bug 28772.
+					delete(existing, iterationMonitor.split(10));
+					iterationMonitor.setWorkRemaining(100);
 
-						if ((createLinks || createVirtualFoldersAndLinks) && (resource.isLinked() == false)
-								&& (resource.isVirtual() == false)) {
-							if (resource.getType() == IResource.FILE) {
-								IFile file = workspaceRoot.getFile(destinationPath);
-								file.createLink(createRelativePath(resource.getLocationURI(), file), 0,
+					if ((createLinks || createVirtualFoldersAndLinks) && (resource.isLinked() == false)
+							&& (resource.isVirtual() == false)) {
+						if (resource.getType() == IResource.FILE) {
+							IFile file = workspaceRoot.getFile(destinationPath);
+							file.createLink(createRelativePath(resource.getLocationURI(), file), 0,
+									iterationMonitor.split(100));
+						} else {
+							IFolder folder = workspaceRoot.getFolder(destinationPath);
+							if (createVirtualFoldersAndLinks) {
+								folder.create(IResource.VIRTUAL, true, iterationMonitor.split(1));
+								IResource[] members = ((IContainer) resource).members();
+								if (members.length > 0)
+									copy(members, destinationPath, iterationMonitor.split(99));
+							} else
+								folder.createLink(createRelativePath(resource.getLocationURI(), folder), 0,
 										iterationMonitor.split(100));
-							} else {
-								IFolder folder = workspaceRoot.getFolder(destinationPath);
-								if (createVirtualFoldersAndLinks) {
-									folder.create(IResource.VIRTUAL, true, iterationMonitor.split(1));
-									IResource[] members = ((IContainer) resource).members();
-									if (members.length > 0)
-										copy(members, destinationPath, iterationMonitor.split(99));
-								} else
-									folder.createLink(createRelativePath(resource.getLocationURI(), folder), 0,
-											iterationMonitor.split(100));
-							}
-						} else
-							resource.copy(destinationPath, IResource.SHALLOW, iterationMonitor.split(100));
-					}
+						}
+					} else
+						resource.copy(destinationPath, IResource.SHALLOW, iterationMonitor.split(100));
 				}
 			}
 		}
@@ -753,21 +751,19 @@ public class CopyFilesAndFoldersOperation {
 		//check if resource linking is disabled
 		if (ResourcesPlugin.getPlugin().getPluginPreferences().getBoolean(ResourcesPlugin.PREF_DISABLE_LINKING))
 			mode= ImportTypeDialog.IMPORT_COPY;
-		else {
-			if (dndPreference.equals(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_PROMPT)) {
-				ImportTypeDialog dialog= new ImportTypeDialog(messageShell, dropOperation, fileNames, destination);
-				dialog.setResource(destination);
-				if (dialog.open() == Window.OK) {
-					mode= dialog.getSelection();
-					variable= dialog.getVariable();
-				}
-			} else if (dndPreference.equals(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_MOVE_COPY)) {
-				mode= ImportTypeDialog.IMPORT_COPY;
-			} else if (dndPreference.equals(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_LINK)) {
-				mode= ImportTypeDialog.IMPORT_LINK;
-			} else if (dndPreference.equals(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_LINK_AND_VIRTUAL_FOLDER)) {
-				mode= ImportTypeDialog.IMPORT_VIRTUAL_FOLDERS_AND_LINKS;
+		else if (dndPreference.equals(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_PROMPT)) {
+			ImportTypeDialog dialog= new ImportTypeDialog(messageShell, dropOperation, fileNames, destination);
+			dialog.setResource(destination);
+			if (dialog.open() == Window.OK) {
+				mode= dialog.getSelection();
+				variable= dialog.getVariable();
 			}
+		} else if (dndPreference.equals(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_MOVE_COPY)) {
+			mode= ImportTypeDialog.IMPORT_COPY;
+		} else if (dndPreference.equals(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_LINK)) {
+			mode= ImportTypeDialog.IMPORT_LINK;
+		} else if (dndPreference.equals(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_LINK_AND_VIRTUAL_FOLDER)) {
+			mode= ImportTypeDialog.IMPORT_VIRTUAL_FOLDERS_AND_LINKS;
 		}
 
 		switch (mode) {

@@ -100,23 +100,21 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 					resource.move(destinationPath, IResource.SHALLOW | IResource.KEEP_HISTORY,
 							iterationMonitor.split(50));
 				}
-			} else {
-				// if we're merging folders, we could be overwriting an existing
-				// file
-				if (existing != null) {
-					if (homogenousResources(resource, existing)) {
-						moveExisting(resource, existing, iterationMonitor.split(100));
-					} else {
-						// Moving a linked resource over unlinked or vice versa.
-						// Can't use setContents here. Fixes bug 28772.
-						delete(existing, iterationMonitor.split(50));
-						resource.move(destinationPath, IResource.SHALLOW | IResource.KEEP_HISTORY,
-								iterationMonitor.split(50));
-					}
+			} else // if we're merging folders, we could be overwriting an existing
+			// file
+			if (existing != null) {
+				if (homogenousResources(resource, existing)) {
+					moveExisting(resource, existing, iterationMonitor.split(100));
 				} else {
+					// Moving a linked resource over unlinked or vice versa.
+					// Can't use setContents here. Fixes bug 28772.
+					delete(existing, iterationMonitor.split(50));
 					resource.move(destinationPath, IResource.SHALLOW | IResource.KEEP_HISTORY,
-							iterationMonitor.split(100));
+							iterationMonitor.split(50));
 				}
+			} else {
+				resource.move(destinationPath, IResource.SHALLOW | IResource.KEEP_HISTORY,
+						iterationMonitor.split(100));
 			}
 		}
 	}

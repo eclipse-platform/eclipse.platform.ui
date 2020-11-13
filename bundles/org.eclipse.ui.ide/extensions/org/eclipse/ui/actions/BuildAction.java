@@ -320,10 +320,8 @@ public class BuildAction extends WorkspaceAction {
 			if (IDEWorkbenchMessages.BuildAction_text.equals(getText())) {
 				setText(IDEWorkbenchMessages.BuildAction_text_plural);
 			}
-		} else {
-			if (IDEWorkbenchMessages.BuildAction_text_plural.equals(getText())) {
-				setText(IDEWorkbenchMessages.BuildAction_text);
-			}
+		} else if (IDEWorkbenchMessages.BuildAction_text_plural.equals(getText())) {
+			setText(IDEWorkbenchMessages.BuildAction_text);
 		}
 		return BuildUtilities.isEnabled(projects, IncrementalProjectBuilder.INCREMENTAL_BUILD);
 	}
