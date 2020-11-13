@@ -172,10 +172,8 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 					if (copyAction != null && !copyAction.isDisposed()) {
 						copyAction.setEnabled(false);
 					}
-				} else {
-					if (copyAction != null && !copyAction.isDisposed()) {
-						copyAction.setEnabled(true);
-					}
+				} else if (copyAction != null && !copyAction.isDisposed()) {
+					copyAction.setEnabled(true);
 				}
 			}
 

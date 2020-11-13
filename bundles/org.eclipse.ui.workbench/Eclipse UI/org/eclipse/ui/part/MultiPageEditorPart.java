@@ -818,12 +818,10 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 					MultiPageSelectionProvider provider = (MultiPageSelectionProvider) outerProvider;
 					provider.fireSelectionChanged(event);
 					provider.firePostSelectionChanged(event);
-				} else {
-					if (Policy.DEBUG_MPE) {
-						Tracing.printTrace(TRACING_COMPONENT, "MultiPageEditorPart " + getTitle() //$NON-NLS-1$
-								+ " did not propogate selection for " //$NON-NLS-1$
-								+ activeEditor.getTitle());
-					}
+				} else if (Policy.DEBUG_MPE) {
+					Tracing.printTrace(TRACING_COMPONENT, "MultiPageEditorPart " + getTitle() //$NON-NLS-1$
+							+ " did not propogate selection for " //$NON-NLS-1$
+							+ activeEditor.getTitle());
 				}
 			}
 		}

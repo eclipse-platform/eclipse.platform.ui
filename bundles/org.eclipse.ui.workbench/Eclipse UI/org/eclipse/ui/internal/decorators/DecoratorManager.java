@@ -274,11 +274,9 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 				clearCaches();
 				updateForEnablementChange();
 			}
-		} else {
-			if (getLightweightManager().addDecorator((LightweightDecoratorDefinition) definition)) {
-				clearCaches();
-				updateForEnablementChange();
-			}
+		} else if (getLightweightManager().addDecorator((LightweightDecoratorDefinition) definition)) {
+			clearCaches();
+			updateForEnablementChange();
 		}
 		((Workbench) PlatformUI.getWorkbench()).getExtensionTracker().registerObject(
 				definition.getConfigurationElement().getDeclaringExtension(), definition, IExtensionTracker.REF_WEAK);
@@ -738,10 +736,8 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 			String id = element.getId();
 			if (enabledIds.contains(id)) {
 				element.setEnabled(true);
-			} else {
-				if (disabledIds.contains(id)) {
-					element.setEnabled(false);
-				}
+			} else if (disabledIds.contains(id)) {
+				element.setEnabled(false);
 			}
 		}
 
@@ -750,10 +746,8 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 			String id = lightweightDefinition.getId();
 			if (enabledIds.contains(id)) {
 				lightweightDefinition.setEnabled(true);
-			} else {
-				if (disabledIds.contains(id)) {
-					lightweightDefinition.setEnabled(false);
-				}
+			} else if (disabledIds.contains(id)) {
+				lightweightDefinition.setEnabled(false);
 			}
 		}
 

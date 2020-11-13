@@ -282,14 +282,12 @@ public class ThemeRegistryReader extends RegistryReader {
 			String value = element.getAttribute(IWorkbenchRegistryConstants.ATT_VALUE);
 			if (name == null || value == null) {
 				logError(element, RESOURCE_BUNDLE.getString("Data.badData")); //$NON-NLS-1$
+			} else if (themeDescriptor != null) {
+				themeDescriptor.setData(name, value);
 			} else {
-				if (themeDescriptor != null) {
-					themeDescriptor.setData(name, value);
-				} else {
-					themeRegistry.setData(name, value);
-					if (!dataMap.containsKey(name)) {
-						dataMap.put(name, value);
-					}
+				themeRegistry.setData(name, value);
+				if (!dataMap.containsKey(name)) {
+					dataMap.put(name, value);
 				}
 			}
 			return true;

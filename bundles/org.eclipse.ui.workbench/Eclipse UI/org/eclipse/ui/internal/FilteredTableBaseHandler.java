@@ -625,15 +625,13 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 		int index = table.getSelectionIndex();
 		if (!isFiltered()) {
 			table.setSelection(index >= 1 ? index - 1 : table.getItemCount() - 1);
+		} else if (text.isFocusControl()) {
+			table.setFocus();
+			table.setSelection(index >= 1 ? index - 1 : table.getItemCount() - 1);
+		} else if (index == 0) {
+			text.setFocus();
 		} else {
-			if (text.isFocusControl()) {
-				table.setFocus();
-				table.setSelection(index >= 1 ? index - 1 : table.getItemCount() - 1);
-			} else if (index == 0) {
-				text.setFocus();
-			} else {
-				table.setSelection(index >= 1 ? index - 1 : table.getItemCount() - 1);
-			}
+			table.setSelection(index >= 1 ? index - 1 : table.getItemCount() - 1);
 		}
 	}
 

@@ -635,12 +635,9 @@ public class EditorSelectionDialog extends Dialog {
 					hasMapping = true;
 					break;
 				}
-			} else {
-				if (fileType.equals(mapping.getExtension())) {
-					hasMapping = true;
-					break;
-				}
-
+			} else if (fileType.equals(mapping.getExtension())) {
+				hasMapping = true;
+				break;
 			}
 		}
 		if (hasMapping) {

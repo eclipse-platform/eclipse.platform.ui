@@ -722,20 +722,18 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
 			// adapters that match the given classes types (classes and interfaces).
 			if (otherAdapters.isEmpty() && !adapters.isEmpty()) {
 				removeNonCommonAdapters(adapters, classesAndInterfaces);
+			} else if (adapters.isEmpty()) {
+				removeNonCommonAdapters(otherAdapters, lastCommonTypes);
+				if (!otherAdapters.isEmpty()) {
+					adapters.addAll(otherAdapters);
+				}
 			} else {
-				if (adapters.isEmpty()) {
-					removeNonCommonAdapters(otherAdapters, lastCommonTypes);
-					if (!otherAdapters.isEmpty()) {
-						adapters.addAll(otherAdapters);
-					}
-				} else {
-					// Remove any adapters of the first element that
-					// are not in the current element's adapter list.
-					for (Iterator it = adapters.iterator(); it.hasNext();) {
-						String adapter = (String) it.next();
-						if (!otherAdapters.contains(adapter)) {
-							it.remove();
-						}
+				// Remove any adapters of the first element that
+				// are not in the current element's adapter list.
+				for (Iterator it = adapters.iterator(); it.hasNext();) {
+					String adapter = (String) it.next();
+					if (!otherAdapters.contains(adapter)) {
+						it.remove();
 					}
 				}
 			}

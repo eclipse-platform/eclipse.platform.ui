@@ -163,10 +163,8 @@ public class AdvancedValidationUserApprover implements IOperationApprover, IOper
 			if (!(operation instanceof IAdvancedUndoableOperation2)) {
 				return Status.OK_STATUS;
 			}
-		} else {
-			if (!(operation instanceof IAdvancedUndoableOperation)) {
-				return Status.OK_STATUS;
-			}
+		} else if (!(operation instanceof IAdvancedUndoableOperation)) {
+			return Status.OK_STATUS;
 		}
 
 		// The next two methods make a number of UI calls, so we wrap the

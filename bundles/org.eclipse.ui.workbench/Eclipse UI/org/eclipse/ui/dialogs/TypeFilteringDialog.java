@@ -138,12 +138,10 @@ public class TypeFilteringDialog extends SelectionDialog {
 			if (!currentExtension.isEmpty()) {
 				if (currentExtension.startsWith("*.")) { //$NON-NLS-1$
 					result.add(currentExtension.substring(2));
+				} else if (currentExtension.startsWith(".")) { //$NON-NLS-1$
+					result.add(currentExtension.substring(1));
 				} else {
-					if (currentExtension.startsWith(".")) { //$NON-NLS-1$
-						result.add(currentExtension.substring(1));
-					} else {
-						result.add(currentExtension);
-					}
+					result.add(currentExtension);
 				}
 			}
 		}
@@ -162,11 +160,9 @@ public class TypeFilteringDialog extends SelectionDialog {
 			if (this.initialSelections.contains(mapping.getExtension())) {
 				listViewer.setChecked(mapping, true);
 				selectedMappings.add(mapping.getExtension());
-			} else {
-				if (this.initialSelections.contains(mapping.getLabel())) {
-					listViewer.setChecked(mapping, true);
-					selectedMappings.add(mapping.getLabel());
-				}
+			} else if (this.initialSelections.contains(mapping.getLabel())) {
+				listViewer.setChecked(mapping, true);
+				selectedMappings.add(mapping.getLabel());
 			}
 		}
 		// Now add in the ones not selected to the user defined list

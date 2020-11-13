@@ -177,11 +177,9 @@ public class WorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
 							if (defaultElement == null) {
 								defaultElement = element;
 							}
-						} else {
-							// non-default
-							if (choice == null) {
-								choice = element;
-							}
+						} else // non-default
+						if (choice == null) {
+							choice = element;
 						}
 					}
 				}

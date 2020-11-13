@@ -31,12 +31,10 @@ class SelectionServiceListener<S extends ISelectionService, D extends IDiff>
 			} else {
 				selectionService.addPostSelectionListener(this);
 			}
+		} else if (partId != null) {
+			selectionService.addSelectionListener(partId, this);
 		} else {
-			if (partId != null) {
-				selectionService.addSelectionListener(partId, this);
-			} else {
-				selectionService.addSelectionListener(this);
-			}
+			selectionService.addSelectionListener(this);
 		}
 	}
 
@@ -49,12 +47,10 @@ class SelectionServiceListener<S extends ISelectionService, D extends IDiff>
 			} else {
 				selectionService.removePostSelectionListener(this);
 			}
+		} else if (partId != null) {
+			selectionService.removeSelectionListener(partId, this);
 		} else {
-			if (partId != null) {
-				selectionService.removeSelectionListener(partId, this);
-			} else {
-				selectionService.removeSelectionListener(this);
-			}
+			selectionService.removeSelectionListener(this);
 		}
 	}
 

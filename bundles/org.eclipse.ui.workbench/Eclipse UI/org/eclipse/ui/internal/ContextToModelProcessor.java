@@ -82,10 +82,8 @@ public class ContextToModelProcessor {
 					if (parentContextModel == null) {
 						System.err.println("Could not find parent " + parentId + " for child " //$NON-NLS-1$ //$NON-NLS-2$
 								+ ctx.getId());
-					} else {
-						if (!parentContextModel.getChildren().contains(contextModel)) {
-							parentContextModel.getChildren().add(contextModel);
-						}
+					} else if (!parentContextModel.getChildren().contains(contextModel)) {
+						parentContextModel.getChildren().add(contextModel);
 					}
 				}
 			} catch (NotDefinedException e) {

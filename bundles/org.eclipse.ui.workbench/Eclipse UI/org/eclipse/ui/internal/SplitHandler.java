@@ -76,13 +76,11 @@ public class SplitHandler extends AbstractHandler {
 					editorPart.getTags().remove(IPresentationEngine.SPLIT_HORIZONTAL);
 					editorPart.getTags().add(IPresentationEngine.SPLIT_VERTICAL);
 				}
+			} else if (taggedEditor.getTags().contains(IPresentationEngine.SPLIT_HORIZONTAL)) {
+				taggedEditor.getTags().remove(IPresentationEngine.SPLIT_HORIZONTAL);
 			} else {
-				if (taggedEditor.getTags().contains(IPresentationEngine.SPLIT_HORIZONTAL)) {
-					taggedEditor.getTags().remove(IPresentationEngine.SPLIT_HORIZONTAL);
-				} else {
-					editorPart.getTags().remove(IPresentationEngine.SPLIT_VERTICAL);
-					editorPart.getTags().add(IPresentationEngine.SPLIT_HORIZONTAL);
-				}
+				editorPart.getTags().remove(IPresentationEngine.SPLIT_VERTICAL);
+				editorPart.getTags().add(IPresentationEngine.SPLIT_HORIZONTAL);
 			}
 		} finally {
 			window.getShell().setRedraw(true);

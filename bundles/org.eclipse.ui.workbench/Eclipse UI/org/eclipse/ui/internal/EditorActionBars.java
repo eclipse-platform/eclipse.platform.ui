@@ -439,14 +439,12 @@ public class EditorActionBars extends SubActionBars2 {
 			if (!isVisible()) {
 				setVisible(true);
 			}
+		} else if (forceVisibility) {
+			// Remove the editor tool bar items
+			setVisible(false);
 		} else {
-			if (forceVisibility) {
-				// Remove the editor tool bar items
-				setVisible(false);
-			} else {
-				// Disabled the tool bar items.
-				setEnabledAllowed(false);
-			}
+			// Disabled the tool bar items.
+			setEnabledAllowed(false);
 		}
 
 		IActionBars2 castedParent = getCastedParent();

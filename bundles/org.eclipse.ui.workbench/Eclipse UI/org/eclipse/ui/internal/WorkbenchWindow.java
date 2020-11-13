@@ -566,10 +566,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 									true, WorkbenchWindow.this);
 							return saveResult != null;
 						}
-					} else {
-						if (isSaveOnCloseNotNeededSplitEditorPart(dirtyPart)) {
-							return true;
-						}
+					} else if (isSaveOnCloseNotNeededSplitEditorPart(dirtyPart)) {
+						return true;
 					}
 					return super.save(dirtyPart, confirm);
 				}
@@ -1045,10 +1043,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			spacerControl.getTags().add(TrimBarLayout.SPACER);
 			spacerControl.getTags().add("SHOW_RESTORE_MENU"); //$NON-NLS-1$
 			trimBar.getChildren().add(spacerControl);
-		} else {
-			if (!spacerControl.getTags().contains("SHOW_RESTORE_MENU")) { //$NON-NLS-1$
-				spacerControl.getTags().add("SHOW_RESTORE_MENU"); //$NON-NLS-1$
-			}
+		} else if (!spacerControl.getTags().contains("SHOW_RESTORE_MENU")) { //$NON-NLS-1$
+			spacerControl.getTags().add("SHOW_RESTORE_MENU"); //$NON-NLS-1$
 		}
 
 		MToolControl switcherControl = (MToolControl) modelService.find("PerspectiveSwitcher", model); //$NON-NLS-1$
@@ -1720,11 +1716,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			if (!workbench.isStarting() && !workbench.isClosing() && count <= 1
 					&& workbench.getWorkbenchConfigurer().getExitOnLastWindowClose()) {
 				windowClosed = workbench.close();
-			} else {
-				if (okToClose()) {
-					closing = true;
-					windowClosed = hardClose(remove);
-				}
+			} else if (okToClose()) {
+				closing = true;
+				windowClosed = hardClose(remove);
 			}
 		} finally {
 			if (!windowClosed) {

@@ -691,21 +691,17 @@ public class InternalDialog extends TrayDialog {
 				launchTrayLink = createGetSupportLink();
 			}
 			launchTrayLink.setEnabled(!getBooleanValue(IStatusDialogConstants.TRAY_OPENED));
-		} else {
-			if (launchTrayLink != null && !launchTrayLink.isDisposed()) {
-				launchTrayLink.dispose();
-				launchTrayLink = null;
-			}
+		} else if (launchTrayLink != null && !launchTrayLink.isDisposed()) {
+			launchTrayLink.dispose();
+			launchTrayLink = null;
 		}
 		IViewDescriptor descriptor = shouldDisplayLinkToErrorLog();
 		if (descriptor != null) {
 			if (showErrorLogLink == null || showErrorLogLink.isDisposed()) {
 				showErrorLogLink = createShowErrorLogLink();
 			}
-		} else {
-			if (showErrorLogLink != null && !showErrorLogLink.isDisposed()) {
-				showErrorLogLink.dispose();
-			}
+		} else if (showErrorLogLink != null && !showErrorLogLink.isDisposed()) {
+			showErrorLogLink.dispose();
 		}
 		linkComposite.getParent().layout();
 	}

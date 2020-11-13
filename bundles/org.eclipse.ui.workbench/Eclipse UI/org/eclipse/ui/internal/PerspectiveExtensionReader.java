@@ -306,15 +306,13 @@ public class PerspectiveExtensionReader extends RegistryReader {
 				} else {
 					pageLayout.addView(id, intRelation, ratio, relative, minimized);
 				}
+			} else // Fix for 99155, CGross (schtoo@schtoo.com)
+			// Adding standalone placeholder for standalone views
+			if (VAL_TRUE.equals(standalone)) {
+				pageLayout.addStandaloneViewPlaceholder(id, intRelation, ratio, relative,
+						!VAL_FALSE.equals(showTitle));
 			} else {
-				// Fix for 99155, CGross (schtoo@schtoo.com)
-				// Adding standalone placeholder for standalone views
-				if (VAL_TRUE.equals(standalone)) {
-					pageLayout.addStandaloneViewPlaceholder(id, intRelation, ratio, relative,
-							!VAL_FALSE.equals(showTitle));
-				} else {
-					pageLayout.addPlaceholder(id, intRelation, ratio, relative);
-				}
+				pageLayout.addPlaceholder(id, intRelation, ratio, relative);
 			}
 		}
 		IViewLayout viewLayout = pageLayout.getViewLayout(id);

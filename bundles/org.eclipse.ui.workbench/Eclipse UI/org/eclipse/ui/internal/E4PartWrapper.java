@@ -62,12 +62,10 @@ public class E4PartWrapper extends ViewPart {
 			if (Policy.DEBUG_FOCUS) {
 				Activator.trace(Policy.DEBUG_FOCUS_FLAG, "Focused: " + object, null); //$NON-NLS-1$
 			}
-		} else {
-			if (Policy.DEBUG_FOCUS) {
-				Activator.trace(Policy.DEBUG_FOCUS_FLAG,
-						"Focus not set, object or context missing: " + object + ", " + context, //$NON-NLS-1$ //$NON-NLS-2$
-						new IllegalStateException());
-			}
+		} else if (Policy.DEBUG_FOCUS) {
+			Activator.trace(Policy.DEBUG_FOCUS_FLAG,
+					"Focus not set, object or context missing: " + object + ", " + context, //$NON-NLS-1$ //$NON-NLS-2$
+					new IllegalStateException());
 		}
 	}
 }

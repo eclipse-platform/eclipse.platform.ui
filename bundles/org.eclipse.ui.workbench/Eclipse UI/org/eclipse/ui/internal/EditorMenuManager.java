@@ -154,14 +154,12 @@ public class EditorMenuManager extends SubMenuManager {
 			if (!isVisible()) {
 				setVisible(true);
 			}
+		} else if (forceVisibility) {
+			// Remove the editor menu items
+			setVisible(false);
 		} else {
-			if (forceVisibility) {
-				// Remove the editor menu items
-				setVisible(false);
-			} else {
-				// Disable the editor menu items.
-				setEnabledAllowed(false);
-			}
+			// Disable the editor menu items.
+			setEnabledAllowed(false);
 		}
 	}
 

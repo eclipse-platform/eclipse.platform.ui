@@ -1323,10 +1323,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			if (definition.getValue() != null) { // value-based color
 				if (colorPreferencesToSet.get(definition).equals(definition.getValue()))
 					return true;
-			} else {
-				if (colorPreferencesToSet.get(definition).equals(getColorAncestorValue(definition)))
-					return true;
-			}
+			} else if (colorPreferencesToSet.get(definition).equals(getColorAncestorValue(definition)))
+				return true;
 		} else if (colorValuesToSet.containsKey(id)) {
 			if (definition.getValue() != null) { // value-based color
 				if (colorValuesToSet.get(id).equals(definition.getValue()))
@@ -1335,16 +1333,14 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 				if (colorValuesToSet.get(id).equals(getColorAncestorValue(definition)))
 					return true;
 			}
+		} else if (definition.getValue() != null) { // value-based color
+			if (getPreferenceStore().isDefault(createPreferenceKey(definition)))
+				return true;
 		} else {
-			if (definition.getValue() != null) { // value-based color
-				if (getPreferenceStore().isDefault(createPreferenceKey(definition)))
-					return true;
-			} else {
-				// a descendant is default if it's the same value as its ancestor
-				RGB rgb = getColorValue(definition);
-				if (rgb != null && rgb.equals(getColorAncestorValue(definition)))
-					return true;
-			}
+			// a descendant is default if it's the same value as its ancestor
+			RGB rgb = getColorValue(definition);
+			if (rgb != null && rgb.equals(getColorAncestorValue(definition)))
+				return true;
 		}
 		return false;
 	}
@@ -1371,18 +1367,16 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 					return true;
 			}
 
+		} else if (definition.getValue() != null) { // value-based font
+			if (getPreferenceStore().isDefault(createPreferenceKey(definition)))
+				return true;
 		} else {
-			if (definition.getValue() != null) { // value-based font
-				if (getPreferenceStore().isDefault(createPreferenceKey(definition)))
-					return true;
-			} else {
-				FontData[] ancestor = getFontAncestorValue(definition);
-				if (ancestor == null)
-					return true;
-				// a descendant is default if it's the same value as its ancestor
-				if (Arrays.equals(getFontValue(definition), ancestor))
-					return true;
-			}
+			FontData[] ancestor = getFontAncestorValue(definition);
+			if (ancestor == null)
+				return true;
+			// a descendant is default if it's the same value as its ancestor
+			if (Arrays.equals(getFontValue(definition), ancestor))
+				return true;
 		}
 		return false;
 	}

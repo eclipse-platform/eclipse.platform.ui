@@ -218,12 +218,10 @@ class ItemDetailToolTip extends NameAndDescriptionToolTip {
 					} else {
 						text = NLS.bind(WorkbenchMessages.HideItems_keyBindingsActionSetUnavailable, keybindings);
 					}
+				} else if (available) {
+					text = WorkbenchMessages.HideItems_noKeyBindings;
 				} else {
-					if (available) {
-						text = WorkbenchMessages.HideItems_noKeyBindings;
-					} else {
-						text = WorkbenchMessages.HideItems_noKeyBindingsActionSetUnavailable;
-					}
+					text = WorkbenchMessages.HideItems_noKeyBindingsActionSetUnavailable;
 				}
 
 				// Construct link to go to the preferences page for key

@@ -436,12 +436,10 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable, 
 			boolean openInPlace = Boolean.parseBoolean(memento.getString(IWorkbenchConstants.TAG_OPEN_IN_PLACE));
 			if (internal) {
 				openMode = OPEN_INTERNAL;
+			} else if (openInPlace) {
+				openMode = OPEN_INPLACE;
 			} else {
-				if (openInPlace) {
-					openMode = OPEN_INPLACE;
-				} else {
-					openMode = OPEN_EXTERNAL;
-				}
+				openMode = OPEN_EXTERNAL;
 			}
 		}
 		if (openMode != OPEN_EXTERNAL && openMode != OPEN_INTERNAL && openMode != OPEN_INPLACE) {

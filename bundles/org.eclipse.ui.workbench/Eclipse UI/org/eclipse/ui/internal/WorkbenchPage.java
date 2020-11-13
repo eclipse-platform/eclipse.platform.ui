@@ -4780,25 +4780,23 @@ public class WorkbenchPage implements IWorkbenchPage {
 								WorkbenchPlugin.log(e);
 							}
 						}
-					} else {
-						// editor already rendered, try to update its state
-						if (curMemento != null && ee.getModel().getObject() instanceof CompatibilityEditor) {
-							CompatibilityEditor ce = (CompatibilityEditor) ee.getModel().getObject();
-							if (ce.getEditor() instanceof IPersistableEditor) {
-								IPersistableEditor pe = (IPersistableEditor) ce.getEditor();
+					} else // editor already rendered, try to update its state
+					if (curMemento != null && ee.getModel().getObject() instanceof CompatibilityEditor) {
+						CompatibilityEditor ce = (CompatibilityEditor) ee.getModel().getObject();
+						if (ce.getEditor() instanceof IPersistableEditor) {
+							IPersistableEditor pe = (IPersistableEditor) ce.getEditor();
 
-								// Extract the 'editorState' from the memento
-								IMemento editorMem = curMemento.getChild(IWorkbenchConstants.TAG_EDITOR_STATE);
-								if (editorMem == null) {
-									// Must be an externally defined memento,
-									// take the second child
-									IMemento[] kids = curMemento.getChildren();
-									if (kids.length == 2)
-										editorMem = kids[1];
-								}
-								if (editorMem != null)
-									pe.restoreState(editorMem);
+							// Extract the 'editorState' from the memento
+							IMemento editorMem = curMemento.getChild(IWorkbenchConstants.TAG_EDITOR_STATE);
+							if (editorMem == null) {
+								// Must be an externally defined memento,
+								// take the second child
+								IMemento[] kids = curMemento.getChildren();
+								if (kids.length == 2)
+									editorMem = kids[1];
 							}
+							if (editorMem != null)
+								pe.restoreState(editorMem);
 						}
 					}
 				}

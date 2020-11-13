@@ -601,24 +601,22 @@ public final class LegacyResourceSupport {
 		Object adaptedElement = null;
 		if (isInstanceOf(element.getClass(), objectClass)) {
 			adaptedElement = element;
-		} else {
-			// Handle IResource
-			if (LegacyResourceSupport.isResourceType(objectClass)) {
-				adaptedElement = getAdaptedResource(element);
-			} else if (LegacyResourceSupport.isResourceMappingType(objectClass)) {
-				adaptedElement = getAdaptedResourceMapping(element);
-				if (adaptedElement == null) {
-					// The object doesn't adapt directly so check if it adapts transitively
-					Object resource = getAdaptedResource(element);
-					if (resource != null) {
-						adaptedElement = ((IAdaptable) resource)
-								.getAdapter(LegacyResourceSupport.getResourceMappingClass());
-					}
+		} else // Handle IResource
+		if (LegacyResourceSupport.isResourceType(objectClass)) {
+			adaptedElement = getAdaptedResource(element);
+		} else if (LegacyResourceSupport.isResourceMappingType(objectClass)) {
+			adaptedElement = getAdaptedResourceMapping(element);
+			if (adaptedElement == null) {
+				// The object doesn't adapt directly so check if it adapts transitively
+				Object resource = getAdaptedResource(element);
+				if (resource != null) {
+					adaptedElement = ((IAdaptable) resource)
+							.getAdapter(LegacyResourceSupport.getResourceMappingClass());
 				}
-			} else {
-				// Handle all other types by using the adapter factory.
-				adaptedElement = Platform.getAdapterManager().loadAdapter(element, objectClass);
 			}
+		} else {
+			// Handle all other types by using the adapter factory.
+			adaptedElement = Platform.getAdapterManager().loadAdapter(element, objectClass);
 		}
 		return adaptedElement;
 	}

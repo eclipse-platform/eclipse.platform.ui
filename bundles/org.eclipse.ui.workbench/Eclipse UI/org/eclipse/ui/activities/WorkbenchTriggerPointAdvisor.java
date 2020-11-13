@@ -194,10 +194,8 @@ public class WorkbenchTriggerPointAdvisor implements ITriggerPointAdvisor, IExec
 					return true;
 				}
 				matchesAtLeastOneEnabled = true;
-			} else {
-				if (disabledExpressionActivitiesTakePrecedence && activity.getExpression() != null) {
-					matchesDisabledExpressionActivitiesWithPrecedence = true;
-				}
+			} else if (disabledExpressionActivitiesTakePrecedence && activity.getExpression() != null) {
+				matchesDisabledExpressionActivitiesWithPrecedence = true;
 			}
 
 		}

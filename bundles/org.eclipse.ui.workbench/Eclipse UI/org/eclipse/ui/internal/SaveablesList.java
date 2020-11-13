@@ -293,15 +293,13 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 		Set<Saveable> modelsForSource = modelMap.get(source);
 		if (modelsForSource == null) {
 			logWarning("Ignored attempt to remove a saveable when no saveables were known", source, model); //$NON-NLS-1$
-		} else {
-			if (modelsForSource.remove(model)) {
-				result = decrementRefCount(model);
-				if (modelsForSource.isEmpty()) {
-					modelMap.remove(source);
-				}
-			} else {
-				logWarning("Ignored attempt to remove a saveable that was not registered", source, model); //$NON-NLS-1$
+		} else if (modelsForSource.remove(model)) {
+			result = decrementRefCount(model);
+			if (modelsForSource.isEmpty()) {
+				modelMap.remove(source);
 			}
+		} else {
+			logWarning("Ignored attempt to remove a saveable that was not registered", source, model); //$NON-NLS-1$
 		}
 		return result;
 	}

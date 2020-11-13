@@ -86,15 +86,13 @@ public abstract class RegistryPersistence implements IDisposable, IWorkbenchRegi
 		if (currentCount == 0) {
 			elements = new IConfigurationElement[1];
 			indexedArray[index] = elements;
+		} else if (currentCount >= indexedArray[index].length) {
+			final IConfigurationElement[] copy = new IConfigurationElement[indexedArray[index].length * 2];
+			System.arraycopy(indexedArray[index], 0, copy, 0, currentCount);
+			elements = copy;
+			indexedArray[index] = elements;
 		} else {
-			if (currentCount >= indexedArray[index].length) {
-				final IConfigurationElement[] copy = new IConfigurationElement[indexedArray[index].length * 2];
-				System.arraycopy(indexedArray[index], 0, copy, 0, currentCount);
-				elements = copy;
-				indexedArray[index] = elements;
-			} else {
-				elements = indexedArray[index];
-			}
+			elements = indexedArray[index];
 		}
 		elements[currentCount] = elementToAdd;
 	}

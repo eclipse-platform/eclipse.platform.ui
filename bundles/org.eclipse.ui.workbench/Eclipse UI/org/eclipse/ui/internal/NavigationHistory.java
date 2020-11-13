@@ -360,13 +360,11 @@ public class NavigationHistory implements INavigationHistory {
 		NavigationHistoryEntry e = createEntry(page, part, location);
 		if (current == null) {
 			add(e);
+		} else if (e.mergeInto(current)) {
+			disposeEntry(e);
+			removeForwardEntries();
 		} else {
-			if (e.mergeInto(current)) {
-				disposeEntry(e);
-				removeForwardEntries();
-			} else {
-				add(e);
-			}
+			add(e);
 		}
 		printEntries("added entry"); //$NON-NLS-1$
 		updateActions();

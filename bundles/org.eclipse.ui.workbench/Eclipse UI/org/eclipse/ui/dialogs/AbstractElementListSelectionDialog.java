@@ -336,12 +336,10 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 				status = new Status(IStatus.OK, PlatformUI.PLUGIN_ID, IStatus.OK, "", //$NON-NLS-1$
 						null);
 			}
+		} else if (fFilteredList.isEmpty()) {
+			status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR, fEmptyListMessage, null);
 		} else {
-			if (fFilteredList.isEmpty()) {
-				status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR, fEmptyListMessage, null);
-			} else {
-				status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR, fEmptySelectionMessage, null);
-			}
+			status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR, fEmptySelectionMessage, null);
 		}
 
 		updateStatus(status);

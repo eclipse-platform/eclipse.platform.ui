@@ -95,10 +95,8 @@ public class FullScreenHandler extends AbstractHandler {
 						false, false, null, null, message);
 				fullScreenInfoPopup.open();
 			}
-		} else {
-			if (fullScreenInfoPopup != null) {
-				fullScreenInfoPopup.close();
-			}
+		} else if (fullScreenInfoPopup != null) {
+			fullScreenInfoPopup.close();
 		}
 		shell.requestLayout();
 		return Status.OK_STATUS;

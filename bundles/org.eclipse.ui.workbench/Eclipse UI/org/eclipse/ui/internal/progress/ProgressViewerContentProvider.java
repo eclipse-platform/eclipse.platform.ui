@@ -121,10 +121,8 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 				GroupInfo group = ((JobInfo) jobTreeElement).getGroupInfo();
 				if (group == null) {
 					roots.add(jobTreeElement);
-				} else {
-					if (subWithParent) {
-						roots.add(group);
-					}
+				} else if (subWithParent) {
+					roots.add(group);
 				}
 			} else {
 				roots.add(jobTreeElement);

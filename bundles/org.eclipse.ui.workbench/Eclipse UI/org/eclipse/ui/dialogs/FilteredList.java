@@ -329,17 +329,15 @@ public class FilteredList extends Composite {
 	public void setSelection(int[] selection) {
 		if (selection == null || selection.length == 0) {
 			fList.deselectAll();
+		} else // If there is no working update job, or the update job is ready to
+		// accept selections, set the selection immediately.
+		if (fUpdateJob == null) {
+			fList.setSelection(selection);
+			fList.notifyListeners(SWT.Selection, new Event());
 		} else {
-			// If there is no working update job, or the update job is ready to
-			// accept selections, set the selection immediately.
-			if (fUpdateJob == null) {
-				fList.setSelection(selection);
-				fList.notifyListeners(SWT.Selection, new Event());
-			} else {
-				// There is an update job doing the population of the list, so
-				// it should update the selection.
-				fUpdateJob.updateSelection(selection);
-			}
+			// There is an update job doing the population of the list, so
+			// it should update the selection.
+			fUpdateJob.updateSelection(selection);
 		}
 	}
 
