@@ -401,14 +401,11 @@ public class EditMask {
 					selection = firstIncompletePosition;
 				text.setSelection(new Point(selection, selection));
 
-			} else { // nothing was accepted by the mask
-
-				// Either we backspaced over a literal or we typed an illegal character
-				if (selection > oldSelection) { // typed an illegal character; backup
-					text.setSelection(new Point(selection-1, selection-1));
-				} else { // backspaced over a literal; don't interfere with selection position
-					text.setSelection(new Point(selection, selection));
-				}
+			} else // Either we backspaced over a literal or we typed an illegal character
+			if (selection > oldSelection) { // typed an illegal character; backup
+				text.setSelection(new Point(selection-1, selection-1));
+			} else { // backspaced over a literal; don't interfere with selection position
+				text.setSelection(new Point(selection, selection));
 			}
 			oldRawText = newRawText;
 		}
