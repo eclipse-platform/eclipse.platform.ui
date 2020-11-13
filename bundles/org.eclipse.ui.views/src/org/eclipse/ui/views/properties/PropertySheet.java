@@ -395,10 +395,8 @@ public class PropertySheet extends PageBookView
 		String secondaryId = viewSite.getSecondaryId();
 		if (null == secondaryId) {
 			super.saveState(memento);
-		} else {
-			if (viewSite.getWorkbenchWindow().isClosing()) {
-				viewSite.getPage().hideView(this);
-			}
+		} else if (viewSite.getWorkbenchWindow().isClosing()) {
+			viewSite.getPage().hideView(this);
 		}
 	}
 

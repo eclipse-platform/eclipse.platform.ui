@@ -271,10 +271,8 @@ public class PropertyDescriptor implements IPropertyDescriptor {
 			if (anotherProperty.getCategory() != null) {
 				return false;
 			}
-		} else {
-			if (!getCategory().equals(anotherProperty.getCategory())) {
-				return false;
-			}
+		} else if (!getCategory().equals(anotherProperty.getCategory())) {
+			return false;
 		}
 
 		return true;
