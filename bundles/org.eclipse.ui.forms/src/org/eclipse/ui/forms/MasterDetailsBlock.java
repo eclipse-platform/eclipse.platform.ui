@@ -269,12 +269,9 @@ public abstract class MasterDetailsBlock {
 				gc.fillRectangle(0, 0, size.x, size.y);
 			//else
 				//gc.drawLine(1, 0, 1, size.y-1);
-		}
-		else {
-			if (hover!=null)
-				gc.fillRectangle(0, 0, size.x, size.y);
-			//else
-				//gc.drawLine(0, 1, size.x-1, 1);
-		}
+		} else if (hover!=null)
+			gc.fillRectangle(0, 0, size.x, size.y);
+		//else
+			//gc.drawLine(0, 1, size.x-1, 1);
 	}
 }

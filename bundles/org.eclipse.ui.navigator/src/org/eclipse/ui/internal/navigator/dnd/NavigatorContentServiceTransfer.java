@@ -62,11 +62,9 @@ public class NavigatorContentServiceTransfer {
 			WeakReference ref = iter.next();
 			if(ref.get() == null) {
 				iter.remove();
-			} else {
-				if(ref.get() == aContentService) {
-					iter.remove();
-					return;
-				}
+			} else if(ref.get() == aContentService) {
+				iter.remove();
+				return;
 			}
 		}
 	}

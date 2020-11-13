@@ -103,14 +103,12 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 						setWorkingSetFilter(null);
 						newLabel = null;
 					}
-				} else {
+				} else if (emptyWorkingSet) {
 					// we've gone from empty to non-empty on our set.
 					// Restore it.
-					if (emptyWorkingSet) {
-						emptyWorkingSet = false;
-						setWorkingSetFilter(workingSet);
-						newLabel = workingSet.getLabel();
-					}
+					emptyWorkingSet = false;
+					setWorkingSetFilter(workingSet);
+					newLabel = workingSet.getLabel();
 				}
 			}
 			if (viewer != null) {
@@ -317,14 +315,12 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 				} else {
 					viewer.refresh();
 				}
+			} else if (!workingSet.isAggregateWorkingSet()) {
+				IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
+				viewer.setInput(workingSetManager.createAggregateWorkingSet(
+						"", "", new IWorkingSet[] { workingSet })); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
-				if (!workingSet.isAggregateWorkingSet()) {
-					IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
-					viewer.setInput(workingSetManager.createAggregateWorkingSet(
-							"", "", new IWorkingSet[] { workingSet })); //$NON-NLS-1$ //$NON-NLS-2$
-				} else {
-					viewer.setInput(workingSet);
-				}
+				viewer.setInput(workingSet);
 			}
 		}
 	}

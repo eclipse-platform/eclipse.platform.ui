@@ -113,13 +113,12 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 				if (webBrowser == null)
 					webBrowser = new ExternalBrowserInstance(browserId, ewb);
 			}
+		} else if ((style & IWorkbenchBrowserSupport.AS_VIEW) != 0) {
+			webBrowser = new InternalBrowserViewInstance(browserId, style,
+					name, tooltip);
 		} else {
-			if ((style & IWorkbenchBrowserSupport.AS_VIEW) != 0)
-				webBrowser = new InternalBrowserViewInstance(browserId, style,
-						name, tooltip);
-			else
-				webBrowser = new InternalBrowserEditorInstance(browserId,
-						style, name, tooltip);
+			webBrowser = new InternalBrowserEditorInstance(browserId,
+					style, name, tooltip);
 		}
 
 		if (webBrowser instanceof InternalBrowserInstance) {

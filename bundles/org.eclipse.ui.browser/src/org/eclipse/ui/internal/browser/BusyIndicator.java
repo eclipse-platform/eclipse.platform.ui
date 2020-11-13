@@ -154,11 +154,9 @@ public class BusyIndicator extends Canvas {
 		if (busy) {
 			if (busyThread == null)
 				createBusyThread();
-		} else {
-			if (busyThread != null) {
-				stop = true;
-				busyThread = null;
-			}
+		} else if (busyThread != null) {
+			stop = true;
+			busyThread = null;
 		}
 	}
 

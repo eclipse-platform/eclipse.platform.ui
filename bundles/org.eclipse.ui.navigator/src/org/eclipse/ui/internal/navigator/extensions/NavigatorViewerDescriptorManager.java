@@ -108,54 +108,52 @@ public class NavigatorViewerDescriptorManager {
 						.getChildren(TAG_POPUP_MENU);
 				if (tagPopupMenu.length == 0 && attPopupMenuId != null) {
 					descriptor.setPopupMenuId(attPopupMenuId);
-				} else {
-					if (attPopupMenuId != null) {
-						NavigatorPlugin
-								.logError(
-										0,
-										"A popupMenuId attribute and popupMenu element may NOT be concurrently specified. (see " + element.getNamespaceIdentifier() + ")", null); //$NON-NLS-1$ //$NON-NLS-2$
-					} else if (tagPopupMenu.length > 1) {
-						NavigatorPlugin
-								.logError(
-										0,
-										"Only one \"popupMenu\" child of \"viewer\" may be specified. (see " + element.getNamespaceIdentifier() + ")", null); //$NON-NLS-1$ //$NON-NLS-2$
-					} else if(tagPopupMenu.length == 1) { // valid case
+				} else if (attPopupMenuId != null) {
+					NavigatorPlugin
+							.logError(
+									0,
+									"A popupMenuId attribute and popupMenu element may NOT be concurrently specified. (see " + element.getNamespaceIdentifier() + ")", null); //$NON-NLS-1$ //$NON-NLS-2$
+				} else if (tagPopupMenu.length > 1) {
+					NavigatorPlugin
+							.logError(
+									0,
+									"Only one \"popupMenu\" child of \"viewer\" may be specified. (see " + element.getNamespaceIdentifier() + ")", null); //$NON-NLS-1$ //$NON-NLS-2$
+				} else if(tagPopupMenu.length == 1) { // valid case
 
-						String popupMenuId = tagPopupMenu[0]
-								.getAttribute(ATT_ID);
-						String allowsPlatformContributions = tagPopupMenu[0]
-								.getAttribute(ATT_ALLOWS_PLATFORM_CONTRIBUTIONS);
+					String popupMenuId = tagPopupMenu[0]
+							.getAttribute(ATT_ID);
+					String allowsPlatformContributions = tagPopupMenu[0]
+							.getAttribute(ATT_ALLOWS_PLATFORM_CONTRIBUTIONS);
 
-						if (popupMenuId != null) {
-							descriptor.setPopupMenuId(popupMenuId);
-						}
-
-						if (allowsPlatformContributions != null) {
-							descriptor.setAllowsPlatformContributions(Boolean
-									.valueOf(allowsPlatformContributions)
-									.booleanValue());
-						}
-
-						IConfigurationElement[] insertionPointElements = tagPopupMenu[0]
-								.getChildren(TAG_INSERTION_POINT);
-						MenuInsertionPoint[] insertionPoints = new MenuInsertionPoint[insertionPointElements.length];
-						String name;
-						String stringAttSeparator;
-
-						boolean isSeparator;
-						for (int indx = 0; indx < insertionPointElements.length; indx++) {
-							name = insertionPointElements[indx]
-									.getAttribute(ATT_NAME);
-							stringAttSeparator = insertionPointElements[indx]
-									.getAttribute(ATT_SEPARATOR);
-							isSeparator = stringAttSeparator != null ? Boolean
-									.valueOf(stringAttSeparator).booleanValue()
-									: false;
-							insertionPoints[indx] = new MenuInsertionPoint(name,
-									isSeparator);
-						}
-						descriptor.setCustomInsertionPoints(insertionPoints);
+					if (popupMenuId != null) {
+						descriptor.setPopupMenuId(popupMenuId);
 					}
+
+					if (allowsPlatformContributions != null) {
+						descriptor.setAllowsPlatformContributions(Boolean
+								.valueOf(allowsPlatformContributions)
+								.booleanValue());
+					}
+
+					IConfigurationElement[] insertionPointElements = tagPopupMenu[0]
+							.getChildren(TAG_INSERTION_POINT);
+					MenuInsertionPoint[] insertionPoints = new MenuInsertionPoint[insertionPointElements.length];
+					String name;
+					String stringAttSeparator;
+
+					boolean isSeparator;
+					for (int indx = 0; indx < insertionPointElements.length; indx++) {
+						name = insertionPointElements[indx]
+								.getAttribute(ATT_NAME);
+						stringAttSeparator = insertionPointElements[indx]
+								.getAttribute(ATT_SEPARATOR);
+						isSeparator = stringAttSeparator != null ? Boolean
+								.valueOf(stringAttSeparator).booleanValue()
+								: false;
+						insertionPoints[indx] = new MenuInsertionPoint(name,
+								isSeparator);
+					}
+					descriptor.setCustomInsertionPoints(insertionPoints);
 				}
 
 				IConfigurationElement[] options = element
