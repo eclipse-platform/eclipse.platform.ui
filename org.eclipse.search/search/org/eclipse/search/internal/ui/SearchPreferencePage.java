@@ -46,6 +46,7 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 
 
 	public static final String IGNORE_POTENTIAL_MATCHES= "org.eclipse.search.potentialMatch.ignore"; //$NON-NLS-1$
+	public static final String REMEMBER_LAST_USED_PAGE = "org.eclipse.search.potentialMatch.remember"; //$NON-NLS-1$
 	public static final String EMPHASIZE_POTENTIAL_MATCHES= "org.eclipse.search.potentialMatch.emphasize"; //$NON-NLS-1$
 	public static final String POTENTIAL_MATCH_FG_COLOR= "org.eclipse.search.potentialMatch.fgColor"; //$NON-NLS-1$
 	public static final String REUSE_EDITOR= "org.eclipse.search.reuseEditor"; //$NON-NLS-1$
@@ -59,6 +60,7 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 	private ColorFieldEditor fColorEditor;
 	private BooleanFieldEditor fEmphasizedCheckbox;
 	private BooleanFieldEditor fIgnorePotentialMatchesCheckbox;
+	private BooleanFieldEditor fRememberLastUsedPageCheckbox;
 
 
 	private static class PerspectiveDescriptorComparator implements Comparator<IPerspectiveDescriptor> {
@@ -81,6 +83,7 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 		RGB gray= new RGB(85, 85, 85);
 		store.setDefault(EMPHASIZE_POTENTIAL_MATCHES, true);
 		store.setDefault(IGNORE_POTENTIAL_MATCHES, false);
+		store.setDefault(REMEMBER_LAST_USED_PAGE, false);
 		PreferenceConverter.setDefault(store, POTENTIAL_MATCH_FG_COLOR, gray);
 		store.setDefault(REUSE_EDITOR, true);
 		store.setDefault(BRING_VIEW_TO_FRONT, true);
@@ -107,6 +110,10 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 			SearchMessages.SearchPreferencePage_ignorePotentialMatches,
 			getFieldEditorParent());
 		addField(fIgnorePotentialMatchesCheckbox);
+
+		fRememberLastUsedPageCheckbox = new BooleanFieldEditor(REMEMBER_LAST_USED_PAGE,
+				SearchMessages.SearchPreferencePage_rememberLastUsedPage, getFieldEditorParent());
+		addField(fRememberLastUsedPageCheckbox);
 
 		fEmphasizedCheckbox= new BooleanFieldEditor(
 			EMPHASIZE_POTENTIAL_MATCHES,
@@ -230,6 +237,11 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 	public static boolean arePotentialMatchesIgnored() {
 		IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
 		return store.getBoolean(IGNORE_POTENTIAL_MATCHES);
+	}
+
+	public static boolean rememberLastUsedPage() {
+		IPreferenceStore store = SearchPlugin.getDefault().getPreferenceStore();
+		return store.getBoolean(REMEMBER_LAST_USED_PAGE);
 	}
 
 	public static boolean arePotentialMatchesEmphasized() {

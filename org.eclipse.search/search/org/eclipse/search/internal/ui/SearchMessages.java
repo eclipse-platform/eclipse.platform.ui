@@ -68,7 +68,6 @@ public final class SearchMessages extends NLS {
 	public static String SearchDialog_noSearchExtension;
 	public static String SearchPageSelectionDialog_title;
 	public static String SearchPageSelectionDialog_message;
-	public static String SearchPageSelectionDialog_rememberLastUsedPage_message;
 	public static String SearchManager_resourceChangedWarning;
 	public static String SearchManager_resourceChanged;
 	public static String SearchManager_resourceDeleted;
@@ -200,6 +199,7 @@ public final class SearchMessages extends NLS {
 	public static String SearchPreferencePage_defaultPerspective;
 	public static String SearchPreferencePage_defaultPerspective_none;
 	public static String SearchPreferencePage_ignorePotentialMatches;
+	public static String SearchPreferencePage_rememberLastUsedPage;
 	public static String ReplaceAction_label_all;
 	public static String ReplaceAction_label_selected;
 	public static String SelectAllAction_label;
