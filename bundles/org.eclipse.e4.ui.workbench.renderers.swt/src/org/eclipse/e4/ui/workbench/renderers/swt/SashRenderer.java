@@ -121,6 +121,8 @@ public class SashRenderer extends SWTPartRenderer {
 				// 'Adopt' the previous root's layout / composite
 				sashComposite = (Composite) psce.getWidget();
 				bindWidget(psce, new Rectangle(0, 0, 0, 0));
+				
+				sashComposite.setParent((Composite) parent);
 			}
 		}
 		// This is a 'root' sash container, create a composite
