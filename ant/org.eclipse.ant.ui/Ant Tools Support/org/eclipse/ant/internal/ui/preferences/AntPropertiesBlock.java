@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -54,6 +54,8 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.PlatformUI;
+import org.osgi.framework.FrameworkUtil;
 
 public class AntPropertiesBlock {
 
@@ -193,7 +195,7 @@ public class AntPropertiesBlock {
 
 	public void createControl(Composite top, String propertyLabel, String propertyFileLabel) {
 		Font font = top.getFont();
-		dialogSettings = AntUIPlugin.getDefault().getDialogSettings();
+		dialogSettings = PlatformUI.getDialogSettingsProvider(FrameworkUtil.getBundle(AntPropertiesBlock.class)).getDialogSettings();
 
 		Label label = new Label(top, SWT.NONE);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);

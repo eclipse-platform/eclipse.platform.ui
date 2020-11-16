@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -32,11 +32,13 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceComparator;
+import org.osgi.framework.FrameworkUtil;
 
 public class FileSelectionDialog extends ElementTreeSelectionDialog {
 
@@ -78,7 +80,7 @@ public class FileSelectionDialog extends ElementTreeSelectionDialog {
 		button.setText(fFilterMessage);
 		button.setFont(parent.getFont());
 
-		IDialogSettings settings = AntUIPlugin.getDefault().getDialogSettings();
+		IDialogSettings settings = PlatformUI.getDialogSettingsProvider(FrameworkUtil.getBundle(FileSelectionDialog.class)).getDialogSettings();
 		fShowAll = settings.getBoolean(DIALOG_SETTING);
 
 		String lastPath = settings.get(LAST_CONTAINER);
@@ -112,7 +114,7 @@ public class FileSelectionDialog extends ElementTreeSelectionDialog {
 
 	@Override
 	public boolean close() {
-		IDialogSettings settings = AntUIPlugin.getDefault().getDialogSettings();
+		IDialogSettings settings = PlatformUI.getDialogSettingsProvider(FrameworkUtil.getBundle(FileSelectionDialog.class)).getDialogSettings();
 		settings.put(DIALOG_SETTING, fShowAll);
 
 		Object[] result = getResult();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,7 +20,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.ant.internal.core.IAntCoreConstants;
-import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
 import org.eclipse.core.resources.IFile;
@@ -49,6 +48,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * This dialog allows the user to search for Ant build files whose names match a given pattern. The search may be performed on the entire workspace or
@@ -86,7 +86,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	/**
 	 * The dialog settings used to persist this dialog's settings.
 	 */
-	private static IDialogSettings settings = AntUIPlugin.getDefault().getDialogSettings();
+	private static IDialogSettings settings = PlatformUI.getDialogSettingsProvider(FrameworkUtil.getBundle(SearchForBuildFilesDialog.class)).getDialogSettings();
 
 	/**
 	 * Initialize any dialog settings that haven't been set.

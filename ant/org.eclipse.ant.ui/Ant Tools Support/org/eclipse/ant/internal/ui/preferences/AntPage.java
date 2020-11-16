@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.eclipse.ant.core.IAntClasspathEntry;
 import org.eclipse.ant.internal.core.AntObject;
-import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.ColumnSorter;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -43,6 +42,7 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.PlatformUI;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Provides the generic implementation for a sub-page in the Ant preference page.
@@ -203,7 +203,7 @@ public abstract class AntPage {
 			}
 		});
 
-		restoreColumnSettings(AntUIPlugin.getDefault().getDialogSettings(), sorters);
+		restoreColumnSettings(PlatformUI.getDialogSettingsProvider(FrameworkUtil.getBundle(AntPage.class)).getDialogSettings(), sorters);
 	}
 
 	/**

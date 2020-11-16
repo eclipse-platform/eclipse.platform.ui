@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,7 +16,6 @@ package org.eclipse.ant.internal.ui.launchConfigurations;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.internal.launching.launchConfigurations.AntHomeClasspathEntry;
-import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.preferences.AntPreferencesMessages;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -29,6 +28,8 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.ui.PlatformUI;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Edits the Ant Home classpath entry.
@@ -52,7 +53,7 @@ public class EditAntHomeEntryAction extends RuntimeClasspathAction {
 
 	@Override
 	public void run() {
-		IDialogSettings dialogSettings = AntUIPlugin.getDefault().getDialogSettings();
+		IDialogSettings dialogSettings = PlatformUI.getDialogSettingsProvider(FrameworkUtil.getBundle(EditAntHomeEntryAction.class)).getDialogSettings();
 		String lastUsedPath = dialogSettings.get(IAntUIConstants.DIALOGSTORE_LASTANTHOME);
 		if (lastUsedPath == null) {
 			lastUsedPath = ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
