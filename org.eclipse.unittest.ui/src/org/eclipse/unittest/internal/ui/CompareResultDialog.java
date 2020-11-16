@@ -17,6 +17,8 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+import org.osgi.framework.FrameworkUtil;
+
 import org.eclipse.unittest.internal.UnitTestPlugin;
 import org.eclipse.unittest.internal.model.TestElement;
 import org.eclipse.unittest.model.ITestElement;
@@ -218,10 +220,11 @@ public class CompareResultDialog extends TrayDialog {
 	 * Returns the section with the given name in this dialog settings.
 	 *
 	 * @param name the key
-	 * @return {@link IDialogSettings} (the section), or <code>null</code> if none
+	 * @return {@link IDialogSettings} (the section)
 	 */
 	private IDialogSettings getDialogSettingsSection(String name) {
-		IDialogSettings dialogSettings = UnitTestPlugin.getDefault().getDialogSettings();
+		IDialogSettings dialogSettings = PlatformUI.getDialogSettingsProvider(FrameworkUtil.getBundle(getClass()))
+				.getDialogSettings();
 		IDialogSettings section = dialogSettings.getSection(name);
 		if (section == null) {
 			section = dialogSettings.addNewSection(name);
