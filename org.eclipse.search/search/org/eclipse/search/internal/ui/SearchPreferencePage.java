@@ -83,7 +83,7 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 		RGB gray= new RGB(85, 85, 85);
 		store.setDefault(EMPHASIZE_POTENTIAL_MATCHES, true);
 		store.setDefault(IGNORE_POTENTIAL_MATCHES, false);
-		store.setDefault(REMEMBER_LAST_USED_PAGE, false);
+		store.setDefault(REMEMBER_LAST_USED_PAGE, true);
 		PreferenceConverter.setDefault(store, POTENTIAL_MATCH_FG_COLOR, gray);
 		store.setDefault(REUSE_EDITOR, true);
 		store.setDefault(BRING_VIEW_TO_FRONT, true);
