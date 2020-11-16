@@ -14,7 +14,9 @@
 package org.eclipse.ui.internal.views.minimap;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -37,24 +39,29 @@ import org.eclipse.ui.texteditor.ITextEditor;
 public class MultiPageMinimapPage extends Page {
 
 	private final MultiPageEditorPart fMultiPageEditor;
-	private final Map<Object, Control> fTextWidgetMap;
+	private final Map<Object, MinimapPage> fMinimapPageMap;
+	private final Set<Object> fUnsupportedEditorPages;
 	private final IPageChangedListener fPageChangedListener;
 	private PageBook fPageBook;
 	private Label fErrorLabel;
 
 	public MultiPageMinimapPage(MultiPageEditorPart multiPageEditor) {
 		this.fMultiPageEditor = multiPageEditor;
-		this.fTextWidgetMap = new HashMap<>();
+		this.fMinimapPageMap = new HashMap<>();
+		this.fUnsupportedEditorPages = new HashSet<>();
 		this.fPageChangedListener = e -> {
 			Object selectedPage = multiPageEditor.getSelectedPage();
 			// Find from cache the minimap for the selected page
-			Control textWidget = fTextWidgetMap.get(selectedPage);
-			if (textWidget != null) {
-				fPageBook.showPage(textWidget);
+			MinimapPage minimapPage = fMinimapPageMap.get(selectedPage);
+			if (minimapPage != null) {
+				fPageBook.showPage(minimapPage.getControl());
+				return;
+			}
+			if (fUnsupportedEditorPages.contains(selectedPage)) {
+				fPageBook.showPage(fErrorLabel);
 				return;
 			}
 
-			MinimapPage minimapPage = null;
 			if (selectedPage instanceof ITextEditor) {
 				// Create and show a minimap page for the given text editor page
 				ITextEditor textEditor = (ITextEditor) selectedPage;
@@ -62,11 +69,10 @@ public class MultiPageMinimapPage extends Page {
 			}
 			if (minimapPage != null) {
 				minimapPage.createControl(fPageBook);
-				textWidget = minimapPage.getControl();
-				fTextWidgetMap.put(selectedPage, textWidget);
-				fPageBook.showPage(textWidget);
+				fMinimapPageMap.put(selectedPage, minimapPage);
+				fPageBook.showPage(minimapPage.getControl());
 			} else {
-				fTextWidgetMap.put(selectedPage, fErrorLabel);
+				fUnsupportedEditorPages.add(selectedPage);
 				fPageBook.showPage(fErrorLabel);
 			}
 		};
@@ -93,7 +99,10 @@ public class MultiPageMinimapPage extends Page {
 
 	@Override
 	public void dispose() {
-		super.dispose();
 		fMultiPageEditor.removePageChangedListener(fPageChangedListener);
+		fMinimapPageMap.values().forEach(MinimapPage::dispose);
+		fMinimapPageMap.clear();
+		fUnsupportedEditorPages.clear();
+		super.dispose();
 	}
 }
