@@ -79,7 +79,7 @@ html, body {
 	position: fixed;
 	bottom: 10px;
 	right: 10px;
-	background: white;
+	color: #4D4D4D;
 	z-index: 100;
 }
 
