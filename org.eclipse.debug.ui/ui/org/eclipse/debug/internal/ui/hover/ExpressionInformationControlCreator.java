@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright (c) 2017, 2018 Red Hat Inc. and others.
+* Copyright (c) 2017, 2020 Red Hat Inc. and others.
 *
 * This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License 2.0
@@ -10,10 +10,12 @@
 *
 * Contributors:
 *     Mickael Istria (Red Hat Inc.) - [521958] initial implementation
+*     IBM Corporation - Bug 568813
 *******************************************************************************/
 package org.eclipse.debug.internal.ui.hover;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.SWTFactory;
@@ -51,6 +53,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
@@ -398,6 +401,12 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 			if (input instanceof IVariable) {
 				fVariable = (IVariable) input;
 				fViewer.setInput(new TreeRoot());
+				// Workaround for empty hover popup dialog due to changed Mac API behaviour
+				if (Platform.OS_MACOSX.equals(Platform.getOS())) {
+					fTree.setItemCount(1);
+					TreeItem item = fTree.getItem(0);
+					item.getText();
+				}
 			}
 		}
 
