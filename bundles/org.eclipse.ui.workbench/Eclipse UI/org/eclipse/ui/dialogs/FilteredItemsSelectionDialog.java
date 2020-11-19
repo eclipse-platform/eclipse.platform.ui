@@ -1994,7 +1994,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 		private SelectionHistory(String rootNodeName, String infoNodeName) {
 
-			historyList = Collections.synchronizedSet(new LinkedHashSet<Object>() {
+			historyList = Collections.synchronizedSet(new LinkedHashSet<>() {
 
 				private static final long serialVersionUID = 0L;
 

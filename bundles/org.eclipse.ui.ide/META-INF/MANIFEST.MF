@@ -73,6 +73,6 @@ Require-Bundle: org.eclipse.core.resources;bundle-version="[3.7.0,4.0.0)";resolu
  org.eclipse.jface;bundle-version="[3.18.0,4.0.0)"
 Import-Package: javax.annotation,
  javax.inject
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Automatic-Module-Name: org.eclipse.ui.ide
 

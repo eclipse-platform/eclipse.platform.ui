@@ -139,7 +139,7 @@ public class SmartImportRootWizardPage extends WizardPage {
 	private Set<IWorkingSet> workingSets;
 	private WorkingSetGroup workingSetsGroup;
 	// Progress monitor
-	protected Supplier<ProgressMonitorPart> wizardProgressMonitor = new Supplier<ProgressMonitorPart>() {
+	protected Supplier<ProgressMonitorPart> wizardProgressMonitor = new Supplier<>() {
 		private ProgressMonitorPart progressMonitorPart;
 		@Override
 		public ProgressMonitorPart get() {

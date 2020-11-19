@@ -85,7 +85,7 @@ public interface IThemeRegistry {
 	 *
 	 * @since 3.0
 	 */
-	Comparator<Object> ID_COMPARATOR = new Comparator<Object>() {
+	Comparator<Object> ID_COMPARATOR = new Comparator<>() {
 
 		@Override
 		public int compare(Object arg0, Object arg1) {

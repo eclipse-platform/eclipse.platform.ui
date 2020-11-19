@@ -2,9 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %fragmentName
 Bundle-SymbolicName: org.eclipse.e4.ui.swt.win32;singleton:=true
-Bundle-Version: 1.0.700.qualifier
+Bundle-Version: 1.1.0.qualifier
 Fragment-Host: org.eclipse.e4.ui.css.swt.theme;bundle-version="0.10.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Localization: fragment-win32
 Bundle-Vendor: %providerName
 Eclipse-PlatformFilter: (osgi.ws=win32)

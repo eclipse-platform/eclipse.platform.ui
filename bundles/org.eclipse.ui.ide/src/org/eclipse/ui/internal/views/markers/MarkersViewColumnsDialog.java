@@ -154,7 +154,7 @@ public class MarkersViewColumnsDialog extends ViewerColumnsDialog<FieldEntry> {
 	@Override
 	protected IColumnInfoProvider<FieldEntry> getColumnInfoProvider() {
 
-		return new IColumnInfoProvider<FieldEntry>() {
+		return new IColumnInfoProvider<>() {
 			@Override
 			public int getColumnIndex(FieldEntry columnObj) {
 				return getVisible().indexOf(columnObj);
@@ -189,7 +189,7 @@ public class MarkersViewColumnsDialog extends ViewerColumnsDialog<FieldEntry> {
 	@Override
 	protected IColumnUpdater<FieldEntry> getColumnUpdater() {
 
-		return new IColumnUpdater<FieldEntry>() {
+		return new IColumnUpdater<>() {
 			@Override
 			public void setColumnVisible(FieldEntry columnObj, boolean visible) {
 				columnObj.visible = visible;

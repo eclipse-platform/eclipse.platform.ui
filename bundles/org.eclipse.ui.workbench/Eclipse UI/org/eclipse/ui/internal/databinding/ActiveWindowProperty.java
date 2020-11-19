@@ -31,7 +31,7 @@ public class ActiveWindowProperty<S extends IWorkbench> extends ValueProperty<S,
 
 	@Override
 	public IObservableValue<IWorkbenchWindow> observe(Realm realm, S source) {
-		return new ListeningValue<IWorkbenchWindow>(realm) {
+		return new ListeningValue<>(realm) {
 			private final IWindowListener listener = new IWindowListener() {
 				@Override
 				public void windowActivated(IWorkbenchWindow window) {

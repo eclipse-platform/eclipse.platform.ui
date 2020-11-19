@@ -95,7 +95,7 @@ public class WizardsRegistryReader extends RegistryReader {
 		}
 	}
 
-	private static final Comparator<CategoryNode> comparer = new Comparator<CategoryNode>() {
+	private static final Comparator<CategoryNode> comparer = new Comparator<>() {
 		private Collator collator = Collator.getInstance();
 
 		@Override

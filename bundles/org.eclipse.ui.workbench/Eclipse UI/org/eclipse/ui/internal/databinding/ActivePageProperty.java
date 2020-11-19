@@ -31,7 +31,7 @@ public class ActivePageProperty<S extends IPageService> extends ValueProperty<S,
 
 	@Override
 	public IObservableValue<IWorkbenchPage> observe(Realm realm, S source) {
-		return new ListeningValue<IWorkbenchPage>(realm) {
+		return new ListeningValue<>(realm) {
 			private final IPageListener listener = new IPageListener() {
 				@Override
 				public void pageActivated(IWorkbenchPage page) {

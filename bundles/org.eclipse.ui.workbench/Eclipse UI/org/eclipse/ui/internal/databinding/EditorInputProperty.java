@@ -31,7 +31,7 @@ public class EditorInputProperty<S extends IEditorPart> extends ValueProperty<S,
 
 	@Override
 	public IObservableValue<IEditorInput> observe(Realm realm, S source) {
-		return new ListeningValue<IEditorInput>(realm) {
+		return new ListeningValue<>(realm) {
 			private final IPropertyListener listener = (Object s, int propId) -> {
 				if (propId == IWorkbenchPartConstants.PROP_INPUT) {
 					protectedSetValue(source.getEditorInput());

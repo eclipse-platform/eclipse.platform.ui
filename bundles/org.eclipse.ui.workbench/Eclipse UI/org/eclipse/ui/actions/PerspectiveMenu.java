@@ -91,7 +91,7 @@ public abstract class PerspectiveMenu extends ContributionItem {
 		dirty = true;
 	};
 
-	private Comparator<IPerspectiveDescriptor> comparator = new Comparator<IPerspectiveDescriptor>() {
+	private Comparator<IPerspectiveDescriptor> comparator = new Comparator<>() {
 		private Collator collator = Collator.getInstance();
 
 		@Override

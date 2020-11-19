@@ -104,7 +104,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 	/**
 	 * <code>Comparator</code> to compare two perspective descriptors
 	 */
-	private Comparator<IPerspectiveDescriptor> comparator = new Comparator<IPerspectiveDescriptor>() {
+	private Comparator<IPerspectiveDescriptor> comparator = new Comparator<>() {
 		private Collator collator = Collator.getInstance();
 
 		@Override

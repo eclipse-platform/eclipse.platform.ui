@@ -254,7 +254,7 @@ public class UIEventPublisher extends EContentAdapter {
 	}
 
 	private Map.Entry<String, Object> createMapEntry(final String key, final Object value) {
-		return new Map.Entry<String, Object>() {
+		return new Map.Entry<>() {
 			@Override
 			public String getKey() {
 				return key;

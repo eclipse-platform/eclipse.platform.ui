@@ -31,7 +31,7 @@ public class ActivePartProperty<S extends IPartService> extends ValueProperty<S,
 
 	@Override
 	public IObservableValue<IWorkbenchPartReference> observe(Realm realm, S source) {
-		return new ListeningValue<IWorkbenchPartReference>(realm) {
+		return new ListeningValue<>(realm) {
 			private final IPartListener2 listener = new IPartListener2() {
 				@Override
 				public void partActivated(IWorkbenchPartReference partRef) {

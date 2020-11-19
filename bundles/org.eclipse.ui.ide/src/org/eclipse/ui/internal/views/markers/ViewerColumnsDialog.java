@@ -769,7 +769,7 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 		}
 
 		private static ViewerColumnsDialog<TestData> getColumnsDialog(Shell shell, final TestData[] colums) {
-			ViewerColumnsDialog<TestData> dialog = new ViewerColumnsDialog<TestData>(shell) {
+			ViewerColumnsDialog<TestData> dialog = new ViewerColumnsDialog<>(shell) {
 
 				@Override
 				protected IColumnInfoProvider<TestData> getColumnInfoProvider() {
@@ -791,7 +791,7 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 		}
 
 		private static IColumnUpdater<TestData> getUpdater() {
-			return new IColumnUpdater<TestData>() {
+			return new IColumnUpdater<>() {
 
 				@Override
 				public void setColumnWidth(TestData columnObj, int newWidth) {
@@ -823,7 +823,7 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 		}
 
 		private static IColumnInfoProvider<TestData> getInfoProvider() {
-			return new IColumnInfoProvider<TestData>() {
+			return new IColumnInfoProvider<>() {
 
 				@Override
 				public boolean isColumnVisible(TestData columnObj) {

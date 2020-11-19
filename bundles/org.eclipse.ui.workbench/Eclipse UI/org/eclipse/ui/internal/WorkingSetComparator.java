@@ -22,7 +22,7 @@ import org.eclipse.ui.IWorkingSet;
  */
 public class WorkingSetComparator implements Comparator<IWorkingSet> {
 
-	private static ThreadLocal<WorkingSetComparator> INSTANCES = new ThreadLocal<WorkingSetComparator>() {
+	private static ThreadLocal<WorkingSetComparator> INSTANCES = new ThreadLocal<>() {
 		@Override
 		protected synchronized WorkingSetComparator initialValue() {
 			return new WorkingSetComparator();
