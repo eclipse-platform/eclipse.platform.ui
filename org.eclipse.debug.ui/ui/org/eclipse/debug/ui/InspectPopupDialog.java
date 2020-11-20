@@ -16,6 +16,7 @@ package org.eclipse.debug.ui;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugPlugin;
@@ -51,6 +52,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartSite;
@@ -167,6 +169,13 @@ public class InspectPopupDialog extends DebugPopup {
 			}
 		});
 		fViewer.setInput(treeRoot);
+
+		// Workaround for empty inspect dialog due to Mac bug (Bug 567787)
+		if (Platform.OS_MACOSX.equals(Platform.getOS())) {
+			fTree.setItemCount(1);
+			TreeItem item = fTree.getItem(0);
+			item.getText();
+		}
 
 		return fTree;
 	}
