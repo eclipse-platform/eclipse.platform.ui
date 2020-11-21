@@ -78,7 +78,7 @@ public interface ITestViewSupport {
 	 * @param shell     a parent {@link Shell} instance
 	 * @param failure   a test element that is failed
 	 * @param traceLine a stack trace or an error message text
-	 * @return an action to open a failure trace element, or <code>null</null>
+	 * @return an action to open a failure trace element, or <code>null</code>
 	 */
 	IAction createOpenEditorAction(Shell shell, ITestElement failure, String traceLine);
 
