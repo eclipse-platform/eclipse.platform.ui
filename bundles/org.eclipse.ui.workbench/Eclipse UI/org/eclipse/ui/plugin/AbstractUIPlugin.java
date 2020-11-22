@@ -39,6 +39,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Abstract base class for plug-ins that integrate with the Eclipse platform UI.
@@ -173,11 +174,24 @@ public abstract class AbstractUIPlugin extends Plugin {
 	}
 
 	/**
+	 * Returns the dialog settings by calling
+	 * {@link PlatformUI#getDialogSettingsProvider(Bundle)
+	 * PlatformUI.getDialogSettingsProvider}({@link #getBundle()
+	 * getBundle()}).{@link IDialogSettingsProvider#getDialogSettings()
+	 * getDialogSettings()}.
+	 * <p>
+	 * For new code, consider using the following idiom directly instead of relying
+	 * on a UI plugin class:
+	 * </p>
+	 *
+	 * <pre>
+	 * PlatformUI.getDialogSettingsProvider({@link FrameworkUtil#getBundle(Class) FrameworkUtil.getBundle}(My.class)).getDialogSettings()
+	 * </pre>
+	 *
 	 * @return the dialog settings
-	 * @deprecated
+	 * @see FrameworkUtil#getBundle(Class)
 	 * @see PlatformUI#getDialogSettingsProvider(Bundle)
 	 */
-	@Deprecated
 	public IDialogSettings getDialogSettings() {
 		return PlatformUI.getDialogSettingsProvider(getBundle()).getDialogSettings();
 	}
