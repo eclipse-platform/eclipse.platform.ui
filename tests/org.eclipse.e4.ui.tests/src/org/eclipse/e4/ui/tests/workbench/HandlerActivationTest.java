@@ -85,9 +85,9 @@ public class HandlerActivationTest {
 	@Before
 	public void setUp() throws Exception {
 		appContext = E4Application.createDefaultContext();
-		ContextInjectionFactory.make(CommandServiceAddon.class, appContext);
-		ContextInjectionFactory.make(ContextServiceAddon.class, appContext);
-		ContextInjectionFactory.make(BindingServiceAddon.class, appContext);
+		appContext.set(CommandServiceAddon.class, ContextInjectionFactory.make(CommandServiceAddon.class, appContext));
+		appContext.set(ContextServiceAddon.class, ContextInjectionFactory.make(ContextServiceAddon.class, appContext));
+		appContext.set(BindingServiceAddon.class, ContextInjectionFactory.make(BindingServiceAddon.class, appContext));
 		appContext.set(IWorkbench.PRESENTATION_URI_ARG, PartRenderingEngine.engineURI);
 		ems = appContext.get(EModelService.class);
 		createLayoutWithThreeContextLayers();
@@ -140,12 +140,13 @@ public class HandlerActivationTest {
 		application.setContext(appContext);
 		appContext.set(MApplication.class, application);
 
-		ContextInjectionFactory.make(CommandProcessingAddon.class, appContext);
-		ContextInjectionFactory.make(HandlerProcessingAddon.class, appContext);
+		appContext.set(CommandProcessingAddon.class,
+				ContextInjectionFactory.make(CommandProcessingAddon.class, appContext));
+		appContext.set(HandlerProcessingAddon.class,
+				ContextInjectionFactory.make(HandlerProcessingAddon.class, appContext));
 
 		wb = new E4Workbench(window, appContext);
 		wb.createAndRunUI(window);
-
 
 		ECommandService commandService = appContext.get(ECommandService.class);
 		handlerService = appContext.get(EHandlerService.class);
