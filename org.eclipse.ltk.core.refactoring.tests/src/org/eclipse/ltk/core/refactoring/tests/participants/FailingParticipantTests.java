@@ -15,8 +15,17 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.tests.participants;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
@@ -26,17 +35,15 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
 
-import junit.framework.TestCase;
-
-public class FailingParticipantTests extends TestCase {
+public class FailingParticipantTests {
 
 	private ElementRenameRefactoring fRefactoring;
 
 	private ILogListener fLogListener;
 	private List<IStatus> fLogEntries;
 
-	@Override
-	protected void setUp() {
+	@Before
+	public void setUp() {
 		fLogListener= new ILogListener() {
 			@Override
 			public void logging(IStatus status, String plugin) {
@@ -46,8 +53,8 @@ public class FailingParticipantTests extends TestCase {
 		Platform.addLogListener(fLogListener);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		Platform.removeLogListener(fLogListener);
 	}
 
@@ -55,6 +62,7 @@ public class FailingParticipantTests extends TestCase {
 		fLogEntries= new ArrayList<>();
 	}
 
+	@Test
 	public void testFailingParticipants() throws Exception {
 		fRefactoring= new ElementRenameRefactoring(0);
 		fRefactoring.checkInitialConditions(new NullProgressMonitor());
@@ -112,6 +120,7 @@ public class FailingParticipantTests extends TestCase {
 	}
 
 	// If the main refactoring fails to execute, disable any participants contributing preChanges
+	@Test
 	public void testFailingRefactorWithPreParticipants() throws Exception {
 		fRefactoring= new ElementRenameRefactoring(ElementRenameRefactoring.WORKING | ElementRenameRefactoring.FAIL_TO_EXECUTE | ElementRenameRefactoring.PRE_CHANGE);
 		fRefactoring.checkInitialConditions(new NullProgressMonitor());

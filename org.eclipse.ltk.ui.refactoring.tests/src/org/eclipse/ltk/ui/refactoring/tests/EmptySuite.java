@@ -13,10 +13,11 @@
  *******************************************************************************/
 package org.eclipse.ltk.ui.refactoring.tests;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class EmptySuite extends TestCase {
+public class EmptySuite {
 
+	@Test
 	public void test0() {
 	}
 }

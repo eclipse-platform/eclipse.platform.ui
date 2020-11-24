@@ -13,7 +13,11 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.tests.participants;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -41,7 +45,7 @@ import org.eclipse.ltk.core.refactoring.participants.RenameRefactoring;
 import org.eclipse.ltk.core.refactoring.participants.SharableParticipants;
 import org.eclipse.ltk.core.refactoring.tests.util.SimpleTestProject;
 
-public class SharedTextChangeTests extends TestCase {
+public class SharedTextChangeTests {
 
 	private SimpleTestProject fProject;
 
@@ -115,22 +119,17 @@ public class SharedTextChangeTests extends TestCase {
 		}
 	}
 
-    public SharedTextChangeTests() {
-	    super("Shared TextChange Tests");
-    }
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		fProject= new SimpleTestProject();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		fProject.delete();
-		super.tearDown();
 	}
 
+	@Test
 	public void testSharedUpdating() throws Exception {
 		IFolder folder= fProject.createFolder("test");
 		IFile file= fProject.createFile(folder, "test.txt", "section one section two");

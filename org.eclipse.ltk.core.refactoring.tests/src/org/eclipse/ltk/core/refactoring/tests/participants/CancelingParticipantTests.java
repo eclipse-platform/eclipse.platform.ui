@@ -13,13 +13,16 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.tests.participants;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import junit.framework.TestCase;
-
-import org.junit.Assert;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILogListener;
@@ -44,7 +47,7 @@ import org.eclipse.ltk.core.refactoring.participants.RenameProcessor;
 import org.eclipse.ltk.core.refactoring.participants.RenameRefactoring;
 import org.eclipse.ltk.core.refactoring.participants.SharableParticipants;
 
-public class CancelingParticipantTests extends TestCase {
+public class CancelingParticipantTests {
 
 	private class CancelingParticipant extends RenameParticipant {
 		@Override
@@ -128,8 +131,8 @@ public class CancelingParticipantTests extends TestCase {
 	private ILogListener fLogListener;
 	private List<IStatus> fLogEntries;
 
-	@Override
-	protected void setUp() {
+	@Before
+	public void setUp() {
 		fLogListener= new ILogListener() {
 			@Override
 			public void logging(IStatus status, String plugin) {
@@ -140,11 +143,12 @@ public class CancelingParticipantTests extends TestCase {
 		fLogEntries= new ArrayList<>();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		Platform.removeLogListener(fLogListener);
 	}
 
+	@Test
 	public void testCheckConditions() throws Exception {
 		RenameRefactoring refactoring= new RenameRefactoring(new TestProcessor());
 
@@ -160,11 +164,12 @@ public class CancelingParticipantTests extends TestCase {
 		}
 
 		assertTrue(pm.isCanceled());
-		Assert.assertEquals(Collections.EMPTY_LIST.toString(), fLogEntries.toString());
-		Assert.assertTrue(exception);
+		assertEquals(Collections.EMPTY_LIST.toString(), fLogEntries.toString());
+		assertTrue(exception);
 	}
 
 
+	@Test
 	public void testCreateChange() throws Exception {
 		RenameRefactoring refactoring= new RenameRefactoring(new TestProcessor());
 
@@ -180,10 +185,11 @@ public class CancelingParticipantTests extends TestCase {
 		}
 
 		assertTrue(pm.isCanceled());
-		Assert.assertEquals(Collections.EMPTY_LIST.toString(), fLogEntries.toString());
-		Assert.assertTrue(exception);
+		assertEquals(Collections.EMPTY_LIST.toString(), fLogEntries.toString());
+		assertTrue(exception);
 	}
 
+	@Test
 	public void testCreatePreChange() throws Exception {
 		RenameRefactoring refactoring= new RenameRefactoring(new TestProcessor());
 
@@ -199,7 +205,7 @@ public class CancelingParticipantTests extends TestCase {
 		}
 
 		assertTrue(pm.isCanceled());
-		Assert.assertEquals(Collections.EMPTY_LIST.toString(), fLogEntries.toString());
-		Assert.assertTrue(exception);
+		assertEquals(Collections.EMPTY_LIST.toString(), fLogEntries.toString());
+		assertTrue(exception);
 	}
 }

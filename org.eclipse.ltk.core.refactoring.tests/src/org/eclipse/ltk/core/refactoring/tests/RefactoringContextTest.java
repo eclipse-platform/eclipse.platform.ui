@@ -13,7 +13,11 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.tests;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import org.junit.Test;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -28,7 +32,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringContext;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 
-public class RefactoringContextTest extends TestCase {
+public class RefactoringContextTest {
 
 	private static class TestRefactoring extends Refactoring {
 		RefactoringStatus fInitialConditionStatus= new RefactoringStatus();
@@ -70,6 +74,7 @@ public class RefactoringContextTest extends TestCase {
 	}
 
 
+	@Test
 	public void testDisposeNormal() throws Exception {
 		TestRefactoring ref= new TestRefactoring();
 		TestRefactoringContext context= new TestRefactoringContext(ref);
@@ -85,6 +90,7 @@ public class RefactoringContextTest extends TestCase {
 		fail("dispose must not be called twice");
 	}
 
+	@Test
 	public void testDisposeInitialFailed() throws Exception {
 		TestRefactoring ref= new TestRefactoring();
 		ref.fInitialConditionStatus.addFatalError("fail");
@@ -94,6 +100,7 @@ public class RefactoringContextTest extends TestCase {
 		assertEquals(1, context.fDisposeCalls);
 	}
 
+	@Test
 	public void testDisposeFinalFailed() throws Exception {
 		TestRefactoring ref= new TestRefactoring();
 		ref.fFinalConditionStatus.addFatalError("fail");
@@ -103,6 +110,7 @@ public class RefactoringContextTest extends TestCase {
 		assertEquals(1, context.fDisposeCalls);
 	}
 
+	@Test
 	public void testDisposeChangeFailed() throws Exception {
 		TestRefactoring ref= new TestRefactoring() {
 			@Override

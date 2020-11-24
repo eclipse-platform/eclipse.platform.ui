@@ -13,10 +13,11 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.tests.scripting;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class RefactoringScriptApplicationTests extends TestCase {
+public class RefactoringScriptApplicationTests {
 
+	@Test
 	public void test0() throws Exception {
 
 	}
