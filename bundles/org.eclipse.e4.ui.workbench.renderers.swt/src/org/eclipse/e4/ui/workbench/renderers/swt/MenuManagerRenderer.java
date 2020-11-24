@@ -337,7 +337,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		context.remove(MenuManagerRendererFilter.class);
 		Display display = context.get(Display.class);
 		if (display != null && !display.isDisposed() && rendererFilter != null) {
-			display.syncExec(() -> {
+			display.asyncExec(() -> {
 				if (!display.isDisposed()) {
 					display.removeFilter(SWT.Show, rendererFilter);
 					display.removeFilter(SWT.Hide, rendererFilter);
