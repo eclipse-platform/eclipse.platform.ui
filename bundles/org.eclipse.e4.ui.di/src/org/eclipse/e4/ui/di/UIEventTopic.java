@@ -35,7 +35,8 @@ import javax.inject.Qualifier;
  *
  * <pre>
  *   public class Car {
- *     &#064;void handle(@Optional @UIEventTopic("org/eclipse/e4/some/event/topic") Payload payload);
+ *     &#064;Inject
+ *     void handle(@Optional @UIEventTopic("org/eclipse/e4/some/event/topic") Payload payload);
  *     ...
  *   }
  * </pre>
