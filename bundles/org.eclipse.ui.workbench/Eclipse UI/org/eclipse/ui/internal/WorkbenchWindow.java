@@ -1146,10 +1146,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	}
 
 	@Inject
-	private void hideQuickAccess(@Optional @UIEventTopic(UIEvents.ApplicationElement.TOPIC_TAGS) Event event) {
-		if (event == null) {
-			return;
-		}
+	@Optional
+	private void hideQuickAccess(@UIEventTopic(UIEvents.ApplicationElement.TOPIC_TAGS) Event event) {
 		Object origin = event.getProperty(UIEvents.EventTags.ELEMENT);
 		if (!(origin instanceof MToolControl)) {
 			return;

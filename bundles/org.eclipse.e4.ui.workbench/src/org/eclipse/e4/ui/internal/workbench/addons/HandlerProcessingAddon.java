@@ -67,10 +67,8 @@ public class HandlerProcessingAddon {
 	 *            The event thrown in the event bus
 	 */
 	@Inject
-	public void handleHandlerEvent(@Optional @EventTopic(UIEvents.HandlerContainer.TOPIC_HANDLERS) Event event) {
-		if (event == null) {
-			return;
-		}
+	@Optional
+	public void handleHandlerEvent(@EventTopic(UIEvents.HandlerContainer.TOPIC_HANDLERS) Event event) {
 		if ((event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MHandlerContainer)
 				&& (event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MContext)) {
 			MHandlerContainer handlerContainer = (MHandlerContainer) event.getProperty(UIEvents.EventTags.ELEMENT);
@@ -113,10 +111,8 @@ public class HandlerProcessingAddon {
 	 */
 
 	@Inject
-	public void handleContextEvent(@Optional @EventTopic(UIEvents.Context.TOPIC_CONTEXT) Event event) {
-		if (event == null) {
-			return;
-		}
+	@Optional
+	public void handleContextEvent(@EventTopic(UIEvents.Context.TOPIC_CONTEXT) Event event) {
 		Object origin = event.getProperty(UIEvents.EventTags.ELEMENT);
 		Object context = event.getProperty(UIEvents.EventTags.NEW_VALUE);
 		if ((origin instanceof MHandlerContainer)
