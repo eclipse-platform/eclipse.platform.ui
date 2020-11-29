@@ -41,6 +41,10 @@ CTabFolder Scale {
     color: #CCC;
 }
 
+Tree, Table {
+	swt-lines-visible: false;
+}
+
 /* ##################### Bottom Status Bar ####################### */
 
 StatusLine,
