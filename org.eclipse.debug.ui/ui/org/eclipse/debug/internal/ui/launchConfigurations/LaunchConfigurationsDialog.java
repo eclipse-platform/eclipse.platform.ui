@@ -233,6 +233,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	private DeletedProjectFilter fDeletedProjectFilter;
 	private LaunchConfigurationTypeFilter fLCTFilter;
 	private WorkingSetsFilter fWorkingSetsFilter;
+	private UniqueLaunchConfigurationFileFilter fUniqueLaunchConfugurationFileFilter;
 
 	/**
 	 * set of reserved names that should not be considered when generating a new name for a launch configuration
@@ -645,6 +646,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_FILTER_WORKING_SETS)) {
 			filters.add(fWorkingSetsFilter);
 		}
+		fUniqueLaunchConfugurationFileFilter = new UniqueLaunchConfigurationFileFilter();
+		filters.add(fUniqueLaunchConfugurationFileFilter);
 		return filters.toArray(new ViewerFilter[filters.size()]);
 	}
 

@@ -319,11 +319,11 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		if (viewer != null) {
 			try {
 				viewer.getControl().setRedraw(false);
-				if (configuration.getPrototype() != null) {
-					viewer.add(configuration.getPrototype(), configuration);
-				} else {
-					viewer.add(configuration.getType(), configuration);
+				Object parentElement = configuration.getPrototype();
+				if (parentElement == null) {
+					parentElement = configuration.getType();
 				}
+				viewer.add(parentElement, configuration);
 				// if moved, remove original now
 				if (from != null) {
 					viewer.remove(from);
@@ -332,6 +332,10 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 					viewer.setSelection(new StructuredSelection(configuration), true);
 				}
 				updateFilterLabel();
+				// Need to refresh here, bug 559758
+				if (!configuration.isLocal()) {
+					viewer.refresh(parentElement);
+				}
 			}
 			catch (CoreException e) {}
 			finally {
