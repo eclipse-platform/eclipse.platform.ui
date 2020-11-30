@@ -195,7 +195,12 @@ class DnDManager {
 
 	protected void startDrag() {
 		// Create a new tracker for this drag instance
-		tracker = new Tracker(Display.getCurrent().getActiveShell(), SWT.NULL);
+		Shell activeShell = Display.getCurrent().getActiveShell();
+		if (activeShell == null) {
+			return;
+		}
+
+		tracker = new Tracker(activeShell, SWT.NULL);
 		tracker.setStippled(true);
 		setRectangle(offScreenRect);
 
