@@ -107,7 +107,7 @@ public abstract class AbstractNotificationPopup extends Window {
 	}
 
 	public AbstractNotificationPopup(Display display, int style) {
-		super(new Shell(display));
+		super((Shell) null);
 		setShellStyle(style);
 
 		this.display = display;
@@ -387,8 +387,14 @@ public abstract class AbstractNotificationPopup extends Window {
 	}
 
 	private Rectangle getPrimaryClientArea() {
-		if (getParentShell() != null) {
-			return getParentShell().getBounds();
+		Shell parentShell = getParentShell();
+		if (parentShell != null) {
+			// calculate client area in display-relative coordinates
+			// (i.e. without window border / decorations)
+			Rectangle bounds = parentShell.getBounds();
+			Rectangle trim = parentShell.computeTrim(0, 0, 0, 0);
+			return new Rectangle(bounds.x - trim.x, bounds.y - trim.y, bounds.width - trim.width,
+					bounds.height - trim.height);
 		}
 		// else display on primary monitor
 		Monitor primaryMonitor = this.shell.getDisplay().getPrimaryMonitor();
