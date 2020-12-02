@@ -182,7 +182,17 @@ public interface IDebugPreferenceConstants {
 	int PREF_ROW_SIZE_DEFAULT = 16;
 
 	/**
-	 * Stores the boolean preference of whether to prompt when removing all breakpoints.
+	 * Stores the boolean preference of whether to prompt when disabling all
+	 * breakpoints.
+	 *
+	 * @since 3.15
+	 */
+	String PREF_PROMPT_DISABLE_ALL_BREAKPOINTS = IDebugUIConstants.PLUGIN_ID + ".disable_all_breakpoints_prompt"; //$NON-NLS-1$
+
+	/**
+	 * Stores the boolean preference of whether to prompt when removing all
+	 * breakpoints.
+	 *
 	 * @since 3.3
 	 */
 	String PREF_PROMPT_REMOVE_ALL_BREAKPOINTS = IDebugUIConstants.PLUGIN_ID + ".remove_all_breakpoints_prompt"; //$NON-NLS-1$
