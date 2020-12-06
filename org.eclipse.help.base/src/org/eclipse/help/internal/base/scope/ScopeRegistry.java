@@ -39,17 +39,17 @@ public class ScopeRegistry {
 
 	private static List<IScopeHandle> scopes = null;
 
-	private static ScopeRegistry instance;
-
 	private boolean initialized = false;
+
+	private static class RegistryHolder {
+		static final ScopeRegistry instance = new ScopeRegistry();
+	}
 
 	private ScopeRegistry() {
 	}
 
 	public static ScopeRegistry getInstance() {
-		if (instance == null)
-			instance = new ScopeRegistry();
-		return instance;
+		return RegistryHolder.instance;
 	}
 
 	public AbstractHelpScope getScope(String id) {
