@@ -126,7 +126,7 @@ InterruptedException {
       if (!inHeading || summary.length() > 0) {
         addToSummary(text);
       }
-      if (!titleComplete && !title.equals("")) {  // finished title //$NON-NLS-1$
+      if (!titleComplete && !title.toString().isEmpty()) { // finished title
         synchronized(this) {
           titleComplete = true;                   // tell waiting threads
           notifyAll();
