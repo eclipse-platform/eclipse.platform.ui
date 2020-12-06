@@ -56,8 +56,8 @@ public class DebugOptions implements DebugOptionsListener {
 	public void optionsChanged(org.eclipse.osgi.service.debug.DebugOptions options) {
 		fgDebugTrace = options.newDebugTrace(DebugPlugin.getUniqueIdentifier());
 		DEBUG = options.getBooleanOption(DEBUG_FLAG, false);
-		DEBUG_COMMANDS = DEBUG & options.getBooleanOption(DEBUG_FLAG_COMMANDS, false);
-		DEBUG_EVENTS = DEBUG & options.getBooleanOption(DEBUG_FLAG_EVENTS, false);
+		DEBUG_COMMANDS = DEBUG && options.getBooleanOption(DEBUG_FLAG_COMMANDS, false);
+		DEBUG_EVENTS = DEBUG && options.getBooleanOption(DEBUG_FLAG_EVENTS, false);
 	}
 
 	/**

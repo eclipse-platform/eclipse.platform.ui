@@ -453,7 +453,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		@Override
 		public boolean visit(IResourceProxy proxy) {
 			if (proxy.getType() == IResource.FILE) {
-				if (ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION.equalsIgnoreCase(proxy.requestFullPath().getFileExtension()) | ILaunchConfiguration.LAUNCH_CONFIGURATION_PROTOTYPE_FILE_EXTENSION.equalsIgnoreCase(proxy.requestFullPath().getFileExtension())) {
+				if (ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION.equalsIgnoreCase(proxy.requestFullPath().getFileExtension()) || ILaunchConfiguration.LAUNCH_CONFIGURATION_PROTOTYPE_FILE_EXTENSION.equalsIgnoreCase(proxy.requestFullPath().getFileExtension())) {
 					fList.add(proxy.requestResource());
 				}
 				return false;
@@ -1662,7 +1662,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		// compatibility.
 		initializePreferredDelegates();
 		for (PreferredDelegate pd : fPreferredDelegates) {
-			if(pd.getModes().equals(modes) & pd.getTypeId().equals(typeid)) {
+			if (pd.getModes().equals(modes) && pd.getTypeId().equals(typeid)) {
 				return pd.getDelegate();
 			}
 		}
@@ -2393,7 +2393,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		try {
 			for (ILaunch launch : launches) {
 				for (ILaunchConfiguration config : configs) {
-					if(config.equals(launch.getLaunchConfiguration()) & launch.canTerminate()) {
+					if (config.equals(launch.getLaunchConfiguration()) && launch.canTerminate()) {
 						launch.terminate();
 					}
 				}
