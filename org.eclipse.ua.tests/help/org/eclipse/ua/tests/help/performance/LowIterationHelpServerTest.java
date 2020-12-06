@@ -27,6 +27,7 @@ public class LowIterationHelpServerTest extends PerformanceTestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		LoadServletUtil.stopServer();
+		super.tearDown();
 	}
 
 	public void testServletRead20x() throws Exception {

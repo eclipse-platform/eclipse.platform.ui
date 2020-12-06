@@ -27,6 +27,7 @@ public class HelpServerTest extends PerformanceTestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		LoadServletUtil.stopServer();
+		super.tearDown();
 	}
 
 	public void testServletRead100x() throws Exception {
