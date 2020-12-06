@@ -36,18 +36,17 @@ public class CriteriaProviderRegistry {
 
 	private static List<AbstractCriteriaProvider> providers = null;
 
-	private static CriteriaProviderRegistry instance;
-
 	private boolean initialized = false;
+
+	private static class RegistryHolder {
+		static final CriteriaProviderRegistry instance = new CriteriaProviderRegistry();
+	}
 
 	private CriteriaProviderRegistry() {
 	}
 
 	public static CriteriaProviderRegistry getInstance() {
-		if (instance == null) {
-			instance = new CriteriaProviderRegistry();
-		}
-		return instance;
+		return RegistryHolder.instance;
 	}
 
 	synchronized private void readProviders() {
