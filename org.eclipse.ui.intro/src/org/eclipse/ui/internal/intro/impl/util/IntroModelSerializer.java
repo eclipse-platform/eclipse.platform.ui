@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.util;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -84,7 +85,7 @@ public class IntroModelSerializer {
 		text.append("\nPresentation Kind = " //$NON-NLS-1$
 				+ model.getPresentation().getImplementationKind());
 		text.append("\nPresentation Shared Style = " //$NON-NLS-1$
-				+ model.getPresentation().getImplementationStyles());
+				+ Arrays.toString(model.getPresentation().getImplementationStyles()));
 		text.append("\nPresentation type = " //$NON-NLS-1$
 				+ model.getPresentation().getType());
 		text.append("\nHome page id = " //$NON-NLS-1$
