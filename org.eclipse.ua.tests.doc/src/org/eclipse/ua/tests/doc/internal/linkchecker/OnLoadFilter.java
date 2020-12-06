@@ -63,9 +63,9 @@ public class OnLoadFilter implements IFilter {
 				state = 21;
 			} else if (state == 1 && (b == 'h' || b == 'H')) {
 				state = 11;
-			} else if (state == 11 && (b == 'e' || b == 'e')) {
+			} else if (state == 11 && (b == 'e' || b == 'E')) {
 				state = 12;
-			} else if (state == 12 && (b == 'a' || b == 'a')) {
+			} else if (state == 12 && (b == 'a' || b == 'A')) {
 				state = 13;
 			} else if (state == 13 && (b == 'm' || b == 'M')) {
 				state = 14;
