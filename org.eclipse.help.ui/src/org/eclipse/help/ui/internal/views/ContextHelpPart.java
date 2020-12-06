@@ -15,6 +15,7 @@
 package org.eclipse.help.ui.internal.views;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -404,7 +405,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		if (part != null) {
 			if (searchTerms != null) {
 				if (HelpPlugin.DEBUG_CONTEXT) {
-					System.out.println("Dynamic help - search for " + searchTerms); //$NON-NLS-1$
+					System.out.println("Dynamic help - search for " + Arrays.toString(searchTerms)); //$NON-NLS-1$
 				}
 				part.startSearch(buildSearchExpression(searchTerms), lastContext);
 			}
