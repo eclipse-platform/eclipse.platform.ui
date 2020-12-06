@@ -26,17 +26,19 @@ public final class IntroEvaluationContext {
 	private static final String VARIABLE_PLATFORM = "platform"; //$NON-NLS-1$
 	private static final String VARIABLE_WORKBENCH = "workbench"; //$NON-NLS-1$
 
-	private static EvaluationContext context;
-
+	private static class ContextHolder {
+		static final EvaluationContext context = extracted();
+	}
 	/*
 	 * Returns the evaluation context to use in intro documents.
 	 */
 	public static EvaluationContext getContext() {
-		if (context == null) {
-			context = new EvaluationContext(null, Platform.class);
-			context.addVariable(VARIABLE_PLATFORM, Platform.class);
-			context.addVariable(VARIABLE_WORKBENCH, PlatformUI.getWorkbench());
-		}
+		return ContextHolder.context;
+	}
+	private static EvaluationContext extracted() {
+		EvaluationContext context = new EvaluationContext(null, Platform.class);
+		context.addVariable(VARIABLE_PLATFORM, Platform.class);
+		context.addVariable(VARIABLE_WORKBENCH, PlatformUI.getWorkbench());
 		return context;
 	}
 
