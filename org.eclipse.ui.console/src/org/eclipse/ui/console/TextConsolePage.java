@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,7 +18,9 @@ package org.eclipse.ui.console;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IAction;
@@ -52,8 +54,11 @@ import org.eclipse.ui.internal.console.FollowHyperlinkAction;
 import org.eclipse.ui.internal.console.IConsoleHelpContextIds;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.IPageSite;
+import org.eclipse.ui.texteditor.FindNextAction;
 import org.eclipse.ui.texteditor.FindReplaceAction;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
+import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 
 /**
  * A page for a text console.
@@ -82,12 +87,12 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 	// text selection listener, used to update selection dependent actions on selection changes
 	private ISelectionChangedListener selectionChangedListener =  event -> updateSelectionDependentActions();
 
-	// updates the find replace action and the clear action if the document length is > 0
+	// updates the find actions and the clear action if the document length is > 0
 	private ITextListener textListener = event -> {
-		IUpdate findReplace = (IUpdate)fGlobalActions.get(ActionFactory.FIND.getId());
-		if (findReplace != null) {
-			findReplace.update();
-		}
+		Stream.of(ActionFactory.FIND.getId(), ITextEditorActionConstants.FIND_NEXT,
+				ITextEditorActionConstants.FIND_PREVIOUS)
+				.map(id -> fGlobalActions.get(id)).filter(Objects::nonNull).map(IUpdate.class::cast)
+				.forEach(IUpdate::update);
 
 		if (fClearOutputAction != null) {
 			IDocument doc = fViewer.getDocument();
@@ -262,10 +267,23 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(fraction, IConsoleHelpContextIds.CONSOLE_FIND_REPLACE_ACTION);
 		setGlobalAction(actionBars, ActionFactory.FIND.getId(), fraction);
 
+		FindNextAction findNextAction = new FindNextAction(bundle, "find_next_action_", fConsoleView, true); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(findNextAction, IConsoleHelpContextIds.CONSOLE_FIND_NEXT_ACTION);
+		findNextAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_NEXT);
+		setGlobalAction(actionBars, ITextEditorActionConstants.FIND_NEXT, findNextAction);
+
+		FindNextAction findPreviousAction = new FindNextAction(bundle, "find_previous_action_", fConsoleView, false); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(findPreviousAction,
+				IConsoleHelpContextIds.CONSOLE_FIND_PREVIOUS_ACTION);
+		findPreviousAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_PREVIOUS);
+		setGlobalAction(actionBars, ITextEditorActionConstants.FIND_PREVIOUS, findPreviousAction);
+
 		fSelectionActions.add(ActionFactory.CUT.getId());
 		fSelectionActions.add(ActionFactory.COPY.getId());
 		fSelectionActions.add(ActionFactory.PASTE.getId());
 		fSelectionActions.add(ActionFactory.FIND.getId());
+		fSelectionActions.add(ITextEditorActionConstants.FIND_NEXT);
+		fSelectionActions.add(ITextEditorActionConstants.FIND_PREVIOUS);
 
 		actionBars.updateActionBars();
 	}
@@ -343,6 +361,8 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 
 		menuManager.add(new Separator("FIND")); //$NON-NLS-1$
 		menuManager.add(fGlobalActions.get(ActionFactory.FIND.getId()));
+		menuManager.add(fGlobalActions.get(ITextEditorActionConstants.FIND_NEXT));
+		menuManager.add(fGlobalActions.get(ITextEditorActionConstants.FIND_PREVIOUS));
 		menuManager.add(new FollowHyperlinkAction(fViewer.getHyperlink()));
 		menuManager.add(fClearOutputAction);
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2019 Andreas Loth and others.
+ * Copyright (c) 2017, 2020 Andreas Loth and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -38,6 +38,7 @@ import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.eclipse.ui.console.MessageConsole;
+import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 import org.junit.Test;
 
 
@@ -160,14 +161,14 @@ public class ConsoleTests extends AbstractDebugTest {
 	}
 
 	/**
-	 * Validate that we can use find and replace after opening a console in the
-	 * Console View.
+	 * Validate that we can use commands findReplace, findNext and findPrevious
+	 * after opening a console in the Console View.
 	 *
 	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=268608">bug
 	 *      268608</a>
 	 */
 	@Test
-	public void testFindReplaceIsEnabledOnConsoleOpen() throws Exception {
+	public void testFindCommandsAreEnabledOnConsoleOpen() throws Exception {
 		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IViewPart consoleView = activePage.showView(IConsoleConstants.ID_CONSOLE_VIEW);
 
@@ -183,8 +184,12 @@ public class ConsoleTests extends AbstractDebugTest {
 			TestUtil.waitForJobs(name.getMethodName(), 100, 3000);
 
 			ICommandService commandService = PlatformUI.getWorkbench().getService(ICommandService.class);
-			Command command = commandService.getCommand(IWorkbenchCommandConstants.EDIT_FIND_AND_REPLACE);
-			assertTrue("expected FindReplace command to be enabled after opening console", command.isEnabled());
+			Command commandFindReplace = commandService.getCommand(IWorkbenchCommandConstants.EDIT_FIND_AND_REPLACE);
+			assertTrue("expected FindReplace command to be enabled after opening console", commandFindReplace.isEnabled());
+			Command commandFindNext = commandService.getCommand(IWorkbenchActionDefinitionIds.FIND_NEXT);
+			assertTrue("expected FindNext command to be enabled after opening console", commandFindNext.isEnabled());
+			Command commandFindPrevious = commandService.getCommand(IWorkbenchActionDefinitionIds.FIND_PREVIOUS);
+			assertTrue("expected FindPrevious command to be enabled after opening console", commandFindPrevious.isEnabled());
 		} finally {
 			consoleManager.removeConsoles(consoles);
 			activePage.hideView(consoleView);
