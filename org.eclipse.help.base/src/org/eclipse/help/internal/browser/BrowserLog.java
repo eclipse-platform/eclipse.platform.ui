@@ -28,11 +28,14 @@ import org.eclipse.help.internal.base.HelpBasePlugin;
  * Log for messages output by external browser processes.
  */
 public class BrowserLog {
-	private static BrowserLog instance;
 	private String logFileName;
 	private boolean newSession;
 	DateFormat formatter = new SimpleDateFormat("MMM dd, yyyy kk:mm:ss.SS"); //$NON-NLS-1$
 	String LN = System.lineSeparator();
+
+	private static class LogHolder {
+		static final BrowserLog instance = new BrowserLog();
+	}
 	/**
 	 * Constructor
 	 */
@@ -50,10 +53,7 @@ public class BrowserLog {
 	 * Obtains singleton
 	 */
 	private static BrowserLog getInstance() {
-		if (instance == null) {
-			instance = new BrowserLog();
-		}
-		return instance;
+		return LogHolder.instance;
 	}
 	/**
 	 * Appends a line to the browser.log
