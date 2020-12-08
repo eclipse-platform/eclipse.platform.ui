@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -115,7 +115,7 @@ public abstract class AbstractUIPlugin extends Plugin {
 	/**
 	 * Storage for preferences.
 	 */
-	private ScopedPreferenceStore preferenceStore;
+	private volatile ScopedPreferenceStore preferenceStore;
 
 	/**
 	 * The registry for all graphic images; <code>null</code> if not yet
@@ -232,21 +232,30 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 * quietly created, initialized with defaults, and returned.
 	 * </p>
 	 * <p>
-	 * <strong>NOTE:</strong> As of Eclipse 3.1 this method is no longer referring
+	 * <strong>NOTE1:</strong> As of Eclipse 3.1 this method is no longer referring
 	 * to the core runtime compatibility layer and so plug-ins relying on
 	 * Plugin#initializeDefaultPreferences will have to access the compatibility
 	 * layer themselves.
+	 * </p>
+	 * <p>
+	 * <strong>NOTE2:</strong> This method may be called from a none UI-Thread.
 	 * </p>
 	 *
 	 * @return the preference store
 	 */
 	public IPreferenceStore getPreferenceStore() {
 		// Create the preference store lazily.
-		if (preferenceStore == null) {
-			preferenceStore = new ScopedPreferenceStore(InstanceScope.INSTANCE, getBundle().getSymbolicName());
-
+		ScopedPreferenceStore result = preferenceStore;
+		if (result == null) { // First check (no locking)
+			synchronized (this) {
+				result = preferenceStore;
+				if (result == null) { // Second check (with locking)
+					preferenceStore = result = new ScopedPreferenceStore(InstanceScope.INSTANCE,
+							getBundle().getSymbolicName());
+				}
+			}
 		}
-		return preferenceStore;
+		return result;
 	}
 
 	/**
