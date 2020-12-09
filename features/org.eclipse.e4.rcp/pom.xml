@@ -19,7 +19,7 @@
   </parent>
   <groupId>org.eclipse.e4.feature</groupId>
   <artifactId>org.eclipse.e4.rcp</artifactId>
-  <version>4.15.0-SNAPSHOT</version>
+  <version>4.15.1-SNAPSHOT</version>
   <packaging>eclipse-feature</packaging>
   <build>
     <plugins>
