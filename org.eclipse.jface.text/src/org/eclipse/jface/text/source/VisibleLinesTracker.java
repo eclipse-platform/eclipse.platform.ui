@@ -14,12 +14,16 @@
  *******************************************************************************/
 package org.eclipse.jface.text.source;
 
+import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Consumer;
 
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.Rectangle;
 
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.JFaceTextUtil;
@@ -36,20 +40,7 @@ class VisibleLinesTracker implements PaintListener {
 	 */
 	private final ITextViewer viewer;
 
-	/**
-	 * The previous bottom model line index.
-	 */
-	private int oldModelBottom= -1;
-
-	/**
-	 * The previous bottom widget line index.
-	 */
-	private int oldWidgetBottom= -1;
-
-	/**
-	 * The previous bottom line pixel.
-	 */
-	private int oldBottomPixel;
+	private Map<Integer, Rectangle> oldVisibleLineBounds= Collections.emptyMap();
 
 	/**
 	 * List of handler to call when a visible line height change.
@@ -69,22 +60,26 @@ class VisibleLinesTracker implements PaintListener {
 	@Override
 	public void paintControl(PaintEvent e) {
 		StyledText textWidget= viewer.getTextWidget();
-		// track if bottom line index or bottom line pixel changed.
-		if (oldModelBottom == -1) {
-			oldWidgetBottom= JFaceTextUtil.getPartialBottomIndex(textWidget);
-			oldModelBottom= JFaceTextUtil.widgetLine2ModelLine(viewer, oldWidgetBottom);
-			oldBottomPixel= JFaceTextUtil.getLinePixel(textWidget, oldWidgetBottom);
-			return;
-		}
-		int newWidgetBottom= JFaceTextUtil.getPartialBottomIndex(textWidget);
-		int newModelBottom= JFaceTextUtil.widgetLine2ModelLine(viewer, newWidgetBottom);
-		int newBottomPixel= JFaceTextUtil.getLinePixel(textWidget, newWidgetBottom);
-		if (newWidgetBottom != oldWidgetBottom || newModelBottom != oldModelBottom || newBottomPixel != oldBottomPixel) {
-			oldWidgetBottom= newWidgetBottom;
-			oldModelBottom= newModelBottom;
-			oldBottomPixel= newBottomPixel;
+		Map<Integer, Rectangle> newBounds= getVisibleLineBounds();
+		if (!oldVisibleLineBounds.equals(newBounds)) {
+			oldVisibleLineBounds= newBounds;
 			handlers.forEach(handler -> handler.accept(textWidget));
 		}
+	}
+
+	private Map<Integer, Rectangle> getVisibleLineBounds() {
+		StyledText textWidget= viewer.getTextWidget();
+		if (textWidget.isDisposed() || !textWidget.isVisible()) {
+			return Collections.emptyMap();
+		}
+		Map<Integer, Rectangle> res= new TreeMap<>();
+		int lastVisibleLineIndex= textWidget.getLineIndex(textWidget.getClientArea().height);
+		for (int widgetLine= textWidget.getLineIndex(0); widgetLine <= lastVisibleLineIndex; widgetLine++) {
+			int widgetLineOffset= textWidget.getOffsetAtLine(widgetLine);
+			res.put(Integer.valueOf(JFaceTextUtil.widgetLine2ModelLine(viewer, widgetLine)), //
+					new Rectangle(0, textWidget.getLinePixel(widgetLine), 0, textWidget.getLineHeight(widgetLineOffset)));
+		}
+		return res;
 	}
 
 	/**
