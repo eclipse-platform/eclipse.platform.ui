@@ -521,12 +521,10 @@
 	        sequence="M1+M2+DEL"/>
 	  <key
 	        commandId="org.eclipse.ui.edit.findNext"
-	        contextId="org.eclipse.ui.textEditorScope"
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
 	        sequence="M1+K"/>
 	  <key
 	        commandId="org.eclipse.ui.edit.findPrevious"
-	        contextId="org.eclipse.ui.textEditorScope"
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
 	        sequence="M1+M2+K"/>
 	  <key
