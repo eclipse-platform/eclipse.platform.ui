@@ -149,6 +149,17 @@
             id="org.eclipse.ui.edit.text.showRulerAnnotationInformation">
       </command>
    </extension>
+   <extension point="org.eclipse.ui.commandImages">
+      <image
+            commandId="org.eclipse.ui.edit.text.folding.collapse_all"
+            disabledIcon="$nl$/icons/full/dlcl16/collapseall.png"
+            icon="$nl$/icons/full/elcl16/collapseall.png">
+      </image>
+      <image
+            commandId="org.eclipse.ui.edit.text.folding.expand_all"
+            icon="$nl$/icons/full/elcl16/expandall.png">
+      </image>
+  </extension>
    
    <extension
          point="org.eclipse.ui.handlers">
