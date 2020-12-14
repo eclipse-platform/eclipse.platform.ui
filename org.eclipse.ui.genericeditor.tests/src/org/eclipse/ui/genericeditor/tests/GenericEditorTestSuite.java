@@ -20,6 +20,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
+		BasicEditionTest.class,
 		CompletionTest.class,
 		ContextInfoTest.class,
 		StylingTest.class,
