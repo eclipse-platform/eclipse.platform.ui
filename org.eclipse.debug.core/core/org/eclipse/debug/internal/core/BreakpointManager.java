@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2018 IBM Corporation and others.
+ *  Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -503,6 +503,8 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			for (IBreakpoint breakpoint : remove) {
 				bps.remove(breakpoint);
 				fMarkersToBreakpoints.remove(breakpoint.getMarker());
+				// If the breakpoint is a trigger point, remove else do nothing.
+				removeTriggerPoint(breakpoint);
 			}
 			fireUpdate(remove, null, REMOVED);
 			refreshTriggerpointDisplay();
@@ -602,6 +604,10 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 					added.add(breakpoint);
 					getBreakpoints0().add(breakpoint);
 					fMarkersToBreakpoints.put(breakpoint.getMarker(), breakpoint);
+					if (breakpoint instanceof ITriggerPoint && ((ITriggerPoint) breakpoint).isTriggerPoint()) {
+						addTriggerPoint(breakpoint);
+					}
+
 				} else {
 					// need to update the 'registered' and/or 'group' attributes
 					update.add(breakpoint);
