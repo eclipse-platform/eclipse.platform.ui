@@ -13,6 +13,8 @@
  */
 package org.eclipse.ui.genericeditor.tests;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -23,6 +25,8 @@ import org.junit.Test;
 
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.core.commands.Command;
+
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
@@ -31,7 +35,10 @@ import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.text.tests.util.DisplayHelper;
 
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.genericeditor.tests.contributions.EnabledPropertyTester;
+
+import org.eclipse.ui.editors.text.IFoldingCommandIds;
 
 public class FoldingTest extends AbstratGenericEditorTest {
 
@@ -117,5 +124,13 @@ public class FoldingTest extends AbstratGenericEditorTest {
 			}
 		}
 		return annotationList;
+	}
+
+	@Test
+	public void testFoldingCommandsEnabled() throws Exception {
+		createAndOpenFile("bar.xml", "<a>\n b</a>");
+		ICommandService commandService = editor.getEditorSite().getService(ICommandService.class);
+		Command collapseAllCommand = commandService.getCommand(IFoldingCommandIds.FOLDING_COLLAPSE_ALL);
+		assertTrue(collapseAllCommand.isEnabled() && collapseAllCommand.isHandled());
 	}
 }
