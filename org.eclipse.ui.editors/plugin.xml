@@ -180,8 +180,8 @@
          </enabledWhen>
       </handler>
       <handler
-            class="org.eclipse.ui.internal.editors.text.folding.CollapseAllHandler"
-            commandId="org.eclipse.ui.edit.text.folding.collapse_all">
+            class="org.eclipse.ui.internal.editors.text.folding.CollapseHandler"
+            commandId="org.eclipse.ui.edit.text.folding.collapse">
          <enabledWhen>
             <with
                   variable="activePart">
