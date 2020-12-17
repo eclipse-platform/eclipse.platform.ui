@@ -977,6 +977,9 @@ public class ModelServiceImpl implements EModelService {
 	public void removePerspectiveModel(MPerspective persp, MWindow window) {
 		// pick a new perspective to become active (if any)
 		MUIElement psElement = persp.getParent();
+		if (psElement == null) {
+			return;
+		}
 		MPerspectiveStack ps = (MPerspectiveStack) psElement;
 		boolean foundNewSelection = false;
 		if (ps.getSelectedElement() == persp) {
