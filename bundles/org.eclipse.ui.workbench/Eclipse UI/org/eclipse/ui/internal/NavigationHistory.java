@@ -175,7 +175,7 @@ public class NavigationHistory implements INavigationHistory {
 	}
 
 	private Display getDisplay() {
-		return page.getWorkbenchWindow().getShell().getDisplay();
+		return Workbench.getInstance().getDisplay();
 	}
 
 	private boolean isPerTabHistoryEnabled() {
