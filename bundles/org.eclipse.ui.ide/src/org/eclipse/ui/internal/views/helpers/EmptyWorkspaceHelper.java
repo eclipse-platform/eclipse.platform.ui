@@ -137,7 +137,10 @@ public final class EmptyWorkspaceHelper {
 	}
 
 	private void dispose(Listener listener) {
-		PlatformUI.getWorkbench().getActiveWorkbenchWindow().removePerspectiveListener(listener);
+		IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (activeWorkbenchWindow != null) {
+			activeWorkbenchWindow.removePerspectiveListener(listener);
+		}
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(listener);
 		JFaceResources.getColorRegistry().removeListener(listener);
 		parent.removeDisposeListener(listener);
@@ -155,7 +158,10 @@ public final class EmptyWorkspaceHelper {
 
 	private void registerListeners() {
 		Listener listener = new Listener();
-		PlatformUI.getWorkbench().getActiveWorkbenchWindow().addPerspectiveListener(listener);
+		IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (activeWorkbenchWindow != null) {
+			activeWorkbenchWindow.addPerspectiveListener(listener);
+		}
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_CHANGE);
 		JFaceResources.getColorRegistry().addListener(listener);
 		parent.addDisposeListener(listener);
@@ -236,6 +242,9 @@ public final class EmptyWorkspaceHelper {
 		}
 		IWorkbench wb = PlatformUI.getWorkbench();
 		IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
+		if (win == null) {
+			return;
+		}
 		IWorkbenchPage page = win.getActivePage();
 		String[] wizardIds = page.getNewWizardShortcuts();
 		projectWizardActions.clear();
@@ -283,7 +292,7 @@ public final class EmptyWorkspaceHelper {
 		WizardShortcutAction action = null;
 		IWorkbench wb = PlatformUI.getWorkbench();
 		IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
-		if (wizardDesc != null) {
+		if (wizardDesc != null && win != null) {
 			action = new WizardShortcutAction(win, wizardDesc);
 		}
 		return action;
@@ -387,7 +396,11 @@ public final class EmptyWorkspaceHelper {
 	private static class ImportAction extends Action {
 		@Override
 		public void run() {
-			IHandlerService handlerService = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+			IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			if (activeWorkbenchWindow == null) {
+				return;
+			}
+			IHandlerService handlerService = activeWorkbenchWindow
 					.getService(IHandlerService.class);
 			try {
 				handlerService.executeCommand("org.eclipse.ui.file.import", null); //$NON-NLS-1$
