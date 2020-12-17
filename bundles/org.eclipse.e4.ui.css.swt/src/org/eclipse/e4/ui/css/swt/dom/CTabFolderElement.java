@@ -158,7 +158,7 @@ public class CTabFolderElement extends CompositeElement implements ChildVisibili
 		if (selected >= 0) {
 			CTabItem item = folder.getItem(selected);
 			// If item.getControl() is not yet set, we pretend it doesn't exist
-			if (item.getControl() != null) {
+			if (!item.isDisposed() && item.getControl() != null) {
 				visible.add(item.getControl());
 			}
 		}
