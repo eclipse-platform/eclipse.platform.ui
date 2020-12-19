@@ -542,7 +542,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	private PreviewNode getFirstNonCompositeChange(ITreeContentProvider provider, ViewerComparator comparator, AbstractChangeNode input) {
 		PreviewNode focus= input;
 		Change change= input.getChange();
-		while (change != null && change instanceof CompositeChange) {
+		while (change instanceof CompositeChange) {
 			PreviewNode[] children= (PreviewNode[])provider.getElements(focus);
 			if (children == null || children.length == 0)
 				return null;
