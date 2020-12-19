@@ -118,9 +118,8 @@ public class FailingParticipantTests extends TestCase {
 		fRefactoring.checkFinalConditions(new NullProgressMonitor());
 
 		resetLog();
-		boolean exception= false;
+        boolean exception= false;
 		Change change= fRefactoring.createChange(new NullProgressMonitor());
-		exception= false;
 		try {
 			// blows up because main refactoring fails to execute
 			change.perform(new NullProgressMonitor());
