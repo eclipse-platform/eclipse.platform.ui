@@ -3,7 +3,7 @@ Automatic-Module-Name: org.eclipse.ltk.core.refactoring
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.ltk.core.refactoring; singleton:=true
-Bundle-Version: 3.11.200.qualifier
+Bundle-Version: 3.11.300.qualifier
 Bundle-Activator: org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
