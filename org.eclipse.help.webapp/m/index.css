@@ -666,3 +666,67 @@ button {
         display: none;
     }
 }
+
+/*******************************************************************************
+ * OS Dark Mode                                                                */
+
+@media (prefers-color-scheme: dark) {
+    body, .s {
+        background: #5c5c5c;
+    }
+    .s, .u ul {
+        border: 1px solid #363636;
+    }
+    .b, #o .b {
+        color: #f0f0f0;
+        background: #5c5c5c;
+    }
+    #t, #c, .c, .qf, #a, .tree .l, #a > .b, .u ul, .p ol, .u ul {
+        color: #f0f0f0;
+        background: #3d3d3d;
+    }
+    .u .z, .j .z button, #b li a:hover, .ba:hover, .j a:focus, .j button:focus {
+        background: #707070;
+    }
+    .tree li.xx > .l {
+        color: #f0f0f0;
+        background: #3d3d3d;
+    }
+    tree, .l {
+        color: #f0f0f0;
+        background: #3d3d3d;
+    }
+    .tree li.x > .l {
+        color: #f0f0f0;
+        background: #3d3d3d;
+    }
+    .tree li > .l:hover, .j .z a {
+        transition: all 0.1s 0.1s ease;
+        background-color: #707070;
+    }
+    .tree li > .l:focus {
+        transition: all 0.1s 0.1s ease;
+        background-color: #a3a3a3;
+    }
+    .tree .open > .h, .tree .h, #q, input, button, strong, .j, .j a, #r .t, #b a {
+        color: #f0f0f0;
+    }
+    .j a .w, #r .tree .l, #r .t .tl {
+        color: #0c4;
+    }
+    .qh {
+        color: #666;
+    }
+    .q, .qf, .qm {
+        background: #3d3d3d;
+        border-color: #3d3d3d;
+    }
+    .qf, .qm {
+        border: 1px solid #3d3d3d	;
+        box-shadow: 0 1px 3px #3d3d3d;
+    }
+    .count {
+        color: #999;
+        background-color: #4d4d4d;
+    }
+}
