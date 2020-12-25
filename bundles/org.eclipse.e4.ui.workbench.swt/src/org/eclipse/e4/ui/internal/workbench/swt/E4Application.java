@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,6 +17,7 @@
  *     Terry Parker <tparker@google.com> - Bug 416673
  *     Christian Georgi (SAP)            - Bug 432480
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 478896
+ *     Christoph Läubrich - Bug 563459 
  ******************************************************************************/
 
 package org.eclipse.e4.ui.internal.workbench.swt;
@@ -81,6 +82,7 @@ import org.eclipse.e4.ui.workbench.lifecycle.ProcessRemovals;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPlaceholderResolver;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
+import org.eclipse.e4.ui.workbench.swt.DisplayUISynchronize;
 import org.eclipse.e4.ui.workbench.swt.internal.copy.WorkbenchSWTMessages;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
@@ -211,22 +213,7 @@ public class E4Application implements IApplication {
 		IEclipseContext appContext = createDefaultContext();
 		appContext.set(Display.class, display);
 		appContext.set(Realm.class, DisplayRealm.getRealm(display));
-		appContext.set(UISynchronize.class, new UISynchronize() {
-
-			@Override
-			public void syncExec(Runnable runnable) {
-				if (display != null && !display.isDisposed()) {
-					display.syncExec(runnable);
-				}
-			}
-
-			@Override
-			public void asyncExec(Runnable runnable) {
-				if (display != null && !display.isDisposed()) {
-					display.asyncExec(runnable);
-				}
-			}
-		});
+		appContext.set(UISynchronize.class, new DisplayUISynchronize(display));
 		appContext.set(IApplicationContext.class, applicationContext);
 
 		// This context will be used by the injector for its

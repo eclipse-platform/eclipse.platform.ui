@@ -19,10 +19,6 @@ import static org.junit.Assert.assertTrue;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
@@ -42,7 +38,9 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.e4.ui.workbench.modeling.ISelectionListener;
+import org.eclipse.e4.ui.workbench.swt.DisplayUISynchronize;
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.swt.widgets.Display;
 import org.junit.Test;
 
 public class ESelectionServiceTest extends UITest {
@@ -880,7 +878,10 @@ public class ESelectionServiceTest extends UITest {
 	}
 
 	static class Target {
+		String s;
+
 		Target(String s) {
+			this.s = s;
 
 		}
 	}
@@ -1000,7 +1001,7 @@ public class ESelectionServiceTest extends UITest {
 		window.setSelectedElement(part);
 
 		initialize();
-		applicationContext.set(UISynchronize.class, new JobUISynchronizeImpl());
+		applicationContext.set(UISynchronize.class, new DisplayUISynchronize(Display.getDefault()));
 		getEngine().createGui(window);
 
 		IEclipseContext context = part.getContext();
@@ -1056,17 +1057,7 @@ public class ESelectionServiceTest extends UITest {
 
 	private void initialize() {
 		applicationContext.set(MApplication.class, application);
-		applicationContext.set(UISynchronize.class, new UISynchronize() {
-			@Override
-			public void syncExec(Runnable runnable) {
-				runnable.run();
-			}
-
-			@Override
-			public void asyncExec(final Runnable runnable) {
-				runnable.run();
-			}
-		});
+		applicationContext.set(UISynchronize.class, new DisplayUISynchronize(Display.getDefault()));
 		application.setContext(applicationContext);
 		final UIEventPublisher ep = new UIEventPublisher(applicationContext);
 		((Notifier) application).eAdapters().add(ep);
@@ -1135,23 +1126,4 @@ public class ESelectionServiceTest extends UITest {
 
 	}
 
-	static class JobUISynchronizeImpl extends UISynchronize {
-		@Override
-		public void syncExec(Runnable runnable) {
-			runnable.run();
-		}
-
-		@Override
-		public void asyncExec(final Runnable runnable) {
-			Job job = new Job("") {
-				@Override
-				protected IStatus run(IProgressMonitor monitor) {
-					runnable.run();
-					return Status.OK_STATUS;
-				}
-			};
-			job.setPriority(Job.INTERACTIVE);
-			job.schedule();
-		}
-	}
 }

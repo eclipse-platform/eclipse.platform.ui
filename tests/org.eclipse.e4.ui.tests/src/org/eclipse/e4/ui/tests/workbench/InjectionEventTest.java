@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Rolf Theunissen <rolf.theunissen@gmail.com> - Bug 546632
+ *     Christoph Läubrich - Bug 563459
  ******************************************************************************/
 package org.eclipse.e4.ui.tests.workbench;
 
@@ -33,6 +34,7 @@ import org.eclipse.e4.core.di.suppliers.ExtendedObjectSupplier;
 import org.eclipse.e4.core.internal.di.osgi.ProviderHelper;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.di.UISynchronize;
+import org.eclipse.e4.ui.workbench.swt.DisplayUISynchronize;
 import org.eclipse.swt.widgets.Display;
 import org.junit.Before;
 import org.junit.Test;
@@ -136,17 +138,7 @@ public class InjectionEventTest {
 		IEclipseContext context = EclipseContextFactory.create();
 		final Display d = Display.getDefault();
 
-		context.set(UISynchronize.class, new UISynchronize() {
-			@Override
-			public void syncExec(Runnable runnable) {
-				d.syncExec(runnable);
-			}
-
-			@Override
-			public void asyncExec(Runnable runnable) {
-				d.asyncExec(runnable);
-			}
-		});
+		context.set(UISynchronize.class, new DisplayUISynchronize(d));
 		ContextInjectionFactory.setDefault(context);
 
 		// Workaround, enforce injection on UIEventTopic provider with current context
@@ -237,17 +229,7 @@ public class InjectionEventTest {
 		IEclipseContext context = EclipseContextFactory.create();
 		final Display d = Display.getDefault();
 
-		context.set(UISynchronize.class, new UISynchronize() {
-			@Override
-			public void syncExec(Runnable runnable) {
-				d.syncExec(runnable);
-			}
-
-			@Override
-			public void asyncExec(Runnable runnable) {
-				d.asyncExec(runnable);
-			}
-		});
+		context.set(UISynchronize.class, new DisplayUISynchronize(d));
 		// Workaround, enforce injection on UIEventTopic provider with current context
 		ExtendedObjectSupplier supplier = ProviderHelper.findProvider(UIEventTopic.class.getName(), null);
 		ContextInjectionFactory.inject(supplier, context);

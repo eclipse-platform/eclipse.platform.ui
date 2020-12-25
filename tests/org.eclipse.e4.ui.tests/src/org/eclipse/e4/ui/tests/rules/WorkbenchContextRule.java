@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Rolf Theunissen and others.
+ * Copyright (c) 2019, 2020 Rolf Theunissen and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     Rolf Theunissen <rolf.theunissen@gmail.com> - initial API and implementation
+ *     Christoph Läubrich - adjust unit test
  ******************************************************************************/
 
 package org.eclipse.e4.ui.tests.rules;
@@ -27,6 +28,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.e4.ui.workbench.swt.DisplayUISynchronize;
 import org.eclipse.swt.widgets.Display;
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
@@ -70,17 +72,7 @@ public class WorkbenchContextRule implements MethodRule {
 		context.set(IWorkbench.PRESENTATION_URI_ARG, PartRenderingEngine.engineURI);
 
 		final Display display = Display.getDefault();
-		context.set(UISynchronize.class, new UISynchronize() {
-			@Override
-			public void syncExec(Runnable runnable) {
-				display.syncExec(runnable);
-			}
-
-			@Override
-			public void asyncExec(Runnable runnable) {
-				display.asyncExec(runnable);
-			}
-		});
+		context.set(UISynchronize.class, new DisplayUISynchronize(display));
 
 		ContextInjectionFactory.setDefault(context);
 

@@ -34,6 +34,7 @@ import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.IResourceUtilities;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.e4.ui.workbench.swt.DisplayUISynchronize;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtilities;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.URI;
@@ -150,18 +151,7 @@ public class MaximizePartSashContainerPlaceholderTest {
 		appContext.set(Display.class, Display.getDefault());
 		appContext.set(MApplication.class.getName(), application);
 		appContext.set(MWindow.class, window);
-		appContext.set(UISynchronize.class, new UISynchronize() {
-
-			@Override
-			public void syncExec(Runnable runnable) {
-				runnable.run();
-			}
-
-			@Override
-			public void asyncExec(Runnable runnable) {
-				runnable.run();
-			}
-		});
+		appContext.set(UISynchronize.class, new DisplayUISynchronize(Display.getDefault()));
 		appContext.set(EModelService.class, new ModelServiceImpl(appContext));
 
 		ContextInjectionFactory.setDefault(appContext);

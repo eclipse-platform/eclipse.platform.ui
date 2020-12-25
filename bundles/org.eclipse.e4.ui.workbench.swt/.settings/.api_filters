@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.e4.ui.workbench.swt" version="2">
-    <resource path="src/org/eclipse/e4/ui/workbench/swt/internal/copy/FilteredTree.java" type="org.eclipse.e4.ui.workbench.swt.internal.copy.FilteredTree$NotifyingTreeViewer">
-        <filter comment="Known extension" id="571473929">
+    <resource path="src/org/eclipse/e4/ui/workbench/swt/DisplayUISynchronize.java" type="org.eclipse.e4.ui.workbench.swt.DisplayUISynchronize">
+        <filter comment="This is the official platform implementation" id="571473929">
             <message_arguments>
-                <message_argument value="TreeViewer"/>
-                <message_argument value="NotifyingTreeViewer"/>
+                <message_argument value="UISynchronize"/>
+                <message_argument value="DisplayUISynchronize"/>
             </message_arguments>
         </filter>
     </resource>
