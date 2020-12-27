@@ -15,6 +15,7 @@
 package org.eclipse.ui.tests.keys;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
@@ -23,8 +24,6 @@ import java.util.List;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.bindings.keys.KeyStroke;
@@ -37,6 +36,7 @@ import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.keys.BindingService;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.junit.Rule;
@@ -67,10 +67,7 @@ public class Bug43321Test {
 	public void testNoCheckOnNonCheckbox() throws CommandException,
 			CoreException, ParseException {
 		IWorkbenchWindow window = UITestCase.openTestWindow();
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IProject testProject = workspace.getRoot().getProject("TestProject"); //$NON-NLS-1$
-		testProject.create(null);
-		testProject.open(null);
+		IProject testProject = FileUtil.createProject("TestProject"); //$NON-NLS-1$
 		IFile textFile = testProject.getFile("A.txt"); //$NON-NLS-1$
 		String contents = "A blurb"; //$NON-NLS-1$
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(contents
@@ -93,5 +90,11 @@ public class Bug43321Test {
 		IAction action = editor.getEditorSite().getActionBars()
 				.getGlobalActionHandler(ActionFactory.COPY.getId());
 		assertTrue("Non-checkbox menu item is checked.", !action.isChecked()); //$NON-NLS-1$
+
+		try {
+			FileUtil.deleteProject(testProject);
+		} catch (CoreException e) {
+			fail(e.toString());
+		}
 	}
 }

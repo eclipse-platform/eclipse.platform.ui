@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
@@ -120,7 +121,7 @@ public class MarkersTestMarkersView extends MarkerSupportView {
 	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
-		tree = (Tree) parent.getChildren()[0];
+		tree = getTreeWidget();
 	}
 
 	/**
@@ -140,4 +141,17 @@ public class MarkersTestMarkersView extends MarkerSupportView {
 		return true;
 	}
 
+	private Tree getTreeWidget() {
+		TreeViewer viewer;
+		try {
+			Method m = ExtendedMarkersView.class.getDeclaredMethod("getViewer");
+			m.setAccessible(true);
+			viewer = (TreeViewer) m.invoke(this);
+			return viewer.getTree();
+		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }
