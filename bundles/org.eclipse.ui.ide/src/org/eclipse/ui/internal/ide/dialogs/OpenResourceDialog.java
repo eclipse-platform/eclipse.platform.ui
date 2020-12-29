@@ -16,6 +16,7 @@ package org.eclipse.ui.internal.ide.dialogs;
 import java.util.Collections;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
@@ -278,14 +279,30 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void updateButtonsEnableState(IStatus status) {
-		super.updateButtonsEnableState(status);
-		if (showInButton != null && !showInButton.isDisposed()
-				&& openWithButton != null && !openWithButton.isDisposed()) {
-			openWithButton.setEnabled(!status.matches(IStatus.ERROR) && getSelectedItems().size() == 1);
-			showInButton.setEnabled(!status.matches(IStatus.ERROR) && getSelectedItems().size() > 0);
+		Button okButton = getOkButton();
+		if (isButtonReady(okButton) && isButtonReady(showInButton) && isButtonReady(openWithButton)) {
+			if (status.matches(IStatus.ERROR) || getSelectedItems().size() == 0) {
+				okButton.setEnabled(false);
+				openWithButton.setEnabled(false);
+				showInButton.setEnabled(false);
+			} else if (getSelectedItems().toList().stream().allMatch(IFile.class::isInstance)) {
+				// selection contains only IFile
+				okButton.setEnabled(true);
+				openWithButton.setEnabled(getSelectedItems().size() == 1);
+				showInButton.setEnabled(true);
+			} else {
+				okButton.setEnabled(false);
+				openWithButton.setEnabled(false);
+				showInButton.setEnabled(true);
+			}
 		}
+	}
+
+	private boolean isButtonReady(Button button) {
+		return button != null && !button.isDisposed();
 	}
 
 	private IAdaptable getSelectedAdaptable() {

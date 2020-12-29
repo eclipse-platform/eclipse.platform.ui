@@ -539,6 +539,13 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 		progressMonitor.done();
 	}
 
+	private boolean parentIsRoot(IResource resource) {
+		if (resource.getParent() == null) {
+			return false;
+		}
+		return resource.getParent().getType() == IResource.ROOT;
+	}
+
 	/**
 	 * Sets the derived flag on the ResourceFilter instance
 	 */
@@ -619,10 +626,11 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 			}
 
 			IResource res = (IResource) element;
-
 			StringBuilder str = new StringBuilder(res.getName());
-			str.append(" - "); //$NON-NLS-1$
-			str.append(res.getParent().getFullPath().makeRelative().toString());
+			if (!parentIsRoot(res)) {
+				str.append(" - "); //$NON-NLS-1$
+				str.append(res.getParent().getFullPath().makeRelative().toString());
+			}
 
 			return str.toString();
 		}
@@ -654,10 +662,11 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 			getMatchPositions(resourceName, searchFieldString).stream()
 					.forEach(position -> str.setStyle(position.offset, position.length, boldStyler));
 
-			// Show extra package info on every element
-			str.append(" - ", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
-			str.append(resource.getParent().getFullPath().makeRelative().toString(), StyledString.QUALIFIER_STYLER);
-
+			if (!parentIsRoot(resource)) {
+				// Show extra package info on elements not in root
+				str.append(" - ", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
+				str.append(resource.getParent().getFullPath().makeRelative().toString(), StyledString.QUALIFIER_STYLER);
+			}
 			return str;
 		}
 
@@ -791,8 +800,13 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 				return super.getImage(element);
 			}
 
-			IResource parent = ((IResource) element).getParent();
-			return provider.getImage(parent);
+			final IResource resource = (IResource) element;
+
+			if (parentIsRoot(resource)) {
+				return provider.getImage(resource);
+			}
+
+			return provider.getImage(resource.getParent());
 		}
 
 		@Override
@@ -806,7 +820,7 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 			if (parent.getType() == IResource.ROOT) {
 				// Get readable name for workspace root ("Workspace"), without
 				// duplicating language-specific string here.
-				return null;
+				return ((IResource) element).getName();
 			}
 
 			return parent.getFullPath().makeRelative().toString();

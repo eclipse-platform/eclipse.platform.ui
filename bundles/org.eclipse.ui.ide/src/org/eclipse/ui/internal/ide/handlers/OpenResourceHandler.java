@@ -156,7 +156,7 @@ public final class OpenResourceHandler extends Action implements IHandler,
 		final IContainer input = ResourcesPlugin.getWorkspace().getRoot();
 
 		final OpenResourceDialog dialog = new OpenResourceDialog(parent, input,
-				IResource.FILE);
+				IResource.FILE | IResource.PROJECT);
 		final int resultCode = dialog.open();
 		if (resultCode != Window.OK) {
 			return null;
