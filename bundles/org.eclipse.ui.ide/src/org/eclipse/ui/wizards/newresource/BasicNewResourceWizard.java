@@ -14,13 +14,13 @@
 package org.eclipse.ui.wizards.newresource;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -142,32 +142,42 @@ public abstract class BasicNewResourceWizard extends Wizard implements
 			return;
 		}
 
-		// get all the view and editor parts
-		List<IWorkbenchPart> parts = new ArrayList<>();
-		for (IWorkbenchPartReference ref : page.getViewReferences()) {
-			IWorkbenchPart part = ref.getPart(false);
+		ISelection selection = new StructuredSelection(resource);
+
+		// collect all the view and editor parts
+		List<Runnable> runnables = new ArrayList<>();
+		collectSelectAndRevealRunnables(selection, runnables, page.getViewReferences());
+		collectSelectAndRevealRunnables(selection, runnables, page.getEditorReferences());
+
+		if (!runnables.isEmpty()) {
+			for (Runnable runnable : runnables) {
+				window.getShell().getDisplay().asyncExec(runnable);
+			}
+		}
+	}
+
+	private static void collectSelectAndRevealRunnables(ISelection selection, List<Runnable> runnables,
+			IWorkbenchPartReference[] partRefs) {
+		for (IWorkbenchPartReference partRef : partRefs) {
+			IWorkbenchPart part = partRef.getPart(false);
 			if (part != null) {
-				parts.add(part);
-			}
-		}
-		for (IWorkbenchPartReference ref : page.getEditorReferences()) {
-			if (ref.getPart(false) != null) {
-				parts.add(ref.getPart(false));
-			}
-		}
+				ISelectionProvider selectionProvider = part.getSite().getSelectionProvider();
+				if (selectionProvider != null) {
+					ISetSelectionTarget selectionTarget = Adapters.adapt(part, ISetSelectionTarget.class);
+					if (selectionTarget != null) {
+						runnables.add(() -> {
+							ISelection oldSelection = selectionProvider.getSelection();
+							selectionTarget.selectReveal(selection);
 
-		final ISelection selection = new StructuredSelection(resource);
-		Iterator<?> itr = parts.iterator();
-		while (itr.hasNext()) {
-			IWorkbenchPart part = (IWorkbenchPart) itr.next();
-
-			// get the part's ISetSelectionTarget implementation
-			ISetSelectionTarget target = Adapters.adapt(part, ISetSelectionTarget.class);
-
-			if (target != null) {
-				// select and reveal resource
-				final ISetSelectionTarget finalTarget = target;
-				window.getShell().getDisplay().asyncExec(() -> finalTarget.selectReveal(selection));
+							if (!oldSelection.isEmpty()) {
+								ISelection newSelection = selectionProvider.getSelection();
+								if (!selection.equals(newSelection)) {
+									selectionTarget.selectReveal(oldSelection);
+								}
+							}
+						});
+					}
+				}
 			}
 		}
 	}
