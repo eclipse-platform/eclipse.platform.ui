@@ -26,6 +26,7 @@ import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
 import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
+import org.eclipse.e4.ui.workbench.swt.DisplayUISynchronize;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Widget;
@@ -71,22 +72,7 @@ public class ContextServiceFactory extends AbstractServiceFactory {
 			appContext.set(Realm.class, Realm.getDefault());
 
 			final Display display = Display.getCurrent();
-			appContext.set(UISynchronize.class, new UISynchronize() {
-
-				@Override
-				public void syncExec(Runnable runnable) {
-					if (display != null && !display.isDisposed()) {
-						display.syncExec(runnable);
-					}
-				}
-
-				@Override
-				public void asyncExec(Runnable runnable) {
-					if (display != null && !display.isDisposed()) {
-						display.asyncExec(runnable);
-					}
-				}
-			});
+			appContext.set(UISynchronize.class, new DisplayUISynchronize(display));
 
 			final IThemeManager manager = serviceContext.get(IThemeManager.class);
 			final IThemeEngine engine = manager.getEngineForDisplay(Display.getCurrent());
