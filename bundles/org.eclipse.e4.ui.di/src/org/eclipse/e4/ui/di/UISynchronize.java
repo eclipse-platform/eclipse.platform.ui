@@ -134,7 +134,6 @@ public abstract class UISynchronize {
 	 * @param action the action to be performed must not be <code>null</code>
 	 * @throws InterruptedException if either the current or the background thread
 	 *                              where interrupted while waiting for the result
-	 * @throws ExecutionException   if the concurrent execution has thrown an
 	 *                              exception
 	 * @since 1.3
 	 */
