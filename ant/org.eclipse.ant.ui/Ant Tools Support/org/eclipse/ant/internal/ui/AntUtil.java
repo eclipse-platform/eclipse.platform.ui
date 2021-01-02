@@ -734,13 +734,7 @@ public final class AntUtil {
 		if (extns.length == 0) {
 			return IAntCoreConstants.XML_EXTENSION;
 		}
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < extns.length; i++) {
-			if (i > 0)
-				sb.append('|');
-			sb.append(extns[i]);
-		}
-		return sb.toString();
+		return String.join(String.valueOf('|'), extns);
 	}
 
 	/**
