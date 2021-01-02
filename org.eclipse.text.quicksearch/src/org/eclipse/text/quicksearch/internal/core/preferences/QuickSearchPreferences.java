@@ -98,14 +98,7 @@ public class QuickSearchPreferences {
 	}
 
 	private static String encode(String[] strings) {
-		StringBuilder encoded = new StringBuilder();
-		for (int i = 0; i < strings.length; i++) {
-			if (i>0) {
-				encoded.append(", ");  //$NON-NLS-1$
-			}
-			encoded.append(strings[i]);
-		}
-		return encoded.toString();
+		return String.join(", ", strings); //$NON-NLS-1$
 	}
 
 

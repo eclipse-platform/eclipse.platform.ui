@@ -193,14 +193,7 @@ public final class FileTextSearchScope extends TextSearchScope {
 			return BasicElementLabels.getFilePattern("*"); //$NON-NLS-1$
 		}
 		Arrays.sort(ext);
-		StringBuilder buf= new StringBuilder();
-		for (int i= 0; i < ext.length; i++) {
-			if (i > 0) {
-				buf.append(", "); //$NON-NLS-1$
-			}
-			buf.append(ext[i]);
-		}
-		return BasicElementLabels.getFilePattern(buf.toString());
+		return BasicElementLabels.getFilePattern(String.join(", ", ext)); //$NON-NLS-1$
 	}
 
 	/**

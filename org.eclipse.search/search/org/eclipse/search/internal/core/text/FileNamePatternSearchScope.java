@@ -146,14 +146,7 @@ public class FileNamePatternSearchScope extends TextSearchScope {
 	public String getFileNamePatternDescription() {
 		String[] ext= fFileNamePatterns.toArray(new String[fFileNamePatterns.size()]);
 		Arrays.sort(ext);
-		StringBuilder buf= new StringBuilder();
-		for (int i= 0; i < ext.length; i++) {
-			if (i > 0) {
-				buf.append(", "); //$NON-NLS-1$
-			}
-			buf.append(ext[i]);
-		}
-		return buf.toString();
+		return String.join(", ", ext); //$NON-NLS-1$
 	}
 
 
