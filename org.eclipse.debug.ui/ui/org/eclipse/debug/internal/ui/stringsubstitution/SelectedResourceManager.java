@@ -242,6 +242,12 @@ public class SelectedResourceManager  {
 		} catch (TimeoutException e) {
 			reportTimeout();
 			return null;
+		} catch (InterruptedException e) {
+			Thread.interrupted();
+			// Bug 569486: don't care, tha task was cancelled, see for example
+			// org.eclipse.jface.text.TextViewerHoverManager.TextViewerHoverManager()
+			// DebugUIPlugin.log(e);
+			return null;
 		} catch (Exception e) {
 			DebugUIPlugin.log(e);
 			return null;
