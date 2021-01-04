@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2020 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -178,6 +178,10 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * Step filter manager
 	 */
 	private StepFilterManager fStepFilterManager = null;
+
+	public LaunchManager() {
+		getAllLaunchConfigurations();
+	}
 
 	/**
 	 * Notifies a launch config listener in a safe runnable to handle
