@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2020 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -1871,6 +1871,38 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		ILaunchConfigurationWorkingCopy t1 = newEmptyPrototype(null, "prototype-to-duplicate"); //$NON-NLS-1$
 		ILaunchConfigurationWorkingCopy t2 = t1.copy("duplicate-prototype"); //$NON-NLS-1$
 		assertTrue(t2.isPrototype());
+	}
+
+	@Test
+	public void testNewInstanceNotifiesListener() throws CoreException {
+		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+		final ArrayList<String> added = new ArrayList<>();
+		ILaunchConfigurationListener listener = new ILaunchConfigurationListener() {
+
+			@Override
+			public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
+
+			}
+
+			@Override
+			public void launchConfigurationChanged(ILaunchConfiguration configuration) {
+
+			}
+
+			@Override
+			public void launchConfigurationAdded(ILaunchConfiguration configuration) {
+				added.add("Launch Configuration added");
+
+			}
+		};
+		launchManager.addLaunchConfigurationListener(listener);
+		String typeId = "org.eclipse.ui.externaltools.ProgramLaunchConfigurationType";
+
+		ILaunchConfigurationType type = launchManager.getLaunchConfigurationType(typeId);
+		type.newInstance(null, "new-lc").doSave();
+		assertEquals(1, added.size());
+		assertEquals("Launch Configuration added", added.get(0));
+
 	}
 
 }

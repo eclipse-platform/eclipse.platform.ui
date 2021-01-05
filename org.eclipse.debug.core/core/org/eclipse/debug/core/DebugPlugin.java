@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -591,6 +591,9 @@ public class DebugPlugin extends Plugin {
 	public synchronized ILaunchManager getLaunchManager() {
 		if (fLaunchManager == null) {
 			fLaunchManager = new LaunchManager();
+			fLaunchManager.getAllLaunchConfigurations();
+			// monitor launch configuration renames for launch groups
+			fLaunchManager.addLaunchConfigurationListener(new GroupMemberChangeListener());
 		}
 		return fLaunchManager;
 	}
@@ -726,9 +729,6 @@ public class DebugPlugin extends Plugin {
 		manager.registerAdapters(actionFactory, ILaunch.class);
 		manager.registerAdapters(actionFactory, IProcess.class);
 		manager.registerAdapters(actionFactory, IDebugElement.class);
-
-		// monitor launch configuration renames for launch groups
-		getLaunchManager().addLaunchConfigurationListener(new GroupMemberChangeListener());
 	}
 
 	/**
