@@ -1523,7 +1523,6 @@
                helpContextId="disable_breakpoint_action_context"
                class="org.eclipse.debug.internal.ui.actions.breakpoints.DisableAllBreakpointsAction"
                menubarPath="breakpointGroup"
-               enablesFor="+"
                id="org.eclipse.debug.ui.actions.DisableAllBreakpoint">
         </action>
         <action
