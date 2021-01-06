@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2019 IBM Corporation and others.
+ * Copyright (c) 2003, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -25,6 +25,8 @@ import org.eclipse.ant.launching.IAntLaunchConstants;
 import org.eclipse.ant.tests.ui.testplugin.ConsoleLineTracker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.text.BadLocationException;
@@ -54,6 +56,10 @@ public class BuildTests extends AbstractAntUIBuildTest {
 	 * stack trace. Bug 82833
 	 */
 	public void testVerboseStackTrace() throws Exception {
+		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode("org.eclipse.ui.monitoring"); //$NON-NLS-1$
+		if (prefs != null) {
+			prefs.putBoolean("monitoring_enabled", false); //$NON-NLS-1$
+		}
 		launch("failingTarget", "-k -verbose"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertEquals("Incorrect message", "BUILD FAILED", ConsoleLineTracker.getMessage(19)); //$NON-NLS-1$ //$NON-NLS-2$
 		assertTrue("Incorrect message" + ConsoleLineTracker.getMessage(22), //$NON-NLS-1$
@@ -143,7 +149,7 @@ public class BuildTests extends AbstractAntUIBuildTest {
 
 	/**
 	 * Tests specifying the XmlLogger as a listener (bug 80435)
-	 * 
+	 *
 	 * @throws FileNotFoundException
 	 */
 	public void testXmlLoggerListener() throws CoreException, FileNotFoundException {
