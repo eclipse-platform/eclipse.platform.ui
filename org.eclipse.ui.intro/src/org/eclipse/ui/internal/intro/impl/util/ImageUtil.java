@@ -18,13 +18,12 @@ import java.net.URL;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Convenience class for Images.
@@ -64,8 +63,7 @@ public final class ImageUtil {
 	 * append that directory name for "imageName".
 	 */
 	public static ImageDescriptor createImageDescriptor(String imageName) {
-		return createImageDescriptor(Platform
-			.getBundle(IIntroConstants.PLUGIN_ID), ICONS_PATH + imageName);
+		return createImageDescriptor(FrameworkUtil.getBundle(ImageUtil.class), ICONS_PATH + imageName);
 	}
 
 	/**
