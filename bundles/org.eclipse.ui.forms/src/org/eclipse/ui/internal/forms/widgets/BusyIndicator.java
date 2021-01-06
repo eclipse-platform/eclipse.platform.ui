@@ -19,7 +19,6 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -31,6 +30,7 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 public final class BusyIndicator extends Canvas {
 
@@ -163,7 +163,7 @@ public final class BusyIndicator extends Canvas {
 	}
 
 	private ImageDescriptor createImageDescriptor(String relativePath) {
-		Bundle bundle = Platform.getBundle("org.eclipse.ui.forms"); //$NON-NLS-1$
+		Bundle bundle = FrameworkUtil.getBundle(this.getClass());
 		URL url = FileLocator.find(bundle, new Path(relativePath),null);
 		if (url == null) return null;
 		try {
