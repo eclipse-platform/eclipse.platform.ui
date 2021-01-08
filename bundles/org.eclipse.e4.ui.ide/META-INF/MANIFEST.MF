@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Automatic-Module-Name: org.eclipse.e4.ui.ide
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.eclipse.e4.ui.ide
-Bundle-Version: 3.15.100.qualifier
+Bundle-Version: 3.15.200.qualifier
 Bundle-Name: %Bundle-Name
 Bundle-Vendor: %Bundle-Vendor
 Bundle-Copyright: %Bundle-Copyright
