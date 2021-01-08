@@ -1152,7 +1152,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		} catch (BackingStoreException e) {
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR,
 					CommonNavigatorMessages.NavigatorContentService_problemSavingPreferences, e);
-			Platform.getLog(Platform.getBundle(NavigatorPlugin.PLUGIN_ID)).log(status);
+			Platform.getLog(NavigatorContentService.class).log(status);
 		}
 	}
 
