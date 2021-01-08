@@ -20,6 +20,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 public class CommonImages {
 
@@ -28,7 +29,7 @@ public class CommonImages {
 	static {
 		Bundle bundle = null;
 		if (Platform.isRunning()) {
-			bundle = Platform.getBundle("org.eclipse.jface.notifications");
+			bundle = FrameworkUtil.getBundle(CommonImages.class);
 		}
 		if (bundle != null) {
 			baseUrl = bundle.getEntry("/icons/"); //$NON-NLS-1$
