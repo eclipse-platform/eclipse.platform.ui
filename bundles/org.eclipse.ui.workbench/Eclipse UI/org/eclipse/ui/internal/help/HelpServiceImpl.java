@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 IBM Corporation and others.
+ * Copyright (c) 2014, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,11 +11,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 445723, 445600
+ *     Christoph Läubrich - Bug 570216
  ******************************************************************************/
 
 package org.eclipse.ui.internal.help;
 
 import org.eclipse.e4.ui.services.help.EHelpService;
+import org.eclipse.help.HelpSystem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -45,5 +47,10 @@ public class HelpServiceImpl implements EHelpService {
 			WorkbenchHelpSystem.getInstance().setHelp((MenuItem) helpTarget, helpContextId);
 		}
 
+	}
+
+	@Override
+	public boolean hasHelp(String helpContextId) {
+		return HelpSystem.getContext(helpContextId) != null;
 	}
 }

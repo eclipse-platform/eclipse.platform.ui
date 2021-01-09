@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2016 IBM Corporation and others.
+ * Copyright (c) 2014, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 445723, 445600, 505896
+ *     Christoph Läubrich - Bug 570216
  ******************************************************************************/
 
 package org.eclipse.e4.ui.services.help;
@@ -46,5 +47,15 @@ public interface EHelpService {
 	 *            the id to use when help system is invoked
 	 */
 	void setHelp(Object element, String helpContextId);
+
+	/**
+	 * Check if help is available for the given id
+	 *
+	 * @param helpContextId the id to use when help system is invoked
+	 * @return <code>true</code> if help is available for the given id,
+	 *         <code>false</code> otherwise
+	 * @since 1.5
+	 */
+	boolean hasHelp(String helpContextId);
 
 }
