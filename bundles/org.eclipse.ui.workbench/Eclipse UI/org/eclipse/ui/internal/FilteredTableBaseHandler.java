@@ -186,7 +186,9 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 
 		/* for issues with dark theme, don't use SWT.SEPARATOR as style */
 		labelSeparator = new Label(composite, SWT.HORIZONTAL);
-		labelSeparator.setBackgroundImage(getSeparatorBgImage());
+		Image separatorBgImage = createSeparatorBgImage();
+		labelSeparator.setBackgroundImage(separatorBgImage);
+		labelSeparator.addDisposeListener(e -> separatorBgImage.dispose());
 		GridData gd_label = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
 		gd_label.heightHint = 1;
 		labelSeparator.setLayoutData(gd_label);
@@ -317,7 +319,7 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 	 * Build a 1x1 px gray image to be used as separator. This color, halfway
 	 * between white and black, looks good both in Classic and in Dark Theme
 	 */
-	private Image getSeparatorBgImage() {
+	private Image createSeparatorBgImage() {
 		Image backgroundImage = new Image(Display.getDefault(), 1, 1);
 		GC gc = new GC(backgroundImage);
 		gc.setBackground(new Color(dialog.getDisplay(), 127, 127, 127));
