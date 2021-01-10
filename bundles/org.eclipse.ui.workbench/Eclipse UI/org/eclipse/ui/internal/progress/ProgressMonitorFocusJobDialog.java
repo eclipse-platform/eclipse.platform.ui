@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,7 +18,6 @@ package org.eclipse.ui.internal.progress;
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
@@ -210,8 +209,7 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 
 				JobMonitor jobMonitor = ProgressManager.getInstance().progressFor(job);
 				Display d = Display.getCurrent();
-				IProgressMonitorWithBlocking wrapper = ProgressMonitorUtil
-						.createAccumulatingProgressMonitor(getProgressMonitor(), d);
+				IProgressMonitor wrapper = ProgressMonitorUtil.createUIProgressMonitor(getProgressMonitor(), d);
 				jobMonitor.addProgressListener(wrapper);
 				open();
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2017 Red Hat Inc. and others.
+ * Copyright (c) 2016, 2021 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,7 +22,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
-import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.operation.ProgressMonitorUtil;
@@ -48,7 +48,7 @@ public class AccumulatingProgressMonitorTest {
 	 * call is in the correct thread. Most will be on the UI thread but some
 	 * methods are exempt.
 	 */
-	private class UIThreadAsserterMonitor implements IProgressMonitorWithBlocking {
+	private class UIThreadAsserterMonitor implements IProgressMonitor {
 		public boolean beginTaskCalled = false;
 		public boolean setTaskNameCalled = false;
 		public boolean subTaskCalled = false;
@@ -127,7 +127,7 @@ public class AccumulatingProgressMonitorTest {
 	 * will keep a reference to every setTaskName call and be able to provide
 	 * the list later for inspection.
 	 */
-	private class CollectorAsserterMonitor implements IProgressMonitorWithBlocking {
+	private class CollectorAsserterMonitor implements IProgressMonitor {
 		ArrayList<String> receivedTaskNames = new ArrayList<>();
 
 		public ArrayList<String> getTaskNames() {
@@ -201,8 +201,7 @@ public class AccumulatingProgressMonitorTest {
 				try {
 					UIThreadAsserterMonitor tm = new UIThreadAsserterMonitor();
 					mon2[0] = tm;
-					IProgressMonitorWithBlocking wrapper = ProgressMonitorUtil.createAccumulatingProgressMonitor(tm,
-							Display.getDefault());
+					IProgressMonitor wrapper = ProgressMonitorUtil.createUIProgressMonitor(tm, Display.getDefault());
 
 					wrapper.beginTask("Some Task", 100);
 					wrapper.setTaskName("Task Name");
@@ -276,8 +275,7 @@ public class AccumulatingProgressMonitorTest {
 	public void testCollector() {
 		final CollectorAsserterMonitor mon = new CollectorAsserterMonitor();
 		final int[] numLoops = new int[] { 10000 };
-		IProgressMonitorWithBlocking wrapper = ProgressMonitorUtil.createAccumulatingProgressMonitor(mon,
-				Display.getDefault());
+		IProgressMonitor wrapper = ProgressMonitorUtil.createUIProgressMonitor(mon, Display.getDefault());
 		wrapper.beginTask("Some Task", 100);
 		for (int i = 0; i < numLoops[0]; i++) {
 			wrapper.setTaskName("Task Name " + i);

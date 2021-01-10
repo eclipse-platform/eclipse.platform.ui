@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2020 IBM Corporation and others.
+ * Copyright (c) 2004, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -155,7 +155,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 	/**
 	 * Return the ProgressMonitorWithBlocking for the receiver.
 	 *
-	 * @return IProgressMonitorWithBlocking
+	 * @return IProgressMonitor
 	 */
 	private IProgressMonitor getBlockingProgressMonitor() {
 		return new IProgressMonitor() {
