@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2020 IBM Corporation and others.
+ * Copyright (c) 2005, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -104,7 +104,7 @@ public class FindUnusedMembers implements IRunnableWithProgress {
 		IType[] allTypes = cu.getAllTypes();
 		SubMonitor subMonitor = SubMonitor.convert(monitor, "Processing " + cu.getElementName(), allTypes.length + 1); //$NON-NLS-1$
 
-		ASTParser astParser = ASTParser.newParser(AST.JLS14);
+		ASTParser astParser = ASTParser.newParser(AST.JLS15);
 		astParser.setResolveBindings(true);
 		astParser.setProject(cu.getJavaProject());
 
