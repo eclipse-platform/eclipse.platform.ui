@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020 Alex Blewitt and others.
+ * Copyright (c) 2020, 2021 Alex Blewitt and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -28,8 +28,6 @@ import org.xml.sax.SAXException;
 
 import org.eclipse.core.internal.content.XMLRootHandler;
 
-import org.eclipse.core.runtime.CoreException;
-
 public class XMLRootHandlerTest {
 
 	private XMLRootHandler handler;
@@ -40,7 +38,7 @@ public class XMLRootHandlerTest {
 	}
 
 	@After
-	public void tearDown() throws CoreException {
+	public void tearDown() {
 		this.handler = null;
 	}
 
