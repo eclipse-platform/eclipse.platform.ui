@@ -19,6 +19,6 @@
   </parent>
   <groupId>org.eclipse.core</groupId>
   <artifactId>org.eclipse.core.contenttype</artifactId>
-  <version>3.7.800-SNAPSHOT</version>
+  <version>3.7.900-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>
