@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime.jobs;
 
-import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.tests.harness.TestBarrier;
 import org.eclipse.core.tests.harness.TestProgressMonitor;
@@ -22,7 +22,7 @@ import org.eclipse.core.tests.harness.TestProgressMonitor;
  * A test progress monitor that sends a signal to a barrier object when it
  * becomes blocked.
  */
-class TestBlockingMonitor extends TestProgressMonitor implements IProgressMonitorWithBlocking {
+class TestBlockingMonitor extends TestProgressMonitor implements IProgressMonitor {
 	private TestBarrier barrier;
 	private boolean cancelled;
 
