@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 IBM Corporation and others.
+ * Copyright (c) 2012, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -41,20 +41,19 @@ public class TestNodeStorage3 extends AbstractPreferenceStorage {
 
 	// made package private to use during testing
 	/* package */File getLocation(String nodePath) throws BackingStoreException {
-		if (root == null)
+		if (root == null) {
 			throw new BackingStoreException("Problems getting preference location.");
+		}
 		IPath path = new Path(nodePath);
 		return new File(root, path.lastSegment());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceStorage#load(java.lang.String)
-	 */
 	@Override
 	public Properties load(String nodePath) throws BackingStoreException {
 		File file = getLocation(nodePath);
-		if (!file.exists())
+		if (!file.exists()) {
 			return null;
+		}
 		InputStream input;
 		try {
 			input = new BufferedInputStream(new FileInputStream(file));
@@ -64,14 +63,12 @@ public class TestNodeStorage3 extends AbstractPreferenceStorage {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceStorage#save(java.lang.String, java.util.Properties)
-	 */
 	@Override
 	public void save(String nodePath, Properties properties) throws BackingStoreException {
 		File file = getLocation(nodePath);
-		if (file == null)
+		if (file == null) {
 			return;
+		}
 		OutputStream output;
 		try {
 			output = new BufferedOutputStream(new FileOutputStream(file));
@@ -81,24 +78,19 @@ public class TestNodeStorage3 extends AbstractPreferenceStorage {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceStorage#childrenNames(java.lang.String)
-	 */
 	@Override
 	public String[] childrenNames(String nodePath) {
 		// Until we expose load-levels to the user, we will only be called for root children here
 		return root == null ? new String[0] : root.list();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceStorage#removed(java.lang.String)
-	 */
 	@Override
 	public void removed(String nodePath) {
 		try {
 			File file = getLocation(nodePath);
-			if (file.exists())
+			if (file.exists()) {
 				file.delete();
+			}
 		} catch (BackingStoreException e) {
 			// fall through
 		}

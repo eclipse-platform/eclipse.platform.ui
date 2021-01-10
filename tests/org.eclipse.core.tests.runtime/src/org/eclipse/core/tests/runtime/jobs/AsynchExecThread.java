@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -40,9 +40,6 @@ public class AsynchExecThread extends Thread {
 		this.index = index;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Runnable#run()
-	 */
 	@Override
 	public void run() {
 		//wait until the main testing method allows this thread to run
@@ -73,8 +70,9 @@ public class AsynchExecThread extends Thread {
 				}
 				current.worked(1);
 			}
-			if (ticks <= 0)
+			if (ticks <= 0) {
 				current.worked(1);
+			}
 		} finally {
 			status[index] = TestBarrier.STATUS_DONE;
 			current.done();

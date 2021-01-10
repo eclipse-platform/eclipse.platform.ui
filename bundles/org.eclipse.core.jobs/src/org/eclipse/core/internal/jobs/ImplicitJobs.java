@@ -51,8 +51,8 @@ class ImplicitJobs {
 		this.manager = manager;
 	}
 
-	/* (Non-javadoc)
-	 * @see IJobManager#beginRule
+	/*
+	 * @see IJobManager#beginRule(ISchedulingRule, IProgressMonitor)
 	 */
 	void begin(ISchedulingRule rule, IProgressMonitor monitor, boolean suspend) {
 		if (JobManager.DEBUG_BEGIN_END)
@@ -106,7 +106,7 @@ class ImplicitJobs {
 		}
 	}
 
-	/* (Non-javadoc)
+	/*
 	 * @see IJobManager#endRule
 	 */
 	synchronized void end(ISchedulingRule rule, boolean resume) {

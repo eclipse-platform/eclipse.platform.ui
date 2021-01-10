@@ -146,9 +146,6 @@ public class IterateExpression extends CompositeExpression {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see Expression#evaluate(IVariablePool)
-	 */
 	@Override
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 		Object var= context.getDefaultVariable();

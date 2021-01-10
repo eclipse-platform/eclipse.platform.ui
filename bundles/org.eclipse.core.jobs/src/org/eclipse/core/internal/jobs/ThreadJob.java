@@ -414,9 +414,6 @@ class ThreadJob extends Job {
 		return true;
 	}
 
-	/** (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public IStatus run(IProgressMonitor monitor) {
 		synchronized (this) {
@@ -443,7 +440,7 @@ class ThreadJob extends Job {
 		return realJob == null ? true : !realJob.isSystem();
 	}
 
-	/* (non-javadoc)
+	/*
 	 * For debugging purposes only
 	 */
 	@Override

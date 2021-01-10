@@ -194,11 +194,6 @@ public class Setup implements Cloneable {
 		this.manager = manager;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see java.lang.Object#clone()
-	 */
 	@Override
 	public Object clone() {
 		Setup clone = null;

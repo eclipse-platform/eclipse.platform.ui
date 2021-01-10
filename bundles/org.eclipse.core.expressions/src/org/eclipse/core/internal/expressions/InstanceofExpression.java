@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -47,9 +47,6 @@ public class InstanceofExpression extends Expression {
 		fTypeName= typeName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.corext.refactoring.participants.Expression#evaluate(java.lang.Object)
-	 */
 	@Override
 	public EvaluationResult evaluate(IEvaluationContext context) {
 		Object element= context.getDefaultVariable();

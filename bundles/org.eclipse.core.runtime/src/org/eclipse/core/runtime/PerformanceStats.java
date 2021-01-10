@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -377,9 +377,6 @@ public class PerformanceStats {
 		currentStart = NOT_STARTED;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals()
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		//count and time are not considered part of equality

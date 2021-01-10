@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -353,13 +353,6 @@ public class EclipseContextTest {
 		IEclipseContext context = EclipseContextFactory.create("ParentContext");
 		context.set("x", new ContextFunction() {
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see
-			 * org.eclipse.e4.core.contexts.ContextFunction#compute(org.eclipse
-			 * .e4.core.contexts.IEclipseContext, java.lang.String)
-			 */
 			@Override
 			public Object compute(IEclipseContext context, String contextKey) {
 				return IInjector.NOT_A_VALUE;
@@ -381,13 +374,6 @@ public class EclipseContextTest {
 		parent.set("x", Integer.valueOf(1));
 		child.set("x", new ContextFunction() {
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see
-			 * org.eclipse.e4.core.contexts.ContextFunction#compute(org.eclipse
-			 * .e4.core.contexts.IEclipseContext, java.lang.String)
-			 */
 			@Override
 			public Object compute(IEclipseContext context, String contextKey) {
 				return IInjector.NOT_A_VALUE;
