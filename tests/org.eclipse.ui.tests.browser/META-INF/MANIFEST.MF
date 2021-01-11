@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui.tests.browser;singleton:=true
-Bundle-Version: 3.2.200
+Bundle-Version: 3.3.0
 Bundle-Vendor: %Plugin.providerName
 Export-Package: org.eclipse.ui.tests.browser.internal
 Require-Bundle: org.eclipse.core.runtime,
@@ -11,5 +11,5 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui.browser
 Bundle-ActivationPolicy: lazy
 Eclipse-BundleShape: dir
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Automatic-Module-Name: org.eclipse.ui.tests.browser
