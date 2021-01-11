@@ -52,7 +52,7 @@ public class ViewWithSaveables extends ViewPart implements ISaveablesSource,
 		ISaveablePart {
 
 	WritableList<Saveable> saveables = new WritableList<>();
-	IObservableValue<?> dirty = new ComputedValue<Object>() {
+	IObservableValue<?> dirty = new ComputedValue<>() {
 		@Override
 		protected Object calculate() {
 			for (Object obj : saveables) {
