@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %bundlename
 Bundle-SymbolicName: org.eclipse.ui.tests.navigator;singleton:=true
-Bundle-Version: 3.5.1300.qualifier
+Bundle-Version: 3.6.0.qualifier
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.resources,
  org.eclipse.core.runtime,
@@ -15,7 +15,7 @@ Require-Bundle: org.eclipse.core.resources,
  org.eclipse.ui.tests.harness,
  org.eclipse.ui.editors
 Bundle-Vendor: Eclipse.org
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: org.eclipse.ui.tests.navigator;x-internal:=true
 Eclipse-BundleShape: dir
 Automatic-Module-Name: org.eclipse.ui.tests.navigator
