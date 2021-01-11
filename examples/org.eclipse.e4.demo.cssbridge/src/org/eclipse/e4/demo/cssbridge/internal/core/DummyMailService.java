@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBM Corporation and others.
+ * Copyright (c) 2014, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.e4.demo.cssbridge.internal.core;
 
+import static org.eclipse.e4.demo.cssbridge.util.DateUtils.parse;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,8 +26,6 @@ import org.eclipse.e4.demo.cssbridge.model.FolderType;
 import org.eclipse.e4.demo.cssbridge.model.Importance;
 import org.eclipse.e4.demo.cssbridge.model.Mail;
 import org.eclipse.e4.demo.cssbridge.util.MailBuilder;
-
-import static org.eclipse.e4.demo.cssbridge.util.DateUtils.parse;
 
 public class DummyMailService implements IMailService {
 	private static final String MAILBOX_NAME = "me@this.com";
@@ -44,7 +44,7 @@ public class DummyMailService implements IMailService {
 	@SuppressWarnings("serial")
 	private Map<FolderType, List<Mail>> getFolderTypeToMails() {
 		if (folderTypeToMails == null) {
-			folderTypeToMails = new HashMap<FolderType, List<Mail>>() {
+			folderTypeToMails = new HashMap<>() {
 				{
 					put(FolderType.Inbox, createDummyInboxFolderMails());
 					put(FolderType.Sent, createDummySentFolderMails());
@@ -56,7 +56,7 @@ public class DummyMailService implements IMailService {
 
 	@SuppressWarnings("serial")
 	private List<Mail> createDummyInboxFolderMails() {
-		return new ArrayList<Mail>() {
+		return new ArrayList<>() {
 			{
 				MailBuilder mailBuilder = new MailBuilder();
 				add(mailBuilder
@@ -99,7 +99,7 @@ public class DummyMailService implements IMailService {
 
 	@SuppressWarnings("serial")
 	private List<Mail> createDummySentFolderMails() {
-		return new ArrayList<Mail>() {
+		return new ArrayList<>() {
 			{
 				MailBuilder mailBuilder = new MailBuilder();
 				add(mailBuilder.mail().withImportance(Importance.High)
