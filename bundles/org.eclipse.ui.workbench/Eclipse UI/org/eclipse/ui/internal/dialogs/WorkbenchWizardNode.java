@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -30,6 +30,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.statushandlers.IStatusAdapterConstants;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.wizards.IWizardDescriptor;
@@ -149,7 +150,8 @@ public abstract class WorkbenchWizardNode implements IWizardNode, IPluginContrib
 			parentWizardPage.setErrorMessage(WorkbenchMessages.WorkbenchWizard_errorMessage);
 			StatusAdapter statusAdapter = new StatusAdapter(statuses[0]);
 			statusAdapter.addAdapter(Shell.class, parentWizardPage.getShell());
-			statusAdapter.setProperty(StatusAdapter.TITLE_PROPERTY, WorkbenchMessages.WorkbenchWizard_errorTitle);
+			statusAdapter.setProperty(IStatusAdapterConstants.TITLE_PROPERTY,
+					WorkbenchMessages.WorkbenchWizard_errorTitle);
 			StatusManager.getManager().handle(statusAdapter, StatusManager.SHOW);
 			return null;
 		}

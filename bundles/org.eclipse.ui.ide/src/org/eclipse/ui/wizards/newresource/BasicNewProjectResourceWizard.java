@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -76,6 +76,7 @@ import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.wizards.newresource.ResourceMessages;
+import org.eclipse.ui.statushandlers.IStatusAdapterConstants;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -269,7 +270,7 @@ try {
 							.getStatus().getSeverity(),
 							ResourceMessages.NewProject_errorMessage, cause));
 				}
-				status.setProperty(StatusAdapter.TITLE_PROPERTY,
+				status.setProperty(IStatusAdapterConstants.TITLE_PROPERTY,
 						ResourceMessages.NewProject_errorMessage);
 				StatusManager.getManager().handle(status, StatusManager.BLOCK);
 			} else {
@@ -277,7 +278,7 @@ try {
 						IStatus.WARNING, IDEWorkbenchPlugin.IDE_WORKBENCH, 0,
 						NLS.bind(ResourceMessages.NewProject_internalError, t
 								.getMessage()), t));
-				status.setProperty(StatusAdapter.TITLE_PROPERTY,
+				status.setProperty(IStatusAdapterConstants.TITLE_PROPERTY,
 						ResourceMessages.NewProject_errorMessage);
 				StatusManager.getManager().handle(status,
 						StatusManager.LOG | StatusManager.BLOCK);

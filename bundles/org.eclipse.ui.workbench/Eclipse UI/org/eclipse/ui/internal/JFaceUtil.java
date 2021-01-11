@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -25,6 +25,7 @@ import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.util.StatusHandler;
+import org.eclipse.ui.statushandlers.IStatusAdapterConstants;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -60,7 +61,7 @@ final class JFaceUtil {
 			@Override
 			public void show(IStatus status, String title) {
 				StatusAdapter statusAdapter = new StatusAdapter(status);
-				statusAdapter.setProperty(StatusAdapter.TITLE_PROPERTY, title);
+				statusAdapter.setProperty(IStatusAdapterConstants.TITLE_PROPERTY, title);
 				StatusManager.getManager().handle(statusAdapter, StatusManager.SHOW);
 			}
 		});
