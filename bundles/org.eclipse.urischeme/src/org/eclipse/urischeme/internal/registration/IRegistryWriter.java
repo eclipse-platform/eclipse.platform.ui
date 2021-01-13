@@ -29,14 +29,13 @@ public interface IRegistryWriter {
 	/**
 	 * Adds scheme and handler path to the OS.
 	 *
-	 * @param scheme The uri scheme which should be handled by the application
-	 *               mentioned in the OS.
+	 * @param scheme       The uri scheme which should be handled by the application
+	 *                     mentioned in the OS.
 	 * @param launcherPath The path to the launcher binary
 	 * @throws WinRegistryException if Windows Registry I/O error occurred
 	 *
 	 */
 	void addScheme(String scheme, String launcherPath) throws WinRegistryException;
-
 
 	/**
 	 * Removes the scheme and handler path from the OS.

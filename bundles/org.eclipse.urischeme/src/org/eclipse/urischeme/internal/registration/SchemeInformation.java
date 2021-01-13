@@ -27,7 +27,6 @@ public class SchemeInformation implements ISchemeInformation {
 
 	@SuppressWarnings("javadoc")
 	public SchemeInformation(String schemeName, String schemeDescription) {
-		super();
 		this.name = schemeName;
 		this.description = schemeDescription;
 	}

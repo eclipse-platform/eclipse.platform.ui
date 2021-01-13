@@ -70,10 +70,10 @@ public class AutoRegisterSchemeHandlersJob extends Job {
 		IPreferencesService preferences = Platform.getPreferencesService();
 		String schemes = testPreferenceNode != null ? testPreferenceNode.get(PROCESSED_SCHEMES_PREFERENCE, "") //$NON-NLS-1$
 				: preferences.getString(UriSchemeExtensionReader.PLUGIN_ID, PROCESSED_SCHEMES_PREFERENCE, "", //$NON-NLS-1$
-				null);
+						null);
 
-		Collection<String> processedSchemes = new LinkedHashSet<>(Arrays
-				.asList(schemes.split(SCHEME_LIST_PREFERENCE_SEPARATOR)));
+		Collection<String> processedSchemes = new LinkedHashSet<>(
+				Arrays.asList(schemes.split(SCHEME_LIST_PREFERENCE_SEPARATOR)));
 		Collection<IScheme> toProcessSchemes = new LinkedHashSet<>(extensionReader.getSchemes());
 		toProcessSchemes.removeIf(scheme -> processedSchemes.contains(scheme.getName()));
 		if (toProcessSchemes.isEmpty()) {

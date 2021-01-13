@@ -43,9 +43,7 @@ public class UriSchemeProcessor implements IUriSchemeProcessor {
 	 */
 	@Override
 	public void handleUri(String uriScheme, String uri) throws CoreException {
-		IUriSchemeHandler handler = null;
-
-		handler = getHandler(uriScheme);
+		IUriSchemeHandler handler = getHandler(uriScheme);
 		if (handler != null) {
 			handler.handle(uri);
 		}

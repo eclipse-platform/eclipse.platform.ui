@@ -40,7 +40,7 @@ public class TestUnitPlistFileWriter {
 		writer.addScheme("adt", "adtScheme");
 		writer.addScheme("other", "otherScheme");
 
-		assertSchemesInOrder(writer, "adt", "other" );
+		assertSchemesInOrder(writer, "adt", "other");
 	}
 
 	@Test
@@ -49,7 +49,7 @@ public class TestUnitPlistFileWriter {
 
 		writer.addScheme("adt", "adtScheme");
 
-		assertSchemesInOrder(writer, "adt" );
+		assertSchemesInOrder(writer, "adt");
 	}
 
 	@Test
@@ -70,7 +70,7 @@ public class TestUnitPlistFileWriter {
 		assertSchemesInOrder(writer, "adt");
 	}
 
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void addFailsOnIllegalScheme() {
 		PlistFileWriter writer = getWriterWithSchemes("adt");
 
@@ -79,51 +79,31 @@ public class TestUnitPlistFileWriter {
 
 	@Test
 	public void doesntRemoveCommentAfterEndArrayTag() {
-		String xml = getPlistStartXmlSnippet() +
-				"	<key>CFBundleURLTypes</key>\n" +
-				"		<array>\n" +
-				getSchemeXmlSnippet("other") +
-				"		</array>\n" +
-				"<!--comment-->\n"+
-				getPlistEndXmlSnippet();
+		String xml = getPlistStartXmlSnippet() + "	<key>CFBundleURLTypes</key>\n" + "		<array>\n"
+				+ getSchemeXmlSnippet("other") + "		</array>\n" + "<!--comment-->\n" + getPlistEndXmlSnippet();
 
 		PlistFileWriter writer = new PlistFileWriter(new StringReader(xml));
 
 		writer.addScheme("adt", "adtScheme");
 
-		String expectedXml = getPlistStartXmlSnippet() +
-				"	<key>CFBundleURLTypes</key>\n" +
-				"		<array>\n" +
-				getSchemeXmlSnippet("other") +
-				getSchemeXmlSnippet("adt") +
-				"		</array>\n" +
-				"<!--comment-->\n"+
-				getPlistEndXmlSnippet();
+		String expectedXml = getPlistStartXmlSnippet() + "	<key>CFBundleURLTypes</key>\n" + "		<array>\n"
+				+ getSchemeXmlSnippet("other") + getSchemeXmlSnippet("adt") + "		</array>\n" + "<!--comment-->\n"
+				+ getPlistEndXmlSnippet();
 
 		assertXml(expectedXml, writer);
 	}
 
 	@Test
 	public void doesntRemoveCommentBeforeEndArrayTag() {
-		String xml = getPlistStartXmlSnippet() +
-				"	<key>CFBundleURLTypes</key>\n" +
-				"		<array>\n" +
-				getSchemeXmlSnippet("other") +
-				"<!--comment-->"+
-				"		</array>\n" +
-				getPlistEndXmlSnippet();
+		String xml = getPlistStartXmlSnippet() + "	<key>CFBundleURLTypes</key>\n" + "		<array>\n"
+				+ getSchemeXmlSnippet("other") + "<!--comment-->" + "		</array>\n" + getPlistEndXmlSnippet();
 		PlistFileWriter writer = new PlistFileWriter(new StringReader(xml));
 
 		writer.addScheme("adt", "adtScheme");
 
-		String expectedXml = getPlistStartXmlSnippet() +
-				"	<key>CFBundleURLTypes</key>\n" +
-				"		<array>\n" +
-				getSchemeXmlSnippet("other") +
-				"<!--comment-->\n"+
-				getSchemeXmlSnippet("adt") +
-				"		</array>\n" +
-				getPlistEndXmlSnippet();
+		String expectedXml = getPlistStartXmlSnippet() + "	<key>CFBundleURLTypes</key>\n" + "		<array>\n"
+				+ getSchemeXmlSnippet("other") + "<!--comment-->\n" + getSchemeXmlSnippet("adt") + "		</array>\n"
+				+ getPlistEndXmlSnippet();
 
 		assertXml(expectedXml, writer);
 	}
@@ -134,9 +114,7 @@ public class TestUnitPlistFileWriter {
 
 		writer.removeScheme("adt");
 
-		String expectedXml = getPlistStartXmlSnippet() +
-				"	\n" +
-				"		\n" + getPlistEndXmlSnippet();
+		String expectedXml = getPlistStartXmlSnippet() + "	\n" + "		\n" + getPlistEndXmlSnippet();
 
 		assertXml(expectedXml, writer);
 	}
@@ -147,7 +125,7 @@ public class TestUnitPlistFileWriter {
 
 		writer.removeScheme("adt");
 
-		assertSchemesInOrder(writer, "other" );
+		assertSchemesInOrder(writer, "other");
 	}
 
 	@Test
@@ -156,7 +134,7 @@ public class TestUnitPlistFileWriter {
 
 		writer.removeScheme("other");
 
-		assertSchemesInOrder(writer, "adt" );
+		assertSchemesInOrder(writer, "adt");
 	}
 
 	@Test
@@ -174,10 +152,10 @@ public class TestUnitPlistFileWriter {
 
 		writer.removeScheme("other");
 
-		assertSchemesInOrder(writer, "adt" );
+		assertSchemesInOrder(writer, "adt");
 	}
 
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void removeFailsOnIllegalScheme() {
 		PlistFileWriter writer = getWriterWithSchemes("adt");
 
@@ -188,7 +166,7 @@ public class TestUnitPlistFileWriter {
 	public void doesNothing() {
 		PlistFileWriter writer = getWriterWithSchemes("adt");
 
-		assertSchemesInOrder(writer, "adt" );
+		assertSchemesInOrder(writer, "adt");
 	}
 
 	@Test
@@ -198,9 +176,7 @@ public class TestUnitPlistFileWriter {
 		writer.removeScheme("adt");
 
 		// some text nodes stay, we don't care
-		String expectedXml = getPlistStartXmlSnippet() +
-				"	\n" +
-				"		\n" + getPlistEndXmlSnippet();
+		String expectedXml = getPlistStartXmlSnippet() + "	\n" + "		\n" + getPlistEndXmlSnippet();
 
 		assertXml(expectedXml, writer);
 	}
@@ -210,17 +186,15 @@ public class TestUnitPlistFileWriter {
 		new PlistFileWriter(new StringReader(""));
 	}
 
-	@Test(expected=IllegalStateException.class)
+	@Test(expected = IllegalStateException.class)
 	public void throwsExceptionOnWrongPlistFile() {
-		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
-					"<plist version=\"1.0\"/>";
+		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" + "<plist version=\"1.0\"/>";
 		new PlistFileWriter(new StringReader(xml));
 	}
 
-	@Test(expected=IllegalStateException.class)
+	@Test(expected = IllegalStateException.class)
 	public void throwsExceptionOnWrongXmlFile() {
-		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
-					"<foo/>";
+		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" + "<foo/>";
 		new PlistFileWriter(new StringReader(xml));
 	}
 
@@ -253,7 +227,7 @@ public class TestUnitPlistFileWriter {
 		writer.isRegisteredScheme("&/%");
 	}
 
-	private void assertSchemesInOrder(PlistFileWriter writer, String... schemes ) {
+	private void assertSchemesInOrder(PlistFileWriter writer, String... schemes) {
 		assertXml(getXml(schemes), writer);
 	}
 
@@ -276,79 +250,50 @@ public class TestUnitPlistFileWriter {
 	}
 
 	private String getXml(String[] schemes) {
-		String snippets = "";
+		StringBuilder snippets = new StringBuilder();
 		if (schemes != null) {
 			for (String scheme : schemes) {
-				snippets += getSchemeXmlSnippet(scheme);
+				snippets.append(getSchemeXmlSnippet(scheme));
 			}
 		}
-		return getPlistStartXmlSnippet() +
-				"	<key>CFBundleURLTypes</key>\n" +
-				"		<array>\n" +
-				snippets+
-				"		</array>\n" +
-				getPlistEndXmlSnippet();
+		return getPlistStartXmlSnippet() + "	<key>CFBundleURLTypes</key>\n" + "		<array>\n"
+				+ snippets.append("		</array>\n").append(getPlistEndXmlSnippet()).toString();
 	}
 
 	private String getPlistStartXmlSnippet() {
-		return "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
-				"<plist version=\"1.0\">\n" +
-				"\n" +
-				"<dict>\n" +
-				"	<key>CFBundleExecutable</key>\n" +
-				"		<string>eclipse</string>\n" +
-				"	<key>CFBundleGetInfoString</key>\n" +
-				"		<string>Eclipse 4.8 for Mac OS X, Copyright IBM Corp. and others 2002, 2017. All rights reserved.</string>\n" +
-				"	<key>CFBundleIconFile</key>\n" +
-				"		<string>Eclipse.icns</string>\n" +
-				"	<key>CFBundleIdentifier</key>\n" +
-				"		<string>org.eclipse.sdk.ide</string>\n" +
-				"	<key>CFBundleInfoDictionaryVersion</key>\n" +
-				"		<string>6.0</string>\n" +
-				"	<key>CFBundleName</key>\n" +
-				"		<string>Eclipse</string>\n" +
-				"	<key>CFBundlePackageType</key>\n" +
-				"		<string>APPL</string>\n" +
-				"	<key>CFBundleShortVersionString</key>\n" +
-				"		<string>4.8.0</string>\n" +
-				"	<key>CFBundleSignature</key>\n" +
-				"		<string>????</string>\n" +
-				"	<key>CFBundleVersion</key>\n" +
-				"		<string>4.8.0.I20180516-2000</string>\n" +
-				"	<key>NSHighResolutionCapable</key>\n" +
-				"		<true/>\n" +
-				"	<key>CFBundleDevelopmentRegion</key>\n" +
-				"		<string>English</string>		\n" +
-				"	<key>Eclipse</key>\n" +
-				"		<array>\n" +
-				"			<!-- to use a specific Java version (instead of the platform's default) uncomment one of the following options,\n" +
-				"					or add a VM found via $/usr/libexec/java_home -V\n" +
-				"				<string>-vm</string><string>/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Commands/java</string>\n" +
-				"				<string>-vm</string><string>/Library/Java/JavaVirtualMachines/1.8.0.jdk/Contents/Home/bin/java</string>\n" +
-				"			-->\n" +
-				"			<string>-keyring</string>\n" +
-				"			<string>~/.eclipse_keyring</string>\n" +
-				"		</array>\n" +
-				"	<key>CFBundleDisplayName</key>\n" +
-				"		<string>Eclipse</string>\n";
+		return "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" + "<plist version=\"1.0\">\n" + "\n"
+				+ "<dict>\n" + "	<key>CFBundleExecutable</key>\n" + "		<string>eclipse</string>\n"
+				+ "	<key>CFBundleGetInfoString</key>\n"
+				+ "		<string>Eclipse 4.8 for Mac OS X, Copyright IBM Corp. and others 2002, 2017. All rights reserved.</string>\n"
+				+ "	<key>CFBundleIconFile</key>\n" + "		<string>Eclipse.icns</string>\n"
+				+ "	<key>CFBundleIdentifier</key>\n" + "		<string>org.eclipse.sdk.ide</string>\n"
+				+ "	<key>CFBundleInfoDictionaryVersion</key>\n" + "		<string>6.0</string>\n"
+				+ "	<key>CFBundleName</key>\n" + "		<string>Eclipse</string>\n"
+				+ "	<key>CFBundlePackageType</key>\n" + "		<string>APPL</string>\n"
+				+ "	<key>CFBundleShortVersionString</key>\n" + "		<string>4.8.0</string>\n"
+				+ "	<key>CFBundleSignature</key>\n" + "		<string>????</string>\n"
+				+ "	<key>CFBundleVersion</key>\n" + "		<string>4.8.0.I20180516-2000</string>\n"
+				+ "	<key>NSHighResolutionCapable</key>\n" + "		<true/>\n"
+				+ "	<key>CFBundleDevelopmentRegion</key>\n" + "		<string>English</string>		\n"
+				+ "	<key>Eclipse</key>\n" + "		<array>\n"
+				+ "			<!-- to use a specific Java version (instead of the platform's default) uncomment one of the following options,\n"
+				+ "					or add a VM found via $/usr/libexec/java_home -V\n"
+				+ "				<string>-vm</string><string>/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Commands/java</string>\n"
+				+ "				<string>-vm</string><string>/Library/Java/JavaVirtualMachines/1.8.0.jdk/Contents/Home/bin/java</string>\n"
+				+ "			-->\n" + "			<string>-keyring</string>\n"
+				+ "			<string>~/.eclipse_keyring</string>\n" + "		</array>\n"
+				+ "	<key>CFBundleDisplayName</key>\n" + "		<string>Eclipse</string>\n";
 	}
 
 	private String getPlistEndXmlSnippet() {
-		return "</dict>\n" +
-				"\n" +
-				"</plist>";
+		return "</dict>\n" + "\n" + "</plist>";
 	}
 
 	private String getSchemeXmlSnippet(String scheme) {
-		return	"			<dict>\n" +
-				"				<key>CFBundleURLName</key>\n" +
-				"					<string>"+scheme+"Scheme</string>\n" +
-				"				<key>CFBundleURLSchemes</key>\n" +
-				"					<array>\n" +
-				"						<string>"+scheme+"</string>\n" +
-				"					</array>\n" +
-				"			</dict>\n";
+		return "			<dict>\n" + "				<key>CFBundleURLName</key>\n" + "					<string>"
+				+ scheme + "Scheme</string>\n" + "				<key>CFBundleURLSchemes</key>\n"
+				+ "					<array>\n" + "						<string>" + scheme + "</string>\n"
+				+ "					</array>\n" + "			</dict>\n";
 	}
-
 
 }

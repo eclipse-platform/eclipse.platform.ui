@@ -68,7 +68,6 @@ public class UriSchemeExtensionReader implements IUriSchemeExtensionReader {
 		return schemes;
 	}
 
-
 	@Override
 	public IUriSchemeHandler getHandlerFromExtensionPoint(String uriScheme) throws CoreException {
 		IConfigurationElement[] elements = getOrReadConfigurationElements();
@@ -104,7 +103,6 @@ public class UriSchemeExtensionReader implements IUriSchemeExtensionReader {
 		private String uriSchemeDescription;
 
 		public Scheme(String uriScheme, String uriSchemeDescription) {
-			super();
 			this.uriScheme = uriScheme;
 			this.uriSchemeDescription = uriSchemeDescription;
 		}

@@ -72,7 +72,8 @@ public class TestUnitAutoRegisterSchemeHandlersJob {
 	public void newSchemeRegistersNewScheme() throws Exception {
 		SchemeInformation helloSchemeInfo = new SchemeInformation(helloScheme.getName(), helloScheme.getDescription());
 		helloSchemeInfo.setHandled(true);
-		SchemeInformation hello1SchemeInfo = new SchemeInformation(hello1Scheme.getName(), hello1Scheme.getDescription());
+		SchemeInformation hello1SchemeInfo = new SchemeInformation(hello1Scheme.getName(),
+				hello1Scheme.getDescription());
 		hello1SchemeInfo.setHandled(false);
 		List<ISchemeInformation> schemeInfos = Arrays.asList(hello1SchemeInfo);
 
@@ -81,8 +82,7 @@ public class TestUnitAutoRegisterSchemeHandlersJob {
 
 		job.run(new NullProgressMonitor());
 
-		assertEquals("Wrong values written to preferences",
-				helloScheme.getName() + "," + hello1Scheme.getName(),
+		assertEquals("Wrong values written to preferences", helloScheme.getName() + "," + hello1Scheme.getName(),
 				preferenceNode.writtenValue);
 		assertTrue("Preferences not flushed", preferenceNode.flushed);
 		assertEquals("Wrong schemes have been registered", hello1SchemeInfo,
@@ -150,18 +150,20 @@ public class TestUnitAutoRegisterSchemeHandlersJob {
 
 		@Override
 		public String get(String key, String defaultValue) {
-			if (PROCESSED_SCHEMES_PREFERENCE.equals(key))
+			if (PROCESSED_SCHEMES_PREFERENCE.equals(key)) {
 				return currentValue;
-			else
+			} else {
 				throw new IllegalArgumentException("Wrong key provided");
+			}
 		}
 
 		@Override
 		public void put(String key, String newValue) {
-			if (PROCESSED_SCHEMES_PREFERENCE.equals(key))
+			if (PROCESSED_SCHEMES_PREFERENCE.equals(key)) {
 				writtenValue = newValue;
-			else
+			} else {
 				throw new IllegalArgumentException("Wrong key provided");
+			}
 		}
 
 		@Override

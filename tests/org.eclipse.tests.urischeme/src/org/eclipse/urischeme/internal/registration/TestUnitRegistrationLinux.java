@@ -38,7 +38,7 @@ public class TestUnitRegistrationLinux {
 	private static final String USER_HOME = System.getProperty("user.home");
 	private static final String ECLIPSE_LAUNCHER = "eclipse.launcher";
 	private static final String ECLIPSE_HOME_LOCATION = "eclipse.home.location";
-	private  static final String OTHER_APP_EXECUTABLE_PATH = "/home/myuser/otherApp/app";
+	private static final String OTHER_APP_EXECUTABLE_PATH = "/home/myuser/otherApp/app";
 	private static final String OTHER_APP_DESKTOP_FILE = "otherApp.desktop";
 	private static final String PATH_OTHER_APP_DESKTOP_FILE = USER_HOME + "/.local/share/applications/"
 			+ OTHER_APP_DESKTOP_FILE;
@@ -184,7 +184,7 @@ public class TestUnitRegistrationLinux {
 				getFileLines(OTHER_APP_EXECUTABLE_PATH, "MimeType=x-scheme-handler/adt;"));
 
 		processStub.result = OTHER_APP_DESKTOP_FILE; // this is returned by xdg-mime query default
-																// x-scheme-handler/adt
+														// x-scheme-handler/adt
 
 		List<ISchemeInformation> infos = registration.getSchemesInformation(Arrays.asList(ADT_SCHEME));
 

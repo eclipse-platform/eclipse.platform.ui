@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.urischeme.IOperatingSystemRegistration;
 import org.eclipse.urischeme.IScheme;
 import org.eclipse.urischeme.ISchemeInformation;
+
 /**
  * Windows OS specific handling of schemes
  *
@@ -55,8 +56,7 @@ public class RegistrationWindows implements IOperatingSystemRegistration {
 	}
 
 	@Override
-	public void handleSchemes(Collection<IScheme> toAdd, Collection<IScheme> toRemove)
-			throws Exception {
+	public void handleSchemes(Collection<IScheme> toAdd, Collection<IScheme> toRemove) throws Exception {
 		String eclipseLauncher = getEclipseLauncher();
 		if (eclipseLauncher != null) {
 			for (IScheme scheme : toAdd) {
@@ -85,8 +85,7 @@ public class RegistrationWindows implements IOperatingSystemRegistration {
 		List<ISchemeInformation> schemeInformations = new ArrayList<>();
 
 		for (IScheme scheme : schemes) {
-			SchemeInformation schemeInfo = new SchemeInformation(scheme.getName(),
-					scheme.getDescription());
+			SchemeInformation schemeInfo = new SchemeInformation(scheme.getName(), scheme.getDescription());
 			String path = registryWriter.getRegisteredHandlerPath(schemeInfo.getName());
 			if (path == null) {
 				path = ""; //$NON-NLS-1$

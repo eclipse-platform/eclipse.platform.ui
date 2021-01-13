@@ -19,8 +19,8 @@ public class UriSchemeHandlerSpy implements IUriSchemeHandler {
 
 	public Collection<String> uris = new ArrayList<>();
 
-		@Override
-		public void handle(String uri) {
-			uris.add(uri);
-		}
+	@Override
+	public void handle(String uri) {
+		uris.add(uri);
+	}
 }

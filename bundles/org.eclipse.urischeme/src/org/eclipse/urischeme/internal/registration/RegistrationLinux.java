@@ -57,8 +57,7 @@ public class RegistrationLinux implements IOperatingSystemRegistration {
 	}
 
 	@Override
-	public void handleSchemes(Collection<IScheme> toAdd, Collection<IScheme> toRemove)
-			throws Exception {
+	public void handleSchemes(Collection<IScheme> toAdd, Collection<IScheme> toRemove) throws Exception {
 		String desktopFileName = getDesktopFileName();
 
 		changeDesktopFile(toAdd, toRemove, PATH_TO_LOCAL_SHARE_APPS + desktopFileName);
@@ -72,8 +71,7 @@ public class RegistrationLinux implements IOperatingSystemRegistration {
 
 		String eclipseLauncher = getEclipseLauncher();
 		for (IScheme scheme : schemes) {
-			SchemeInformation schemeInfo = new SchemeInformation(scheme.getName(),
-					scheme.getDescription());
+			SchemeInformation schemeInfo = new SchemeInformation(scheme.getName(), scheme.getDescription());
 
 			String location = determineHandlerLocation(scheme.getName());
 			if (location.equals(eclipseLauncher)) {
@@ -93,8 +91,8 @@ public class RegistrationLinux implements IOperatingSystemRegistration {
 		return ""; //$NON-NLS-1$
 	}
 
-	private void changeDesktopFile(Iterable<IScheme> toAdd, Iterable<IScheme> toRemove,
-			String desktopFilePath) throws IOException {
+	private void changeDesktopFile(Iterable<IScheme> toAdd, Iterable<IScheme> toRemove, String desktopFilePath)
+			throws IOException {
 
 		List<String> lines = readFileOrGetInitialContent(desktopFilePath);
 		if (lines.isEmpty()) {
@@ -120,8 +118,7 @@ public class RegistrationLinux implements IOperatingSystemRegistration {
 		}
 	}
 
-	private void registerSchemesWithXdgMime(Collection<IScheme> schemes, String desktopFilePath)
-			throws Exception {
+	private void registerSchemesWithXdgMime(Collection<IScheme> schemes, String desktopFilePath) throws Exception {
 		if (schemes.isEmpty()) {
 			return;
 		}

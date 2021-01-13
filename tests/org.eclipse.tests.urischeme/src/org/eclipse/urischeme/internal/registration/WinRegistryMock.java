@@ -54,7 +54,6 @@ public class WinRegistryMock implements IWinRegistry {
 		public String value;
 
 		public Entry(String key, String attribute, String value) {
-			super();
 			this.key = key;
 			this.attribute = attribute;
 			this.value = value;

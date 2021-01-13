@@ -27,8 +27,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({
-		UriSchemeProcessorUnitTest.class, //
+@SuiteClasses({ UriSchemeProcessorUnitTest.class, //
 		TestUnitPlistFileWriter.class, //
 		TestUnitDesktopFileWriter.class, //
 		TestUnitRegistrationMacOsX.class, //
@@ -36,7 +35,6 @@ import org.junit.runners.Suite.SuiteClasses;
 		TestUnitRegistrationWindows.class, //
 		TestUnitRegistryWriter.class, //
 		TestUnitWinRegistry.class, //
-		TestUnitAutoRegisterSchemeHandlersJob.class
-})
+		TestUnitAutoRegisterSchemeHandlersJob.class })
 public class AllUnitTests {
 }
