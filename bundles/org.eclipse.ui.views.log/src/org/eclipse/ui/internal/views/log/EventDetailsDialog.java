@@ -17,8 +17,7 @@
 package org.eclipse.ui.internal.views.log;
 
 import java.io.*;
-import java.text.Collator;
-import java.text.DateFormat;
+import java.text.*;
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.IAdaptable;
@@ -92,7 +91,8 @@ public class EventDetailsDialog extends TrayDialog {
 	private Point dialogSize;
 	private int[] sashWeights;
 
-	private DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+	private DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT);
+	private DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss.SSS"); //$NON-NLS-1$
 
 	/**
 	 *
@@ -354,7 +354,9 @@ public class EventDetailsDialog extends TrayDialog {
 		if (entry instanceof LogEntry) {
 			LogEntry logEntry = (LogEntry) entry;
 
-			String strDate = dateFormat.format(logEntry.getDate());
+			String strDate = MessageFormat.format("{0}, {1}", //$NON-NLS-1$
+					dateFormat.format(logEntry.getDate()), //
+					timeFormat.format(logEntry.getDate()));
 			dateLabel.setText(strDate);
 			plugInIdLabel.setText(logEntry.getPluginId());
 			severityImageLabel.setImage(labelProvider.getColumnImage(entry, 0));
