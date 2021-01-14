@@ -157,6 +157,15 @@
          <location>%%ProgramW6432%\Internet Explorer\iexplore.exe</location>
       </browser>
       <browser
+         id="org.eclipse.ui.browser.msedge"
+         name="%browserMicrosoftEdge"
+         os="Win32"
+         executable="msedge.exe">
+         <location>%%ProgramFiles%\Microsoft\Edge\Application\msedge.exe</location>
+         <location>%%ProgramFiles(x86)%\Microsoft\Edge\Application\msedge.exe</location>
+         <location>%%ProgramW6432%\Microsoft\Edge\Application\msedge.exe</location>
+      </browser>
+      <browser
          id="org.eclipse.ui.browser.chrome"
          name="%browserChrome"
          os="Win32"
