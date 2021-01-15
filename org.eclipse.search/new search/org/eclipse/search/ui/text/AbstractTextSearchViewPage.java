@@ -19,6 +19,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.osgi.framework.FrameworkUtil;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -83,7 +85,6 @@ import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.IUpdate;
 
 import org.eclipse.search.internal.ui.CopyToClipboardAction;
-import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.SearchPluginImages;
 import org.eclipse.search.internal.ui.SelectAllAction;
 import org.eclipse.search.internal.ui.text.EditorOpener;
@@ -354,7 +355,9 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * @see AbstractTextSearchViewPage#getID()
 	 */
 	protected IDialogSettings getSettings() {
-		IDialogSettings parent = SearchPlugin.getDefault().getDialogSettings();
+		IDialogSettings parent = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(AbstractTextSearchViewPage.class))
+				.getDialogSettings();
 		IDialogSettings settings = parent.getSection(getID());
 		if (settings == null)
 			settings = parent.addNewSection(getID());

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -41,6 +42,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.StringConverter;
 
 import org.eclipse.ui.IPluginContribution;
+import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
 import org.eclipse.search.ui.ISearchPage;
@@ -284,7 +286,8 @@ class SearchPageDescriptor implements IPluginContribution, Comparable<SearchPage
 	}
 
 	private static IDialogSettings getDialogSettings() {
-		IDialogSettings settings= SearchPlugin.getDefault().getDialogSettings();
+		IDialogSettings settings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(SearchPageDescriptor.class)).getDialogSettings();
 		IDialogSettings section= settings.getSection(SECTION_ID);
 		if (section == null)
 			// create new section

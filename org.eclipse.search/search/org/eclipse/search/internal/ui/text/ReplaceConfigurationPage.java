@@ -16,6 +16,8 @@ package org.eclipse.search.internal.ui.text;
 import java.util.ArrayList;
 import java.util.regex.PatternSyntaxException;
 
+import org.osgi.framework.FrameworkUtil;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -43,7 +45,6 @@ import org.eclipse.search.internal.core.text.PatternConstructor;
 import org.eclipse.search.internal.ui.ISearchHelpContextIds;
 import org.eclipse.search.internal.ui.Messages;
 import org.eclipse.search.internal.ui.SearchMessages;
-import org.eclipse.search.internal.ui.SearchPlugin;
 
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
@@ -106,7 +107,9 @@ public class ReplaceConfigurationPage extends UserInputWizardPage {
 		fTextField.setFocus();
 		fTextField.addModifyListener(e -> updateOKStatus());
 
-		IDialogSettings settings= SearchPlugin.getDefault().getDialogSettings().getSection(SETTINGS_GROUP);
+		IDialogSettings settings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(ReplaceConfigurationPage.class)).getDialogSettings()
+				.getSection(SETTINGS_GROUP);
 		if (settings != null) {
 			String[] previousReplaceWith= settings.getArray(SETTINGS_REPLACE_WITH);
 			if (previousReplaceWith != null) {
@@ -201,7 +204,9 @@ public class ReplaceConfigurationPage extends UserInputWizardPage {
 				history.add(curr);
 			}
 		}
-		IDialogSettings settings= SearchPlugin.getDefault().getDialogSettings().addNewSection(SETTINGS_GROUP);
+		IDialogSettings settings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(ReplaceConfigurationPage.class)).getDialogSettings()
+				.addNewSection(SETTINGS_GROUP);
 		settings.put(SETTINGS_REPLACE_WITH, history.toArray(new String[history.size()]));
 
 	}

@@ -22,6 +22,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import org.osgi.framework.FrameworkUtil;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CTabFolder;
@@ -153,7 +155,9 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	private final ISelection fCurrentSelection;
 	private final String[] fCurrentEnclosingProject;
 
-	private final IDialogSettings fDialogSettings= DialogSettings.getOrCreateSection(SearchPlugin.getDefault().getDialogSettings(), DIALOG_NAME);
+	private final IDialogSettings fDialogSettings = DialogSettings.getOrCreateSection(
+			PlatformUI.getDialogSettingsProvider(FrameworkUtil.getBundle(SearchDialog.class)).getDialogSettings(),
+			DIALOG_NAME);
 
 
 	public SearchDialog(IWorkbenchWindow window, String pageId) {
