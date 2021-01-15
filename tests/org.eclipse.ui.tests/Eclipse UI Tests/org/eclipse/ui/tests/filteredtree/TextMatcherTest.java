@@ -64,6 +64,12 @@ public class TextMatcherTest {
 		assertFalse(new TextMatcher("h?hner", false, true).match("hahn henne hühnerhof küken huhn"));
 		assertFalse(new TextMatcher("h*hner", false, true).match("hahn henne hühnerhof küken huhn"));
 		assertFalse(new TextMatcher("hühner", false, true).match("hahn henne hühnerhof küken huhn"));
+
+		// Bug 570390: Pattern starting/ending with whitespace should still match
+		assertTrue(new TextMatcher("hahn ", false, false).match("hahn henne hühnerhof küken huhn"));
+		assertTrue(new TextMatcher("huhn ", false, false).match("hahn henne hühnerhof küken huhn"));
+		assertTrue(new TextMatcher(" hahn", false, false).match("hahn henne hühnerhof küken huhn"));
+		assertTrue(new TextMatcher(" huhn", false, false).match("hahn henne hühnerhof küken huhn"));
 	}
 
 	@Test
@@ -80,6 +86,12 @@ public class TextMatcherTest {
 		assertTrue(new TextMatcher("huhn hühner", false, false).match("hahn henne hühnerhof küken huhn"));
 		assertTrue(new TextMatcher("huhn hühner", false, true).match("hahn henne hühner küken huhn"));
 		assertTrue(new TextMatcher("huhn hühner", false, true).match("hahn henne hühnerhof küken huhn"));
+
+		// Bug 570390: Pattern starting/ending with whitespace should still match
+		assertTrue(new TextMatcher("huhn hahn ", false, false).match("hahn henne hühnerhof küken huhn"));
+		assertTrue(new TextMatcher("hahn huhn ", false, false).match("hahn henne hühnerhof küken huhn"));
+		assertTrue(new TextMatcher(" huhn hahn", false, false).match("hahn henne hühnerhof küken huhn"));
+		assertTrue(new TextMatcher(" hahn huhn", false, false).match("hahn henne hühnerhof küken huhn"));
 	}
 
 	@Test

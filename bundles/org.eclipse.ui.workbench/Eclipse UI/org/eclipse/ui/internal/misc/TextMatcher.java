@@ -28,6 +28,7 @@ import org.eclipse.core.text.StringMatcher;
  * The precise rules are:
  * </p>
  * <ul>
+ * <li>Leading and trailing whitespace in the pattern is ignored.</li>
  * <li>If the full pattern matches the full text, the match succeeds.</li>
  * <li>If the full pattern matches a single word of the text, the match
  * succeeds.</li>
@@ -57,7 +58,7 @@ public final class TextMatcher {
 	 * @throws IllegalArgumentException if {@code pattern == null}
 	 */
 	public TextMatcher(String pattern, boolean ignoreCase, boolean ignoreWildCards) {
-		full = new StringMatcher(pattern, ignoreCase, ignoreWildCards);
+		full = new StringMatcher(pattern.trim(), ignoreCase, ignoreWildCards);
 		parts = splitPattern(pattern, ignoreCase, ignoreWildCards);
 	}
 
@@ -67,7 +68,7 @@ public final class TextMatcher {
 		if (pat.isEmpty()) {
 			return Collections.emptyList();
 		}
-		String[] subPatterns = pattern.split("\\s+"); //$NON-NLS-1$
+		String[] subPatterns = pat.split("\\s+"); //$NON-NLS-1$
 		if (subPatterns.length <= 1) {
 			return Collections.emptyList();
 		}
