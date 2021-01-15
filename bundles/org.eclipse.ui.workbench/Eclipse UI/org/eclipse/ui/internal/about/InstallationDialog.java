@@ -45,13 +45,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.about.IInstallationPageContainer;
 import org.eclipse.ui.about.InstallationPage;
 import org.eclipse.ui.internal.ConfigurationInfo;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.services.IServiceLocator;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * @since 3.5
@@ -305,7 +306,8 @@ public class InstallationDialog extends TrayDialog implements IInstallationPageC
 
 	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
-		IDialogSettings settings = WorkbenchPlugin.getDefault().getDialogSettings();
+		IDialogSettings settings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(InstallationDialog.class)).getDialogSettings();
 		IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
 		if (section == null) {
 			section = settings.addNewSection(DIALOG_SETTINGS_SECTION);

@@ -24,8 +24,9 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * This is the contribution item that is used to add a help search field to the
@@ -67,7 +68,8 @@ public class HelpSearchContributionItem extends ControlContribution {
 	protected Control createControl(Composite parent) {
 		combo = new Combo(parent, SWT.NONE);
 		combo.setToolTipText(WorkbenchMessages.WorkbenchWindow_searchCombo_toolTip);
-		String[] items = WorkbenchPlugin.getDefault().getDialogSettings().getArray(ID);
+		String[] items = PlatformUI.getDialogSettingsProvider(FrameworkUtil.getBundle(HelpSearchContributionItem.class))
+				.getDialogSettings().getArray(ID);
 		if (items != null) {
 			combo.setItems(items);
 		}
@@ -113,7 +115,8 @@ public class HelpSearchContributionItem extends ControlContribution {
 				if (combo.getItemCount() > MAX_ITEM_COUNT) {
 					combo.remove(combo.getItemCount() - 1);
 				}
-				WorkbenchPlugin.getDefault().getDialogSettings().put(ID, combo.getItems());
+				PlatformUI.getDialogSettingsProvider(FrameworkUtil.getBundle(HelpSearchContributionItem.class))
+						.getDialogSettings().put(ID, combo.getItems());
 			}
 		}
 		window.getWorkbench().getHelpSystem().search(phrase);

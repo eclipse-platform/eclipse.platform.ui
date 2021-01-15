@@ -67,6 +67,7 @@ import org.eclipse.ui.internal.layout.CellData;
 import org.eclipse.ui.internal.layout.CellLayout;
 import org.eclipse.ui.internal.layout.Row;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Implements a dialog showing all opened editors in the workbench and the
@@ -620,7 +621,8 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 	 * Return a dialog setting section for this dialog
 	 */
 	private IDialogSettings getDialogSettings() {
-		IDialogSettings settings = WorkbenchPlugin.getDefault().getDialogSettings();
+		IDialogSettings settings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(WorkbenchEditorsDialog.class)).getDialogSettings();
 		IDialogSettings thisSettings = settings.getSection(getClass().getName());
 		if (thisSettings == null) {
 			thisSettings = settings.addNewSection(getClass().getName());

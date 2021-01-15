@@ -21,8 +21,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Instances of this class provide a {@link WorkingSetConfigurationBlock}
@@ -50,7 +51,8 @@ public final class WorkingSetGroup {
 		workingSetGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		workingSetGroup.setLayout(new GridLayout(1, false));
 
-		workingSetBlock = new WorkingSetConfigurationBlock(WorkbenchPlugin.getDefault().getDialogSettings(),
+		workingSetBlock = new WorkingSetConfigurationBlock(PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(WorkingSetGroup.class)).getDialogSettings(),
 				workingSetTypes);
 		workingSetBlock.setWorkingSets(workingSetBlock.findApplicableWorkingSets(currentSelection));
 		workingSetBlock.createContent(workingSetGroup);

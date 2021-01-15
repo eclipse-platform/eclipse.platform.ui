@@ -61,7 +61,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.progress.ProgressManagerUtil;
 import org.eclipse.ui.internal.quickaccess.providers.ActionProvider;
@@ -75,6 +75,7 @@ import org.eclipse.ui.internal.quickaccess.providers.ViewProvider;
 import org.eclipse.ui.internal.quickaccess.providers.WizardProvider;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.quickaccess.QuickAccessElement;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * This is the quick access popup dialog used in 3.x. The new quick access is
@@ -336,7 +337,8 @@ public class QuickAccessDialog extends PopupDialog {
 
 	@Override
 	protected IDialogSettings getDialogSettings() {
-		final IDialogSettings workbenchDialogSettings = WorkbenchPlugin.getDefault().getDialogSettings();
+		final IDialogSettings workbenchDialogSettings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(QuickAccessDialog.class)).getDialogSettings();
 		IDialogSettings result = workbenchDialogSettings.getSection(getId());
 		if (result == null) {
 			result = workbenchDialogSettings.addNewSection(getId());

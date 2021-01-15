@@ -39,12 +39,12 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.LegacyResourceSupport;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.ImportExportWizard;
 import org.eclipse.ui.internal.dialogs.NewWizard;
 import org.eclipse.ui.menus.UIElement;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 import org.eclipse.ui.wizards.IWizardRegistry;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Abstract handler for commands that launch the import, export and new wizards.
@@ -85,7 +85,8 @@ public abstract class WizardHandler extends AbstractHandler implements IElementU
 			IStructuredSelection selectionToPass = getSelectionToUse(event);
 
 			wizard.init(activeWorkbenchWindow.getWorkbench(), selectionToPass);
-			IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
+			IDialogSettings workbenchSettings = PlatformUI
+					.getDialogSettingsProvider(FrameworkUtil.getBundle(WizardHandler.class)).getDialogSettings();
 			IDialogSettings wizardSettings = workbenchSettings.getSection("ImportExportAction"); //$NON-NLS-1$
 			if (wizardSettings == null) {
 				wizardSettings = workbenchSettings.addNewSection("ImportExportAction"); //$NON-NLS-1$
@@ -133,7 +134,8 @@ public abstract class WizardHandler extends AbstractHandler implements IElementU
 			IStructuredSelection selectionToPass = getSelectionToUse(event);
 
 			wizard.init(activeWorkbenchWindow.getWorkbench(), selectionToPass);
-			IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
+			IDialogSettings workbenchSettings = PlatformUI
+					.getDialogSettingsProvider(FrameworkUtil.getBundle(WizardHandler.class)).getDialogSettings();
 			IDialogSettings wizardSettings = workbenchSettings.getSection("ImportExportAction"); //$NON-NLS-1$
 			if (wizardSettings == null) {
 				wizardSettings = workbenchSettings.addNewSection("ImportExportAction"); //$NON-NLS-1$
@@ -242,7 +244,8 @@ public abstract class WizardHandler extends AbstractHandler implements IElementU
 			IStructuredSelection selectionToPass = getSelectionToUse(event);
 			wizard.init(activeWorkbenchWindow.getWorkbench(), selectionToPass);
 
-			IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
+			IDialogSettings workbenchSettings = PlatformUI
+					.getDialogSettingsProvider(FrameworkUtil.getBundle(WizardHandler.class)).getDialogSettings();
 			IDialogSettings wizardSettings = workbenchSettings.getSection("NewWizardAction"); //$NON-NLS-1$
 			if (wizardSettings == null) {
 				wizardSettings = workbenchSettings.addNewSection("NewWizardAction"); //$NON-NLS-1$

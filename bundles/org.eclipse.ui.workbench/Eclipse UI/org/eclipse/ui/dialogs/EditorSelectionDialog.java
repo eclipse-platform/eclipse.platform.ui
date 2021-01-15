@@ -68,6 +68,7 @@ import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.FileEditorMapping;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * This class is used to allow the user to select a dialog from the set of
@@ -397,7 +398,8 @@ public class EditorSelectionDialog extends Dialog {
 	 * Return the dialog store to cache values into
 	 */
 	protected IDialogSettings getDialogSettings() {
-		IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
+		IDialogSettings workbenchSettings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(EditorSelectionDialog.class)).getDialogSettings();
 		IDialogSettings section = workbenchSettings.getSection("EditorSelectionDialog");//$NON-NLS-1$
 		if (section == null) {
 			section = workbenchSettings.addNewSection("EditorSelectionDialog");//$NON-NLS-1$

@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * This class is used to prompt the user for a file name &amp; extension.
@@ -202,7 +202,9 @@ public class ContentTypeFilenameAssociationDialog extends TitleAreaDialog {
 
 	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
-		IDialogSettings settings = WorkbenchPlugin.getDefault().getDialogSettings();
+		IDialogSettings settings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(ContentTypeFilenameAssociationDialog.class))
+				.getDialogSettings();
 		IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
 		if (section == null)
 			section = settings.addNewSection(DIALOG_SETTINGS_SECTION);

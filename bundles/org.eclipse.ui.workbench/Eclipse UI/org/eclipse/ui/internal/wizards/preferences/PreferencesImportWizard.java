@@ -27,7 +27,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Standard workbench wizard for importing resources from the local file system
@@ -68,7 +68,8 @@ public class PreferencesImportWizard extends Wizard implements IImportWizard {
 	 * system.
 	 */
 	public PreferencesImportWizard() {
-		IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
+		IDialogSettings workbenchSettings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(PreferencesImportWizard.class)).getDialogSettings();
 		IDialogSettings section = workbenchSettings.getSection("PreferencesImportWizard");//$NON-NLS-1$
 		if (section == null) {
 			section = workbenchSettings.addNewSection("PreferencesImportWizard");//$NON-NLS-1$

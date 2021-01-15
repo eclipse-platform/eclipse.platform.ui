@@ -32,8 +32,8 @@ import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.LegacyResourceSupport;
 import org.eclipse.ui.internal.PerspectiveTracker;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.NewWizard;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Invoke the resource creation wizard selection Wizard.
@@ -188,7 +188,8 @@ public class NewWizardAction extends Action implements ActionFactory.IWorkbenchA
 
 		wizard.init(workbenchWindow.getWorkbench(), selectionToPass);
 
-		IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
+		IDialogSettings workbenchSettings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(NewWizardAction.class)).getDialogSettings();
 		IDialogSettings wizardSettings = workbenchSettings.getSection("NewWizardAction"); //$NON-NLS-1$
 		if (wizardSettings == null) {
 			wizardSettings = workbenchSettings.addNewSection("NewWizardAction"); //$NON-NLS-1$

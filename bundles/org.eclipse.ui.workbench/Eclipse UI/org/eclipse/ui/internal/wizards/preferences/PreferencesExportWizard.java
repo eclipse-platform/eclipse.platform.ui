@@ -19,9 +19,10 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Standard workbench wizard for exporting preferences from the workspace to the
@@ -67,7 +68,8 @@ public class PreferencesExportWizard extends Wizard implements IExportWizard {
 	 * system.
 	 */
 	public PreferencesExportWizard() {
-		IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
+		IDialogSettings workbenchSettings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(PreferencesExportWizard.class)).getDialogSettings();
 		IDialogSettings section = workbenchSettings.getSection("PreferencesExportWizard");//$NON-NLS-1$
 		if (section == null) {
 			section = workbenchSettings.addNewSection("PreferencesExportWizard");//$NON-NLS-1$
