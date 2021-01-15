@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -51,6 +51,7 @@ public class Messages extends NLS {
 	public static String edit;
 	public static String remove;
 	public static String search;
+	public static String restore;
 	public static String selectDirectory;
 	public static String directoryDialogTitle;
 	public static String searchingTaskName;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2016 IBM Corporation and others.
+ * Copyright (c) 2003, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -173,16 +173,28 @@ public class BrowserManager extends Observable {
 	protected void setupDefaultBrowsers() {
 		browsers = new ArrayList<>();
 
-		// add system browser
+		// This adds a system browser as well as all the EXTERNAL browsers by criteria
+		addDefaultBrowsers();
+	}
+
+	/**
+	 * Adds absent default Browsers.
+	 */
+	protected void addDefaultBrowsers() {
+		// add system browser if it's not added yet
 		if (WebBrowserUtil.canUseSystemBrowser()) {
 			IBrowserDescriptor system = new SystemBrowserDescriptor();
-			browsers.add(system);
+			if (!browsers.contains(system)) {
+				browsers.add(system);
+			}
 		}
 
-		// handle all the EXTERNAL browsers by criteria and add those too at startup
+		// handle all the EXTERNAL browsers by criteria and add those that aren't added
+		// yet
 		WebBrowserUtil.addFoundBrowsers(browsers);
 
-		// by default, if internal is there, that is current, else set the first external one
+		// by default, if internal is there, that is current, else set the first
+		// external one
 		if (!browsers.isEmpty() && currentBrowser == null)
 			currentBrowser = browsers.get(0);
 	}

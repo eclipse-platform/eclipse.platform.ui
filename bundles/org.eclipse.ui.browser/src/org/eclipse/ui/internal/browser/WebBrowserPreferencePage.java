@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2016 IBM Corporation and others.
+ * Copyright (c) 2003, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,8 @@
  * Martin Oberhuber (Wind River) - [293159] cyclic link when searching browser
  *******************************************************************************/
 package org.eclipse.ui.internal.browser;
+
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.io.File;
 import java.io.IOException;
@@ -76,6 +78,8 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 	protected Button remove;
 
 	protected Button search;
+
+	protected Button restore;
 
 	protected Label location;
 
@@ -421,6 +425,11 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 				tableViewer.setChecked(checkedBrowser, true);
 		}));
 
+		restore = SWTUtil.createButton(buttonComp, Messages.restore);
+		data = (GridData) restore.getLayoutData();
+		data.verticalIndent = 9;
+		restore.addSelectionListener(widgetSelectedAdapter(e -> addDefaults()));
+
 		tableViewer.addCheckStateListener(e -> {
 			checkNewDefaultBrowser(e.getElement());
 			checkedBrowser = (IBrowserDescriptor) e.getElement();
@@ -546,6 +555,28 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 			tableViewer.setChecked(checkedBrowser, true);
 
 		super.performDefaults();
+	}
+
+	/**
+	 * Re-adds absent default Browsers. This helps to restore the default Browsers
+	 * in case of some of them were removed by user or any new browser definitions
+	 * appeared after the Eclipse Platform update.
+	 */
+	protected void addDefaults() {
+		internal.setSelection(WebBrowserPreference
+				.isDefaultUseInternalBrowser());
+		external.setSelection(!WebBrowserPreference.
+				isDefaultUseInternalBrowser());
+
+		BrowserManager.getInstance().currentBrowser = null;
+		BrowserManager.getInstance().addDefaultBrowsers();
+		tableViewer.refresh();
+
+		checkedBrowser = BrowserManager.getInstance().getCurrentWebBrowser();
+		if (checkedBrowser != null)
+			tableViewer.setChecked(checkedBrowser, true);
+
+		super.updateApplyButton();
 	}
 
 	/**
