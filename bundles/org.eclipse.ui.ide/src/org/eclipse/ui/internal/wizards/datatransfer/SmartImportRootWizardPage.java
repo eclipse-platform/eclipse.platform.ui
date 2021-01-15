@@ -100,6 +100,7 @@ import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.wizards.datatransfer.ProjectConfigurator;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * This page of {@link SmartImportWizard} simply asks for what to import, and asks
@@ -332,7 +333,9 @@ public class SmartImportRootWizardPage extends WizardPage {
 					sel = new StructuredSelection();
 				}
 				importWizard.init(PlatformUI.getWorkbench(), sel);
-				IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
+				IDialogSettings workbenchSettings = PlatformUI
+						.getDialogSettingsProvider(FrameworkUtil.getBundle(WorkbenchPlugin.class))
+						.getDialogSettings();
 				IDialogSettings wizardSettings = workbenchSettings.getSection("ImportExportAction"); //$NON-NLS-1$
 				if (wizardSettings == null) {
 					wizardSettings = workbenchSettings.addNewSection("ImportExportAction"); //$NON-NLS-1$

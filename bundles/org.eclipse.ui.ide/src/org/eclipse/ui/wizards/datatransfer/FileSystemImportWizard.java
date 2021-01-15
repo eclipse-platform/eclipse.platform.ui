@@ -22,11 +22,13 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardFileSystemResourceImportPage1;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Standard workbench wizard for importing resources from the local file system
@@ -65,7 +67,8 @@ public class FileSystemImportWizard extends Wizard implements IImportWizard {
 	 * the file system.
 	 */
 	public FileSystemImportWizard() {
-		IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
+		IDialogSettings workbenchSettings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(WorkbenchPlugin.class)).getDialogSettings();
 		IDialogSettings section = workbenchSettings
 				.getSection("FileSystemImportWizard");//$NON-NLS-1$
 		if (section == null) {

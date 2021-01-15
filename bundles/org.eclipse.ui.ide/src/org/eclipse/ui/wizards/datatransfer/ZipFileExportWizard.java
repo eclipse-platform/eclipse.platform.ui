@@ -22,11 +22,13 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardArchiveFileResourceExportPage1;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Standard workbench wizard for exporting resources from the workspace to a zip
@@ -63,7 +65,8 @@ public class ZipFileExportWizard extends Wizard implements IExportWizard {
 	 * Creates a wizard for exporting workspace resources to a zip file.
 	 */
 	public ZipFileExportWizard() {
-		IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
+		IDialogSettings workbenchSettings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(WorkbenchPlugin.class)).getDialogSettings();
 		IDialogSettings section = workbenchSettings
 				.getSection("ZipFileExportWizard");//$NON-NLS-1$
 		if (section == null) {

@@ -18,9 +18,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardProjectsImportPage;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Standard workbench wizard for importing projects defined outside of the
@@ -73,7 +75,8 @@ public class ExternalProjectImportWizard extends Wizard implements
 		super();
 		this.initialPath = initialPath;
 		setNeedsProgressMonitor(true);
-		IDialogSettings workbenchSettings = IDEWorkbenchPlugin.getDefault()
+		IDialogSettings workbenchSettings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(ExternalProjectImportWizard.class))
 				.getDialogSettings();
 
 		IDialogSettings wizardSettings = workbenchSettings

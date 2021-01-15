@@ -82,11 +82,11 @@ import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.model.ResourceFactory;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Shows a list of resources to the user with a text entry field for a string
@@ -227,10 +227,13 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 
 	@Override
 	protected IDialogSettings getDialogSettings() {
-		IDialogSettings settings = IDEWorkbenchPlugin.getDefault().getDialogSettings().getSection(DIALOG_SETTINGS);
+		IDialogSettings dialogSettings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(FilteredResourcesSelectionDialog.class))
+				.getDialogSettings();
+		IDialogSettings settings = dialogSettings.getSection(DIALOG_SETTINGS);
 
 		if (settings == null) {
-			settings = IDEWorkbenchPlugin.getDefault().getDialogSettings().addNewSection(DIALOG_SETTINGS);
+			settings = dialogSettings.addNewSection(DIALOG_SETTINGS);
 		}
 
 		return settings;

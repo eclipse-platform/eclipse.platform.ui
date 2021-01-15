@@ -26,9 +26,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dialogs.NewWizard;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Standard action for launching the create project selection
@@ -99,8 +99,8 @@ public class NewExampleAction extends Action {
 			selectionToPass = (IStructuredSelection) selection;
 		}
 		wizard.init(workbench, selectionToPass);
-		IDialogSettings workbenchSettings = IDEWorkbenchPlugin.getDefault()
-				.getDialogSettings();
+		IDialogSettings workbenchSettings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(NewExampleAction.class)).getDialogSettings();
 		IDialogSettings wizardSettings = workbenchSettings
 				.getSection("NewWizardAction"); //$NON-NLS-1$
 		if (wizardSettings == null) {

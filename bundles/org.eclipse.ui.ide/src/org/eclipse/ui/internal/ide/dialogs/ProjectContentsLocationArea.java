@@ -40,10 +40,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.filesystem.FileSystemConfiguration;
 import org.eclipse.ui.internal.ide.filesystem.FileSystemSupportRegistry;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * ProjectContentsLocationArea is a convenience class for area that handle entry
@@ -305,7 +306,9 @@ public class ProjectContentsLocationArea {
 	}
 
 	private IDialogSettings getDialogSettings() {
-		IDialogSettings ideDialogSettings = IDEWorkbenchPlugin.getDefault().getDialogSettings();
+		IDialogSettings ideDialogSettings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(ProjectContentsLocationArea.class))
+				.getDialogSettings();
 		IDialogSettings result = ideDialogSettings.getSection(getClass().getName());
 		if (result == null) {
 			result = ideDialogSettings.addNewSection(getClass().getName());

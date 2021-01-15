@@ -42,11 +42,13 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.wizards.datatransfer.ProjectConfigurator;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * This {@link SmartImportWizard} allows user to control an import operation. It
@@ -164,7 +166,8 @@ public class SmartImportWizard extends Wizard implements IImportWizard {
 		setForcePreviousAndNextButtons(true);
 		IDialogSettings dialogSettings = getDialogSettings();
 		if (dialogSettings == null) {
-			dialogSettings = DialogSettings.getOrCreateSection(IDEWorkbenchPlugin.getDefault().getDialogSettings(),
+			dialogSettings = DialogSettings.getOrCreateSection(PlatformUI
+					.getDialogSettingsProvider(FrameworkUtil.getBundle(SmartImportWizard.class)).getDialogSettings(),
 					SMART_IMPORT_SECTION_NAME);
 			setDialogSettings(dialogSettings);
 		}

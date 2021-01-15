@@ -79,6 +79,7 @@ import org.eclipse.ui.internal.wizards.newresource.ResourceMessages;
 import org.eclipse.ui.statushandlers.IStatusAdapterConstants;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Standard workbench wizard that creates a new project resource in the
@@ -143,7 +144,8 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
 	 * Creates a wizard for creating a new project resource in the workspace.
 	 */
 	public BasicNewProjectResourceWizard() {
-		IDialogSettings workbenchSettings = IDEWorkbenchPlugin.getDefault()
+		IDialogSettings workbenchSettings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(BasicNewProjectResourceWizard.class))
 				.getDialogSettings();
 		IDialogSettings section = workbenchSettings
 				.getSection("BasicNewProjectResourceWizard");//$NON-NLS-1$

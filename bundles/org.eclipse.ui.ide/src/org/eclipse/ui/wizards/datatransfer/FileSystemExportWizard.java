@@ -25,11 +25,13 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardFileSystemResourceExportPage1;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Standard workbench wizard for exporting resources from the workspace to the
@@ -66,7 +68,8 @@ public class FileSystemExportWizard extends Wizard implements IExportWizard {
 	 * Creates a wizard for exporting workspace resources to the local file system.
 	 */
 	public FileSystemExportWizard() {
-		IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
+		IDialogSettings workbenchSettings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(WorkbenchPlugin.class)).getDialogSettings();
 		IDialogSettings section = workbenchSettings
 				.getSection("FileSystemExportWizard");//$NON-NLS-1$
 		if (section == null) {

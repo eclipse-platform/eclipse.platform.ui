@@ -24,12 +24,13 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardArchiveFileResourceImportPage1;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Standard workbench wizard for importing resources from a zip file into the
@@ -69,8 +70,8 @@ public class ZipFileImportWizard extends Wizard implements IImportWizard {
 	 * file.
 	 */
 	public ZipFileImportWizard() {
-		AbstractUIPlugin plugin = WorkbenchPlugin.getDefault();
-		IDialogSettings workbenchSettings = plugin.getDialogSettings();
+		IDialogSettings workbenchSettings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(WorkbenchPlugin.class)).getDialogSettings();
 		IDialogSettings section = workbenchSettings
 				.getSection("ZipFileImportWizard");//$NON-NLS-1$
 		if (section == null) {

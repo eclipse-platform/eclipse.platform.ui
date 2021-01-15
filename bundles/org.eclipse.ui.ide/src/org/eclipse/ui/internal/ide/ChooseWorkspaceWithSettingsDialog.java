@@ -56,6 +56,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.preferences.SettingsTransfer;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * The ChooseWorkspaceWithSettingsDialog is the dialog used to switch workspaces
@@ -169,8 +170,9 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 	 * @return boolean <code>true</code> if any were selected
 	 */
 	private boolean createButtons(FormToolkit toolkit, Composite sectionClient) {
-		String[] enabledSettings = getEnabledSettings(IDEWorkbenchPlugin
-				.getDefault().getDialogSettings()
+		String[] enabledSettings = getEnabledSettings(
+				PlatformUI.getDialogSettingsProvider(FrameworkUtil.getBundle(ChooseWorkspaceWithSettingsDialog.class))
+						.getDialogSettings()
 				.getSection(WORKBENCH_SETTINGS));
 
 		RowLayout layout = new RowLayout(SWT.VERTICAL);
@@ -292,15 +294,16 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 	 * @param selectionIDs
 	 */
 	private void saveSettings(String[] selectionIDs) {
-		IDialogSettings settings = IDEWorkbenchPlugin.getDefault()
-				.getDialogSettings().getSection(WORKBENCH_SETTINGS);
+		IDialogSettings dialogSettings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(ChooseWorkspaceWithSettingsDialog.class))
+				.getDialogSettings();
+		IDialogSettings settings = dialogSettings.getSection(WORKBENCH_SETTINGS);
 
 		if (settings == null)
-			settings = IDEWorkbenchPlugin.getDefault().getDialogSettings()
+			settings = dialogSettings
 					.addNewSection(WORKBENCH_SETTINGS);
 
 		settings.put(ENABLED_TRANSFERS, selectionIDs);
-
 	}
 
 	/**
