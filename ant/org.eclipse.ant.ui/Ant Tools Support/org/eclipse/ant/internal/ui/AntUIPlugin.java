@@ -21,7 +21,6 @@ import org.eclipse.ant.internal.ui.editor.DecayCodeCompletionDataStructuresThrea
 import org.eclipse.ant.internal.ui.editor.text.AntEditorDocumentProvider;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -159,22 +158,6 @@ public class AntUIPlugin extends AbstractUIPlugin {
 			display = Display.getDefault();
 		}
 		return display;
-	}
-
-	/**
-	 * Returns the {@link IDialogSettings} section with the given name. Creates a new section if one does not exist.
-	 * 
-	 * @param name
-	 * @return the {@link IDialogSettings} section with the given name
-	 * @since 3.5.500
-	 */
-	public IDialogSettings getDialogSettingsSection(String name) {
-		IDialogSettings dialogSettings = getDialogSettings();
-		IDialogSettings section = dialogSettings.getSection(name);
-		if (section == null) {
-			section = dialogSettings.addNewSection(name);
-		}
-		return section;
 	}
 
 	@Override
