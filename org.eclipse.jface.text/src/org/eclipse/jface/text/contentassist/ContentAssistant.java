@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,7 @@
  *     Marcel Bruch, bruch@cs.tu-darmstadt.de - [content assist] Allow to re-sort proposals - https://bugs.eclipse.org/bugs/show_bug.cgi?id=350991
  *     John Glassmyer, jogl@google.com - catch Content Assist exceptions to protect navigation keys - http://bugs.eclipse.org/434901
  *     Mickael Istria (Red Hat Inc.) - [251156] Allow multiple contentAssitProviders internally & inheritance
+ *     Christoph Läubrich - Bug 508821 - [Content assist] More flexible API in IContentAssistProcessor to decide whether to auto-activate or not
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
@@ -22,7 +23,6 @@ import static org.eclipse.jface.util.Util.isValid;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Function;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
@@ -114,6 +113,10 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 */
 	public static final String SELECT_PREVIOUS_PROPOSAL_COMMAND_ID= "org.eclipse.ui.edit.text.contentAssist.selectPreviousProposal"; //$NON-NLS-1$
 
+	enum TriggerType {
+		CONTEXT_INFORMATION,
+		COMPLETION_PROPOSAL, NONE;
+	}
 
 	/**
 	 * A generic closer class used to monitor various interface events in order to determine whether
@@ -303,17 +306,6 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 				threadToStop.interrupt();
 		}
 
-		private boolean contains(char[] characters, char character) {
-			if (characters != null) {
-				for (char c : characters) {
-					if (character == c) {
-						return true;
-					}
-				}
-			}
-			return false;
-		}
-
 		@Override
 		public void keyPressed(KeyEvent e) {
 			// Only act on typed characters and ignore modifier-only events
@@ -323,24 +315,20 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			if (e.character != 0 && (e.stateMask == SWT.ALT))
 				return;
 
+			TriggerType triggerType= getAutoActivationTriggerType(e.character);
+
 			// Only act on characters that are trigger candidates. This
 			// avoids computing the model selection on every keystroke
-			if (!isAutoActivationTriggerChar(e.character)) {
+			if (triggerType == TriggerType.NONE) {
 				stop();
 				return;
 			}
 
 			int showStyle;
-			int pos= fContentAssistSubjectControlAdapter.getSelectedRange().x;
-			char[] activation;
-
-			activation= fContentAssistSubjectControlAdapter.getCompletionProposalAutoActivationCharacters(ContentAssistant.this, pos);
-
-			if (contains(activation, e.character) && !isProposalPopupActive())
+			if (triggerType == TriggerType.COMPLETION_PROPOSAL && !isProposalPopupActive())
 				showStyle= SHOW_PROPOSALS;
 			else {
-				activation= fContentAssistSubjectControlAdapter.getContextInformationAutoActivationCharacters(ContentAssistant.this, pos);
-				if (contains(activation, e.character) && !isContextInfoPopupActive())
+				if (triggerType == TriggerType.CONTEXT_INFORMATION && !isContextInfoPopupActive())
 					showStyle= SHOW_CONTEXT_INFO;
 				else {
 					stop();
@@ -1187,26 +1175,28 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	}
 
 	/**
+	 * @param c the character to check
 	 * @return whether the given char is an auto-activation trigger char
 	 * @since 3.15
 	 */
-	boolean isAutoActivationTriggerChar(char c) {
+	TriggerType getAutoActivationTriggerType(char c) {
 		if (fProcessors == null)
-			return false;
-
-		for (Set<IContentAssistProcessor> processorsForContentType : fProcessors.values()) {
-			for (IContentAssistProcessor processor : processorsForContentType) {
-				char[] triggers= processor.getCompletionProposalAutoActivationCharacters();
-				if (triggers != null && new String(triggers).indexOf(c) >= 0) {
-					return true;
-				}
-				triggers= processor.getContextInformationAutoActivationCharacters();
-				if (triggers != null && new String(triggers).indexOf(c) >= 0) {
-					return true;
-				}
+			return TriggerType.NONE;
+		int offset= fContentAssistSubjectControlAdapter.getSelectedRange().x;
+		Set<IContentAssistProcessor> processors= fContentAssistSubjectControlAdapter.getContentAssistProcessors(this, offset);
+		if (processors == null) {
+			return TriggerType.NONE;
+		}
+		for (IContentAssistProcessor processor : processors) {
+			IContentAssistProcessorExtension extension= IContentAssistProcessorExtension.adapt(processor);
+			if (extension.isCompletionProposalAutoActivation(c, fViewer, offset)) {
+				return TriggerType.COMPLETION_PROPOSAL;
+			}
+			if (extension.isContextInformationAutoActivation(c, fViewer, offset)) {
+				return TriggerType.CONTEXT_INFORMATION;
 			}
 		}
-		return false;
+		return TriggerType.NONE;
 	}
 
 	/**
@@ -1916,7 +1906,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @return the content-assist processors or <code>null</code> if none exists
 	 * @since 3.13
 	 */
-	private Set<IContentAssistProcessor> getProcessors(ITextViewer viewer, int offset) {
+	Set<IContentAssistProcessor> getProcessors(ITextViewer viewer, int offset) {
 		try {
 
 			IDocument document= viewer.getDocument();
@@ -1938,7 +1928,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @return the content-assist processors or <code>null</code> if none exists
 	 * @since 3.13
 	 */
-	private Set<IContentAssistProcessor> getProcessors(IContentAssistSubjectControl contentAssistSubjectControl, int offset) {
+	Set<IContentAssistProcessor> getProcessors(IContentAssistSubjectControl contentAssistSubjectControl, int offset) {
 		try {
 
 			IDocument document= contentAssistSubjectControl.getDocument();
@@ -2186,95 +2176,6 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		if (validator instanceof IContextInformationPresenter)
 			return (IContextInformationPresenter) validator;
 		return null;
-	}
-
-	/**
-	 * Returns the characters which when typed by the user should automatically initiate proposing
-	 * completions. The position is used to determine the appropriate content assist processor to
-	 * invoke.
-	 *
-	 * @param contentAssistSubjectControl the content assist subject control
-	 * @param offset a document offset
-	 * @return the auto activation characters
-	 * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
-	 * @since 3.0
-	 */
-	char[] getCompletionProposalAutoActivationCharacters(IContentAssistSubjectControl contentAssistSubjectControl, int offset) {
-		return mergeResults(getProcessors(contentAssistSubjectControl, offset), IContentAssistProcessor::getCompletionProposalAutoActivationCharacters);
-	}
-
-	/**
-	 * Returns the characters which when typed by the user should automatically initiate proposing
-	 * completions. The position is used to determine the appropriate content assist processor to
-	 * invoke.
-	 *
-	 * @param viewer the text viewer
-	 * @param offset a document offset
-	 * @return the auto activation characters
-	 * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
-	 */
-	char[] getCompletionProposalAutoActivationCharacters(ITextViewer viewer, int offset) {
-		return mergeResults(getProcessors(viewer, offset), IContentAssistProcessor::getCompletionProposalAutoActivationCharacters);
-	}
-
-	/**
-	 * Returns the characters which when typed by the user should automatically initiate the
-	 * presentation of context information. The position is used to determine the appropriate
-	 * content assist processor to invoke.
-	 *
-	 * @param viewer the text viewer
-	 * @param offset a document offset
-	 * @return the auto activation characters
-	 * @see IContentAssistProcessor#getContextInformationAutoActivationCharacters()
-	 * @since 3.0
-	 */
-	char[] getContextInformationAutoActivationCharacters(ITextViewer viewer, int offset) {
-		return mergeResults(getProcessors(viewer, offset), IContentAssistProcessor::getContextInformationAutoActivationCharacters);
-	}
-
-	/**
-	 * Returns the characters which when typed by the user should automatically initiate the
-	 * presentation of context information. The position is used to determine the appropriate
-	 * content assist processor to invoke.
-	 *
-	 * @param contentAssistSubjectControl the content assist subject control
-	 * @param offset a document offset
-	 * @return the auto activation characters
-	 * @see IContentAssistProcessor#getContextInformationAutoActivationCharacters()
-	 * @since 3.0
-	 */
-	char[] getContextInformationAutoActivationCharacters(IContentAssistSubjectControl contentAssistSubjectControl, int offset) {
-		return mergeResults(getProcessors(contentAssistSubjectControl, offset), IContentAssistProcessor::getContextInformationAutoActivationCharacters);
-	}
-
-	private char[] mergeResults(Collection<IContentAssistProcessor> processors, Function<IContentAssistProcessor, char[]> f) {
-		if (processors == null) {
-			return null;
-		}
-		char[][] arrays = processors.stream()
-			.map(f)
-			.filter(Objects::nonNull)
-			.filter(array -> array.length > 0)
-			.toArray(char[][]::new);
-		if (arrays.length == 0) {
-			return null;
-		} else if (arrays.length == 1) {
-			return arrays[0];
-		} else {
-			LinkedHashSet<Character> res = new LinkedHashSet<>();
-			for (char[] current : arrays) {
-				for (char c : current) {
-					res.add(Character.valueOf(c));
-				}
-			}
-			char[] array = new char[res.size()];
-			int index = 0;
-			for (Character c : res) {
-				array[index] = c.charValue();
-				index++;
-			}
-			return array;
-		}
 	}
 
 	@Override

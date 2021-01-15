@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Red Hat Inc. and others.
+ * Copyright (c) 2016, 2021 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,40 +9,40 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- * - Mickael Istria (Red Hat Inc.)
+ *  Mickael Istria (Red Hat Inc.) - Initial API and implementation
+ *  Christoph Läubrich - Bug 508821 - [Content assist] More flexible API in IContentAssistProcessor to decide whether to auto-activate or not
  *******************************************************************************/
 package org.eclipse.ui.internal.genericeditor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
+import org.eclipse.jface.text.contentassist.IContentAssistProcessorExtension;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
 /**
- * A content assist processor that delegates all content assist
- * operations to children provided in constructor and aggregates
- * the results.
+ * A content assist processor that delegates all content assist operations to
+ * children provided in constructor and aggregates the results.
  *
  * @since 1.0
  */
-public class CompositeContentAssistProcessor implements IContentAssistProcessor {
+public class CompositeContentAssistProcessor implements IContentAssistProcessorExtension, IContentAssistProcessor {
 
 	private List<IContentAssistProcessor> fContentAssistProcessors;
 
 	/**
 	 * Constructor
-	 * @param contentAssistProcessors the children that will actually populate the output
-	 *        of this content assist processor.
+	 * 
+	 * @param contentAssistProcessors the children that will actually populate the
+	 *                                output of this content assist processor.
 	 */
 	public CompositeContentAssistProcessor(List<IContentAssistProcessor> contentAssistProcessors) {
-		fContentAssistProcessors= contentAssistProcessors;
+		fContentAssistProcessors = contentAssistProcessors;
 	}
 
 	@Override
@@ -70,44 +70,6 @@ public class CompositeContentAssistProcessor implements IContentAssistProcessor 
 	}
 
 	@Override
-	public char[] getCompletionProposalAutoActivationCharacters() {
-		Set<Character> res = new HashSet<>();
-		for (IContentAssistProcessor processor : this.fContentAssistProcessors) {
-			char[] chars = processor.getCompletionProposalAutoActivationCharacters();
-			if (chars != null) {
-				for (char c : chars) {
-					res.add(Character.valueOf(c));
-				}
-			}
-		}
-		return toCharArray(res);
-	}
-
-	private static char[] toCharArray(Set<Character> chars) {
-		char[] res = new char[chars.size()];
-		int i = 0;
-		for (Character c : chars) {
-			res[i] = c.charValue();
-			i++;
-		}
-		return res;
-	}
-
-	@Override
-	public char[] getContextInformationAutoActivationCharacters() {
-		Set<Character> res = new HashSet<>();
-		for (IContentAssistProcessor processor : this.fContentAssistProcessors) {
-			char[] chars = processor.getContextInformationAutoActivationCharacters();
-			if (chars != null) {
-				for (char c : chars) {
-					res.add(Character.valueOf(c));
-				}
-			}
-		}
-		return toCharArray(res);
-	}
-
-	@Override
 	public String getErrorMessage() {
 		StringBuilder res = new StringBuilder();
 		for (IContentAssistProcessor processor : this.fContentAssistProcessors) {
@@ -126,6 +88,28 @@ public class CompositeContentAssistProcessor implements IContentAssistProcessor 
 	@Override
 	public IContextInformationValidator getContextInformationValidator() {
 		return null;
+	}
+
+	@Override
+	public boolean isCompletionProposalAutoActivation(char c, ITextViewer viewer, int offset) {
+		for (IContentAssistProcessor processor : this.fContentAssistProcessors) {
+			IContentAssistProcessorExtension adapt = IContentAssistProcessorExtension.adapt(processor);
+			if (adapt.isCompletionProposalAutoActivation(c, viewer, offset)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isContextInformationAutoActivation(char c, ITextViewer viewer, int offset) {
+		for (IContentAssistProcessor processor : this.fContentAssistProcessors) {
+			IContentAssistProcessorExtension adapt = IContentAssistProcessorExtension.adapt(processor);
+			if (adapt.isContextInformationAutoActivation(c, viewer, offset)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

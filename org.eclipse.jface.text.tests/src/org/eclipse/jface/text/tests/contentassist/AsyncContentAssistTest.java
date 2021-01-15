@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Red Hat Inc. and others.
+ * Copyright (c) 2019, 2021 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  * - Mickael Istria (Red Hat Inc.)
+ * Christoph Läubrich - add additional test
  *******************************************************************************/
 package org.eclipse.jface.text.tests.contentassist;
 
@@ -28,7 +29,9 @@ import org.junit.Test;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
@@ -125,6 +128,59 @@ public class AsyncContentAssistTest {
 				return false;
 			}
 		}.waitForCondition(display, 2000));
+	}
+
+	@Test
+	public void testCompleteActivationChar() throws InterruptedException {
+		Shell shell= new Shell();
+		shell.setLayout(new FillLayout());
+		shell.setSize(500, 300);
+		SourceViewer viewer= new SourceViewer(shell, null, SWT.NONE);
+		Document document= new Document("b");
+		viewer.setDocument(document);
+		viewer.setSelectedRange(1, 0);
+		ContentAssistant contentAssistant= new ContentAssistant(true);
+		BarContentAssistProcessor processor= new BarContentAssistProcessor();
+		processor.setCompletionProposalAutoActivationChar('b');
+		contentAssistant.addContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
+		contentAssistant.enablePrefixCompletion(true);
+		contentAssistant.enableAutoActivation(true);
+		contentAssistant.setAutoActivationDelay(0);
+		contentAssistant.install(viewer);
+		shell.open();
+		Display display= shell.getDisplay();
+		final Set<Shell> beforeShells= Arrays.stream(display.getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
+		Event keyEvent= new Event();
+		Control control= viewer.getTextWidget();
+		display.timerExec(200, new Runnable() {
+			@Override
+			public void run() {
+				control.forceFocus();
+				keyEvent.widget= control;
+				keyEvent.type= SWT.KeyDown;
+				keyEvent.character= 'b';
+				keyEvent.keyCode= 'b';
+				control.getDisplay().post(keyEvent);
+				keyEvent.type= SWT.KeyUp;
+				control.getDisplay().post(keyEvent);
+				DisplayHelper.driveEventQueue(control.getDisplay());
+				if (!document.get().startsWith("bb")) {
+					display.timerExec(200, this);
+				}
+			}
+		});
+		assertTrue("Completion item not shown", new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				Set<Shell> newShells= Arrays.stream(display.getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
+				newShells.removeAll(beforeShells);
+				if (!newShells.isEmpty()) {
+					Table completionTable= findCompletionSelectionControl(newShells.iterator().next());
+					return Arrays.stream(completionTable.getItems()).map(TableItem::getText).anyMatch(item -> item.contains(BarContentAssistProcessor.PROPOSAL.substring(document.getLength())));
+				}
+				return false;
+			}
+		}.waitForCondition(display, 4000));
 	}
 
 	private static Table findCompletionSelectionControl(Widget control) {

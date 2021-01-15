@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Christoph Läubrich - Bug 508821 - [Content assist] More flexible API in IContentAssistProcessor to decide whether to auto-activate or not
  *******************************************************************************/
 package org.eclipse.jface.internal.text.link.contentassist;
 
@@ -63,6 +64,7 @@ import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension6;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
+import org.eclipse.jface.text.contentassist.IContentAssistProcessorExtension;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistantExtension;
 import org.eclipse.jface.text.contentassist.IContextInformation;
@@ -261,17 +263,6 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 				threadToStop.interrupt();
 		}
 
-		private boolean contains(char[] characters, char character) {
-			if (characters != null) {
-				for (char c : characters) {
-					if (character == c) {
-						return true;
-					}
-				}
-			}
-			return false;
-		}
-
 		@Override
 		public void verifyKey(VerifyEvent e) {
 			// Only act on typed characters and ignore modifier-only events
@@ -281,15 +272,23 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 			if (e.character != 0 && (e.stateMask == SWT.ALT))
 				return;
 
+
+
 			int showStyle;
 			int pos= fViewer.getSelectedRange().x;
-			char[] activation= getCompletionProposalAutoActivationCharacters(fViewer, pos);
+			IContentAssistProcessorExtension p= getProcessor(fViewer, pos);
+			if (p == null) {
+				stop();
+				return;
+			}
 
-			if (contains(activation, e.character) && !fProposalPopup.isActive())
+
+
+
+			if (p.isCompletionProposalAutoActivation(e.character, fViewer, pos) && !fProposalPopup.isActive())
 				showStyle= SHOW_PROPOSALS;
 			else {
-				activation= getContextInformationAutoActivationCharacters(fViewer, pos);
-				if (contains(activation, e.character) && !fContextInfoPopup.isActive())
+				if (p.isContextInformationAutoActivation(e.character, fViewer, pos) && !fContextInfoPopup.isActive())
 					showStyle= SHOW_CONTEXT_INFO;
 				else {
 					if (fThread != null && fThread.isAlive())
@@ -1322,10 +1321,10 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	 * @param offset a offset within the document
 	 * @return a content-assist processor or <code>null</code> if none exists
 	 */
-	private IContentAssistProcessor getProcessor(ITextViewer viewer, int offset) {
+	private IContentAssistProcessorExtension getProcessor(ITextViewer viewer, int offset) {
 		try {
 			String type= TextUtilities.getContentType(viewer.getDocument(), getDocumentPartitioning(), offset, true);
-			return getContentAssistProcessor(type);
+			return IContentAssistProcessorExtension.adapt(getContentAssistProcessor(type));
 		} catch (BadLocationException x) {
 		}
 		return null;
@@ -1411,38 +1410,6 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 		if (validator instanceof IContextInformationPresenter)
 			return (IContextInformationPresenter) validator;
 		return null;
-	}
-
-	/**
-	 * Returns the characters which when typed by the user should automatically
-	 * initiate proposing completions. The position is used to determine the
-	 * appropriate content assist processor to invoke.
-	 *
-	 * @param textViewer the text viewer
-	 * @param offset a document offset
-	 * @return the auto activation characters
-	 *
-	 * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters
-	 */
-	private char[] getCompletionProposalAutoActivationCharacters(ITextViewer textViewer, int offset) {
-		IContentAssistProcessor p= getProcessor(textViewer, offset);
-		return p != null ? p.getCompletionProposalAutoActivationCharacters() : null;
-	}
-
-	/**
-	 * Returns the characters which when typed by the user should automatically
-	 * initiate the presentation of context information. The position is used
-	 * to determine the appropriate content assist processor to invoke.
-	 *
-	 * @param textViewer the text viewer
-	 * @param offset a document offset
-	 * @return the auto activation characters
-	 *
-	 * @see IContentAssistProcessor#getContextInformationAutoActivationCharacters
-	 */
-	private char[] getContextInformationAutoActivationCharacters(ITextViewer textViewer, int offset) {
-		IContentAssistProcessor p= getProcessor(textViewer, offset);
-		return p != null ? p.getContextInformationAutoActivationCharacters() : null;
 	}
 
 	@Override

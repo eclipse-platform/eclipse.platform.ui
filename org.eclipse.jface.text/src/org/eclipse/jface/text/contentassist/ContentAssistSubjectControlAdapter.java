@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,10 +12,13 @@
  *     IBM Corporation - initial API and implementation
  *     Mickael Istria (Red Hat Inc.) - [251156] Allow multiple contentAssitProviders internally & inheritance
  *     Stephan Wahlbrink <sw@wahlbrink.eu> - Bug 512251 - Fix IllegalArgumentException in ContextInformationPopup
+ *     Christoph Läubrich - Bug 508821 - [Content assist] More flexible API in IContentAssistProcessor to decide whether to auto-activate or not
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
 import static org.eclipse.jface.util.Util.isValid;
+
+import java.util.Set;
 
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
@@ -241,38 +244,21 @@ class ContentAssistSubjectControlAdapter implements IContentAssistSubjectControl
 			return fContentAssistSubjectControl.supportsVerifyKeyListener();
 		return true;
 	}
-	/**
-	 * Returns the characters which when typed by the user should automatically
-	 * initiate proposing completions. The position is used to determine the
-	 * appropriate content assist processor to invoke.
-	 *
-	 * @param contentAssistant the content assistant
-	 * @param offset a document offset
-	 * @return the auto activation characters
-	 * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
-	 */
-	public char[] getCompletionProposalAutoActivationCharacters(ContentAssistant contentAssistant, int offset) {
-		if (fContentAssistSubjectControl != null)
-			return contentAssistant.getCompletionProposalAutoActivationCharacters(fContentAssistSubjectControl, offset);
-		return contentAssistant.getCompletionProposalAutoActivationCharacters(fViewer, offset);
-	}
 
 	/**
-	 * Returns the characters which when typed by the user should automatically
-	 * initiate the presentation of context information. The position is used
-	 * to determine the appropriate content assist processor to invoke.
+	 * Returns the processors for the given offset
 	 *
 	 * @param contentAssistant the content assistant
 	 * @param offset a document offset
-	 * @return the auto activation characters
-	 *
-	 * @see IContentAssistProcessor#getContextInformationAutoActivationCharacters()
+	 * @return the processors set
+	 * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
 	 */
-	char[] getContextInformationAutoActivationCharacters(ContentAssistant contentAssistant, int offset) {
+	Set<IContentAssistProcessor> getContentAssistProcessors(ContentAssistant contentAssistant, int offset) {
 		if (fContentAssistSubjectControl != null)
-			return contentAssistant.getContextInformationAutoActivationCharacters(fContentAssistSubjectControl, offset);
-		return contentAssistant.getContextInformationAutoActivationCharacters(fViewer, offset);
+			return contentAssistant.getProcessors(fContentAssistSubjectControl, offset);
+		return contentAssistant.getProcessors(fViewer, offset);
 	}
+
 
 	/**
 	 * Creates and returns a completion proposal popup for the given content assistant.
@@ -347,7 +333,7 @@ class ContentAssistSubjectControlAdapter implements IContentAssistSubjectControl
 	public void installValidator(ContextFrame frame) {
 		if (fContentAssistSubjectControl != null) {
 			if (frame.fValidator instanceof ISubjectControlContextInformationValidator)
-				((ISubjectControlContextInformationValidator)frame.fValidator).install(frame.fInformation, fContentAssistSubjectControl, frame.fOffset);
+				((ISubjectControlContextInformationValidator) frame.fValidator).install(frame.fInformation, fContentAssistSubjectControl, frame.fOffset);
 		} else
 			frame.fValidator.install(frame.fInformation, fViewer, frame.fOffset);
 	}
@@ -360,7 +346,7 @@ class ContentAssistSubjectControlAdapter implements IContentAssistSubjectControl
 	public void installContextInformationPresenter(ContextFrame frame) {
 		if (fContentAssistSubjectControl != null) {
 			if (frame.fPresenter instanceof ISubjectControlContextInformationPresenter)
-				((ISubjectControlContextInformationPresenter)frame.fValidator).install(frame.fInformation, fContentAssistSubjectControl, frame.fBeginOffset);
+				((ISubjectControlContextInformationPresenter) frame.fValidator).install(frame.fInformation, fContentAssistSubjectControl, frame.fBeginOffset);
 		} else
 			frame.fPresenter.install(frame.fInformation, fViewer, frame.fBeginOffset);
 	}
@@ -396,4 +382,5 @@ class ContentAssistSubjectControlAdapter implements IContentAssistSubjectControl
 		else
 			fViewer.getTextWidget().removeSelectionListener(selectionListener);
 	}
+
 }

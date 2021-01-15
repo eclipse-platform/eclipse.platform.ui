@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Christoph Läubrich - Bug 508821 - [Content assist] More flexible API in IContentAssistProcessor to decide whether to auto-activate or not
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
@@ -17,16 +18,29 @@ import org.eclipse.jface.text.ITextViewer;
 
 
 /**
- * A content assist processor proposes completions and
- * computes context information for a particular content type.
- * A content assist processor is a {@link org.eclipse.jface.text.contentassist.IContentAssistant}
- * plug-in.
+ * A content assist processor proposes completions and computes context information for a particular
+ * content type. A content assist processor is a
+ * {@link org.eclipse.jface.text.contentassist.IContentAssistant} plug-in.
  * <p>
- * This interface must be implemented by clients. Implementers should be
- * registered with a content assistant in order to get involved in the
- * assisting process.
+ * This interface must be implemented by clients. Implementers should be registered with a content
+ * assistant in order to get involved in the assisting process.
  * </p>
-*/
+ * In order to provide backward compatibility for clients of <code>IContentAssistProcessor</code>,
+ * extension interfaces are used to provide a means of evolution. The following extension interfaces
+ * exist:
+ * </p>
+ * <ul>
+ * <li>{@link org.eclipse.jface.text.contentassist.IContentAssistProcessorExtension} since version
+ * 3.17 introducing the following functions:
+ * <ul>
+ * <li>isCompletionProposalAutoActivation(char, ITextViewer, int) providing context information when
+ * calculating auto activation</li>
+ * <li>isContextInformationAutoActivation(char, ITextViewer, int) providing context information when
+ * calculating auto activation</li>
+ * </ul>
+ * </li>
+ * </ul>
+ */
 public interface IContentAssistProcessor {
 
 	/**

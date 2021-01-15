@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,7 @@
  *     Terry Parker, tparker@google.com - Protect against poorly behaved completion proposers - http://bugs.eclipse.org/429925
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 493649
  *     Mickael Istria (Red Hat Inc.) - [251156] Allow multiple contentAssitProviders internally & inheritance
+ *     Christoph Läubrich - Bug 508821 - [Content assist] More flexible API in IContentAssistProcessor to decide whether to auto-activate or not
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
@@ -99,6 +100,7 @@ import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.jface.text.contentassist.ContentAssistant.TriggerType;
 
 
 /**
@@ -376,7 +378,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 				if (fContentAssistant.isAutoActivation() && offset > 0 && event != null) {
 					try {
 						char charBeforeOffset= event.getDocument().getChar(offset - 1);
-						if (fContentAssistant.isAutoActivationTriggerChar(charBeforeOffset)) {
+						if (fContentAssistant.getAutoActivationTriggerType(charBeforeOffset) != TriggerType.NONE) {
 							fContentAssistant.fireSessionBeginEvent(true);
 							showProposals(true);
 						}

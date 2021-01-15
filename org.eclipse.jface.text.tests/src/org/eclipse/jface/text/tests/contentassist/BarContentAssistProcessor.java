@@ -25,13 +25,13 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
+import org.eclipse.jface.text.contentassist.IContentAssistProcessorExtension;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationExtension;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
 
-public class BarContentAssistProcessor implements IContentAssistProcessor {
+public class BarContentAssistProcessor implements IContentAssistProcessorExtension {
 
 	public static final String PROPOSAL= "bars are good for a beer.";
 
@@ -107,6 +107,8 @@ public class BarContentAssistProcessor implements IContentAssistProcessor {
 
 	private final String completeString;
 
+	private char activationChar;
+
 	public BarContentAssistProcessor() {
 		this(PROPOSAL);
 	}
@@ -176,6 +178,20 @@ public class BarContentAssistProcessor implements IContentAssistProcessor {
 	@Override
 	public String getErrorMessage() {
 		return null;
+	}
+
+	@Override
+	public boolean isCompletionProposalAutoActivation(char c, ITextViewer viewer, int offset) {
+		return activationChar == c;
+	}
+
+	@Override
+	public boolean isContextInformationAutoActivation(char c, ITextViewer viewer, int offset) {
+		return false;
+	}
+
+	public void setCompletionProposalAutoActivationChar(char c) {
+		activationChar= c;
 	}
 
 }
