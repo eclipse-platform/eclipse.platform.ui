@@ -19,7 +19,6 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.PopupDialog;
@@ -33,6 +32,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.keys.IBindingService;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * A <code>PopupDialog</code> that is automatically positioned relative
@@ -171,8 +171,7 @@ public abstract class DebugPopup extends PopupDialog {
 
 	@Override
 	protected IDialogSettings getDialogSettings() {
-		IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
-		return settings;
+		return PlatformUI.getDialogSettingsProvider(FrameworkUtil.getBundle(DebugPopup.class)).getDialogSettings();
 	}
 
 	@Override

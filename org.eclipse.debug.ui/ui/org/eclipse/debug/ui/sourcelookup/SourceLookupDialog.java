@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * A dialog for editing the source lookup path of a
@@ -128,7 +129,8 @@ public class SourceLookupDialog extends TitleAreaDialog {
 
 	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
-		IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
+		IDialogSettings settings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(SourceLookupDialog.class)).getDialogSettings();
 		IDialogSettings section = settings.getSection(getClass().getName());
 		if (section == null) {
 			section = settings.addNewSection(getClass().getName());

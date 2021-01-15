@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.breakpoints;
 
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -27,6 +26,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Allows the user to specify if they want to delete the working set, all the breakpoints in the working
@@ -130,8 +131,9 @@ public class DeleteWorkingsetsMessageDialog extends MessageDialog {
 	 * @return dialog settings
 	 */
 	protected IDialogSettings getDialogSettings() {
-		DebugUIPlugin plugin = DebugUIPlugin.getDefault();
-		IDialogSettings workbenchSettings = plugin.getDialogSettings();
+		IDialogSettings workbenchSettings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(DeleteWorkingsetsMessageDialog.class))
+				.getDialogSettings();
 		IDialogSettings section = workbenchSettings.getSection(DIALOG_SETTINGS);
 		if (section == null) {
 			section = workbenchSettings.addNewSection(DIALOG_SETTINGS);

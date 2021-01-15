@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * This class provides the framework for a general selection dialog class.
@@ -202,7 +203,9 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 
 	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
-		IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
+		IDialogSettings settings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(AbstractDebugSelectionDialog.class))
+				.getDialogSettings();
 		IDialogSettings section = settings.getSection(getDialogSettingsId());
 		if (section == null) {
 			section = settings.addNewSection(getDialogSettingsId());

@@ -17,7 +17,6 @@ package org.eclipse.debug.internal.ui.hover;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.model.elements.ElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
@@ -57,6 +56,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Creates an information control to display an expression in a hover control.
@@ -196,7 +196,9 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		 * @param create whether to create the settings
 		 */
 		private IDialogSettings getDialogSettings(boolean create) {
-			IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
+			IDialogSettings settings = PlatformUI
+					.getDialogSettingsProvider(FrameworkUtil.getBundle(ExpressionInformationControlCreator.class))
+					.getDialogSettings();
 			IDialogSettings section = settings.getSection(this.getClass().getName());
 			if (section == null && create) {
 				section = settings.addNewSection(this.getClass().getName());

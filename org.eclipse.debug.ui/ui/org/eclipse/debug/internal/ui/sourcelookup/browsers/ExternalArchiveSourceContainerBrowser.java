@@ -18,12 +18,14 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.containers.ExternalArchiveSourceContainer;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIMessages;
 import org.eclipse.debug.ui.sourcelookup.AbstractSourceContainerBrowser;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * The browser for adding an external archive.
@@ -36,7 +38,10 @@ public class ExternalArchiveSourceContainerBrowser extends AbstractSourceContain
 	@Override
 	public ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director) {
 		FileDialog dialog = new FileDialog(shell, SWT.OPEN | SWT.MULTI | SWT.SHEET);
-		String rootDir = DebugUIPlugin.getDefault().getDialogSettings().get(ROOT_DIR);
+		IDialogSettings dialogSettings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(ExternalArchiveSourceContainerBrowser.class))
+				.getDialogSettings();
+		String rootDir = dialogSettings.get(ROOT_DIR);
 		dialog.setText(SourceLookupUIMessages.ExternalArchiveSourceContainerBrowser_2);
 		dialog.setFilterExtensions(new String[]{"*.jar;*.zip"});  //$NON-NLS-1$
 		if (rootDir != null) {
@@ -54,7 +59,7 @@ public class ExternalArchiveSourceContainerBrowser extends AbstractSourceContain
 				// TODO: configure auto-detect
 				containers[i]= new ExternalArchiveSourceContainer(path.toOSString(), true);
 			}
-			DebugUIPlugin.getDefault().getDialogSettings().put(ROOT_DIR, rootDir);
+			dialogSettings.put(ROOT_DIR, rootDir);
 			return containers;
 		}
 		return new ISourceContainer[0];

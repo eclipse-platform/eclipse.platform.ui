@@ -50,6 +50,8 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.PlatformUI;
+import org.osgi.framework.FrameworkUtil;
 
 
 /**
@@ -428,7 +430,8 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 	}
 
 	private IDialogSettings getDialogSettings() {
-		IDialogSettings javaSettings= DebugUIPlugin.getDefault().getDialogSettings();
+		IDialogSettings javaSettings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(BreadcrumbItemDropDown.class)).getDialogSettings();
 		IDialogSettings settings= javaSettings.getSection(DIALOG_SETTINGS);
 		if (settings == null) {
 			settings= javaSettings.addNewSection(DIALOG_SETTINGS);

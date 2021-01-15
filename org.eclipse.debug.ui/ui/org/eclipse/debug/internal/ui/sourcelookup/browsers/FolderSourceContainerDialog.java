@@ -22,6 +22,7 @@ import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIMessages;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -35,6 +36,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.views.navigator.ResourceComparator;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * The dialog for selecting the folder for which a source container will be created.
@@ -102,7 +104,10 @@ public class FolderSourceContainerDialog extends ElementTreeSelectionDialog {
 		setAllowMultiple(true);
 		setMessage(SourceLookupUIMessages.folderSelection_label);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,  IDebugHelpContextIds.ADD_FOLDER_CONTAINER_DIALOG);
-		setSearchSubfolders(DebugUIPlugin.getDefault().getDialogSettings().getBoolean(LAST_SUBDIR_SETTING));
+		IDialogSettings dialogSettings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(FolderSourceContainerDialog.class))
+				.getDialogSettings();
+		setSearchSubfolders(dialogSettings.getBoolean(LAST_SUBDIR_SETTING));
 		addFilter(new ViewerFilter() {
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
@@ -140,7 +145,8 @@ public class FolderSourceContainerDialog extends ElementTreeSelectionDialog {
 	@Override
 	protected void okPressed() {
 		fSearchSubfolders = fSubfoldersButton.getSelection();
-		DebugUIPlugin.getDefault().getDialogSettings().put(LAST_SUBDIR_SETTING, fSearchSubfolders);
+		PlatformUI.getDialogSettingsProvider(FrameworkUtil.getBundle(FolderSourceContainerDialog.class))
+				.getDialogSettings().put(LAST_SUBDIR_SETTING, fSearchSubfolders);
 		super.okPressed();
 	}
 

@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Provides a dialog for changing the maximum length allowed in the detail pane
@@ -70,7 +71,9 @@ public class DetailPaneMaxLengthDialog extends TrayDialog {
 
 	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
-		IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
+		IDialogSettings settings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(DetailPaneMaxLengthDialog.class))
+				.getDialogSettings();
 		IDialogSettings section = settings.getSection(SETTINGS_ID);
 		if (section == null) {
 			section = settings.addNewSection(SETTINGS_ID);

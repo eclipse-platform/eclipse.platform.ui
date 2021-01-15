@@ -83,6 +83,7 @@ import org.eclipse.ui.ide.IDEEncoding;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceComparator;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Launch configuration tab used to specify the location a launch configuration
@@ -183,7 +184,8 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * @since 3.6
 	 */
 	IDialogSettings getDialogBoundsSettings(String id) {
-		IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
+		IDialogSettings settings = PlatformUI.getDialogSettingsProvider(FrameworkUtil.getBundle(CommonTab.class))
+				.getDialogSettings();
 		IDialogSettings section = settings.getSection(id);
 		if (section == null) {
 			section = settings.addNewSection(id);

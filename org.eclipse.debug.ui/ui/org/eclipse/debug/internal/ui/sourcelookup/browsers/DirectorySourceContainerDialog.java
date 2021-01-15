@@ -18,11 +18,11 @@ import java.io.File;
 
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIMessages;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
@@ -41,6 +41,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * The dialog for selecting the external folder for which a source container will be created.
@@ -66,7 +67,9 @@ public class DirectorySourceContainerDialog extends TitleAreaDialog {
 	 * @param shell shell
 	 */
 	public DirectorySourceContainerDialog(Shell shell) {
-		this(shell, IInternalDebugCoreConstants.EMPTY_STRING, DebugUIPlugin.getDefault().getDialogSettings().getBoolean(LAST_SUBDIR_SETTING));
+		this(shell, IInternalDebugCoreConstants.EMPTY_STRING,
+				PlatformUI.getDialogSettingsProvider(FrameworkUtil.getBundle(DirectorySourceContainerDialog.class))
+						.getDialogSettings().getBoolean(LAST_SUBDIR_SETTING));
 		fNewContainer = true;
 	}
 
@@ -189,15 +192,21 @@ public class DirectorySourceContainerDialog extends TitleAreaDialog {
 	protected void okPressed() {
 		fDirectory = fDirText.getText().trim();
 		fSearchSubfolders = fSubfoldersButton.getSelection();
-		DebugUIPlugin.getDefault().getDialogSettings().put(LAST_PATH_SETTING, fDirectory);
-		DebugUIPlugin.getDefault().getDialogSettings().put(LAST_SUBDIR_SETTING, fSearchSubfolders);
+		IDialogSettings dialogSettings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(DirectorySourceContainerDialog.class))
+				.getDialogSettings();
+		dialogSettings.put(LAST_PATH_SETTING, fDirectory);
+		dialogSettings.put(LAST_SUBDIR_SETTING, fSearchSubfolders);
 		super.okPressed();
 	}
 
 	private void browse() {
 		String last = fDirText.getText().trim();
 		if (last.length() == 0) {
-			last = DebugUIPlugin.getDefault().getDialogSettings().get(LAST_PATH_SETTING);
+			IDialogSettings dialogSettings = PlatformUI
+					.getDialogSettingsProvider(FrameworkUtil.getBundle(DirectorySourceContainerDialog.class))
+					.getDialogSettings();
+			last = dialogSettings.get(LAST_PATH_SETTING);
 		}
 		if (last == null) {
 			last = IInternalDebugCoreConstants.EMPTY_STRING;

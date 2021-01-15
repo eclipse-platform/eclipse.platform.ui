@@ -14,12 +14,13 @@
 
 package org.eclipse.debug.internal.ui.importexport.breakpoints;
 
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * <p>
@@ -64,8 +65,8 @@ public class WizardExportBreakpoints extends Wizard implements IExportWizard {
 	 */
 	public WizardExportBreakpoints() {
 		super();
-		DebugUIPlugin plugin = DebugUIPlugin.getDefault();
-		IDialogSettings workbenchSettings = plugin.getDialogSettings();
+		IDialogSettings workbenchSettings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(WizardExportBreakpoints.class)).getDialogSettings();
 		IDialogSettings section = workbenchSettings.getSection(EXPORT_DIALOG_SETTINGS);
 		if (section == null) {
 			section = workbenchSettings.addNewSection(EXPORT_DIALOG_SETTINGS);

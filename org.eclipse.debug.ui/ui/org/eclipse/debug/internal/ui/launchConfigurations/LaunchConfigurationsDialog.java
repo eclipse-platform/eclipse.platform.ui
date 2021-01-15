@@ -92,6 +92,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.WorkbenchJob;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * The dialog used to edit and launch launch configurations.
@@ -746,7 +747,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @return IDialogSettings
 	 */
 	protected IDialogSettings getDialogSettings() {
-		IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
+		IDialogSettings settings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(LaunchConfigurationDialog.class))
+				.getDialogSettings();
 		IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
 		if (section == null) {
 			section = settings.addNewSection(getDialogSettingsSectionName());

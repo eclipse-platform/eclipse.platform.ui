@@ -13,12 +13,13 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.importexport.launchconfigurations;
 
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * This class provides a wizard for importing launch configurations from the local
@@ -38,8 +39,9 @@ public class ImportLaunchConfigurationsWizard extends Wizard implements IImportW
 	 */
 	public ImportLaunchConfigurationsWizard() {
 		super();
-		DebugUIPlugin plugin = DebugUIPlugin.getDefault();
-		IDialogSettings workbenchSettings = plugin.getDialogSettings();
+		IDialogSettings workbenchSettings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(ImportLaunchConfigurationsWizard.class))
+				.getDialogSettings();
 		IDialogSettings section = workbenchSettings.getSection(EXPORT_DIALOG_SETTINGS);
 		if (section == null) {
 			section = workbenchSettings.addNewSection(EXPORT_DIALOG_SETTINGS);

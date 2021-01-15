@@ -69,6 +69,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * This class was taken from org.eclipse.debug.ui. We expose a Common tab for
@@ -243,7 +244,8 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 	}
 
 	private IDialogSettings getDialogBoundsSettings() {
-		IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
+		IDialogSettings settings = PlatformUI.getDialogSettingsProvider(FrameworkUtil.getBundle(CommonTabLite.class))
+				.getDialogSettings();
 		IDialogSettings section = settings.getSection(SETTINGS_ID);
 		if (section == null) {
 			section = settings.addNewSection(SETTINGS_ID);
