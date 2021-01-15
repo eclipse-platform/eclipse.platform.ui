@@ -72,6 +72,7 @@ import org.eclipse.ui.internal.cheatsheets.views.CheatSheetView;
 import org.eclipse.ui.internal.cheatsheets.views.ViewUtilities;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchAdapter;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Dialog to allow the user to select a cheat sheet from a list.
@@ -230,7 +231,8 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 	protected Control createDialogArea(Composite parent) {
 		initializeDialogUnits(parent);
 
-		IDialogSettings workbenchSettings = CheatSheetPlugin.getPlugin()
+		IDialogSettings workbenchSettings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(CheatSheetCategoryBasedSelectionDialog.class))
 				.getDialogSettings();
 		IDialogSettings dialogSettings = workbenchSettings
 				.getSection(DIALOG_SETTINGS_SECTION);
@@ -800,7 +802,9 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 
 	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
-		IDialogSettings settings = CheatSheetPlugin.getPlugin().getDialogSettings();
+		IDialogSettings settings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(CheatSheetCategoryBasedSelectionDialog.class))
+				.getDialogSettings();
 		IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
 		if (section == null) {
 			section = settings.addNewSection(DIALOG_SETTINGS_SECTION);

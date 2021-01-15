@@ -21,6 +21,8 @@ import java.util.Observable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.ui.PlatformUI;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Manages the scope for the federated search.
@@ -86,7 +88,7 @@ public class ScopeSetManager extends Observable {
 			ScopeSet set = sets.get(i);
 			set.save();
 		}
-		IDialogSettings settings = HelpUIPlugin.getDefault()
+		IDialogSettings settings = PlatformUI.getDialogSettingsProvider(FrameworkUtil.getBundle(ScopeSetManager.class))
 				.getDialogSettings();
 		if (activeSet != null)
 			settings.put(ACTIVE_SET, activeSet.getName());
@@ -154,8 +156,8 @@ public class ScopeSetManager extends Observable {
 	 */
 	public ScopeSet getActiveSet() {
 		if (activeSet == null) {
-			IDialogSettings settings = HelpUIPlugin.getDefault()
-					.getDialogSettings();
+			IDialogSettings settings = PlatformUI
+					.getDialogSettingsProvider(FrameworkUtil.getBundle(ScopeSetManager.class)).getDialogSettings();
 			String name = settings.get(ACTIVE_SET);
 			activeSet = findSet(name);
 			if (activeSet == null) {
