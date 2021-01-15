@@ -114,6 +114,7 @@ import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.progress.UIJob;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Shows a list of items to the user with a text entry field for a string
@@ -1080,14 +1081,13 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	 * @return return dialog settings for this dialog
 	 */
 	protected IDialogSettings getDialogSettings() {
-		IDialogSettings settings = IDEWorkbenchPlugin.getDefault()
-				.getDialogSettings().getSection(DIALOG_SETTINGS);
-
+		IDialogSettings dialogSettings = PlatformUI.getDialogSettingsProvider(FrameworkUtil.getBundle(IDEWorkbenchPlugin.class))
+				.getDialogSettings();
+		IDialogSettings settings = dialogSettings.getSection(DIALOG_SETTINGS);
 		if (settings == null) {
-			settings = IDEWorkbenchPlugin.getDefault().getDialogSettings()
+			settings = dialogSettings
 					.addNewSection(DIALOG_SETTINGS);
 		}
-
 		return settings;
 	}
 

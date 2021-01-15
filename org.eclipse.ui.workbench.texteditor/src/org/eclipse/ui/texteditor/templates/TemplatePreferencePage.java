@@ -33,6 +33,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.osgi.framework.FrameworkUtil;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.FocusEvent;
@@ -704,7 +706,9 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		@Override
 		protected IDialogSettings getDialogBoundsSettings() {
 			String sectionName= getClass().getName() + "_dialogBounds"; //$NON-NLS-1$
-			IDialogSettings settings= TextEditorPlugin.getDefault().getDialogSettings();
+			IDialogSettings settings = PlatformUI
+					.getDialogSettingsProvider(FrameworkUtil.getBundle(TemplatePreferencePage.class))
+					.getDialogSettings();
 			IDialogSettings section= settings.getSection(sectionName);
 			if (section == null)
 				section= settings.addNewSection(sectionName);

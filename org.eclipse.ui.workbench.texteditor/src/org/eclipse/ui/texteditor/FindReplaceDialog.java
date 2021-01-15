@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.PatternSyntaxException;
 
+import org.osgi.framework.FrameworkUtil;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -73,7 +75,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
 import org.eclipse.ui.internal.texteditor.NLSUtility;
 import org.eclipse.ui.internal.texteditor.SWTUtil;
-import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 
 /**
@@ -1783,7 +1784,8 @@ class FindReplaceDialog extends Dialog {
 	 * @return the dialog settings to be used
 	 */
 	private IDialogSettings getDialogSettings() {
-		IDialogSettings settings= TextEditorPlugin.getDefault().getDialogSettings();
+		IDialogSettings settings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(FindReplaceDialog.class)).getDialogSettings();
 		fDialogSettings= settings.getSection(getClass().getName());
 		if (fDialogSettings == null)
 			fDialogSettings= settings.addNewSection(getClass().getName());
@@ -1793,7 +1795,8 @@ class FindReplaceDialog extends Dialog {
 	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
 		String sectionName= getClass().getName() + "_dialogBounds"; //$NON-NLS-1$
-		IDialogSettings settings= TextEditorPlugin.getDefault().getDialogSettings();
+		IDialogSettings settings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(FindReplaceDialog.class)).getDialogSettings();
 		IDialogSettings section= settings.getSection(sectionName);
 		if (section == null)
 			section= settings.addNewSection(sectionName);

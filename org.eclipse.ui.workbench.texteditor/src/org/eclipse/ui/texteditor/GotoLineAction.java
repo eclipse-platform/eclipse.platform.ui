@@ -15,6 +15,8 @@ package org.eclipse.ui.texteditor;
 
 import java.util.ResourceBundle;
 
+import org.osgi.framework.FrameworkUtil;
+
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -35,6 +37,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.texteditor.NLSUtility;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
@@ -103,7 +106,8 @@ public class GotoLineAction extends TextEditorAction {
 		@Override
 		protected IDialogSettings getDialogBoundsSettings() {
 			String sectionName= getClass().getName() + "_dialogBounds"; //$NON-NLS-1$
-			IDialogSettings settings= TextEditorPlugin.getDefault().getDialogSettings();
+			IDialogSettings settings = PlatformUI
+					.getDialogSettingsProvider(FrameworkUtil.getBundle(GotoLineAction.class)).getDialogSettings();
 			IDialogSettings section= settings.getSection(sectionName);
 			if (section == null)
 				section= settings.addNewSection(sectionName);
