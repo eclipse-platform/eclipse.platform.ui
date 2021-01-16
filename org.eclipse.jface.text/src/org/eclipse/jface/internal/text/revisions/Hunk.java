@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.text.revisions;
 
+import java.util.Objects;
+
 import org.eclipse.core.runtime.Assert;
 
 /**
@@ -58,12 +60,7 @@ public final class Hunk {
 
 	@Override
 	public int hashCode() {
-		final int prime= 31;
-		int result= 1;
-		result= prime * result + changed;
-		result= prime * result + delta;
-		result= prime * result + line;
-		return result;
+		return Objects.hash(changed, delta, line);
 	}
 
 	@Override

@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.text.quicksearch.internal.core;
 
+import java.util.Objects;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.search.internal.ui.text.FileMatch;
 
@@ -56,11 +58,7 @@ public class LineItem {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((f == null) ? 0 : f.hashCode());
-		result = prime * result + lineNumber;
-		return result;
+		return Objects.hash(f, lineNumber);
 	}
 
 	@Override
@@ -72,11 +70,9 @@ public class LineItem {
 		if (getClass() != obj.getClass())
 			return false;
 		LineItem other = (LineItem) obj;
-		if (f == null) {
-			if (other.f != null)
-				return false;
-		} else if (!f.equals(other.f))
+		if (!Objects.equals(f, other.f)) {
 			return false;
+		}
 		if (lineNumber != other.lineNumber)
 			return false;
 		return true;

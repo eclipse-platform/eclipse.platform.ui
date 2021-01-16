@@ -14,6 +14,7 @@
 package org.eclipse.ui.texteditor.rulers;
 
 import java.net.URL;
+import java.util.Objects;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -270,10 +271,7 @@ public final class RulerColumnDescriptor {
 
 	@Override
 	public int hashCode() {
-		final int prime= 31;
-		int result= 1;
-		result= prime * result + ((fId == null) ? 0 : fId.hashCode());
-		return result;
+		return Objects.hash(fId);
 	}
 
 	@Override
@@ -285,11 +283,9 @@ public final class RulerColumnDescriptor {
 		if (getClass() != obj.getClass())
 			return false;
 		final RulerColumnDescriptor other= (RulerColumnDescriptor) obj;
-		if (fId == null) {
-			if (other.fId != null)
-				return false;
-		} else if (!fId.equals(other.fId))
+		if (!Objects.equals(fId, other.fId)) {
 			return false;
+		}
 		return true;
 	}
 
