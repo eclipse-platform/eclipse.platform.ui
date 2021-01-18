@@ -25,6 +25,7 @@ import org.eclipse.jface.text.ITextViewer;
  * This interface must be implemented by clients. Implementers should be registered with a content
  * assistant in order to get involved in the assisting process.
  * </p>
+ * <p>
  * In order to provide backward compatibility for clients of <code>IContentAssistProcessor</code>,
  * extension interfaces are used to provide a means of evolution. The following extension interfaces
  * exist:
