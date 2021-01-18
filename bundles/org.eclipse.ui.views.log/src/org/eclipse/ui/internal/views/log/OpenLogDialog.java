@@ -24,6 +24,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Displays the error log in non-Win32 platforms - see bug 55314.
@@ -122,7 +124,8 @@ public final class OpenLogDialog extends TrayDialog {
 	 * @return the dialog settings to be used
 	 */
 	private IDialogSettings getDialogSettings() {
-		IDialogSettings settings = Activator.getDefault().getDialogSettings();
+		IDialogSettings settings = PlatformUI.getDialogSettingsProvider(FrameworkUtil.getBundle(OpenLogDialog.class))
+				.getDialogSettings();
 		dialogSettings = settings.getSection(getClass().getName());
 		if (dialogSettings == null)
 			dialogSettings = settings.addNewSection(getClass().getName());

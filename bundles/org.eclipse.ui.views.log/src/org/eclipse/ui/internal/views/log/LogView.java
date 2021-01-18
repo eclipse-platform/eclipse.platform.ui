@@ -1669,7 +1669,9 @@ public class LogView extends ViewPart implements LogListener {
 	 * @return the dialog settings to be used
 	 */
 	private IDialogSettings getLogSettings() {
-		IDialogSettings settings = Activator.getDefault().getDialogSettings();
+		IDialogSettings settings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(LogView.class))
+				.getDialogSettings();
 		return settings.getSection(getClass().getName());
 	}
 
@@ -1746,8 +1748,10 @@ public class LogView extends ViewPart implements LogListener {
 
 	private void writeFilterSettings() {
 		IDialogSettings settings = getLogSettings();
-		if (settings == null)
-			settings = Activator.getDefault().getDialogSettings().addNewSection(getClass().getName());
+		if (settings == null) {
+			settings = PlatformUI.getDialogSettingsProvider(FrameworkUtil.getBundle(LogView.class)).getDialogSettings()
+					.addNewSection(getClass().getName());
+		}
 		settings.put(P_USE_LIMIT, fMemento.getString(P_USE_LIMIT).equals("true")); //$NON-NLS-1$
 		settings.put(P_LOG_LIMIT, fMemento.getInteger(P_LOG_LIMIT).intValue());
 		settings.put(P_LOG_INFO, fMemento.getString(P_LOG_INFO).equals("true")); //$NON-NLS-1$

@@ -90,6 +90,7 @@ import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.statushandlers.AbstractStatusHandler;
 import org.eclipse.urischeme.AutoRegisterSchemeHandlersJob;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.Version;
 
@@ -636,8 +637,8 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 */
 	private Map<String, AboutInfo> createNewBundleGroupsMap() {
 		// retrieve list of installed bundle groups from last session
-		IDialogSettings settings = IDEWorkbenchPlugin.getDefault()
-				.getDialogSettings();
+		IDialogSettings settings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(IDE.class)).getDialogSettings();
 		String[] previousFeaturesArray = settings.getArray(INSTALLED_FEATURES);
 
 		// get a map of currently installed bundle groups and store it for next

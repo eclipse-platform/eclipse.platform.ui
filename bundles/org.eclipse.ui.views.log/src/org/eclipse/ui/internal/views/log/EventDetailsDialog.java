@@ -37,6 +37,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Displays details about Log Entry. Event information is split in three
@@ -814,7 +815,8 @@ public class EventDetailsDialog extends TrayDialog {
 	 * @return the dialog settings to be used
 	 */
 	private IDialogSettings getDialogSettings() {
-		IDialogSettings settings = Activator.getDefault().getDialogSettings();
+		IDialogSettings settings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(EventDetailsDialog.class)).getDialogSettings();
 		IDialogSettings dialogSettings = settings.getSection(getClass().getName());
 		if (dialogSettings == null)
 			dialogSettings = settings.addNewSection(getClass().getName());
