@@ -131,7 +131,7 @@ public class AsyncContentAssistTest {
 	}
 
 	@Test
-	public void testCompleteActivationChar() throws InterruptedException {
+	public void testCompleteActivationChar() {
 		Shell shell= new Shell();
 		shell.setLayout(new FillLayout());
 		shell.setSize(500, 300);
