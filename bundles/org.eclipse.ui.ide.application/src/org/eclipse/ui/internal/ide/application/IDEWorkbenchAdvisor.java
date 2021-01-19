@@ -23,6 +23,7 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.Consumer;
 
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.net.proxy.IProxyService;
@@ -61,8 +62,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Resource;
-import org.eclipse.swt.graphics.Resource.NonDisposedException;
-import org.eclipse.swt.graphics.Resource.NonDisposedReporter;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
@@ -231,10 +230,10 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	}
 
 	private void initResourceTracking() {
-		final String property = System.getProperty("org.eclipse.swt.graphics.Resource.reportNonDisposed"); //$NON-NLS-1$
-		if ("stacks".equalsIgnoreCase(property)) { //$NON-NLS-1$
-			NonDisposedReporter reporter = createNonDisposedReporter();
-			Resource.trackNonDisposed(reporter != null, reporter);
+		boolean trackingEnabled = Boolean.getBoolean("org.eclipse.swt.graphics.Resource.reportNonDisposed"); //$NON-NLS-1$
+		if (trackingEnabled) {
+			Consumer<Error> reporter = createNonDisposedReporter();
+			Resource.setNonDisposeHandler(reporter);
 		}
 	}
 
@@ -242,16 +241,16 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 * @return reporter instance for SWT leaks reporting, or {@code null} to disable
 	 *         SWT leak reporting
 	 */
-	public NonDisposedReporter createNonDisposedReporter() {
+	public Consumer<Error> createNonDisposedReporter() {
 		return new IDENonDisposedReporter();
 	}
 
-	private static class IDENonDisposedReporter implements NonDisposedReporter {
+	private static class IDENonDisposedReporter implements Consumer<Error> {
 
 		@Override
-		public void onNonDisposedResource(Resource resource, NonDisposedException allocationStack) {
+		public void accept(Error allocationStack) {
 			IDEWorkbenchPlugin.log(null,
-					StatusUtil.newStatus(IStatus.ERROR, "Not properly disposed SWT resource: " + resource, //$NON-NLS-1$
+					StatusUtil.newStatus(IStatus.ERROR, "Not properly disposed SWT resource", //$NON-NLS-1$
 							allocationStack));
 		}
 
