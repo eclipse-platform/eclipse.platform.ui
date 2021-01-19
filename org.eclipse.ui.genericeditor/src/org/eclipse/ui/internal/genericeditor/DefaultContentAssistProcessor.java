@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Red Hat Inc. and others.
+ * Copyright (c) 2017, 2021 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  * - Sopot Cela (Red Hat Inc.)
+ * Christoph Läubrich - Bug 570488 - [genericeditor][DefaultContentAssistProcessor] IllegalStateException: No match available
  *******************************************************************************/
 package org.eclipse.ui.internal.genericeditor;
 
@@ -50,13 +51,17 @@ public class DefaultContentAssistProcessor implements IContentAssistProcessor {
 	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
 		String text = viewer.getDocument().get();
-		String[] tokens = text.split(NON_ALPHANUMERIC_REGEXP);
-
-		//remove duplicates
-		Set<String> tokenSet = new HashSet<>(Arrays.asList(tokens));
-
 		//wordStartIndex is the index of the last non-alphanumeric before 'offset' in text 'text'
 		int wordStartIndex = findStartingPoint(text, offset);
+		if (wordStartIndex < 0) {
+			// not possible
+			return null;
+		}
+		String[] tokens = text.split(NON_ALPHANUMERIC_REGEXP);
+
+		// remove duplicates
+		Set<String> tokenSet = new HashSet<>(Arrays.asList(tokens));
+
 		String prefix = text.substring(wordStartIndex, offset);
 
 		List<ICompletionProposal> proposals = new ArrayList<>();
@@ -80,8 +85,10 @@ public class DefaultContentAssistProcessor implements IContentAssistProcessor {
 	private static int findStartingPoint(String text, int offset) {
 		String substring = text.substring(0, offset);
 		Matcher m = NON_ALPHANUMERIC_LAST_PATTERN.matcher(substring);
-		m.find();
-		return m.end();
+		if (m.find()) {
+			return m.end();
+		}
+		return -1;
 	}
 
 	@Override
