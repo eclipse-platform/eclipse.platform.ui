@@ -29,6 +29,7 @@ import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -417,7 +418,11 @@ public class ProgressManagerUtil {
 
 		// If shell is null or disposed, then look through all shells
 		if (shell == null || shell.isDisposed()) {
-			return getModalChildExcluding(PlatformUI.getWorkbench().getDisplay().getShells(), shell);
+			Display display = PlatformUI.getWorkbench().getDisplay();
+			if (display.isDisposed()) {
+				return null;
+			}
+			return getModalChildExcluding(display.getShells(), shell);
 		}
 
 		// Start with the shell to exclude and check it's shells
