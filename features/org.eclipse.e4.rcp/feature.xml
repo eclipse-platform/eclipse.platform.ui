@@ -396,6 +396,16 @@
          fragment="true"/>
 
    <plugin
+         id="org.eclipse.equinox.launcher.cocoa.macosx.arm64"
+         os="macosx"
+         ws="cocoa"
+         arch="arm64"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"/>
+
+   <plugin
          id="org.eclipse.equinox.launcher.gtk.linux.ppc64le"
          os="linux"
          ws="gtk"
@@ -491,6 +501,17 @@
          os="macosx"
          ws="cocoa"
          arch="x86_64"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.swt.cocoa.macosx.arm64"
+         os="macosx"
+         ws="cocoa"
+         arch="arm64"
          download-size="0"
          install-size="0"
          version="0.0.0"
