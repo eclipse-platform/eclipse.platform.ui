@@ -15,6 +15,7 @@
 package org.eclipse.ui.internal.editors.text;
 
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
@@ -284,7 +285,7 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	 * @since 3.7
 	 */
 	public IDialogSettings getDialogSettingsSection(String name) {
-		IDialogSettings dialogSettings= getDialogSettings();
+		IDialogSettings dialogSettings= PlatformUI.getDialogSettingsProvider(FrameworkUtil.getBundle(EditorsPlugin.class)).getDialogSettings();
 		IDialogSettings section= dialogSettings.getSection(name);
 		if (section == null) {
 			section= dialogSettings.addNewSection(name);
