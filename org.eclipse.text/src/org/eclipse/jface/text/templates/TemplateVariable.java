@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Christoph Läubrich - Bug 570519 - Allow to specify TemplateVariable#fInitialLength
  *******************************************************************************/
 package org.eclipse.jface.text.templates;
 
@@ -87,7 +88,7 @@ public class TemplateVariable {
 	 * @since 3.3
 	 */
 	public TemplateVariable(TemplateVariableType type, String name, String defaultValue, int[] offsets) {
-		this(type, name, new String[] { defaultValue }, offsets);
+		this(type, name, new String[] { defaultValue }, offsets, defaultValue.length());
 	}
 
 	/**
@@ -111,7 +112,7 @@ public class TemplateVariable {
 	 * @param offsets the array of offsets of the variable
 	 */
 	public TemplateVariable(String type, String name, String[] values, int[] offsets) {
-		this(new TemplateVariableType(type), name, values, offsets);
+		this(type, name, values, offsets, values[0].length());
 	}
 
 	/**
@@ -121,18 +122,33 @@ public class TemplateVariable {
 	 * @param name the name of the variable
 	 * @param values the values available at this variable, non-empty
 	 * @param offsets the array of offsets of the variable
+	 * @param length the length of the variable in the template at offset positions
+	 * @since 3.11
+	 */
+	public TemplateVariable(String type, String name, String[] values, int[] offsets, int length) {
+		this(new TemplateVariableType(type), name, values, offsets, length);
+	}
+
+	/**
+	 * Creates a template variable with multiple possible values.
+	 *
+	 * @param type the type of the variable
+	 * @param name the name of the variable
+	 * @param values the values available at this variable, non-empty
+	 * @param offsets the array of offsets of the variable
+	 * @param initialLength the length of the variable in the template
 	 * @since 3.3
 	 */
-	TemplateVariable(TemplateVariableType type, String name, String[] values, int[] offsets) {
+	TemplateVariable(TemplateVariableType type, String name, String[] values, int[] offsets, int initialLength) {
 		Assert.isNotNull(type);
 		Assert.isNotNull(name);
+		fInitialLength= initialLength;
 		fType= type;
 		fName= name;
 		setValues(values);
 		setOffsets(offsets);
 		setUnambiguous(false);
 		setResolved(false);
-		fInitialLength= values[0].length();
 	}
 
 	/**
@@ -198,9 +214,9 @@ public class TemplateVariable {
 	 * resolved values of the variable.
 	 *
 	 * @return the initial length of the variable
-	 * @since 3.3
+	 * @since 3.11
 	 */
-	final int getInitialLength() {
+	public final int getInitialLength() {
 		return fInitialLength;
 	}
 
