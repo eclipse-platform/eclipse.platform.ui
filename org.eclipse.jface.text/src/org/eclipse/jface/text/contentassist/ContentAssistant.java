@@ -16,6 +16,7 @@
  *     John Glassmyer, jogl@google.com - catch Content Assist exceptions to protect navigation keys - http://bugs.eclipse.org/434901
  *     Mickael Istria (Red Hat Inc.) - [251156] Allow multiple contentAssitProviders internally & inheritance
  *     Christoph Läubrich - Bug 508821 - [Content assist] More flexible API in IContentAssistProcessor to decide whether to auto-activate or not
+ *     						Bug 570459 - [genericeditor] Support ContentAssistProcessors to be registered as OSGi-Services
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
@@ -1131,10 +1132,22 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		if (processor == null) {
 			fProcessors.remove(contentType);
 		} else {
-			if (!fProcessors.containsKey(contentType)) {
-				fProcessors.put(contentType, new LinkedHashSet<>());
-			}
-			fProcessors.get(contentType).add(processor);
+			fProcessors.computeIfAbsent(contentType, key -> new LinkedHashSet<>()).add(processor);
+		}
+	}
+
+	/**
+	 * removes the given processor from all content types in this {@link ContentAssistant}
+	 *
+	 * @param processor The content-assist process to remove
+	 * @since 3.17
+	 */
+	public void removeContentAssistProcessor(IContentAssistProcessor processor) {
+		if (fProcessors == null || processor == null) {
+			return;
+		}
+		for (Set<IContentAssistProcessor> set : fProcessors.values()) {
+			set.remove(processor);
 		}
 	}
 
@@ -2705,4 +2718,5 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	boolean isAutoActivation() {
 		return fIsAutoActivated;
 	}
+
 }

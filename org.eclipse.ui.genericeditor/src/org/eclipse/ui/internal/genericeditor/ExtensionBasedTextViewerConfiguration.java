@@ -14,6 +14,7 @@
  *                               - Bug 521382 default highlight reconciler
  *   Simon Scholz <simon.scholz@vogella.com> - Bug 527830
  *   Angelo Zerr <angelo.zerr@gmail.com> - [generic editor] Default Code folding for generic editor should use IndentFoldingStrategy - Bug 520659
+ *   Christoph Läubrich - Bug 570459 - [genericeditor] Support ContentAssistProcessors to be registered as OSGi-Services
  *******************************************************************************/
 package org.eclipse.ui.internal.genericeditor;
 
@@ -33,14 +34,12 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.AbstractReusableInformationControlCreator;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioningListener;
-import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.ITextHover;
-import org.eclipse.jface.text.contentassist.ContentAssistant;
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
@@ -49,7 +48,6 @@ import org.eclipse.jface.text.quickassist.IQuickAssistProcessor;
 import org.eclipse.jface.text.quickassist.QuickAssistAssistant;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.internal.genericeditor.folding.DefaultFoldingReconciler;
@@ -72,8 +70,7 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 	private Set<IContentType> contentTypes;
 	private IDocument document;
 
-	private ContentAssistant contentAssistant;
-	private List<IContentAssistProcessor> processors;
+	private GenericEditorContentAssistant contentAssistant;
 
 	/**
 	 *
@@ -85,7 +82,7 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		this.editor = editor;
 	}
 
-	Set<IContentType> getContentTypes(ISourceViewer viewer) {
+	Set<IContentType> getContentTypes(ITextViewer viewer) {
 		if (this.contentTypes == null) {
 			this.contentTypes = new LinkedHashSet<>();
 			String fileName = null;
@@ -107,7 +104,7 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		return this.contentTypes;
 	}
 
-	private String getCurrentFileName(ISourceViewer viewer) {
+	private String getCurrentFileName(ITextViewer viewer) {
 		String fileName = null;
 		if (this.editor != null) {
 			fileName = editor.getEditorInput().getName();
@@ -140,28 +137,15 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 	@Override
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 		ContentAssistProcessorRegistry registry = GenericEditorPlugin.getDefault().getContentAssistProcessorRegistry();
-		contentAssistant = new ContentAssistant(true);
-		contentAssistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_BELOW);
-		contentAssistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_REMOVE);
-		contentAssistant.setAutoActivationDelay(0);
-		contentAssistant.enableColoredLabels(true);
-		contentAssistant.enableAutoActivation(true);
-		this.processors = registry.getContentAssistProcessors(sourceViewer, editor, getContentTypes(sourceViewer));
-		if (this.processors.isEmpty()) {
-			this.processors.add(new DefaultContentAssistProcessor());
-		}
-		for (IContentAssistProcessor processor : this.processors) {
-			contentAssistant.addContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
-		}
+		ContentTypeRelatedExtensionTracker<IContentAssistProcessor> contentAssistProcessorTracker = new ContentTypeRelatedExtensionTracker<>(
+				GenericEditorPlugin.getDefault().getBundle().getBundleContext(), IContentAssistProcessor.class,
+				sourceViewer.getTextWidget().getDisplay());
+		Set<IContentType> types = getContentTypes(sourceViewer);
+		contentAssistant = new GenericEditorContentAssistant(contentAssistProcessorTracker,
+				registry.getContentAssistProcessors(sourceViewer, editor, types), types);
 		if (this.document != null) {
 			associateTokenContentTypes(this.document);
 		}
-		contentAssistant.setInformationControlCreator(new AbstractReusableInformationControlCreator() {
-			@Override
-			protected IInformationControl doCreateInformationControl(Shell parent) {
-				return new DefaultInformationControl(parent);
-			}
-		});
 		watchDocument(sourceViewer.getDocument());
 		return contentAssistant;
 	}
@@ -197,14 +181,10 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 	}
 
 	private void associateTokenContentTypes(IDocument document) {
-		if (contentAssistant == null || this.processors == null) {
+		if (contentAssistant == null) {
 			return;
 		}
-		for (String legalTokenContentType : document.getLegalContentTypes()) {
-			for (IContentAssistProcessor processor : this.processors) {
-				contentAssistant.addContentAssistProcessor(processor, legalTokenContentType);
-			}
-		}
+		contentAssistant.updateTokens(document);
 	}
 
 	@Override
@@ -268,4 +248,5 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		targets.put(ExtensionBasedTextEditor.GENERIC_EDITOR_ID, editor);
 		return targets;
 	}
+
 }
