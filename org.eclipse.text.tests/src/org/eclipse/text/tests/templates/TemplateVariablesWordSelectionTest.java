@@ -26,6 +26,7 @@ import org.eclipse.jface.text.templates.TemplateBuffer;
 import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.TemplateTranslator;
 import org.eclipse.jface.text.templates.TemplateVariable;
+import org.eclipse.jface.text.templates.TemplateVariableType;
 
 public class TemplateVariablesWordSelectionTest  {
 
@@ -62,6 +63,29 @@ public class TemplateVariablesWordSelectionTest  {
 
 		StringBuilder expected= new StringBuilder();
 		expected.append("No selection results in the default text.");
+		assertBufferStringAndVariables(expected.toString(), buffer);
+	}
+
+	@Test
+	public void testMulti() throws Exception {
+		TemplateBuffer buffer = new TemplateTranslator() {
+
+			@Override
+			protected TemplateVariable createVariable(TemplateVariableType type, String name, int[] offsets) {
+				if ("petType".equals(name)) {
+					String[] pets = new String[] { "cat", "dog", "other" };
+					TemplateVariable variable = new TemplateVariable(type.getName(), name, pets, offsets);
+					variable.setUnambiguous(true);
+					return variable;
+				}
+				return super.createVariable(type, name, offsets);
+			}
+		}.translate("My favorite pet is a ${petType:String}, I love my ${petType}.");
+		assertEquals("My favorite pet is a cat, I love my cat.", buffer.getString());
+		fType.resolve(buffer, fContext);
+
+		StringBuilder expected = new StringBuilder();
+		expected.append("My favorite pet is a cat, I love my cat.");
 		assertBufferStringAndVariables(expected.toString(), buffer);
 	}
 

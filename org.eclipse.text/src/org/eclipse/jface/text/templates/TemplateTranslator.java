@@ -14,10 +14,15 @@
 package org.eclipse.jface.text.templates;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -221,7 +226,37 @@ public class TemplateTranslator {
 		buffer.append(string.substring(complete));
 
 		TemplateVariable[] vars= createVariables(variables);
+		fixOffsetsAndBuffer(buffer, vars);
 		return new TemplateBuffer(buffer.toString(), vars);
+	}
+
+	/**
+	 * In cases default value is provided dynamically when instantiating the variable (so not part
+	 * of the {@link VariableDescription}), the buffer would actually contain incorrect text (name instead
+	 * of default value) and offsets can also be inconsistent if variable name and default value have different
+	 * length. This methods fix both buffer and variable offsets to ensure default value is used.
+	 * @param buffer the default template string
+	 * @param vars variables
+	 */
+	private void fixOffsetsAndBuffer(StringBuilder buffer, TemplateVariable[] vars) {
+		SortedMap<Integer, TemplateVariable> varsByOffset = new TreeMap<>();
+		for (TemplateVariable var : vars) {
+			for (int offset : var.getOffsets()) {
+				varsByOffset.put(Integer.valueOf(offset), var);
+			}
+		}
+		int totalOffsetDelta = 0;
+		Map<TemplateVariable, Collection<Integer>> fixedOffsets = new HashMap<>(vars.length, 1.f);
+		for (Entry<Integer, TemplateVariable> entry : varsByOffset.entrySet()) {
+			final int initialOffset = entry.getKey().intValue();
+			TemplateVariable variable = entry.getValue();
+			final int fixedOffset = initialOffset + totalOffsetDelta;
+			fixedOffsets.computeIfAbsent(variable, v -> new ArrayList<>(v.getOffsets().length)).add(Integer.valueOf(fixedOffset));
+			int currentOffsetDelta = variable.getDefaultValue().length() - variable.getName().length();
+			buffer.replace(fixedOffset, fixedOffset + variable.getName().length(), variable.getDefaultValue());
+			totalOffsetDelta += currentOffsetDelta;
+		}
+		fixedOffsets.forEach((variable, fixs) -> variable.setOffsets(fixs.stream().mapToInt(Integer::valueOf).toArray()));
 	}
 
 	private TemplateVariableType createType(String typeName, String paramString) {
@@ -237,7 +272,7 @@ public class TemplateTranslator {
 			String argument= matcher.group();
 			if (argument.charAt(0) == '\'') {
 				// argumentText
-				argument= argument.substring(1, argument.length() - 1).replaceAll("''", "'"); //$NON-NLS-1$ //$NON-NLS-2$
+				argument= argument.substring(1, argument.length() - 1).replace("''", "'"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
 			params.add(argument);
@@ -260,10 +295,11 @@ public class TemplateTranslator {
 	 * @param name the name of the variable
 	 * @param type the variable type, <code>null</code> for not defined
 	 * @param offset the buffer offset of the variable
+	 * @return the variable description found or created for that name
 	 * @throws TemplateException if merging the type fails
 	 * @since 3.3
 	 */
-	private void updateOrCreateVariable(Map<String, VariableDescription> variables, String name, TemplateVariableType type, int offset) throws TemplateException {
+	private VariableDescription updateOrCreateVariable(Map<String, VariableDescription> variables, String name, TemplateVariableType type, int offset) throws TemplateException {
 		VariableDescription varDesc= variables.get(name);
 		if (varDesc == null) {
 			varDesc= new VariableDescription(name, type);
@@ -272,6 +308,7 @@ public class TemplateTranslator {
 			varDesc.mergeType(type);
 		}
 		varDesc.fOffsets.add(Integer.valueOf(offset));
+		return varDesc;
 	}
 
 	/**
