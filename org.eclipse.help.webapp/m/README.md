@@ -29,7 +29,7 @@ Improvements compared to the legacy UI:
 
 This prototype can be activated with the following Java property:
 
-    -Dorg.eclipse.help.webapp.experimental.ui=m/index.html
+    -Dorg.eclipse.help.webapp.experimental.ui=true
 
 To test, modify  and/or customize this prototype, the files in this folder can
 be put in a separate plugin (in `index.html` the links to the JavaScript and
@@ -38,7 +38,12 @@ CSS file have to be changed from `m/...` to something like
 the plugin has the symbolic name `com.example.my_plugin`; using the raw
 topic help link `rtopic/<plugin>/<optional-path>/<file>`):
 
-     -Dorg.eclipse.help.webapp.experimental.ui=rtopic/com.example.my_plugin/index.html
+     -Dorg.eclipse.help.webapp.experimental.ui=<plugin>/<optional-path>/<file>
+
+For example, when the plugin has the symbolic name `com.example.my_plugin` with
+`index.html` in the folder `customized-help`:
+
+     -Dorg.eclipse.help.webapp.experimental.ui=com.example.my_plugin/customized-help/index.html
 
 
 ## Further development
@@ -54,7 +59,7 @@ buttons and  bookmark support) and to determine the initial content page.
 * Print chapter
     * [`/advanced/print.jsp`](127.0.0.1:49999/help/advanced/print.jsp?topic=/../nav/0)
 * Rest API to get the following as JSON instead of requesting and parsing the legacy UI
-    * Search as you type and search term completion: currently, when typing `fo`, a search is executed for `fo*` (which means starts with `fo`), but this disables stemming like in the full search (which means when entering `logging`, pages containing `log` or `logs` are not found; ideally _starts with_ and stemming should be combined; the search term completion proposals are currently computed from the words contained in the results, for which there are better ways to do this on the server side  
+    * Search as you type and search term completion: currently, when typing `fo`, a search is executed for `fo*` (which means starts with `fo`), but this disables stemming like in the full search (which means when entering `logging`, pages containing `log` or `logs` are not found; ideally _starts with_ and stemming should be combined; the search term completion proposals are currently computed from the words contained in the results, for which there are better ways to do this on the server side
         * [`/advanced/searchView.jsp`](http://127.0.0.1:49999/help/advanced/searchView.jsp?showSearchCategories=false&searchWord=test*&maxHits=7)
     * User-defined search scopes
         * [`/advanced/workingSetManager.jsp`](http://127.0.0.1:49999/help/advanced/workingSetManager.jsp) - list of scopes

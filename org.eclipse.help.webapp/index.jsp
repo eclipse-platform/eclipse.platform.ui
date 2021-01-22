@@ -14,6 +14,7 @@
 <%@ page import="org.eclipse.help.internal.webapp.data.*" errorPage="/advanced/err.jsp" contentType="text/html; charset=UTF-8"%>
 <%@ page import="java.util.Scanner" %>
 <%@ page import="java.net.URL" %>
+<%@ page import="org.eclipse.core.runtime.Platform" %>
 <%
 	request.setCharacterEncoding("UTF-8");
 	ServerState.webappStarted(application,request, response);	
@@ -42,17 +43,14 @@
 		if (request.getParameter("legacy") == null && experimentalUi != null) {
 			try {
 				// In a JSP forwarding to non JSP resources does not work
-				// (page is shown, but "java.lang.IllegalStateException: STREAM" is thrown)
-				// so read from URL instead:
-				URL baseUrl = new URL(request.getRequestURL().toString());
-				URL forwardUrl = new URL(baseUrl, experimentalUi);
-				// Same-origin policy
-				if (!baseUrl.getProtocol().equals(forwardUrl.getProtocol())
-					|| !baseUrl.getHost().equals(forwardUrl.getHost())
-					|| baseUrl.getPort() != forwardUrl.getPort()) throw new Exception();
+				// (page is shown, but "java.lang.IllegalStateException: STREAM" is thrown),
+				// so read it as plug-in resource instead:
+				String resource = experimentalUi.equalsIgnoreCase("true") ? "org.eclipse.help.webapp/m/index.html" : experimentalUi;
+				String[] bundleAndPath = resource.split("/", 2);
+				URL resourceAsUrl = Platform.getBundle(bundleAndPath[0]).getResource(bundleAndPath[1]);
 				// Read it as InputStream and convert it to a String
 				// (by using a Scanner with a delimiter that cannot be found: \A - start of input)
-				Scanner scanAll = new Scanner(forwardUrl.openStream()).useDelimiter("\\A");
+				Scanner scanAll = new Scanner(resourceAsUrl.openStream()).useDelimiter("\\A");
 				response.getWriter().write(scanAll.hasNext() ? scanAll.next() : "");
 			} catch (Exception e) {
 				// Experimental UI resource not found, so fall back to legacy UI
