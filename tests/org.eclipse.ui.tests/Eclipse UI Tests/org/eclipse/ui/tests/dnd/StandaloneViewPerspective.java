@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -24,7 +24,7 @@ public class StandaloneViewPerspective implements IPerspectiveFactory {
 
 	public static final String OUTLINE_ID = IPageLayout.ID_OUTLINE;
 
-	public static final String RESOURCE_ID = IPageLayout.ID_RES_NAV;
+	public static final String RESOURCE_ID = IPageLayout.ID_PROJECT_EXPLORER;
 
 	public static final String TASK_ID = IPageLayout.ID_TASK_LIST;
 
@@ -38,12 +38,9 @@ public class StandaloneViewPerspective implements IPerspectiveFactory {
 	public void createInitialLayout(IPageLayout layout) {
 		layout.setEditorAreaVisible(true);
 
-		layout.addStandaloneView(RESOURCE_ID, true, IPageLayout.LEFT, 0.25f,
-				IPageLayout.ID_EDITOR_AREA);
-		layout.addStandaloneView(OUTLINE_ID, true, IPageLayout.RIGHT, 0.25f,
-				IPageLayout.ID_EDITOR_AREA);
+		layout.addStandaloneView(RESOURCE_ID, true, IPageLayout.LEFT, 0.25f, IPageLayout.ID_EDITOR_AREA);
+		layout.addStandaloneView(OUTLINE_ID, true, IPageLayout.RIGHT, 0.25f, IPageLayout.ID_EDITOR_AREA);
 		layout.getViewLayout(OUTLINE_ID).setCloseable(false);
-		layout.addStandaloneView(TASK_ID, true, IPageLayout.BOTTOM, 0.25f,
-				IPageLayout.ID_EDITOR_AREA);
+		layout.addStandaloneView(TASK_ID, true, IPageLayout.BOTTOM, 0.25f, IPageLayout.ID_EDITOR_AREA);
 	}
 }
