@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -56,7 +56,7 @@ package org.eclipse.ui;
  *
  * 	// Top left: Resource Navigator view and Bookmarks view placeholder
  * 	IFolderLayout topLeft = layout.createFolder("topLeft", IPageLayout.LEFT, 0.25f, editorArea);
- * 	topLeft.addView(IPageLayout.ID_RES_NAV);
+ * 	topLeft.addView(IPageLayout.ID_PROJECT_EXPLORER);
  * 	topLeft.addPlaceholder(IPageLayout.ID_BOOKMARKS);
  *
  * 	// Bottom left: Outline view and Property Sheet view
