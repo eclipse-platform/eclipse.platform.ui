@@ -366,7 +366,7 @@ public class BookmarkNavigator extends ViewPart {
 			return adapterClass.cast((IShowInSource) () -> new ShowInContext(null, getViewer().getSelection()));
 		}
 		if (adapterClass == IShowInTargetList.class) {
-			return adapterClass.cast((IShowInTargetList) () -> new String[] { IPageLayout.ID_RES_NAV });
+			return adapterClass.cast((IShowInTargetList) () -> new String[] { IPageLayout.ID_PROJECT_EXPLORER });
 		}
 		return super.getAdapter(adapterClass);
 	}
