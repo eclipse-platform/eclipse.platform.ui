@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Remain Software
+ * Copyright (c) 2018, 2021 Remain Software and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -106,7 +106,7 @@ public abstract class JsonTipProvider extends TipProvider {
 
 	private JsonObject loadJsonObject() throws IOException {
 		try (InputStream stream = fJsonUrl.openStream(); InputStreamReader reader = new InputStreamReader(stream)) {
-			Object result = new JsonParser().parse(reader);
+			Object result = JsonParser.parseReader(reader);
 			if (result instanceof JsonObject) {
 				return (JsonObject) result;
 			} else {
