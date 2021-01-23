@@ -102,7 +102,7 @@ public class AdaptableTocsArray implements IAdaptable {
 	public int hashCode() {
 		if (element == null)
 			return -1;
-		return Arrays.hashCode(element);
+		return element.hashCode();
 	}
 }
 
