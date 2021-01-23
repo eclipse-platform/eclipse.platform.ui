@@ -13,7 +13,9 @@
     var LOGO_ICON_WIDTH = 36;
     var LOGO_FULL_WIDTH = 146;
     var MENU_FONT_SIZING = 0;
-    var MENU_HELP = 0;
+    var MENU_HELP = 0 // 0 or e.g. 'topic/org.eclipse.help.base/doc/help_home.html'
+    var MENU_HELP_LABEL = 'Help';
+    var MENU_HELP_DESCRIPTION = 'Using the help system'
     var MENU_ABOUT = 0;
     var TOC_SIDEBAR_DEFAULT_WIDTH = 380;
     var TOC_SIDEBAR_MINIMUM_WIDTH = 76;
@@ -101,7 +103,8 @@
             remoteRequest(BASE_URL + 'index.jsp?legacy', function(responseText) {
                 var match = new RegExp('<title>([^<]*)</title>').exec(responseText);
                 if (!match) return;
-                document.title = decodeHtml(match[1]);
+                title = decodeHtml(match[1]);
+                document.title = title;
             });
 
             // embedded or Infocenter mode? + read scopes
@@ -1155,14 +1158,13 @@
         function search(e, fullSearch) {
             var noPendingQueries = !currentSearch[getSearchTypeId(fullSearch)];
 
-            // get search word, query, URL and remember query to detect stale responses
-            var searchWord =  searchField.value
+            // get (trimmed) search word, query, URL and remember query to detect stale responses
+            var searchWord =  searchField.value.replace(/(^\s+|\s+$)/ig, '');
 
-                                  // trim
-                                  .replace(/(^\s+|\s+$)/ig, '')
-
-                                  // TODO if Eclipse bug 351077 (https://bugs.eclipse.org/351077), remove following line
-                                  .replace(/\-([^\-\s]*$)/ig, ' $1');
+            // TODO if Eclipse bug 351077 (https://bugs.eclipse.org/351077), remove following line
+            if (!fullSearch || searchWord.indexOf('*') >= 0 || searchWord.indexOf('?') >= 0) {
+                searchWord = searchWord.replace(/\-([^\-\s]*$)/ig, ' $1');
+            }
 
             var tocScope = currentTocLi ? currentTocLi.n : currentTocLi;
             for (var tocLi = currentTocLi; searchScope.l < 3 && tocLi && tocLi.n; tocLi = tocLi.p) {
@@ -2148,7 +2150,7 @@
 
         // "Help"
         if (MENU_HELP) {
-            createMenuItem('Help', 'How to use help', 0, 'ai', 'topic/org.eclipse.help.base/doc/help_home.html');
+            createMenuItem(MENU_HELP_LABEL, MENU_HELP_DESCRIPTION, 0, 'ai', MENU_HELP);
         }
 
         // "About"
@@ -2260,7 +2262,7 @@
         function createNodeChildrenFn(parent) {
             return function(children, open) {
                 var ul = createElement(parent, 'ul');
-                for (var i = 0; i < children.length; i++) {
+                for (var i = 0; children && i < children.length; i++) {
                     var li = createElement(ul, 'li', 'closed');
                     li.p = parent;
                     var child = children[i];
