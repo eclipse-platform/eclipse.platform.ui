@@ -21,7 +21,52 @@ import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.commands.ParameterizedCommand;
 
 /**
- * @noimplement
+ * This service allows access to the command subsystem.
+ *
+ * A <code>command</code> is an abstract notion of a user action like "copy" and
+ * "paste". A handler is an object that executes the actual code when the
+ * command is activated.
+ *
+ * <p>
+ * Many handlers may be associated with a command (e.g. "copy") because each
+ * handler typically only handles the command when in a specific context. An
+ * example of different contexts is the use of the "copy" command in a text
+ * editor versus in a table. In each case the command is the same, but the code
+ * to handle the case in that context is very different.
+ * <p>
+ * You should not implement this service, an implementation is provided by
+ * Eclipse.
+ * <p>
+ * It is usually not needed to use this service in your programs because command
+ * creation is done by Eclipse using the application model. However, in some
+ * cases it may be needed to programmatically create commands, or activate a
+ * handler using the <code>EHandlerService</code>
+ * <p>
+ * Example usage:
+ *
+ * <pre>
+ * <code>
+ * &#64;inject  ECommandService cs;
+ * &#64;inject  EHandlerService hs;
+ *
+ * Command command = cs.getCommand(commandId);
+ * if (command.isDefined()) {
+ *	Map<String, Object> parameters = new HashMap<String, Object>();
+ *	parameters.put("parm1", "hello, world");
+ *	ParameterizedCommand parmCmd = cs.createCommand(commandId, parameters);
+ *	if (hs.canExecute(parmCmd)) {
+ *		hs.executeHandler(parmCmd);
+ *	}
+ *	else {logger.error("Cannot execute command");}
+ * }
+ * else {logger.error("Command is not defined");}
+ * </code>
+ * </pre>
+ *
+ * @since 1.0
+ * @see EHandlerService
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface ECommandService {
 	/**

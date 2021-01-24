@@ -25,10 +25,12 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 
 /**
- * Provide the command and handler service as an add-on. Must be instantiated against the
- * application level context.
+ * Provide the command and handler service as an add-on. Must be instantiated
+ * against the application level context.
  *
- * @noinstantiate
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noreference This class is not intended to be referenced by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class CommandServiceAddon {
 

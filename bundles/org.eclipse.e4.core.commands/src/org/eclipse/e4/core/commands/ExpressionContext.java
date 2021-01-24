@@ -21,8 +21,9 @@ import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 
 /**
- * @noreference
- * @since 1.0
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noreference This class is not intended to be referenced by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ExpressionContext implements IEvaluationContext {
 	/**

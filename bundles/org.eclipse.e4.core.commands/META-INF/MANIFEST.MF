@@ -4,7 +4,7 @@ Bundle-SymbolicName: org.eclipse.e4.core.commands;singleton:=true
 Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Bundle-Version: 0.13.0.qualifier
+Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Import-Package: javax.annotation,
  javax.inject;version="1.0.0",
@@ -14,14 +14,7 @@ Import-Package: javax.annotation,
  org.eclipse.e4.core.contexts,
  org.eclipse.e4.core.services.log,
  org.osgi.framework;version="1.5.0"
-Export-Package: org.eclipse.e4.core.commands;
-  x-friends:="org.eclipse.e4.ui.bindings,
-   org.eclipse.e4.ui.workbench,
-   org.eclipse.e4.ui.workbench.renderers.swt,
-   org.eclipse.ui.workbench,
-   org.eclipse.e4.ui.workbench.swt,
-   org.eclipse.e4.ui.progress,
-   org.eclipse.e4.core.commands.tests",
+Export-Package: org.eclipse.e4.core.commands,
  org.eclipse.e4.core.commands.internal;x-friends:="org.eclipse.e4.ui.bindings,org.eclipse.ui.workbench"
 Require-Bundle: org.eclipse.equinox.common;bundle-version="[3.6.0,4.0.0)",
  org.eclipse.e4.core.di;bundle-version="0.9.0"
