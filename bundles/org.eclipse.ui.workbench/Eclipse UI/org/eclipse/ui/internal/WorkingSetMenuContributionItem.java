@@ -84,8 +84,13 @@ public class WorkingSetMenuContributionItem extends ContributionItem {
 		}));
 		if (image == null) {
 			ImageDescriptor imageDescriptor = workingSet.getImageDescriptor();
-			if (imageDescriptor != null)
+			if (imageDescriptor != null) {
 				image = imageDescriptor.createImage();
+				mi.addDisposeListener(e -> {
+					if (image != null && !image.isDisposed())
+						image.dispose();
+				});
+			}
 		}
 		mi.setImage(image);
 	}
