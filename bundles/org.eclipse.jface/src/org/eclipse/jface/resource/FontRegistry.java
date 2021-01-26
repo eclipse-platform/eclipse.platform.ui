@@ -568,8 +568,8 @@ public class FontRegistry extends ResourceRegistry {
 			Font defaultFont = calculateDefaultFont();
 			record = createFont(JFaceResources.DEFAULT_FONT, defaultFont.getFontData());
 			defaultFont.dispose();
-			stringToFontRecord.put(JFaceResources.DEFAULT_FONT, record);
 		}
+		stringToFontRecord.put(JFaceResources.DEFAULT_FONT, record);
 		return record;
 	}
 
