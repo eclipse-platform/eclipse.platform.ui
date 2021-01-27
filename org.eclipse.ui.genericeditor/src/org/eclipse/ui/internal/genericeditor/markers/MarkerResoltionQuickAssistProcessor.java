@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Red Hat Inc. and others.
+ * Copyright (c) 2017, 2021 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *   Mickael Istria (Red Hat Inc.) - initial implementation
+ *   Christoph Läubrich - [Generic Editor] misses quick fix if not at start of line
  *******************************************************************************/
 package org.eclipse.ui.internal.genericeditor.markers;
 
@@ -18,6 +19,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.quickassist.IQuickAssistInvocationContext;
@@ -50,11 +52,32 @@ public class MarkerResoltionQuickAssistProcessor implements IQuickAssistProcesso
 		IAnnotationModel annotationModel = invocationContext.getSourceViewer().getAnnotationModel();
 		Collection<MarkerAnnotation> annotations = new HashSet<>();
 		annotationModel.getAnnotationIterator().forEachRemaining(annotation -> {
-			Position position = annotationModel.getPosition(annotation);
-			if (invocationContext.getOffset() >= position.getOffset() &&
-				invocationContext.getOffset() + Math.max(0, invocationContext.getLength()) <= position.getOffset() + position.getLength() &&
-				annotation instanceof MarkerAnnotation) {
-				annotations.add((MarkerAnnotation)annotation);
+			if (annotation instanceof MarkerAnnotation) {
+				MarkerAnnotation markerAnnotation = (MarkerAnnotation) annotation;
+				Position position = annotationModel.getPosition(annotation);
+				int documentOffset = invocationContext.getOffset();
+				int annotationOffset = position.getOffset();
+				int selectionLength = invocationContext.getLength();
+				int annotationLength = position.getLength();
+				if (annotationLength == 0) {
+					// Marker lines are 1-based
+					int markerLine = markerAnnotation.getMarker().getAttribute(IMarker.LINE_NUMBER, 0) - 1;
+					if (markerLine > -1) {
+						try {
+							int documentLine = invocationContext.getSourceViewer().getDocument()
+									.getLineOfOffset(documentOffset);
+							if (markerLine == documentLine) {
+								annotations.add((MarkerAnnotation) annotation);
+							}
+						} catch (BadLocationException e) {
+							// can't be used then...
+						}
+					}
+				}
+				if (documentOffset >= annotationOffset
+						&& documentOffset + Math.max(0, selectionLength) <= annotationOffset + annotationLength) {
+					annotations.add(markerAnnotation);
+				}
 			}
 		});
 		Collection<MarkerResolutionCompletionProposal> resolutions = new ArrayList<>();
