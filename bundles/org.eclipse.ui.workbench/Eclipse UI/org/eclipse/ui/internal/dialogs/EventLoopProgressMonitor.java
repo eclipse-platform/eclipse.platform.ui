@@ -111,12 +111,12 @@ public class EventLoopProgressMonitor extends ProgressMonitorWrapper implements 
 		if (t - lastTime < T_THRESH) {
 			return;
 		}
-		lastTime = t;
 		// Run the event loop.
-		Display disp = Display.getDefault();
+		Display disp = Display.getCurrent();
 		if (disp == null) {
 			return;
 		}
+		lastTime = t;
 
 		// Initialize an exception handler from the window class.
 		ExceptionHandler handler = ExceptionHandler.getInstance();
