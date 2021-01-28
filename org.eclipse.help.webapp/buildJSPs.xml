@@ -42,6 +42,8 @@
 					<include name="org.apache.ant*/lib/ant.jar"/>
 					<include name="org.apache.commons.logging*.jar"/>
 					<include name="org.apache.jasper.glassfish*.jar"/>
+					<include name="org.eclipse.core.runtime*.jar"/>
+					<include name="org.eclipse.osgi*.jar"/>
 					<include name="org.eclipse.help*.jar"/>
 					<include name="org.eclipse.help.base*.jar"/>
 				</patternset>
