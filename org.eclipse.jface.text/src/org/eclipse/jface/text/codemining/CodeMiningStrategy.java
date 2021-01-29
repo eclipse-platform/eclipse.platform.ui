@@ -1,5 +1,5 @@
 /**
- *  Copyright (c) 2017 Angelo ZERR.
+ *  Copyright (c) 2017, 2021 Angelo ZERR.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -10,8 +10,11 @@
  *
  *  Contributors:
  *  Angelo Zerr <angelo.zerr@gmail.com> - [CodeMining] Provide extension point for CodeMining - Bug 528419
+ *  Christoph Läubrich - Bug 570727 - [codemining] Codeminings computed multiple times
  */
 package org.eclipse.jface.text.codemining;
+
+import java.util.function.Supplier;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -30,13 +33,13 @@ import org.eclipse.jface.text.source.ISourceViewerExtension5;
  */
 class CodeMiningStrategy implements IReconcilingStrategy, IReconcilingStrategyExtension {
 
-	private ISourceViewerExtension5 fViewer;
 
-	public void install(ITextViewer viewer) {
-		if (viewer instanceof ISourceViewerExtension5) {
-			fViewer= (ISourceViewerExtension5) viewer;
-		}
+	private Supplier<ITextViewer> fViewerSupplier;
+
+	public CodeMiningStrategy(Supplier<ITextViewer> viewerSupplier) {
+		fViewerSupplier= viewerSupplier;
 	}
+
 
 	@Override
 	public void initialReconcile() {
@@ -48,13 +51,10 @@ class CodeMiningStrategy implements IReconcilingStrategy, IReconcilingStrategyEx
 
 	@Override
 	public void reconcile(IRegion partition) {
-		if (fViewer != null) {
-			fViewer.updateCodeMinings();
+		ITextViewer viewer= fViewerSupplier.get();
+		if (viewer instanceof ISourceViewerExtension5) {
+			((ISourceViewerExtension5) viewer).updateCodeMinings();
 		}
-	}
-
-	public void uninstall() {
-		fViewer= null;
 	}
 
 	@Override
