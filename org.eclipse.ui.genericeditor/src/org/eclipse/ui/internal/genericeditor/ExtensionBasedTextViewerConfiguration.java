@@ -111,7 +111,7 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		}
 		if (fileName == null) {
 			IDocument viewerDocument = viewer.getDocument();
-			if (document != null) {
+			if (viewerDocument != null) {
 				ITextFileBuffer buffer = FileBuffers.getTextFileBufferManager().getTextFileBuffer(viewerDocument);
 				if (buffer != null) {
 					fileName = buffer.getLocation().lastSegment();
