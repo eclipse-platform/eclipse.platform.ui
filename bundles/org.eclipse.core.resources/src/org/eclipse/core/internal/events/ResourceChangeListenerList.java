@@ -136,19 +136,22 @@ public class ResourceChangeListenerList {
 	}
 
 	public boolean hasListenerFor(int event) {
-		if (event == 1)
+		switch (event) {
+		case 1:
 			return count1 > 0;
-		if (event == 2)
+		case 2:
 			return count2 > 0;
-		if (event == 4)
+		case 4:
 			return count4 > 0;
-		if (event == 8)
+		case 8:
 			return count8 > 0;
-		if (event == 16)
+		case 16:
 			return count16 > 0;
-		if (event == 32)
+		case 32:
 			return count32 > 0;
-		return false;
+		default:
+			return false;
+		}
 	}
 
 	/**
