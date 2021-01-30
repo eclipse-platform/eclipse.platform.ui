@@ -16,6 +16,7 @@ package org.eclipse.e4.core.internal.di;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.AnnotatedElement;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
@@ -191,9 +192,7 @@ abstract public class Requestor<L extends AnnotatedElement> implements IRequesto
 	protected void clearResolvedArgs() {
 		if (actualArgs == null)
 			return;
-		for (int i = 0; i < actualArgs.length; i++) {
-			actualArgs[i] = null;
-		}
+		Arrays.fill(actualArgs, null);
 		actualArgs = null;
 		return;
 	}
