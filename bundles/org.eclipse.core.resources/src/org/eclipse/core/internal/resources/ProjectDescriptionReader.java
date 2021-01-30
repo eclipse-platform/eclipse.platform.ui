@@ -928,11 +928,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 		state = S_INITIAL;
 		try {
 			createParser().parse(input, this);
-		} catch (ParserConfigurationException e) {
-			log(e);
-		} catch (IOException e) {
-			log(e);
-		} catch (SAXException e) {
+		} catch (ParserConfigurationException | IOException | SAXException e) {
 			log(e);
 		}
 
