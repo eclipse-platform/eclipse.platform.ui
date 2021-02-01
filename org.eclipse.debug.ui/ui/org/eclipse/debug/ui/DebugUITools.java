@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -28,6 +28,7 @@ import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.ObjectUndoContext;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -868,7 +869,7 @@ public class DebugUITools {
 								TreePath[] treePath = selection.getPaths();
 								if (treePath != null && treePath.length == 1) {
 									Object lastSegmentObj = treePath[0].getLastSegment();
-									IResource selectedResource = ((IAdaptable) lastSegmentObj).getAdapter(IResource.class);
+									IResource selectedResource = Adapters.adapt(lastSegmentObj, IResource.class);
 									if (selectedResource!= null && selectedResource.equals(configResource[0])) {
 										return isShiftTerminateLaunch(key);
 									}
