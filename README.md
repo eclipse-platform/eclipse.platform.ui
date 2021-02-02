@@ -63,7 +63,7 @@ Search for bugs:
 
 This project uses Bugzilla to track ongoing development and issues.
 
-- <https://bugs.eclipse.org/bugs/buglist.cgi?bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&classification=Eclipse&component=UI&list_id=12049886&product=Platform&query_format=advanced>
+- <https://bugs.eclipse.org/bugs/buglist.cgi?bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&classification=Eclipse%20Project&component=UI&list_id=12049886&product=Platform&query_format=advanced>
 
 Create a new bug:
 -----------------
