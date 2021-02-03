@@ -593,7 +593,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 		}
 
 		StringTokenizer extEditors = new StringTokenizer(defaultEditors,
-				Character.valueOf(IPreferenceConstants.SEPARATOR).toString());
+				Character.toString(IPreferenceConstants.SEPARATOR));
 		while (extEditors.hasMoreTokens()) {
 			String extEditor = extEditors.nextToken().trim();
 			int index = extEditor.indexOf(':');
