@@ -57,8 +57,14 @@ import org.eclipse.swt.widgets.TabFolder;
  * </ul>
  *
  * @deprecated Use the class <code>MultiPageEditorPart</code> instead
+ *
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noreference This class is not intended to be referenced by clients.
+ *
+ *              Marked for deletion see Bug 547018.
+ *
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public abstract class MultiPageEditor extends EditorPart {
 	private List<PageBook> syncVector;
 
