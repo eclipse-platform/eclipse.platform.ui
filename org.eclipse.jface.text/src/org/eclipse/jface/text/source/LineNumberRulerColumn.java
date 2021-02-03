@@ -66,15 +66,10 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 */
 	class InternalListener implements ITextListener {
 
-		/**
-		 * @since 3.1
-		 */
-		private boolean fCachedRedrawState= true;
-
 		@Override
 		public void textChanged(TextEvent event) {
 
-			fCachedRedrawState= event.getViewerRedrawState();
+			boolean fCachedRedrawState= event.getViewerRedrawState();
 			if (!fCachedRedrawState)
 				return;
 
