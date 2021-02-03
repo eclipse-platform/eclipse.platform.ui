@@ -263,14 +263,14 @@ public class Expressions {
 		String value= element.getAttribute(attributeName);
 		if (value == null)
 			return false;
-		return Boolean.valueOf(value).booleanValue();
+		return Boolean.parseBoolean(value);
 	}
 
 	public static boolean getOptionalBooleanAttribute(Element element, String attributeName) {
 		String value= element.getAttribute(attributeName);
 		if (value.isEmpty())
 			return false;
-		return Boolean.valueOf(value).booleanValue();
+		return Boolean.parseBoolean(value);
 	}
 
 	//---- Argument parsing --------------------------------------------
