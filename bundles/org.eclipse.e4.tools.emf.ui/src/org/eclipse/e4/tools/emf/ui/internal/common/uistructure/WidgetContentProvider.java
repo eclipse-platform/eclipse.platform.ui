@@ -77,9 +77,6 @@ public class WidgetContentProvider implements ITreeContentProvider {
 		} else if (parentElement instanceof Tree) {
 			// No children
 
-		} else if (parentElement instanceof Tree) {
-			// No children
-
 		} else if (parentElement instanceof List) {
 			// No children
 

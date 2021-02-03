@@ -411,11 +411,7 @@ public class RegistryUtil {
 			return new RegistryStruct(EMPTY_STRING, "org.eclipse.ui.views", "view", NAME); //$NON-NLS-1$ //$NON-NLS-2$
 		} else if (applicationElement == MHandler.class) {
 			return new RegistryStruct(EMPTY_STRING, "org.eclipse.ui.handlers", "handler", COMMAND_ID); //$NON-NLS-1$ //$NON-NLS-2$
-		} else if (applicationElement == MPart.class) {
-			return new RegistryStruct(EMPTY_STRING, "org.eclipse.ui.views", "view", NAME); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-
-		else if (applicationElement == MPartDescriptor.class) {
+		} else if (applicationElement == MPartDescriptor.class) {
 			if (hint == HINT_EDITOR)
 			{
 				return new RegistryStruct(EMPTY_STRING, "org.eclipse.ui.editors", EDITOR, NAME); //$NON-NLS-1$
