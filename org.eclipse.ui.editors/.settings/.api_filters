@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.ui.editors" version="2">
+    <resource path="src/org/eclipse/ui/editors/text/EncodingActionGroup.java" type="org.eclipse.ui.editors.text.EncodingActionGroup">
+        <filter comment="&#10;Bug 544309 - [API] Mark EncodingActionGroup and related interfaces for deletion" id="336744520">
+            <message_arguments>
+                <message_argument value="@noextend"/>
+                <message_argument value="org.eclipse.ui.editors.text.EncodingActionGroup"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/ui/editors/text/ITextEditorHelpContextIds.java" type="org.eclipse.ui.editors.text.ITextEditorHelpContextIds">
         <filter id="571473929">
             <message_arguments>
