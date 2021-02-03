@@ -56,7 +56,6 @@ public class FileSystemAccess {
 		}
 		//just put the cache in the user home directory
 		return Path.fromOSString(System.getProperty("user.home")); //$NON-NLS-1$
-		//		Platform.getStateLocation(Platform.getBundle(Policy.PI_FILE_SYSTEM));
 	}
 
 	public static Enumeration<URL> findEntries(String path, String filePattern, boolean recurse) {
