@@ -606,7 +606,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 
 		@Override
 		public void documentChanged(DocumentEvent event) {
-			fPreservedRedoModificationStamp= event.getModificationStamp();
+			long fPreservedRedoModificationStamp= event.getModificationStamp();
 
 			// record the current valid state for the top operation in case it
 			// remains the
@@ -739,11 +739,6 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 	 * placing items on our undo/redo history.
 	 */
 	private UndoableTextChange fLastAddedTextEdit= null;
-
-	/**
-	 * The document modification stamp for redo.
-	 */
-	private long fPreservedRedoModificationStamp= IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
 
 	/**
 	 * Text buffer to collect viewer content which has been replaced
