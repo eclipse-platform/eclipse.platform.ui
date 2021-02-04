@@ -234,13 +234,10 @@ public class MarkerSet implements Cloneable, IStringPoolParticipant {
 	@Override
 	public void shareStrings(StringPool set) {
 		//copy elements for thread safety
-		Object[] array = elements;
+		IMarkerSetElement[] array = elements;
 		if (array == null)
 			return;
-		for (int i = 0; i < array.length; i++) {
-			Object o = array[i];
-			if (o instanceof String)
-				array[i] = set.add((String) o);
+		for (IMarkerSetElement o : array) {
 			if (o instanceof IStringPoolParticipant)
 				((IStringPoolParticipant) o).shareStrings(set);
 		}
