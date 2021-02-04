@@ -8,3 +8,4 @@ Comparator errors in I20200818-0900
 Comparator errors in I20201006-0600
 Bug 567461 - Please update felix gogo shell to 1.1.4 due to bug in 1.1.0
 Bug 567461 - Please update felix gogo shell to 1.1.4 due to bug in 1.1.0
+4.19 I-Build: I20210204-1300 - BUILD FAILED
