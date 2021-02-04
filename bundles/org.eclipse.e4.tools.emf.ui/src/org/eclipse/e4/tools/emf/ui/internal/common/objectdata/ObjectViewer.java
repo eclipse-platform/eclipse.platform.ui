@@ -180,7 +180,7 @@ public class ObjectViewer {
 						return 1;
 					}
 
-					final int rv = Integer.valueOf(a1.getAccessLevel().value).compareTo(a2.getAccessLevel().value);
+					final int rv = Integer.compare(a1.getAccessLevel().value, a2.getAccessLevel().value);
 					if (rv == 0) {
 						return a1.getName().compareTo(a2.getName());
 					}
