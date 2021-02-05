@@ -134,10 +134,9 @@ public class MarkerTesterTest extends UITestCase {
 	@Test
 	public void testPriority() throws Exception {
 
-		IMarker highPriority = project.createMarker(IMarker.PROBLEM);
 		Map<String, Object> attributes = new HashMap<>();
 		attributes.put(IMarker.PRIORITY, Integer.valueOf(IMarker.PRIORITY_HIGH));
-		highPriority.setAttributes(attributes);
+		IMarker highPriority = project.createMarker(IMarker.PROBLEM, attributes);
 
 		EvaluationContext context = new EvaluationContext(null, highPriority);
 		TestExpression testExpression = new TestExpression(MARKER_NAMESPACE,
@@ -145,10 +144,9 @@ public class MarkerTesterTest extends UITestCase {
 		EvaluationResult result = testExpression.evaluate(context);
 		assertEquals(EvaluationResult.TRUE, result);
 
-		IMarker lowPriority = project.createMarker(IMarker.PROBLEM);
 		attributes = new HashMap<>();
 		attributes.put(IMarker.PRIORITY, Integer.valueOf(IMarker.PRIORITY_LOW));
-		lowPriority.setAttributes(attributes);
+		IMarker lowPriority = project.createMarker(IMarker.PROBLEM, attributes);
 
 		context = new EvaluationContext(null, lowPriority);
 		testExpression = new TestExpression(MARKER_NAMESPACE, "priority", null,
@@ -194,10 +192,9 @@ public class MarkerTesterTest extends UITestCase {
 	@Test
 	public void testMessage() throws Exception {
 
-		IMarker someTaskMarker = project.createMarker(IMarker.TASK);
 		Map<String, String> attributes = new HashMap<>();
 		attributes.put(IMarker.MESSAGE, "Some nice message to test");
-		someTaskMarker.setAttributes(attributes);
+		IMarker someTaskMarker = project.createMarker(IMarker.TASK, attributes);
 
 		EvaluationContext context = new EvaluationContext(null, someTaskMarker);
 		TestExpression testExpression = new TestExpression(MARKER_NAMESPACE,
@@ -230,10 +227,9 @@ public class MarkerTesterTest extends UITestCase {
 	@Test
 	public void testResourceType() throws Exception {
 
-		IMarker someTaskMarker = project.createMarker(IMarker.TASK);
 		Map<String, String> attributes = new HashMap<>();
 		attributes.put(IMarker.MESSAGE, "Some nice message to test");
-		someTaskMarker.setAttributes(attributes);
+		IMarker someTaskMarker = project.createMarker(IMarker.TASK, attributes);
 
 		EvaluationContext context = new EvaluationContext(null, someTaskMarker);
 		TestExpression testExpression = new TestExpression(MARKER_NAMESPACE,
@@ -244,10 +240,9 @@ public class MarkerTesterTest extends UITestCase {
 		IFolder folder = project.getFolder("forMarker");
 		folder.create(true, true, null);
 
-		IMarker someOtherMarker = folder.createMarker(IMarker.TASK);
 		attributes = new HashMap<>();
 		attributes.put(IMarker.MESSAGE, "Some nice message to test");
-		someOtherMarker.setAttributes(attributes);
+		IMarker someOtherMarker = folder.createMarker(IMarker.TASK, attributes);
 
 		context = new EvaluationContext(null, someOtherMarker);
 		testExpression = new TestExpression(MARKER_NAMESPACE, "resourceType",
