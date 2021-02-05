@@ -38,6 +38,6 @@ Require-Bundle: org.eclipse.osgi.services,
  org.eclipse.core.expressions,
  org.eclipse.pde.junit.runtime;bundle-version="3.5.0"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Eclipse-BundleShape: dir
 Automatic-Module-Name: org.eclipse.core.tests.resources
