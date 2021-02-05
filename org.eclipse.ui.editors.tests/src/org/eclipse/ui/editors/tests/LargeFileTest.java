@@ -15,6 +15,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.Before;
@@ -108,13 +109,15 @@ public class LargeFileTest {
 			TestUtil.runEventLoop();
 		}
 		// Create a marker on the file
-		IMarker marker = fLargeFile.createMarker(IMarker.BOOKMARK);
-		marker.setAttribute(IMarker.LOCATION, "line 1");
-		marker.setAttribute(IMarker.MESSAGE, "Just a test marker");
-		marker.setAttribute(IMarker.LINE_NUMBER, 1);
-		marker.setAttribute(IMarker.CHAR_START, 8);
-		marker.setAttribute(IMarker.CHAR_END, 12);
-		marker.setAttribute(IMarker.USER_EDITABLE, false);
+		Map<String, Object> attributes = Map.of(IMarker.LOCATION, "line 1", //
+				IMarker.MESSAGE, "Just a test marker", //
+				IMarker.LINE_NUMBER, 1, //
+				IMarker.CHAR_START, 8, //
+				IMarker.CHAR_END, 12 ,//
+				IMarker.USER_EDITABLE, false
+				);
+
+		fLargeFile.createMarker(IMarker.BOOKMARK, attributes);
 		TestUtil.runEventLoop();
 		// Open it again
 		long[] withMarker = { System.nanoTime() };
