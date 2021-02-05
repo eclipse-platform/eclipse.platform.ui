@@ -245,7 +245,7 @@ public class PlatformLogReader {
 			return "";
 		}
 		StringBuilder buffer = new StringBuilder();
-		buffer.append(currentLine.substring(KEYWORD_MESSAGE.length() + 1, currentLine.length()));
+		buffer.append(currentLine.substring(KEYWORD_MESSAGE.length() + 1));
 		currentLine = reader.readLine();
 		buffer.append(readText());
 		return buffer.toString();
