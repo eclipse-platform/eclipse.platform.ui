@@ -51,7 +51,7 @@ public class ClassImplementationsCodeMiningProvider extends AbstractCodeMiningPr
 		String line = AbstractClassCodeMining.getLineText(document, lineIndex).trim();
 		int index = line.indexOf(token);
 		if (index == 0) {
-			String className = line.substring(index + token.length(), line.length());
+			String className = line.substring(index + token.length());
 			index = className.indexOf(" ");
 			if (index != -1) {
 				className = className.substring(0, index);

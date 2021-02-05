@@ -154,7 +154,7 @@ public class InlinedAnnotationDemo {
 			String line = getLineText(document, i).trim();
 			int index = line.indexOf("color:");
 			if (index == 0) {
-				String rgb = line.substring(index + "color:".length(), line.length()).trim();
+				String rgb = line.substring(index + "color:".length()).trim();
 				try {
 					String status = "OK!";
 					Color color = parse(rgb, viewer.getTextWidget().getDisplay());
@@ -187,7 +187,7 @@ public class InlinedAnnotationDemo {
 					if (rgbIndex != -1) {
 						rgbIndex = rgbIndex + "rgb".length();
 						int startOffset = pos.offset + rgbIndex;
-						String rgbContent = line.substring(rgbIndex, line.length());
+						String rgbContent = line.substring(rgbIndex);
 						int startIndex = addRGBParamNameAnnotation("red:", rgbContent, 0, startOffset, viewer, support,
 								annotations);
 						if (startIndex != -1) {
