@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.markers;
 
+import java.util.Map;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -103,8 +105,9 @@ public class ResourceMappingTestView extends ViewPart {
 		IResource element = top.getChildren()[0].element;
 
 		try {
-			IMarker marker = element.createMarker("org.eclipse.core.resources.problemmarker");
-			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+			IMarker marker = element.createMarker("org.eclipse.core.resources.problemmarker",
+					Map.of(IMarker.SEVERITY, IMarker.SEVERITY_ERROR)
+			);
 			return marker;
 		} catch (CoreException e) {
 			return null;
