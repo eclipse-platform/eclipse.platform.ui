@@ -532,6 +532,52 @@ public class MarkerTest extends ResourceTest {
 		}
 	}
 
+	// testing that markers creation and calling setAttribute trigger multiple
+	// resource change
+	// events (which is bad for performance hence the better createMarker(String
+	// type, Map<String, Object> attributes) method
+
+	public void testThatSettingAttributesTriggerAdditionalResourceChangeEvent() {
+		// Create and register a listener.
+		MarkersNumberOfDeltasChangeListener listener = new MarkersNumberOfDeltasChangeListener();
+		getWorkspace().addResourceChangeListener(listener);
+		for (IResource resource : resources) {
+			listener.reset();
+			// each setAttributes triggers one additional resource change event
+			try {
+				IMarker marker = resource.createMarker(TEST_PROBLEM_MARKER);
+				marker.setAttribute(IMarker.MESSAGE, getRandomString());
+				marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
+				assertEquals(3, listener.numberOfChanges());
+			} catch (CoreException e) {
+				fail("Marker creation failed unexpected", e);
+			}
+		}
+		// cleanup
+		getWorkspace().removeResourceChangeListener(listener);
+	}
+
+	// testing that markers creation with arbiutes
+	public void testThatMarkersWithAttributesOnlyTriggerOnResourceChangeEvent() {
+		// Create and register a listener.
+		MarkersNumberOfDeltasChangeListener listener = new MarkersNumberOfDeltasChangeListener();
+		getWorkspace().addResourceChangeListener(listener);
+		for (IResource resource : resources) {
+			listener.reset();
+			// createMarker with attributes triggers only one resource change event
+			listener.reset();
+			// each setAttributes triggers one resource change event
+			try {
+				resource.createMarker(TEST_PROBLEM_MARKER,
+						Map.of(IMarker.MESSAGE, getRandomString(), IMarker.PRIORITY, IMarker.PRIORITY_HIGH));
+				assertEquals(1, listener.numberOfChanges());
+			} catch (CoreException e) {
+				fail("Marker creation failed unexpected", e);
+			}
+		}
+		// cleanup
+		getWorkspace().removeResourceChangeListener(listener);
+	}
 	public void testCreationTime() {
 
 		for (int i = 0; i < resources.length; i++) {
