@@ -70,9 +70,7 @@ public class MarkerHighlighter extends Highlighter {
 			// need to clone position, can't have it twice in a document.
 			position= new Position(position.getOffset(), position.getLength());
 		}
-		IMarker marker= match.isFiltered()
-			? fFile.createMarker(SearchPlugin.FILTERED_SEARCH_MARKER)
-			: fFile.createMarker(NewSearchUI.SEARCH_MARKER);
+
 		HashMap<String, Integer> attributes= new HashMap<>(4);
 		if (match.getBaseUnit() == Match.UNIT_CHARACTER) {
 			attributes.put(IMarker.CHAR_START, Integer.valueOf(position.getOffset()));
@@ -80,7 +78,9 @@ public class MarkerHighlighter extends Highlighter {
 		} else {
 			attributes.put(IMarker.LINE_NUMBER, Integer.valueOf(position.getOffset()));
 		}
-		marker.setAttributes(attributes);
+		IMarker marker = match.isFiltered() ? fFile.createMarker(SearchPlugin.FILTERED_SEARCH_MARKER, attributes)
+				: fFile.createMarker(NewSearchUI.SEARCH_MARKER, attributes);
+
 		return marker;
 	}
 
