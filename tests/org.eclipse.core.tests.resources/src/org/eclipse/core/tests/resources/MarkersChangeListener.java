@@ -14,8 +14,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -24,7 +23,7 @@ import org.eclipse.core.runtime.Path;
  * A support class for the marker tests.
  */
 public class MarkersChangeListener implements IResourceChangeListener {
-	protected Hashtable<IPath, Vector<IMarkerDelta>> changes;
+	protected HashMap<IPath, List<IMarkerDelta>> changes;
 
 	public MarkersChangeListener() {
 		reset();
@@ -36,7 +35,7 @@ public class MarkersChangeListener implements IResourceChangeListener {
 	 */
 	public boolean checkChanges(IResource resource, IMarker[] added, IMarker[] removed, IMarker[] changed) {
 		IPath path = resource == null ? Path.ROOT : resource.getFullPath();
-		Vector<IMarkerDelta> v = changes.get(path);
+		List<IMarkerDelta> v = changes.get(path);
 		if (v == null) {
 			v = new Vector<>();
 		}
@@ -44,8 +43,7 @@ public class MarkersChangeListener implements IResourceChangeListener {
 		if (numChanges != v.size()) {
 			return false;
 		}
-		for (int i = 0; i < v.size(); ++i) {
-			IMarkerDelta delta = v.elementAt(i);
+		for (IMarkerDelta delta : v) {
 			switch (delta.getKind()) {
 				case IResourceDelta.ADDED :
 					if (!contains(added, delta.getMarker())) {
@@ -91,7 +89,7 @@ public class MarkersChangeListener implements IResourceChangeListener {
 	}
 
 	public void reset() {
-		changes = new Hashtable<>(11);
+		changes = new HashMap<>();
 	}
 
 	/**
@@ -111,14 +109,14 @@ public class MarkersChangeListener implements IResourceChangeListener {
 		}
 		if ((delta.getFlags() & IResourceDelta.MARKERS) != 0) {
 			IPath path = delta.getFullPath();
-			Vector<IMarkerDelta> v = changes.get(path);
+			List<IMarkerDelta> v = changes.get(path);
 			if (v == null) {
 				v = new Vector<>();
 				changes.put(path, v);
 			}
 			IMarkerDelta[] markerDeltas = delta.getMarkerDeltas();
 			for (IMarkerDelta markerDelta : markerDeltas) {
-				v.addElement(markerDelta);
+				v.add(markerDelta);
 			}
 		}
 		IResourceDelta[] children = delta.getAffectedChildren();
