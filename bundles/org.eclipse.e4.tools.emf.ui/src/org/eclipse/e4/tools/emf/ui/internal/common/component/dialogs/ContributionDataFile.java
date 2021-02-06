@@ -697,4 +697,9 @@ public class ContributionDataFile implements IFile {
 		// TODO Auto-generated method stub
 
 	}
+
+	public IMarker createMarker(String type, Map<String, Object> attributes) throws CoreException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
