@@ -26,6 +26,7 @@ package org.eclipse.core.internal.resources;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
+import java.util.Map.Entry;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.filesystem.provider.FileInfo;
@@ -686,6 +687,11 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 
 	@Override
 	public IMarker createMarker(String type) throws CoreException {
+		return createMarker(type, Collections.emptyMap());
+	}
+
+	@Override
+	public IMarker createMarker(String type, Map<String, Object> attributes) throws CoreException {
 		Assert.isNotNull(type);
 		final ISchedulingRule rule = workspace.getRuleFactory().markerRule(this);
 		try {
@@ -695,13 +701,19 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			MarkerInfo info = new MarkerInfo();
 			info.setType(type);
 			info.setCreationTime(System.currentTimeMillis());
+
 			workspace.getMarkerManager().add(this, info);
-			return new Marker(this, info.getId());
+			Marker marker = new Marker(this, info.getId());
+			if (attributes != null) {
+				for (Entry<String, Object> entry : attributes.entrySet()) {
+					marker.setAttribute(entry.getKey(), entry.getValue());
+				}
+			}
+			return marker;
 		} finally {
 			workspace.endOperation(rule, false);
 		}
 	}
-
 	@Override
 	public IResourceProxy createProxy() {
 		ResourceProxy result = new ResourceProxy();
