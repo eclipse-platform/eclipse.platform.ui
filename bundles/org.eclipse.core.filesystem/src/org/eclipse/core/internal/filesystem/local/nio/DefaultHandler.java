@@ -18,6 +18,7 @@ package org.eclipse.core.internal.filesystem.local.nio;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.provider.FileInfo;
@@ -35,40 +36,40 @@ public class DefaultHandler extends NativeHandler {
 	@Override
 	public FileInfo fetchFileInfo(String fileName) {
 		Path path = Paths.get(fileName);
-		boolean exists = Files.exists(path);
-
 		FileInfo info = new FileInfo();
+		boolean exists = Files.exists(path);
 		info.setExists(exists);
 
-		// Even if it doesn't exist then check for symbolic link information.
-		boolean isSymbolicLink = Files.isSymbolicLink(path);
-		if (isSymbolicLink) {
-			info.setAttribute(EFS.ATTRIBUTE_SYMLINK, true);
-			try {
-				info.setStringAttribute(EFS.ATTRIBUTE_LINK_TARGET, Files.readSymbolicLink(path).toString());
-			} catch (IOException e) {
-				// Leave the target alone.
-				info.setError(IFileInfo.IO_ERROR);
-			}
-		}
-
-		// Fill in the name of the file.
-		// If the file system is case insensitive, we don't know the real name of the file.
-		// Since obtaining the real name in such situation is pretty expensive, we use the name
-		// passed as a parameter, which may differ by case from the real name of the file
-		// if the file system is case insensitive.
-		info.setName(path.toFile().getName());
-
-		// Since we will be using a mixture of pre Java 7 API's which do not support the
-		// retrieval of information for the symbolic link itself instead of the target
-		// we will only support the following details if the symbolic link target exists.
-		if (!exists)
-			return info;
-
 		try {
-			info.setLastModified(Files.getLastModifiedTime(path).toMillis());
-			info.setLength(Files.size(path));
-			info.setDirectory(Files.isDirectory(path));
+			BasicFileAttributes readAttributes = Files.readAttributes(path, BasicFileAttributes.class);
+
+			// Even if it doesn't exist then check for symbolic link information.
+			if (readAttributes.isSymbolicLink()) {
+				info.setAttribute(EFS.ATTRIBUTE_SYMLINK, true);
+				try {
+					info.setStringAttribute(EFS.ATTRIBUTE_LINK_TARGET, Files.readSymbolicLink(path).toString());
+				} catch (IOException e) {
+					// Leave the target alone.
+					info.setError(IFileInfo.IO_ERROR);
+				}
+			}
+
+			// Fill in the name of the file.
+			// If the file system is case insensitive, we don't know the real name of the file.
+			// Since obtaining the real name in such situation is pretty expensive, we use the name
+			// passed as a parameter, which may differ by case from the real name of the file
+			// if the file system is case insensitive.
+			info.setName(path.toFile().getName());
+
+			// Since we will be using a mixture of pre Java 7 API's which do not support the
+			// retrieval of information for the symbolic link itself instead of the target
+			// we will only support the following details if the symbolic link target exists.
+			if (!exists)
+				return info;
+
+			info.setLastModified(readAttributes.lastModifiedTime().toMillis());
+			info.setLength(readAttributes.size());
+			info.setDirectory(readAttributes.isDirectory());
 
 			info.setAttribute(EFS.ATTRIBUTE_READ_ONLY, !Files.isWritable(path) && Files.isReadable(path));
 			info.setAttribute(EFS.ATTRIBUTE_EXECUTABLE, Files.isExecutable(path));
