@@ -30,19 +30,27 @@ public class FileCache {
 	private static final String CACHE_DIR_NAME = "filecache";//$NON-NLS-1$
 
 	/**
-	 * Thread safety for lazy instantiation of the cache
-	 */
-	private static final Object creationLock = new Object();
-
-	/**
 	 * Cached constant indicating if the current OS is Mac OSX
 	 */
 	static final boolean MACOSX = FileCache.getOS().equals(Constants.OS_MACOSX);
 
 	/**
 	 * The singleton file cache instance.
+	 * Lazy initialization holder class idiom for static fields
 	 */
-	private static FileCache instance = null;
+	private static class FileCacheHolder {
+		static final FileCache instance = createFileCache();
+		static CoreException ce;
+
+		private static FileCache createFileCache() {
+			try {
+				return new FileCache();
+			} catch (CoreException e) {
+				ce = e;
+				return null;
+			}
+		}
+	}
 
 	private File cacheDir;
 
@@ -53,11 +61,10 @@ public class FileCache {
 	 * @throws CoreException If the file cache could not be created
 	 */
 	public static FileCache getCache() throws CoreException {
-		synchronized (creationLock) {
-			if (instance == null)
-				instance = new FileCache();
-			return instance;
-		}
+		FileCache instance = FileCacheHolder.instance;
+		if (instance == null)
+			throw FileCacheHolder.ce;
+		return instance;
 	}
 
 	/**
@@ -65,7 +72,7 @@ public class FileCache {
 	 *
 	 * @throws CoreException If the file cache could not be created
 	 */
-	private FileCache() throws CoreException {
+	FileCache() throws CoreException {
 		IPath location = FileSystemAccess.getCacheLocation();
 		File cacheParent = new File(location.toFile(), CACHE_DIR_NAME);
 		cleanOldCache(cacheParent);
