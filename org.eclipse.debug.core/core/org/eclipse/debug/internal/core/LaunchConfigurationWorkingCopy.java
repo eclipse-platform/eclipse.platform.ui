@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.core.filesystem.EFS;
@@ -35,6 +36,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -608,13 +610,8 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		}
 		IContainer newContainer = getContainer();
 		IContainer originalContainer = ((LaunchConfiguration)getOriginal()).getContainer();
-		if (newContainer == originalContainer) {
-			return false;
-		}
-		if (newContainer == null) {
-			return !originalContainer.equals(newContainer);
-		}
-		return !newContainer.equals(originalContainer);
+
+		return !isSameContainerLocation(newContainer, originalContainer);
 	}
 
 	/**
@@ -636,9 +633,22 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		return fSuppressChange;
 	}
 
+	private boolean isSameContainerLocation(IContainer newContainer, IContainer originalContainer) {
+		// Verify that containers are not nested
+		if (newContainer != null && originalContainer != null) {
+			IPath newPath = newContainer.getLocation();
+			IPath originalPath = originalContainer.getLocation();
+
+			if (Objects.equals(newPath, originalPath)) {
+				return true;
+			}
+		}
+		return Objects.equals(newContainer, originalContainer);
+	}
+
 	@Override
 	public void setContainer(IContainer container) {
-		if (equalOrNull(getContainer(), container)) {
+		if (isSameContainerLocation(container, getContainer())) {
 			return;
 		}
 		super.setContainer(container);
