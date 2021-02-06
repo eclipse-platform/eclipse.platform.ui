@@ -322,13 +322,6 @@ public class MarkerTest extends ResourceTest {
 		}
 	}
 
-	protected void assertExists(String message, List<IMarker> markers) {
-		for (IMarker marker : markers) {
-			assertExists(message, marker);
-		}
-	}
-
-
 	protected void assertExists(String message, IMarker marker) {
 		assertTrue(message, marker.exists());
 	}
@@ -473,63 +466,6 @@ public class MarkerTest extends ResourceTest {
 
 		// cleanup
 		getWorkspace().removeResourceChangeListener(listener);
-	}
-
-	public void testCreateMarkerWithAttributes() {
-		// Create and register a listener.
-		MarkersChangeListener listener = new MarkersChangeListener();
-		getWorkspace().addResourceChangeListener(listener);
-
-		// create markers on our hierarchy of resources
-		for (IResource resource : resources) {
-			listener.reset();
-
-			List<IMarker> markers = new ArrayList<>();
-			try {
-				markers.add(resource.createMarker(IMarker.PROBLEM, null));
-				markers.add(resource.createMarker(IMarker.BOOKMARK, Collections.emptyMap()));
-				markers.add(resource.createMarker(IMarker.TASK, Map.of(IMarker.MESSAGE, "My text")));
-				assertExists("Markers do not exist" + resource.getFullPath(), markers);
-			} catch (CoreException e) {
-				fail("Failed to created markers for resource" + resource.getFullPath(), e);
-			}
-			assertEquals("Not exactly one resource affected by the marker cahnge" + resource.getFullPath(), 1,
-					listener.numAffectedResources());
-			assertTrue("Not exactly the markers created as defined" + resource.getFullPath(),
-					listener.checkChanges(resource, markers.toArray(new IMarker[0]), null, null));
-
-		}
-
-		// cleanup
-		getWorkspace().removeResourceChangeListener(listener);
-	}
-
-	public void testCreateNullMarkerWithAttributesShouldFail() {
-		// create markers on our hierarchy of resources
-		for (IResource resource : resources) {
-			try {
-				resource.createMarker(null, null);
-				fail("Creating a null marker should not work" + resource.getFullPath());
-			} catch (CoreException e) {
-				fail("Core exception during the creation of a null marker" + resource.getFullPath(), e);
-			} catch (RuntimeException e) {
-				// expected
-			}
-		}
-
-	}
-
-	public void testCreateMarkerWithAttributesOnAResourceWhichDoesNotExistShouldFail() {
-
-		// try creating a marker on a resource which does't exist
-		IResource testResource = getWorkspace().getRoot().getFile(new Path("non/existant/resource"));
-		assertTrue("Resource should not exist", !testResource.exists());
-		try {
-			testResource.createMarker(IMarker.PROBLEM, Map.of(IMarker.MESSAGE, "My text"));
-			fail("Creating a marker for a non existing resource should not work");
-		} catch (CoreException e) {
-			// expected
-		}
 	}
 
 	public void testCreationTime() {
