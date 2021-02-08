@@ -174,10 +174,12 @@ public class CheckMissingNaturesListener implements IResourceChangeListener, IPr
 								targetResource = project;
 							}
 							for (String natureId : missingNatures) {
-								IMarker marker = targetResource.createMarker(MARKER_TYPE);
-								marker.setAttribute(IMarker.SEVERITY, getMissingNatureSeverity(project));
-								marker.setAttribute(IMarker.MESSAGE, NLS.bind(Messages.natures_missingNature, natureId));
-								marker.setAttribute(NATURE_ID_ATTRIBUTE, natureId);
+
+								Map<String, Object> attributes = new HashMap<>();
+								attributes.put(IMarker.SEVERITY, getMissingNatureSeverity(project));
+								attributes.put(IMarker.MESSAGE, NLS.bind(Messages.natures_missingNature, natureId));
+								attributes.put(NATURE_ID_ATTRIBUTE, natureId);
+								IMarker marker = targetResource.createMarker(MARKER_TYPE, attributes);
 								if (targetResource.getType() == IResource.FILE) {
 									updateRange(marker, natureId, (IFile) targetResource);
 								}
