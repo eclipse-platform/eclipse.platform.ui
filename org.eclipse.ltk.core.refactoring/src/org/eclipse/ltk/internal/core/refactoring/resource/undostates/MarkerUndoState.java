@@ -53,23 +53,6 @@ public class MarkerUndoState {
 	}
 
 	/**
-	 * Create a {@link MarkerUndoState} from the specified marker type, attributes,
-	 * and resource.
-	 *
-	 * @param type
-	 *            the type of marker to be created.
-	 * @param attributes
-	 *            the attributes to be assigned to the marker
-	 * @param resource
-	 *            the resource on which the marker should be created
-	 */
-	public MarkerUndoState(String type, Map<String, Object> attributes, IResource resource) {
-		this.type = type;
-		this.attributes = attributes;
-		this.resource = resource;
-	}
-
-	/**
 	 * Create a marker from the marker description.
 	 *
 	 * @return the created marker
