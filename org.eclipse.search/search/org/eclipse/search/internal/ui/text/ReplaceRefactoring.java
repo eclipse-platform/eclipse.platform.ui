@@ -475,7 +475,7 @@ public class ReplaceRefactoring extends Refactoring {
 				replacementText= PatternConstructor.interpretReplaceEscapes(replacementText, originalText, lineDelimiter);
 
 				Matcher matcher= pattern.matcher(originalText);
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				matcher.reset();
 				if (matcher.find()) {
 					matcher.appendReplacement(sb, replacementText);
