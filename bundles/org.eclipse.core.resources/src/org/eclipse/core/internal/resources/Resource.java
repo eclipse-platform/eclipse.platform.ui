@@ -26,7 +26,6 @@ package org.eclipse.core.internal.resources;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
-import java.util.Map.Entry;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.filesystem.provider.FileInfo;
@@ -704,10 +703,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 
 			workspace.getMarkerManager().add(this, info);
 			Marker marker = new Marker(this, info.getId());
-			if (attributes != null) {
-				for (Entry<String, Object> entry : attributes.entrySet()) {
-					marker.setAttribute(entry.getKey(), entry.getValue());
-				}
+			if (attributes != null && !attributes.isEmpty()) {
+				marker.setAttributes(attributes);
 			}
 			return marker;
 		} finally {
