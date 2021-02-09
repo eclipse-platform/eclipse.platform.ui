@@ -234,25 +234,6 @@ public abstract class Job extends InternalJob {
 	}
 
 	/**
-	 * Creates a new system {@link Job} that will execute the provided runnable
-	 * when it runs.
-	 *
-	 * @param runnable
-	 *            the runnable to execute
-	 * @return a job that encapsulates the provided runnable
-	 * @see ICoreRunnable
-	 * @see Job#setSystem(boolean)
-	 * @since 3.8
-	 * @noreference This API is planned to be deleted, see
-	 *              https://bugs.eclipse.org/531276 for details.
-	 * @deprecated use {@link #createSystem(String, ICoreRunnable)} instead
-	 */
-	@Deprecated
-	public static Job createSystem(final ICoreRunnable runnable) {
-		return createSystem("", runnable); //$NON-NLS-1$
-	}
-
-	/**
 	 * Creates a new job with the specified name. The job name is a
 	 * human-readable value that is displayed to users. The name does not need
 	 * to be unique, but it must not be <code>null</code>.

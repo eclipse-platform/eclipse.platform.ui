@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.core.jobs" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="Bug 544573 - Delete Job.createSystem(ICoreRunnable) API" id="926941240">
+            <message_arguments>
+                <message_argument value="3.11.0"/>
+                <message_argument value="3.10.1100"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
