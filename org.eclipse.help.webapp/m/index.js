@@ -8,46 +8,29 @@
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 (function(window, document) {
-
     var SMALL_SCREEN_WIDTH = 768;
     var LOGO_ICON_WIDTH = 36;
     var LOGO_FULL_WIDTH = 146;
     var MENU_FONT_SIZING = 0;
-    var MENU_HELP = 0 // 0 or e.g. 'topic/org.eclipse.help.base/doc/help_home.html'
-    var MENU_HELP_LABEL = 'Help';
-    var MENU_HELP_DESCRIPTION = 'Using the help system'
+    var MENU_HELP = 0; // 0 or e.g. 'topic/org.eclipse.help.base/doc/help_home.html'
+    var MENU_HELP_LABEL = '<%js:menu_item_help_label%>';
+    var MENU_HELP_DESCRIPTION = '<%js:menu_item_help_description%>';
     var MENU_ABOUT = 0;
     var TOC_SIDEBAR_DEFAULT_WIDTH = 380;
     var TOC_SIDEBAR_MINIMUM_WIDTH = 76;
     var TOC_SIDEBAR_WIDTH_COOKIE_NAME = 'toc_width';
-    var TOC_ICON_DESCRIPTION = 'Toggle table of content';
     var TOC_ICON = '<svg width="20" height="20" viewBox="0 0 20 20"><path fill="currentColor" d="M19 5H1V3h18v2zm0 10H1v2h18v-2zm-4-6H1v2h14V9z"/></svg>';
-    var HISTORY_BACK_DESCRIPTION = 'Go back one page';
     var HISTORY_BACK_ICON = '<svg width="20" height="20" viewBox="0 0 20 20"><path fill="currentColor" d="m 8.27224,17.95644 c 0.39048,0.390343 1.023592,0.390211 1.413938,0 0.390613,-0.390612 0.390613,-1.023597 -1.33e-4,-1.41421 L 4.144057,11.000499 18.27041,10.999748 c 0.55219,-1.31e-4 0.999731,-0.447671 0.999731,-1.0001299 -1.34e-4,-0.552189 -0.447674,-0.999595 -0.999864,-0.999595 l -14.126755,9.99e-4 5.542723,-5.543204 c 0.390479,-0.390479 0.390479,-1.023727 0,-1.414074 -0.195307,-0.195173 -0.451138,-0.292892 -0.707102,-0.292892 -0.255832,0 -0.511664,0.09772 -0.70697,0.292759 l -7.249421,7.250043 c -0.187575,0.18744 -0.292893,0.441666 -0.292893,0.7069649 1.33e-4,0.2653 0.105451,0.519396 0.293025,0.707237 z"/></svg>';
-    var HISTORY_FORWARD_DESCRIPTION = 'Go back one page';
     var HISTORY_FORWARD_ICON = '<svg width="20" height="20" viewBox="0 0 20 20"><path fill="currentColor" d="m 11.72776,17.95644 c -0.39048,0.390343 -1.023592,0.390211 -1.413938,0 -0.390613,-0.390612 -0.390613,-1.023597 1.33e-4,-1.41421 L 15.855943,11.000499 1.72959,10.999748 C 1.1774,10.999617 0.729859,10.552077 0.729859,9.9996181 0.729993,9.4474291 1.177533,9.0000231 1.729723,9.0000231 l 14.126755,9.99e-4 -5.542723,-5.543204 c -0.390479,-0.390479 -0.390479,-1.023727 0,-1.414074 0.195307,-0.195173 0.451138,-0.292892 0.707102,-0.292892 0.255832,0 0.511664,0.09772 0.70697,0.292759 l 7.249421,7.250043 c 0.187575,0.18744 0.292893,0.441666 0.292893,0.7069649 -1.33e-4,0.2653 -0.105451,0.519396 -0.293025,0.707237 z"/></svg>';
     var BOOKMARKS_ICON = '<svg width="20" height="20" viewBox="0 0 20 20"><path fill="currentColor" d="M 10.019531 0.5 A 1.000065 1.000065 0 0 0 9.1035156 1.0566406 L 6.5742188 6.1816406 L 0.91796875 7.0039062 A 1.000065 1.000065 0 0 0 0.36523438 8.7089844 L 4.4570312 12.699219 L 3.4902344 18.332031 A 1.000065 1.000065 0 0 0 4.9414062 19.384766 L 10 16.726562 L 15.058594 19.384766 A 1.000065 1.000065 0 0 0 16.509766 18.332031 L 15.542969 12.699219 L 19.634766 8.7089844 A 1.000065 1.000065 0 0 0 19.082031 7.0039062 L 13.425781 6.1816406 L 10.896484 1.0566406 A 1.000065 1.000065 0 0 0 10.019531 0.5 z M 10 3.7597656 L 11.865234 7.5390625 A 1.000065 1.000065 0 0 0 12.617188 8.0859375 L 16.789062 8.6914062 L 13.771484 11.632812 A 1.000065 1.000065 0 0 0 13.482422 12.517578 L 14.195312 16.673828 L 10.464844 14.710938 A 1.000065 1.000065 0 0 0 9.5351562 14.710938 L 5.8046875 16.673828 L 6.5175781 12.517578 A 1.000065 1.000065 0 0 0 6.2285156 11.632812 L 3.2109375 8.6914062 L 7.3828125 8.0859375 A 1.000065 1.000065 0 0 0 8.1347656 7.5390625 L 10 3.7597656 z"/></svg>';
-    var BOOKMARKS_DESCRIPTION = 'Bookmarks';
-    var BOOKMARKS_CLOSE_DESCRIPTION = 'Close bookmarks';
-    var BOOKMARKS_ADD_PAGE_DESCRIPTION = 'Bookmark current page';
-    var BOOKMARKS_ADD_SEARCH_DESCRIPTION = 'Bookmark current search';
-    var BOOKMARKS_DELETE = 'Delete';
-    var BOOKMARKS_DELETE_DESCRIPTION = 'Delete this bookmarks (cannot be undone)';
-    var BOOKMARKS_DELETE_ALL = 'Delete all bookmarks';
-    var BOOKMARKS_DELETE_ALL_DESCRIPTION = 'Delete all bookmarks (cannot be undone)';
     var BOOKMARKS_PATTERN = new RegExp('<tr[^<]*<td[^<]*<a\\s+(?:(?!href)[\\w\\-]+\\s*=\\s*(?:(?:\'[^\']*\')|(?:"[^"]*"))\\s+)*href\\s*=\\s*\'([^\']*)\'[^<]*<img[^>]*>\\s*([^<]*)</a>', 'gi');
     var MENU_ICON = '<svg width="20" height="20" viewBox="0 0 20 20"><path fill="currentColor" d="M 10 1.5 A 2 2 0 0 0 8 3.5 A 2 2 0 0 0 10 5.5 A 2 2 0 0 0 12 3.5 A 2 2 0 0 0 10 1.5 z M 10 8 A 2 2 0 0 0 8 10 A 2 2 0 0 0 10 12 A 2 2 0 0 0 12 10 A 2 2 0 0 0 10 8 z M 10 14.5 A 2 2 0 0 0 8 16.5 A 2 2 0 0 0 10 18.5 A 2 2 0 0 0 12 16.5 A 2 2 0 0 0 10 14.5 z"/></svg>';
-    var MENU_ICON_DESCRIPTION = 'Show menu';
     var MENU_CLOSE_ICON = '<svg width="20" height="20" viewBox="0 0 20 20"><path fill="currentColor" d="M 4.34375 2.9296875 L 2.9296875 4.34375 L 8.5859375 10 L 2.9296875 15.65625 L 4.34375 17.070312 L 10 11.414062 L 15.65625 17.070312 L 17.070312 15.65625 L 11.414062 10 L 17.070312 4.34375 L 15.65625 2.9296875 L 10 8.5859375 L 4.34375 2.9296875 z"/></svg>';
-    var MENU_CLOSE_ICON_DESCRIPTION = 'Hide menu';
     var TREE_HANDLE = '<svg width="24" height="24" viewBox="0 0 24 24" focusable="false" role="presentation">-<path d="M10.294 9.698a.988.988 0 0 1 0-1.407 1.01 1.01 0 0 1 1.419 0l2.965 2.94a1.09 1.09 0 0 1 0 1.548l-2.955 2.93a1.01 1.01 0 0 1-1.42 0 .988.988 0 0 1 0-1.407l2.318-2.297-2.327-2.307z" fill="currentColor"/></svg>';
     var BOOK_NAME_SHORTENER = function shortenBookName(bookName) { return bookName.replace(/\s+(Documentation\s*)?(\-\s+([0-9,\-]+\s+)?Preview(\s+[0-9,\-]+)?\s*)?$/i, ''); };
     var BOOK_SCOPE_BY_DEFAULT = 0;
     var BOOK_SCOPE_COOKIE = 'book-scope';
-    var SEARCH_SCOPE_CLOSE_DESCRIPTION = 'Close scopes';
     var SEARCH_ICON = '<svg width="20" height="20" viewBox="0 0 20 20"><g fill="#fff"><path fill="currentColor" d="M 7.5 0 C 3.3578644 0 0 3.3578644 0 7.5 C 0 11.642136 3.3578644 15 7.5 15 C 8.8853834 14.997 10.242857 14.610283 11.421875 13.882812 L 17.185547 19.662109 C 17.632478 20.113489 18.36112 20.112183 18.8125 19.660156 L 19.623047 18.845703 C 20.072507 18.398153 20.072507 17.665594 19.623047 17.214844 L 13.871094 11.447266 C 14.607206 10.26212 14.998156 8.8951443 15 7.5 C 15 3.3578644 11.642136 0 7.5 0 z M 7.5 2 A 5.5 5.5 0 0 1 13 7.5 A 5.5 5.5 0 0 1 7.5 13 A 5.5 5.5 0 0 1 2 7.5 A 5.5 5.5 0 0 1 7.5 2 z"/></g></svg>';
-    var SEARCH_FIELD_DESCRIPTION = '* = any string\n? = any character\n"" = phrase\nAND, OR & NOT = boolean operators';
-    var SEARCH_FIELD_PLACEHOLDER = 'Search';
     var BASE_URL;
     var SEARCH_BASE_URL;
     var SEARCH_HITS_MAX = 500;
@@ -55,10 +38,6 @@
     var SEARCH_RESULTS_INDEXING_PATTERN = new RegExp('[\'"]divProgress[\'"]\\s+STYLE\\s*=\\s*[\'"]\\s*width\\s*:\\s*([\\d]+)\\s*px', 'i');
     var SEARCH_RESULTS_PATTERN = new RegExp('<tr[^<]*<td[^<]*<img[^<]*</td[^<]*<td[^<]*<a\\s+(?:(?!href)(?!title)[\\w\\-]+\\s*=\\s*(?:(?:\'[^\']*\')|(?:"[^"]*"))\\s+)*(href|title)\\s*=\\s*"([^"]*)"\\s+(?:(?!href)(?!title)[\\w\\-]+\\s*=\\s*(?:(?:\'[^\']*\')|(?:"[^"]*"))\\s+)*(href|title)\\s*=\\s*"([^"]*)"[^>]*>([^<]*)</a>(?:(?:(?!<[/]?tr)[\\s\\S])*</tr\\s*>\\s*<tr(?:(?!</tr)(?!class="location">)[\\s\\S])*class="location">((?:(?!</div)[\\s\\S])*))?(?:(?:(?!</tr)(?!\\sclass=["\']description["\'])[\\s\\S])*</tr){1,2}(?:(?!</tr)(?!\\sclass=["\']description["\'])[\\s\\S])*\\sclass=["\']description["\'][^>]*>([^<]*)', 'gi');
     var SEARCH_RESULTS_BREADCRUMB_SNIPPET_PATTERN = new RegExp('<a\\s+href="([^"]+)">([^<]+)</a>', 'gi');
-    var SEARCH_SCOPE_LABEL_NONE = 'All';
-    var SEARCH_SCOPE_LABEL_BOOK = 'Book';
-    var SEARCH_SCOPE_LABEL_CHAPTER = 'Chapter';
-//    var SEARCH_SCOPE_LABEL_TOPIC = 'Find in page';
     var SEARCH_SCOPE_CURRENT_PATTERN = new RegExp('<div\\s+id\\s*=\\s*"scope"\\s*>([^<]*)<');
     var SEARCH_SCOPE_ALL_PATTERN = new RegExp('<a\\s+(?:(?!title)[\\w\\-]+\\s*=\\s*(?:(?:\'[^\']*\')|(?:"[^"]*"))\\s+)*title\\s*=\\s*"([^"]*)"', 'gi');
     var SEARCH_SCOPE_NAME_PATTERN = new RegExp('<input\\s+type\\s*=\\s*["\']text["\']\\s+(?:(?!value)[\\w\\-]+\\s*=\\s*(?:(?:\'[^\']*\')|(?:"[^"]*"))\\s+)*value\\s*=\\s*\'([^\']*)\'', 'i');
@@ -72,7 +51,7 @@
     // TODO integration: the browser should not have to calculate the following variables itself;
     //                   only "init()" should be called instead
     var embeddedMode = 1;
-    var title = 'Help';
+    var title = '<%js:Help%>';
     var bookmarksPage;
     var scopesPage;
     var searchPage;
@@ -167,13 +146,13 @@
                 if (title == null || title == '') {
                     title = url;
                 }
-                createElement(bookmarksPage, 'span', 'g', 'Add:');
+                createElement(bookmarksPage, 'span', 'g', '<%js:bookmarks_add_field_label%>');
                 var addArea = createElement(bookmarksPage, 'span', 'a');
                 var input = createElement(addArea, 'input');
                 input.type = 'text';
                 input.autocomplete = 'off';
                 input.value = title;
-                var addButtonTooltip = searchPage.o ? BOOKMARKS_ADD_SEARCH_DESCRIPTION : BOOKMARKS_ADD_PAGE_DESCRIPTION;
+                var addButtonTooltip = searchPage.o ? '<%js:bookmarks_add_button_description_search%>' : '<%js:bookmarks_add_button_description_page%>';
                 createButton(addArea, BOOKMARKS_ICON, addButtonTooltip, function() {
                     try {
                         var url = frames.c.location.href;
@@ -201,7 +180,7 @@
             } catch (e) {}
 
             // "x" button
-            setClassName(createButton(bookmarksPage, MENU_CLOSE_ICON, BOOKMARKS_CLOSE_DESCRIPTION, function() {
+            setClassName(createButton(bookmarksPage, MENU_CLOSE_ICON, '<%js:bookmarks_button_description_close%>', function() {
                 bookmarksPage.s();
             }), 'b bc');
 
@@ -212,7 +191,7 @@
                 BOOKMARKS_PATTERN.lastIndex = 0;
                 for (var match; (match = BOOKMARKS_PATTERN.exec(responseText)) != null;) {
                     if (!ol) {
-                        createElement(bookmarksPage, 0, 'g', 'Bookmarks:');
+                        createElement(bookmarksPage, 0, 'g', '<%js:bookmarks_heading%>');
                         ol = createElement(bookmarksPage, 'ol');
                     }
                     var groups = [];
@@ -223,8 +202,8 @@
                     var li = createElement(ol, 'li');
                     var href = groups[0].substring(0, 3) == '../' ? BASE_URL + '/' + groups[0] : groups[0];
                     var deleteButton = createButton(li,
-                                                    BOOKMARKS_DELETE,
-                                                    BOOKMARKS_DELETE_DESCRIPTION,
+                                                    '<%js:bookmarks_delete_button_label%>',
+                                                    '<%js:bookmarks_delete_button_description%>',
                                                     function(href, title, li) {
                         return function() {
                             remoteRequest(  BASE_URL + 'advanced/bookmarksView.jsp?operation=remove&'
@@ -244,10 +223,10 @@
                     createElement(a, 'span', 0, groups[1]);
                 }
                 if (deleteButtons.length) {
-                    var editButton = createButton(bookmarksPage, 'Edit', 'Delete bookmarks', function() {
-                        var editMode = editButton.innerHTML == 'Edit';
-                        editButton.innerHTML = editMode ? BOOKMARKS_DELETE_ALL : 'Edit';
-                        editButton.title = editMode ? BOOKMARKS_DELETE_ALL_DESCRIPTION : 'Delete bookmarks';
+                    var editButton = createButton(bookmarksPage, '<%js:bookmarks_edit_button_label%>', '<%js:bookmarks_edit_button_description%>', function() {
+                        var editMode = editButton.innerHTML == decodeHtml('<%js:bookmarks_edit_button_label%>');
+                        editButton.innerHTML = decodeHtml(editMode ? '<%js:bookmarks_delete_all_button_label%>' : '<%js:bookmarks_edit_button_label%>');
+                        editButton.title = editMode ? '<%js:bookmarks_delete_all_button_description%>' : '<%js:bookmarks_edit_button_description%>';
                         setClassName(editButton, editMode ? 'b br' : 'b');
                         for (var i = 0; i < deleteButtons.length; i++) {
                             deleteButtons[i].style.display = 'inline-block';
@@ -258,7 +237,7 @@
                         }
                     });
                 }
-                createButton(bookmarksPage, 'Cancel', BOOKMARKS_CLOSE_DESCRIPTION, function() { bookmarksPage.s(); });
+                createButton(bookmarksPage, '<%js:bookmarks_button_label_close%>', '<%js:bookmarks_button_description_close%>', function() { bookmarksPage.s(); });
 
             });
         }
@@ -278,7 +257,7 @@
                 scopesPage.innerHTML = '';
 
                 // "x" button
-                setClassName(createButton(scopesPage, MENU_CLOSE_ICON, SEARCH_SCOPE_CLOSE_DESCRIPTION, function() {
+                setClassName(createButton(scopesPage, MENU_CLOSE_ICON, '<%js:scopes_close_button_description%>', function() {
                     scopesPage.s();
                 }), 'b bc');
 
@@ -290,7 +269,7 @@
                               function(responseText) {
                     var match = SEARCH_SCOPE_NAME_PATTERN.exec(responseText);
                     if (match) {
-                        createElement(scopesPage, 'span', 'g', 'Scope:');
+                        createElement(scopesPage, 'span', 'g', '<%js:scopes_scope_field_label%>');
                         var scopeName = decodeHtml(match[1]);
                         var nameInput = createElement(createElement(scopesPage, 'span', 'a'), 'input');
                         nameInput.type = 'text';
@@ -357,17 +336,17 @@
                             return hrefs;
                         }
                         if (SEARCH_SCOPE_IS_NEW_PATTERN.exec(responseText)) {
-                            createButton(scopesPage, 'Create', 'Add new scope', function() {
+                            createButton(scopesPage, '<%js:scopes_scope_create_button_label%>', '<%js:scopes_scope_create_button_description%>', function() {
                                 doScopesOperation(  'add&oldName=&workingSet='
                                                   + encodeURIComponent(nameInput.value)
                                                   + getHrefs());
                             });
                         } else {
-                            var deleteButton = createButton(scopesPage, 'Delete', 'Delete this scope', function() {
+                            var deleteButton = createButton(scopesPage, '<%js:scopes_scope_delete_button_label%>', '<%js:scopes_scope_delete_button_description%>', function() {
                                 doScopesOperation('remove&workingSet=' + encodeURIComponent(scopeName));
                             });
                             deleteButton.className = 'b br';
-                            createButton(scopesPage, 'Apply', 'Update this scope', function() {
+                            createButton(scopesPage, '<%js:scopes_scope_apply_button_label%>', '<%js:scopes_scope_apply_button_description%>', function() {
                                 doScopesOperation(  'edit&oldName='
                                                   + encodeURIComponent(scopeName)
                                                   + '&workingSet='
@@ -376,10 +355,10 @@
                                 setSearchScope([4, scopeName, scopeNr]);
                             });
                         }
-                        createButton(scopesPage, 'Cancel', 'Go back to list of scopes',function() { showScopesPage(); });
+                        createButton(scopesPage, '<%js:scopes_scope_cancel_button_label%>', '<%js:scopes_scope_cancel_button_description%>', function() { showScopesPage(); });
 
                     } else {
-                        createElement(scopesPage, 0, 'g', 'Scopes:');
+                        createElement(scopesPage, 0, 'g', '<%js:scopes_heading%>');
                         var ol = createElement(scopesPage, 'ol');
                         SEARCH_SCOPE_ALL_PATTERN.lastIndex = 0;
                         for (var scopeIndex = 0; (match = SEARCH_SCOPE_ALL_PATTERN.exec(responseText)) != null;) {
@@ -391,8 +370,8 @@
                             }(scopeName, scopeIndex), 'ba');
                             scopeIndex++;
                         }
-                        createButton(scopesPage, 'New', 'Add a new scope', function() { showScopesPage('operation=add'); });
-                        createButton(scopesPage, 'Cancel', SEARCH_SCOPE_CLOSE_DESCRIPTION, function() { scopesPage.s(); });
+                        createButton(scopesPage, '<%js:scopes_new_button_label%>', '<%js:scopes_new_button_description%>', function() { showScopesPage('operation=add'); });
+                        createButton(scopesPage, '<%js:scopes_close_button_label%>', '<%js:scopes_close_button_description%>', function() { scopesPage.s(); });
                     }
                 });
             }
@@ -439,7 +418,7 @@
         scopesPage.s();
 
         // search page
-        searchPage = createElement(getElementById('m'), 0, 'c', 'Loading...');
+        searchPage = createElement(getElementById('m'), 0, 'c', '<%js:search_page_loading%>');
         searchPage.id = 'r';
         searchPage.s = function(show) {
             searchPage.o = !!show;
@@ -464,12 +443,12 @@
         var header = getElementById('h');
         var toolbarContainer = createElement(header);
         var toolbar = createElement(toolbarContainer, 0, 'y');
-        var tocSidebarToggleButton = createButton(toolbar, TOC_ICON, TOC_ICON_DESCRIPTION);
+        var tocSidebarToggleButton = createButton(toolbar, TOC_ICON, '<%js:toc_toggle_button_description%>');
         if (embeddedMode) {
-            createButton(toolbar, HISTORY_BACK_ICON, HISTORY_BACK_DESCRIPTION, function() {
+            createButton(toolbar, HISTORY_BACK_ICON, '<%js:back_button_description%>', function() {
                 window.history.back();
             });
-            createButton(toolbar, HISTORY_FORWARD_ICON, HISTORY_FORWARD_DESCRIPTION, function() {
+            createButton(toolbar, HISTORY_FORWARD_ICON, '<%js:forward_button_description%>', function() {
                 window.history.forward();
             });
         }
@@ -924,7 +903,7 @@
         var searchFieldArea = createElement(createElement(searchFieldAreaWrapper, 0, 'q1'), 'form', 'q');
 
         if (embeddedMode) {
-            createButton(searchFieldAreaWrapper, BOOKMARKS_ICON, BOOKMARKS_DESCRIPTION, function() {
+            createButton(searchFieldAreaWrapper, BOOKMARKS_ICON, '<%js:bookmarks_button_description%>', function() {
                 bookmarksPage.s(!bookmarksPage.o);
             });
         }
@@ -970,14 +949,12 @@
                     currentChapter = tocLi.n.t;
                 }
             }
-            menuItems.push(createElement(booksDropDownUl, 'li', searchScope.l == 0 ? 'x': 0, SEARCH_SCOPE_LABEL_NONE));
+            menuItems.push(createElement(booksDropDownUl, 'li', searchScope.l == 0 ? 'x': 0, '<%js:scope_none_label%>'));
             dataItems.push([0]);
-            menuItems.push(createElement(booksDropDownUl, 'li', searchScope.l == 1 ? 'x': 0, SEARCH_SCOPE_LABEL_BOOK + (currentBook ? ': ' + currentBook : '')));
+            menuItems.push(createElement(booksDropDownUl, 'li', searchScope.l == 1 ? 'x': 0, '<%js:scope_book_label%>' + (currentBook ? ': ' + currentBook : '')));
             dataItems.push([1]);
-            menuItems.push(createElement(booksDropDownUl, 'li', searchScope.l == 2 ? 'x': 0, SEARCH_SCOPE_LABEL_CHAPTER + (currentChapter ? ': ' + currentChapter : '')));
+            menuItems.push(createElement(booksDropDownUl, 'li', searchScope.l == 2 ? 'x': 0, '<%js:scope_chapter_label%>' + (currentChapter ? ': ' + currentChapter : '')));
             dataItems.push([2]);
-//            menuItems.push(createElement(booksDropDownUl, 'li', searchScope.l == 3 ? 'x': 0, SEARCH_SCOPE_LABEL_TOPIC));
-//            dataItems.push([3]);
             remoteRequest(BASE_URL + 'advanced/workingSetManager.jsp?t=' + Date.now(), function(menuItems, dataItems) {
                 return function(responseText) {
                     var delimiter = 'l ';
@@ -992,7 +969,7 @@
                          dataItems.push([4, label, scopeIndex]);
                          scopeIndex++;
                     }
-                    menuItems.push(createElement(booksDropDownUl, 'li', 'l y', 'Scopes...'));
+                    menuItems.push(createElement(booksDropDownUl, 'li', 'l y', '<%js:scope_manage_label%>'));
                     dataItems.push([5]);
                     toMenu(booksButton, menuItems, dataItems, setSearchScope);
                 }
@@ -1097,10 +1074,10 @@
         var searchField = createElement(wrap, 'input');
         searchField.id = 'q';
         searchField.type = 'text';
-        searchField.alt = SEARCH_FIELD_DESCRIPTION;
-        searchField.title = SEARCH_FIELD_DESCRIPTION;
+        searchField.alt = '<%js:search_field_description%>';
+        searchField.title = '<%js:search_field_description%>';
         searchField.autocomplete = 'off';
-        searchField.placeholder = SEARCH_FIELD_PLACEHOLDER;
+        searchField.placeholder = '<%js:search_field_placeholder%>';
         addEvent(searchField, 'input', search); // for IE 8 do also on 'propertychange'
         addEvent(searchField, 'focus', search);
 
@@ -1216,7 +1193,7 @@
                     window.frames.c.location = url;
                     return;
                 }
-                setInnerHtml(searchPage, 'Searching...');
+                setInnerHtml(searchPage, '<%js:search_page_loading%>');
                 searchPage.scrollTop = 0;
             } else if (query == proposals.q) {
                 preventDefault(e);
@@ -1356,7 +1333,7 @@
                 var match = SEARCH_RESULTS_INDEXING_PATTERN.exec(data);
                 if (match != null) {
                     if (fullSearch) {
-                        setInnerHtml(searchPage, 'Indexing... ' + match[1] + '%');
+                        setInnerHtml(searchPage, '<%js:search_indexing%>'.replace('{0}', match[1]));
                     }
                     return;
                 }
@@ -1454,13 +1431,13 @@
             var parentElement = fullSearch ? searchPage : proposals;
             setInnerHtml(parentElement, '');
             parentElement.q = query;
-            parentElement.l = 'Search' + (searchScope.l > 0 ? ' (' + searchScopeLabel+ ')': '') + ': ' + searchWord;
+            parentElement.l = (searchScope.l > 0 ? '<%js:search_scoped_title%>' : '<%js:search_title%>').replace('{0}', searchWord).replace('{1}', searchScopeLabel);
             if (fullSearch) {
                 document.title = searchPage.l + ' - ' + title;
 
                 // no results?
                 if (!results.length) {
-                    var noResults = createElement(searchPage, 0, 'r0', 'No results found for ');
+                    var noResults = createElement(searchPage, 0, 'r0', '<%js:searchpage_nothing_found_prefix%>' + ' ');
                     createElement(noResults, 'strong', 0, searchWord);
                     return;
                 }
@@ -1530,7 +1507,9 @@
                         var labelText = '';
                         if (isRoot) {
                             checkbox.style.display = 'none';
-                            labelText = 'Results ' + (searchScope && searchScope.l > 0 ? 'in ' : '');
+                            labelText = (searchScope && searchScope.l > 0
+                                        ? '<%js:searchpage_heading_scoped%>'
+                                        : '<%js:searchpage_heading%>') + ' ';
                         } else {
                             addEvent(checkbox, 'click', (function(liCheck, li) {
                                 return function() {
@@ -2100,8 +2079,8 @@
         var closeMenuButton = createElement(createElement(menu, 0, 'e'), 'a', 'b');
         closeMenuButton.href = '#';
         addEvent(closeMenuButton, 'click', menu.o);
-        closeMenuButton.alt = MENU_CLOSE_ICON_DESCRIPTION;
-        closeMenuButton.title = MENU_CLOSE_ICON_DESCRIPTION;
+        closeMenuButton.alt = '<%js:menu_button_close_description%>';
+        closeMenuButton.title = '<%js:menu_button_close_description%>';
         setInnerHtml(closeMenuButton, MENU_CLOSE_ICON);
 
         // "Highlight search terms" dummy
@@ -2110,35 +2089,37 @@
             // dummy for highlight() in org.eclipse.help.webapp/advanced/highlight.js
         };
         window.ContentToolbarFrame = new HighlightConnector();
-        var highlight = createMenuItem(0, 'Toggle search term highlighting', toggleHighlight, 'ah');
-        createElement(highlight, 'span', 'hl', 'Highlight');
+        var highlight = createMenuItem(0, '<%js:menu_item_highlighting_label_description%>', toggleHighlight, 'ah');
+        createElement(highlight, 'span', 'hl', '<%js:menu_item_highlighting_label_prefix%>');
         createElement(highlight, 'span', 'hs', ' ');
-        createElement(highlight, 'span', 'ht', 'search term');
+        createElement(highlight, 'span', 'ht', '<%js:menu_item_highlighting_label_highlighting%>');
+        createElement(highlight, 'span', 'hs', ' ');
+        createElement(highlight, 'span', 'hl', '<%js:menu_item_highlighting_label_suffix%>');
         toggleHighlight(0, 1);
 
         // "Font: - +"
         if (MENU_FONT_SIZING) {
             var fontSizer = createElement(menu);
             fontSizer.id = 'af';
-            createElement(fontSizer, 'span', 0, 'Font:');
-            createMenuItem('\u2013', 'Decrease font size', function() { setFontSize(0); }, 'afm', 0, fontSizer);
-            createMenuItem('+', 'Increase font size', function() { setFontSize(1); }, 'afp', 0, fontSizer);
+            createElement(fontSizer, 'span', 0, '<%js:menu_item_font_label%>');
+            createMenuItem('\u2013', '<%js:menu_item_font_minus_button_description%>', function() { setFontSize(0); }, 'afm', 0, fontSizer);
+            createMenuItem('+', '<%js:menu_item_font_plus_button_description%>', function() { setFontSize(1); }, 'afp', 0, fontSizer);
         }
 
         // "Bookmarks..."
         if (embeddedMode) {
-            createMenuItem('Bookmarks...', 'Bookmark current topic and manage existing bookmarks', function() {
+            createMenuItem('<%js:menu_item_bookmarks_label%>', '<%js:menu_item_bookmarks_description%>', function() {
                 bookmarksPage.s(1);
             });
         }
 
         // "Search scopes..."
-        createMenuItem('Search scopes...', 'Manage search scopes', function() {
+        createMenuItem('<%js:menu_item_scopes_label%>', '<%js:menu_item_scopes_description%>', function() {
             scopesPage.s(1);
         });
 
         // "Print topic..."
-        createMenuItem('Print topic...', 'Print topic without its subtopics', function() {
+        createMenuItem('<%js:menu_item_print_topic_label%>', '<%js:menu_item_print_topic_description%>', function() {
             try {
                 getElementById('c').contentWindow.print();
             } catch (e) {
@@ -2146,7 +2127,7 @@
         }, 'ap');
 
         // "Print chapter..."
-        createMenuItem('Print chapter...', 'Print topic including subtopics', printChapter, 'app');
+        createMenuItem('<%js:menu_item_print_chapter_label%>', '<%js:menu_item_print_chapter_description%>', printChapter, 'app');
 
         // "Help"
         if (MENU_HELP) {
@@ -2155,14 +2136,14 @@
 
         // "About"
         if (MENU_ABOUT) {
-            createMenuItem('About', 'Configuration details', 0, 'aa', 'about.html');
+            createMenuItem('<%js:menu_item_about_label%>', '<%js:menu_item_about_description%>', 0, 'aa', 'about.html');
         }
 
         // show menu button
         var menuButton = createElement(getElementById('h'), 'a', 'b');
         menuButton.href = '#';
-        menuButton.alt = MENU_ICON_DESCRIPTION;
-        menuButton.title = MENU_ICON_DESCRIPTION;
+        menuButton.alt = '<%js:menu_button_open_description%>';
+        menuButton.title = '<%js:menu_button_open_description%>';
         setInnerHtml(menuButton, MENU_ICON);
         addEvent(menuButton, 'click', menu.a);
 

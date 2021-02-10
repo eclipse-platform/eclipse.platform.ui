@@ -12,6 +12,7 @@
      IBM Corporation - initial API and implementation
 --%>
 <%@ page import="org.eclipse.help.internal.webapp.data.*" errorPage="/advanced/err.jsp" contentType="text/html; charset=UTF-8"%>
+<%@ page import="org.eclipse.help.internal.webapp.HelpUi" %>
 <%@ page import="java.util.Scanner" %>
 <%@ page import="java.net.URL" %>
 <%@ page import="java.util.UUID" %>
@@ -68,7 +69,7 @@
 				// Read it as InputStream and convert it to a String
 				// (by using a Scanner with a delimiter that cannot be found: \A - start of input)
 				Scanner scanAll = new Scanner(resourceAsUrl.openStream()).useDelimiter("\\A");
-				response.getWriter().write(scanAll.hasNext() ? scanAll.next() : "");
+				response.getWriter().write(HelpUi.resolve(scanAll.hasNext() ? scanAll.next() : "", request));
 			} catch (Exception e) {
 				// Experimental UI resource not found, so fall back to legacy UI
 				request.getRequestDispatcher("/advanced/index.jsp" + data.getQuery()).forward(request, response);

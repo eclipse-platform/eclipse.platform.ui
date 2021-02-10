@@ -45,6 +45,13 @@ For example, when the plugin has the symbolic name `com.example.my_plugin` with
 
      -Dorg.eclipse.help.webapp.experimental.ui=com.example.my_plugin/customized-help/index.html
 
+The `m/index.js` JavaScript file can be customized in the same way:
+
+     -Dorg.eclipse.help.webapp.experimental.ui.js=<plugin>/<optional-path>/<file>
+
+The customized HTML and JavaScript file can contain placeholders (see
+[`org.eclipse.help.internal.webapp.HelpUi.resolve(String, HttpServletRequest)`](../src/org/eclipse/help/internal/webapp/HelpUi.java)).
+
 
 ## Further development
 
@@ -69,7 +76,6 @@ buttons and  bookmark support) and to determine the initial content page.
         * [`/advanced/bookmarksView.jsp`](127.0.0.1:49999/help/advanced/print.jsp?topic=/../nav/0)
     * Storing UI settings: TOC side bar width and show/hidden, search results filter tree expanded or collapsed, etc.
 * Things to improve (where this prototype currently falls behind the legacy UI):
-    * Internationalization (by externalize Strings)
     * Right-to-left (RTL) support
     * Accessibility (HTML5 ARIA, keyboard support, color contrast, etc.)
     * Dark theme support

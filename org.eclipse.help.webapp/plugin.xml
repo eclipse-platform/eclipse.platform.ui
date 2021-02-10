@@ -128,6 +128,11 @@
             httpcontextId="help">
       </servlet>
       <servlet
+            alias="/m/index.js"
+            class="org.eclipse.help.internal.webapp.HelpUiJs"
+            httpcontextId="help">
+      </servlet>
+      <servlet
             alias="/*.jsp"
             class="org.eclipse.equinox.jsp.jasper.registry.JSPFactory:/"
             httpcontextId="help">
