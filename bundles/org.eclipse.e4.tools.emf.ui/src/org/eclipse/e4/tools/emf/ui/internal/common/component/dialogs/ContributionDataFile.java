@@ -397,7 +397,7 @@ public class ContributionDataFile implements IFile {
 
 	@Override
 	public void move(IProjectDescription description, boolean force, boolean keepHistory, IProgressMonitor monitor)
-		throws CoreException {
+			throws CoreException {
 		// TODO Auto-generated method stub
 
 	}
@@ -509,7 +509,7 @@ public class ContributionDataFile implements IFile {
 
 	@Override
 	public void appendContents(InputStream source, boolean force, boolean keepHistory, IProgressMonitor monitor)
-		throws CoreException {
+			throws CoreException {
 		// TODO Auto-generated method stub
 
 	}
@@ -654,7 +654,7 @@ public class ContributionDataFile implements IFile {
 
 	@Override
 	public void move(IPath destination, boolean force, boolean keepHistory, IProgressMonitor monitor)
-		throws CoreException {
+			throws CoreException {
 		// TODO Auto-generated method stub
 
 	}
@@ -674,14 +674,14 @@ public class ContributionDataFile implements IFile {
 
 	@Override
 	public void setContents(InputStream source, boolean force, boolean keepHistory, IProgressMonitor monitor)
-		throws CoreException {
+			throws CoreException {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void setContents(IFileState source, boolean force, boolean keepHistory, IProgressMonitor monitor)
-		throws CoreException {
+			throws CoreException {
 		// TODO Auto-generated method stub
 
 	}
@@ -698,7 +698,8 @@ public class ContributionDataFile implements IFile {
 
 	}
 
-	public IMarker createMarker(String type, Map<String, Object> attributes) throws CoreException {
+	@Override
+	public IMarker createMarker(String type, Map<String, ? extends Object> attributes) throws CoreException {
 		// TODO Auto-generated method stub
 		return null;
 	}
