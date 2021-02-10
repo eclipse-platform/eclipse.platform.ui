@@ -448,7 +448,8 @@ public class MockResource implements IResource {
 		throw new Error("Not implemented");
 	}
 
-	public IMarker createMarker(String type, Map<String, Object> attributes) throws CoreException {
+	@Override
+	public IMarker createMarker(String type, Map<String, ? extends Object> attributes) throws CoreException {
 		// TODO Auto-generated method stub
 		return null;
 	}
