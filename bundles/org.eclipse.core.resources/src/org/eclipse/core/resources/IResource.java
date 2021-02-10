@@ -954,7 +954,10 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * specified type string must not be <code>null</code>.
 	 *
 	 * @param type       the type of the marker to create
-	 * @param attributes the attributes for this marker
+	 * @param attributes a map of attribute names to attribute values (key type :
+	 *                   <code>String</code> value type : <code>String</code>,
+	 *                   <code>Integer</code>, or <code>Boolean</code>) or
+	 *                   <code>null</code>
 	 * @return the handle of the new marker
 	 * @exception CoreException if this method fails. Reasons include:
 	 *                          <ul>
@@ -966,7 +969,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *
 	 * @since 3.14
 	 */
-	IMarker createMarker(String type, Map<String, Object> attributes) throws CoreException;
+	IMarker createMarker(String type, Map<String, ? extends Object> attributes) throws CoreException;
 
 	/**
 	 * Creates a resource proxy representing the current state of this resource.

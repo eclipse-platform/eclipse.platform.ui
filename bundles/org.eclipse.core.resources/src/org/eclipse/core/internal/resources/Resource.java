@@ -690,7 +690,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	}
 
 	@Override
-	public IMarker createMarker(String type, Map<String, Object> attributes) throws CoreException {
+	public IMarker createMarker(String type, Map<String, ? extends Object> attributes) throws CoreException {
 		Assert.isNotNull(type);
 		final ISchedulingRule rule = workspace.getRuleFactory().markerRule(this);
 		try {
