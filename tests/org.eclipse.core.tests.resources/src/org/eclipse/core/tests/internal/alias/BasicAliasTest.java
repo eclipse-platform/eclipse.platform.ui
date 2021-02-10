@@ -15,7 +15,10 @@
 package org.eclipse.core.tests.internal.alias;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.resources.*;
@@ -271,6 +274,97 @@ public class BasicAliasTest extends ResourceTest {
 		IProjectDescription projectDesc = project.getDescription();
 		projectDesc.setLocationURI(newLocation);
 		project.move(projectDesc, IResource.REPLACE, null);
+	}
+
+	/* Bug570896 */
+//	@Ignore("that is already implemented without the uri via store.getFileSystem().getScheme()")
+//	public void testCompareUriSchemeDistinct() throws URISyntaxException {
+//		// AliasManager requires that different scheme are distinct
+//		// (doesnt actually matter if compare yields +1 or -1 for different values)
+//		String[] urisStrings = { //
+//				"scheme1://authority1/path?query#fragment", //
+//				"scheme2://authority1/path?query#fragment", //
+//		};
+//		assertComparedDistinct(urisStrings);
+//	}
+
+	/* Bug570896 */
+	public void testCompareUriAuthorityDistinct() throws URISyntaxException {
+		// AliasManager requires that different authority (server:port) are distinct
+		// (doesnt actually matter if compare yields +1 or -1 for different values)
+
+		String[] urisStrings = { //
+				"scheme1://authority1/path?query#fragment", //
+				"scheme1://authority2/path?query#fragment", //
+		};
+		assertComparedDistinct(urisStrings);
+	}
+
+	private void assertComparedDistinct(String[] urisStrings) {
+		List<URI> uriList = Arrays.asList(urisStrings).stream().map(t -> {
+			try {
+				return new URI(t);
+			} catch (URISyntaxException e) {
+				throw new RuntimeException(e);
+			}
+		}).collect(Collectors.toList());
+		for (URI u1 : uriList) {
+			for (URI u2 : uriList) {
+				if (!u1.equals(u2)) {
+					assertTrue("1.0", 0 != AliasManager.compareUri(u1, u2));
+				}
+			}
+		}
+	}
+
+	/* Bug570896 */
+	public void testCompareUriPathHierarchy() throws URISyntaxException {
+		// AliasManager requires that the path is ordered such path < path%00
+		// and that any subpath of path yields path < subpath < path%00
+		// for example "foo" < "foo/zzz" < "foo%00"
+
+		String[] urisStrings = { //
+				"http://Server/Volume:segment1a", //
+				"http://Server/Volume:segment1a/a", //
+				"http://Server/Volume:segment1a/a%00", //
+				"http://Server/Volume:segment1a/segment2a", //
+				"http://Server/Volume:segment1a/segment2a%00", //
+				"http://Server/Volume:segment1a/segment2b", //
+				"http://Server/Volume:segment1a/segment2b%00", //
+				"http://Server/Volume:segment1a%00", //
+				"http://Server/Volume:segment2a", //
+				"http://Server/Volume:segment2a/b", //
+				"http://Server/Volume:segment2a/segment2a", //
+				"http://Server/Volume:segment2a/segment2b", //
+				"http://Server/Volume:segment2a%00", //
+		};
+		assertPreOrdered(urisStrings);
+	}
+
+	/* Bug570896 */
+	public void testCompareUriFragment() throws URISyntaxException {
+		// fragments should NOT be distinct! Even though they might not be used:
+		String[] urisStrings = { //
+				"scheme://authority/path?query#fragment1", //
+				"scheme://authority/path?query#fragment2", //
+				"scheme://authority/path?query#fragment1", //
+				"scheme://authority/path?query#fragment2", //
+		};
+		assertPreOrdered(urisStrings);
+	}
+
+	private void assertPreOrdered(String[] urisStrings) {
+		List<URI> uriList = Arrays.asList(urisStrings).stream().map(t -> {
+			try {
+				return new URI(t);
+			} catch (URISyntaxException e) {
+				throw new RuntimeException(e);
+			}
+		}).collect(Collectors.toList());
+		// stable sort:
+		List<URI> sorted = uriList.stream().sorted(AliasManager::compareUri).collect(Collectors.toList());
+		// proof sort order did not change
+		assertEquals("1.0", uriList, sorted);
 	}
 
 	public void testBug256837() {

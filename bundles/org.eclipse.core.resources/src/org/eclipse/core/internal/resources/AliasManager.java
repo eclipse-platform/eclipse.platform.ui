@@ -510,7 +510,12 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 					Policy.log(e);
 					return 1;
 				}
-
+				return compareUri(uri1, uri2);
+			}
+		};
+	}			
+	public static int compareUri(URI uri1, URI uri2) {
+				int compare;
 				// compare hosts
 				compare = compareStringOrNull(uri1.getHost(), uri2.getHost());
 				if (compare != 0)
@@ -550,7 +555,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 			/**
 			 * Compares two strings that are possibly null.
 			 */
-			private int compareStringOrNull(String string1, String string2) {
+			private static int compareStringOrNull(String string1, String string2) {
 				if (string1 == null) {
 					if (string2 == null)
 						return 0;
@@ -561,8 +566,6 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 				return string1.compareTo(string2);
 
 			}
-		};
-	}
 
 	@Override
 	public void handleEvent(LifecycleEvent event) {
