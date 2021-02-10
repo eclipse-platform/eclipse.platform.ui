@@ -702,11 +702,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			info.setCreationTime(System.currentTimeMillis());
 
 			workspace.getMarkerManager().add(this, info);
-			Marker marker = new Marker(this, info.getId());
-			if (attributes != null && !attributes.isEmpty()) {
-				marker.setAttributes(attributes);
-			}
-			return marker;
+			return new Marker(this, info, attributes);
 		} finally {
 			workspace.endOperation(rule, false);
 		}

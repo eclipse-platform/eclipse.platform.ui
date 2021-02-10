@@ -54,6 +54,26 @@ public class Marker extends PlatformObject implements IMarker {
 	}
 
 	/**
+	 * Used internally by {@link Resource#createMarker(String, Map)} to create a
+	 * marker with given attributes
+	 *
+	 * @param resource   non null parent resource
+	 * @param markerInfo non null marker info just created for that marker
+	 * @param attributes may be null or empty
+	 */
+	Marker(Resource resource, MarkerInfo markerInfo, Map<String, ? extends Object> attributes) {
+		this(resource, markerInfo.getId());
+		if (attributes != null && !attributes.isEmpty()) {
+			MarkerManager manager = getWorkspace().getMarkerManager();
+			boolean validate = manager.isPersistentType(markerInfo.getType());
+			markerInfo.setAttributes(attributes, validate);
+			if (manager.isPersistent(markerInfo)) {
+				resource.getResourceInfo(false, true).set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
+			}
+		}
+	}
+
+	/**
 	 * Checks the given marker info to ensure that it is not null.
 	 * Throws an exception if it is.
 	 */
