@@ -565,4 +565,33 @@ public interface IFileStore extends IAdaptable {
 	 * @see EFS#getStore(URI)
 	 */
 	public URI toURI();
+
+	/**
+	 * Compares this store to other store of same FileSystem. Comparison has to be
+	 * based on segments, so that paths with the most segments in common will always
+	 * be adjacent. This is equivalent to the natural order on the path strings,
+	 * with the extra condition that the path separator is ordered before all other
+	 * characters. (Ex: "/foo" &lt; "/foo/zzz" &lt; "/fooaaa").
+	 * 
+	 * @since org.eclipse.core.filesystem 1.9
+	 */
+	public default int compareTo(IFileStore other) {
+		// compare based on URI path segment values
+		URI uri1;
+		URI uri2;
+		try {
+			uri1 = this.toURI();
+		} catch (Exception e1) {
+			// protect against misbehaving 3rd party code in file system implementations
+			uri1 = null;
+		}
+		try {
+			uri2 = other.toURI();
+		} catch (Exception e2) {
+			// protect against misbehaving 3rd party code in file system implementations
+			uri2 = null;
+		}
+		// use old slow compare for compatibility reason. Does have a memory hotspot see bug 570896 
+		return URIUtil.comparePathUri(uri1, uri2);
+	}
 }

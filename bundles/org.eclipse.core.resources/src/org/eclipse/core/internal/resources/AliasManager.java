@@ -22,10 +22,12 @@ import java.net.URI;
 import java.util.*;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.events.ILifecycleListener;
 import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
-import org.eclipse.core.internal.utils.*;
+import org.eclipse.core.internal.utils.FileUtil;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
@@ -128,7 +130,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 		/**
 		 * Map of FileStore-&gt;IResource OR FileStore-&gt;ArrayList of (IResource)
 		 */
-		private final SortedMap<IFileStore, Object> map = new TreeMap<>(getComparator());
+		private final SortedMap<IFileStore, Object> map = new TreeMap<>(AliasManager::compareUri);
 
 		/**
 		 * Adds the given resource to the map, keyed by the given location.
@@ -485,84 +487,20 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 	}
 
 	/**
-	 * Returns the comparator to use when sorting the locations map.  Comparison
-	 * is based on segments, so that paths with the most segments in common will
-	 * always be adjacent.  This is equivalent to the natural order on the path
-	 * strings, with the extra condition that the path separator is ordered
-	 * before all other characters. (Ex: "/foo" &lt; "/foo/zzz" &lt; "/fooaaa").
+	 * Returns the compare result when sorting the locations map. Comparison is
+	 * based on segments, so that paths with the most segments in common will always
+	 * be adjacent. This is equivalent to the natural order on the path strings,
+	 * with the extra condition that the path separator is ordered before all other
+	 * characters. (Ex: "/foo" &lt; "/foo/zzz" &lt; "/fooaaa").
 	 */
-	Comparator<IFileStore> getComparator() {
-		return (store1, store2) -> {
-			//scheme takes precedence over all else
-			int compare = compareStringOrNull(store1.getFileSystem().getScheme(), store2.getFileSystem().getScheme());
+	static int compareUri(IFileStore store1, IFileStore store2) {
+			// scheme takes precedence over all else
+			int compare = URIUtil.compareStringOrNull(store1.getFileSystem().getScheme(),
+					store2.getFileSystem().getScheme());
 			if (compare != 0)
 				return compare;
-			// compare based on URI path segment values
-			final URI uri1;
-			final URI uri2;
-			try {
-				uri1 = store1.toURI();
-				uri2 = store2.toURI();
-			} catch (Exception e) {
-				//protect against misbehaving 3rd party code in file system implementations
-				Policy.log(e);
-				return 1;
-			}
-			return compareUri(uri1, uri2);
-		};
+			return store1.compareTo(store2);
 	}
-	public static int compareUri(URI uri1, URI uri2) {
-				int compare;
-				// compare hosts
-				compare = compareStringOrNull(uri1.getHost(), uri2.getHost());
-				if (compare != 0)
-					return compare;
-				// compare user infos
-				compare = compareStringOrNull(uri1.getUserInfo(), uri2.getUserInfo());
-				if (compare != 0)
-					return compare;
-				// compare ports
-				int port1 = uri1.getPort();
-				int port2 = uri2.getPort();
-				if (port1 != port2)
-					return port1 - port2;
-
-				IPath path1 = new Path(uri1.getPath());
-				IPath path2 = new Path(uri2.getPath());
-				// compare devices
-				compare = compareStringOrNull(path1.getDevice(), path2.getDevice());
-				if (compare != 0)
-					return compare;
-				// compare segments
-				int segmentCount1 = path1.segmentCount();
-				int segmentCount2 = path2.segmentCount();
-				for (int i = 0; (i < segmentCount1) && (i < segmentCount2); i++) {
-					compare = path1.segment(i).compareTo(path2.segment(i));
-					if (compare != 0)
-						return compare;
-				}
-				//all segments are equal, so compare based on number of segments
-				compare = segmentCount1 - segmentCount2;
-				if (compare != 0)
-					return compare;
-				//same number of segments, so compare query
-				return compareStringOrNull(uri1.getQuery(), uri2.getQuery());
-			}
-
-			/**
-			 * Compares two strings that are possibly null.
-			 */
-			private static int compareStringOrNull(String string1, String string2) {
-				if (string1 == null) {
-					if (string2 == null)
-						return 0;
-					return 1;
-				}
-				if (string2 == null)
-					return -1;
-				return string1.compareTo(string2);
-
-			}
 
 	@Override
 	public void handleEvent(LifecycleEvent event) {

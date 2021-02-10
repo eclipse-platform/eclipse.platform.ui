@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -311,7 +312,7 @@ public class BasicAliasTest extends ResourceTest {
 		for (URI u1 : uriList) {
 			for (URI u2 : uriList) {
 				if (!u1.equals(u2)) {
-					assertTrue("1.0", 0 != AliasManager.compareUri(u1, u2));
+					assertTrue("1.0", 0 != URIUtil.compareNormalisedUri(u1, u2));
 				}
 			}
 		}
@@ -376,16 +377,28 @@ public class BasicAliasTest extends ResourceTest {
 		assertPreOrdered(urisStrings);
 	}
 
+	/* Bug570896 */
+	public void testCompareUriNulls() throws URISyntaxException {
+		// fragments should NOT be distinct! Even though they might not be used:
+		String[] urisStrings = { //
+				"scheme://authority/path?query#fragment", //
+				"s:///?#", //
+				"s:///?#", //
+				"s:///", //
+				"", "", null, null,
+		};
+		assertPreOrdered(urisStrings);
+	}
 	private void assertPreOrdered(String[] urisStrings) {
 		List<URI> uriList = Arrays.asList(urisStrings).stream().map(t -> {
 			try {
-				return new URI(t);
+				return t == null ? null : new URI(t);
 			} catch (URISyntaxException e) {
 				throw new RuntimeException(e);
 			}
 		}).collect(Collectors.toList());
 		// stable sort:
-		List<URI> sorted = uriList.stream().sorted(AliasManager::compareUri).collect(Collectors.toList());
+		List<URI> sorted = uriList.stream().sorted(URIUtil::compareNormalisedUri).collect(Collectors.toList());
 		// proof sort order did not change
 		assertEquals("1.0", uriList, sorted);
 	}

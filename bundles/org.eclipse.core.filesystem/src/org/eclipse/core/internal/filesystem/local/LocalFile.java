@@ -469,4 +469,10 @@ public class LocalFile extends FileStore {
 		}
 		return this.uri;
 	}
+
+	@Override
+	public int compareTo(IFileStore other) {
+		// override with fast implementation:
+		return URIUtil.compareNormalisedUri(this.toURI(), other.toURI());
+	}
 }
