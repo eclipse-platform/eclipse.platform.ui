@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -33,9 +33,12 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * <li>must re-implement at least <code>build</code></li>
  * <li>may implement other methods</li>
  * <li>must supply a public, no-argument constructor</li>
+ * <li>may implement {@link IIncrementalProjectBuilder2}</li>
  * </ul>
  * On creation, the <code>setInitializationData</code> method is called with
  * any parameter data specified in the declaring plug-in's manifest.
+ *
+ * @see IIncrementalProjectBuilder2
  */
 public abstract class IncrementalProjectBuilder extends InternalBuilder implements IExecutableExtension {
 	/**
@@ -168,12 +171,19 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * propagated to the caller by throwing
 	 * <code>OperationCanceledException</code>.
 	 * </p>
+	 * <p>
+	 * An alternative clean method that passes the build arguments is available in
+	 * {@link IIncrementalProjectBuilder2#clean(Map, IProgressMonitor)} that can be
+	 * implemented instead of overridding this clean method. This method will not be
+	 * called if {@link IIncrementalProjectBuilder2} is implemented.
+	 * </p>
 	 *
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 * reporting and cancellation are not desired
 	 * @exception CoreException if this build fails.
 	 * @see IWorkspace#build(int, IProgressMonitor)
 	 * @see #CLEAN_BUILD
+	 * @see IIncrementalProjectBuilder2#clean(Map, IProgressMonitor)
 	 * @since 3.0
 	 */
 	@Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,7 @@
  *     James Blackburn (Broadcom) - [306822] Provide Context for Builder getRule()
  *     Broadcom Corporation - ongoing development
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
+ *     Torbjörn Svensson (STMicroelectronics) - bug #552606
  *******************************************************************************/
 package org.eclipse.core.internal.events;
 
@@ -843,8 +844,13 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				//invoke the appropriate build method depending on the trigger
 				if (trigger != IncrementalProjectBuilder.CLEAN_BUILD)
 					prereqs = currentBuilder.build(trigger, args, monitor);
-				else
-					currentBuilder.clean(monitor);
+				else {
+					if (currentBuilder instanceof IIncrementalProjectBuilder2) {
+						((IIncrementalProjectBuilder2) currentBuilder).clean(args, monitor);
+					} else {
+						currentBuilder.clean(monitor);
+					}
+				}
 				if (prereqs == null)
 					prereqs = new IProject[0];
 				currentBuilder.setInterestingProjects(prereqs.clone());

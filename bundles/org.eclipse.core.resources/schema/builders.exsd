@@ -118,7 +118,8 @@ If &quot;&lt;tt&gt;false&lt;/tt&gt;&quot; the delta is the delta since build was
             <annotation>
                <documentation>
                   the fully-qualified name of a subclass of 
-&lt;samp&gt;org.eclipse.core.resources.IncrementalProjectBuilder&lt;/samp&gt;.
+&lt;samp&gt;org.eclipse.core.resources.IncrementalProjectBuilder&lt;/samp&gt; which can
+additionally optionally implement &lt;samp&gt;org.eclipse.core.resources.IIncrementalProjectBuilder2&lt;/samp&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.core.resources.IncrementalProjectBuilder"/>
@@ -203,7 +204,8 @@ If this extension was defined in a plug-in with id &quot;com.xyz.coolplugin&quot
       </appInfo>
       <documentation>
          The value of the class attribute must represent a 
-subclass of &lt;samp&gt;org.eclipse.core.resources.IncrementalProjectBuilder&lt;/samp&gt;.
+subclass of &lt;samp&gt;org.eclipse.core.resources.IncrementalProjectBuilder&lt;/samp&gt; which can
+additionally optionally implement &lt;samp&gt;org.eclipse.core.resources.IIncrementalProjectBuilder2&lt;/samp&gt;.
       </documentation>
    </annotation>
 
