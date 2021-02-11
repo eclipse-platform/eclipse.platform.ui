@@ -953,6 +953,10 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <code>org.eclipse.core.resources.markers</code> extension point. The
 	 * specified type string must not be <code>null</code>.
 	 *
+	 * <p>
+	 * Note: default implementation is provided for backwards compatibility only and
+	 * is not optimized for performance.
+	 *
 	 * @param type       the type of the marker to create
 	 * @param attributes a map of attribute names to attribute values (key type :
 	 *                   <code>String</code> value type : <code>String</code>,
@@ -969,7 +973,11 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *
 	 * @since 3.14
 	 */
-	IMarker createMarker(String type, Map<String, ? extends Object> attributes) throws CoreException;
+	default IMarker createMarker(String type, Map<String, ? extends Object> attributes) throws CoreException {
+		IMarker marker = createMarker(type);
+		marker.setAttributes(attributes);
+		return marker;
+	}
 
 	/**
 	 * Creates a resource proxy representing the current state of this resource.
