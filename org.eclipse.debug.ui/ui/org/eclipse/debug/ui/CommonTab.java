@@ -628,20 +628,13 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * @param configuration the local configuration
 	 */
 	private void updateConsoleOutput(ILaunchConfiguration configuration) {
-		boolean outputToConsole = true;
-		String stdinFromFile = null;
-		String outputFile = null;
-		boolean append = false;
-		boolean mergeOutput = false;
+		boolean outputToConsole = getAttribute(configuration, IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, true);
+		String stdinFromFile = getAttribute(configuration, IDebugUIConstants.ATTR_CAPTURE_STDIN_FILE, (String) null);
+		String outputFile = getAttribute(configuration, IDebugUIConstants.ATTR_CAPTURE_IN_FILE, (String) null);
+		boolean append = getAttribute(configuration, IDebugUIConstants.ATTR_APPEND_TO_FILE, false);
+		boolean mergeOutput = getAttribute(configuration, DebugPlugin.ATTR_MERGE_OUTPUT, false);
 		boolean supportsMergeOutput = false;
-
 		try {
-			outputToConsole = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, true);
-			stdinFromFile = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_STDIN_FILE, (String) null);
-
-			outputFile = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, (String)null);
-			append = configuration.getAttribute(IDebugUIConstants.ATTR_APPEND_TO_FILE, false);
-			mergeOutput = configuration.getAttribute(DebugPlugin.ATTR_MERGE_OUTPUT, false);
 			supportsMergeOutput = configuration.getType().supportsOutputMerging();
 		} catch (CoreException e) {
 		}
@@ -688,11 +681,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * @param configuration the local configuration
 	 */
 	private void updateEncoding(ILaunchConfiguration configuration) {
-		String encoding = null;
-		try {
-			encoding = configuration.getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, (String)null);
-		} catch (CoreException e) {
-		}
+		String encoding = getAttribute(configuration, DebugPlugin.ATTR_CONSOLE_ENCODING, (String) null);
 		String defaultEncoding = getDefaultEncoding(configuration);
 		fDefaultEncodingButton.setText(MessageFormat.format(LaunchConfigurationsMessages.CommonTab_2, defaultEncoding));
 		fDefaultEncodingButton.pack();
@@ -715,13 +704,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * @return whether the configuration is configured to launch in the background
 	 */
 	public static boolean isLaunchInBackground(ILaunchConfiguration configuration) {
-		boolean launchInBackground= true;
-		try {
-			launchInBackground= configuration.getAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, true);
-		} catch (CoreException ce) {
-			DebugUIPlugin.log(ce);
-		}
-		return launchInBackground;
+		return getAttribute(configuration, IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, true);
 	}
 
 	/**
@@ -732,29 +715,26 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	private void updateFavoritesFromConfig(ILaunchConfiguration config) {
 		fFavoritesTable.setInput(config);
 		fFavoritesTable.setCheckedElements(new Object[]{});
-		try {
-			List<String> groups = config.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, new ArrayList<>());
-			if (groups.isEmpty()) {
-				// check old attributes for backwards compatible
-				if (config.getAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, false)) {
-					groups.add(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP);
-				}
-				if (config.getAttribute(IDebugUIConstants.ATTR_RUN_FAVORITE, false)) {
-					groups.add(IDebugUIConstants.ID_RUN_LAUNCH_GROUP);
+		List<String> groups = getAttribute(config, IDebugUIConstants.ATTR_FAVORITE_GROUPS, new ArrayList<>());
+
+		if (groups.isEmpty()) {
+			// check old attributes for backwards compatible
+			if (getAttribute(config, IDebugUIConstants.ATTR_DEBUG_FAVORITE, false)) {
+				groups.add(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP);
+			}
+			if (getAttribute(config, IDebugUIConstants.ATTR_RUN_FAVORITE, false)) {
+				groups.add(IDebugUIConstants.ID_RUN_LAUNCH_GROUP);
+			}
+		}
+		if (!groups.isEmpty()) {
+			List<LaunchGroupExtension> list = new ArrayList<>();
+			for (String id : groups) {
+				LaunchGroupExtension extension = getLaunchConfigurationManager().getLaunchGroup(id);
+				if (extension != null) {
+					list.add(extension);
 				}
 			}
-			if (!groups.isEmpty()) {
-				List<LaunchGroupExtension> list = new ArrayList<>();
-				for (String id : groups) {
-					LaunchGroupExtension extension = getLaunchConfigurationManager().getLaunchGroup(id);
-					if (extension != null) {
-						list.add(extension);
-					}
-				}
-				fFavoritesTable.setCheckedElements(list.toArray());
-			}
-		} catch (CoreException e) {
-			DebugUIPlugin.log(e);
+			fFavoritesTable.setCheckedElements(list.toArray());
 		}
 	}
 
@@ -796,49 +776,72 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 */
 	@SuppressWarnings("deprecation")
 	private void updateConfigFromFavorites(ILaunchConfigurationWorkingCopy config) {
+		Object[] checked = fFavoritesTable.getCheckedElements();
+		boolean debug = getAttribute(config, IDebugUIConstants.ATTR_DEBUG_FAVORITE, false);
+		boolean run = getAttribute(config, IDebugUIConstants.ATTR_RUN_FAVORITE, false);
+		if (debug || run) {
+			// old attributes
+			List<LaunchGroupExtension> groups = new ArrayList<>();
+			int num = 0;
+			if (debug) {
+				groups.add(getLaunchConfigurationManager().getLaunchGroup(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP));
+				num++;
+			}
+			if (run) {
+				num++;
+				groups.add(getLaunchConfigurationManager().getLaunchGroup(IDebugUIConstants.ID_RUN_LAUNCH_GROUP));
+			}
+			// see if there are any changes
+			if (num == checked.length) {
+				boolean different = false;
+				for (Object checked1 : checked) {
+					if (!groups.contains(checked1)) {
+						different = true;
+						break;
+					}
+				}
+				if (!different) {
+					return;
+				}
+			}
+		}
+		config.setAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, (String) null);
+		config.setAttribute(IDebugUIConstants.ATTR_RUN_FAVORITE, (String) null);
+		List<String> groups = null;
+		for (Object c : checked) {
+			LaunchGroupExtension group = (LaunchGroupExtension) c;
+			if (groups == null) {
+				groups = new ArrayList<>();
+			}
+			groups.add(group.getIdentifier());
+		}
+		config.setAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, groups);
+	}
+
+	private static boolean getAttribute(ILaunchConfiguration config, String attribute, boolean defaultValue) {
 		try {
-			Object[] checked = fFavoritesTable.getCheckedElements();
-			boolean debug = config.getAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, false);
-			boolean run = config.getAttribute(IDebugUIConstants.ATTR_RUN_FAVORITE, false);
-			if (debug || run) {
-				// old attributes
-				List<LaunchGroupExtension> groups = new ArrayList<>();
-				int num = 0;
-				if (debug) {
-					groups.add(getLaunchConfigurationManager().getLaunchGroup(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP));
-					num++;
-				}
-				if (run) {
-					num++;
-					groups.add(getLaunchConfigurationManager().getLaunchGroup(IDebugUIConstants.ID_RUN_LAUNCH_GROUP));
-				}
-				// see if there are any changes
-				if (num == checked.length) {
-					boolean different = false;
-					for (Object checked1 : checked) {
-						if (!groups.contains(checked1)) {
-							different = true;
-							break;
-						}
-					}
-					if (!different) {
-						return;
-					}
-				}
-			}
-			config.setAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, (String)null);
-			config.setAttribute(IDebugUIConstants.ATTR_RUN_FAVORITE, (String)null);
-			List<String> groups = null;
-			for (Object c : checked) {
-				LaunchGroupExtension group = (LaunchGroupExtension) c;
-				if (groups == null) {
-					groups = new ArrayList<>();
-				}
-				groups.add(group.getIdentifier());
-			}
-			config.setAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, groups);
-		} catch (CoreException e) {
-			DebugUIPlugin.log(e);
+			return config.getAttribute(attribute, defaultValue);
+		} catch (CoreException ce) {
+			DebugUIPlugin.log(ce);
+			return defaultValue;
+		}
+	}
+
+	private static String getAttribute(ILaunchConfiguration config, String attribute, String defaultValue) {
+		try {
+			return config.getAttribute(attribute, defaultValue);
+		} catch (CoreException ce) {
+			DebugUIPlugin.log(ce);
+			return defaultValue;
+		}
+	}
+
+	private static List<String> getAttribute(ILaunchConfiguration config, String attribute, List<String> defaultValue) {
+		try {
+			return config.getAttribute(attribute, defaultValue);
+		} catch (CoreException ce) {
+			DebugUIPlugin.log(ce);
+			return defaultValue;
 		}
 	}
 
