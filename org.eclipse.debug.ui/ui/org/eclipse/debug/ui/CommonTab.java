@@ -15,6 +15,8 @@
  *******************************************************************************/
 package org.eclipse.debug.ui;
 
+import static org.eclipse.swt.accessibility.AccessibleListener.getNameAdapter;
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
@@ -58,13 +60,8 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.accessibility.AccessibleAdapter;
-import org.eclipse.swt.accessibility.AccessibleEvent;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -107,8 +104,10 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 *
 	 * @since 3.6
 	 */
-	private final String SHARED_LAUNCH_CONFIGURATON_DIALOG = IDebugUIConstants.PLUGIN_ID + ".SHARED_LAUNCH_CONFIGURATON_DIALOG"; //$NON-NLS-1$
-	private final String WORKSPACE_SELECTION_DIALOG = IDebugUIConstants.PLUGIN_ID + ".WORKSPACE_SELECTION_DIALOG"; //$NON-NLS-1$
+	private static final String SHARED_LAUNCH_CONFIGURATON_DIALOG = IDebugUIConstants.PLUGIN_ID
+			+ ".SHARED_LAUNCH_CONFIGURATON_DIALOG"; //$NON-NLS-1$
+	private static final String WORKSPACE_SELECTION_DIALOG = IDebugUIConstants.PLUGIN_ID
+			+ ".WORKSPACE_SELECTION_DIALOG"; //$NON-NLS-1$
 
 	/**
 	 * This attribute exists solely for the purpose of making sure that invalid shared locations
@@ -223,27 +222,15 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		gd.horizontalSpan = 3;
 		fLocalRadioButton.setLayoutData(gd);
 		fSharedRadioButton = createRadioButton(comp, LaunchConfigurationsMessages.CommonTab_S_hared_4);
-		fSharedRadioButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent evt) {
-				handleSharedRadioButtonSelected();
-			}
-		});
+		fSharedRadioButton.addSelectionListener(widgetSelectedAdapter(e -> handleSharedRadioButtonSelected()));
+
 		fSharedLocationText = SWTFactory.createSingleText(comp, 1);
-		fSharedLocationText.getAccessible().addAccessibleListener(new AccessibleAdapter() {
-			@Override
-			public void getName(AccessibleEvent e) {
-				e.result =  LaunchConfigurationsMessages.CommonTab_S_hared_4;
-			}
-		});
+		fSharedLocationText.getAccessible().addAccessibleListener(
+				getNameAdapter(e -> e.result = LaunchConfigurationsMessages.CommonTab_S_hared_4));
+
 		fSharedLocationText.addModifyListener(fBasicModifyListener);
 		fSharedLocationButton = createPushButton(comp, LaunchConfigurationsMessages.CommonTab__Browse_6, null);
-		fSharedLocationButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent evt) {
-				handleSharedLocationButtonSelected();
-			}
-		});
+		fSharedLocationButton.addSelectionListener(widgetSelectedAdapter(e -> handleSharedLocationButtonSelected()));
 
 		fLocalRadioButton.setSelection(true);
 		setSharedEnabled(false);
@@ -260,20 +247,13 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		fIoComposit = comp;
 		fFileOutput = createCheckButton(comp, LaunchConfigurationsMessages.CommonTab_6);
 		fFileOutput.setLayoutData(new GridData(SWT.BEGINNING, SWT.NORMAL, false, false));
-		fFileOutput.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				enableOuputCaptureWidgets(fFileOutput.getSelection());
-				updateLaunchConfigurationDialog();
-			}
-		});
+		fFileOutput.addSelectionListener(widgetSelectedAdapter(e -> {
+			enableOuputCaptureWidgets(fFileOutput.getSelection());
+			updateLaunchConfigurationDialog();
+		}));
 		fFileText = SWTFactory.createSingleText(comp, 4);
-		fFileText.getAccessible().addAccessibleListener(new AccessibleAdapter() {
-			@Override
-			public void getName(AccessibleEvent e) {
-				e.result = LaunchConfigurationsMessages.CommonTab_6;
-			}
-		});
+		fFileText.getAccessible()
+				.addAccessibleListener(getNameAdapter(e -> e.result = LaunchConfigurationsMessages.CommonTab_6));
 		fFileText.addModifyListener(fBasicModifyListener);
 
 		Composite bcomp = SWTFactory.createComposite(comp, 3, 5, GridData.HORIZONTAL_ALIGN_END);
@@ -281,73 +261,55 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		ld.marginHeight = 1;
 		ld.marginWidth = 0;
 		fWorkspaceBrowse = createPushButton(bcomp, LaunchConfigurationsMessages.CommonTab_12, null);
-		fWorkspaceBrowse.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
-				dialog.setTitle(LaunchConfigurationsMessages.CommonTab_13);
-				dialog.setMessage(LaunchConfigurationsMessages.CommonTab_14);
-				dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
-				dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
-				dialog.setDialogBoundsSettings(getDialogBoundsSettings(WORKSPACE_SELECTION_DIALOG), Dialog.DIALOG_PERSISTSIZE);
-				if (dialog.open() == IDialogConstants.OK_ID) {
-					IResource resource = (IResource) dialog.getFirstResult();
-					if(resource != null) {
-						String arg = resource.getFullPath().toString();
-						String fileLoc = VariablesPlugin.getDefault().getStringVariableManager().generateVariableExpression("workspace_loc", arg); //$NON-NLS-1$
-						fFileText.setText(fileLoc);
-					}
+		fWorkspaceBrowse.addSelectionListener(widgetSelectedAdapter(e -> {
+			ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), new WorkbenchLabelProvider(),
+					new WorkbenchContentProvider());
+			dialog.setTitle(LaunchConfigurationsMessages.CommonTab_13);
+			dialog.setMessage(LaunchConfigurationsMessages.CommonTab_14);
+			dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
+			dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
+			dialog.setDialogBoundsSettings(getDialogBoundsSettings(WORKSPACE_SELECTION_DIALOG),
+					Dialog.DIALOG_PERSISTSIZE);
+			if (dialog.open() == IDialogConstants.OK_ID) {
+				IResource resource = (IResource) dialog.getFirstResult();
+				if (resource != null) {
+					String arg = resource.getFullPath().toString();
+					String fileLoc = VariablesPlugin.getDefault().getStringVariableManager()
+							.generateVariableExpression("workspace_loc", arg); //$NON-NLS-1$
+					fFileText.setText(fileLoc);
 				}
 			}
-		});
+		}));
 		fFileBrowse = createPushButton(bcomp, LaunchConfigurationsMessages.CommonTab_7, null);
-		fFileBrowse.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				String filePath = fFileText.getText();
-				FileDialog dialog = new FileDialog(getShell(), SWT.SAVE | SWT.SHEET);
-				filePath = dialog.open();
-				if (filePath != null) {
-					fFileText.setText(filePath);
-				}
+		fFileBrowse.addSelectionListener(widgetSelectedAdapter(e -> {
+			String filePath = fFileText.getText();
+			FileDialog dialog = new FileDialog(getShell(), SWT.SAVE | SWT.SHEET);
+			filePath = dialog.open();
+			if (filePath != null) {
+				fFileText.setText(filePath);
 			}
-		});
+		}));
 		fVariables = createPushButton(bcomp, LaunchConfigurationsMessages.CommonTab_9, null);
-		fVariables.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
-				dialog.open();
-				String variable = dialog.getVariableExpression();
-				if (variable != null) {
-					fFileText.insert(variable);
-				}
+		fVariables.addSelectionListener(widgetSelectedAdapter(e -> {
+			StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
+			dialog.open();
+			String variable = dialog.getVariableExpression();
+			if (variable != null) {
+				fFileText.insert(variable);
 			}
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {}
-		});
+		}));
 		fAppend = createCheckButton(comp, LaunchConfigurationsMessages.CommonTab_11);
 
 		GridData gd = new GridData(SWT.LEFT, SWT.TOP, true, false);
 		gd.horizontalSpan = 5;
 		fAppend.setLayoutData(gd);
-		fAppend.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateLaunchConfigurationDialog();
-			}
-		});
+		fAppend.addSelectionListener(widgetSelectedAdapter(e -> updateLaunchConfigurationDialog()));
 	}
 
 	private void createInputCaptureComponent(Composite parent){
 		Composite comp1 = SWTFactory.createComposite(parent, parent.getFont(), 5, 5, GridData.FILL_BOTH, 0, 0);
 		fConsoleOutput = createCheckButton(comp1, LaunchConfigurationsMessages.CommonTab_5);
-		fConsoleOutput.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateLaunchConfigurationDialog();
-			}
-		});
+		fConsoleOutput.addSelectionListener(widgetSelectedAdapter(e -> updateLaunchConfigurationDialog()));
 
 		Composite comp = SWTFactory.createComposite(comp1, comp1.getFont(), 5, 5, GridData.FILL_BOTH, 0, 0);
 		fInputFileCheckButton = createCheckButton(comp, LaunchConfigurationsMessages.CommonTab_17);
@@ -355,85 +317,71 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		gd.horizontalSpan = 3;
 
 		fInputFileCheckButton.setLayoutData(gd);
-		fInputFileCheckButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent evt) {
-				handleInputFileButtonSelected();
-				updateLaunchConfigurationDialog();
-			}
-		});
+		fInputFileCheckButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			handleInputFileButtonSelected();
+			updateLaunchConfigurationDialog();
+		}));
 
 		fInputFileLocationText = SWTFactory.createSingleText(comp, 2);
-		fInputFileLocationText.getAccessible().addAccessibleListener(new AccessibleAdapter() {
-			@Override
-			public void getName(AccessibleEvent e) {
-				e.result = LaunchConfigurationsMessages.CommonTab_17;
-			}
-		});
+		fInputFileLocationText.getAccessible()
+				.addAccessibleListener(getNameAdapter(e -> e.result = LaunchConfigurationsMessages.CommonTab_17));
 		fInputFileLocationText.addModifyListener(fBasicModifyListener);
 		Composite bcomp = SWTFactory.createComposite(comp, 3, 5, GridData.HORIZONTAL_ALIGN_END);
 		GridLayout ld = (GridLayout) bcomp.getLayout();
 		ld.marginHeight = 1;
 		ld.marginWidth = 0;
 		fInputWorkspaceBrowse = createPushButton(bcomp, LaunchConfigurationsMessages.CommonTab_16, null);
-		fInputWorkspaceBrowse.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
-				dialog.setTitle(LaunchConfigurationsMessages.CommonTab_13);
-				dialog.setValidator(selection -> {
-					if (selection.length == 0) {
-						return new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), 0, IInternalDebugCoreConstants.EMPTY_STRING, null);
-					}
-					for (Object f : selection) {
-						if (!(f instanceof IFile)) {
-							return new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), 0, IInternalDebugCoreConstants.EMPTY_STRING, null);
-						}
-					}
-					return new Status(IStatus.OK, DebugUIPlugin.getUniqueIdentifier(), 0, IInternalDebugCoreConstants.EMPTY_STRING, null);
-				});
-				dialog.setMessage(LaunchConfigurationsMessages.CommonTab_18);
-				dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
-				dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
-				dialog.setDialogBoundsSettings(getDialogBoundsSettings(WORKSPACE_SELECTION_DIALOG), Dialog.DIALOG_PERSISTSIZE);
-				if (dialog.open() == IDialogConstants.OK_ID) {
-					IResource resource = (IResource) dialog.getFirstResult();
-					if (resource != null) {
-						String arg = resource.getFullPath().toString();
-						String fileLoc = VariablesPlugin.getDefault().getStringVariableManager().generateVariableExpression("workspace_loc", arg); //$NON-NLS-1$
-						fInputFileLocationText.setText(fileLoc);
+		fInputWorkspaceBrowse.addSelectionListener(widgetSelectedAdapter(e -> {
+			ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), new WorkbenchLabelProvider(),
+					new WorkbenchContentProvider());
+			dialog.setTitle(LaunchConfigurationsMessages.CommonTab_13);
+			dialog.setValidator(selection -> {
+				if (selection.length == 0) {
+					return new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), 0,
+							IInternalDebugCoreConstants.EMPTY_STRING, null);
+				}
+				for (Object f : selection) {
+					if (!(f instanceof IFile)) {
+						return new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), 0,
+								IInternalDebugCoreConstants.EMPTY_STRING, null);
 					}
 				}
+				return new Status(IStatus.OK, DebugUIPlugin.getUniqueIdentifier(), 0,
+						IInternalDebugCoreConstants.EMPTY_STRING, null);
+			});
+			dialog.setMessage(LaunchConfigurationsMessages.CommonTab_18);
+			dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
+			dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
+			dialog.setDialogBoundsSettings(getDialogBoundsSettings(WORKSPACE_SELECTION_DIALOG),
+					Dialog.DIALOG_PERSISTSIZE);
+			if (dialog.open() == IDialogConstants.OK_ID) {
+				IResource resource = (IResource) dialog.getFirstResult();
+				if (resource != null) {
+					String arg = resource.getFullPath().toString();
+					String fileLoc = VariablesPlugin.getDefault().getStringVariableManager()
+							.generateVariableExpression("workspace_loc", arg); //$NON-NLS-1$
+					fInputFileLocationText.setText(fileLoc);
+				}
 			}
-		});
+		}));
 		fInputFileBrowse = createPushButton(bcomp, LaunchConfigurationsMessages.CommonTab_19, null);
-		fInputFileBrowse.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				String filePath = fInputFileLocationText.getText();
-				FileDialog dialog = new FileDialog(getShell(), SWT.OK | SWT.SHEET);
-				filePath = dialog.open();
-				if (filePath != null) {
-					fInputFileLocationText.setText(filePath);
-				}
+		fInputFileBrowse.addSelectionListener(widgetSelectedAdapter(e -> {
+			String filePath = fInputFileLocationText.getText();
+			FileDialog dialog = new FileDialog(getShell(), SWT.OK | SWT.SHEET);
+			filePath = dialog.open();
+			if (filePath != null) {
+				fInputFileLocationText.setText(filePath);
 			}
-		});
+		}));
 		fInputVariables = createPushButton(bcomp, LaunchConfigurationsMessages.CommonTab_20, null);
-		fInputVariables.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
-				dialog.open();
-				String variable = dialog.getVariableExpression();
-				if (variable != null) {
-					fInputFileLocationText.insert(variable);
-				}
+		fInputVariables.addSelectionListener(widgetSelectedAdapter(e -> {
+			StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
+			dialog.open();
+			String variable = dialog.getVariableExpression();
+			if (variable != null) {
+				fInputFileLocationText.insert(variable);
 			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
+		}));
 
 		setInputFileEnabled(false);
 	}
@@ -500,36 +448,24 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		if (encodingArray.length > 0) {
 			fEncodingCombo.select(0);
 		}
-		fEncodingCombo.getAccessible().addAccessibleListener(new AccessibleAdapter() {
-			@Override
-			public void getName(AccessibleEvent e) {
-				e.result = LaunchConfigurationsMessages.CommonTab_3;
+		fEncodingCombo.getAccessible()
+				.addAccessibleListener(getNameAdapter(e -> e.result = LaunchConfigurationsMessages.CommonTab_3));
+
+		SelectionListener listener = widgetSelectedAdapter(e -> {
+			if (e.getSource() instanceof Button) {
+				Button button = (Button) e.getSource();
+				if (button.getSelection()) {
+					updateLaunchConfigurationDialog();
+					fEncodingCombo.setEnabled(fAltEncodingButton.getSelection());
+				}
+			} else {
+				updateLaunchConfigurationDialog();
 			}
 		});
-		SelectionListener listener = new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if(e.getSource() instanceof Button) {
-					Button button = (Button)e.getSource();
-					if(button.getSelection()) {
-						updateLaunchConfigurationDialog();
-						fEncodingCombo.setEnabled(fAltEncodingButton.getSelection() == true);
-					}
-				}
-				else {
-					updateLaunchConfigurationDialog();
-				}
-			}
-		};
 		fAltEncodingButton.addSelectionListener(listener);
 		fDefaultEncodingButton.addSelectionListener(listener);
 		fEncodingCombo.addSelectionListener(listener);
-		fEncodingCombo.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyReleased(KeyEvent e) {
-				scheduleUpdateJob();
-			}
-		});
+		fEncodingCombo.addKeyListener(KeyListener.keyReleasedAdapter(e -> scheduleUpdateJob()));
 	}
 
 	/**
@@ -561,12 +497,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		data.horizontalSpan = 2;
 		fLaunchInBackgroundButton.setLayoutData(data);
 		fLaunchInBackgroundButton.setFont(parent.getFont());
-		fLaunchInBackgroundButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateLaunchConfigurationDialog();
-			}
-		});
+		fLaunchInBackgroundButton.addSelectionListener(widgetSelectedAdapter(e -> updateLaunchConfigurationDialog()));
 	}
 
 	/**
@@ -722,12 +653,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			GridData gd = new GridData(SWT.LEFT, SWT.TOP, true, false);
 			gd.horizontalSpan = 5;
 			fMergeOutput.setLayoutData(gd);
-			fMergeOutput.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					updateLaunchConfigurationDialog();
-				}
-			});
+			fMergeOutput.addSelectionListener(widgetSelectedAdapter(e -> updateLaunchConfigurationDialog()));
 			fMergeOutput.setSelection(mergeOutput);
 		}
 		else if (fMergeOutput != null) {
@@ -768,7 +694,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		} catch (CoreException e) {
 		}
 		String defaultEncoding = getDefaultEncoding(configuration);
-		fDefaultEncodingButton.setText(MessageFormat.format(LaunchConfigurationsMessages.CommonTab_2, new Object[] { defaultEncoding }));
+		fDefaultEncodingButton.setText(MessageFormat.format(LaunchConfigurationsMessages.CommonTab_2, defaultEncoding));
 		fDefaultEncodingButton.pack();
 		if (encoding != null) {
 			fAltEncodingButton.setSelection(true);
@@ -937,13 +863,10 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * @return true if the validate encoding is allowable, false otherwise
 	 */
 	private boolean validateEncoding() {
-		if (fAltEncodingButton.getSelection()) {
-			if (fEncodingCombo.getSelectionIndex() == -1) {
-				if (!isValidEncoding(fEncodingCombo.getText().trim())) {
-					setErrorMessage(LaunchConfigurationsMessages.CommonTab_15);
-					return false;
-				}
-			}
+		if (fAltEncodingButton.getSelection() && fEncodingCombo.getSelectionIndex() == -1
+				&& !isValidEncoding(fEncodingCombo.getText().trim())) {
+			setErrorMessage(LaunchConfigurationsMessages.CommonTab_15);
+			return false;
 		}
 		return true;
 	}
@@ -1135,15 +1058,10 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
-			Image image = fImages.get(element);
-			if (image == null) {
-				ImageDescriptor descriptor = ((LaunchGroupExtension)element).getImageDescriptor();
-				if (descriptor != null) {
-					image = descriptor.createImage();
-					fImages.put(element, image);
-				}
-			}
-			return image;
+			return fImages.computeIfAbsent(element, e -> {
+				ImageDescriptor descriptor = ((LaunchGroupExtension) e).getImageDescriptor();
+				return descriptor != null ? descriptor.createImage() : null;
+			});
 		}
 
 		@Override
