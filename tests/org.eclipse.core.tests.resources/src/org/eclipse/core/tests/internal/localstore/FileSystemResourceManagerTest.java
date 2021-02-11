@@ -356,12 +356,37 @@ public class FileSystemResourceManagerTest extends LocalStoreTest implements ICo
 		}
 
 		/* test the overwrite parameter (false) */
-		ensureDoesNotExistInFileSystem(file);
+		ensureDoesNotExistInFileSystem(file); // FIXME Race Condition with asynchronous workplace refresh see Bug 571133
 		another = getContents(anotherContent);
 		try {
 			write(file, another, false, null);
 			fail("5.0");
 		} catch (CoreException e) {
+			// expected
+		}
+
+		/* remove trash */
+		ensureDoesNotExistInWorkspace(project);
+	}
+
+	public void testWriteFile2() {
+		// Bug 571133
+		IProject project = projects[0];
+		IFile file = project.getFile("foo");
+
+		// this file does NOT exist in workspace yet -> no ResourceInfo;
+
+		/* common contents */
+		String anotherContent = "and this string should not... well, you know...";
+		InputStream another;
+
+		another = getContents(anotherContent);
+		try {
+			write(file, another, false, null);
+			fail("5.0");
+		} catch (CoreException e) {
+			fail("6.0");
+		} catch (IllegalStateException e) {
 			// expected
 		}
 

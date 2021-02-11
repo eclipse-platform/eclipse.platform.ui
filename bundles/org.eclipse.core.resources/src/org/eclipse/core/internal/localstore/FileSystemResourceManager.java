@@ -243,8 +243,8 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 		//convert to array and remove null elements
 		IResource[] toReturn = files ? (IResource[]) new IFile[count] : (IResource[]) new IContainer[count];
 		count = 0;
-		for (Iterator it = result.iterator(); it.hasNext();) {
-			IResource resource = (IResource) it.next();
+		for (Object element : result) {
+			IResource resource = (IResource) element;
 			if (resource != null)
 				toReturn[count++] = resource;
 		}
@@ -1123,6 +1123,9 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 			} else {
 				if (target.isLocal(IResource.DEPTH_ZERO)) {
 					ResourceInfo info = ((Resource) target).getResourceInfo(true, false);
+					if (info == null) {
+						throw new IllegalStateException("No ResourceInfo for: " + target); //$NON-NLS-1$
+					}
 					// test if timestamp is the same since last synchronization
 					if (lastModified != info.getLocalSyncInfo()) {
 						asyncRefresh(target);
@@ -1179,6 +1182,10 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 			// get the new last modified time and stash in the info
 			lastModified = store.fetchInfo().getLastModified();
 			ResourceInfo info = ((Resource) target).getResourceInfo(false, true);
+			if (info == null) {
+				// happens see Bug 571133
+				throw new IllegalStateException("No ResourceInfo for: " + target); //$NON-NLS-1$
+			}
 			updateLocalSync(info, lastModified);
 			info.incrementContentId();
 			info.clear(M_CONTENT_CACHE);
