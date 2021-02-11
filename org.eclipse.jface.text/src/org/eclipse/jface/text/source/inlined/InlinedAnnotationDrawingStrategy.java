@@ -82,16 +82,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 			return;
 		}
 		if (gc != null) {
-			// Compute the location of the annotation
-			Rectangle bounds= textWidget.getTextBounds(offset, offset);
-			int x= bounds.x;
-			int y= bounds.y;
-
-			gc.setBackground(textWidget.getBackground());
-
-			// Draw the line header annotation
-			annotation.setLocation(x, y);
-			annotation.draw(gc, textWidget, offset, length, color, x, y);
+			// Setting vertical indent first, before computing bounds
 			int height= annotation.getHeight();
 			if (height != 0) {
 				if (height != textWidget.getLineVerticalIndent(line)) {
@@ -101,19 +92,24 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 					textWidget.setLineVerticalIndent(line, height);
 				}
 				annotation.oldLine= line;
-				return;
 			} else if (textWidget.getLineVerticalIndent(line) > 0) {
 				textWidget.setLineVerticalIndent(line, 0);
 			}
+			// Compute the location of the annotation
+			Rectangle bounds= textWidget.getTextBounds(offset, offset);
+			int x= bounds.x;
+			int y= bounds.y;
+			// Draw the line header annotation
+			gc.setBackground(textWidget.getBackground());
+			annotation.setLocation(x, y);
+			annotation.draw(gc, textWidget, offset, length, color, x, y);
+		} else if (textWidget.getLineVerticalIndent(line) > 0) {
+			// Here vertical indent is done, the redraw of the full line width is done to avoid annotation clipping
+			Rectangle bounds= textWidget.getTextBounds(offset, offset);
+			Rectangle client= textWidget.getClientArea();
+			textWidget.redraw(0, bounds.y, client.width, bounds.height, false);
 		} else {
-			if (textWidget.getLineVerticalIndent(line) > 0) {
-				// Here vertical indent is done, the redraw of the full line width is done to avoid annotation clipping
-				Rectangle bounds= textWidget.getTextBounds(offset, offset);
-				Rectangle client= textWidget.getClientArea();
-				textWidget.redraw(0, bounds.y, client.width, bounds.height, false);
-			} else {
-				textWidget.redrawRange(offset, length, true);
-			}
+			textWidget.redrawRange(offset, length, true);
 		}
 	}
 
