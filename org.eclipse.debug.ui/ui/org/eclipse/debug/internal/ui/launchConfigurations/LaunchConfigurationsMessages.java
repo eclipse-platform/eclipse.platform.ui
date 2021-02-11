@@ -63,6 +63,7 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String CommonTab_AttributeLabel_AppendToFile;
 	public static String CommonTab_AttributeLabel_LaunchInBackground;
 	public static String CommonTab_AttributeLabel_FavoriteGroups;
+	public static String CommonTab_AttributeLabel_TerminateDescendants;
 
 	public static String CompileErrorProjectPromptStatusHandler_0;
 	public static String CompileErrorProjectPromptStatusHandler_1;

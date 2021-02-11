@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020 Paul Pazderski and others.
+ * Copyright (c) 2020, 2021 Paul Pazderski and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,6 +22,7 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.debug.core.DebugEvent;
@@ -32,7 +33,6 @@ import org.eclipse.debug.internal.core.DebugCoreMessages;
 import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.debug.tests.TestUtil;
 import org.junit.Test;
-import org.junit.function.ThrowingRunnable;
 
 public class RuntimeProcessTests extends AbstractDebugTest {
 
@@ -129,6 +129,31 @@ public class RuntimeProcessTests extends AbstractDebugTest {
 	}
 
 	/**
+	 * Test {@link RuntimeProcess} terminating the wrapped process while not
+	 * terminating its descendants.
+	 */
+	@Test
+	public void testTerminateProcessWithoutTerminatingDescendents() throws Exception {
+
+		MockProcess childProcess = new MockProcess(MockProcess.RUN_FOREVER);
+
+		MockProcess mockProcess = new MockProcess(MockProcess.RUN_FOREVER);
+		mockProcess.setHandle(new MockProcessHandle(mockProcess, List.of(childProcess)));
+
+		RuntimeProcess runtimeProcess = mockProcess.toRuntimeProcess("MockProcess", Map.of(DebugPlugin.ATTR_TERMINATE_DESCENDANTS, false));
+
+		assertTrue("RuntimeProcess already terminated.", childProcess.isAlive());
+		assertFalse("RuntimeProcess already terminated.", runtimeProcess.isTerminated());
+
+		runtimeProcess.terminate();
+
+		assertFalse("RuntimeProcess failed to terminate wrapped process.", mockProcess.isAlive());
+		assertTrue("RuntimeProcess terminated child of wrapped process, unlike configured.", childProcess.isAlive());
+
+		TestUtil.waitWhile(p -> !p.isTerminated(), runtimeProcess, 1000, p -> "RuntimePocess not terminated.");
+	}
+
+	/**
 	 * Test {@link RuntimeProcess} terminating the wrapped process which does
 	 * not support {@link Process#toHandle()}.
 	 */
@@ -140,7 +165,7 @@ public class RuntimeProcessTests extends AbstractDebugTest {
 		// implementation is called which throws an
 		// UnsupportedOperationException
 		mockProcess.setHandle(null);
-		assertThrows(UnsupportedOperationException.class, () -> mockProcess.toHandle());
+		assertThrows(UnsupportedOperationException.class, mockProcess::toHandle);
 		RuntimeProcess runtimeProcess = mockProcess.toRuntimeProcess();
 		runtimeProcess.terminate(); // must not throw, even toHandle() does
 
@@ -158,9 +183,8 @@ public class RuntimeProcessTests extends AbstractDebugTest {
 		mockProcess.setTerminationDelay(6000);
 
 		RuntimeProcess runtimeProcess = mockProcess.toRuntimeProcess();
-		ThrowingRunnable termianteProcess = () -> runtimeProcess.terminate();
 
-		DebugException timeoutException = assertThrows(DebugException.class, termianteProcess);
+		DebugException timeoutException = assertThrows(DebugException.class, runtimeProcess::terminate);
 		assertThat(timeoutException.getMessage(), is(DebugCoreMessages.RuntimeProcess_terminate_failed));
 	}
 
@@ -178,9 +202,8 @@ public class RuntimeProcessTests extends AbstractDebugTest {
 		mockProcess.setHandle(new MockProcessHandle(mockProcess, List.of(childProcess)));
 
 		RuntimeProcess runtimeProcess = mockProcess.toRuntimeProcess();
-		ThrowingRunnable termianteProcess = () -> runtimeProcess.terminate();
 
-		DebugException timeoutException = assertThrows(DebugException.class, termianteProcess);
+		DebugException timeoutException = assertThrows(DebugException.class, runtimeProcess::terminate);
 		assertThat(timeoutException.getMessage(), is(DebugCoreMessages.RuntimeProcess_terminate_failed));
 	}
 }

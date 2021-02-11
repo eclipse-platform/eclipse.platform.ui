@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2020 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
@@ -102,6 +103,11 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	private boolean fCaptureOutput = true;
 
 	/**
+	 * Whether the descendants of this process should be terminated too
+	 */
+	private boolean fTerminateDescendants = true;
+
+	/**
 	 * Constructs a RuntimeProcess on the given system process
 	 * with the given name, adding this process to the given
 	 * launch.
@@ -126,6 +132,15 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 
 		String captureOutput = launch.getAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT);
 		fCaptureOutput = !("false".equals(captureOutput)); //$NON-NLS-1$
+
+		try {
+			ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
+			if (launchConfiguration != null) {
+				fTerminateDescendants = launchConfiguration.getAttribute(DebugPlugin.ATTR_TERMINATE_DESCENDANTS, true);
+			}
+		} catch (CoreException e) {
+			DebugPlugin.log(e);
+		}
 
 		fStreamsProxy = createStreamsProxy();
 		fMonitor = new ProcessMonitorThread();
@@ -209,12 +224,13 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 				return;
 			}
 
-			List<ProcessHandle> descendants; // only a snapshot!
-			try {
-				descendants = process.descendants().collect(Collectors.toList());
-			} catch (UnsupportedOperationException e) {
-				// JVM may not support toHandle() -> assume no descendants
-				descendants = Collections.emptyList();
+			List<ProcessHandle> descendants = Collections.emptyList();
+			if (fTerminateDescendants) {
+				try { // List of descendants of process is only a snapshot!
+					descendants = process.descendants().collect(Collectors.toList());
+				} catch (UnsupportedOperationException e) {
+					// JVM may not support toHandle() -> assume no descendants
+				}
 			}
 
 			process.destroy();

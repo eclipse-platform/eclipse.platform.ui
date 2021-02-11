@@ -356,6 +356,21 @@ public class DebugPlugin extends Plugin {
 	public static final String ATTR_PATH = PI_DEBUG_CORE + ".ATTR_PATH"; //$NON-NLS-1$
 
 	/**
+	 * Launch configuration attribute that designates whether or not the
+	 * descendants of the {@link IProcess} associated to a launch of this
+	 * configuration should be terminated if the main-process is terminated. The
+	 * descendants (also called child- or sub-processes) of a operating system
+	 * process are the processes started by that process.
+	 *
+	 * Value is a string representing a boolean - <code>true</code> or
+	 * <code>false</code>. When unspecified, the default value is considered
+	 * <code>true</code>.
+	 *
+	 * @since 3.18
+	 */
+	public static final String ATTR_TERMINATE_DESCENDANTS = PI_DEBUG_CORE + ".TERMINATE_DESCENDANTS"; //$NON-NLS-1$
+
+	/**
 	 * The singleton debug plug-in instance.
 	 */
 	private static DebugPlugin fgDebugPlugin= null;

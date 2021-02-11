@@ -124,6 +124,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	private Text fSharedLocationText;
 	private Button fSharedLocationButton;
 	private Button fLaunchInBackgroundButton;
+	private Button fTerminateDescendantsButton;
 	private Button fDefaultEncodingButton;
 	private Button fAltEncodingButton;
 	private Combo fEncodingCombo;
@@ -173,6 +174,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		createEncodingComponent(comp);
 		createOutputCaptureComponent(comp);
 		createLaunchInBackgroundComponent(comp);
+		createTerminateDescendantsButtonComponent(comp);
 	}
 
 	/**
@@ -501,6 +503,22 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	}
 
 	/**
+	 * Creates the controls needed to edit the terminate descendants attribute of an
+	 * external tool
+	 *
+	 * @param parent the composite to create the controls in
+	 */
+	private void createTerminateDescendantsButtonComponent(Composite parent) {
+		fTerminateDescendantsButton = createCheckButton(parent,
+				LaunchConfigurationsMessages.CommonTab_AttributeLabel_TerminateDescendants);
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		data.horizontalSpan = 2;
+		fTerminateDescendantsButton.setLayoutData(data);
+		fTerminateDescendantsButton.setFont(parent.getFont());
+		fTerminateDescendantsButton.addSelectionListener(widgetSelectedAdapter(e -> updateLaunchConfigurationDialog()));
+	}
+
+	/**
 	 * handles the shared radio button being selected
 	 */
 	private void handleSharedRadioButtonSelected() {
@@ -621,6 +639,9 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		updateLaunchInBackground(configuration);
 		updateEncoding(configuration);
 		updateConsoleOutput(configuration);
+
+		boolean terminateDescendants = getAttribute(configuration, DebugPlugin.ATTR_TERMINATE_DESCENDANTS, true);
+		fTerminateDescendantsButton.setSelection(terminateDescendants);
 	}
 
 	/**
@@ -934,7 +955,13 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		updateConfigFromLocalShared(configuration);
 		updateConfigFromFavorites(configuration);
-		setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, configuration, fLaunchInBackgroundButton.getSelection(), true);
+
+		boolean launchInBackground = fLaunchInBackgroundButton.getSelection();
+		setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, configuration, launchInBackground, true);
+
+		boolean terminateDescendants = fTerminateDescendantsButton.getSelection();
+		setAttribute(DebugPlugin.ATTR_TERMINATE_DESCENDANTS, configuration, terminateDescendants, true);
+
 		String encoding = null;
 		if(fAltEncodingButton.getSelection()) {
 			encoding = fEncodingCombo.getText().trim();
@@ -1022,6 +1049,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		getAttributesLabelsForPrototype().put(IDebugUIConstants.ATTR_APPEND_TO_FILE, LaunchConfigurationsMessages.CommonTab_AttributeLabel_AppendToFile);
 		getAttributesLabelsForPrototype().put(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, LaunchConfigurationsMessages.CommonTab_AttributeLabel_LaunchInBackground);
 		getAttributesLabelsForPrototype().put(IDebugUIConstants.ATTR_FAVORITE_GROUPS, LaunchConfigurationsMessages.CommonTab_AttributeLabel_FavoriteGroups);
+		getAttributesLabelsForPrototype().put(DebugPlugin.ATTR_TERMINATE_DESCENDANTS, LaunchConfigurationsMessages.CommonTab_AttributeLabel_TerminateDescendants);
 	}
 
 	/**
