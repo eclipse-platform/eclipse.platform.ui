@@ -287,7 +287,9 @@ public class FileUtil {
 	public static String getLineSeparator(IFile file) {
 		if (file.exists()) {
 			try (
-				InputStream input = file.getContents()
+					// for performance reasons the buffer size should
+					// reflect the average length of the first Line:
+					InputStream input = new BufferedInputStream(file.getContents(), 128);
 			) {
 				int c = input.read();
 				while (c != -1 && c != '\r' && c != '\n')
