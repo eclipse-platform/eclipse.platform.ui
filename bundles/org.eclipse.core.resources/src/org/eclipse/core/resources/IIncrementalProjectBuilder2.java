@@ -14,7 +14,7 @@
  * Anton Leherbauer (Wind River) - [305858] Allow Builder to return null rule
  * James Blackburn (Broadcom) - [306822] Provide Context for Builder getRule()
  * Broadcom Corporation - build configurations and references
- * Torbjörn Svensson (STMicroelectronics) - bug #552606
+ * TorbjÃ¶rn Svensson (STMicroelectronics) - bug #552606
  *******************************************************************************/
 package org.eclipse.core.resources;
 
