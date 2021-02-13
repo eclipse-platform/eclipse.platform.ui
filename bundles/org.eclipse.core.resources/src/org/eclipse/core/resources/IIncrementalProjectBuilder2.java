@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * <p>
  * All builders must subclass {@link IncrementalProjectBuilder} and can
  * optionally implement this interface.
+ * </p>
  *
  * @see IncrementalProjectBuilder
  * @since 3.14
@@ -42,11 +43,11 @@ public interface IIncrementalProjectBuilder2 {
 	 * that were created by previous invocations of the builder. The platform will
 	 * take care of discarding the builder's last built state (there is no need to
 	 * call <code>forgetLastBuiltState</code>).
-	 * </p>
 	 * <p>
 	 * This method is called as a result of invocations of
 	 * <code>IWorkspace.build</code> or <code>IProject.build</code> where the build
 	 * kind is {@link IncrementalProjectBuilder#CLEAN_BUILD}.
+	 * </p>
 	 * <p>
 	 * This method is long-running; progress and cancellation are provided by the
 	 * given progress monitor. All builders should report their progress and honor
