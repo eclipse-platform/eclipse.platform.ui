@@ -43,4 +43,15 @@ public final class LineRange implements ILineRange {
 	public int getNumberOfLines() {
 		return fNumberOfLines;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder= new StringBuilder();
+		builder.append("LineRange [start line="); //$NON-NLS-1$
+		builder.append(fStartLine);
+		builder.append(", count="); //$NON-NLS-1$
+		builder.append(fNumberOfLines);
+		builder.append("]"); //$NON-NLS-1$
+		return builder.toString();
+	}
 }
