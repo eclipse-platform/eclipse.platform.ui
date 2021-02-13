@@ -15,7 +15,7 @@
  *     James Blackburn (Broadcom) - [306822] Provide Context for Builder getRule()
  *     Broadcom Corporation - ongoing development
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
- *     Torbjörn Svensson (STMicroelectronics) - bug #552606
+ *     TorbjÃ¶rn Svensson (STMicroelectronics) - bug #552606
  *******************************************************************************/
 package org.eclipse.core.internal.events;
 
