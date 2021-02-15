@@ -608,7 +608,7 @@ public class PerspectiveSwitcher {
 	}
 
 	private void addSaveAsItem(final Menu menu) {
-		final MenuItem saveAsMenuItem = new MenuItem(menu, SWT.Activate);
+		final MenuItem saveAsMenuItem = new MenuItem(menu, SWT.PUSH);
 		saveAsMenuItem.setText(WorkbenchMessages.PerspectiveBar_saveAs);
 		final IWorkbenchWindow workbenchWindow = window.getContext().get(IWorkbenchWindow.class);
 		workbenchWindow.getWorkbench().getHelpSystem().setHelp(saveAsMenuItem,
@@ -630,7 +630,7 @@ public class PerspectiveSwitcher {
 	}
 
 	private void addResetItem(final Menu menu) {
-		final MenuItem resetMenuItem = new MenuItem(menu, SWT.Activate);
+		final MenuItem resetMenuItem = new MenuItem(menu, SWT.PUSH);
 		resetMenuItem.setText(WorkbenchMessages.PerspectiveBar_reset);
 		final IWorkbenchWindow workbenchWindow = window.getContext().get(IWorkbenchWindow.class);
 		workbenchWindow.getWorkbench().getHelpSystem().setHelp(resetMenuItem,
@@ -652,7 +652,7 @@ public class PerspectiveSwitcher {
 	}
 
 	private void addCustomizeItem(final Menu menu) {
-		final MenuItem customizeMenuItem = new MenuItem(menu, SWT.Activate);
+		final MenuItem customizeMenuItem = new MenuItem(menu, SWT.PUSH);
 		customizeMenuItem.setText(WorkbenchMessages.PerspectiveBar_customize);
 		final IWorkbenchWindow workbenchWindow = window.getContext().get(IWorkbenchWindow.class);
 		customizeMenuItem.addSelectionListener(widgetSelectedAdapter(event -> {
