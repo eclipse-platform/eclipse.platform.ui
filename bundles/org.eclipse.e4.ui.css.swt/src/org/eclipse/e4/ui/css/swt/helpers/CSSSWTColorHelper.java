@@ -28,7 +28,7 @@ import org.eclipse.e4.ui.css.core.css2.CSS2ColorHelper;
 import org.eclipse.e4.ui.css.core.css2.CSS2RGBColorImpl;
 import org.eclipse.e4.ui.css.core.dom.properties.Gradient;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.e4.ui.internal.css.swt.CSSActivator;
+import org.eclipse.e4.ui.internal.css.swt.ColorAndFontUtil;
 import org.eclipse.e4.ui.internal.css.swt.definition.IColorAndFontProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -339,7 +339,7 @@ public class CSSSWTColorHelper {
 	}
 
 	private static RGBA findColorByDefinition(String name) {
-		IColorAndFontProvider provider = CSSActivator.getDefault().getColorAndFontProvider();
+		IColorAndFontProvider provider = ColorAndFontUtil.getColorAndFontProvider();
 		if (provider != null) {
 			RGB rgb = provider.getColor(normalizeId(name.substring(1)));
 			if (rgb != null) {

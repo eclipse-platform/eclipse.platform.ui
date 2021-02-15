@@ -16,17 +16,16 @@ package org.eclipse.e4.ui.css.swt.helpers;
 
 import static org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelper.COLOR_DEFINITION_MARKER;
 import static org.eclipse.e4.ui.css.swt.helpers.CSSSWTFontHelper.FONT_DEFINITION_MARKER;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import org.eclipse.e4.ui.css.core.css2.CSS2FontHelper;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontProperties;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSValueImpl;
-import org.eclipse.e4.ui.internal.css.swt.CSSActivator;
 import org.eclipse.e4.ui.internal.css.swt.definition.IColorAndFontProvider;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
+import org.osgi.framework.FrameworkUtil;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
@@ -52,17 +51,8 @@ public abstract class CSSSWTHelperTestCase {
 	}
 
 	private void registerProvider(final IColorAndFontProvider provider) {
-		try {
-			new CSSActivator() {
-				@Override
-				public IColorAndFontProvider getColorAndFontProvider() {
-					return provider;
-				}
-			}.start(null);
-		} catch (Exception e) {
-			fail();
-		}
-
+		FrameworkUtil.getBundle(getClass()).getBundleContext().registerService(IColorAndFontProvider.class, provider,
+				null);
 	}
 
 	protected CSS2FontProperties fontProperties(String family) {

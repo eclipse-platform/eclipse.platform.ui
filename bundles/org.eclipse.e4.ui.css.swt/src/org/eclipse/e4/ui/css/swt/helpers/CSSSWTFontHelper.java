@@ -23,7 +23,7 @@ import org.eclipse.e4.ui.css.core.css2.CSS2PrimitiveValueImpl;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontProperties;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontPropertiesImpl;
 import org.eclipse.e4.ui.css.core.engine.CSSElementContext;
-import org.eclipse.e4.ui.internal.css.swt.CSSActivator;
+import org.eclipse.e4.ui.internal.css.swt.ColorAndFontUtil;
 import org.eclipse.e4.ui.internal.css.swt.definition.IColorAndFontProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
@@ -219,7 +219,7 @@ public class CSSSWTFontHelper {
 	}
 
 	private static FontData[] findFontDataByDefinition(CSSPrimitiveValue cssFontFamily) {
-		IColorAndFontProvider provider = CSSActivator.getDefault().getColorAndFontProvider();
+		IColorAndFontProvider provider = ColorAndFontUtil.getColorAndFontProvider();
 		FontData[] result = new FontData[0];
 		if (provider != null) {
 			FontData[] fontData = provider.getFont(normalizeId(cssFontFamily.getStringValue().substring(1)));

@@ -18,12 +18,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
+import java.util.Hashtable;
+
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.e4.ui.internal.css.swt.CSSActivator;
 import org.eclipse.e4.ui.internal.css.swt.definition.IColorAndFontProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.junit.Test;
+import org.osgi.framework.FrameworkUtil;
 
 public class ColorDefinitionTest extends CSSSWTTestCase {
 
@@ -169,17 +170,12 @@ public class ColorDefinitionTest extends CSSSWTTestCase {
 	}
 
 	private void registerColorProviderWith(final String symbolicName, final RGB rgb) {
-		try {
-			new CSSActivator() {
-				@Override
-				public IColorAndFontProvider getColorAndFontProvider() {
-					IColorAndFontProvider provider = mock(IColorAndFontProvider.class);
-					doReturn(rgb).when(provider).getColor(symbolicName);
-					return provider;
-				}
-			}.start(null);
-		} catch (Exception e) {
-			fail("Register color provider should not fail");
-		}
+		IColorAndFontProvider provider = mock(IColorAndFontProvider.class);
+		doReturn(rgb).when(provider).getColor(symbolicName);
+		Hashtable<String, Object> properties = new Hashtable<>();
+		properties.put("service.ranking", "1000");
+
+		FrameworkUtil.getBundle(getClass()).getBundleContext().registerService(IColorAndFontProvider.class, provider,
+				properties);
 	}
 }
