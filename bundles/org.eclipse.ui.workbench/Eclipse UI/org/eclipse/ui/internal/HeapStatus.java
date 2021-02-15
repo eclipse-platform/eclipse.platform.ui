@@ -18,7 +18,6 @@
 
 package org.eclipse.ui.internal;
 
-import java.lang.reflect.Method;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -67,7 +66,7 @@ public class HeapStatus extends Composite {
 	private long mark = -1;
 	// start with 12x12
 	private Rectangle imgBounds = new Rectangle(0, 0, 12, 12);
-	private long maxMem = Long.MAX_VALUE;
+	private final long maxMem;
 	private boolean maxMemKnown;
 	private float lowMemThreshold = 0.05f;
 	private boolean showLowMemThreshold = true;
@@ -110,7 +109,7 @@ public class HeapStatus extends Composite {
 	public HeapStatus(Composite parent, IPreferenceStore prefStore) {
 		super(parent, SWT.NONE);
 
-		maxMem = getMaxMem();
+		maxMem = Runtime.getRuntime().maxMemory();
 		maxMemKnown = maxMem != Long.MAX_VALUE;
 
 		this.prefStore = prefStore;
@@ -231,25 +230,6 @@ public class HeapStatus extends Composite {
 			return usedMemCol;
 		}
 		return getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
-	}
-
-	/**
-	 * Returns the maximum memory limit, or Long.MAX_VALUE if the max is not known.
-	 */
-	private long getMaxMem() {
-		long max = Long.MAX_VALUE;
-		try {
-			// Must use reflect to allow compilation against JCL/Foundation
-			Method maxMemMethod = Runtime.class.getMethod("maxMemory"); //$NON-NLS-1$
-			Object o = maxMemMethod.invoke(Runtime.getRuntime());
-			if (o instanceof Long) {
-				max = ((Long) o).longValue();
-			}
-		} catch (Exception e) {
-			// ignore if method missing or if there are other failures trying to determine
-			// the max
-		}
-		return max;
 	}
 
 	private void setUpdateIntervalInMS(int interval) {
