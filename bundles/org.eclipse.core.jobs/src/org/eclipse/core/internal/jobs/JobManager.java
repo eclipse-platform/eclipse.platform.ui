@@ -948,16 +948,24 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 					@Override
 					public void done(IJobChangeEvent event) {
 						//don't remove from list if job is being rescheduled
-						if (!((JobChangeEvent) event).reschedule)
+						if (!((JobChangeEvent) event).reschedule) {
 							jobs.remove(event.getJob());
+							if (jobs.isEmpty()) { // minimal notification
+								synchronized (jobs) {
+									jobs.notifyAll();
+								}
+							}
+						}
 					}
 
 					//update the list of jobs if new ones are started during the join
 					@Override
 					public void running(IJobChangeEvent event) {
 						Job job = event.getJob();
-						if (family == null || job.belongsTo(family))
+						if (family == null || job.belongsTo(family)) {
 							jobs.add(job);
+							// no notification upon increased size
+						}
 					}
 
 					//update the list of jobs if new ones are scheduled during the join
@@ -970,8 +978,10 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 						if (isSuspended())
 							return;
 						Job job = event.getJob();
-						if (family == null || job.belongsTo(family))
+						if (family == null || job.belongsTo(family)) {
 							jobs.add(job);
+							// no notification upon increased size
+						}
 					}
 				};
 				addJobChangeListener(listener);
@@ -1005,7 +1015,11 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 					throw new OperationCanceledException();
 				//notify hook to service pending syncExecs before falling asleep
 				lockManager.aboutToWait(null);
-				Thread.sleep(100);
+				synchronized (jobs) {
+					if (!jobs.isEmpty()) { // in case we missed a notify outside the synchronized block
+						jobs.wait(100);// Avoid sleep for fixed period by notify / wait
+					}
+				}
 			}
 		} finally {
 			lockManager.aboutToRelease();
