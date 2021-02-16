@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2020 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,6 +16,7 @@ package org.eclipse.help.internal.base;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
@@ -58,6 +59,7 @@ public final class BaseHelpSystem {
 	private IBrowser browser;
 	private IBrowser internalBrowser;
 	private HelpDisplay helpDisplay = null;
+	private String liveHelpToken = null;
 
 	private BaseHelpSystem() {
 		super();
@@ -345,6 +347,31 @@ public final class BaseHelpSystem {
 		if (!getInstance().webappStarted) {
 			setMode(MODE_INFOCENTER);
 		}
+	}
+
+	/**
+	 * Check supplied token against stored token. Clears the stored token if
+	 * successful.
+	 * 
+	 * @param helpSessionToken
+	 * @return true if match successful
+	 */
+	public boolean matchOnceLiveHelpToken(String helpSessionToken) {
+		/*
+		 * @FIXME - should we use a constant time comparison, and store/compare a
+		 * cryptographic hash?
+		 */
+		if (liveHelpToken != null && liveHelpToken.equals(helpSessionToken)) {
+			// Enforce one-time use.
+			liveHelpToken = null;
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public void setLiveHelpToken(String helpSessionToken) {
+		liveHelpToken = helpSessionToken;
 	}
 
 }

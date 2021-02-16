@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,8 +14,8 @@
 package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.IOException;
-
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -51,6 +51,45 @@ public class LiveHelpServlet extends HttpServlet {
 			return;
 		}
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
+		String sessionid = req.getSession().getId();
+		Cookie cookies[] = req.getCookies();
+		boolean jsessOK = false;
+		boolean xsessOK = false;
+		boolean lsessOK = false;
+		// Unique session ID per help server
+		int port = req.getLocalPort();
+		String xsessname = "XSESSION-" + port; //$NON-NLS-1$
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if (cookie.getName().equals("JSESSIONID")) {//$NON-NLS-1$
+					if (sessionid.length() >= 30 &&
+							cookie.getValue().startsWith(sessionid)) {
+						jsessOK = true;
+					}
+				}
+				if (cookie.getName().equals(xsessname)) {
+					if (cookie.getValue().equals(req.getSession().getAttribute("XSESSION"))) { //$NON-NLS-1$
+						xsessOK = true;
+					}
+				}
+			}
+		}
+		String token = req.getParameter("token"); //$NON-NLS-1$
+		if (token != null && token.equals(req.getSession().getAttribute("LSESSION"))) { //$NON-NLS-1$
+			lsessOK = true;
+		}
+		if (!jsessOK) {
+			resp.sendError(HttpServletResponse.SC_FORBIDDEN, "JSESSIONID"); //$NON-NLS-1$
+			return;
+		}
+		if (!lsessOK) {
+			resp.sendError(HttpServletResponse.SC_FORBIDDEN, "token"); //$NON-NLS-1$
+			return;
+		}
+		if (!xsessOK) {
+			resp.sendError(HttpServletResponse.SC_FORBIDDEN, xsessname);
+			return;
+		}
 		String pluginID = req.getParameter("pluginID"); //$NON-NLS-1$
 		if (pluginID == null)
 			return;
@@ -59,6 +98,11 @@ public class LiveHelpServlet extends HttpServlet {
 			return;
 		String arg = req.getParameter("arg"); //$NON-NLS-1$
 		BaseHelpSystem.runLiveHelp(pluginID, className, arg);
+		/*
+		 * @FIXME Should runLiveHelp return an error if the plugin/class is wrong
+		 * so a SC_BAD_REQUEST can be returned? Or does this reveal too much?
+		 */
+		resp.setStatus(HttpServletResponse.SC_ACCEPTED);
 	}
 	/**
 	 *
