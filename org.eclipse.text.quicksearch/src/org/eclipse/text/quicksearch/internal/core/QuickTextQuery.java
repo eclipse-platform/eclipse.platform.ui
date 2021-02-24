@@ -29,7 +29,7 @@ import org.eclipse.jface.text.IRegion;
 public class QuickTextQuery {
 
 	//TODO: delete and use jface Region class instead.
-	public class TextRange implements IRegion {
+	public static class TextRange implements IRegion {
 		public final int start;
 		public final int len;
 		public TextRange(int start, int len) {
