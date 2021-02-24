@@ -36,7 +36,7 @@ import org.xml.sax.SAXException;
 
 public class DocumentReader {
 
-	private class ManagedBuilder {
+	private static class ManagedBuilder {
 		public DocumentBuilder builder;
 		public boolean inUse;
 	}
