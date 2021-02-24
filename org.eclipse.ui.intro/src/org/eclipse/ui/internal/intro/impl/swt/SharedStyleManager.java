@@ -34,7 +34,7 @@ public class SharedStyleManager {
 	protected Properties properties;
 	protected StyleContext context;
 
-	class StyleContext {
+	static class StyleContext {
 		IPath path;
 		Bundle bundle;
 		boolean inTheme;
