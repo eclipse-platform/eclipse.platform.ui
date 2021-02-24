@@ -119,7 +119,7 @@ public class HelpIndexBuilder {
 	private static HashSet<String> legalLanguages = null;
 	private static HashSet<String> legalCountries = null;
 
-	class PluginIdentifier {
+	static class PluginIdentifier {
 		String id;
 
 		Version version;
@@ -191,7 +191,7 @@ public class HelpIndexBuilder {
 		}
 	}
 
-	class TocFile {
+	static class TocFile {
 		String href;
 		boolean primary;
 		String extraDir;
