@@ -56,7 +56,7 @@ public class UAElement implements IUAElement {
 	private Expression enablementExpression;
 	private IUAElement src;
 
-	private class Filter {
+	private static class Filter {
 		public Filter(String name, String value, boolean isNegated) {
 			this.name = name;
 			this.value = value;
