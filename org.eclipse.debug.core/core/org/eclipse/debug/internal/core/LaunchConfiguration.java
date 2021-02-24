@@ -262,7 +262,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			}
 
 
-			boolean local = (Boolean.valueOf(localString)).booleanValue();
+			boolean local = Boolean.parseBoolean(localString);
 			IPath iPath = new Path(path);
 			String name = getSimpleName(iPath.lastSegment());
 			IContainer container = null;
@@ -601,7 +601,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			Document doc = LaunchManager.getDocument();
 			Element node = doc.createElement(IConfigurationElementConstants.LAUNCH_CONFIGURATION);
 			doc.appendChild(node);
-			node.setAttribute(IConfigurationElementConstants.LOCAL, (Boolean.valueOf(local)).toString());
+			node.setAttribute(IConfigurationElementConstants.LOCAL, Boolean.toString(local));
 			node.setAttribute(IConfigurationElementConstants.PATH, relativePath.toString());
 			return LaunchManager.serializeDocument(doc);
 		} catch (IOException ioe) {
