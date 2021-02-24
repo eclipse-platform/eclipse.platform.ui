@@ -104,7 +104,7 @@ public class QuicklinksViewer implements IIntroContentProvider {
 	}
 
 	/** Model holding the relevant attributes of a Quicklink element */
-	class Quicklink implements Comparable<Quicklink> {
+	static class Quicklink implements Comparable<Quicklink> {
 		String commandSpec;
 		String url;
 		String label;
