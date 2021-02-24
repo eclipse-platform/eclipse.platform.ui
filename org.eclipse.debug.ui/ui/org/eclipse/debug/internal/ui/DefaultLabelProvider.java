@@ -258,7 +258,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 					if (element instanceof IProcess) {
 						IProcess process = (IProcess)element;
 						int exit = process.getExitValue();
-						terminatedMessage = MessageFormat.format(DebugUIMessages.DefaultLabelProvider_16, new Object[] { Integer.valueOf(exit).toString() });
+						terminatedMessage = MessageFormat.format(DebugUIMessages.DefaultLabelProvider_16, new Object[] { Integer.toString(exit) });
 					} else {
 						terminatedMessage= DebugUIMessages.DefaultLabelProvider_1;
 					}
@@ -365,7 +365,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 		} else {
 			snippetBuffer.append(snippet);
 		}
-		snippet = snippetBuffer.toString().replaceAll("[\n\r\t]+", " ");  //$NON-NLS-1$//$NON-NLS-2$
+		snippet = snippetBuffer.toString().replace("[\n\r\t]+", " ");  //$NON-NLS-1$//$NON-NLS-2$
 
 		result.append('"');
 		result.append(snippet);
