@@ -138,7 +138,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
 	private List<ExtensionContent> unresolvedConfigExt = new ArrayList<>();
 
 
-	private class ExtensionContent {
+	private static class ExtensionContent {
 		Element element;
 		IConfigurationElement configExtElement;
 		ExtensionContent(Element element,
