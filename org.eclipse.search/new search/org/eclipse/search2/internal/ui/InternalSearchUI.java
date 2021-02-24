@@ -57,7 +57,7 @@ public class InternalSearchUI {
 
 	public static final Object FAMILY_SEARCH = new Object();
 
-	private class SearchJobRecord {
+	private static class SearchJobRecord {
 		public ISearchQuery query;
 		public Job job;
 		public boolean isRunning;
