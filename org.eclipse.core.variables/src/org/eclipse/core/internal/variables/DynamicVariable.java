@@ -73,7 +73,7 @@ public class DynamicVariable extends StringVariable implements IDynamicVariable 
 	@Override
 	public boolean supportsArgument() {
 		String arg = getConfigurationElement().getAttribute("supportsArgument"); //$NON-NLS-1$
-		return arg == null || Boolean.valueOf(arg).booleanValue();
+		return arg == null || Boolean.parseBoolean(arg);
 	}
 
 }
