@@ -45,7 +45,7 @@ public class LocalHistoryBrowserView extends ViewPart {
 	Action refreshAction;
 	Action doubleClickAction;
 
-	class NameSorter extends ViewerComparator {
+	static class NameSorter extends ViewerComparator {
 		// empty impl
 	}
 
