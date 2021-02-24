@@ -155,7 +155,7 @@ public class CountResourcesAction implements IWorkbenchWindowActionDelegate {
 	 * A helper class that implements <code>IResourceVisitor</code>. Visits each
 	 * resource in a resource hierarchy, counting them.
 	 */
-	class ResourceCounterVisitor implements IResourceVisitor {
+	static class ResourceCounterVisitor implements IResourceVisitor {
 		protected int count;
 
 		/**
