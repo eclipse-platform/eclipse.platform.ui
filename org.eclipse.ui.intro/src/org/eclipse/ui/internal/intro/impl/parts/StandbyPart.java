@@ -425,7 +425,7 @@ public class StandbyPart implements IIntroConstants {
 	 * Model class to wrap Control and IStandbyContentPart pairs, along with the
 	 * representing ID..
 	 */
-	class ControlKey {
+	static class ControlKey {
 
 		Control c;
 		IStandbyContentPart part;
