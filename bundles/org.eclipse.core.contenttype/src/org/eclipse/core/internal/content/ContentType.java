@@ -26,7 +26,7 @@ import org.osgi.service.prefs.Preferences;
 public final class ContentType implements IContentType, IContentTypeInfo {
 
 	/* A placeholder for missing/invalid binary/text describers. */
-	private class InvalidDescriber implements IContentDescriber, ITextContentDescriber {
+	private static class InvalidDescriber implements IContentDescriber, ITextContentDescriber {
 		@Override
 		public int describe(InputStream contents, IContentDescription description) {
 			return INVALID;
