@@ -39,7 +39,7 @@ import org.eclipse.text.quicksearch.internal.ui.QuickSearchActivator;
  */
 public abstract class ResourceWalker extends Job {
 
-	private class QItem implements Comparable<QItem> {
+	private static class QItem implements Comparable<QItem> {
 		public final double priority;
 		public final IResource resource;
 
