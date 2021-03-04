@@ -959,7 +959,6 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @since 2.1
 	 */
 	void insertProposal(ICompletionProposal p, char trigger, int stateMask, final int offset) {
-
 		fInserting= true;
 		IRewriteTarget target= null;
 		IEditingSupport helper= new IEditingSupport() {
@@ -977,9 +976,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		};
 
 		try {
-
 			IDocument document= fContentAssistSubjectControlAdapter.getDocument();
-
 			if (fViewer instanceof ITextViewerExtension) {
 				ITextViewerExtension extension= (ITextViewerExtension) fViewer;
 				target= extension.getRewriteTarget();
@@ -1300,6 +1297,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 	@Override
 	public boolean verifyKey(VerifyEvent e) {
+		if (fInserting) {
+			return false;
+		}
+
 		if (!isValid(fProposalShell))
 			return true;
 
