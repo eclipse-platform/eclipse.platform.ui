@@ -72,17 +72,19 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 
 		Control widget = (Control) stack.getWidget();
 		widget.setRedraw(false);
+		try {
+			// Gather up the elements that are being 'hidden' by this change
+			MUIElement oldSel = (MUIElement) event.getProperty(UIEvents.EventTags.OLD_VALUE);
+			if (oldSel != null) {
+				hideElementRecursive(oldSel);
+			}
 
-		// Gather up the elements that are being 'hidden' by this change
-		MUIElement oldSel = (MUIElement) event.getProperty(UIEvents.EventTags.OLD_VALUE);
-		if (oldSel != null) {
-			hideElementRecursive(oldSel);
+			if (stack.getSelectedElement() != null) {
+				lsr.showTab(stack.getSelectedElement());
+			}
+		} finally {
+			widget.setRedraw(true);
 		}
-
-		if (stack.getSelectedElement() != null) {
-			lsr.showTab(stack.getSelectedElement());
-		}
-		widget.setRedraw(true);
 	};
 
 	public void init(IEventBroker eventBroker) {
