@@ -3,7 +3,7 @@ Automatic-Module-Name: org.eclipse.ltk.ui.refactoring.tests
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.ltk.ui.refactoring.tests;singleton:=true
-Bundle-Version: 3.9.800.qualifier
+Bundle-Version: 3.9.900.qualifier
 Bundle-Activator: org.eclipse.ltk.ui.refactoring.tests.RefactoringUITestPlugin
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
