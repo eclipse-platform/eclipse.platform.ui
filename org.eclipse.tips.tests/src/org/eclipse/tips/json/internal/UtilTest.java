@@ -2,8 +2,6 @@ package org.eclipse.tips.json.internal;
 
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-
 import org.junit.Test;
 
 import com.google.gson.JsonObject;
@@ -13,7 +11,7 @@ public class UtilTest {
 
 	@SuppressWarnings("restriction")
 	@Test
-	public void testGetValueOrDefaultJsonObjectStringString() throws IOException {
+	public void testGetValueOrDefaultJsonObjectStringString() {
 		String jsonString = "{\"first\": \"Wim\", \"last\": \"Jongman\", \"variables\": {\"title\": \"Mr.\", \"age\": 53}}";
 		JsonObject jsonObject = (JsonObject) JsonParser.parseString(jsonString);
 		assertTrue(Util.getValueOrDefault(jsonObject, "first", "Mark").equals("Wim"));
@@ -22,7 +20,7 @@ public class UtilTest {
 
 	@SuppressWarnings("restriction")
 	@Test
-	public void testGetValueOrDefaultJsonObjectStringInt() throws IOException {
+	public void testGetValueOrDefaultJsonObjectStringInt() {
 		String jsonString = "{\"age\": \"53\", \"last\": \"Jongman\"}";
 		JsonObject jsonObject = (JsonObject) JsonParser.parseString(jsonString);
 		assertTrue(Util.getValueOrDefault(jsonObject, "age", 100) == 53);
@@ -31,7 +29,7 @@ public class UtilTest {
 
 	@SuppressWarnings("restriction")
 	@Test
-	public void testGetValueOrDefaultJsonObjectStringDouble() throws IOException {
+	public void testGetValueOrDefaultJsonObjectStringDouble() {
 		String jsonString = "{\"double\": 5.21, \"last\": \"Jongman\"}";
 		JsonObject jsonObject = (JsonObject) JsonParser.parseString(jsonString);
 		assertTrue(Util.getValueOrDefault(jsonObject, "double", 10.10) == 5.21);
@@ -40,7 +38,7 @@ public class UtilTest {
 
 	@SuppressWarnings("restriction")
 	@Test
-	public void testReplace() throws IOException {
+	public void testReplace() {
 		String input = "${title} ${first} ${last} is ${age} years old.";
 		String result = "Mr. Wim Jongman is 53 years old.";
 		String jsonString = "{\"first\": \"Wim\", \"last\": \"Jongman\", \"variables\": {\"title\": \"Mr.\", \"age\": 53}}";
@@ -51,7 +49,7 @@ public class UtilTest {
 
 	@SuppressWarnings("restriction")
 	@Test
-	public void testReplace2() throws IOException {
+	public void testReplace2() {
 		String input = "${title} ${first} ${last} ${ddd} is ${age} years old.${title}";
 		String result = "Mr. Wim Jongman ${ddd} is 53 years old.Mr.";
 		String jsonString = "{\"first\": \"Wim\", \"last\": \"Jongman\", \"variables\": {\"title\": \"Mr.\", \"age\": 53}}";
@@ -62,7 +60,7 @@ public class UtilTest {
 
 	@SuppressWarnings("restriction")
 	@Test
-	public void testReplace3() throws IOException {
+	public void testReplace3() {
 		String input = "${tit${empty}le}";
 		String result = "Mr.";
 		String jsonString = "{\"first\": \"Wim\", \"empty\": \"\", \"variables\": {\"title\": \"Mr.\", \"age\": 53}}";
