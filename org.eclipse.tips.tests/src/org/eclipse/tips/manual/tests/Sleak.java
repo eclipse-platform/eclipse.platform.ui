@@ -1,14 +1,19 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2021 IBM Corp.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ *******************************************************************************/
 package org.eclipse.tips.manual.tests;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-/*
- * Copyright (c) 2000, 2018 IBM Corp.  All rights reserved.
- * This file is made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- */
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
