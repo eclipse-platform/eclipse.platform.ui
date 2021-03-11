@@ -17,7 +17,6 @@ package org.eclipse.e4.ui.tests.workbench;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -25,9 +24,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import javax.annotation.PostConstruct;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResource;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResourceFactory;
 import org.eclipse.e4.ui.internal.workbench.ModelAssembler;
@@ -49,10 +49,12 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.fragment.MFragmentFactory;
 import org.eclipse.e4.ui.model.fragment.MModelFragments;
 import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
+import org.eclipse.e4.ui.workbench.swt.DisplayUISynchronize;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.swt.widgets.Display;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -69,7 +71,6 @@ public class ModelAssemblerFragmentOrderingTests {
 	private ResourceSetImpl resourceSet;
 	private E4XMIResource appResource;
 	private ModelAssembler assembler;
-	private Logger logger;
 	private MToolBar toolBar;
 	private static final String MAIN_TOOLBAR_ID = "org.eclipse.e4.ui.tests.modelassembler.fragmentordering.mainWindow.mainToolBar";
 	private static final String MAIN_WINDOW_ID = "org.eclipse.e4.ui.tests.modelassembler.fragmentordering.mainWindow";
@@ -81,10 +82,8 @@ public class ModelAssemblerFragmentOrderingTests {
 		application.setElementId(APPLICATION_ID);
 		application.setContext(appContext);
 
-		logger = mock(Logger.class);
-
-		appContext.set(Logger.class, logger);
 		appContext.set(MApplication.class, application);
+		appContext.set(UISynchronize.class, new DisplayUISynchronize(Display.getDefault()));
 
 		factory = new E4XMIResourceFactory();
 		appResource = (E4XMIResource) factory.createResource(URI.createURI("virtualuri"));
@@ -92,7 +91,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		resourceSet.getResources().add(appResource);
 		appResource.getContents().add((EObject) application);
 		assembler = new ModelAssembler();
-		ContextInjectionFactory.inject(assembler, appContext);
+		ContextInjectionFactory.invoke(assembler, PostConstruct.class, appContext);
 		createWindowWithToolbar();
 	}
 

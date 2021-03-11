@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -192,9 +192,12 @@ public class ResourceHandler implements IModelResourceHandler {
 		MApplication appElement = (MApplication) resource.getContents().get(0);
 
 		this.context.set(MApplication.class, appElement);
-		ModelAssembler contribProcessor = ContextInjectionFactory.make(ModelAssembler.class,
-				context);
-		contribProcessor.processModel(initialModel);
+
+		ModelAssembler mac = context.get(ModelAssembler.class);
+		if (mac != null) {
+			ContextInjectionFactory.invoke(mac, PostConstruct.class, context);
+			mac.processModel(initialModel);
+		}
 
 		if (!hasTopLevelWindows(resource) && logger != null) {
 			logger.error(new Exception(), // log a stack trace to help debug the

@@ -21,11 +21,13 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import org.eclipse.core.internal.registry.ExtensionRegistry;
 import org.eclipse.core.runtime.ContributorFactorySimple;
 import org.eclipse.core.runtime.IContributor;
@@ -35,7 +37,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResource;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResourceFactory;
 import org.eclipse.e4.ui.internal.workbench.ExtensionsSort;
@@ -55,14 +57,19 @@ import org.eclipse.e4.ui.model.fragment.MModelFragment;
 import org.eclipse.e4.ui.model.fragment.MModelFragments;
 import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.e4.ui.workbench.swt.DisplayUISynchronize;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.swt.widgets.Display;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
+import org.osgi.service.log.Logger;
+import org.osgi.service.log.LoggerFactory;
 
 @SuppressWarnings("nls")
 public class ModelAssemblerTests {
@@ -86,17 +93,25 @@ public class ModelAssemblerTests {
 		application.setContext(appContext);
 
 		logger = mock(Logger.class);
+		LoggerFactory logFactory = mock(LoggerFactory.class);
+		when(logFactory.getLogger((Class<?>) ArgumentMatchers.any())).thenReturn(logger);
 
 		appContext.set(Logger.class, logger);
 		appContext.set(MApplication.class, application);
+		appContext.set(UISynchronize.class, new DisplayUISynchronize(Display.getDefault()));
 
 		factory = new E4XMIResourceFactory();
 		appResource = (E4XMIResource) factory.createResource(URI.createURI("virtualuri"));
 		resourceSet = new ResourceSetImpl();
 		resourceSet.getResources().add(appResource);
 		appResource.getContents().add((EObject) application);
+
+		// FIXME set references programmatically
 		assembler = new ModelAssembler();
-		ContextInjectionFactory.inject(assembler, appContext);
+		ContextInjectionFactory.invoke(assembler, PostConstruct.class, appContext);
+
+		assembler.setLogger(logFactory);
+
 		modelService = application.getContext().get(EModelService.class);
 	}
 
@@ -295,7 +310,7 @@ public class ModelAssemblerTests {
 
 		assembler.resolveImports(imports, addedElements);
 		assertEquals(null, placeholder.getRef());
-		verify(logger).warn("Could not resolve import for null");
+		verify(logger).warn("Could not resolve import for {0}", new Object[] { null });
 		verifyZeroInteractions(logger);
 	}
 
@@ -325,6 +340,8 @@ public class ModelAssemblerTests {
 		/* contribute fragment with imports and post-processor */
 		IContributor contributor = ContributorFactorySimple.createContributor(BUNDLE_SYMBOLIC_NAME);
 		IExtensionRegistry registry = createTestExtensionRegistry();
+		assembler.setExtensionRegistry(registry);
+
 		assertEquals(0, registry.getConfigurationElementsFor(EXTENSION_POINT_ID).length);
 		// The fragment contributes a Placeholder to the application's Area. The
 		// Placeholder references the Part that we created above.
@@ -463,7 +480,8 @@ public class ModelAssemblerTests {
 	@Test
 	public void testProcessor_noProcessor() throws Exception {
 		testProcessor("org.eclipse.e4.ui.tests/data/ModelAssembler/processor_null.xml", true, false);
-		verify(logger).warn("Unable to create processor null from org.eclipse.e4.ui.tests");
+		verify(logger).warn("Unable to create processor {0} from {1}",
+				new Object[] { null, "org.eclipse.e4.ui.tests" });
 		assertEquals(0, application.getDescriptors().size());
 		verifyZeroInteractions(logger);
 	}
@@ -477,8 +495,9 @@ public class ModelAssemblerTests {
 	@Test
 	public void testProcessor_processorNotFound() throws Exception {
 		testProcessor("org.eclipse.e4.ui.tests/data/ModelAssembler/processor_wrongProcessorClass.xml", true, false);
-		verify(logger).warn(
-				"Unable to create processor org.eclipse.e4.ui.tests.workbench.SimplePreProcessor_NotFound from org.eclipse.e4.ui.tests");
+		verify(logger).warn("Unable to create processor {0} from {1}",
+				new Object[] { "org.eclipse.e4.ui.tests.workbench.SimplePreProcessor_NotFound",
+						"org.eclipse.e4.ui.tests" });
 		assertEquals(0, application.getDescriptors().size());
 		verifyZeroInteractions(logger);
 	}
@@ -495,7 +514,8 @@ public class ModelAssemblerTests {
 	public void testProcessor_wrongAppId() throws Exception {
 		application.setElementId("newID");
 		testProcessor("org.eclipse.e4.ui.tests/data/ModelAssembler/processors_initial.xml", true, true);
-		verify(logger).warn("Could not find element with id 'org.eclipse.e4.ui.tests.modelassembler.app'");
+		verify(logger).warn("Could not find element with id '{0}'",
+				new Object[] { "org.eclipse.e4.ui.tests.modelassembler.app" });
 		verifyZeroInteractions(logger);
 		assertEquals(1, application.getDescriptors().size());
 		assertEquals("simpleprocessor.post", application.getDescriptors().get(0).getElementId());

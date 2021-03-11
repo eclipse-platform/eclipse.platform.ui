@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="deactivate" immediate="true" name="org.eclipse.e4.ui.internal.workbench.ModelAssembler">
+   <service>
+      <provide interface="org.eclipse.e4.ui.internal.workbench.ModelAssembler"/>
+   </service>
+   <reference bind="setExtensionRegistry" interface="org.eclipse.core.runtime.IExtensionRegistry" name="ExtensionRegistry"/>
+   <reference bind="setLogger" cardinality="0..1" interface="org.osgi.service.log.LoggerFactory" name="Logger" policy="dynamic" unbind="unsetLogger"/>
+   <reference bind="setModelProcessorContribution" cardinality="0..n" interface="org.eclipse.e4.ui.workbench.modeling.IModelProcessorContribution" name="ModelProcessorContribution" policy="dynamic" unbind="unsetModelProcessorContribution"/>
+   <implementation class="org.eclipse.e4.ui.internal.workbench.ModelAssembler"/>
+</scr:component>
