@@ -35,7 +35,7 @@
 			</dirset>
 			<fileset dir="${target_home}/plugins">
 				<patternset>
-					<include name="javax.servlet*.jar"/>
+					<include name="jakarta.servlet*.jar"/>
 					<include name="javax.servlet.jsp*.jar"/>
 					<include name="javax.el*.jar"/>
 					<include name="com.sun.el*.jar"/>
