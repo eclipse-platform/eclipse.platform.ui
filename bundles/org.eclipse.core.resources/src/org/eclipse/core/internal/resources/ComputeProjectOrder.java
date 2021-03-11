@@ -697,7 +697,7 @@ public class ComputeProjectOrder {
 		// Takes an id as input, and returns the nodes in the filteredGraph that are adjacent to this node
 		// so that if initial graph has A->B and B->C and B->D and B is removed, this function return C and D
 		// when invoked on A.
-		Function<T, Set<T>> computeAdjacents = new Function<T, Set<T>>() {
+		Function<T, Set<T>> computeAdjacents = new Function<>() {
 			private Set<T> processing = new HashSet<>();
 			// Store intermediary results to not repeat same computations with the same expected results
 			private Map<T, Set<T>> adjacentsMap = new HashMap<>(initialGraph.vertexList.size(), 1.f);

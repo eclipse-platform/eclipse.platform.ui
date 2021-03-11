@@ -492,28 +492,25 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 	 * before all other characters. (Ex: "/foo" &lt; "/foo/zzz" &lt; "/fooaaa").
 	 */
 	Comparator<IFileStore> getComparator() {
-		return new Comparator<IFileStore>() {
-			@Override
-			public int compare(IFileStore store1, IFileStore store2) {
-				//scheme takes precedence over all else
-				int compare = compareStringOrNull(store1.getFileSystem().getScheme(), store2.getFileSystem().getScheme());
-				if (compare != 0)
-					return compare;
-				// compare based on URI path segment values
-				final URI uri1;
-				final URI uri2;
-				try {
-					uri1 = store1.toURI();
-					uri2 = store2.toURI();
-				} catch (Exception e) {
-					//protect against misbehaving 3rd party code in file system implementations
-					Policy.log(e);
-					return 1;
-				}
-				return compareUri(uri1, uri2);
+		return (store1, store2) -> {
+			//scheme takes precedence over all else
+			int compare = compareStringOrNull(store1.getFileSystem().getScheme(), store2.getFileSystem().getScheme());
+			if (compare != 0)
+				return compare;
+			// compare based on URI path segment values
+			final URI uri1;
+			final URI uri2;
+			try {
+				uri1 = store1.toURI();
+				uri2 = store2.toURI();
+			} catch (Exception e) {
+				//protect against misbehaving 3rd party code in file system implementations
+				Policy.log(e);
+				return 1;
 			}
+			return compareUri(uri1, uri2);
 		};
-	}			
+	}
 	public static int compareUri(URI uri1, URI uri2) {
 				int compare;
 				// compare hosts
