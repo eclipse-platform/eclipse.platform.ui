@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.help.ui" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="Removed re-exported IPlatformRunnable via bug 564890" id="926941240">
+            <message_arguments>
+                <message_argument value="4.3.0"/>
+                <message_argument value="4.2.200"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.core.runtime.IPlatformRunnable">
+        <filter comment="Removed re-exported IPlatformRunnable via bug 564890" id="305422471">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.runtime.IPlatformRunnable"/>
+                <message_argument value="org.eclipse.help.ui_4.2.200"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
