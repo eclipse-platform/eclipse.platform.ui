@@ -8,11 +8,43 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.core.runtime.ILibrary">
+        <filter comment="Planned deletion" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.runtime.ILibrary"/>
+                <message_argument value="org.eclipse.core.runtime_3.21.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="META-INF/MANIFEST.MF" type="org.eclipse.core.runtime.IPlatformRunnable">
         <filter comment="Planned-Deletion" id="305324134">
             <message_arguments>
                 <message_argument value="org.eclipse.core.runtime.IPlatformRunnable"/>
                 <message_argument value="org.eclipse.core.runtime_3.21.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.core.runtime.IPluginPrerequisite">
+        <filter comment="Planned deletion" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.runtime.IPluginPrerequisite"/>
+                <message_argument value="org.eclipse.core.runtime_3.21.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.core.runtime.IPluginRegistry">
+        <filter comment="Planned deletion" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.runtime.IPluginRegistry"/>
+                <message_argument value="org.eclipse.core.runtime_3.21.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/core/runtime/Platform.java" type="org.eclipse.core.runtime.Platform">
+        <filter comment="Planned deletion" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.runtime.Platform"/>
+                <message_argument value="getPluginRegistry()"/>
             </message_arguments>
         </filter>
     </resource>

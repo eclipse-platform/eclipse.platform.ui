@@ -788,17 +788,6 @@ public final class Platform {
 	}
 
 	/**
-	 * As the org.eclipse.core.runtime.compatibility plug-in has been removed in
-	 * Eclipse 4.6 this method is not supported anymore.
-	 *
-	 * See the comments on {@link IPluginRegistry} and its methods for details.
-	 */
-	@Deprecated
-	public static IPluginRegistry getPluginRegistry() {
-		return null;
-	}
-
-	/**
 	 * Returns the location in the local file system of the plug-in
 	 * state area for the given plug-in.
 	 * The platform must be running.
