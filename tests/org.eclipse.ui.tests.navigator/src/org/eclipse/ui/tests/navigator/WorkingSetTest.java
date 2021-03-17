@@ -249,6 +249,7 @@ public class WorkingSetTest extends NavigatorTestBase {
 		for (ViewerFilter vf1 : vf) {
 			if (vf1 instanceof ResourceWorkingSetFilter) {
 				found = true;
+				break;
 			}
 		}
 		assertTrue(found);
@@ -261,6 +262,7 @@ public class WorkingSetTest extends NavigatorTestBase {
 		for (ViewerFilter vf1 : vf) {
 			if (vf1 instanceof ResourceWorkingSetFilter) {
 				found = true;
+				break;
 			}
 		}
 		assertTrue("Working set filter is gone, oh my!", found);
