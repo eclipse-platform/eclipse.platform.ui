@@ -72,6 +72,7 @@ public class ObservableContractTest extends ObservableDelegateTest {
 		for (IObservable c : collected) {
 			if (c == created[0]) {
 				wasCollected = true;
+				break;
 			}
 		}
 		assertTrue(wasCollected);
