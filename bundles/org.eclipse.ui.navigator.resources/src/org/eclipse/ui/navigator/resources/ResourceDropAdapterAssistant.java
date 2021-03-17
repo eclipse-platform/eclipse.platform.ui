@@ -128,6 +128,7 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 			for (IResource res : selectedResources) {
 				if(res instanceof IProject) {
 					bProjectDrop = true;
+					break;
 				}
 			}
 			if(bProjectDrop) {
