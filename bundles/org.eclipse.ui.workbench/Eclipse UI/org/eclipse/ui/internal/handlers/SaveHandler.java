@@ -18,6 +18,7 @@ import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablesSource;
@@ -97,40 +98,60 @@ public class SaveHandler extends AbstractSaveHandler {
 		// no window? not active
 		if (window == null)
 			return EvaluationResult.FALSE;
+
+		boolean enabled = evaluateEnabled(context, window);
+		if (window != null) {
+			Shell shell = window.getShell();
+			if (shell != null && !shell.isDisposed()) {
+				shell.setModified(enabled);
+			}
+		}
+
+		return enabled ? EvaluationResult.TRUE : EvaluationResult.FALSE;
+	}
+
+	/**
+	 * @param context
+	 * @param window
+	 * @param page
+	 * @return
+	 */
+	private boolean evaluateEnabled(IEvaluationContext context, IWorkbenchWindow window) {
+
 		WorkbenchPage page = (WorkbenchPage) window.getActivePage();
 
 		// no page? not active
 		if (page == null)
-			return EvaluationResult.FALSE;
+			return false;
 
 		MPart activeMPart = getActivePart(window);
 
 		IWorkbenchPart activePart = InternalHandlerUtil.getActivePart(context);
 		ISaveablePart part = SaveableHelper.getSaveable(activePart);
 		if (part == null && activeMPart != null && activeMPart.isDirty()) {
-			return EvaluationResult.TRUE;
+			return true;
 		}
 
 		// get saveable part
 		ISaveablePart saveablePart = getSaveablePart(context);
 		if (saveablePart == null && activeMPart == null)
-			return EvaluationResult.FALSE;
+			return false;
 
 		if (saveablePart instanceof ISaveablesSource) {
 			ISaveablesSource modelSource = (ISaveablesSource) saveablePart;
 			if (SaveableHelper.needsSave(modelSource))
-				return EvaluationResult.TRUE;
+				return true;
 			if (activeMPart == null)
-				return EvaluationResult.FALSE;
+				return false;
 		}
 
 		if (saveablePart != null && saveablePart.isDirty())
-			return EvaluationResult.TRUE;
+			return true;
 
 		if (activeMPart != null && activeMPart.isDirty()) {
-			return EvaluationResult.TRUE;
+			return true;
 		}
 
-		return EvaluationResult.FALSE;
+		return false;
 	}
 }
