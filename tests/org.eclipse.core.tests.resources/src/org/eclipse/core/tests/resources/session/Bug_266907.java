@@ -17,7 +17,6 @@ import java.io.*;
 import junit.framework.Test;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.tests.resources.WorkspaceSessionTest;
 import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
 
@@ -72,7 +71,7 @@ public class Bug_266907 extends WorkspaceSessionTest {
 		File dotProjectCopy = getTempDir().append("dotProjectCopy").toFile();
 		try {
 			dotProjectCopy.createNewFile();
-			transferStreams(new FileInputStream(dotProject), new FileOutputStream(dotProjectCopy), null, new NullProgressMonitor());
+			transferStreams(new FileInputStream(dotProject), new FileOutputStream(dotProjectCopy), null);
 			dotProject.delete();
 		} catch (FileNotFoundException e) {
 			fail("5.0", e);
@@ -93,7 +92,7 @@ public class Bug_266907 extends WorkspaceSessionTest {
 		File dotProjectCopy = getTempDir().append("dotProjectCopy").toFile();
 		try {
 			dotProject.createNewFile();
-			transferStreams(new FileInputStream(dotProjectCopy), new FileOutputStream(dotProject), null, new NullProgressMonitor());
+			transferStreams(new FileInputStream(dotProjectCopy), new FileOutputStream(dotProject), null);
 			dotProjectCopy.delete();
 		} catch (IOException e1) {
 			fail("2.0", e1);

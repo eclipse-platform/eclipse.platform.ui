@@ -1023,7 +1023,7 @@ public class BuilderTest extends AbstractBuilderTest {
 			getWorkspace().run((IWorkspaceRunnable) monitor -> {
 				input.setContents(new ByteArrayInputStream(new byte[] {5, 4, 3, 2, 1}), IResource.NONE, getMonitor());
 				project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
-				transferStreams(output.getContents(), out, null, null);
+				transferStreams(output.getContents(), out, null);
 			}, getMonitor());
 		} catch (CoreException e) {
 			fail("1.99", e);

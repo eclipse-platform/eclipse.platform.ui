@@ -75,12 +75,12 @@ public class SafeFileInputOutputStreamTest extends ResourceTest {
 		SafeFileOutputStream safeStream = createSafeStream(target.getAbsolutePath(), tempLocation.toOSString(), "2.0");
 		File tempFile = tempLocation.toFile();
 		String contents = getRandomString();
-		transferStreams(getContents(contents), safeStream, target.getAbsolutePath(), null);
+		transferStreams(getContents(contents), safeStream, target.getAbsolutePath());
 
 		// now we should have a temp file
 		safeStream = createSafeStream(target.getAbsolutePath(), tempLocation.toOSString(), "4.0");
 		tempFile = tempLocation.toFile();
-		transferStreams(getContents(contents), safeStream, target.getAbsolutePath(), null);
+		transferStreams(getContents(contents), safeStream, target.getAbsolutePath());
 
 		assertTrue("5.0", target.exists());
 		assertTrue("5.1", !tempFile.exists());
@@ -102,7 +102,7 @@ public class SafeFileInputOutputStreamTest extends ResourceTest {
 		// basic use (like a FileOutputStream)
 		SafeFileOutputStream safeStream = createSafeStream(target, "1.0");
 		String contents = getRandomString();
-		transferStreams(getContents(contents), safeStream, target.getAbsolutePath(), null);
+		transferStreams(getContents(contents), safeStream, target.getAbsolutePath());
 		InputStream diskContents = getContents(target, "1.2");
 		assertTrue("1.3", compareContent(diskContents, getContents(contents)));
 
@@ -111,7 +111,7 @@ public class SafeFileInputOutputStreamTest extends ResourceTest {
 		safeStream = createSafeStream(target, "2.0");
 		File tempFile = new File(safeStream.getTempFilePath());
 		assertTrue("2.0", tempFile.exists());
-		transferStreams(getContents(contents), safeStream, target.getAbsolutePath(), null);
+		transferStreams(getContents(contents), safeStream, target.getAbsolutePath());
 		diskContents = getContents(target, "3.1");
 		assertTrue("3.2", compareContent(diskContents, getContents(contents)));
 		assertTrue("3.3", !tempFile.exists());
@@ -134,7 +134,7 @@ public class SafeFileInputOutputStreamTest extends ResourceTest {
 
 		// update target contents
 		String contents = getRandomString();
-		transferStreams(getContents(contents), safeStream, target.getAbsolutePath(), null);
+		transferStreams(getContents(contents), safeStream, target.getAbsolutePath());
 		InputStream diskContents = getContents(target, "3.1");
 		assertTrue("3.2", compareContent(diskContents, getContents(contents)));
 		assertTrue("3.3", !tempFile.exists());
@@ -146,7 +146,7 @@ public class SafeFileInputOutputStreamTest extends ResourceTest {
 
 		// update target contents
 		contents = getRandomString();
-		transferStreams(getContents(contents), safeStream, target.getAbsolutePath(), null);
+		transferStreams(getContents(contents), safeStream, target.getAbsolutePath());
 		diskContents = getContents(target, "5.1");
 		assertTrue("5.2", compareContent(diskContents, getContents(contents)));
 		assertTrue("5.3", !tempFile.exists());

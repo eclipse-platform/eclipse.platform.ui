@@ -103,28 +103,12 @@ public abstract class ResourceTest extends CoreTest {
 	/**
 	 * Convenience method to copy contents from one stream to another.
 	 */
-	public static void transferStreams(InputStream source, OutputStream destination, String path, IProgressMonitor monitor) {
-		SubMonitor subMonitor = SubMonitor.convert(monitor);
+	public static void transferStreams(InputStream source, OutputStream destination, String path) {
 		try {
-			byte[] buffer = new byte[8192];
-			while (true) {
-				int bytesRead = -1;
-				try {
-					bytesRead = source.read(buffer);
-				} catch (IOException e) {
-					fail("Failed to read during transferStreams", e);
-				}
-				if (bytesRead == -1) {
-					break;
-				}
-				try {
-					destination.write(buffer, 0, bytesRead);
-				} catch (IOException e) {
-					fail("Failed to write during transferStreams", e);
-				}
-				subMonitor.setWorkRemaining(100).split(1);
-			}
-		} finally {
+			source.transferTo(destination);
+		}  catch (IOException e) {
+			fail("Failed to write during transferStreams", e);
+		}finally {
 			FileUtil.safeClose(source);
 			FileUtil.safeClose(destination);
 		}
