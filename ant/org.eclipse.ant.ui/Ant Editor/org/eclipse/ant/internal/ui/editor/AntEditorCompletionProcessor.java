@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2019 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2021 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  *
@@ -119,7 +119,7 @@ import org.w3c.dom.NodeList;
  */
 public class AntEditorCompletionProcessor extends TemplateCompletionProcessor implements ICompletionListener {
 
-	private Comparator<ICompletionProposal> proposalComparator = new Comparator<ICompletionProposal>() {
+	private Comparator<ICompletionProposal> proposalComparator = new Comparator<>() {
 		@Override
 		public int compare(ICompletionProposal o1, ICompletionProposal o2) {
 

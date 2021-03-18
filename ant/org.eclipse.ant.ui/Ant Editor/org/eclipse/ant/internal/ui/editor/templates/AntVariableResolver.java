@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -24,7 +24,7 @@ import org.eclipse.jface.text.templates.TemplateVariableResolver;
  */
 public class AntVariableResolver extends TemplateVariableResolver {
 
-	Comparator<String> comparator = new Comparator<String>() {
+	Comparator<String> comparator = new Comparator<>() {
 
 		@Override
 		public int compare(String o1, String o2) {
