@@ -1246,7 +1246,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			else {
 				if (counts.get(to) == null)
 					counts.put(to, Integer.valueOf(0));
-				fromCount = fromCount == null ? Integer.valueOf(1) : new Integer(fromCount.intValue() + 1);
+				fromCount = fromCount == null ? Integer.valueOf(1) : Integer.valueOf(fromCount.intValue() + 1);
 				counts.put(from, fromCount);
 			}
 		}
