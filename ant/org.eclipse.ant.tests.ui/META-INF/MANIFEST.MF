@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.ant.tests.ui; singleton:=true
-Bundle-Version: 3.9.1100.qualifier
+Bundle-Version: 3.10.0.qualifier
 Bundle-ClassPath: anttestsui.jar
 Bundle-Activator: org.eclipse.ant.tests.ui.testplugin.AntUITestPlugin
 Bundle-Vendor: %providerName
@@ -39,6 +39,6 @@ Require-Bundle: org.eclipse.ui.ide;resolution:=optional,
  org.eclipse.ant.launching,
  org.eclipse.core.externaltools
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Eclipse-BundleShape: dir
 Automatic-Module-Name: org.eclipse.ant.tests.ui

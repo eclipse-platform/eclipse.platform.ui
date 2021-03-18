@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.ant.tests.core; singleton:=true
-Bundle-Version: 3.5.800.qualifier
+Bundle-Version: 3.6.0.qualifier
 Bundle-ClassPath: anttestscore.jar
 Bundle-Activator: org.eclipse.ant.tests.core.testplugin.AntTestPlugin
 Bundle-Vendor: %providerName
@@ -18,6 +18,6 @@ Require-Bundle: org.eclipse.ui.ide;resolution:=optional,
  org.eclipse.ant.core,
  org.eclipse.core.runtime
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Eclipse-BundleShape: dir
 Automatic-Module-Name: org.eclipse.ant.tests.core
