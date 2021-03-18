@@ -45,8 +45,7 @@ public class LaunchUpdateIntroAction implements IIntroAction {
 	boolean executeUpdateCommand(String command) {
 		ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
 		IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
-		Command cmd;
-		cmd = commandService.getCommand(command);
+		Command cmd = commandService.getCommand(command);
 		ExecutionEvent executionEvent = handlerService.createExecutionEvent(cmd, null);
 		try {
 			cmd.executeWithChecks(executionEvent);
