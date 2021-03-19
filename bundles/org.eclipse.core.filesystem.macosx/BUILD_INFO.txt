@@ -1,10 +1,10 @@
 Native Build Info:
 ------------------
 
-Platform:         iMac
-Built by:         pawel.pogorzelski@pl.ibm.com
-Build date:       21-Jan-2010
-OS Name:          Mac OS X
-OS Version:       10.5.7
-Compiler version: gcc version 4.0.1
-Java version:     Standard Edition (build 1.5.0_19-137)
+Platform:         Jenkins Mac slave (b9h15-macos10.15)
+Build date:       22-Mar-2021
+OS Name:          macOS
+OS Version:       10.15.7
+Compiler version: Apple clang version 12.0.0
+Java version:     jdk1.8.0_192
+Architecture:	  x86_64 and arm64 (universal binary)

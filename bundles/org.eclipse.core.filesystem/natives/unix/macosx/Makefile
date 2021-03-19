@@ -19,12 +19,14 @@ LIB_NAME_FULL=libunixfile_1_0_0.jnilib
 
 JAVA_HOME=$(shell /usr/libexec/java_home)
 
+$(info JAVA_HOME is $(JAVA_HOME))
+
 JDK_INCLUDE=-I $(JAVA_HOME)/include -I $(JAVA_HOME)/include/darwin
 MACOSX_DEPLOYMENT_TARGET=10.10
 
-FRAMEWORKS=-framework JavaVM -framework CoreServices
+FRAMEWORKS=-framework CoreServices
 # define MACOSX to include Mac OS X specific code
-CC_FLAGS=-arch x86_64 -mmacosx-version-min=10.10 -DMACOSX
+CC_FLAGS=-arch x86_64 -arch arm64 -mmacosx-version-min=10.10 -DMACOSX
 
 core:
 	cc $(JDK_INCLUDE) $(CORE.C) -o $(LIB_NAME_FULL) -bundle $(FRAMEWORKS) $(CC_FLAGS)
@@ -32,6 +34,6 @@ core:
 clean:
 	rm -f $(LIB_NAME_FULL)
 
-install:
+install: core
 	rm -f ../../../../org.eclipse.core.filesystem.macosx/os/macosx/$(LIB_NAME_FULL)
 	mv $(LIB_NAME_FULL) ../../../../org.eclipse.core.filesystem.macosx/os/macosx/
