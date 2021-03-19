@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.internal.WorkbenchImages;
@@ -138,7 +138,7 @@ public class FileSystemElement implements IAdaptable {
 			return adapter.cast(workbenchAdapter);
 		}
 		// defer to the platform
-		return Platform.getAdapterManager().getAdapter(this, adapter);
+		return Adapters.adapt(this, adapter);
 	}
 
 	/**
