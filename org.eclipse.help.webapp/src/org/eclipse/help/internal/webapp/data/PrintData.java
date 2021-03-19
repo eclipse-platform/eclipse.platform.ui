@@ -506,7 +506,7 @@ public class PrintData extends RequestData {
 	private static String getAnchor(String href) {
 		int index = href.indexOf('#');
 		if (index != -1) {
-			return href.substring(index, href.length());
+			return href.substring(index);
 		}
 		return ""; //$NON-NLS-1$
 	}

@@ -59,7 +59,7 @@ public class ServletResources {
 			return property;
 		}
 		return property.substring(0, amp)
-				+ property.substring(amp + 1, property.length());
+				+ property.substring(amp + 1);
 	}
 
 	/**
@@ -119,7 +119,7 @@ public class ServletResources {
 		return property.substring(0, amp)
 				+ acceleratorPrefix
 				+ property.charAt(amp+1) + acceleratorSuffix
-				+ property.substring(amp + 2, property.length());
+				+ property.substring(amp + 2);
 	}
 
 	/**
