@@ -521,7 +521,7 @@ public class CheatSheetParser implements IStatusContainer {
 			firstNonWhitespaceIndex++;
 		}
 		if (firstNonWhitespaceIndex > 0) {
-			return nodeValue.substring(firstNonWhitespaceIndex, nodeValue.length());
+			return nodeValue.substring(firstNonWhitespaceIndex);
 		}
 		return nodeValue;
 	}
