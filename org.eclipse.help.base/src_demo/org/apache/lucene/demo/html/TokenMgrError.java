@@ -88,7 +88,7 @@ public class TokenMgrError extends Error
            default:
               if ((ch = str.charAt(i)) < 0x20 || ch > 0x7e) {
                  String s = "0000" + Integer.toString(ch, 16); //$NON-NLS-1$
-                 retval.append("\\u" + s.substring(s.length() - 4, s.length())); //$NON-NLS-1$
+                 retval.append("\\u" + s.substring(s.length() - 4)); //$NON-NLS-1$
               } else {
                  retval.append(ch);
               }
