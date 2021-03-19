@@ -168,7 +168,7 @@ public class Sleak {
 		if (index == -1) {
 			return string;
 		}
-		return string.substring(index + 1, string.length());
+		return string.substring(index + 1);
 	}
 
 	void toggleStackTrace() {
