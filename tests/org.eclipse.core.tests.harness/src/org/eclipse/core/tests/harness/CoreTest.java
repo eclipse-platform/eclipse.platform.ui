@@ -237,11 +237,16 @@ public class CoreTest extends TestCase {
 		String[] envp = {};
 		try {
 			Process p;
-			if (isDir) {
-				String[] cmd = { "cmd", "/c", "mklink", "/d", linkName, linkTarget };
-				p = Runtime.getRuntime().exec(cmd, envp, basedir);
+			if (Platform.getOS().equals(Platform.OS_WIN32)) {
+				if (isDir) {
+					String[] cmd = {"cmd", "/c", "mklink", "/d", linkName, linkTarget};
+					p = Runtime.getRuntime().exec(cmd, envp, basedir);
+				} else {
+					String[] cmd = {"cmd", "/c", "mklink", linkName, linkTarget};
+					p = Runtime.getRuntime().exec(cmd, envp, basedir);
+				}
 			} else {
-				String[] cmd = { "cmd", "/c", "mklink", linkName, linkTarget };
+				String[] cmd = {"ln", "-s", linkTarget, linkName};
 				p = Runtime.getRuntime().exec(cmd, envp, basedir);
 			}
 			int exitcode = p.waitFor();
@@ -261,19 +266,23 @@ public class CoreTest extends TestCase {
 	 */
 	protected boolean canCreateSymLinks() {
 		if (canCreateSymLinks == null) {
-			// Creation of a symbolic link on Windows requires administrator privileges,
-			// so it may or may not be possible.
-			IPath tempDir = getTempDir();
-			String linkName = FileSystemHelper.getRandomLocation(tempDir).lastSegment();
-			try {
-				// Try to create a symlink.
-				createSymLink(tempDir.toFile(), linkName, "testTarget", false);
-				// Clean up if the link was created.
-				new File(tempDir.toFile(), linkName).delete();
+			if (Platform.getOS().equals(Platform.OS_WIN32)) {
+				// Creation of a symbolic link on Windows requires administrator privileges,
+				// so it may or may not be possible.
+				IPath tempDir = getTempDir();
+				String linkName = FileSystemHelper.getRandomLocation(tempDir).lastSegment();
+				try {
+					// Try to create a symlink.
+					createSymLink(tempDir.toFile(), linkName, "testTarget", false);
+					// Clean up if the link was created.
+					new File(tempDir.toFile(), linkName).delete();
+					canCreateSymLinks = Boolean.TRUE;
+				} catch (AssertionFailedError e) {
+					// This exception indicates that creation of the symlink failed.
+					canCreateSymLinks = Boolean.FALSE;
+				}
+			} else {
 				canCreateSymLinks = Boolean.TRUE;
-			} catch (AssertionFailedError e) {
-				// This exception indicates that creation of the symlink failed.
-				canCreateSymLinks = Boolean.FALSE;
 			}
 		}
 		return canCreateSymLinks.booleanValue();
@@ -361,7 +370,6 @@ public class CoreTest extends TestCase {
 	public String getUniqueString() {
 		return System.currentTimeMillis() + "-" + Math.random();
 	}
-
 
 	/**
 	 * Copy the data from the input stream to the output stream.
