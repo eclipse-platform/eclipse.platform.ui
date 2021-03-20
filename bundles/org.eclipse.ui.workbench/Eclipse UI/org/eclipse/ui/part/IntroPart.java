@@ -17,10 +17,10 @@ package org.eclipse.ui.part;
 import java.util.Objects;
 import java.util.Optional;
 import org.eclipse.core.commands.common.EventManager;
-import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
@@ -125,13 +125,14 @@ public abstract class IntroPart extends EventManager implements IIntroPart, IExe
 	/**
 	 * This implementation of the method declared by <code>IAdaptable</code> passes
 	 * the request along to the platform's adapter manager; roughly
-	 * <code>Adapters.adapt(this, adapter)</code>. Subclasses may override this
-	 * method (however, if they do so, they should invoke the method on their
-	 * superclass to ensure that the Platform's adapter manager is consulted).
+	 * <code>Platform.getAdapterManager().getAdapter(this, adapter)</code>.
+	 * Subclasses may override this method (however, if they do so, they should
+	 * invoke the method on their superclass to ensure that the Platform's adapter
+	 * manager is consulted).
 	 */
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-		return Adapters.adapt(this, adapter);
+		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 
 	/**
