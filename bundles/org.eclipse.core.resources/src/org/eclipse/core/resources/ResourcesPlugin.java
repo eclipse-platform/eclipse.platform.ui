@@ -18,9 +18,9 @@
  *******************************************************************************/
 package org.eclipse.core.resources;
 
-import java.util.*;
-import org.eclipse.core.internal.preferences.PreferencesService;
-import org.eclipse.core.internal.resources.*;
+import java.util.Hashtable;
+import org.eclipse.core.internal.resources.CheckMissingNaturesListener;
+import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.runtime.*;
@@ -373,24 +373,6 @@ public final class ResourcesPlugin extends Plugin {
 	}
 
 	/**
-	 * Constructs a brand new workspace structure at the location in the local file system
-	 * identified by the given path and returns a new workspace object.
-	 *
-	 * @exception CoreException if the workspace structure could not be constructed.
-	 * Reasons include:
-	 * <ul>
-	 * <li> There is an existing workspace structure on at the given location
-	 *      in the local file system.
-	 * <li> A file exists at the given location in the local file system.
-	 * <li> A directory could not be created at the given location in the
-	 *      local file system.
-	 * </ul>
-	 */
-	private static void constructWorkspace() throws CoreException {
-		new LocalMetaArea().createMetaArea();
-	}
-
-	/**
 	 * Returns the encoding to use when reading text files in the workspace.
 	 * This is the value of the <code>PREF_ENCODING</code> preference, or the
 	 * file system encoding (<code>System.getProperty("file.encoding")</code>)
@@ -477,15 +459,9 @@ public final class ResourcesPlugin extends Plugin {
 		Hashtable<String, String> properties = new Hashtable<>(2);
 		properties.put(DebugOptions.LISTENER_SYMBOLICNAME, PI_RESOURCES);
 		debugRegistration = context.registerService(DebugOptionsListener.class, Policy.RESOURCES_DEBUG_OPTIONS_LISTENER, properties);
-
-		if (!new LocalMetaArea().hasSavedWorkspace()) {
-			constructWorkspace();
-		}
 		// Remember workspace before opening, to
 		// make it easier to debug cases where open() is failing.
 		workspace = new Workspace();
-		PlatformURLResourceConnection.startup(workspace.getRoot().getLocation());
-		initializePreferenceLookupOrder();
 		IStatus result = workspace.open(null);
 		if (!result.isOK())
 			getLog().log(result);
@@ -495,17 +471,4 @@ public final class ResourcesPlugin extends Plugin {
 		InstanceScope.INSTANCE.getNode(PI_RESOURCES).addPreferenceChangeListener(checkMissingNaturesListener);
 	}
 
-	/*
-	 * Add the project scope to the preference service's default look-up order so
-	 * people get it for free
-	 */
-	private void initializePreferenceLookupOrder() {
-		PreferencesService service = PreferencesService.getDefault();
-		String[] original = service.getDefaultDefaultLookupOrder();
-		List<String> newOrder = new ArrayList<>();
-		// put the project scope first on the list
-		newOrder.add(ProjectScope.SCOPE);
-		newOrder.addAll(Arrays.asList(original));
-		service.setDefaultDefaultLookupOrder(newOrder.toArray(new String[newOrder.size()]));
-	}
 }
