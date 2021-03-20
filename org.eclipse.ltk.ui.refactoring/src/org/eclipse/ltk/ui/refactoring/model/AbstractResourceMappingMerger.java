@@ -319,7 +319,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 						final IFileRevision revision= resourceDiff.getAfterState();
 						if (revision != null) {
 							final String name= revision.getName();
-							if (name.equalsIgnoreCase(RefactoringHistoryService.NAME_HISTORY_FILE))
+							if (RefactoringHistoryService.NAME_HISTORY_FILE.equalsIgnoreCase(name))
 								getRefactoringDescriptors(revision, localDescriptors, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 						}
 					}
@@ -329,7 +329,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 						final IFileRevision revision= resourceDiff.getAfterState();
 						if (revision != null) {
 							final String name= revision.getName();
-							if (name.equalsIgnoreCase(RefactoringHistoryService.NAME_HISTORY_FILE))
+							if (RefactoringHistoryService.NAME_HISTORY_FILE.equalsIgnoreCase(name))
 								getRefactoringDescriptors(revision, remoteDescriptors, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 						}
 					}

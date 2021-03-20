@@ -493,7 +493,7 @@ public abstract class RefactoringWizard extends Wizard {
 	public IWizardPage getPreviousPage(IWizardPage page) {
 		if (hasUserInput())
 			return super.getPreviousPage(page);
-		if (! page.getName().equals(IErrorWizardPage.PAGE_NAME)){
+		if (! IErrorWizardPage.PAGE_NAME.equals(page.getName())){
 			if (fConditionCheckingStatus.isOK())
 				return null;
 		}

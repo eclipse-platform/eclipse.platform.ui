@@ -103,7 +103,7 @@ public abstract class AbstractSynchronizationContentProvider extends Synchroniza
 						final IFileRevision revision1= resourceDiff1.getAfterState();
 						if (revision1 != null) {
 							final String name1= revision1.getName();
-							if (name1.equalsIgnoreCase(RefactoringHistoryService.NAME_HISTORY_FILE))
+							if (RefactoringHistoryService.NAME_HISTORY_FILE.equalsIgnoreCase(name1))
 								AbstractResourceMappingMerger.getRefactoringDescriptors(revision1, localDescriptors, new SubProgressMonitor(finalMonitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 						}
 					}
@@ -113,7 +113,7 @@ public abstract class AbstractSynchronizationContentProvider extends Synchroniza
 						final IFileRevision revision2= resourceDiff2.getAfterState();
 						if (revision2 != null) {
 							final String name2= revision2.getName();
-							if (name2.equalsIgnoreCase(RefactoringHistoryService.NAME_HISTORY_FILE))
+							if (RefactoringHistoryService.NAME_HISTORY_FILE.equalsIgnoreCase(name2))
 								AbstractResourceMappingMerger.getRefactoringDescriptors(revision2, remoteDescriptors, new SubProgressMonitor(finalMonitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 						}
 					}

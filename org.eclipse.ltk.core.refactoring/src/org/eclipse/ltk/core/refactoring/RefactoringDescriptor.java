@@ -448,7 +448,7 @@ public abstract class RefactoringDescriptor implements Comparable<RefactoringDes
 		final StringBuilder buffer= new StringBuilder(128);
 
 		buffer.append(getClass().getName());
-		if (fRefactoringId.equals(ID_UNKNOWN))
+		if (ID_UNKNOWN.equals(fRefactoringId))
 			buffer.append("[unknown refactoring]"); //$NON-NLS-1$
 		else {
 			buffer.append("[timeStamp="); //$NON-NLS-1$

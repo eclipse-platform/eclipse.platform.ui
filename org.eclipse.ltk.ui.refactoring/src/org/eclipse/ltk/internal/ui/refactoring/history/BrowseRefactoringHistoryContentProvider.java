@@ -240,7 +240,7 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 		if (fSortProjects) {
 			final List<Object> list= new ArrayList<>(32);
 			for (String project : getRefactoringHistories().keySet()) {
-				if (project.equals(WORKSPACE_PROJECT)) {
+				if (WORKSPACE_PROJECT.equals(project)) {
 					final RefactoringHistory history= getRefactoringHistory(project);
 					if (history != null) {
 						if (fControlConfiguration.isTimeDisplayed()) {
