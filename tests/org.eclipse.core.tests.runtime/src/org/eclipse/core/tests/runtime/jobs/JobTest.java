@@ -991,7 +991,7 @@ public class JobTest extends AbstractJobTest {
 	}
 
 	public void testJoinInterruptUIThread() throws InterruptedException {
-		final Job job = new TestJob("job", 1000, 100);
+		final Job job = new TestJob("job", 3, org.eclipse.core.internal.jobs.JobManager.MAX_WAIT_INTERVAL);
 		Thread t = new Thread(() -> {
 			job.schedule();
 			try {

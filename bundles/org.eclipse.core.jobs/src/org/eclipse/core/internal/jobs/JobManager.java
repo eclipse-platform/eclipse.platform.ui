@@ -65,7 +65,7 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 	/**
 	 * Determines how often the progress monitor is checked for cancellation during the join call.
 	 */
-	private static final long MAX_WAIT_INTERVAL = 100;
+	public static final long MAX_WAIT_INTERVAL = 100;
 
 	private static final String OPTION_DEADLOCK_ERROR = PI_JOBS + "/jobs/errorondeadlock"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_BEGIN_END = PI_JOBS + "/jobs/beginend"; //$NON-NLS-1$
