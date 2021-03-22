@@ -339,8 +339,6 @@ public class WorkspaceTest extends ResourceTest {
 		}
 		IProject project = getTestProject();
 		FussyProgressMonitor monitor = new FussyProgressMonitor();
-		project.create(null, monitor);
-		monitor.assertUsedUp();
 		IPath workingLocation = project.getWorkingLocation("org.eclipse.core.tests.resources");
 		IPath linkTarget = getRandomLocation();
 		try {
