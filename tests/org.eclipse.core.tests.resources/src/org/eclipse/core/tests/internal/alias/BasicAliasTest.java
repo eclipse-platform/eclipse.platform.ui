@@ -342,6 +342,29 @@ public class BasicAliasTest extends ResourceTest {
 	}
 
 	/* Bug570896 */
+	public void testCompareUriOctets() throws URISyntaxException {
+		// uri.getPath() will normalize the octets
+		String[] urisStrings = { //
+				"http://Server/Volume:A", //
+				"http://Server/Volume:%41", // hex 41==Ascii A
+				"http://Server/Volume:A", //
+				"http://Server/Volume:%41", //
+		};
+		assertPreOrdered(urisStrings);
+	}
+
+	/* Bug570896 */
+	public void testCompareUriCase() throws URISyntaxException {
+		// its not a requirement but a back compatibility that the order is
+		// case sensitive even on case insensitive OSes:
+		String[] urisStrings = { //
+				"http://Server/Volume:a", //
+				"http://Server/Volume:A", // A>a
+		};
+		assertComparedDistinct(urisStrings);
+	}
+
+	/* Bug570896 */
 	public void testCompareUriFragment() throws URISyntaxException {
 		// fragments should NOT be distinct! Even though they might not be used:
 		String[] urisStrings = { //
