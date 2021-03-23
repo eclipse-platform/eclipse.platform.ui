@@ -10,6 +10,7 @@
 package org.eclipse.help.internal.webapp;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Scanner;
 
@@ -27,10 +28,13 @@ public class HelpUiJs extends HttpServlet {
     private static final String JS_TEMPLATE_DEFAULT = "org.eclipse.help.webapp/m/index.js"; //$NON-NLS-1$
     private static final String JS_TEMPLATE = loadJsTemplate();
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
         response.setContentType("text/html; charset=UTF-8"); //$NON-NLS-1$
-        response.getWriter().write(HelpUi.resolve(JS_TEMPLATE, request));
+        try (PrintWriter writer = response.getWriter()) {
+			writer.write(HelpUi.resolve(JS_TEMPLATE, request));
+		}
     }
 
     private static String loadJsTemplate() {
@@ -57,8 +61,9 @@ public class HelpUiJs extends HttpServlet {
 
         // read it as InputStream and convert it to a String
         // (by using a Scanner with a delimiter that cannot be found: \A - start of input)
-        Scanner scanAll = new Scanner(resourceAsUrl.openStream()).useDelimiter("\\A"); //$NON-NLS-1$
-        return scanAll.hasNext() ? scanAll.next() : ""; //$NON-NLS-1$
+        try (Scanner scanAll = new Scanner(resourceAsUrl.openStream()).useDelimiter("\\A")) { //$NON-NLS-1$
+        	return scanAll.hasNext() ? scanAll.next() : ""; //$NON-NLS-1$
+        }
     }
 
 }
