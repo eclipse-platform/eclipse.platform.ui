@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Shell;
 
 public class Snippet063ComboViewer {
 
-	public class MyModel {
+	public static class MyModel {
 		public int counter;
 
 		public MyModel(int counter) {

@@ -203,7 +203,7 @@ public class Snippet056BooleanCellEditor {
 		}
 	}
 
-	private final class MyColumnLabelProvider extends ColumnLabelProvider {
+	private static final class MyColumnLabelProvider extends ColumnLabelProvider {
 		private String prefix;
 
 		public MyColumnLabelProvider(String prefix) {
@@ -251,7 +251,7 @@ public class Snippet056BooleanCellEditor {
 
 	}
 
-	public class MyModel {
+	public static class MyModel {
 
 		public MyModel parent;
 		public List<MyModel> child = new ArrayList<>();

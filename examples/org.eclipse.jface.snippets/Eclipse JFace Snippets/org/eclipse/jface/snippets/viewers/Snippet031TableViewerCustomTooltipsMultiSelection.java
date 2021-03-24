@@ -50,7 +50,7 @@ import org.eclipse.swt.widgets.TableItem;
  *
  */
 public class Snippet031TableViewerCustomTooltipsMultiSelection {
-	public class MyLableProvider implements ITableLabelProvider {
+	public static class MyLableProvider implements ITableLabelProvider {
 
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
@@ -90,7 +90,7 @@ public class Snippet031TableViewerCustomTooltipsMultiSelection {
 
 	}
 
-	public class MyModel {
+	public static class MyModel {
 		public String col1, col2;
 
 		public MyModel(String c1, String c2) {

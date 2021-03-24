@@ -78,7 +78,7 @@ public class Snippet017TableViewerHideShowColumns {
 		}
 	}
 
-	public class MyModel {
+	public static class MyModel {
 		public int counter;
 
 		public MyModel(int counter) {
@@ -91,7 +91,7 @@ public class Snippet017TableViewerHideShowColumns {
 		}
 	}
 
-	public class MyLabelProvider extends LabelProvider implements
+	public static class MyLabelProvider extends LabelProvider implements
 			ITableLabelProvider {
 
 		@Override

@@ -42,7 +42,7 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class Snippet057TableViewerSkipHiddenCells {
 
-	public class Person {
+	public static class Person {
 		public String givenname;
 		public String surname;
 		public String email;

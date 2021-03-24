@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.TableColumn;
  */
 public class Snippet008RevealElement {
 
-	public class MyModel {
+	public static class MyModel {
 		public int counter;
 
 		public MyModel(int counter) {

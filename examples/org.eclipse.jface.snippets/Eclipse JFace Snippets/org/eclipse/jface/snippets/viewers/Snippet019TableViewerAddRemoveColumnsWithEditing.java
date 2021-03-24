@@ -42,7 +42,7 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class Snippet019TableViewerAddRemoveColumnsWithEditing {
 
-	public class Person {
+	public static class Person {
 		public String givenname;
 		public String surname;
 		public String email;
@@ -54,7 +54,7 @@ public class Snippet019TableViewerAddRemoveColumnsWithEditing {
 		}
 	}
 
-	private class GivenNameLabelProvider extends ColumnLabelProvider {
+	private static class GivenNameLabelProvider extends ColumnLabelProvider {
 		@Override
 		public String getText(Object element) {
 			return ((Person) element).givenname;
@@ -91,7 +91,7 @@ public class Snippet019TableViewerAddRemoveColumnsWithEditing {
 		}
 	}
 
-	private class SurNameLabelProvider extends ColumnLabelProvider {
+	private static class SurNameLabelProvider extends ColumnLabelProvider {
 		@Override
 		public String getText(Object element) {
 			return ((Person) element).surname;
@@ -128,7 +128,7 @@ public class Snippet019TableViewerAddRemoveColumnsWithEditing {
 		}
 	}
 
-	private class EmailLabelProvider extends ColumnLabelProvider {
+	private static class EmailLabelProvider extends ColumnLabelProvider {
 		@Override
 		public String getText(Object element) {
 			return ((Person) element).email;

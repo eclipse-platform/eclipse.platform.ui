@@ -48,7 +48,7 @@ public class Snippet052DoubleClickCellEditor {
 
 	public static boolean flag = true;
 
-	public class MyModel {
+	public static class MyModel {
 		public int counter;
 
 		public MyModel(int counter) {

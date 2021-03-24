@@ -84,7 +84,7 @@ public class Snippet027TreeLayout {
 
 	}
 
-	public class MyModel {
+	public static class MyModel {
 		public MyModel parent;
 
 		public ArrayList<MyModel> child = new ArrayList<>();

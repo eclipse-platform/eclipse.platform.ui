@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.TableColumn;
 public class Snippet003TableLabelProvider {
 	private static Image[] images;
 
-	public class MyModel {
+	public static class MyModel {
 		public int counter;
 
 		public MyModel(int counter) {
@@ -48,7 +48,7 @@ public class Snippet003TableLabelProvider {
 		}
 	}
 
-	public class MyLabelProvider extends LabelProvider implements ITableLabelProvider {
+	public static class MyLabelProvider extends LabelProvider implements ITableLabelProvider {
 
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {

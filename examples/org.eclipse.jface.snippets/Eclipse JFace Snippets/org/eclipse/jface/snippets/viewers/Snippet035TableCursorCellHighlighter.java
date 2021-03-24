@@ -49,7 +49,7 @@ public class Snippet035TableCursorCellHighlighter {
 
 	public static boolean flag = true;
 
-	private class MyModel {
+	private static class MyModel {
 		public int counter;
 
 		public MyModel(int counter) {

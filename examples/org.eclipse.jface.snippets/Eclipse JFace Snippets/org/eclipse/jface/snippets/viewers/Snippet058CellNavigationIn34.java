@@ -48,7 +48,7 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class Snippet058CellNavigationIn34 {
 
-	public class Person {
+	public static class Person {
 		public String givenname;
 		public String surname;
 		public String email;

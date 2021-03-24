@@ -91,7 +91,7 @@ public class Snippet034CellEditorPerRow {
 
 	}
 
-	public class MyModel {
+	public static class MyModel {
 		public int counter;
 
 		public MyModel(int counter) {
@@ -104,7 +104,7 @@ public class Snippet034CellEditorPerRow {
 		}
 	}
 
-	public class MyModel2 extends MyModel {
+	public static class MyModel2 extends MyModel {
 
 		public MyModel2(int counter) {
 			super(counter);

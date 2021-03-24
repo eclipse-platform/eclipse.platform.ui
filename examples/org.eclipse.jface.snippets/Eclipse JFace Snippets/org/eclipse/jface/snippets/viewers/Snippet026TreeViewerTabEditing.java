@@ -207,7 +207,7 @@ public class Snippet026TreeViewerTabEditing {
 
 	}
 
-	public class MyModel {
+	public static class MyModel {
 		public MyModel parent;
 		public List<MyModel> child = new ArrayList<>();
 		public int counter;

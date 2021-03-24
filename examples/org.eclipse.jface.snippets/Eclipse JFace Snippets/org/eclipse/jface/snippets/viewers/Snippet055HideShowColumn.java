@@ -121,7 +121,7 @@ public class Snippet055HideShowColumn {
 
 	}
 
-	class MyColumnLabelProvider extends ColumnLabelProvider {
+	static class MyColumnLabelProvider extends ColumnLabelProvider {
 
 		private String prefix;
 
@@ -214,7 +214,7 @@ public class Snippet055HideShowColumn {
 		return b;
 	}
 
-	public class MyModel {
+	public static class MyModel {
 
 		public MyModel parent;
 		public List<MyModel> child = new ArrayList<>();

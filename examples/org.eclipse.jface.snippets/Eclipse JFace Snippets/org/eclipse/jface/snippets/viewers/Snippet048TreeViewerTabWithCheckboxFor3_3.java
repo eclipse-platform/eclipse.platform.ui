@@ -273,7 +273,7 @@ public class Snippet048TreeViewerTabWithCheckboxFor3_3 {
 
 	}
 
-	public class MyModel {
+	public static class MyModel {
 
 		public MyModel parent;
 		public List<MyModel> child = new ArrayList<>();

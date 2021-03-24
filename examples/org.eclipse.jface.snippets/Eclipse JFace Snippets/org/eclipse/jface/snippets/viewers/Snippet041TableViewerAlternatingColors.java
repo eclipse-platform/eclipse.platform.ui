@@ -45,7 +45,7 @@ import org.eclipse.swt.widgets.TableItem;
  */
 public class Snippet041TableViewerAlternatingColors {
 
-	public class MyModel {
+	public static class MyModel {
 		public int counter;
 
 		public MyModel(int counter) {

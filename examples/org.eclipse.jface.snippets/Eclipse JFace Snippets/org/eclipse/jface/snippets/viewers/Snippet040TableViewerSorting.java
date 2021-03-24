@@ -42,7 +42,7 @@ import org.eclipse.swt.widgets.Table;
  */
 public class Snippet040TableViewerSorting {
 
-	public class Person {
+	public static class Person {
 		public String givenname;
 		public String surname;
 		public String email;

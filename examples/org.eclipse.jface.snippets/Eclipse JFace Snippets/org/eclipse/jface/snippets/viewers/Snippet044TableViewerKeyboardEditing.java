@@ -43,7 +43,7 @@ import org.eclipse.swt.widgets.Table;
  */
 public class Snippet044TableViewerKeyboardEditing {
 
-	private class MyModel {
+	private static class MyModel {
 		public int counter;
 
 		public MyModel(int counter) {

@@ -42,7 +42,7 @@ import org.eclipse.swt.widgets.TableColumn;
  *
  */
 public class Snippet027ComboBoxCellEditors {
-	public class MyModel {
+	public static class MyModel {
 		public int counter;
 
 		public MyModel(int counter) {

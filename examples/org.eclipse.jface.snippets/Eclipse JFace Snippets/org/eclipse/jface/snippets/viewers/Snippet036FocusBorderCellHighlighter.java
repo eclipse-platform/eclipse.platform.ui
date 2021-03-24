@@ -48,7 +48,7 @@ public class Snippet036FocusBorderCellHighlighter {
 
 	public static boolean flag = true;
 
-	private class MyModel {
+	private static class MyModel {
 		public int counter;
 
 		public MyModel(int counter) {

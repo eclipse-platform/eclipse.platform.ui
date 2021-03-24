@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.TableColumn;
  */
 public class Snippet001TableViewer {
 
-	private class MyContentProvider implements IStructuredContentProvider {
+	private static class MyContentProvider implements IStructuredContentProvider {
 
 		@Override
 		public Object[] getElements(Object inputElement) {
@@ -39,7 +39,7 @@ public class Snippet001TableViewer {
 
 	}
 
-	public class MyModel {
+	public static class MyModel {
 		public int counter;
 
 		public MyModel(int counter) {

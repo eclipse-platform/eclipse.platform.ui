@@ -62,7 +62,7 @@ public class Snippet002TreeViewer {
 
 	}
 
-	public class MyModel {
+	public static class MyModel {
 		public MyModel parent;
 		public List<MyModel> child = new ArrayList<>();
 		public int counter;

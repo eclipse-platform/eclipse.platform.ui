@@ -58,7 +58,7 @@ public class Snippet030VirtualLazyTableViewer {
 
 	}
 
-	public class MyModel {
+	public static class MyModel {
 		public int counter;
 
 		public MyModel(int counter) {

@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class Snippet062TextAndDialogCellEditor {
 
-	public class Person {
+	public static class Person {
 		public String givenname;
 		public String surname;
 		public String email;

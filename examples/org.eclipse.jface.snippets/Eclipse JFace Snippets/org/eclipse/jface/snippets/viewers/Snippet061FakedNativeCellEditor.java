@@ -392,7 +392,7 @@ public class Snippet061FakedNativeCellEditor {
 		}
 	}
 
-	public class File {
+	public static class File {
 		public File parent;
 		public List<File> child = new ArrayList<>();
 		public int counter;

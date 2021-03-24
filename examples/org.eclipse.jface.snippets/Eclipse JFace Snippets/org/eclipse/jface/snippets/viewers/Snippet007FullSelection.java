@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.TableColumn;
  */
 public class Snippet007FullSelection {
 
-	public class MyModel {
+	public static class MyModel {
 		public int counter;
 
 		public MyModel(int counter) {

@@ -43,7 +43,7 @@ import org.eclipse.swt.widgets.TableColumn;
 public class Snippet046UpdateViewerFromBackgroundThread {
 	private static Image[] images;
 
-	public class MyModel {
+	public static class MyModel {
 		public int counter;
 
 		public boolean finished;
@@ -58,7 +58,7 @@ public class Snippet046UpdateViewerFromBackgroundThread {
 		}
 	}
 
-	public class MyLabelProvider extends LabelProvider implements ITableLabelProvider {
+	public static class MyLabelProvider extends LabelProvider implements ITableLabelProvider {
 
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {

@@ -80,7 +80,7 @@ public class Snippet051TableCenteredImage {
 		protected abstract Image getImage(Object element);
 	}
 
-	public class MyModel {
+	public static class MyModel {
 		public int counter;
 
 		public MyModel(int counter) {

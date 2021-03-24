@@ -89,7 +89,7 @@ public class Snippet053StartEditorWithContextMenu extends SelectionAdapter {
 
 	}
 
-	public class MyModel {
+	public static class MyModel {
 		public MyModel parent;
 
 		public List<MyModel> child = new ArrayList<>();

@@ -49,7 +49,7 @@ import org.eclipse.swt.widgets.TableItem;
  */
 public class Snippet054NativeControlsInViewers {
 
-	public class MyModel {
+	public static class MyModel {
 		public int counter;
 
 		public MyModel(int counter) {
