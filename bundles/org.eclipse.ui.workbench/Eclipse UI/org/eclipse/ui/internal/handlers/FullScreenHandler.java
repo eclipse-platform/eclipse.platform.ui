@@ -57,8 +57,6 @@ public class FullScreenHandler extends AbstractHandler {
 	private static final String FULL_SCREEN_COMMAND_ID = "org.eclipse.ui.window.fullscreenmode"; //$NON-NLS-1$
 	private static final String FULL_SCREEN_COMMAND_DO_NOT_SHOW_INFO_AGAIN_PREF_ID = "org.eclipse.ui.window.fullscreenmode.donotshowinfoagain"; //$NON-NLS-1$
 
-	private boolean showInfoPopup;
-
 	private int timeLastEvent;
 	private FullScreenInfoPopup fullScreenInfoPopup;
 
@@ -75,7 +73,7 @@ public class FullScreenHandler extends AbstractHandler {
 		BindingTableManager bindingTableManager = window.getService(BindingTableManager.class);
 		IContextService bindingContextService = window.getService(IContextService.class);
 
-		showInfoPopup = !WorkbenchPlugin.getDefault().getPreferenceStore()
+		boolean showInfoPopup = !WorkbenchPlugin.getDefault().getPreferenceStore()
 				.getBoolean(FULL_SCREEN_COMMAND_DO_NOT_SHOW_INFO_AGAIN_PREF_ID);
 
 		Optional<TriggerSequence> sequence = getKeybindingSequence(bindingService, commandService, bindingTableManager,
