@@ -54,7 +54,6 @@ class IndexingOperation {
 	private static final String ELEMENT_NAME_INDEX = "index"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_NAME_PATH = "path"; //$NON-NLS-1$
 
-	private int numAdded;
 	private int numRemoved;
 	private SearchIndex index = null;
 
@@ -89,7 +88,7 @@ class IndexingOperation {
 		Collection<URL> staleDocs = getRemovedDocuments(index);
 		numRemoved = staleDocs.size();
 		Collection<URL> newDocs = getAddedDocuments(index);
-		numAdded = newDocs.size();
+		int numAdded = newDocs.size();
 
 		// if collection is empty, we may return right away
 		// need to check if we have to do anything to the progress monitor

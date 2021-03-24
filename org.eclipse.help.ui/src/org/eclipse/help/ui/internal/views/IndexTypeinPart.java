@@ -48,7 +48,6 @@ public class IndexTypeinPart extends AbstractFormPart implements IHelpPart, IHel
 	private Button indexButton;
 	private IndexPart indexPart;
 	private Tree indexTree;
-	private int itemCount;
 	private String[] rootItems;
 	private int currentIndex;
 
@@ -168,7 +167,7 @@ public class IndexTypeinPart extends AbstractFormPart implements IHelpPart, IHel
 		indexTree = indexPart.getTreeWidget();
 		if (indexTree == null) return;
 
-		itemCount = indexTree.getItemCount();
+		int itemCount = indexTree.getItemCount();
 		if (itemCount == 0) {
 			indexTree = null;
 		} else {
