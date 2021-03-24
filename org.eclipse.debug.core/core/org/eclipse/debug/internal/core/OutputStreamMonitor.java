@@ -83,8 +83,6 @@ public class OutputStreamMonitor implements IBinaryStreamMonitor {
 	 */
 	private boolean fKilled = false;
 
-	private long lastSleep;
-
 	private Charset fCharset;
 
 	private StreamDecoder fDecoder;
@@ -235,7 +233,7 @@ public class OutputStreamMonitor implements IBinaryStreamMonitor {
 	 * publicly exposing a {@link Runnable#run()} method.
 	 */
 	private void internalRead() {
-		lastSleep = System.currentTimeMillis();
+		long lastSleep = System.currentTimeMillis();
 		long currentTime = lastSleep;
 		byte[] buffer = new byte[BUFFER_SIZE];
 		int read = 0;
