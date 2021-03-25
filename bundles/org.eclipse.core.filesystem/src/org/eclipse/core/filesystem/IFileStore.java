@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import org.eclipse.core.filesystem.provider.FileStore;
+import org.eclipse.core.internal.filesystem.FileStoreUtil;
 import org.eclipse.core.runtime.*;
 
 /**
@@ -572,10 +573,13 @@ public interface IFileStore extends IAdaptable {
 	 * be adjacent. This is equivalent to the natural order on the path strings,
 	 * with the extra condition that the path separator is ordered before all other
 	 * characters. (Ex: "/foo" &lt; "/foo/zzz" &lt; "/fooaaa").
-	 * 
+	 *
 	 * @since org.eclipse.core.filesystem 1.9
 	 */
 	public default int compareTo(IFileStore other) {
+		int compare = FileStoreUtil.compareStringOrNull(this.getFileSystem().getScheme(), other.getFileSystem().getScheme());
+		if (compare != 0)
+			return compare;
 		// compare based on URI path segment values
 		URI uri1;
 		URI uri2;
@@ -591,7 +595,7 @@ public interface IFileStore extends IAdaptable {
 			// protect against misbehaving 3rd party code in file system implementations
 			uri2 = null;
 		}
-		// use old slow compare for compatibility reason. Does have a memory hotspot see bug 570896 
-		return URIUtil.comparePathUri(uri1, uri2);
+		// use old slow compare for compatibility reason. Does have a memory hotspot see bug 570896
+		return FileStoreUtil.comparePathUri(uri1, uri2);
 	}
 }

@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.internal.filesystem.FileStoreUtil;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -312,7 +312,7 @@ public class BasicAliasTest extends ResourceTest {
 		for (URI u1 : uriList) {
 			for (URI u2 : uriList) {
 				if (!u1.equals(u2)) {
-					assertTrue("1.0", 0 != URIUtil.compareNormalisedUri(u1, u2));
+					assertTrue("1.0", 0 != FileStoreUtil.compareNormalisedUri(u1, u2));
 				}
 			}
 		}
@@ -398,7 +398,7 @@ public class BasicAliasTest extends ResourceTest {
 			}
 		}).collect(Collectors.toList());
 		// stable sort:
-		List<URI> sorted = uriList.stream().sorted(URIUtil::compareNormalisedUri).collect(Collectors.toList());
+		List<URI> sorted = uriList.stream().sorted(FileStoreUtil::compareNormalisedUri).collect(Collectors.toList());
 		// proof sort order did not change
 		assertEquals("1.0", uriList, sorted);
 	}

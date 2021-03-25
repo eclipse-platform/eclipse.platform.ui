@@ -22,7 +22,6 @@ import java.net.URI;
 import java.util.*;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.events.ILifecycleListener;
 import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
@@ -130,7 +129,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 		/**
 		 * Map of FileStore-&gt;IResource OR FileStore-&gt;ArrayList of (IResource)
 		 */
-		private final SortedMap<IFileStore, Object> map = new TreeMap<>(AliasManager::compareUri);
+		private final SortedMap<IFileStore, Object> map = new TreeMap<>(IFileStore::compareTo);
 
 		/**
 		 * Adds the given resource to the map, keyed by the given location.
@@ -484,22 +483,6 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 				//skip inaccessible projects
 			}
 		}
-	}
-
-	/**
-	 * Returns the compare result when sorting the locations map. Comparison is
-	 * based on segments, so that paths with the most segments in common will always
-	 * be adjacent. This is equivalent to the natural order on the path strings,
-	 * with the extra condition that the path separator is ordered before all other
-	 * characters. (Ex: "/foo" &lt; "/foo/zzz" &lt; "/fooaaa").
-	 */
-	static int compareUri(IFileStore store1, IFileStore store2) {
-			// scheme takes precedence over all else
-			int compare = URIUtil.compareStringOrNull(store1.getFileSystem().getScheme(),
-					store2.getFileSystem().getScheme());
-			if (compare != 0)
-				return compare;
-			return store1.compareTo(store2);
 	}
 
 	@Override

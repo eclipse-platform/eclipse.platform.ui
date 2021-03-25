@@ -25,8 +25,7 @@ import org.eclipse.core.filesystem.*;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.filesystem.provider.FileInfo;
 import org.eclipse.core.filesystem.provider.FileStore;
-import org.eclipse.core.internal.filesystem.Messages;
-import org.eclipse.core.internal.filesystem.Policy;
+import org.eclipse.core.internal.filesystem.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.util.NLS;
@@ -472,7 +471,10 @@ public class LocalFile extends FileStore {
 
 	@Override
 	public int compareTo(IFileStore other) {
+		int compare = FileStoreUtil.compareStringOrNull(this.getFileSystem().getScheme(), other.getFileSystem().getScheme());
+		if (compare != 0)
+			return compare;
 		// override with fast implementation:
-		return URIUtil.compareNormalisedUri(this.toURI(), other.toURI());
+		return FileStoreUtil.compareNormalisedUri(this.toURI(), other.toURI());
 	}
 }
