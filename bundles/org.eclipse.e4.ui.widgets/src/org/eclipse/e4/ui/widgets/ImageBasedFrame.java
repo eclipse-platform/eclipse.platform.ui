@@ -196,9 +196,16 @@ public class ImageBasedFrame extends Canvas {
 			srcRect.y = 0;
 			srcRect.width = handle.getBounds().width;
 			srcRect.height = handle.getBounds().height;
-			dstRect.x = w1;
+
+			// handle should not be stretched
+			// center the handle if width of "inner" > width of handle
+			if (inner.x >= srcRect.width) {
+				dstRect.x = (inner.x - srcRect.width) / 2;
+			} else {
+				dstRect.x = w1;
+			}
 			dstRect.y = h1;
-			dstRect.width = inner.x;
+			dstRect.width = srcRect.width;
 			dstRect.height = handleHeight;
 			e.gc.drawImage(handle, srcRect.x, srcRect.y, srcRect.width,
 					srcRect.height, dstRect.x, dstRect.y, dstRect.width,
@@ -238,9 +245,15 @@ public class ImageBasedFrame extends Canvas {
 			srcRect.width = handle.getBounds().width;
 			srcRect.height = handle.getBounds().height;
 			dstRect.x = w1;
-			dstRect.y = h1;
+			// handle should not be stretched
+			// center the handle if height of "inner" > height of handle
+			if (inner.y >= srcRect.height) {
+				dstRect.y = (inner.y - srcRect.height) / 2;
+			} else {
+				dstRect.y = h1;
+			}
 			dstRect.width = handleWidth;
-			dstRect.height = inner.y;
+			dstRect.height = srcRect.height;
 			e.gc.drawImage(handle, srcRect.x, srcRect.y, srcRect.width,
 					srcRect.height, dstRect.x, dstRect.y, dstRect.width,
 					dstRect.height);
