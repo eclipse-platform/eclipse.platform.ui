@@ -253,7 +253,7 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 		String text = fLimitElementsField.getText();
 		int value = -1;
 		try {
-			value = Integer.valueOf(text).intValue();
+			value = Integer.parseInt(text);
 		} catch (NumberFormatException e) {
 		}
 		fLimitElementCount= value;

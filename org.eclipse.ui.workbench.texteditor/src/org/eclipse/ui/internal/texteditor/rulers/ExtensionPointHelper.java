@@ -61,7 +61,7 @@ public final class ExtensionPointHelper {
 			return dflt;
 
 		try {
-			return Float.valueOf(value).floatValue();
+			return Float.parseFloat(value);
 		} catch (NumberFormatException x) {
 			fail(MessageFormat.format(RulerColumnMessages.ExtensionPointHelper_invalid_number_attribute_msg, attribute,
 					fName));

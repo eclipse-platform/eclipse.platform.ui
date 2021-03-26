@@ -428,7 +428,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 					TableColumn col = table.getColumn(i);
 					try {
 						if (col!=null) {
-							col.setWidth(Integer.valueOf(columnWidths[i]));
+							col.setWidth(Integer.parseInt(columnWidths[i]));
 						}
 					} catch (Throwable e) {
 						QuickSearchActivator.log(e);
