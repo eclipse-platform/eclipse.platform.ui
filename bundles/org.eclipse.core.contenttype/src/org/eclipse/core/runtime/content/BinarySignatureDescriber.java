@@ -98,7 +98,7 @@ public final class BinarySignatureDescriber implements IContentDescriber, IExecu
 				if (parameters.containsKey(OFFSET))
 					offset = Integer.parseInt((String) parameters.get(OFFSET));
 				if (parameters.containsKey(REQUIRED))
-					required = Boolean.valueOf((String) parameters.get(REQUIRED)).booleanValue();
+					required = Boolean.parseBoolean((String) parameters.get(REQUIRED));
 			}
 		} catch (NumberFormatException nfe) {
 			String message = NLS.bind(ContentMessages.content_badInitializationData, BinarySignatureDescriber.class.getName());
