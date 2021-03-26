@@ -269,7 +269,7 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 	private void restoreWidgetState() {
 		IDialogSettings settings = getDialogSettings();
 		if(settings != null) {
-			fOverwriteExistingFilesCheckbox.setSelection(Boolean.valueOf(settings.get(OVERWRITE_ALL_STATE)).booleanValue());
+			fOverwriteExistingFilesCheckbox.setSelection(Boolean.parseBoolean(settings.get(OVERWRITE_ALL_STATE)));
 			String filename = settings.get(DESTINATION_FILE_NAME);
 			if (filename != null) {
 				fDestinationNameField.setText(filename);

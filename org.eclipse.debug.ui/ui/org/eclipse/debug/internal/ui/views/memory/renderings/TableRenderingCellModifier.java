@@ -72,7 +72,7 @@ public class TableRenderingCellModifier implements ICellModifier {
 			// numberofAddressableUnit * addressableSize
 			int addressableSize = getAddressableSize();
 
-			int offset = Integer.valueOf(property, 16).intValue() * addressableSize;
+			int offset = Integer.parseInt(property, 16) * addressableSize;
 			int end = offset + fRendering.getBytesPerColumn();
 
 			for (int i = offset; i < end; i++) {
@@ -114,7 +114,7 @@ public class TableRenderingCellModifier implements ICellModifier {
 				return line.getAddress();
 			}
 
-			int offset = Integer.valueOf(property, 16).intValue() * getAddressableSize();
+			int offset = Integer.parseInt(property, 16) * getAddressableSize();
 			int end = offset + fRendering.getBytesPerColumn();
 
 			// Ask for label provider
@@ -122,7 +122,7 @@ public class TableRenderingCellModifier implements ICellModifier {
 
 			if (line.isAvailable(offset, end)) {
 				// ask the renderer for a string representation of the bytes
-				offset = Integer.valueOf(property, 16).intValue();
+				offset = Integer.parseInt(property, 16);
 
 				BigInteger address = new BigInteger(((TableRenderingLine) element).getAddress(), 16);
 				address = address.add(BigInteger.valueOf(offset));
@@ -154,7 +154,7 @@ public class TableRenderingCellModifier implements ICellModifier {
 			// calculate offset to update
 			IMemoryBlock memoryBlk = fRendering.getMemoryBlock();
 
-			int lineOffset = Integer.valueOf(property, 16).intValue();
+			int lineOffset = Integer.parseInt(property, 16);
 
 			// this offset is number of addressable unit from the line address
 			BigInteger offset = getOffset(memoryBlk, line.getAddress(), lineOffset);
@@ -168,7 +168,7 @@ public class TableRenderingCellModifier implements ICellModifier {
 				// property is number of addressable unit from line address
 				// to calculate proper offset in the memoryViewLine's array
 				// offset = numberOfAddressableUnit * addressableSize
-				int offsetToLine = Integer.valueOf(property, 16).intValue() * getAddressableSize();
+				int offsetToLine = Integer.parseInt(property, 16) * getAddressableSize();
 				int end = offsetToLine + fRendering.getBytesPerColumn();
 
 				MemoryByte[] oldArray = line.getBytes(offsetToLine, end);

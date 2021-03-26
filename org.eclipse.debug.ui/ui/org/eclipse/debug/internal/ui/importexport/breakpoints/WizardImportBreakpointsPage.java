@@ -183,8 +183,8 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 	private void restoreWidgetState() {
 		IDialogSettings settings = getDialogSettings();
 		if(settings != null) {
-			fAutoRemoveDuplicates.setSelection(Boolean.valueOf(settings.get(REMOVE_DUPS)).booleanValue());
-			fAutoCreateWorkingSets.setSelection(Boolean.valueOf(settings.get(CREATE_WORKING_SETS)).booleanValue());
+			fAutoRemoveDuplicates.setSelection(Boolean.parseBoolean(settings.get(REMOVE_DUPS)));
+			fAutoCreateWorkingSets.setSelection(Boolean.parseBoolean(settings.get(CREATE_WORKING_SETS)));
 			String fileName = settings.get(SOURCE_FILE_NAME);
 			if (fileName != null) {
 				fFileNameField.setText(fileName);

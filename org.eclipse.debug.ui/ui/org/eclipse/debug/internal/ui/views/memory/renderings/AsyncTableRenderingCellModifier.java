@@ -83,7 +83,7 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
 			// numberofAddressableUnit * addressableSize
 			int addressableSize = getAddressableSize();
 
-			int offset = Integer.valueOf(property, 16).intValue() * addressableSize;
+			int offset = Integer.parseInt(property, 16) * addressableSize;
 
 			MemoryByte[] bytes = line.getBytes(offset, fRendering.getBytesPerColumn());
 
@@ -132,10 +132,10 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
 				return line.getAddress();
 			}
 
-			int offsetToLineBuffer = Integer.valueOf(property, 16).intValue() * getAddressableSize();
+			int offsetToLineBuffer = Integer.parseInt(property, 16) * getAddressableSize();
 			MemoryByte[] memory = line.getBytes(offsetToLineBuffer, fRendering.getBytesPerColumn());
 
-			int offsetFromLineAddress = Integer.valueOf(property, 16).intValue();
+			int offsetFromLineAddress = Integer.parseInt(property, 16);
 			BigInteger address = line.getAddress().add(BigInteger.valueOf(offsetFromLineAddress));
 
 			if (fCustomModifier != null)
@@ -181,7 +181,7 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
 					final IMemoryBlock memoryBlk = fRendering.getMemoryBlock();
 
 					// number of addressable units from the line's start address
-					int offsetFromLineAddress = Integer.valueOf(property, 16).intValue();
+					int offsetFromLineAddress = Integer.parseInt(property, 16);
 
 					// this offset is number of addressable unit from memory block's base address
 					final BigInteger offsetFromMBBase = getOffset(memoryBlk, line.getAddress(), offsetFromLineAddress);
@@ -189,7 +189,7 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
 					// property is number of addressable unit from line address
 					// to calculate proper offset in the memoryViewLine's array
 					// offset = numberOfAddressableUnit * addressableSize
-					int offsetToLineBuffer = Integer.valueOf(property, 16).intValue() * getAddressableSize();
+					int offsetToLineBuffer = Integer.parseInt(property, 16) * getAddressableSize();
 
 					MemoryByte[] oldArray = line.getBytes(offsetToLineBuffer, fRendering.getBytesPerColumn());
 

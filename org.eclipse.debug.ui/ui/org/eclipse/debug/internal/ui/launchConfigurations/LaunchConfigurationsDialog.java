@@ -1655,7 +1655,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				TreeViewer viewer = fLaunchConfigurationView.getTreeViewer();
-				boolean newvalue = Boolean.valueOf(event.getNewValue().toString()).booleanValue();
+				boolean newvalue = Boolean.parseBoolean(event.getNewValue().toString());
 				if(event.getProperty().equals(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_CLOSED)) {
 					updateFilter(newvalue, fClosedProjectFilter);
 				}

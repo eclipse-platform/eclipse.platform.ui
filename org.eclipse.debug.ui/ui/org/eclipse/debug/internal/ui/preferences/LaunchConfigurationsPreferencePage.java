@@ -232,7 +232,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 				newvalue = ((Boolean)event.getNewValue()).booleanValue();
 			}
 			else {
-				newvalue = Boolean.valueOf(event.getNewValue().toString()).booleanValue();
+				newvalue = Boolean.parseBoolean(event.getNewValue().toString());
 			}
 			if(newvalue) {
 				fTable.setEnabled(true);
