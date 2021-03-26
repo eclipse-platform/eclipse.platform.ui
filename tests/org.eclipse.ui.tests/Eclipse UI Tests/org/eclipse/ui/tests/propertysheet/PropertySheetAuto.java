@@ -169,7 +169,7 @@ public class PropertySheetAuto extends UITestCase {
 		@Override
 		public void setPropertyValue(Object id, Object value) {
 			if (id.equals(MODEL_YEAR)) {
-				modelYear = Integer.valueOf((String) value).intValue();
+				modelYear = Integer.parseInt((String) value);
 			}
 			if (id.equals(COLOR)) {
 				color = (RGB) value;

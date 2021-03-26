@@ -130,9 +130,7 @@ public class NavigatorViewerDescriptorManager {
 					}
 
 					if (allowsPlatformContributions != null) {
-						descriptor.setAllowsPlatformContributions(Boolean
-								.valueOf(allowsPlatformContributions)
-								.booleanValue());
+						descriptor.setAllowsPlatformContributions(Boolean.parseBoolean(allowsPlatformContributions));
 					}
 
 					IConfigurationElement[] insertionPointElements = tagPopupMenu[0]
@@ -147,8 +145,7 @@ public class NavigatorViewerDescriptorManager {
 								.getAttribute(ATT_NAME);
 						stringAttSeparator = insertionPointElements[indx]
 								.getAttribute(ATT_SEPARATOR);
-						isSeparator = stringAttSeparator != null ? Boolean
-								.valueOf(stringAttSeparator).booleanValue()
+						isSeparator = stringAttSeparator != null ? Boolean.parseBoolean(stringAttSeparator)
 								: false;
 						insertionPoints[indx] = new MenuInsertionPoint(name,
 								isSeparator);

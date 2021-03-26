@@ -353,7 +353,7 @@ public class ActionDescriptor implements IPluginContribution {
 		// Is it a numeric definition?
 		if (Character.isDigit(acceleratorText.charAt(0))) {
 			try {
-				action.setAccelerator(Integer.valueOf(acceleratorText).intValue());
+				action.setAccelerator(Integer.parseInt(acceleratorText));
 			} catch (NumberFormatException e) {
 				WorkbenchPlugin.log("Invalid accelerator declaration for action: " + id, e); //$NON-NLS-1$
 			}

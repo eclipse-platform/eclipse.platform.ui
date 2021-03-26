@@ -331,7 +331,7 @@ public class ScopedPreferenceStore extends EventManager implements IPreferenceSt
 	@Override
 	public boolean getBoolean(String name) {
 		String value = internalGet(name);
-		return value == null ? BOOLEAN_DEFAULT_DEFAULT : Boolean.valueOf(value).booleanValue();
+		return value == null ? BOOLEAN_DEFAULT_DEFAULT : Boolean.parseBoolean(value);
 	}
 
 	@Override

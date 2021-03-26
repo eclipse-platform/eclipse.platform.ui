@@ -123,8 +123,7 @@ class Binding {
 			if (toRespectRoots) {
 				isRootString = contentExtensionPattern
 						.getAttribute(NavigatorViewerDescriptor.ATT_IS_ROOT);
-				isRoot = (isRootString != null) ? Boolean.valueOf(
-						isRootString.trim()).booleanValue() : false;
+				isRoot = (isRootString != null) ? Boolean.parseBoolean(isRootString.trim()) : false;
 			}
 
 			patternString = contentExtensionPattern

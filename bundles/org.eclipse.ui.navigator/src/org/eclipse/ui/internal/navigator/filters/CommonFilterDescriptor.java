@@ -95,8 +95,7 @@ public class CommonFilterDescriptor implements ICommonFilterDescriptor,
 	 */
 	@Override
 	public boolean isActiveByDefault() {
-		return Boolean.valueOf(element.getAttribute(ATT_ACTIVE_BY_DEFAULT))
-				.booleanValue();
+		return Boolean.parseBoolean(element.getAttribute(ATT_ACTIVE_BY_DEFAULT));
 	}
 
 	/**

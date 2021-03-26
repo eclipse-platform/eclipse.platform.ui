@@ -143,6 +143,6 @@ public class IntegerFieldEditor extends StringFieldEditor {
 	 *   contain a parsable integer
 	 */
 	public int getIntValue() throws NumberFormatException {
-		return Integer.valueOf(getStringValue()).intValue();
+		return Integer.parseInt(getStringValue());
 	}
 }

@@ -180,14 +180,12 @@ public final class NavigatorContentDescriptor implements
 		String activeByDefaultString = configElement
 				.getAttribute(ATT_ACTIVE_BY_DEFAULT);
 		activeByDefault = (activeByDefaultString != null && activeByDefaultString
-				.length() > 0) ? Boolean.valueOf(activeByDefaultString)
-				.booleanValue() : true;
+				.length() > 0) ? Boolean.parseBoolean(activeByDefaultString) : true;
 
 		String providesSaveablesString = configElement
 			.getAttribute(ATT_PROVIDES_SAVEABLES);
 		providesSaveables = (providesSaveablesString != null && providesSaveablesString
-				.length() > 0) ? Boolean.valueOf(providesSaveablesString)
-						.booleanValue() : false;
+				.length() > 0) ? Boolean.parseBoolean(providesSaveablesString) : false;
 		appearsBeforeId = configElement.getAttribute(ATT_APPEARS_BEFORE);
 
 		if (priorityString != null) {
@@ -205,8 +203,7 @@ public final class NavigatorContentDescriptor implements
 		sequenceNumber = priority;
 
 		String sortOnlyString = configElement.getAttribute(ATT_SORT_ONLY);
-		sortOnly = (sortOnlyString != null && sortOnlyString.length() > 0) ? Boolean.valueOf(
-				sortOnlyString).booleanValue() : false;
+		sortOnly = (sortOnlyString != null && sortOnlyString.length() > 0) ? Boolean.parseBoolean(sortOnlyString) : false;
 
 		if (id == null) {
 			throw new WorkbenchException(NLS.bind(

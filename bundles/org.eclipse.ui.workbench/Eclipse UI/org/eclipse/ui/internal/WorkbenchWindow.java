@@ -2630,8 +2630,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 */
 	private boolean getShowHeapStatus() {
 		return // Show if the preference is set or debug option is on
-		PrefUtil.getAPIPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR) || Boolean
-				.valueOf(Platform.getDebugOption(PlatformUI.PLUGIN_ID + "/perf/showHeapStatus")).booleanValue(); //$NON-NLS-1$
+		PrefUtil.getAPIPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR) || Boolean.parseBoolean(Platform.getDebugOption(PlatformUI.PLUGIN_ID + "/perf/showHeapStatus")); //$NON-NLS-1$
 	}
 
 	public void showHeapStatus(boolean show) {

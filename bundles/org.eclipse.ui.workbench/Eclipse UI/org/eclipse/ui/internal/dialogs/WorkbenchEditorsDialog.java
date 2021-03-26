@@ -145,16 +145,16 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 			String[] array = s.getArray(BOUNDS);
 			if (array != null) {
 				bounds = new Rectangle(0, 0, 0, 0);
-				bounds.x = Integer.valueOf(array[0]).intValue();
-				bounds.y = Integer.valueOf(array[1]).intValue();
-				bounds.width = Integer.valueOf(array[2]).intValue();
-				bounds.height = Integer.valueOf(array[3]).intValue();
+				bounds.x = Integer.parseInt(array[0]);
+				bounds.y = Integer.parseInt(array[1]);
+				bounds.width = Integer.parseInt(array[2]);
+				bounds.height = Integer.parseInt(array[3]);
 			}
 			array = s.getArray(COLUMNS);
 			if (array != null) {
 				columnsWidth = new int[array.length];
 				for (int i = 0; i < columnsWidth.length; i++) {
-					columnsWidth[i] = Integer.valueOf(array[i]).intValue();
+					columnsWidth[i] = Integer.parseInt(array[i]);
 				}
 			}
 		}

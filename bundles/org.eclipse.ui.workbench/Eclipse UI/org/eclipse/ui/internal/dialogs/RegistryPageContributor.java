@@ -91,7 +91,7 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
 	public RegistryPageContributor(String pageId, IConfigurationElement element) {
 		this.pageId = pageId;
 		this.pageElement = element;
-		adaptable = Boolean.valueOf(pageElement.getAttribute(PropertyPagesRegistryReader.ATT_ADAPTABLE)).booleanValue();
+		adaptable = Boolean.parseBoolean(pageElement.getAttribute(PropertyPagesRegistryReader.ATT_ADAPTABLE));
 		supportsMultiSelect = PropertyPagesRegistryReader.ATT_SELECTION_FILTER_MULTI
 				.equals(pageElement.getAttribute(PropertyPagesRegistryReader.ATT_SELECTION_FILTER));
 		initializeEnablement(element);

@@ -1726,7 +1726,7 @@ public class LogView extends ViewPart implements LogListener {
 	}
 
 	private long getLogMaxTailSize() {
-		return Long.valueOf(this.fMemento.getString(P_LOG_MAX_TAIL_SIZE)).longValue();
+		return Long.parseLong(this.fMemento.getString(P_LOG_MAX_TAIL_SIZE));
 	}
 
 	/**
