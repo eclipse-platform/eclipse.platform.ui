@@ -494,7 +494,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			restoreViewerInput(memento);
 			IMemento child = memento.getChild(TAG_FILTER_INTERNAL_TARGETS);
 			if (child != null) {
-				filterInternalTargets = Boolean.valueOf(child.getString(KEY_VALUE)).booleanValue();
+				filterInternalTargets = Boolean.parseBoolean(child.getString(KEY_VALUE));
 			}
 		}
 	}
@@ -535,9 +535,9 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 				nameString = IAntCoreConstants.EMPTY_STRING;
 			}
 			project = new AntProjectNodeProxy(nameString, pathString);
-			if (errorString != null && Boolean.valueOf(errorString).booleanValue()) {
+			if (errorString != null && Boolean.parseBoolean(errorString)) {
 				project.setProblemSeverity(AntModelProblem.SEVERITY_ERROR);
-			} else if (warningString != null && Boolean.valueOf(warningString).booleanValue()) {
+			} else if (warningString != null && Boolean.parseBoolean(warningString)) {
 				project.setProblemSeverity(AntModelProblem.SEVERITY_WARNING);
 			}
 			if (defaultTarget != null) {

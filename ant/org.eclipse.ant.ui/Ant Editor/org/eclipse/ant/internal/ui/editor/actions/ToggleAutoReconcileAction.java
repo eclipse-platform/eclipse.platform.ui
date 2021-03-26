@@ -95,7 +95,7 @@ public class ToggleAutoReconcileAction extends TextEditorAction implements IProp
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(AntEditorPreferenceConstants.EDITOR_RECONCILE)) {
-			setChecked(Boolean.valueOf(event.getNewValue().toString()).booleanValue());
+			setChecked(Boolean.parseBoolean(event.getNewValue().toString()));
 		}
 	}
 }

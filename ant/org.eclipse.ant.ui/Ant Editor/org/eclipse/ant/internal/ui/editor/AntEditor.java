@@ -672,7 +672,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		}
 
 		if (AntEditorPreferenceConstants.EDITOR_MARK_OCCURRENCES.equals(property)) {
-			boolean newBooleanValue = Boolean.valueOf(event.getNewValue().toString()).booleanValue();
+			boolean newBooleanValue = Boolean.parseBoolean(event.getNewValue().toString());
 			if (newBooleanValue != fMarkOccurrenceAnnotations) {
 				fMarkOccurrenceAnnotations = newBooleanValue;
 				if (fMarkOccurrenceAnnotations) {
@@ -684,7 +684,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 			return;
 		}
 		if (AntEditorPreferenceConstants.EDITOR_STICKY_OCCURRENCES.equals(property)) {
-			boolean newBooleanValue = Boolean.valueOf(event.getNewValue().toString()).booleanValue();
+			boolean newBooleanValue = Boolean.parseBoolean(event.getNewValue().toString());
 			fStickyOccurrenceAnnotations = newBooleanValue;
 			return;
 		}
