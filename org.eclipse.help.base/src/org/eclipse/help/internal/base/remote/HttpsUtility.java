@@ -59,7 +59,7 @@ public class HttpsUtility {
 	public static InputStream getHttpsInputStream(String thisProtocol,String thisHost, String thisPort, String thisPath, String locale)
 	{
 		try {
-			URL url = new URL(thisProtocol, thisHost, Integer.valueOf(thisPort) .intValue(),
+			URL url = new URL(thisProtocol, thisHost, Integer.parseInt(thisPort),
 					thisPath + PATH_TOC + '?' + PARAM_LANG + '=' + locale);
 			return getHttpsStream(url);
 		} catch (Exception e) {

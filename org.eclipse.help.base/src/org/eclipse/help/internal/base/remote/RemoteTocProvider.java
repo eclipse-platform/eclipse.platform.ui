@@ -80,7 +80,7 @@ public class RemoteTocProvider extends AbstractTocProvider {
 
 						if(protocol[i].equalsIgnoreCase(PROTOCOL))
 						{
-							url = new URL(protocol[i], host[i], Integer.valueOf(port[i]) .intValue(),
+							url = new URL(protocol[i], host[i], Integer.parseInt(port[i]),
 									path[i] + PATH_TOC + '?' + PARAM_LANG + '=' + locale);
 
 							in = ProxyUtil.getStream(url);

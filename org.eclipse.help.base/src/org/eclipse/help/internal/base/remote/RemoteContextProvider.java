@@ -65,7 +65,7 @@ public class RemoteContextProvider extends AbstractContextProvider {
 						HttpURLConnection connection;
 						if(protocols[i].equals(PROTOCOL))
 						{
-							url = new URL(PROTOCOL, host[i], Integer.valueOf(port[i]).intValue(), path[i]+ PATH_CONTEXT + '?' + PARAM_ID + '=' + id + '&' + PARAM_LANG + '=' + locale);
+							url = new URL(PROTOCOL, host[i], Integer.parseInt(port[i]), path[i]+ PATH_CONTEXT + '?' + PARAM_ID + '=' + id + '&' + PARAM_LANG + '=' + locale);
 							connection = (HttpURLConnection)ProxyUtil.getConnection(url);
 							if (connection.getResponseCode() == 200) {
 								in = connection.getInputStream();

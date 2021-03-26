@@ -68,7 +68,7 @@ public class RemoteSearchManager {
 
 							if(protocols[i].equals(PROTOCOL_HTTP))
 							{
-								url = new URL("http", host[i], Integer.valueOf(port[i]).intValue(), path[i] + PATH_SEARCH + '?' + PARAM_PHRASE + '=' + URLCoder.encode(searchQuery.getSearchWord()) + '&' + PARAM_LANG + '=' + searchQuery.getLocale()); //$NON-NLS-1$
+								url = new URL("http", host[i], Integer.parseInt(port[i]), path[i] + PATH_SEARCH + '?' + PARAM_PHRASE + '=' + URLCoder.encode(searchQuery.getSearchWord()) + '&' + PARAM_LANG + '=' + searchQuery.getLocale()); //$NON-NLS-1$
 								in = ProxyUtil.getStream(url);
 							}
 							else
