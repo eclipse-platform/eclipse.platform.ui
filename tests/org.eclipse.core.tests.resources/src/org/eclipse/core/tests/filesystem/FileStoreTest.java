@@ -17,8 +17,13 @@ import java.io.File;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Date;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.eclipse.core.filesystem.*;
+import org.eclipse.core.filesystem.provider.FileSystem;
+import org.eclipse.core.internal.filesystem.NullFileSystem;
+import org.eclipse.core.internal.filesystem.local.LocalFileSystem;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.internal.localstore.LocalStoreTest;
@@ -620,5 +625,53 @@ public class FileStoreTest extends LocalStoreTest {
 		info = relativeStore.fetchInfo();
 		assertNotNull("10.0", info);
 		assertTrue("11.0", info.exists());
+	}
+
+	public void testSortOrder() {
+		IFileSystem nullfs = NullFileSystem.getInstance();
+		if (nullfs == null) {
+			nullfs = new NullFileSystem();
+			((FileSystem) nullfs).initialize(EFS.SCHEME_NULL);
+		}
+		IFileStore nabc = nullfs.getStore(new Path("/a/b/c"));
+		IFileStore nabd = nullfs.getStore(new Path("/a/b/d"));
+		assertEquals("1.0", -1, nabc.compareTo(nabd));
+		assertEquals("1.1", 0, nabc.compareTo(nabc));
+		assertEquals("1.2", 1, nabd.compareTo(nabc));
+		IFileSystem lfs = LocalFileSystem.getInstance();
+		IFileStore labc = lfs.getStore(new Path("/a/b/c"));
+		IFileStore labd = lfs.getStore(new Path("/a/b/d"));
+		assertEquals("2.0", -1, labc.compareTo(labd));
+		assertEquals("2.1", 0, labc.compareTo(labc));
+		assertEquals("2.2", 1, labd.compareTo(labc));
+		int schemeCompare = nullfs.getScheme().compareTo(lfs.getScheme());
+		assertEquals("3.0", schemeCompare, nabd.compareTo(labc));
+		assertEquals("3.1", schemeCompare, nabc.compareTo(labd));
+		assertEquals("3.2", -schemeCompare, labd.compareTo(nabc));
+		assertEquals("3.3", -schemeCompare, labc.compareTo(nabd));
+	}
+
+	public void testSortOrderPaths() {
+		IFileSystem lfs = LocalFileSystem.getInstance();
+		List<String> paths = List.of( //
+				"/a", //
+				"/a/", //
+				"/a/b", //
+				"/a/./c", //
+				"/a/e/../c", //
+				"/a/d", //
+				"/aa", //
+				"/b"
+		);
+		List<String> pathsTrimmed = paths.stream().map(s -> s //
+				.replaceAll("/$", "") // remove trailing slashes
+				.replaceAll("/[^/]+/\\.\\./", "/") // collapse /a/../ to /
+				.replaceAll("/\\./", "/") // collapse /./ to /
+		).collect(Collectors.toList());
+		paths = new ArrayList<>(paths); // to get a mutable copy for shuffling
+		Collections.shuffle(paths);
+		Stream<IFileStore> stores = paths.stream().map(Path::new).map(lfs::getStore);
+		List<String> sortedPaths = stores.sorted(IFileStore::compareTo).map(IFileStore::toURI).map(URI::getPath).collect(Collectors.toList());
+		assertEquals("1.0 ", pathsTrimmed, sortedPaths);
 	}
 }
