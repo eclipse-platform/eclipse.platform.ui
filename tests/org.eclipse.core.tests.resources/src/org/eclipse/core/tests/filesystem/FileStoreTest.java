@@ -23,6 +23,7 @@ import java.util.stream.Stream;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.filesystem.provider.FileSystem;
 import org.eclipse.core.internal.filesystem.NullFileSystem;
+import org.eclipse.core.internal.filesystem.local.LocalFile;
 import org.eclipse.core.internal.filesystem.local.LocalFileSystem;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
@@ -649,6 +650,8 @@ public class FileStoreTest extends LocalStoreTest {
 		assertEquals("3.1", schemeCompare, nabc.compareTo(labd));
 		assertEquals("3.2", -schemeCompare, labd.compareTo(nabc));
 		assertEquals("3.3", -schemeCompare, labc.compareTo(nabd));
+		assertEquals("4.0", 1, labc.compareTo(null));
+		assertEquals("4.1", 1, nabc.compareTo(null));
 	}
 
 	public void testSortOrderPaths() {
@@ -670,8 +673,15 @@ public class FileStoreTest extends LocalStoreTest {
 		).collect(Collectors.toList());
 		paths = new ArrayList<>(paths); // to get a mutable copy for shuffling
 		Collections.shuffle(paths);
-		Stream<IFileStore> stores = paths.stream().map(Path::new).map(lfs::getStore);
-		List<String> sortedPaths = stores.sorted(IFileStore::compareTo).map(IFileStore::toURI).map(URI::getPath).collect(Collectors.toList());
-		assertEquals("1.0 ", pathsTrimmed, sortedPaths);
+		// Test with new Path(string).getStore()
+		Stream<IFileStore> pathStores = paths.stream().map(Path::new).map(lfs::getStore);
+		List<String> sortedPathStores = pathStores.sorted(IFileStore::compareTo).map(IFileStore::toURI)
+				.map(URI::getPath).collect(Collectors.toList());
+		assertEquals("1.0 ", pathsTrimmed, sortedPathStores);
+		// Test with new LocalFile(new File(string)))
+		Stream<IFileStore> localFileStores = paths.stream().map(File::new).map(LocalFile::new);
+		List<String> sortedLocalFileStores = localFileStores.sorted(IFileStore::compareTo).map(IFileStore::toURI)
+				.map(URI::getPath).collect(Collectors.toList());
+		assertEquals("2.0 ", pathsTrimmed, sortedLocalFileStores);
 	}
 }

@@ -577,25 +577,9 @@ public interface IFileStore extends IAdaptable {
 	 * @since org.eclipse.core.filesystem 1.9
 	 */
 	public default int compareTo(IFileStore other) {
-		int compare = FileStoreUtil.compareStringOrNull(this.getFileSystem().getScheme(), other.getFileSystem().getScheme());
-		if (compare != 0)
-			return compare;
-		// compare based on URI path segment values
-		URI uri1;
-		URI uri2;
-		try {
-			uri1 = this.toURI();
-		} catch (Exception e1) {
-			// protect against misbehaving 3rd party code in file system implementations
-			uri1 = null;
+		if (other == null) {
+			return 1;
 		}
-		try {
-			uri2 = other.toURI();
-		} catch (Exception e2) {
-			// protect against misbehaving 3rd party code in file system implementations
-			uri2 = null;
-		}
-		// use old slow compare for compatibility reason. Does have a memory hotspot see bug 570896
-		return FileStoreUtil.comparePathUri(uri1, uri2);
+		return FileStoreUtil.compareFileStore(this, other);
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2021  Joerg Kubitz and others.
+ * Copyright (c) 2021 Joerg Kubitz and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
 package org.eclipse.core.internal.filesystem;
 
 import java.net.URI;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -31,7 +32,7 @@ public final class FileStoreUtil {
 	 * This is the old slow implementation and has a memory hotspot see bug 570896. Prefer to use compareNormalisedUri!
 	 * @since org.eclipse.core.filesystem 1.9
 	 */
-	public static int comparePathUri(URI uri1, URI uri2) {
+	private static int comparePathUri(URI uri1, URI uri2) {
 		if (uri1 == null && uri2 == null)
 			return 0;
 		int compare;
@@ -110,7 +111,7 @@ public final class FileStoreUtil {
 		return 0;
 	}
 
-	static int comparePathSegments(String p1, String p2) {
+	public static int comparePathSegments(String p1, String p2) {
 		int compare;
 		compare = compareSlashFirst(p1, p2);
 		if (compare != 0)
@@ -159,7 +160,7 @@ public final class FileStoreUtil {
 	 * Compares two strings that are possibly null.
 	 * @since org.eclipse.core.filesystem 1.9
 	 */
-	public static int compareStringOrNull(String string1, String string2) {
+	private static int compareStringOrNull(String string1, String string2) {
 		if (string1 == null) {
 			if (string2 == null)
 				return 0;
@@ -168,5 +169,34 @@ public final class FileStoreUtil {
 		if (string2 == null)
 			return -1;
 		return string1.compareTo(string2);
+	}
+
+	/**
+	 * Compares two file stores by comparing their URIs.
+	 * @param fileStore1 the first fileStore to compare, cannot be null
+	 * @param fileStore2 the second fileStore to compare, cannot be null
+	 * @return 0 if the fileStores are equal, 1 if fileStore1 is bigger than fileStore2, -1 otherwise
+	 */
+	public static int compareFileStore(IFileStore fileStore1, IFileStore fileStore2) {
+		int compare = compareStringOrNull(fileStore1.getFileSystem().getScheme(), fileStore2.getFileSystem().getScheme());
+		if (compare != 0)
+			return compare;
+		// compare based on URI path segment values
+		URI uri1;
+		URI uri2;
+		try {
+			uri1 = fileStore1.toURI();
+		} catch (Exception e1) {
+			// protect against misbehaving 3rd party code in file system implementations
+			uri1 = null;
+		}
+		try {
+			uri2 = fileStore2.toURI();
+		} catch (Exception e2) {
+			// protect against misbehaving 3rd party code in file system implementations
+			uri2 = null;
+		}
+		// use old slow compare for compatibility reason. Does have a memory hotspot see bug 570896
+		return comparePathUri(uri1, uri2);
 	}
 }
