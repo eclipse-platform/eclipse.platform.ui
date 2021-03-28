@@ -337,11 +337,12 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		context.remove(MenuManagerRendererFilter.class);
 		Display display = context.get(Display.class);
 		if (display != null && !display.isDisposed() && rendererFilter != null) {
+			final MenuManagerRendererFilter filter = rendererFilter;
 			display.asyncExec(() -> {
 				if (!display.isDisposed()) {
-					display.removeFilter(SWT.Show, rendererFilter);
-					display.removeFilter(SWT.Hide, rendererFilter);
-					display.removeFilter(SWT.Dispose, rendererFilter);
+					display.removeFilter(SWT.Show, filter);
+					display.removeFilter(SWT.Hide, filter);
+					display.removeFilter(SWT.Dispose, filter);
 				}
 			});
 		}
