@@ -1849,6 +1849,7 @@ public class EPartServiceTest extends UITest {
 		assertEquals(part, window.getChildren().get(0));
 		assertEquals(part, shownPart);
 		assertTrue("A shown part should be rendered", part.isToBeRendered());
+		assertNotNull("A shown part should have a widget", part.getWidget());
 	}
 
 	@Test
@@ -1892,6 +1893,7 @@ public class EPartServiceTest extends UITest {
 		assertEquals(part, partStack.getChildren().get(0));
 		assertEquals(part, shownPart);
 		assertTrue("A shown part should be rendered", part.isToBeRendered());
+		assertNotNull("A shown part should have a widget", part.getWidget());
 	}
 
 	@Test
@@ -1939,6 +1941,7 @@ public class EPartServiceTest extends UITest {
 		assertEquals(part, partStack.getChildren().get(0));
 		assertEquals(part, shownPart);
 		assertTrue("A shown part should be rendered", part.isToBeRendered());
+		assertNotNull("A shown part should have a widget", part.getWidget());
 	}
 
 	@Test

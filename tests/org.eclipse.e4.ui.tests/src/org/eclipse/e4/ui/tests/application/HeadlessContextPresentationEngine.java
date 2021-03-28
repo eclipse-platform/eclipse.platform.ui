@@ -156,8 +156,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 			Boolean value = (Boolean) event
 					.getProperty(UIEvents.EventTags.NEW_VALUE);
 			if (value.booleanValue()) {
-				createGui(element, element.getParent(),
-						getParentContext(element));
+				createGui(element);
 			} else {
 				removeGui(element);
 			}
@@ -207,11 +206,23 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 	@Override
 	public Object createGui(MUIElement element, Object parentWidget,
 			IEclipseContext parentContext) {
-		if (!element.isToBeRendered()) {
-			return null;
+		MUIElement current = element;
+		while (current != null) {
+			if (!current.isToBeRendered()) {
+				return null;
+			}
+			if (current.getCurSharedRef() != null) {
+				current = current.getCurSharedRef();
+			} else {
+				current = current.getParent();
+			}
 		}
 
 		MUIElement parent = element.getParent();
+		if (element.getCurSharedRef() != null) {
+			parent = element.getCurSharedRef().getParent();
+		}
+
 		if (!(parent instanceof MApplication)) {
 			// if the element is not under the application, it should have a
 			// parent widget
