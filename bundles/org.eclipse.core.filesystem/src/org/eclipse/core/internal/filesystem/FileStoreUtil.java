@@ -76,30 +76,6 @@ public final class FileStoreUtil {
 		return compareStringOrNull(uri1.getQuery(), uri2.getQuery());
 	}
 
-	/**
-	 * Compares already normalized URIs
-	 * This is a fast implementation without memory allocation (Bug 570896).
-	 * note: if pathes contain different segment count this is != uri1.compareNormalisedUri(uri2)
-	 * @since org.eclipse.core.filesystem 1.9
-	 */
-	public static int compareNormalisedUri(URI uri1, URI uri2) {
-		if (uri1 == null && uri2 == null)
-			return 0;
-		int c;
-		if ((c = nullsLast(uri1, uri2)) != 0)
-			return c;
-		// avoid to use IPath here due to high ephemeral memory allocation (Bug 570896)
-		if ((c = compareStringOrNull(uri1.getAuthority(), uri2.getAuthority())) != 0)
-			return c;
-		if ((c = compareStringOrNull(uri1.getScheme(), uri2.getScheme())) != 0)
-			return c;
-		if ((c = comparePathSegments(uri1.getPath(), uri2.getPath())) != 0)
-			return c;
-		if ((c = compareStringOrNull(uri1.getQuery(), uri2.getQuery())) != 0)
-			return c;
-		return c;
-	}
-
 	static int nullsLast(Object c1, Object c2) {
 		if (c1 == null) {
 			if (c2 == null)

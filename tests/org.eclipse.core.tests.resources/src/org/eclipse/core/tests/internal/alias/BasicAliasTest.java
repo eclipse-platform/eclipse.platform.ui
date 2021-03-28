@@ -19,9 +19,9 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.internal.filesystem.FileStoreUtil;
+import org.eclipse.core.filesystem.*;
+import org.eclipse.core.internal.filesystem.NullFileStore;
+import org.eclipse.core.internal.filesystem.NullFileSystem;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -46,6 +46,46 @@ public class BasicAliasTest extends ResourceTest {
 	private IFile lLinked;
 	private IFile lChildLinked;
 	private IPath linkOverlapLocation;
+
+	static class BatFS extends NullFileSystem {
+		static final BatFS instance = new BatFS();
+
+		private BatFS() {
+			super();
+			initialize("batfs");
+		}
+	}
+
+	static class BatFSURI extends NullFileStore {
+		private final URI uri;
+
+		public BatFSURI(String uri) {
+			this(from(uri));
+		}
+
+		private static URI from(String uri) {
+			try {
+				return new URI(uri);
+			} catch (URISyntaxException e) {
+				throw new IllegalArgumentException(e);
+			}
+		}
+
+		public BatFSURI(URI uri) {
+			super(new Path("/not/used"));
+			this.uri = uri;
+		}
+
+		@Override
+		public IFileSystem getFileSystem() {
+			return BatFS.instance;
+		}
+
+		@Override
+		public URI toURI() {
+			return uri;
+		}
+	}
 
 	/**
 	 * Asserts that the two given resources are duplicates in the file system.
@@ -294,25 +334,18 @@ public class BasicAliasTest extends ResourceTest {
 		// AliasManager requires that different authority (server:port) are distinct
 		// (doesnt actually matter if compare yields +1 or -1 for different values)
 
-		String[] urisStrings = { //
-				"scheme1://authority1/path?query#fragment", //
-				"scheme1://authority2/path?query#fragment", //
-		};
-		assertComparedDistinct(urisStrings);
+		assertComparedDistinct(List.of( //
+				"batfs://authority1/path?query#fragment", //
+				"batfs://authority2/path?query#fragment" //
+		));
 	}
 
-	private void assertComparedDistinct(String[] urisStrings) {
-		List<URI> uriList = Arrays.asList(urisStrings).stream().map(t -> {
-			try {
-				return new URI(t);
-			} catch (URISyntaxException e) {
-				throw new RuntimeException(e);
-			}
-		}).collect(Collectors.toList());
-		for (URI u1 : uriList) {
-			for (URI u2 : uriList) {
-				if (!u1.equals(u2)) {
-					assertTrue("1.0", 0 != FileStoreUtil.compareNormalisedUri(u1, u2));
+	private void assertComparedDistinct(List<String> urisStrings) {
+		List<BatFSURI> batfsList = urisStrings.stream().map(BatFSURI::new).collect(Collectors.toList());
+		for (BatFSURI bu1 : batfsList) {
+			for (BatFSURI bu2 : batfsList) {
+				if (!bu1.equals(bu2)) {
+					assertTrue("1.0", 0 != bu1.compareTo(bu2));
 				}
 			}
 		}
@@ -324,83 +357,61 @@ public class BasicAliasTest extends ResourceTest {
 		// and that any subpath of path yields path < subpath < path%00
 		// for example "foo" < "foo/zzz" < "foo%00"
 
-		String[] urisStrings = { //
-				"http://Server/Volume:segment1a", //
-				"http://Server/Volume:segment1a/a", //
-				"http://Server/Volume:segment1a/a%00", //
-				"http://Server/Volume:segment1a/segment2a", //
-				"http://Server/Volume:segment1a/segment2a%00", //
-				"http://Server/Volume:segment1a/segment2b", //
-				"http://Server/Volume:segment1a/segment2b%00", //
-				"http://Server/Volume:segment1a%00", //
-				"http://Server/Volume:segment2a", //
-				"http://Server/Volume:segment2a/b", //
-				"http://Server/Volume:segment2a/segment2a", //
-				"http://Server/Volume:segment2a/segment2b", //
-				"http://Server/Volume:segment2a%00", //
-		};
-		assertPreOrdered(urisStrings);
+		assertPreOrdered(List.of( //
+				"batfs://Server/Volume:segment1a", //
+				"batfs://Server/Volume:segment1a/a", //
+				"batfs://Server/Volume:segment1a/a%00", //
+				"batfs://Server/Volume:segment1a/segment2a", //
+				"batfs://Server/Volume:segment1a/segment2a%00", //
+				"batfs://Server/Volume:segment1a/segment2b", //
+				"batfs://Server/Volume:segment1a/segment2b%00", //
+				"batfs://Server/Volume:segment1a%00", //
+				"batfs://Server/Volume:segment2a", //
+				"batfs://Server/Volume:segment2a/b", //
+				"batfs://Server/Volume:segment2a/segment2a", //
+				"batfs://Server/Volume:segment2a/segment2b", //
+				"batfs://Server/Volume:segment2a%00" //
+		));
 	}
 
 	/* Bug570896 */
 	public void testCompareUriOctets() throws URISyntaxException {
 		// uri.getPath() will normalize the octets
-		String[] urisStrings = { //
+		assertPreOrdered(List.of( //
 				"http://Server/Volume:A", //
 				"http://Server/Volume:%41", // hex 41==Ascii A
 				"http://Server/Volume:A", //
-				"http://Server/Volume:%41", //
-		};
-		assertPreOrdered(urisStrings);
+				"http://Server/Volume:%41" //
+		));
 	}
 
 	/* Bug570896 */
 	public void testCompareUriCase() throws URISyntaxException {
 		// its not a requirement but a back compatibility that the order is
 		// case sensitive even on case insensitive OSes:
-		String[] urisStrings = { //
+		assertComparedDistinct(List.of( //
 				"http://Server/Volume:a", //
-				"http://Server/Volume:A", // A>a
-		};
-		assertComparedDistinct(urisStrings);
+				"http://Server/Volume:A" // A>a
+		));
 	}
 
 	/* Bug570896 */
 	public void testCompareUriFragment() throws URISyntaxException {
 		// fragments should NOT be distinct! Even though they might not be used:
-		String[] urisStrings = { //
-				"scheme://authority/path?query#fragment1", //
-				"scheme://authority/path?query#fragment2", //
-				"scheme://authority/path?query#fragment1", //
-				"scheme://authority/path?query#fragment2", //
-		};
-		assertPreOrdered(urisStrings);
+		assertPreOrdered(List.of( //
+				"bats://authority/path?query#fragment1", //
+				"bats://authority/path?query#fragment2", //
+				"bats://authority/path?query#fragment1", //
+				"bats://authority/path?query#fragment2" //
+		));
 	}
 
-	/* Bug570896 */
-	public void testCompareUriNulls() throws URISyntaxException {
-		// fragments should NOT be distinct! Even though they might not be used:
-		String[] urisStrings = { //
-				"scheme://authority/path?query#fragment", //
-				"s:///?#", //
-				"s:///?#", //
-				"s:///", //
-				"", "", null, null,
-		};
-		assertPreOrdered(urisStrings);
-	}
-	private void assertPreOrdered(String[] urisStrings) {
-		List<URI> uriList = Arrays.asList(urisStrings).stream().map(t -> {
-			try {
-				return t == null ? null : new URI(t);
-			} catch (URISyntaxException e) {
-				throw new RuntimeException(e);
-			}
-		}).collect(Collectors.toList());
+	private void assertPreOrdered(List<String> urisStrings) {
+		List<BatFSURI> batfsList = urisStrings.stream().map(BatFSURI::new).collect(Collectors.toList());
 		// stable sort:
-		List<URI> sorted = uriList.stream().sorted(FileStoreUtil::compareNormalisedUri).collect(Collectors.toList());
+		List<BatFSURI> sorted = batfsList.stream().sorted(IFileStore::compareTo).collect(Collectors.toList());
 		// proof sort order did not change
-		assertEquals("1.0", uriList, sorted);
+		assertEquals("1.0", batfsList, sorted);
 	}
 
 	public void testBug256837() {
