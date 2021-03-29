@@ -281,9 +281,9 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 * launches to be registered.
 	 */
 	public void startup() {
+		initPerspectives();
 		DebugUIPlugin.getDefault().addSaveParticipant(this);
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
-		initPerspectives();
 	}
 
 	/**
