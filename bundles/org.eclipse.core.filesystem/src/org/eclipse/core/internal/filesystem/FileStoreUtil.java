@@ -15,8 +15,6 @@ package org.eclipse.core.internal.filesystem;
 
 import java.net.URI;
 import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
 /**
  * Provides internal utility functions for comparing FileStores and paths
@@ -28,8 +26,9 @@ public final class FileStoreUtil {
 	}
 
 	/**
-	 * Compares URIs by normalized IPath
-	 * This is the old slow implementation and has a memory hotspot see bug 570896. Prefer to use compareNormalisedUri!
+	 * Compares URIs by their normalized values.
+	 * This implementation has a memory hotspot when uri is not normalized.
+	 * see bug 570896!
 	 * @since org.eclipse.core.filesystem 1.9
 	 */
 	private static int comparePathUri(URI uri1, URI uri2) {
@@ -40,40 +39,22 @@ public final class FileStoreUtil {
 		// in case of Exceptions:
 		if ((compare = nullsLast(uri1, uri2)) != 0)
 			return compare;
-		// compare hosts
-		compare = compareStringOrNull(uri1.getHost(), uri2.getHost());
-		if (compare != 0)
-			return compare;
-		// compare user infos
-		compare = compareStringOrNull(uri1.getUserInfo(), uri2.getUserInfo());
-		if (compare != 0)
-			return compare;
-		// compare ports
-		int port1 = uri1.getPort();
-		int port2 = uri2.getPort();
-		if (port1 != port2)
-			return port1 - port2;
+		// note: If uri is already normal u.normalize() will just return u:
+		return compareNormalisedUri(uri1.normalize(), uri2.normalize());
+	}
 
-		IPath path1 = new Path(uri1.getPath());
-		IPath path2 = new Path(uri2.getPath());
-		// compare devices
-		compare = compareStringOrNull(path1.getDevice(), path2.getDevice());
-		if (compare != 0)
-			return compare;
-		// compare segments
-		int segmentCount1 = path1.segmentCount();
-		int segmentCount2 = path2.segmentCount();
-		for (int i = 0; (i < segmentCount1) && (i < segmentCount2); i++) {
-			compare = path1.segment(i).compareTo(path2.segment(i));
-			if (compare != 0)
-				return compare;
-		}
-		//all segments are equal, so compare based on number of segments
-		compare = segmentCount1 - segmentCount2;
-		if (compare != 0)
-			return compare;
-		//same number of segments, so compare query
-		return compareStringOrNull(uri1.getQuery(), uri2.getQuery());
+	private static int compareNormalisedUri(URI uri1, URI uri2) {
+		int c;
+		// avoid to use IPath here due to high ephemeral memory allocation (Bug 570896)
+		if ((c = compareStringOrNull(uri1.getAuthority(), uri2.getAuthority())) != 0)
+			return c;
+		if ((c = compareStringOrNull(uri1.getScheme(), uri2.getScheme())) != 0)
+			return c;
+		if ((c = comparePathSegments(uri1.getPath(), uri2.getPath())) != 0)
+			return c;
+		if ((c = compareStringOrNull(uri1.getQuery(), uri2.getQuery())) != 0)
+			return c;
+		return c;
 	}
 
 	static int nullsLast(Object c1, Object c2) {
