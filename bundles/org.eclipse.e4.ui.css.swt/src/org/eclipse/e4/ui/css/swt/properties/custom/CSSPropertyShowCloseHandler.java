@@ -78,7 +78,7 @@ public class CSSPropertyShowCloseHandler extends CTabETabHelper implements ICSSP
 		return null;
 	}
 
-	private class ShowCloseSelectionListener implements Listener {
+	private static class ShowCloseSelectionListener implements Listener {
 
 		private CSSEngine engine;
 
