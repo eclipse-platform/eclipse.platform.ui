@@ -37,7 +37,6 @@ public abstract class AbstractCellCursor extends Canvas {
 	private ViewerCell[] cells = new ViewerCell[0];
 	private ColumnViewer viewer;
 	private int activationTime = 0;
-	private boolean inFocusRequest = false;
 
 	/**
 	 * @param viewer
@@ -90,13 +89,7 @@ public abstract class AbstractCellCursor extends Canvas {
 				break;
 
 			case SWT.FocusIn:
-				if (isVisible()) {
-					inFocusRequest = true;
-					if (!inFocusRequest) {
-						forceFocus();
-					}
-					inFocusRequest = false;
-				}
+				break;
 
 			default:
 				break;
