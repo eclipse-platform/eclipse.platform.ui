@@ -128,7 +128,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 	 * An input stream that only opens the file if bytes are actually requested.
 	 * @see #readDescription(File)
 	 */
-	class LazyFileInputStream extends InputStream {
+	static class LazyFileInputStream extends InputStream {
 		private InputStream actual;
 		private IFileStore target;
 

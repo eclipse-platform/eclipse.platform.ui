@@ -31,7 +31,7 @@ import org.eclipse.core.tests.resources.ResourceTest;
 
 public class HistoryStoreTest extends ResourceTest {
 
-	class LogListenerVerifier implements ILogListener {
+	static class LogListenerVerifier implements ILogListener {
 		List<Integer> actual = new ArrayList<>();
 		List<Integer> expected = new ArrayList<>();
 
@@ -79,7 +79,7 @@ public class HistoryStoreTest extends ResourceTest {
 		}
 	}
 
-	class VerificationFailedException extends Exception {
+	static class VerificationFailedException extends Exception {
 		/**
 		 * All serializable objects should have a stable serialVersionUID
 		 */

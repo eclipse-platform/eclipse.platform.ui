@@ -82,7 +82,7 @@ public class ElementTree {
 	protected DeltaDataTree tree;
 	protected IElementTreeData userData;
 
-	private class ChildIDsCache {
+	private static class ChildIDsCache {
 		ChildIDsCache(IPath path, IPath[] childPaths) {
 			this.path = path;
 			this.childPaths = childPaths;

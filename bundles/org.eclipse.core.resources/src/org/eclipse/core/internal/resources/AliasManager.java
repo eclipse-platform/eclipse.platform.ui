@@ -55,7 +55,7 @@ import org.eclipse.osgi.util.NLS;
  *  - when linked resources are created, deleted, or moved.
  */
 public class AliasManager implements IManager, ILifecycleListener, IResourceChangeListener {
-	public class AddToCollectionDoit implements Doit {
+	public static class AddToCollectionDoit implements Doit {
 		Collection<IResource> collection;
 
 		@Override

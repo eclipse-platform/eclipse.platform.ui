@@ -31,7 +31,7 @@ import org.osgi.service.log.*;
  * that correct deltas are received for all types of workspace changes.
  */
 public class IResourceChangeListenerTest extends ResourceTest {
-	class SimpleListener implements IResourceChangeListener {
+	static class SimpleListener implements IResourceChangeListener {
 		Object source;
 		int trigger;
 

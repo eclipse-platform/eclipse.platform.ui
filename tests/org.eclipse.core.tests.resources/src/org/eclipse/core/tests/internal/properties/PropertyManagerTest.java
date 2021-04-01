@@ -24,7 +24,7 @@ import org.eclipse.core.tests.internal.localstore.LocalStoreTest;
 
 public class PropertyManagerTest extends LocalStoreTest {
 
-	public class StoredProperty {
+	public static class StoredProperty {
 		protected QualifiedName name = null;
 		protected String value = null;
 

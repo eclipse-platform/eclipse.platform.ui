@@ -71,7 +71,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 	protected SelectionProvider selectionProvider;
 	protected MarkerViewPropertySheetPage propertyPage;
 
-	class SelectionProvider implements ISelectionProvider {
+	static class SelectionProvider implements ISelectionProvider {
 		private List<ISelectionChangedListener> listeners = new ArrayList<>();
 		private ISelection selection;
 

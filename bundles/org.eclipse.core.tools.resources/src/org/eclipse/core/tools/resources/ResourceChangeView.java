@@ -34,7 +34,7 @@ import org.eclipse.ui.*;
  * resource change events.
  */
 public class ResourceChangeView extends SpyView implements IResourceChangeListener {
-	class DeltaNode implements IAdaptable {
+	static class DeltaNode implements IAdaptable {
 		private ArrayList<DeltaNode> children;
 		private int deltaFlags = -1;
 		private int deltaKind = -1;

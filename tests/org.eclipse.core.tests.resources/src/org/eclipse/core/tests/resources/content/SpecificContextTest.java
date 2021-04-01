@@ -38,7 +38,7 @@ public class SpecificContextTest extends ContentTypeTest {
 	/**
 	 * A minimal scope implementation.
 	 */
-	private class SingleNodeScope implements IScopeContext {
+	private static class SingleNodeScope implements IScopeContext {
 		private final IEclipsePreferences node;
 
 		SingleNodeScope() {

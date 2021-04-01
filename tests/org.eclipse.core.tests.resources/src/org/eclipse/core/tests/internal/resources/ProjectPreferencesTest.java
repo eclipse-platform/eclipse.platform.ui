@@ -35,7 +35,7 @@ public class ProjectPreferencesTest extends ResourceTest {
 	private static final String DIR_NAME = ".settings";
 	private static final String FILE_EXTENSION = "prefs";
 
-	class Tracer implements IEclipsePreferences.IPreferenceChangeListener {
+	static class Tracer implements IEclipsePreferences.IPreferenceChangeListener {
 		public StringBuilder log = new StringBuilder();
 
 		private String typeCode(Object value) {

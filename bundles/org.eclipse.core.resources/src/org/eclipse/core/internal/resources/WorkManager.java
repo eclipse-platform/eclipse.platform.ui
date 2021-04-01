@@ -47,7 +47,7 @@ public class WorkManager implements IManager {
 	 * threads that own the workspace lock must never block trying to acquire a
 	 * resource rule.
 	 */
-	class NotifyRule implements ISchedulingRule {
+	static class NotifyRule implements ISchedulingRule {
 		@Override
 		public boolean contains(ISchedulingRule rule) {
 			return (rule instanceof IResource) || rule.getClass().equals(NotifyRule.class);
