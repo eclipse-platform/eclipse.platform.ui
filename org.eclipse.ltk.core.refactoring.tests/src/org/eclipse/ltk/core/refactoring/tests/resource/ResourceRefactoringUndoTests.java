@@ -654,7 +654,7 @@ public class ResourceRefactoringUndoTests {
 		}
 	}
 
-	abstract class ResourceSnapshot {
+	abstract static class ResourceSnapshot {
 		String name;
 
 		abstract boolean isValid(IResource parent) throws CoreException;
