@@ -49,7 +49,7 @@ public class ProgressBuildListener implements BuildListener {
 	/**
 	 * Contains the progress monitor instances for the various projects in a chain.
 	 */
-	protected class ProjectMonitors {
+	protected static class ProjectMonitors {
 		/**
 		 * This field is null for the main project
 		 */

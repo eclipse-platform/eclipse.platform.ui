@@ -37,7 +37,7 @@ public class AntEditorDocumentProvider extends TextFileDocumentProvider {
 	/**
 	 * Remembers a Ant document model for each element.
 	 */
-	protected class AntFileInfo extends FileInfo {
+	protected static class AntFileInfo extends FileInfo {
 
 		public AntModel fAntModel;
 

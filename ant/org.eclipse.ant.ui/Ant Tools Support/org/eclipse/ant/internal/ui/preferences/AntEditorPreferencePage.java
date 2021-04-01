@@ -107,7 +107,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 	 * 
 	 * @since 3.0
 	 */
-	private class HighlightingColorListItem {
+	private static class HighlightingColorListItem {
 		/** Display name */
 		private String fDisplayName;
 		/** Color preference key */
@@ -182,7 +182,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 	 * 
 	 * @since 3.0
 	 */
-	private class ColorListLabelProvider extends LabelProvider implements IColorProvider {
+	private static class ColorListLabelProvider extends LabelProvider implements IColorProvider {
 
 		@Override
 		public String getText(Object element) {
@@ -205,7 +205,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 	 * 
 	 * @since 3.0
 	 */
-	private class ColorListContentProvider implements IStructuredContentProvider {
+	private static class ColorListContentProvider implements IStructuredContentProvider {
 
 		@Override
 		public Object[] getElements(Object inputElement) {

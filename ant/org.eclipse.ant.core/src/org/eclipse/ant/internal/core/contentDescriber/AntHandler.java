@@ -42,7 +42,7 @@ public final class AntHandler extends DefaultHandler {
 	 *
 	 * @since 3.1
 	 */
-	private class StopParsingException extends SAXException {
+	private static class StopParsingException extends SAXException {
 		/**
 		 * All serializable objects should have a stable serialVersionUID
 		 */

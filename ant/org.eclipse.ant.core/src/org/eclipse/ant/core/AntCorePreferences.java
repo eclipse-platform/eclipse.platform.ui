@@ -81,7 +81,7 @@ import org.osgi.util.tracker.ServiceTracker;
 @SuppressWarnings("deprecation")
 public class AntCorePreferences implements IPropertyChangeListener {
 
-	class WrappedClassLoader extends ClassLoader {
+	static class WrappedClassLoader extends ClassLoader {
 		private Bundle bundle;
 
 		public WrappedClassLoader(Bundle bundle) {

@@ -44,7 +44,7 @@ public class JavacMarkerCreator {
 	private Map<IFile, List<MarkerInfo>> fFileToMarkerInfo = new HashMap<>();
 	private final boolean fUseCustomMessage;
 
-	private class MarkerInfo {
+	private static class MarkerInfo {
 
 		public int fLineNumber;
 		public int fOffset;

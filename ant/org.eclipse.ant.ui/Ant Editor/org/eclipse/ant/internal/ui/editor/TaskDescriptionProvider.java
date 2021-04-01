@@ -68,7 +68,7 @@ public class TaskDescriptionProvider {
 	 * 
 	 * @since 3.5
 	 */
-	class ProposalNode {
+	static class ProposalNode {
 		String desc = null;
 		String required = null;
 		HashMap<String, ProposalNode> nodes = null;

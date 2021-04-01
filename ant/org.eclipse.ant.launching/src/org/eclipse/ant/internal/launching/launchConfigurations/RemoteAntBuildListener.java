@@ -43,7 +43,7 @@ import org.eclipse.debug.core.model.IProcess;
  * the different messages.
  */
 public class RemoteAntBuildListener implements ILaunchesListener {
-	public abstract class ListenerSafeRunnable implements ISafeRunnable {
+	public abstract static class ListenerSafeRunnable implements ISafeRunnable {
 		@Override
 		public void handleException(Throwable exception) {
 			AntLaunching.log(exception);
