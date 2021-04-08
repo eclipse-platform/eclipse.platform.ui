@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2020 IBM Corporation and others.
+ * Copyright (c) 2008, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -135,6 +135,13 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		}
 	}
 
+	@Override
+	public void hideChild(MElementContainer<MUIElement> parentElement, MUIElement child) {
+		super.hideChild(parentElement, child);
+
+		hideElementRecursive(child);
+	}
+
 	@Inject
 	@Optional
 	private void subscribePartTopicToolbar(@UIEventTopic(UIEvents.Part.TOPIC_TOOLBAR) Event event) {
@@ -227,9 +234,12 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			return;
 		}
 
+		// Recursively hide placeholder refs if reference is current
 		if (element instanceof MPlaceholder) {
 			MPlaceholder ph = (MPlaceholder) element;
-			element = ph.getRef();
+			if (ph.getRef() != null && ph.getRef().getCurSharedRef() == ph) {
+				hideElementRecursive(ph.getRef());
+			}
 		}
 
 		// Hide any floating windows
@@ -296,7 +306,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 				refCtrl.requestLayout();
 			}
 
-			element = ref;
+			showElementRecursive(ref);
 		}
 
 		if (element instanceof MPart) {
