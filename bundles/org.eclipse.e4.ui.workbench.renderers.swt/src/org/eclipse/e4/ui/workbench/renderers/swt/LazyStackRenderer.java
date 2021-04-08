@@ -291,13 +291,9 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			Composite phComp = (Composite) ph.getWidget();
 			Control refCtrl = (Control) ph.getRef().getWidget();
 
-			// If the parent changes we need to adjust the bounds of the child
-			// we do not call layout() because this could lead to
-			// a big amount of layout calls in unrelated places e.g. none
-			// visible children of a CTabFolder (see 460745)
 			if (refCtrl != null && refCtrl.getParent() != phComp) {
 				refCtrl.setParent(phComp);
-				refCtrl.setSize(phComp.getSize());
+				refCtrl.requestLayout();
 			}
 
 			element = ref;
