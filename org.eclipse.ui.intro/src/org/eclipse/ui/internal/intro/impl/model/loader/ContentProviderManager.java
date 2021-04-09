@@ -54,7 +54,7 @@ public class ContentProviderManager {
 	private Map<String, ContentProviderWrapper> contentProviders = new HashMap<>();
 
 
-	class ContentProviderWrapper {
+	static class ContentProviderWrapper {
 
 		IIntroContentProvider provider;
 		AbstractIntroPage parentPage;

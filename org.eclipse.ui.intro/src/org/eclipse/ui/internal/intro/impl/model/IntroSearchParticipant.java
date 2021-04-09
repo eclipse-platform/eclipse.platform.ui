@@ -44,7 +44,7 @@ public class IntroSearchParticipant extends SearchParticipant {
 
 	private IntroModelRoot model;
 
-	private class TitleAndSummary {
+	private static class TitleAndSummary {
 		String title;
 		String summary;
 	}

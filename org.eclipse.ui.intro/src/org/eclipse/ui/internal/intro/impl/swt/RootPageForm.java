@@ -75,7 +75,7 @@ public class RootPageForm implements IIntroConstants {
 		}
 	}
 
-	class RootPageLayout extends Layout {
+	static class RootPageLayout extends Layout {
 
 		// gap between link composite and description label.
 		private int VERTICAL_SPACING = 20;

@@ -35,7 +35,7 @@ public class History {
 	// IFrame is stored in history as a different object with the IFrameURL set.
 	// This way the model actually creates one page for every embedded Help
 	// Topic target but the navigation history updates the IFrame accordingly.
-	class HistoryObject {
+	static class HistoryObject {
 		AbstractIntroPage page;
 		String iframeUrl;
 		String url;

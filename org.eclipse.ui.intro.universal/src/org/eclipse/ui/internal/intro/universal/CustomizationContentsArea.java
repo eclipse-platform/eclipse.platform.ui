@@ -383,7 +383,7 @@ public class CustomizationContentsArea {
 		}
 	}
 
-	class IntroTheme {
+	static class IntroTheme {
 		IConfigurationElement element;
 		Image previewImage;
 
