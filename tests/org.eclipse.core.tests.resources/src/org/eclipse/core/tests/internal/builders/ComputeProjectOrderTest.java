@@ -69,7 +69,7 @@ public class ComputeProjectOrderTest {
 		assertTrue(duration < 1000);
 		// keep half elements
 		timestamp = System.currentTimeMillis();
-		Predicate<Object> removeOneOutOfTwo = new Predicate<Object>() {
+		Predicate<Object> removeOneOutOfTwo = new Predicate<>() {
 			private int i = 0;
 
 			@Override
