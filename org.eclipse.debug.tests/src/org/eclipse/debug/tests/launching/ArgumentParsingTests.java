@@ -76,14 +76,8 @@ public class ArgumentParsingTests extends AbstractDebugTest {
 
 		String[] splitArguments = DebugPlugin.splitArguments(commandLine);
 		assertEquals(expectedArgs.length, splitArguments.length);
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < splitArguments.length; i++) {
-			if (i > 0) {
-				sb.append(" "); //$NON-NLS-1$
-			}
-			sb.append(splitArguments[i]);
-		}
-		assertEquals(commandLine, sb.toString());
+		String sb = String.join(" ", splitArguments); //$NON-NLS-1$
+		assertEquals(commandLine, sb);
 	}
 
 	private static void runCommandLine(String commandLine, String[] arguments) throws IOException,
