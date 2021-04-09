@@ -58,7 +58,7 @@ public class Snippet041TableViewerAlternatingColors {
 		}
 	}
 
-	private class OptimizedIndexSearcher {
+	private static class OptimizedIndexSearcher {
 		private int lastIndex = 0;
 
 		public boolean isEven(TableItem item) {

@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.TableColumn;
  *
  */
 public class Snippet030VirtualLazyTableViewer {
-	private class MyContentProvider implements ILazyContentProvider {
+	private static class MyContentProvider implements ILazyContentProvider {
 		private TableViewer viewer;
 		private MyModel[] elements;
 

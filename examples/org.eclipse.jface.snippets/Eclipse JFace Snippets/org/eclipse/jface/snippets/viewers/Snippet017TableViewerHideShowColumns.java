@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.TableColumn;
  * @since 3.2
  */
 public class Snippet017TableViewerHideShowColumns {
-	private class ShrinkThread extends Thread {
+	private static class ShrinkThread extends Thread {
 		private int width = 0;
 		private TableColumn column;
 
@@ -59,7 +59,7 @@ public class Snippet017TableViewerHideShowColumns {
 		}
 	}
 
-	private class ExpandThread extends Thread {
+	private static class ExpandThread extends Thread {
 		private int width = 0;
 		private TableColumn column;
 

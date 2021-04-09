@@ -122,7 +122,7 @@ public class Snippet066TableViewerWithLabelDecorator {
 		}
 	}
 
-	private class StatusStyledLabelProvider implements IStyledLabelProvider {
+	private static class StatusStyledLabelProvider implements IStyledLabelProvider {
 
 		@Override
 		public StyledString getStyledText(Object element) {

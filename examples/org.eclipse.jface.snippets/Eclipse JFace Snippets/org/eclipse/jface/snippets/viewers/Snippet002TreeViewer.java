@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.TreeColumn;
  */
 
 public class Snippet002TreeViewer {
-	private class MyContentProvider implements ITreeContentProvider {
+	private static class MyContentProvider implements ITreeContentProvider {
 
 		@Override
 		public Object[] getElements(Object inputElement) {

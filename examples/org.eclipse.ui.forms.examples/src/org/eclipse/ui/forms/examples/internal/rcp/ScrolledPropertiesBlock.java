@@ -65,7 +65,7 @@ public class ScrolledPropertiesBlock extends MasterDetailsBlock {
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
-	class MasterLabelProvider extends LabelProvider
+	static class MasterLabelProvider extends LabelProvider
 			implements
 				ITableLabelProvider {
 		@Override

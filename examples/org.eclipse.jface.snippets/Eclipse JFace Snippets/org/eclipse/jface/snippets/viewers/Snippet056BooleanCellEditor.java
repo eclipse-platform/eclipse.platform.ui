@@ -170,7 +170,7 @@ public class Snippet056BooleanCellEditor {
 		display.dispose();
 	}
 
-	private final class MyEditingSupport extends EditingSupport {
+	private static final class MyEditingSupport extends EditingSupport {
 		private final TreeViewer v;
 		private final TextCellEditor textCellEditor;
 
@@ -216,7 +216,7 @@ public class Snippet056BooleanCellEditor {
 		}
 	}
 
-	private class MyContentProvider implements ITreeContentProvider {
+	private static class MyContentProvider implements ITreeContentProvider {
 
 		@Override
 		public Object[] getElements(Object inputElement) {

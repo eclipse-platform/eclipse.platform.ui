@@ -62,7 +62,7 @@ public class Snippet045TableViewerFillFromBackgroundThread {
 		}
 	}
 
-	public class MyLabelProvider extends LabelProvider implements
+	public static class MyLabelProvider extends LabelProvider implements
 			ITableLabelProvider, ITableFontProvider, ITableColorProvider {
 		FontRegistry registry = new FontRegistry();
 

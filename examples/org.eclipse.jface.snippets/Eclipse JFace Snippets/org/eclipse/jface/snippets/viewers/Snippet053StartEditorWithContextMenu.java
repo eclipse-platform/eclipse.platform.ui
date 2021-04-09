@@ -52,7 +52,7 @@ public class Snippet053StartEditorWithContextMenu extends SelectionAdapter {
 
 	private TreeViewer viewer;
 
-	private class MyContentProvider implements ITreeContentProvider {
+	private static class MyContentProvider implements ITreeContentProvider {
 
 		@Override
 		public Object[] getElements(Object inputElement) {

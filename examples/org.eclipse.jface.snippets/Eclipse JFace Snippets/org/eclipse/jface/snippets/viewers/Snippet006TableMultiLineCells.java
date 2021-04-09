@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.TableColumn;
 public class Snippet006TableMultiLineCells {
 
 
-	class LineEntry {
+	static class LineEntry {
 
 		String line;
 

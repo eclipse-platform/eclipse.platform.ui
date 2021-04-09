@@ -53,7 +53,7 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class Snippet055HideShowColumn {
 
-	private final class MyEditingSupport extends EditingSupport {
+	private static final class MyEditingSupport extends EditingSupport {
 		private final TreeViewer v;
 		private final TextCellEditor textCellEditor;
 
@@ -86,7 +86,7 @@ public class Snippet055HideShowColumn {
 		}
 	}
 
-	class MyContentProvider implements ITreeContentProvider {
+	static class MyContentProvider implements ITreeContentProvider {
 
 		@Override
 		public Object[] getElements(Object inputElement) {

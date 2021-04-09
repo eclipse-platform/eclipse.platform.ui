@@ -190,7 +190,7 @@ public class Snippet070GenericSelectionDialog {
 		}
 	}
 
-	private class Model {
+	private static class Model {
 
 		private String name;
 

@@ -46,7 +46,7 @@ import org.eclipse.swt.widgets.TreeColumn;
  *
  */
 public class Snippet027TreeLayout {
-	private class MyContentProvider implements ITreeContentProvider {
+	private static class MyContentProvider implements ITreeContentProvider {
 
 		@Override
 		public Object[] getElements(Object inputElement) {
@@ -109,7 +109,7 @@ public class Snippet027TreeLayout {
 		}
 	}
 
-	public class MyLabelProvider extends LabelProvider implements
+	public static class MyLabelProvider extends LabelProvider implements
 			ITableLabelProvider, ITableFontProvider, ITableColorProvider {
 		FontRegistry registry = new FontRegistry();
 

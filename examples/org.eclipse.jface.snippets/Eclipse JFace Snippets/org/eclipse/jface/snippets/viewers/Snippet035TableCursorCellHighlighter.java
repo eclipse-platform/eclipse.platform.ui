@@ -93,7 +93,7 @@ public class Snippet035TableCursorCellHighlighter {
 
 	}
 
-	private class MyColumnLabelProvider extends ColumnLabelProvider {
+	private static class MyColumnLabelProvider extends ColumnLabelProvider {
 		FontRegistry registry = JFaceResources.getFontRegistry();
 		private String columnIndex;
 

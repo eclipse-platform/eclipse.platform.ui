@@ -177,7 +177,7 @@ public class FoldersView extends ViewPart {
 		}
 	}
 
-	private class ViewLabelProvider extends LabelProvider implements
+	private static class ViewLabelProvider extends LabelProvider implements
 			IFontProvider, IColorProvider {
 		@Override
 		public String getText(Object obj) {

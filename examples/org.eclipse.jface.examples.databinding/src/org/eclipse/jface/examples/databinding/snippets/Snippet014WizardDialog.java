@@ -58,7 +58,7 @@ public class Snippet014WizardDialog {
 	}
 
 	static class FirstWizardPage extends WizardPage {
-		private final class SingleDigitValidator implements IValidator<Integer> {
+		private static final class SingleDigitValidator implements IValidator<Integer> {
 			@Override
 			public IStatus validate(Integer value) {
 				if (value == null) {

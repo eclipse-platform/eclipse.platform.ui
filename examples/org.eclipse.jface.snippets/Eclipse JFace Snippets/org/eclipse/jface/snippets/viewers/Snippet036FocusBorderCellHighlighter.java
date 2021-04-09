@@ -92,7 +92,7 @@ public class Snippet036FocusBorderCellHighlighter {
 
 	}
 
-	private class MyColumnLabelProvider extends ColumnLabelProvider {
+	private static class MyColumnLabelProvider extends ColumnLabelProvider {
 
 		private int columnIndex;
 		private Table table;

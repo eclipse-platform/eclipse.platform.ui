@@ -61,7 +61,7 @@ import org.eclipse.ui.examples.fieldassist.preferences.PreferenceConstants;
  */
 public class FieldAssistTestDialog extends StatusDialog {
 
-	class SpinnerContentAdapter implements IControlContentAdapter {
+	static class SpinnerContentAdapter implements IControlContentAdapter {
 		// We are only implementing this for our internal use, not for
 		// content assist, so many of the methods are ignored.
 		@Override
@@ -98,7 +98,7 @@ public class FieldAssistTestDialog extends StatusDialog {
 		}
 	}
 
-	abstract class SmartField {
+	abstract static class SmartField {
 		ControlDecoration controlDecoration;
 
 		Control control;

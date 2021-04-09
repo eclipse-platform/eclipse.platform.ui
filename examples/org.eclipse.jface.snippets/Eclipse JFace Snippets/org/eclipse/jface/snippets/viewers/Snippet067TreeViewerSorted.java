@@ -48,7 +48,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 
 public class Snippet067TreeViewerSorted {
-	private class MyContentProvider implements ITreeContentProvider {
+	private static class MyContentProvider implements ITreeContentProvider {
 
 		@Override
 		public Object[] getElements(Object inputElement) {
@@ -75,7 +75,7 @@ public class Snippet067TreeViewerSorted {
 
 	}
 
-	public class MyModel {
+	public static class MyModel {
 		private MyModel parent;
 		private List<MyModel> children;
 		private String name;
@@ -179,7 +179,7 @@ public class Snippet067TreeViewerSorted {
 
 	}
 
-	public class DefaultLabelProvider extends LabelProvider
+	public static class DefaultLabelProvider extends LabelProvider
 			implements ITableLabelProvider, ITableFontProvider, ITableColorProvider {
 		FontRegistry registry = new FontRegistry();
 
@@ -209,7 +209,7 @@ public class Snippet067TreeViewerSorted {
 		}
 	}
 
-	public class MyLabelProvider extends LabelProvider
+	public static class MyLabelProvider extends LabelProvider
 			implements ITableLabelProvider, ITableFontProvider, ITableColorProvider {
 		FontRegistry registry = new FontRegistry();
 
@@ -266,7 +266,7 @@ public class Snippet067TreeViewerSorted {
 
 	}
 
-	public class LegendLabelProvider extends LabelProvider
+	public static class LegendLabelProvider extends LabelProvider
 			implements IBaseLabelProvider, ITableFontProvider, ITableColorProvider {
 		FontRegistry registry = new FontRegistry();
 
@@ -312,7 +312,7 @@ public class Snippet067TreeViewerSorted {
 
 	}
 
-	public class MyCategoryComparator extends ViewerComparator {
+	public static class MyCategoryComparator extends ViewerComparator {
 		@Override
 		public int category(Object element) {
 			MyModel location = (MyModel) element;
@@ -350,7 +350,7 @@ public class Snippet067TreeViewerSorted {
 		}
 	}
 
-	public class MyComparator extends ViewerComparator {
+	public static class MyComparator extends ViewerComparator {
 		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			MyModel location1 = (MyModel) e1;

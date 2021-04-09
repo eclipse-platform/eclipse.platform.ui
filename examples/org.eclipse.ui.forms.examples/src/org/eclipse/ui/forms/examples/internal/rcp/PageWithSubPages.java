@@ -29,7 +29,7 @@ public class PageWithSubPages extends FormPage {
 	private CTabFolder tabFolder;
 	private Text text;
 
-	class TextSection {
+	static class TextSection {
 		String text;
 		public TextSection(String text) {this.text = text;}
 	}

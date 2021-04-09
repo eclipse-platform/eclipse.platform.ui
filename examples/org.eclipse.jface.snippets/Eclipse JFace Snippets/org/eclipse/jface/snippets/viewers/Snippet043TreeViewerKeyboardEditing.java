@@ -133,7 +133,7 @@ public class Snippet043TreeViewerKeyboardEditing {
 		display.dispose();
 	}
 
-	private class MyContentProvider implements ITreeContentProvider {
+	private static class MyContentProvider implements ITreeContentProvider {
 
 		@Override
 		public Object[] getElements(Object inputElement) {

@@ -60,7 +60,7 @@ import org.eclipse.swt.widgets.TreeItem;
  */
 public class Snippet061FakedNativeCellEditor {
 
-	private final class MyEditingSupport extends EditingSupport {
+	private static final class MyEditingSupport extends EditingSupport {
 		private final TextCellEditor textCellEditor;
 		private final TreeViewer viewer;
 
@@ -93,7 +93,7 @@ public class Snippet061FakedNativeCellEditor {
 		}
 	}
 
-	private class MyContentProvider implements ITreeContentProvider {
+	private static class MyContentProvider implements ITreeContentProvider {
 
 		@Override
 		public Object[] getElements(Object inputElement) {
@@ -128,7 +128,7 @@ public class Snippet061FakedNativeCellEditor {
 
 	}
 
-	public abstract class EmulatedNativeCheckBoxLabelProvider extends
+	public abstract static class EmulatedNativeCheckBoxLabelProvider extends
 			OwnerDrawLabelProvider {
 		private static final String CHECKED_KEY = "CHECKED";
 		private static final String UNCHECK_KEY = "UNCHECKED";
