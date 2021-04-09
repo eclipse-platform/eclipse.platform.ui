@@ -35,7 +35,7 @@ public TitleSearchData(ServletContext context, HttpServletRequest request,
 private List<SearchResult> results;
 private String searchTerm;
 
-public class SearchResult {
+public static class SearchResult {
 	public String title;
 	public String href;
 }

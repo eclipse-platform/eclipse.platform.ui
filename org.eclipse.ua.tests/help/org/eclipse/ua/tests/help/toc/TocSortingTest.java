@@ -46,7 +46,7 @@ public class TocSortingTest {
 	private String helpDataPreference;
 	private String baseTocsPreference;
 
-	private class Toc implements IToc {
+	private static class Toc implements IToc {
 
 		private String label;
 
@@ -86,7 +86,7 @@ public class TocSortingTest {
 
 	}
 
-	private class TC implements ITocContribution {
+	private static class TC implements ITocContribution {
 
 		private IToc toc;
 		private String categoryId;

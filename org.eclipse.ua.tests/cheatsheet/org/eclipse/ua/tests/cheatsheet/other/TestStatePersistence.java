@@ -43,7 +43,7 @@ public class TestStatePersistence {
 	private static final String TEST_ID = "TestId";
 	private static final String PATH = "ContentPath";
 
-	private class PropertySet {
+	private static class PropertySet {
 		public String id;
 		public int currentItem;
 		public int button;

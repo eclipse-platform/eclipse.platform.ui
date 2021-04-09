@@ -23,7 +23,7 @@ import org.junit.Test;
 
 public class ContextLinkSorter {
 
-	private class TestResource implements IHelpResource {
+	private static class TestResource implements IHelpResource {
 
 		private String category;
 		private String href;
@@ -51,7 +51,7 @@ public class ContextLinkSorter {
 
 	}
 
-	private class TestContext implements IContext2 {
+	private static class TestContext implements IContext2 {
 
 		@Override
 		public String getCategory(IHelpResource topic) {

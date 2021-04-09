@@ -39,7 +39,7 @@ import org.junit.Test;
 
 public class TestTaskEvents {
 
-	public class TaskMap {
+	public static class TaskMap {
 
 		private Map<String, TaskCounter> map = new HashMap<>();
 		private int eventCount = 0;
@@ -68,7 +68,7 @@ public class TestTaskEvents {
 		}
 	}
 
-	public class TaskCounter {
+	public static class TaskCounter {
 		private int count = 1;
 
 		public int getCount() {

@@ -38,28 +38,28 @@ import org.junit.Test;
 
 public class TocLinkChecker {
 
-	private final class ReferenceFilter extends TocValidator.Filter {
+	private static final class ReferenceFilter extends TocValidator.Filter {
 		@Override
 		public boolean isIncluded(String href) {
 			return href.startsWith("reference");
 		}
 	}
 
-	private final class NonReferenceFilter extends TocValidator.Filter {
+	private static final class NonReferenceFilter extends TocValidator.Filter {
 		@Override
 		public boolean isIncluded(String href) {
 			return !href.startsWith("reference");
 		}
 	}
 
-	private final class NonReferenceNonSampleFilter extends TocValidator.Filter {
+	private static final class NonReferenceNonSampleFilter extends TocValidator.Filter {
 		@Override
 		public boolean isIncluded(String href) {
 			return !href.startsWith("reference") && !href.startsWith("samples");
 		}
 	}
 
-	private final class ReferenceOrSampleFilter extends TocValidator.Filter {
+	private static final class ReferenceOrSampleFilter extends TocValidator.Filter {
 		@Override
 		public boolean isIncluded(String href) {
 			return href.startsWith("reference") || href.startsWith("samples");

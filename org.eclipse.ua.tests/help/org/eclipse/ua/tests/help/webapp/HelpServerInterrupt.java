@@ -33,7 +33,7 @@ public class HelpServerInterrupt {
 	private static boolean enableTimeout = true;
 	private int iterations;
 	private int sleepTime = 10;
-	private class ServerStarter extends Thread {
+	private static class ServerStarter extends Thread {
 
 		private Exception exception = null;
 

@@ -30,7 +30,7 @@ import org.junit.Test;
 
 public class EnabledTopicTest {
 
-	private class ETopic implements ITopic {
+	private static class ETopic implements ITopic {
 
 		private String label;
 		private boolean isEnabled;
@@ -72,7 +72,7 @@ public class EnabledTopicTest {
 		}
 	}
 
-	private class NoHrefTopic extends ETopic {
+	private static class NoHrefTopic extends ETopic {
 
 		public NoHrefTopic(String label) {
 			super(label, true);
@@ -85,7 +85,7 @@ public class EnabledTopicTest {
 
 	}
 
-	private class EIndexEntry extends UAElement implements IIndexEntry  {
+	private static class EIndexEntry extends UAElement implements IIndexEntry  {
 
 		private String keyword;
 		private List<ITopic> topics = new ArrayList<>();

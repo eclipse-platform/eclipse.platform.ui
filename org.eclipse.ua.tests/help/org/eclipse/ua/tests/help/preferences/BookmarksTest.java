@@ -40,7 +40,7 @@ public class BookmarksTest {
 	private static final String BUGZILLA = "bugzilla";
 	private static final String HTTP_BUGZILLA = "https://bugs.eclipse.org/bugs/";
 
-	private class BookmarkObserver implements Observer {
+	private static class BookmarkObserver implements Observer {
 
 		public Object o;
 		public Object arg;

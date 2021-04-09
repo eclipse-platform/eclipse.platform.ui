@@ -31,7 +31,7 @@ import org.eclipse.tips.ui.ISwtTip;
 
 public class SwtTipImpl extends Tip implements ISwtTip {
 
-	private final class Beeper extends SelectionAdapter {
+	private static final class Beeper extends SelectionAdapter {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			e.widget.getDisplay().beep();

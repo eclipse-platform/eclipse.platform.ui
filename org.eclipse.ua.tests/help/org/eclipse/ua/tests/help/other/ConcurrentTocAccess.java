@@ -31,7 +31,7 @@ public class ConcurrentTocAccess {
 	// Set enableTimeout to false for debugging
 	private boolean enableTimeout = true;
 
-	private class TocGenerator {
+	private static class TocGenerator {
 		private int[] dimensions;
 		private StringBuilder result;
 
@@ -91,10 +91,10 @@ public class ConcurrentTocAccess {
 		}
 	}
 
-	private class BadHrefException extends RuntimeException {
+	private static class BadHrefException extends RuntimeException {
 		private static final long serialVersionUID = 410319402417607912L;
 	}
-	private class BadLabelException extends RuntimeException {
+	private static class BadLabelException extends RuntimeException {
 		private static final long serialVersionUID = -4581518572807575035L;
 	}
 
