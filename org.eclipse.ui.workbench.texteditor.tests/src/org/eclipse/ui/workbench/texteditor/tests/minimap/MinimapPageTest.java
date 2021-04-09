@@ -41,7 +41,7 @@ public class MinimapPageTest {
 		None, ITextViewer, ITextOperationTarget
 	}
 
-	class MyTextEditor extends StatusTextEditor {
+	static class MyTextEditor extends StatusTextEditor {
 
 		private final TextVieverAdapterKind kind;
 

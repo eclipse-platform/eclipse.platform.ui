@@ -114,7 +114,7 @@ public class MarkerAnnotationOrderTest {
 
 	}
 
-	public class TestMarkerAnnotationModel extends AbstractMarkerAnnotationModel {
+	public static class TestMarkerAnnotationModel extends AbstractMarkerAnnotationModel {
 		@Override
 		protected IMarker[] retrieveMarkers() throws CoreException {
 			return null;

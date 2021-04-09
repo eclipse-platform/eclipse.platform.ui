@@ -40,7 +40,7 @@ import org.eclipse.jface.text.source.IAnnotationModelListener;
  */
 public class AnnotationModelExtension2Test {
 
-	public class OldAnnotationModel implements IAnnotationModel {
+	public static class OldAnnotationModel implements IAnnotationModel {
 
 		private final HashMap<Annotation, Position> fAnnotations= new HashMap<>();
 

@@ -830,7 +830,7 @@ public class LinkedModeModelTest {
 		"	Ich habe schon so viel fur dich getan,\n" +
 		"	Das mir zu tun fast nichts mehr ubrigbleibt.";
 
-	private class LinkedAdapter implements ILinkedModeListener {
+	private static class LinkedAdapter implements ILinkedModeListener {
 		@Override
 		public void left(LinkedModeModel environment, int flags) {}
 		@Override

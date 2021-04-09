@@ -55,7 +55,7 @@ import org.eclipse.jface.text.tests.util.DisplayHelper;
 
 public class CodeMiningProjectionViewerTest {
 
-	private final class RepeatLettersCodeMiningProvider implements ICodeMiningProvider {
+	private static final class RepeatLettersCodeMiningProvider implements ICodeMiningProvider {
 		@Override
 		public CompletableFuture<List<? extends ICodeMining>> provideCodeMinings(ITextViewer viewer, IProgressMonitor monitor) {
 			List<LineContentCodeMining> codeMinings = new ArrayList<>();
