@@ -424,7 +424,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		return buff.length() > 0 ? buff.toString().trim() : null;
 	}
 
-	private class SearchTerms {
+	private static class SearchTerms {
 
 		private List<String> terms = new ArrayList<>();
 		private Set<String> termSet = new HashSet<>();

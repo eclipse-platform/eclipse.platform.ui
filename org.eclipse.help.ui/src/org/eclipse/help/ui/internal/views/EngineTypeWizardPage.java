@@ -50,7 +50,7 @@ public class EngineTypeWizardPage extends WizardPage {
 		}
 	}
 
-	class EngineLabelProvider extends LabelProvider implements ITableLabelProvider {
+	static class EngineLabelProvider extends LabelProvider implements ITableLabelProvider {
 
 		@Override
 		public String getText(Object obj) {

@@ -54,7 +54,7 @@ import org.eclipse.ui.PlatformUI;
 public class ScopeSetDialog extends TrayDialog  {
 
 
-	public class NonDefaultFilter extends ViewerFilter {
+	public static class NonDefaultFilter extends ViewerFilter {
 
 		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
@@ -99,7 +99,7 @@ public class ScopeSetDialog extends TrayDialog  {
 	private Object[] result;
 	private boolean localOnly;
 
-	private abstract class PendingOperation {
+	private abstract static class PendingOperation {
 		ScopeSet set;
 		public PendingOperation(ScopeSet set) {
 			this.set = set;
@@ -124,7 +124,7 @@ public class ScopeSetDialog extends TrayDialog  {
 		}
 	}
 
-	private class RenameOperation extends PendingOperation {
+	private static class RenameOperation extends PendingOperation {
 		private String newName;
 		public RenameOperation(ScopeSet set, String newName) {
 			super(set);

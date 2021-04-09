@@ -70,7 +70,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 
 	private static final String HELP_VIEW_ID = "org.eclipse.help.ui.HelpView"; //$NON-NLS-1$
 
-	class ExternalWorkbenchBrowser implements IBrowser {
+	static class ExternalWorkbenchBrowser implements IBrowser {
 
 		public ExternalWorkbenchBrowser() {
 		}

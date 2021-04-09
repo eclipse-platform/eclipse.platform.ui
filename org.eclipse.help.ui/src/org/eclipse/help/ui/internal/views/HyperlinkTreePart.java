@@ -71,7 +71,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 		}
 	}
 
-	private class ScopeFilter extends ViewerFilter {
+	private static class ScopeFilter extends ViewerFilter {
 
 		public ScopeFilter(AbstractHelpScope scope) {
 			this.scope = scope;

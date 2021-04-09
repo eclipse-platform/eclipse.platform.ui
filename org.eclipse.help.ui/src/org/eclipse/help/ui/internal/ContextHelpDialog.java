@@ -473,7 +473,7 @@ public class ContextHelpDialog {
 		});
 	}
 
-	public class Description extends StyledText {
+	public static class Description extends StyledText {
 		/**
 		 * @param parent
 		 * @param style

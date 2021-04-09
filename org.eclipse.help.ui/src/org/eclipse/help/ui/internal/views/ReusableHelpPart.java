@@ -688,7 +688,7 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 		}
 	}
 
-	class RoleFilter extends ViewerFilter {
+	static class RoleFilter extends ViewerFilter {
 
 		@Override
 		public boolean select(Viewer viewer, Object parentElement,
@@ -701,7 +701,7 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 		}
 	}
 
-	class UAFilter extends ViewerFilter {
+	static class UAFilter extends ViewerFilter {
 
 		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {

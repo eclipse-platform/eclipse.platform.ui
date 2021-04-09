@@ -37,7 +37,7 @@ public class ScopePreferenceDialog extends PreferenceDialog {
 	private EngineDescriptorManager descManager;
 	private ArrayList<PendingOperation> pendingOperations;
 
-	class PendingOperation {
+	static class PendingOperation {
 		int action;
 		EngineDescriptor desc;
 		public PendingOperation(int action, EngineDescriptor desc) {

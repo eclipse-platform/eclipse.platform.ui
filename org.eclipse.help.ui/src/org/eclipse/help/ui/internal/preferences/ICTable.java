@@ -139,7 +139,7 @@ public class ICTable {
 	 * for the Table. This class implements IRemoteHelpListViewer interface an
 	 * registers itself with RemoteICList
 	 */
-	class ICContentProvider implements IStructuredContentProvider
+	static class ICContentProvider implements IStructuredContentProvider
 	{
 		private List<IC> content = new ArrayList<>();
 
@@ -161,7 +161,7 @@ public class ICTable {
 
 	}
 
-	public class ICLabelProvider extends LabelProvider implements ITableLabelProvider {
+	public static class ICLabelProvider extends LabelProvider implements ITableLabelProvider {
 
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {

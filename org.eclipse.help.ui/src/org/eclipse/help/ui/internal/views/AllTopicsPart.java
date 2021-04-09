@@ -134,7 +134,7 @@ public class AllTopicsPart extends HyperlinkTreePart {
 		}
 	}
 
-	class EmptyContainerFilter extends ViewerFilter {
+	static class EmptyContainerFilter extends ViewerFilter {
 
 		@Override
 		public boolean select(Viewer viewer, Object parentElement,

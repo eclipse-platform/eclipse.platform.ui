@@ -47,7 +47,7 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 	private boolean filteringEnabled;
 	private ActivityDescriptor activityDescriptor;
 
-	class ActivityDescriptor {
+	static class ActivityDescriptor {
 		private IConfigurationElement config;
 		private String documentMessage;
 		private boolean needsLiveHelp;

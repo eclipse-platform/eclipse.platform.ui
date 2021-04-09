@@ -110,7 +110,7 @@ public class IndexPart extends HyperlinkTreePart implements IHelpUIConstants {
 		return message;
 	}
 
-	class RoleFilter extends ViewerFilter {
+	static class RoleFilter extends ViewerFilter {
 
 		@Override
 		public boolean select(Viewer viewer, Object parentElement,
