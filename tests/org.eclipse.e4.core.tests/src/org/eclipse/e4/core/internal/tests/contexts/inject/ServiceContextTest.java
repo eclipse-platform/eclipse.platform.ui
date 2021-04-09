@@ -46,7 +46,7 @@ import org.osgi.framework.ServiceRegistration;
  * Tests for contexts used in OSGi services.
  */
 public class ServiceContextTest {
-	class Crayon {
+	static class Crayon {
 		@Inject
 		IPaletteService palette;
 
@@ -69,7 +69,7 @@ public class ServiceContextTest {
 		public Color getColor();
 	}
 
-	class PaletteImpl implements IPaletteService {
+	static class PaletteImpl implements IPaletteService {
 		private final Color color;
 
 		PaletteImpl(Color color) {

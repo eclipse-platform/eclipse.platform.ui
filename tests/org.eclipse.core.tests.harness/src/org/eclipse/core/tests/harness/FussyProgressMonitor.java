@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.jobs.Job;
  * you are testing.
  */
 public class FussyProgressMonitor extends TestProgressMonitor {
-	public class FussyProgressAssertionFailed extends AssertionFailedError {
+	public static class FussyProgressAssertionFailed extends AssertionFailedError {
 		/**
 		 * All serializable objects should have a stable serialVersionUID
 		 */

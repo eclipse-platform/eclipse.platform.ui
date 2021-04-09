@@ -29,7 +29,7 @@ public class InvokeTestMissingAnnotation {
 	/**
 	 * Class to invoke for the test
 	 */
-	class TestSuperclass {
+	static class TestSuperclass {
 		public int saveCount = 0;
 
 		// @Execute annotation missing on purpose

@@ -32,7 +32,7 @@ import org.osgi.service.prefs.BackingStoreException;
 @Deprecated
 public class PreferenceForwarderTest extends RuntimeTest {
 
-	class Tracer implements Preferences.IPropertyChangeListener {
+	static class Tracer implements Preferences.IPropertyChangeListener {
 		public StringBuilder log = new StringBuilder();
 
 		private String typeCode(Object value) {

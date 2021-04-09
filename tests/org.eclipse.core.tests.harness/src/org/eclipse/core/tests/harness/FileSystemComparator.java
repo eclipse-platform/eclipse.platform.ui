@@ -33,7 +33,7 @@ import org.junit.Assert;
  */
 public class FileSystemComparator {
 
-	private class FileSummary {
+	private static class FileSummary {
 		boolean directory;
 		private String path;
 		private long size;

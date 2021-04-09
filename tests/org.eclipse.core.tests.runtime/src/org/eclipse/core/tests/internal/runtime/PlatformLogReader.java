@@ -139,7 +139,7 @@ public class PlatformLogReader {
 	/**
 	 * A reconsituted exception that only contains a stack trace and a message.
 	 */
-	class FakeException extends Throwable {
+	static class FakeException extends Throwable {
 		/**
 		 * All serializable objects should have a stable serialVersionUID
 		 */

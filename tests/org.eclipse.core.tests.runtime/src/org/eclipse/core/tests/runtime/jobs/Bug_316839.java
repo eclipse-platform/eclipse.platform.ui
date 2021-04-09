@@ -57,7 +57,7 @@ public class Bug_316839 extends AbstractJobManagerTest {
 		waitForCompletion(interruptingJob);
 	}
 
-	public class TestJob extends Job {
+	public static class TestJob extends Job {
 		public TestJob(String name) {
 			super(name);
 		}

@@ -26,7 +26,7 @@ public class ProcessController {
 	 * Thrown when a process being executed exceeds the maximum amount
 	 * of time allowed for it to complete.
 	 */
-	public class TimeOutException extends Exception {
+	public static class TimeOutException extends Exception {
 		/**
 		 * All serializable objects should have a stable serialVersionUID
 		 */

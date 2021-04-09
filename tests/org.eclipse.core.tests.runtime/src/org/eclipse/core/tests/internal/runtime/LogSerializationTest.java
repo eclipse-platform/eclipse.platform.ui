@@ -21,7 +21,7 @@ import org.eclipse.core.tests.runtime.RuntimeTest;
 
 public class LogSerializationTest extends RuntimeTest {
 
-	class TestException extends Exception {
+	static class TestException extends Exception {
 		private static final long serialVersionUID = 1L;
 
 		TestException() {

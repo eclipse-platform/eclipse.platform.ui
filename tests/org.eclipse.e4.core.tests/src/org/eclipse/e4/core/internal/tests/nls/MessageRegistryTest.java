@@ -37,7 +37,7 @@ public class MessageRegistryTest {
 		BundleMessagesRegistry registry;
 	}
 
-	class TestLocalizableObject {
+	static class TestLocalizableObject {
 		private String localizableValue;
 
 		public String getLocalizableValue() {

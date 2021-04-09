@@ -34,7 +34,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class SetupManager {
-	public class SetupException extends Exception {
+	public static class SetupException extends Exception {
 		/**
 		 * All serializable objects should have a stable serialVersionUID
 		 */

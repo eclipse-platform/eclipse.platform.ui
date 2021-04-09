@@ -38,7 +38,7 @@ import org.eclipse.core.tests.harness.CoreTest;
  */
 public class SessionTestRunner {
 
-	class Result {
+	static class Result {
 		final static int ERROR = 2;
 		final static int FAILURE = 1;
 		final static int SUCCESS = 0;

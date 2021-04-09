@@ -31,7 +31,7 @@ import org.osgi.framework.ServiceRegistration;
  *
  */
 public class ContextExample {
-	class Crayon {
+	static class Crayon {
 		@Inject
 		IPaletteService pallete;
 
@@ -51,7 +51,7 @@ public class ContextExample {
 		public Color getColor();
 	}
 
-	class PaletteImpl implements IPaletteService {
+	static class PaletteImpl implements IPaletteService {
 		private final Color color;
 
 		PaletteImpl(Color color) {

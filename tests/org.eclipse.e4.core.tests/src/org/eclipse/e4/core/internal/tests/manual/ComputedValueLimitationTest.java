@@ -42,7 +42,7 @@ public class ComputedValueLimitationTest {
 	/**
 	 * Used as an injection target
 	 */
-	public class UserObject {
+	public static class UserObject {
 
 		private String txt;
 
@@ -63,7 +63,7 @@ public class ComputedValueLimitationTest {
 		}
 	}
 
-	public class CalcColor extends ContextFunction {
+	public static class CalcColor extends ContextFunction {
 
 		@Override
 		public Object compute(IEclipseContext context, String contextKey) {
@@ -72,7 +72,7 @@ public class ComputedValueLimitationTest {
 		}
 	}
 
-	public class Time extends ContextFunction {
+	public static class Time extends ContextFunction {
 		@Override
 		public Object compute(IEclipseContext context, String contextKey) {
 			context.get(String.valueOf(System.currentTimeMillis()));

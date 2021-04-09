@@ -67,7 +67,7 @@ public class RunAndTrackTest {
 
 	}
 
-	private class ActivePartLookupFunction extends ContextFunction {
+	private static class ActivePartLookupFunction extends ContextFunction {
 
 		@Override
 		public Object compute(IEclipseContext context, String contextKey) {

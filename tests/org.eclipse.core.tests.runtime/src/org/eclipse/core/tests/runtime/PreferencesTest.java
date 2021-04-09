@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.Preferences;
 @Deprecated
 public class PreferencesTest extends RuntimeTest {
 
-	class Tracer implements Preferences.IPropertyChangeListener {
+	static class Tracer implements Preferences.IPropertyChangeListener {
 		public StringBuilder log = new StringBuilder();
 
 		private String typeCode(Object value) {

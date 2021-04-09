@@ -29,7 +29,7 @@ import org.osgi.service.prefs.Preferences;
  */
 public class PreferencesServiceTest extends RuntimeTest {
 
-	class ExportVerifier {
+	static class ExportVerifier {
 
 		private IEclipsePreferences node;
 		private ByteArrayOutputStream output;

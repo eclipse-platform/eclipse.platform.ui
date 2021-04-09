@@ -107,7 +107,7 @@ public class Bug_478634 extends AbstractJobTest {
 
 	}
 
-	class ThreadJobListener extends JobChangeAdapter {
+	static class ThreadJobListener extends JobChangeAdapter {
 
 		private boolean beginRule = false;
 
