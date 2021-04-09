@@ -95,7 +95,7 @@ public class PropertiesActionProvider extends CommonActionProvider {
 		}
 	}
 
-	private class DelegateSelectionProvider implements ISelectionProvider {
+	private static class DelegateSelectionProvider implements ISelectionProvider {
 
 		private ISelectionProvider delegate;
 

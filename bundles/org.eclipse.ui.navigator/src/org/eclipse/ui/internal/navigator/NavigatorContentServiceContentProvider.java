@@ -517,7 +517,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 		}
 	}
 
-	class TreePathCompiler {
+	static class TreePathCompiler {
 
 		private final LinkedList segments = new LinkedList();
 
