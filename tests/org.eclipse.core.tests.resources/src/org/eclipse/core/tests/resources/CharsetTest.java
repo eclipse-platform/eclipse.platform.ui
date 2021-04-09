@@ -32,7 +32,7 @@ import org.osgi.service.prefs.BackingStoreException;
 
 public class CharsetTest extends ResourceTest {
 
-	private final class JobChangeAdapterExtension extends JobChangeAdapter {
+	private static final class JobChangeAdapterExtension extends JobChangeAdapter {
 		private IStatus result;
 
 		public JobChangeAdapterExtension() {
