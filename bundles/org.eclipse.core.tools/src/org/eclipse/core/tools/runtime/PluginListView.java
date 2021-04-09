@@ -36,7 +36,7 @@ public class PluginListView extends SpyView implements IStructuredContentProvide
 	/**
 	 * Class which provides the text labels for the view.
 	 */
-	class PluginListLabelProvider extends LabelProvider implements ITableLabelProvider {
+	static class PluginListLabelProvider extends LabelProvider implements ITableLabelProvider {
 		@Override
 		public Image getColumnImage(Object arg0, int arg1) {
 			return null;

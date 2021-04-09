@@ -94,7 +94,7 @@ public class EclipsePreferencesView extends ViewPart {
 		}
 	}
 
-	class ViewLabelProvider extends LabelProvider {
+	static class ViewLabelProvider extends LabelProvider {
 
 		@Override
 		public String getText(Object obj) {

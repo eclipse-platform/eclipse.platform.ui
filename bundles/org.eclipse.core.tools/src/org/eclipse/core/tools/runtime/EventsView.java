@@ -48,7 +48,7 @@ import org.eclipse.ui.IActionBars;
  */
 
 public class EventsView extends TableWithTotalView {
-	class EventsViewContentProvider implements ITreeContentProvider {
+	static class EventsViewContentProvider implements ITreeContentProvider {
 		@Override
 		public void dispose() {
 			// do nothing
@@ -83,7 +83,7 @@ public class EventsView extends TableWithTotalView {
 	/**
 	 * Class to display the labels for the stats view table.
 	 */
-	class EventsViewLabelProvider extends LabelProvider implements ITableLabelProvider, IColorProvider {
+	static class EventsViewLabelProvider extends LabelProvider implements ITableLabelProvider, IColorProvider {
 
 		@Override
 		public Image getColumnImage(Object arg0, int arg1) {
