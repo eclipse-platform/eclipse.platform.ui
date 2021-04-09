@@ -149,7 +149,7 @@ public class ResourceChangeView extends SpyView implements IResourceChangeListen
 		}
 	}
 
-	class ResourceEventNode extends DeltaNode {
+	static class ResourceEventNode extends DeltaNode {
 		private int eventType;
 
 		public ResourceEventNode(IResourceChangeEvent event) {
