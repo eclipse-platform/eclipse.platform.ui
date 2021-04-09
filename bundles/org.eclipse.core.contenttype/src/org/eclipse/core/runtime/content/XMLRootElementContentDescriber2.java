@@ -88,7 +88,7 @@ public final class XMLRootElementContentDescriber2 extends XMLContentDescriber i
 	/* (Intentionally not included in javadoc)
 	 * Simple value holder for root element name, its namespace and dtd.
 	 */
-	private class QualifiedElement {
+	private static class QualifiedElement {
 		private String namespace;
 		private String element;
 		private String dtd;
