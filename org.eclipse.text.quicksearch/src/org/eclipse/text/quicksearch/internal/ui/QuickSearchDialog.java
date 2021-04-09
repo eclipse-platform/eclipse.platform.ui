@@ -367,6 +367,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 
 	private IWorkbenchWindow window;
 	private Text searchIn;
+	private Label listLabel;
 
 	/**
 	 * Creates a new instance of the class.
@@ -759,7 +760,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		searchIn.setToolTipText(Messages.QuickSearchDialog_InTooltip);
 		GridDataFactory.fillDefaults().grab(true, false).indent(5, 0).applyTo(searchIn);
 
-		final Label listLabel = createLabels(content);
+		listLabel = createLabels(content);
 
 		sashForm = new SashForm(content, SWT.VERTICAL);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(sashForm);
@@ -1098,6 +1099,8 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		if (list != null && !list.getTable().isDisposed()) {
 			int itemCount = contentProvider.getNumberOfElements();
 			list.setItemCount(itemCount);
+			listLabel.setText(NLS.bind(Messages.QuickSearchDialog_listLabel, itemCount));
+			listLabel.pack();
 			list.refresh(true, false);
 			Button openButton = getButton(OPEN_BUTTON_ID);
 			if (openButton!=null && !openButton.isDisposed()) {
