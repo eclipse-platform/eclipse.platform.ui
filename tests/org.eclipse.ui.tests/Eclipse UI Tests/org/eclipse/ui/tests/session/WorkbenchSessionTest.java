@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.tests.harness.FileSystemHelper;
 import org.eclipse.core.tests.session.SessionTestSuite;
 import org.eclipse.core.tests.session.Setup;
-import org.eclipse.core.tests.session.SetupManager;
 import org.eclipse.core.tests.session.SetupManager.SetupException;
 import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.decorators.BadIndexDecorator;
@@ -119,8 +118,7 @@ public class WorkbenchSessionTest extends SessionTestSuite {
 				}
 			}
 		} catch (Exception e) {
-			throw SetupManager.getInstance().new SetupException(e.getMessage(),
-					e);
+			throw new SetupException(e.getMessage(), e);
 		}
 		return base;
 	}
