@@ -656,6 +656,8 @@ public class FileStoreTest extends LocalStoreTest {
 
 	public void testSortOrderPaths() {
 		IFileSystem lfs = LocalFileSystem.getInstance();
+		boolean isWindows = java.io.File.separatorChar == '\\';
+		String prefix = isWindows ? "/D:" : "";
 		List<String> paths = List.of( //
 				"/a", //
 				"/a/", //
@@ -664,8 +666,7 @@ public class FileStoreTest extends LocalStoreTest {
 				"/a/e/../c", //
 				"/a/d", //
 				"/aa", //
-				"/b"
-		);
+				"/b").stream().map(s -> prefix + s).collect(Collectors.toList());
 		List<String> pathsTrimmed = paths.stream().map(s -> s //
 				.replaceAll("/$", "") // remove trailing slashes
 				.replaceAll("/[^/]+/\\.\\./", "/") // collapse /a/../ to /
