@@ -56,7 +56,6 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 
 	private TreeModelViewer fClientViewer;
 	private static final String TAB = "\t"; //$NON-NLS-1$
-	private static final String SEPARATOR = "line.separator"; //$NON-NLS-1$
 
 	/**
 	 * Virtual viewer listener.  It tracks progress of copy and increments
@@ -153,7 +152,7 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 				}
 				buffer.append(TAB);
 			}
-			buffer.append(System.getProperty(SEPARATOR));
+			buffer.append(System.lineSeparator());
 		}
 	}
 
