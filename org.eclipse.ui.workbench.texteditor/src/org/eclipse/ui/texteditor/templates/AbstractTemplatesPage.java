@@ -37,6 +37,8 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -84,6 +86,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewer;
@@ -101,6 +104,7 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.internal.texteditor.NLSUtility;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
+import org.eclipse.ui.internal.texteditor.templates.TextViewerAction;
 import org.eclipse.ui.part.Page;
 
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -467,6 +471,8 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	/** Paste action support for the editor. */
 	private IAction fEditorOldPasteAction;
 	private IAction fEditorPasteAction;
+	private TextViewerAction fPatternViewerCopyAction;
+	private TextViewerAction fPatternViewerSelectAllAction;
 
 
 	/**
@@ -488,13 +494,13 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 	@Override
 	public void createControl(Composite ancestor) {
-		setupActions();
-
+		createActions();
 		fControl= new SashForm(ancestor, SWT.VERTICAL);
 
 		createTemplateTree(fControl);
 		createPatternForm(fControl);
 
+		setupActions();
 		hookContextMenu();
 		initializeDND();
 		updateButtons();
@@ -603,6 +609,20 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		viewer.setDocument(document);
 		viewer.setEditable(false);
 		return viewer;
+	}
+
+	private void fillPatternViewerContextMenu(IMenuManager menu) {
+		menu.add(new Separator(ITextEditorActionConstants.GROUP_EDIT));
+		menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, fPatternViewerCopyAction);
+		menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, fPatternViewerSelectAllAction);
+	}
+
+	/**
+	 * @param event The event
+	 */
+	private void updateCopyAction(SelectionChangedEvent event) {
+		if (fPatternViewerCopyAction != null)
+			fPatternViewerCopyAction.update();
 	}
 
 	/**
@@ -795,17 +815,36 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 * Setup the menu, context menu and toolbar actions.
 	 */
 	private void setupActions() {
-		createActions();
 		IActionBars actionBars= getSite().getActionBars();
 
-		actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(), fPasteAction);
 		fPasteAction.setActionDefinitionId(ActionFactory.PASTE.getCommandId());
 		fPasteAction.setText(TemplatesMessages.TemplatesPage_paste);
-		actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), fCopyAction);
 		fCopyAction.setActionDefinitionId(ActionFactory.COPY.getCommandId());
 		fCopyAction.setText(TemplatesMessages.TemplatesPage_copy);
+		fRemoveAction.setActionDefinitionId(ActionFactory.DELETE.getCommandId());
+		fRemoveAction.setText(TemplatesMessages.TemplatesPage_remove);
 		fillToolbar(actionBars);
 		fillMenu(actionBars);
+		actionBars.updateActionBars();
+
+		fTreeViewer.getControl().addFocusListener(new FocusListener() {
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(), null);
+				actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), null);
+				actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(), null);
+				actionBars.updateActionBars();
+			}
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(), fPasteAction);
+				actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), fCopyAction);
+				actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(), fRemoveAction);
+				actionBars.updateActionBars();
+			}
+		});
 	}
 
 	/**
@@ -1089,6 +1128,9 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		viewForm.setTopLeft(previewLabel);
 
 		fPatternViewer= createPatternViewer(viewForm);
+
+		addActionsToPatternViewer(fPatternViewer);
+
 		viewForm.setContent(fPatternViewer.getControl());
 		viewForm.addControlListener(new ControlListener() {
 			@Override
@@ -1102,6 +1144,26 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 				fPreferenceStore.setValue(SASH_SIZE_PREF_ID, sashSize);
 			}
 		});
+	}
+
+	private void addActionsToPatternViewer(SourceViewer viewer) {
+		// create actions
+		fPatternViewerCopyAction = new TextViewerAction(viewer, ITextOperationTarget.COPY);
+		fPatternViewerCopyAction.setActionDefinitionId(ActionFactory.COPY.getCommandId());
+		fPatternViewerCopyAction.setText(TemplatesMessages.EditTemplateDialog_copy);
+
+		fPatternViewerSelectAllAction = new TextViewerAction(viewer, ITextOperationTarget.SELECT_ALL);
+		fPatternViewerSelectAllAction.setActionDefinitionId(ActionFactory.SELECT_ALL.getCommandId());
+		fPatternViewerSelectAllAction.setText(TemplatesMessages.EditTemplateDialog_select_all);
+		viewer.addSelectionChangedListener(this::updateCopyAction);
+		// create context menu
+		MenuManager manager = new MenuManager(null, null);
+		manager.setRemoveAllWhenShown(true);
+		manager.addMenuListener(this::fillPatternViewerContextMenu);
+
+		StyledText text = viewer.getTextWidget();
+		Menu menu = manager.createContextMenu(text);
+		text.setMenu(menu);
 	}
 
 	/**

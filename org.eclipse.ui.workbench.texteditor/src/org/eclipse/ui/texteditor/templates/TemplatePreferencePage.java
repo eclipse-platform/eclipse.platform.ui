@@ -69,7 +69,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.text.templates.TemplatePersistenceData;
 import org.eclipse.text.templates.TemplateReaderWriter;
 
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -92,6 +91,7 @@ import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -101,7 +101,6 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextOperationTarget;
-import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
@@ -119,11 +118,13 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.texteditor.NLSUtility;
 import org.eclipse.ui.internal.texteditor.SWTUtil;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
+import org.eclipse.ui.internal.texteditor.templates.TextViewerAction;
 
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
@@ -152,55 +153,6 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	 * @since 3.3
 	 */
 	protected static class EditTemplateDialog extends StatusDialog {
-
-		private class TextViewerAction extends Action implements IUpdate {
-
-			private int fOperationCode= -1;
-			private ITextOperationTarget fOperationTarget;
-
-			/**
-			 * Creates a new action.
-			 *
-			 * @param viewer the viewer
-			 * @param operationCode the opcode
-			 */
-			public TextViewerAction(ITextViewer viewer, int operationCode) {
-				fOperationCode= operationCode;
-				fOperationTarget= viewer.getTextOperationTarget();
-				update();
-			}
-
-			/**
-			 * Updates the enabled state of the action.
-			 * Fires a property change if the enabled state changes.
-			 *
-			 * @see Action#firePropertyChange(String, Object, Object)
-			 */
-			@Override
-			public void update() {
-				// XXX: workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=206111
-				if (fOperationCode == ITextOperationTarget.REDO || fOperationCode == ITextOperationTarget.REDO)
-					return;
-
-				boolean wasEnabled= isEnabled();
-				boolean isEnabled= (fOperationTarget != null && fOperationTarget.canDoOperation(fOperationCode));
-				setEnabled(isEnabled);
-
-				if (wasEnabled != isEnabled) {
-					firePropertyChange(ENABLED, wasEnabled ? Boolean.TRUE : Boolean.FALSE, isEnabled ? Boolean.TRUE : Boolean.FALSE);
-				}
-			}
-
-			/**
-			 * @see Action#run()
-			 */
-			@Override
-			public void run() {
-				if (fOperationCode != -1 && fOperationTarget != null) {
-					fOperationTarget.doOperation(fOperationCode);
-				}
-			}
-		}
 
 		private final Template fOriginalTemplate;
 
@@ -553,26 +505,32 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			});
 
 			TextViewerAction action= new TextViewerAction(fPatternEditor, ITextOperationTarget.UNDO);
+			action.setActionDefinitionId(ActionFactory.UNDO.getCommandId());
 			action.setText(TemplatesMessages.EditTemplateDialog_undo);
 			fGlobalActions.put(ITextEditorActionConstants.UNDO, action);
 
 			action= new TextViewerAction(fPatternEditor, ITextOperationTarget.REDO);
+			action.setActionDefinitionId(ActionFactory.REDO.getCommandId());
 			action.setText(TemplatesMessages.EditTemplateDialog_redo);
 			fGlobalActions.put(ITextEditorActionConstants.REDO, action);
 
-			action= new TextViewerAction(fPatternEditor, ITextOperationTarget.CUT);
+			action = new TextViewerAction(fPatternEditor, ITextOperationTarget.CUT);
+			action.setActionDefinitionId(ActionFactory.CUT.getCommandId());
 			action.setText(TemplatesMessages.EditTemplateDialog_cut);
 			fGlobalActions.put(ITextEditorActionConstants.CUT, action);
 
-			action= new TextViewerAction(fPatternEditor, ITextOperationTarget.COPY);
+			action = new TextViewerAction(fPatternEditor, ITextOperationTarget.COPY);
+			action.setActionDefinitionId(ActionFactory.COPY.getCommandId());
 			action.setText(TemplatesMessages.EditTemplateDialog_copy);
 			fGlobalActions.put(ITextEditorActionConstants.COPY, action);
 
 			action= new TextViewerAction(fPatternEditor, ITextOperationTarget.PASTE);
+			action.setActionDefinitionId(ActionFactory.PASTE.getCommandId());
 			action.setText(TemplatesMessages.EditTemplateDialog_paste);
 			fGlobalActions.put(ITextEditorActionConstants.PASTE, action);
 
 			action= new TextViewerAction(fPatternEditor, ITextOperationTarget.SELECT_ALL);
+			action.setActionDefinitionId(ActionFactory.SELECT_ALL.getCommandId());
 			action.setText(TemplatesMessages.EditTemplateDialog_select_all);
 			fGlobalActions.put(ITextEditorActionConstants.SELECT_ALL, action);
 
@@ -776,6 +734,9 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	/** The context type registry. */
 	private ContextTypeRegistry fContextTypeRegistry;
 
+	private TextViewerAction fPatternViewerCopyAction;
+
+	private TextViewerAction fPatternViewerSelectAllAction;
 
 	/**
 	 * Creates a new template preference page.
@@ -1060,7 +1021,44 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		data.heightHint= convertHeightInCharsToPixels(5);
 		control.setLayoutData(data);
 
+		addActionsToPatternViewer(viewer);
+
 		return viewer;
+	}
+
+	private void addActionsToPatternViewer(SourceViewer viewer) {
+		// create actions
+		fPatternViewerCopyAction = new TextViewerAction(viewer, ITextOperationTarget.COPY);
+		fPatternViewerCopyAction.setActionDefinitionId(ActionFactory.COPY.getCommandId());
+		fPatternViewerCopyAction.setText(TemplatesMessages.EditTemplateDialog_copy);
+
+		fPatternViewerSelectAllAction = new TextViewerAction(viewer, ITextOperationTarget.SELECT_ALL);
+		fPatternViewerSelectAllAction.setActionDefinitionId(ActionFactory.SELECT_ALL.getCommandId());
+		fPatternViewerSelectAllAction.setText(TemplatesMessages.EditTemplateDialog_select_all);
+
+		viewer.addSelectionChangedListener(this::updateCopyAction);
+		// create context menu
+		MenuManager manager = new MenuManager(null, null);
+		manager.setRemoveAllWhenShown(true);
+		manager.addMenuListener(this::fillPatternViewerContextMenu);
+
+		StyledText text = viewer.getTextWidget();
+		Menu menu = manager.createContextMenu(text);
+		text.setMenu(menu);
+	}
+
+	private void fillPatternViewerContextMenu(IMenuManager menu) {
+		menu.add(new Separator(ITextEditorActionConstants.GROUP_EDIT));
+		menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, fPatternViewerCopyAction);
+		menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, fPatternViewerSelectAllAction);
+	}
+
+	/**
+	 * @param event The event
+	 */
+	private void updateCopyAction(SelectionChangedEvent event) {
+		if (fPatternViewerCopyAction != null)
+			fPatternViewerCopyAction.update();
 	}
 
 	/**
