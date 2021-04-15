@@ -10,3 +10,4 @@ Bug 562167 - Comparator errors in I20200415-0620
 Bug 565905 - Comparator Errors Found in I20200807-1800
 Bug 566668 - Comparator errors in I20200904-0210
 Bug 568058 - Comparator errors in I20201020-1800
+Bug 572789 - Comparator errors in I20210412-1800 after moving to compiler from 4.20 M1

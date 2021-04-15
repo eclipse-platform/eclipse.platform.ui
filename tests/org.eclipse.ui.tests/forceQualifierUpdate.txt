@@ -5,3 +5,4 @@ Bug 438659 - [Metadata] comparator errors in weekly I-build: I20140701-0800
 Bug 472126 - Unusual comparator error in I-build and M-build
 Bug 472126 - Unusual comparator error in I-build and M-build
 Bug 534597 - Unanticipated comparator errors in I20180511-2000
+Bug 572789 - Comparator errors in I20210412-1800 after moving to compiler from 4.20 M1
