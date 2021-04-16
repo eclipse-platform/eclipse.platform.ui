@@ -1337,7 +1337,10 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @since 3.13
 	 */
 	public void refreshLaunchConfigurationView() {
-		fLaunchConfigurationView.getTreeViewer().refresh();
+		LaunchConfigurationView view = fLaunchConfigurationView;
+		if (view != null) {
+			view.getTreeViewer().refresh();
+		}
 	}
 
 	/**
