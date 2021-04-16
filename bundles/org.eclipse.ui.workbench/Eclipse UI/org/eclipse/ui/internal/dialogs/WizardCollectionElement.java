@@ -17,11 +17,11 @@ package org.eclipse.ui.internal.dialogs;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -198,7 +198,7 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
 		if (adapter == IWorkbenchAdapter.class) {
 			return adapter.cast(this);
 		}
-		return Adapters.adapt(this, adapter);
+		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 
 	/**
