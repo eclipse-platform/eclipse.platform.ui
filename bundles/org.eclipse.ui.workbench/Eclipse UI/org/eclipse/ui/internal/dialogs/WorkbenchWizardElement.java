@@ -15,10 +15,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -139,7 +139,7 @@ public class WorkbenchWizardElement extends WorkbenchAdapter
 		} else if (adapter == IConfigurationElement.class) {
 			return adapter.cast(configurationElement);
 		}
-		return Adapters.adapt(this, adapter);
+		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 
 	/**
