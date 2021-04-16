@@ -18,8 +18,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
-import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -570,7 +570,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 			return adapter.cast(new WorkbenchPartTestable(this));
 		}
 
-		return Adapters.adapt(this, adapter);
+		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 
 	public void activateActionBars(boolean forceVisibility) {
