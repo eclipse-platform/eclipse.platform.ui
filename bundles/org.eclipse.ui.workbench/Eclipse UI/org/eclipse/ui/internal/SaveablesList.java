@@ -16,8 +16,6 @@
 
 package org.eclipse.ui.internal;
 
-import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -43,19 +41,9 @@ import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.ISaveablesLifecycleListener;
@@ -770,13 +758,17 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 					return true;
 				}
 			} else if (!modelsToSave.isEmpty()) {
-				MyListSelectionDialog dlg = new MyListSelectionDialog(shellProvider.getShell(), modelsToSave,
-						ArrayContentProvider.getInstance(), new WorkbenchPartLabelProvider(),
-						stillOpenElsewhere ? WorkbenchMessages.EditorManager_saveResourcesOptionallyMessage
-								: WorkbenchMessages.EditorManager_saveResourcesMessage,
-						canCancel, stillOpenElsewhere);
-				dlg.setInitialSelections(modelsToSave.toArray());
-				dlg.setTitle(WorkbenchMessages.EditorManager_saveResourcesTitle);
+				ListSelectionDialog dlg = ListSelectionDialog.of(modelsToSave)
+						.labelProvider(new WorkbenchPartLabelProvider()).preselect(modelsToSave.toArray())
+						.title(WorkbenchMessages.EditorManager_saveResourcesTitle)
+						.message(stillOpenElsewhere ? WorkbenchMessages.EditorManager_saveResourcesOptionallyMessage
+								: WorkbenchMessages.EditorManager_saveResourcesMessage)
+						.okButtonText(WorkbenchMessages.SaveableHelper_Save_n_of_m)
+						.okButtonTextWhenNoSelection(WorkbenchMessages.SaveableHelper_Save_0_of_m).canCancel(canCancel)
+						.asSheet(true)
+						.checkboxText(
+								stillOpenElsewhere ? WorkbenchMessages.EditorManager_closeWithoutPromptingOption : null)
+						.create(shellProvider.getShell());
 
 				// this "if" statement aids in testing.
 				if (SaveableHelper.testGetAutomatedResponse() == SaveableHelper.USER_RESPONSE) {
@@ -785,7 +777,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 					if (result == IDialogConstants.CANCEL_ID)
 						return true;
 
-					if (dlg.getDontPromptSelection()) {
+					if (dlg.getCheckboxValue()) {
 						apiPreferenceStore.setValue(IWorkbenchPreferenceConstants.PROMPT_WHEN_SAVEABLE_STILL_OPEN,
 								false);
 					}
@@ -941,62 +933,6 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 			}
 		}
 		return result.toArray();
-	}
-
-	private static final class MyListSelectionDialog extends ListSelectionDialog {
-		private final boolean canCancel;
-		private Button checkbox;
-		private boolean dontPromptSelection;
-		private boolean stillOpenElsewhere;
-
-		private MyListSelectionDialog(Shell shell, Object input, IStructuredContentProvider contentprovider,
-				ILabelProvider labelProvider, String message, boolean canCancel, boolean stillOpenElsewhere) {
-			super(shell, input, contentprovider, labelProvider, message);
-			this.canCancel = canCancel;
-			this.stillOpenElsewhere = stillOpenElsewhere;
-			int shellStyle = getShellStyle();
-			if (!canCancel) {
-				shellStyle &= ~SWT.CLOSE;
-			}
-			setShellStyle(shellStyle | SWT.SHEET);
-		}
-
-		public boolean getDontPromptSelection() {
-			return dontPromptSelection;
-		}
-
-		@Override
-		protected void createButtonsForButtonBar(Composite parent) {
-			createButton(parent, IDialogConstants.OK_ID, WorkbenchMessages.SaveableHelper_Save_Selected, true);
-			if (canCancel) {
-				createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
-			}
-		}
-
-		@Override
-		protected Control createDialogArea(Composite parent) {
-			Composite dialogAreaComposite = (Composite) super.createDialogArea(parent);
-
-			if (stillOpenElsewhere) {
-				Composite checkboxComposite = new Composite(dialogAreaComposite, SWT.NONE);
-				checkboxComposite.setLayout(new GridLayout(2, false));
-
-				checkbox = new Button(checkboxComposite, SWT.CHECK);
-				checkbox.addSelectionListener(
-						widgetSelectedAdapter(e -> dontPromptSelection = checkbox.getSelection()));
-				GridData gd = new GridData();
-				gd.horizontalAlignment = SWT.BEGINNING;
-				checkbox.setLayoutData(gd);
-
-				Label label = new Label(checkboxComposite, SWT.NONE);
-				label.setText(WorkbenchMessages.EditorManager_closeWithoutPromptingOption);
-				gd = new GridData();
-				gd.grabExcessHorizontalSpace = true;
-				gd.horizontalAlignment = SWT.BEGINNING;
-			}
-
-			return dialogAreaComposite;
-		}
 	}
 
 	/**

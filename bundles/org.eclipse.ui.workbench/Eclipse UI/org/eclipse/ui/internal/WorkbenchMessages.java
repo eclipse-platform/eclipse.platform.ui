@@ -633,6 +633,8 @@ public class WorkbenchMessages extends NLS {
 	public static String SaveableHelper_Cancel;
 	public static String SaveableHelper_Dont_Save;
 	public static String SaveableHelper_Save_Selected;
+	public static String SaveableHelper_Save_n_of_m;
+	public static String SaveableHelper_Save_0_of_m;
 
 	// ==============================================================================
 	// Perspective Framework
