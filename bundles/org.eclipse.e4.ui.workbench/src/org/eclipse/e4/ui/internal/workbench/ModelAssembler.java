@@ -33,6 +33,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -78,6 +79,7 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
+import org.osgi.service.component.annotations.ReferencePolicyOption;
 import org.osgi.service.log.LogLevel;
 import org.osgi.service.log.Logger;
 import org.osgi.service.log.LoggerFactory;
@@ -211,7 +213,7 @@ public class ModelAssembler {
 	LoggerFactory factory;
 	Logger logger;
 
-	private IExtensionRegistry registry;
+	private AtomicReference<IExtensionRegistry> registry = new AtomicReference<>();
 
 	private CopyOnWriteArrayList<ServiceReference<IModelProcessorContribution>> processorContributions = new CopyOnWriteArrayList<>();
 
@@ -242,13 +244,17 @@ public class ModelAssembler {
 	 *
 	 * @param registry The {@link IExtensionRegistry} to use.
 	 */
-	@Reference
+	@Reference(cardinality = ReferenceCardinality.OPTIONAL, policy = ReferencePolicy.DYNAMIC, policyOption = ReferencePolicyOption.GREEDY)
 	public void setExtensionRegistry(IExtensionRegistry registry) {
-		this.registry = registry;
+		this.registry.set(registry);
+	}
+
+	void unsetExtensionRegistry(IExtensionRegistry registry) {
+		this.registry.compareAndSet(registry, null);
 	}
 
 	@Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
-	void setModelProcessorContribution(ServiceReference<IModelProcessorContribution> contrib) {
+	void registerModelProcessorContribution(ServiceReference<IModelProcessorContribution> contrib) {
 		this.processorContributions.add(contrib);
 
 		// we skip direct processing in case the startup model processing is not done
@@ -261,7 +267,7 @@ public class ModelAssembler {
 		}
 	}
 
-	void unsetModelProcessorContribution(ServiceReference<IModelProcessorContribution> contrib) {
+	void unregisterModelProcessorContribution(ServiceReference<IModelProcessorContribution> contrib) {
 		this.processorContributions.remove(contrib);
 		IModelProcessorContribution service = bundleContext.getService(contrib);
 
@@ -307,15 +313,18 @@ public class ModelAssembler {
 	public void processModel(boolean initial) {
 		this.initial = initial;
 
-		IExtensionPoint extPoint = registry.getExtensionPoint(EXTENSION_POINT_ID);
-		IExtension[] extensions = new ExtensionsSort().sort(extPoint.getExtensions());
+		IExtensionRegistry extReg = this.registry.get();
+		if (extReg != null) {
+			IExtensionPoint extPoint = extReg.getExtensionPoint(EXTENSION_POINT_ID);
+			IExtension[] extensions = new ExtensionsSort().sort(extPoint.getExtensions());
 
-		// run processors which are marked to run before fragments
-		runProcessors(extensions, initial, false);
-		// process fragments (and resolve imports)
-		processFragments(extensions, initial);
-		// run processors which are marked to run after fragments
-		runProcessors(extensions, initial, true);
+			// run processors which are marked to run before fragments
+			runProcessors(extensions, initial, false);
+			// process fragments (and resolve imports)
+			processFragments(extensions, initial);
+			// run processors which are marked to run after fragments
+			runProcessors(extensions, initial, true);
+		}
 
 		// once we are done, any further handling in the tracker can't be initial
 		// anymore

@@ -96,7 +96,6 @@ public class ModelAssemblerTests {
 		LoggerFactory logFactory = mock(LoggerFactory.class);
 		when(logFactory.getLogger((Class<?>) ArgumentMatchers.any())).thenReturn(logger);
 
-		appContext.set(Logger.class, logger);
 		appContext.set(MApplication.class, application);
 		appContext.set(UISynchronize.class, new DisplayUISynchronize(Display.getDefault()));
 
@@ -106,7 +105,6 @@ public class ModelAssemblerTests {
 		resourceSet.getResources().add(appResource);
 		appResource.getContents().add((EObject) application);
 
-		// FIXME set references programmatically
 		assembler = new ModelAssembler();
 		ContextInjectionFactory.invoke(assembler, PostConstruct.class, appContext);
 
