@@ -320,7 +320,7 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 	 * Register the fragment.e4xmi with the org.eclipse.e4.workbench.model
 	 * extension point, if there is not already a fragment registered.
 	 */
-	private void registerWithExtensionPointIfRequired(IProject project, WorkspaceBundlePluginModel fModel, IFile file)
+	protected void registerWithExtensionPointIfRequired(IProject project, WorkspaceBundlePluginModel fModel, IFile file)
 			throws CoreException {
 
 		final String WORKBENCH_MODEL_EP_ID = "org.eclipse.e4.workbench.model"; //$NON-NLS-1$

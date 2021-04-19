@@ -22,6 +22,11 @@ import org.eclipse.osgi.util.NLS;
  */
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.e4.internal.tools.messages"; //$NON-NLS-1$
+	public static String ContributionMode;
+	public static String ContributionMode_Static;
+	public static String ContributionMode_Dynamic;
+	public static String ContributionMode_Static_Info;
+	public static String ContributionMode_Dynamic_Info;
 	public static String AbstractNewClassPage_Browse;
 	public static String AbstractNewClassPage_ChooseAPackage;
 	public static String AbstractNewClassPage_ChoosePackage;

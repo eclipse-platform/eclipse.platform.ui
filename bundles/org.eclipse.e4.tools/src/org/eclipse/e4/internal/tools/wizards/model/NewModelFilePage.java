@@ -43,6 +43,8 @@ import org.eclipse.ui.dialogs.ContainerSelectionDialog;
  */
 
 public class NewModelFilePage extends WizardPage {
+	public static final String PAGE_NAME = "wizardPage"; //$NON-NLS-1$
+
 	private Text containerText;
 
 	private Text fileText;
@@ -56,7 +58,7 @@ public class NewModelFilePage extends WizardPage {
 	 *
 	 */
 	public NewModelFilePage(ISelection selection, String defaultFilename) {
-		super("wizardPage"); //$NON-NLS-1$
+		super(PAGE_NAME);
 		setTitle(Messages.NewModelFilePage_NewApplicationModel);
 		setDescription(Messages.NewModelFilePage_TheWizardCreates);
 		this.selection = selection;
