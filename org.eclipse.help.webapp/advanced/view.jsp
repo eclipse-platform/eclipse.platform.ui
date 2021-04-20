@@ -11,7 +11,7 @@
  Contributors:
      IBM Corporation - initial API and implementation
 --%>
-<%@ include file="fheader.jsp"%>
+<%@ include file="header.jsp"%>
 
 <% 
 	new ActivitiesData(application, request, response); // here it can turn filtering on or off

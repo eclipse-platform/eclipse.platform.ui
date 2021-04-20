@@ -16,7 +16,7 @@
      IBM Corporation 2009, css changes
      IBM Corporation 2010, added lang to html tag
 --%>
-<%@ include file="fheader.jsp"%>
+<%@ include file="header.jsp"%>
 
 <%
     RequestData requestData = new ActivitiesData(application,request, response);
