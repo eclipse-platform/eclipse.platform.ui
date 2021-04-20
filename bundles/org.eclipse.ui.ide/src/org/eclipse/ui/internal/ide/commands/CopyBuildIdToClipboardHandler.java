@@ -46,6 +46,16 @@ public class CopyBuildIdToClipboardHandler extends AbstractHandler {
 	private static final String OSGI_WS = "osgi.ws"; //$NON-NLS-1$
 	/** Java version */
 	private static final String JAVA_VERSION = "java.version"; //$NON-NLS-1$
+
+	/** Java vendor */
+	private static final String JAVA_VENDOR = "java.vendor"; //$NON-NLS-1$
+
+	/** Java vendor version*/
+	private static final String JAVA_VENDOR_VERSION = "java.vendor.version="; //$NON-NLS-1$
+
+	/** Java runtime version */
+	private static final String JAVA_RUNTIME_VERSION = "java.runtime.version"; //$NON-NLS-1$
+
 	/** GTK version */
 	private static final String SWT_GTK_VERSION = "org.eclipse.swt.internal.gtk.version"; //$NON-NLS-1$
 	/** WebKitGTK version */
@@ -78,6 +88,21 @@ public class CopyBuildIdToClipboardHandler extends AbstractHandler {
 		String webkitGtkVer = sp.getProperty(SWT_WEBKITGTK_VERSION);
 		if (webkitGtkVer != null) {
 			osInfo += String.format(", WebKit %s", webkitGtkVer); //$NON-NLS-1$
+		}
+
+		String javaVendor = System.getProperty(JAVA_VENDOR); // $NON-NLS-1$
+		if (javaVendor != null) {
+			osInfo += String.format("%nJava vendor: %s", javaVendor);//$NON-NLS-1$
+		}
+
+		String javaVendorVersion = System.getProperty(JAVA_VENDOR_VERSION); // $NON-NLS-1$
+		if (javaVendorVersion != null) {
+			osInfo += String.format("%nJava vendor version: %s", javaVendorVersion);//$NON-NLS-1$
+		}
+
+		String javaRuntimeVersion = System.getProperty(JAVA_RUNTIME_VERSION); // $NON-NLS-1$
+		if (javaRuntimeVersion != null) {
+			osInfo += String.format("%nJava runtime version: %s", javaRuntimeVersion);//$NON-NLS-1$
 		}
 
 		String javaVersion = System.getProperty(JAVA_VERSION); // $NON-NLS-1$
