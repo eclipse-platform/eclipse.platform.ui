@@ -2681,7 +2681,7 @@
     function getParams(queryPart) {
         var params = {};
         queryPart.replace(/(?:^|&+)([^=&]+)=([^&]*)/gi,
-            function(_match, group1Param, group2Value) { params[group1Param] = decodeURIComponent(group2Value); });
+            function(_match, group1Param, group2Value) { params[group1Param] = decodeURIComponent(group2Value.replace(/\+/g, ' ')); });
         return params;
     }
 
