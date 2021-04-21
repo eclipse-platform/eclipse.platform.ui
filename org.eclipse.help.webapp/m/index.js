@@ -587,14 +587,9 @@
 
         // ...default start/cover page
         remoteRequest(BASE_URL + 'advanced/content.jsp', function(responseText) {
-            var start = responseText.indexOf('title="Topic View" src=\'');
-            if (start > 0) {
-                var end = responseText.indexOf("'", start + 24);
-                var element = createElement(null, 'p');
-                element.innerHTML = responseText.substring(start + 24, end);
-                getElementById('c').src =   BASE_URL
-                                          + 'topic/'
-                                          + (element.textContent ? element.textContent : element.innerText);
+            var match = new RegExp('name="ContentViewFrame"\\s+title="[^"]+"\\s+src=\'([^\']+)\'', 'i').exec(responseText);
+            if (match) {
+                getElementById('c').src = BASE_URL + 'topic/' + decodeHtml(match[1]);
                 updateDeepLink();
             }
         });
