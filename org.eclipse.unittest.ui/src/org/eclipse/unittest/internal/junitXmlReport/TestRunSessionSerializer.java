@@ -15,6 +15,8 @@
 package org.eclipse.unittest.internal.junitXmlReport;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -89,9 +91,13 @@ public class TestRunSessionSerializer implements XMLReader {
 		addCDATA(atts, IXMLTags.ATTR_FAILURES, fTestRunSession.getCurrentFailureCount());
 		addCDATA(atts, IXMLTags.ATTR_ERRORS, fTestRunSession.getCurrentErrorCount());
 		addCDATA(atts, IXMLTags.ATTR_IGNORED, fTestRunSession.getCurrentIgnoredCount());
-		addCDATA(atts, IXMLTags.ATTR_START_TIME, fTestRunSession.getStartTime().toString());
-		if (fTestRunSession.getDuration() != null) {
-			addCDATA(atts, IXMLTags.ATTR_DURATION, fTestRunSession.getDuration().toString());
+		Instant startTime = fTestRunSession.getStartTime();
+		if (startTime != null) {
+			addCDATA(atts, IXMLTags.ATTR_START_TIME, startTime.toString());
+		}
+		Duration duration = fTestRunSession.getDuration();
+		if (duration != null) {
+			addCDATA(atts, IXMLTags.ATTR_DURATION, duration.toString());
 		}
 		startElement(IXMLTags.NODE_TESTRUN, atts);
 
