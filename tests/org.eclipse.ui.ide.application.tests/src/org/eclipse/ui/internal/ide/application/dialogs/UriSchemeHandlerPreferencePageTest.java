@@ -213,14 +213,19 @@ public class UriSchemeHandlerPreferencePageTest {
 	@Test
 	public void doesNotRegistersSchemesInOperatingSystemOnApplyWhenLoading() throws Exception {
 		this.page.createContents(this.page.getShell());
-
+		waitForJob();
 		// tableItem[1] (hello1 scheme) is true (refer to members), but page is still
 		// loading
+		assertNotNull("Page is null", page);
 		page.performOk();
 
 		OperatingSystemRegistrationMock mock = (OperatingSystemRegistrationMock) page.operatingSystemRegistration;
+		assertNotNull("mock is null", mock);
+
+		assertNotNull("addedSchemes is null", mock.addedSchemes);
 		assertEquals(0, mock.addedSchemes.size());
 
+		assertNotNull("removedSchemes is null", mock.removedSchemes);
 		assertEquals(0, mock.removedSchemes.size());
 		waitForJob();
 	}
