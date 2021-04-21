@@ -165,7 +165,7 @@ public class ModelAssembler {
 						E4XMIResource applicationResource = (E4XMIResource) ((EObject) application).eResource();
 						ResourceSet resourceSet = applicationResource.getResourceSet();
 						if (attrURI == null) {
-							log(LogLevel.WARN, "Unable to find location for the model extension \"{0}\"", bundleName); //$NON-NLS-1$
+							log(LogLevel.WARN, "Unable to find location for the model extension {}", bundleName); //$NON-NLS-1$
 							return;
 						}
 
@@ -179,7 +179,7 @@ public class ModelAssembler {
 								uri = URI.createPlatformPluginURI(path, false);
 							}
 						} catch (RuntimeException e) {
-							log(LogLevel.WARN, "Invalid location \"{0}\" of model extension \"\"", attrURI, bundleName, //$NON-NLS-1$
+							log(LogLevel.WARN, "Invalid location {} of model extension {}", attrURI, bundleName, //$NON-NLS-1$
 									e);
 							return;
 						}
@@ -188,7 +188,7 @@ public class ModelAssembler {
 							Resource resource = resourceSet.getResource(uri, true);
 							resource.unload();
 						} catch (RuntimeException e) {
-							log(LogLevel.WARN, "Unable to read model extension from \"{0}\" of \"{1}\"", uri, //$NON-NLS-1$
+							log(LogLevel.WARN, "Unable to read model extension from {} of {}", uri, //$NON-NLS-1$
 									bundleName);
 						}
 					}
@@ -276,7 +276,7 @@ public class ModelAssembler {
 				try {
 					ContextInjectionFactory.invoke(service, PreDestroy.class, context);
 				} catch (Exception e) {
-					log(LogLevel.WARN, "Could not run PreDestroy on processor {0}: {1}", contrib.getClass().getName(), //$NON-NLS-1$
+					log(LogLevel.WARN, "Could not run PreDestroy on processor {}: {}", contrib.getClass().getName(), //$NON-NLS-1$
 							e);
 				}
 			});
@@ -389,7 +389,7 @@ public class ModelAssembler {
 
 			// check if the value for apply is valid
 			if (!ALWAYS.equals(apply) && !INITIAL.equals(apply) && !NOTEXISTS.equals(apply)) {
-				log(LogLevel.WARN, "Model-Fragment header apply attribute \"{0}\" is invalid, falling back to always", //$NON-NLS-1$
+				log(LogLevel.WARN, "Model-Fragment header apply attribute {} is invalid, falling back to always", //$NON-NLS-1$
 						apply);
 				apply = ALWAYS;
 			}
@@ -405,7 +405,7 @@ public class ModelAssembler {
 				}
 			}
 		} else {
-			log(LogLevel.ERROR, "Model-Fragment header value \"{0}\" in bundle \\\"{1}\\\" is invalid", //$NON-NLS-1$
+			log(LogLevel.ERROR, "Model-Fragment header value {} in bundle {} is invalid", //$NON-NLS-1$
 					fragmentHeader, bundle.getSymbolicName());
 		}
 
@@ -515,7 +515,7 @@ public class ModelAssembler {
 		int severity = validationResult.getSeverity();
 		if (severity == Diagnostic.ERROR) {
 			log(LogLevel.ERROR,
-					"Fragment from \"{0}\" of \"{1}\" could not be validated and was not merged: " //$NON-NLS-1$
+					"Fragment from {} of {} could not be validated and was not merged: " //$NON-NLS-1$
 							+ fragment, contributorURI, contributorName);
 		}
 
@@ -524,7 +524,7 @@ public class ModelAssembler {
 			evalImports = true;
 			addedElements.addAll(merged);
 		} else {
-			log(LogLevel.DEBUG, "Nothing to merge for fragment \"{0}\" of \"{1}\"", contributorURI, //$NON-NLS-1$
+			log(LogLevel.DEBUG, "Nothing to merge for fragment {} of {}", contributorURI, //$NON-NLS-1$
 					contributorName);
 		}
 		if (evalImports && fragmentsContainer.getImports().size() > 0) {
@@ -536,7 +536,7 @@ public class ModelAssembler {
 		E4XMIResource applicationResource = (E4XMIResource) ((EObject) application).eResource();
 		ResourceSet resourceSet = applicationResource.getResourceSet();
 		if (attrURI == null) {
-			log(LogLevel.WARN, "Unable to find location for the model extension \"{0}\"", bundleName); //$NON-NLS-1$
+			log(LogLevel.WARN, "Unable to find location for the model extension {}", bundleName); //$NON-NLS-1$
 			return null;
 		}
 
@@ -550,7 +550,7 @@ public class ModelAssembler {
 				uri = URI.createPlatformPluginURI(path, false);
 			}
 		} catch (RuntimeException e) {
-			log(LogLevel.WARN, "Invalid location \"{0}\" of model extension \"\"", attrURI, bundleName, e); //$NON-NLS-1$
+			log(LogLevel.WARN, "Invalid location {} of model extension {}", attrURI, bundleName, e); //$NON-NLS-1$
 			return null;
 		}
 
@@ -558,7 +558,7 @@ public class ModelAssembler {
 		try {
 			resource = resourceSet.getResource(uri, true);
 		} catch (RuntimeException e) {
-			log(LogLevel.WARN, "Unable to read model extension from \"{0}\" of \"{1}\"", uri, bundleName); //$NON-NLS-1$
+			log(LogLevel.WARN, "Unable to read model extension from {} of {}", uri, bundleName); //$NON-NLS-1$
 			return null;
 		}
 
@@ -570,7 +570,7 @@ public class ModelAssembler {
 		Object extensionRoot = contents.get(0);
 
 		if (!(extensionRoot instanceof MModelFragments)) {
-			log(LogLevel.WARN, "Unable to create model extension \"{0}\"", bundleName); //$NON-NLS-1$
+			log(LogLevel.WARN, "Unable to create model extension {}", bundleName); //$NON-NLS-1$
 			return null;
 		}
 		return (MModelFragments) extensionRoot;
@@ -670,7 +670,7 @@ public class ModelAssembler {
 			// check if the value for apply is valid
 			if (!ALWAYS.equals(apply) && !INITIAL.equals(apply)) {
 				log(LogLevel.WARN,
-						"IModelProcessorContribution apply property value \"{0}\" is invalid, falling back to always", //$NON-NLS-1$
+						"IModelProcessorContribution apply property value {} is invalid, falling back to always", //$NON-NLS-1$
 						apply);
 				apply = IModelProcessorContribution.APPLY_ALWAYS;
 			}
@@ -699,7 +699,7 @@ public class ModelAssembler {
 
 			MApplicationElement el = ModelUtils.findElementById(application, id);
 			if (el == null) {
-				log(LogLevel.WARN, "Could not find element with id '{0}'", id); //$NON-NLS-1$
+				log(LogLevel.WARN, "Could not find element with id {}", id); //$NON-NLS-1$
 			}
 			localContext.set(key, el);
 		}
@@ -708,14 +708,14 @@ public class ModelAssembler {
 			Object o = factory.create("bundleclass://" + ce.getContributor().getName() + "/" + ce.getAttribute("class"), //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 					context, localContext);
 			if (o == null) {
-				log(LogLevel.WARN, "Unable to create processor {0} from {1}", //$NON-NLS-1$
+				log(LogLevel.WARN, "Unable to create processor {} from {}", //$NON-NLS-1$
 						ce.getAttribute("class"), //$NON-NLS-1$
 						ce.getContributor().getName());
 			} else {
 				ContextInjectionFactory.invoke(o, Execute.class, context, localContext, null);
 			}
 		} catch (Exception e) {
-			log(LogLevel.WARN, "Could not run processor: {0}", e); //$NON-NLS-1$
+			log(LogLevel.WARN, "Could not run processor: {}", e); //$NON-NLS-1$
 		}
 	}
 
@@ -737,7 +737,7 @@ public class ModelAssembler {
 
 			MApplicationElement el = ModelUtils.findElementById(application, id);
 			if (el == null) {
-				log(LogLevel.WARN, "Could not find element with id '{0}'", id); //$NON-NLS-1$
+				log(LogLevel.WARN, "Could not find element with id {}", id); //$NON-NLS-1$
 			}
 			localContext.set(key, el);
 		}
@@ -750,14 +750,14 @@ public class ModelAssembler {
 				o = processor;
 			}
 			if (o == null) {
-				log(LogLevel.WARN, "Unable to create processor {0} from {1}", //$NON-NLS-1$
+				log(LogLevel.WARN, "Unable to create processor {} from {}", //$NON-NLS-1$
 						processor.getProcessorClass().getName(),
 						FrameworkUtil.getBundle(processor.getProcessorClass()).getSymbolicName());
 			} else {
 				ContextInjectionFactory.invoke(o, Execute.class, context, localContext, null);
 			}
 		} catch (Exception e) {
-			log(LogLevel.WARN, "Could not run processor: {0}", e); //$NON-NLS-1$
+			log(LogLevel.WARN, "Could not run processor: {}", e); //$NON-NLS-1$
 		}
 	}
 
@@ -799,7 +799,7 @@ public class ModelAssembler {
 						el = importMaps.get((MApplicationElement) importObject);
 
 						if (el == null) {
-							log(LogLevel.WARN, "Could not resolve import for {0}", //$NON-NLS-1$
+							log(LogLevel.WARN, "Could not resolve import for {}", //$NON-NLS-1$
 									((MApplicationElement) importObject).getElementId());
 						}
 					}
@@ -812,7 +812,7 @@ public class ModelAssembler {
 					commands.add(() -> {
 						if (internalFeature.isMany()) {
 							log(LogLevel.ERROR, MessageFormat.format(
-									"Replacing in {0}.\n\nFeature={1}.\n\nInternalElement={2} contributed by {3}.\n\nImportObject={4}", //$NON-NLS-1$
+									"Replacing in {}.\n\nFeature={}.\n\nInternalElement={} contributed by {}.\n\nImportObject={}", //$NON-NLS-1$
 									interalTarget, internalFeature.getName(), internalElement.getElementId(),
 									internalElement.getContributorURI(), internalImportObject));
 							@SuppressWarnings("unchecked")

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2020 EclipseSource Muenchen GmbH and others.
+ * Copyright (c) 2016, 2021 EclipseSource Muenchen GmbH and others.
  *
  *
  * This program and the accompanying materials
@@ -18,15 +18,14 @@ package org.eclipse.e4.ui.tests.workbench;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import javax.annotation.PostConstruct;
 import org.eclipse.core.internal.registry.ExtensionRegistry;
 import org.eclipse.core.runtime.ContributorFactorySimple;
@@ -63,13 +62,15 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.equinox.log.ExtendedLogReaderService;
+import org.eclipse.equinox.log.LogFilter;
 import org.eclipse.swt.widgets.Display;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.ArgumentMatchers;
-import org.osgi.service.log.Logger;
-import org.osgi.service.log.LoggerFactory;
+import org.osgi.service.log.LogEntry;
+import org.osgi.service.log.LogListener;
 
 @SuppressWarnings("nls")
 public class ModelAssemblerTests {
@@ -82,8 +83,25 @@ public class ModelAssemblerTests {
 	private ResourceSetImpl resourceSet;
 	private E4XMIResource appResource;
 	private ModelAssembler assembler;
-	private Logger logger;
 	private EModelService modelService;
+
+	private static final int COUNTDOWN_TIMEOUT = 10_000;
+	private ArrayDeque<String> logMessages;
+	private ModelAssemblerTestLogListener logListener;
+
+	class ModelAssemblerTestLogListener implements LogListener {
+
+		CountDownLatch countDownLatch;
+
+		@Override
+		public void logged(LogEntry entry) {
+			logMessages.add(entry.getMessage());
+			if (countDownLatch != null) {
+				countDownLatch.countDown();
+			}
+		}
+
+	}
 
 	@Before
 	public void setup() {
@@ -91,10 +109,6 @@ public class ModelAssemblerTests {
 		application = ApplicationFactoryImpl.eINSTANCE.createApplication();
 		application.setElementId(APPLICATION_ID);
 		application.setContext(appContext);
-
-		logger = mock(Logger.class);
-		LoggerFactory logFactory = mock(LoggerFactory.class);
-		when(logFactory.getLogger((Class<?>) ArgumentMatchers.any())).thenReturn(logger);
 
 		appContext.set(MApplication.class, application);
 		appContext.set(UISynchronize.class, new DisplayUISynchronize(Display.getDefault()));
@@ -105,12 +119,27 @@ public class ModelAssemblerTests {
 		resourceSet.getResources().add(appResource);
 		appResource.getContents().add((EObject) application);
 
-		assembler = new ModelAssembler();
+		assembler = appContext.get(ModelAssembler.class);
+		assembler.init(application, appContext, new DisplayUISynchronize(Display.getDefault()));
 		ContextInjectionFactory.invoke(assembler, PostConstruct.class, appContext);
 
-		assembler.setLogger(logFactory);
+		logMessages = new ArrayDeque<>();
+		logListener = new ModelAssemblerTestLogListener();
+
+		ExtendedLogReaderService log = appContext.get(ExtendedLogReaderService.class);
+		LogFilter logFilter = (bundle, loggerName, logLevel) -> {
+			return "org.eclipse.e4.ui.internal.workbench.ModelAssembler".equals(loggerName);
+		};
+
+		log.addLogListener(logListener, logFilter);
 
 		modelService = application.getContext().get(EModelService.class);
+	}
+
+	@After
+	public void tearDown() {
+		ExtendedLogReaderService log = appContext.get(ExtendedLogReaderService.class);
+		log.removeLogListener(logListener);
 	}
 
 	/**
@@ -131,7 +160,7 @@ public class ModelAssemblerTests {
 						&& element.getContributorURI().equals(contributorURI));
 		assertTrue(modelElements.isEmpty());
 
-		verifyZeroInteractions(logger);
+		assertEquals(0, logMessages.size());
 	}
 
 	/**
@@ -170,9 +199,7 @@ public class ModelAssemblerTests {
 		assertEquals(window, found);
 		assertEquals(fragmentParentId, found.getParent().getElementId());
 
-		verifyZeroInteractions(logger);
-
-
+		assertEquals(0, logMessages.size());
 	}
 
 	@Test
@@ -214,7 +241,7 @@ public class ModelAssemblerTests {
 		MUIElement found = modelService.find(contributedElementId, application);
 		assertEquals(window1, found);
 
-		verifyZeroInteractions(logger);
+		assertEquals(0, logMessages.size());
 	}
 
 	/**
@@ -258,7 +285,7 @@ public class ModelAssemblerTests {
 		assertEquals(found, window2);
 		assertEquals(contributorID, found.getContributorURI());
 
-		verifyZeroInteractions(logger);
+		assertEquals(0, logMessages.size());
 	}
 
 	/** Tests that correctly configured imports are correctly handled. */
@@ -284,12 +311,13 @@ public class ModelAssemblerTests {
 
 		assembler.resolveImports(imports, addedElements);
 		assertEquals(realWindow1, placeholder.getRef());
-		verifyZeroInteractions(logger);
+
+		assertEquals(0, logMessages.size());
 	}
 
 	/** Tests the processing of an import with a null/incorrect element id. */
 	@Test
-	public void testImports_noImportElementId() {
+	public void testImports_noImportElementId() throws Exception {
 		List<MApplicationElement> imports = new ArrayList<>();
 		List<MApplicationElement> addedElements = new ArrayList<>();
 
@@ -306,10 +334,17 @@ public class ModelAssemblerTests {
 		placeholder.setRef(importWindow1);
 		addedElements.add(placeholder);
 
+		CountDownLatch countDownLatch = new CountDownLatch(1);
+		this.logListener.countDownLatch = countDownLatch;
+
 		assembler.resolveImports(imports, addedElements);
 		assertEquals(null, placeholder.getRef());
-		verify(logger).warn("Could not resolve import for {0}", new Object[] { null });
-		verifyZeroInteractions(logger);
+
+		boolean completed = countDownLatch.await(COUNTDOWN_TIMEOUT, TimeUnit.MILLISECONDS);
+		assertTrue("Timeout - no event received", completed);
+
+		assertEquals(1, logMessages.size());
+		assertEquals("Could not resolve import for null", logMessages.poll());
 	}
 
 	/**
@@ -356,7 +391,7 @@ public class ModelAssemblerTests {
 
 		// the testing was done in the post-processor; if we didn't fail there,
 		// everything went fine.
-		verifyZeroInteractions(logger);
+		assertEquals(0, logMessages.size());
 	}
 
 	/**
@@ -370,7 +405,7 @@ public class ModelAssemblerTests {
 		testProcessor("org.eclipse.e4.ui.tests/data/ModelAssembler/processors_always.xml", true, false);
 		assertEquals(1, application.getDescriptors().size());
 		assertEquals("simpleprocessor.pre", application.getDescriptors().get(0).getElementId());
-		verifyZeroInteractions(logger);
+		assertEquals(0, logMessages.size());
 	}
 
 	/**
@@ -384,7 +419,7 @@ public class ModelAssemblerTests {
 		testProcessor("org.eclipse.e4.ui.tests/data/ModelAssembler/processors_always.xml", false, false);
 		assertEquals(1, application.getDescriptors().size());
 		assertEquals("simpleprocessor.pre", application.getDescriptors().get(0).getElementId());
-		verifyZeroInteractions(logger);
+		assertEquals(0, logMessages.size());
 	}
 
 	/**
@@ -398,7 +433,7 @@ public class ModelAssemblerTests {
 		testProcessor("org.eclipse.e4.ui.tests/data/ModelAssembler/processors_initial.xml", true, false);
 		assertEquals(1, application.getDescriptors().size());
 		assertEquals("simpleprocessor.pre", application.getDescriptors().get(0).getElementId());
-		verifyZeroInteractions(logger);
+		assertEquals(0, logMessages.size());
 	}
 
 	/**
@@ -411,7 +446,7 @@ public class ModelAssemblerTests {
 	public void testPreProcessor_persistedState_initial() throws Exception {
 		testProcessor("org.eclipse.e4.ui.tests/data/ModelAssembler/processors_initial.xml", false, false);
 		assertEquals(0, application.getDescriptors().size());
-		verifyZeroInteractions(logger);
+		assertEquals(0, logMessages.size());
 	}
 
 	/**
@@ -425,7 +460,7 @@ public class ModelAssemblerTests {
 		testProcessor("org.eclipse.e4.ui.tests/data/ModelAssembler/processors_always.xml", false, true);
 		assertEquals(1, application.getDescriptors().size());
 		assertEquals("simpleprocessor.post", application.getDescriptors().get(0).getElementId());
-		verifyZeroInteractions(logger);
+		assertEquals(0, logMessages.size());
 	}
 
 	/**
@@ -439,7 +474,7 @@ public class ModelAssemblerTests {
 		testProcessor("org.eclipse.e4.ui.tests/data/ModelAssembler/processors_always.xml", true, true);
 		assertEquals(1, application.getDescriptors().size());
 		assertEquals("simpleprocessor.post", application.getDescriptors().get(0).getElementId());
-		verifyZeroInteractions(logger);
+		assertEquals(0, logMessages.size());
 	}
 
 	/**
@@ -453,7 +488,7 @@ public class ModelAssemblerTests {
 		testProcessor("org.eclipse.e4.ui.tests/data/ModelAssembler/processors_initial.xml", true, true);
 		assertEquals(1, application.getDescriptors().size());
 		assertEquals("simpleprocessor.post", application.getDescriptors().get(0).getElementId());
-		verifyZeroInteractions(logger);
+		assertEquals(0, logMessages.size());
 	}
 
 	/**
@@ -466,7 +501,7 @@ public class ModelAssemblerTests {
 	public void testPostProcessor_persistedState_initial() throws Exception {
 		testProcessor("org.eclipse.e4.ui.tests/data/ModelAssembler/processors_initial.xml", false, true);
 		assertEquals(0, application.getDescriptors().size());
-		verifyZeroInteractions(logger);
+		assertEquals(0, logMessages.size());
 	}
 
 	/**
@@ -477,11 +512,18 @@ public class ModelAssemblerTests {
 	 */
 	@Test
 	public void testProcessor_noProcessor() throws Exception {
+		CountDownLatch countDownLatch = new CountDownLatch(1);
+		this.logListener.countDownLatch = countDownLatch;
+
 		testProcessor("org.eclipse.e4.ui.tests/data/ModelAssembler/processor_null.xml", true, false);
-		verify(logger).warn("Unable to create processor {0} from {1}",
-				new Object[] { null, "org.eclipse.e4.ui.tests" });
+		boolean completed = countDownLatch.await(COUNTDOWN_TIMEOUT, TimeUnit.MILLISECONDS);
+		assertTrue("Timeout - no event received", completed);
+
+		assertEquals(1, logMessages.size());
+		assertEquals("Unable to create processor null from org.eclipse.e4.ui.tests", logMessages.poll());
+
 		assertEquals(0, application.getDescriptors().size());
-		verifyZeroInteractions(logger);
+		assertEquals(0, logMessages.size());
 	}
 
 	/**
@@ -492,14 +534,21 @@ public class ModelAssemblerTests {
 	 */
 	@Test
 	public void testProcessor_processorNotFound() throws Exception {
-		testProcessor("org.eclipse.e4.ui.tests/data/ModelAssembler/processor_wrongProcessorClass.xml", true, false);
-		verify(logger).warn("Unable to create processor {0} from {1}",
-				new Object[] { "org.eclipse.e4.ui.tests.workbench.SimplePreProcessor_NotFound",
-						"org.eclipse.e4.ui.tests" });
-		assertEquals(0, application.getDescriptors().size());
-		verifyZeroInteractions(logger);
-	}
+		CountDownLatch countDownLatch = new CountDownLatch(1);
+		this.logListener.countDownLatch = countDownLatch;
 
+		testProcessor("org.eclipse.e4.ui.tests/data/ModelAssembler/processor_wrongProcessorClass.xml", true, false);
+		boolean completed = countDownLatch.await(COUNTDOWN_TIMEOUT, TimeUnit.MILLISECONDS);
+		assertTrue("Timeout - no event received", completed);
+
+		assertEquals(1, logMessages.size());
+		assertEquals(
+				"Unable to create processor org.eclipse.e4.ui.tests.workbench.SimplePreProcessor_NotFound from org.eclipse.e4.ui.tests",
+				logMessages.poll());
+
+		assertEquals(0, application.getDescriptors().size());
+		assertEquals(0, logMessages.size());
+	}
 
 	/**
 	 * Tests a processor contribution that adds to the context an element with
@@ -510,11 +559,18 @@ public class ModelAssemblerTests {
 	 */
 	@Test
 	public void testProcessor_wrongAppId() throws Exception {
+		CountDownLatch countDownLatch = new CountDownLatch(1);
+		this.logListener.countDownLatch = countDownLatch;
+
 		application.setElementId("newID");
 		testProcessor("org.eclipse.e4.ui.tests/data/ModelAssembler/processors_initial.xml", true, true);
-		verify(logger).warn("Could not find element with id '{0}'",
-				new Object[] { "org.eclipse.e4.ui.tests.modelassembler.app" });
-		verifyZeroInteractions(logger);
+		boolean completed = countDownLatch.await(COUNTDOWN_TIMEOUT, TimeUnit.MILLISECONDS);
+		assertTrue("Timeout - no event received", completed);
+
+		assertEquals(1, logMessages.size());
+		assertEquals("Could not find element with id org.eclipse.e4.ui.tests.modelassembler.app", logMessages.poll());
+
+		assertEquals(0, logMessages.size());
 		assertEquals(1, application.getDescriptors().size());
 		assertEquals("simpleprocessor.post", application.getDescriptors().get(0).getElementId());
 	}
