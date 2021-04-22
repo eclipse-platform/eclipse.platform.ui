@@ -99,7 +99,7 @@ public class DefaultPriorityFunction extends PriorityFunction {
 	 * See https://issuetracker.springsource.com/browse/STS-3783
 	 */
 	private boolean isIgnoredLinkedContainer(IResource resource) {
-		if (!(resource instanceof IContainer) || !resource.isLinked(IResource.NONE)) {
+		if (!(resource instanceof IContainer) || !resource.isLinked(IResource.NONE) || resource.isVirtual()) {
 			return false;
 		}
 

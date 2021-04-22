@@ -18,6 +18,7 @@ import static org.junit.Assert.assertNotEquals;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.text.quicksearch.internal.core.priority.DefaultPriorityFunction;
@@ -59,6 +60,20 @@ public class DefaultPriorityFunctionTest {
 		assertNotEquals(PriorityFunction.PRIORITY_IGNORE, fPriorityFunction.priority(p1), 1.0);
 		assertEquals(PriorityFunction.PRIORITY_IGNORE, fPriorityFunction.priority(linkedF1), 1.0);
 		assertNotEquals(PriorityFunction.PRIORITY_IGNORE, fPriorityFunction.priority(f1), 1.0);
+	}
+
+	@Test
+	public void testDoNotIgnoreVirtualFolder() throws Exception {
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+
+		IProject p3 = root.getProject("p3");
+		p3.create(null);
+		p3.open(null);
+
+		IFolder f2 = p3.getFolder("f2");
+		f2.create(IResource.VIRTUAL, true, null);
+
+		assertNotEquals(PriorityFunction.PRIORITY_IGNORE, fPriorityFunction.priority(f2), 1.0);
 	}
 
 }
