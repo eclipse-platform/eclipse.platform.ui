@@ -38,7 +38,7 @@
                 <plugin id="javax.xml"/>
                 <plugin id="org.eclipse.swt"/>
                 <plugin id="org.eclipse.equinox.launcher.cocoa.macosx.x86_64"/>
-                <plugin id="org.eclipse.equinox.launcher.cocoa.macosx.arm64"/>
+                <plugin id="org.eclipse.equinox.launcher.cocoa.macosx.aarch64"/>
                 <plugin id="org.eclipse.equinox.launcher.gtk.linux.ppc64le"/>
                 <plugin id="org.eclipse.equinox.launcher.gtk.linux.aarch64"/>
                 <plugin id="org.eclipse.equinox.launcher.gtk.linux.x86_64"/>
