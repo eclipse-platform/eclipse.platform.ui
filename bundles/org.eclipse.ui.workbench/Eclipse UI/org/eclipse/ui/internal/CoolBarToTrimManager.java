@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2017 IBM Corporation and others.
+ * Copyright (c) 2011, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -156,7 +156,8 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 				return;
 			}
 
-			MToolBar toolBar = (MToolBar) modelService.find(item.getId(), window);
+			List<MToolBar> toolbars = modelService.findElements(window, item.getId(), MToolBar.class);
+			MToolBar toolBar = toolbars.isEmpty() ? null : toolbars.get(0);
 			boolean tbFound = toolBar != null;
 			if (!tbFound) {
 				toolBar = modelService.createModelElement(MToolBar.class);
