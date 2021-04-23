@@ -344,6 +344,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	private final int MAX_LINE_LEN;
+	private final int MAX_RESULTS;
 
 	private IHandlerActivation showViewHandler;
 
@@ -389,6 +390,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		contentProvider = new ContentProvider();
 		selectionMode = NONE;
 		MAX_LINE_LEN = QuickSearchActivator.getDefault().getPreferences().getMaxLineLen();
+		MAX_RESULTS = QuickSearchActivator.getDefault().getPreferences().getMaxResults();
 		progressJob.setSystem(true);
 	}
 
@@ -1099,7 +1101,11 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		if (list != null && !list.getTable().isDisposed()) {
 			int itemCount = contentProvider.getNumberOfElements();
 			list.setItemCount(itemCount);
-			listLabel.setText(NLS.bind(Messages.QuickSearchDialog_listLabel, itemCount));
+			if (itemCount < MAX_RESULTS) {
+				listLabel.setText(NLS.bind(Messages.QuickSearchDialog_listLabel, itemCount));
+			} else {
+				listLabel.setText(NLS.bind(Messages.QuickSearchDialog_listLabel_limit_reached, itemCount));
+			}
 			listLabel.pack();
 			list.refresh(true, false);
 			Button openButton = getButton(OPEN_BUTTON_ID);
@@ -1295,6 +1301,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 						contentProvider.refresh();
 					}
 				});
+				this.searcher.setMaxResults(MAX_RESULTS);
 				applyPathMatcher();
 				refreshWidgets();
 			}

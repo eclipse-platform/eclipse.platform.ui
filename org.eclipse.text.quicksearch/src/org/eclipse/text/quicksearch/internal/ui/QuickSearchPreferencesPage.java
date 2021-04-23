@@ -59,6 +59,9 @@ public class QuickSearchPreferencesPage extends FieldEditorPreferencePage implem
 				Messages.QuickSearchPreferencesPage_Tooltip_MaxLineLength);
 		addField(fieldMaxLineLen);
 
+		IntegerFieldEditor fieldMaxResults = new IntegerFieldEditor(QuickSearchPreferences.MAX_RESULTS, Messages.QuickSearchPreferencesPage_MaxResults, getFieldEditorParent());
+		addField(fieldMaxResults);
+
 		for (int i = 0; i < fieldLabels.length; i++) {
 			final String tooltip = toolTips[i];
 			StringFieldEditor field = new StringFieldEditor(prefsKeys[i], fieldLabels[i], StringFieldEditor.UNLIMITED, 5, StringFieldEditor.VALIDATE_ON_FOCUS_LOST, getFieldEditorParent()) {

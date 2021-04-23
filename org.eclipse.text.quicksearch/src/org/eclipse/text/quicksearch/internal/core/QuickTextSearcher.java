@@ -56,13 +56,14 @@ public class QuickTextSearcher {
 	 */
 	private QuickTextQuery newQuery;
 
+	public static final int DEFAULT_MAX_RESULTS = 200;
 	/**
 	 * If number of accumulated results reaches maxResults the search will be suspended.
 	 * <p>
 	 * Note that more results may still arrive beyond the limit since the searcher does not (yet) have the
 	 * capability to suspend/resume a search in the middle of a file.
 	 */
-	private int maxResults = 200;
+	private int maxResults = DEFAULT_MAX_RESULTS;
 
 	/**
 	 * If a line of text is encountered longer than this, the searcher will stop searching

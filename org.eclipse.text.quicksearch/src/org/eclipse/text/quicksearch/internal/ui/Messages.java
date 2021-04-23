@@ -21,6 +21,7 @@ public class Messages extends NLS {
 	public static String QuickSearchPreferencesPage_Tooltip_Names;
 	public static String QuickSearchPreferencesPage_MaxLineLength;
 	public static String QuickSearchPreferencesPage_Tooltip_MaxLineLength;
+	public static String QuickSearchPreferencesPage_MaxResults;
 	public static String QuickSearchPreferencesPage_Ignored_Extensions;
 	public static String QuickSearchPreferencesPage_Ignored_Prefixes;
 	public static String QuickSearchPreferencesPage_Ignored_Names;
@@ -37,6 +38,7 @@ public class Messages extends NLS {
 	public static String QuickSearchDialog_caseSensitive_toggle;
 	public static String QuickSearchDialog_title;
 	public static String QuickSearchDialog_listLabel;
+	public static String QuickSearchDialog_listLabel_limit_reached;
 	public static String QuickSearchDialog_caseSensitive_label;
 	public static String QuickSearchDialog_caseInsensitive_label;
 	public static String QuickTextSearch_updateMatchesJob;
