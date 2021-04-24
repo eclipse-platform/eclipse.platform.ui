@@ -123,7 +123,7 @@ public final class RefactoringHistoryImplementation extends RefactoringHistory {
 		final StringBuilder buffer= new StringBuilder(256);
 		buffer.append(getClass().getName());
 		buffer.append("[descriptors="); //$NON-NLS-1$
-		buffer.append(getDescriptors().toString());
+		buffer.append(Arrays.toString(getDescriptors()));
 		buffer.append(']');
 		return buffer.toString();
 	}
