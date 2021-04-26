@@ -15,6 +15,7 @@ package org.eclipse.core.tests.resources.regression;
 
 import java.io.*;
 import java.net.URI;
+import java.util.function.Function;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.*;
@@ -24,12 +25,13 @@ import org.eclipse.core.tests.internal.filesystem.wrapper.WrapperFileSystem;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 /**
- * This tests that I/O Exception on OuptuStream#close() after IFile#setContents is correctly reported.
+ * This tests that I/O Exception on OuptuStream#close() after IFile#setContents
+ * is correctly reported.
  */
 public class Bug_332543 extends ResourceTest {
 	/**
-	 * Wrapper FS which throws an IOException when someone
-	 * closes an output stream...
+	 * Wrapper FS which throws an IOException when someone closes an output
+	 * stream...
 	 */
 	public static class IOErrOnCloseFileStore extends WrapperFileStore {
 		public IOErrOnCloseFileStore(IFileStore store) {
@@ -42,7 +44,8 @@ public class Bug_332543 extends ResourceTest {
 			os = new BufferedOutputStream(os) {
 				@Override
 				public void close() throws java.io.IOException {
-					// We close the output stream (so there aren't issues deleting the project during tear-down)
+					// We close the output stream (so there aren't issues deleting the project
+					// during tear-down)
 					super.close();
 					// But we also throw IOException as if the operation had failed.
 					throw new IOException("Whoops I dunno how to close!");
@@ -58,7 +61,26 @@ public class Bug_332543 extends ResourceTest {
 		super.tearDown();
 	}
 
-	public void testBug() throws Exception {
+	public void testBugForByteArrayInputStream() throws Exception {
+		testCancel(s -> s);
+	}
+
+	public void testBugForInputStream() throws Exception {
+		testCancel(delegate -> new InputStream() { // Not ArrayInputStream
+			@Override
+			public int read() throws IOException {
+				return delegate.read();
+			}
+
+			@Override
+			public int read(byte b[], int off, int len) throws IOException {
+				return delegate.read(b, off, len);
+			}
+
+		});
+	}
+
+	private void testCancel(Function<ByteArrayInputStream, InputStream> wrap) throws CoreException {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
 		String proj_name = getUniqueString();
@@ -83,7 +105,7 @@ public class Bug_332543 extends ResourceTest {
 
 		// Try #setContents on an existing file
 		try {
-			f.setContents(new ByteArrayInputStream("Random".getBytes()), false, true, getMonitor());
+			f.setContents(wrap.apply(new ByteArrayInputStream("Random".getBytes())), false, true, getMonitor());
 			fail("1.0");
 		} catch (CoreException e) {
 			// This is expected.
@@ -92,10 +114,11 @@ public class Bug_332543 extends ResourceTest {
 		// Try create on a non-existent file
 		f = project.getFile("foo1.txt");
 		try {
-			f.create(new ByteArrayInputStream("Random".getBytes()), false, getMonitor());
+			f.create(wrap.apply(new ByteArrayInputStream("Random".getBytes())), false, getMonitor());
 			fail("2.0");
 		} catch (CoreException e) {
 			// This is expected.
 		}
 	}
+
 }

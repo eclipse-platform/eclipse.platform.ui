@@ -392,30 +392,37 @@ public class FileUtil {
 		return null;
 	}
 
-	public static final void transferStreams(InputStream source, OutputStream destination, String path, IProgressMonitor monitor) throws CoreException {
+	public static final void transferStreams(InputStream source, OutputStream destination, String path,
+			IProgressMonitor monitor) throws CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor);
 		try {
-			byte[] buffer = new byte[8192];
-			while (true) {
-				int bytesRead = -1;
-				try {
-					bytesRead = source.read(buffer);
-				} catch (IOException e) {
-					String msg = NLS.bind(Messages.localstore_failedReadDuringWrite, path);
-					throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, new Path(path), msg, e);
-				}
-				try {
-					if (bytesRead == -1) {
-						// Bug 332543 - ensure we don't ignore failures on close()
-						destination.close();
-						break;
+			try {
+				if (source instanceof ByteArrayInputStream) {
+					// ByteArrayInputStream does overload transferTo avoiding buffering
+					((ByteArrayInputStream) source).transferTo(destination);
+					subMonitor.split(1);
+				} else {
+					byte[] buffer = new byte[8192];
+					while (true) {
+						int bytesRead = -1;
+						try {
+							bytesRead = source.read(buffer);
+						} catch (IOException e) {
+							String msg = NLS.bind(Messages.localstore_failedReadDuringWrite, path);
+							throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, new Path(path), msg, e);
+						}
+						if (bytesRead == -1) {
+							break;
+						}
+						destination.write(buffer, 0, bytesRead);
+						subMonitor.split(1);
 					}
-					destination.write(buffer, 0, bytesRead);
-				} catch (IOException e) {
-					String msg = NLS.bind(Messages.localstore_couldNotWrite, path);
-					throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, new Path(path), msg, e);
 				}
-				subMonitor.split(1);
+				// Bug 332543 - ensure we don't ignore failures on close()
+				destination.close();
+			} catch (IOException e) {
+				String msg = NLS.bind(Messages.localstore_couldNotWrite, path);
+				throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, new Path(path), msg, e);
 			}
 		} finally {
 			safeClose(source);
