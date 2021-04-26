@@ -21,6 +21,7 @@ public class Messages extends NLS {
 	public static String QuickSearchPreferencesPage_Tooltip_Names;
 	public static String QuickSearchPreferencesPage_MaxLineLength;
 	public static String QuickSearchPreferencesPage_Tooltip_MaxLineLength;
+	public static String QuickSearchPreferencesPage_Tooltip_MaxResults;
 	public static String QuickSearchPreferencesPage_MaxResults;
 	public static String QuickSearchPreferencesPage_Ignored_Extensions;
 	public static String QuickSearchPreferencesPage_Ignored_Prefixes;
