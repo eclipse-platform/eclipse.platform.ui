@@ -577,7 +577,7 @@ public class ModelEditor implements IGotoObject {
 		StackLayout layout = new StackLayout();
 		contentContainer.setLayout(layout);
 
-		form.setWeights(new int[] { 2, 5 });
+		form.setWeights(2, 5);
 
 		viewer.getTree().addKeyListener(new KeyAdapter() {
 			@Override
@@ -1071,7 +1071,7 @@ public class ModelEditor implements IGotoObject {
 		viewer.setLabelProvider(new DelegatingStyledCellLabelProvider(
 				new ComponentLabelProvider(this, messages, italicFontDescriptor)));
 		final ObservableListTreeContentProvider<Object> contentProvider = new ObservableListTreeContentProvider<>(
-				new ObservableFactoryImpl(), new TreeStructureAdvisor<Object>() {
+				new ObservableFactoryImpl(), new TreeStructureAdvisor<>() {
 				});
 		viewer.setContentProvider(contentProvider);
 
