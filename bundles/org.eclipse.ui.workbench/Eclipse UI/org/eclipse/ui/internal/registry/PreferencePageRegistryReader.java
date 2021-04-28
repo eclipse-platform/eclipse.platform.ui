@@ -38,7 +38,7 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 
 	private IWorkbench workbench;
 
-	class PreferencesCategoryNode extends CategoryNode {
+	static class PreferencesCategoryNode extends CategoryNode {
 
 		WorkbenchPreferenceNode node;
 

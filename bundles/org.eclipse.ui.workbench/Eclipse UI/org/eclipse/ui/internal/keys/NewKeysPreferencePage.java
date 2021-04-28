@@ -306,7 +306,7 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 
 	}
 
-	private final class ResortColumn extends SelectionAdapter {
+	private static final class ResortColumn extends SelectionAdapter {
 		private final BindingModelComparator comparator;
 		private final TreeColumn treeColumn;
 		private final TreeViewer viewer;
@@ -429,7 +429,7 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 		}
 	}
 
-	class ModelContentProvider implements ITreeContentProvider {
+	static class ModelContentProvider implements ITreeContentProvider {
 		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof BindingModel) {

@@ -39,7 +39,7 @@ public abstract class CategorizedPageRegistryReader extends RegistryReader {
 	 * Internal class used to sort all the preference page nodes based on the
 	 * category.
 	 */
-	abstract class CategoryNode {
+	abstract static class CategoryNode {
 		/**
 		 * Comment for <code>reader</code>
 		 */

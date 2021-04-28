@@ -88,7 +88,7 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 
 	private PropertyPageContributorManager manager;
 
-	class PropertyCategoryNode extends CategoryNode {
+	static class PropertyCategoryNode extends CategoryNode {
 
 		RegistryPageContributor page;
 

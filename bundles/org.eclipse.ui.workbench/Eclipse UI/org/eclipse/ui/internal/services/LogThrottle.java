@@ -111,7 +111,7 @@ public class LogThrottle {
 		return counter;
 	}
 
-	private class MutableInt {
+	private static class MutableInt {
 		private int fCount;
 
 		public void increment() {

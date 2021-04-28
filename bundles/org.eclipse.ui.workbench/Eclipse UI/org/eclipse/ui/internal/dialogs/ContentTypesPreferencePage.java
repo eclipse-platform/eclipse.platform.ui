@@ -165,7 +165,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements IWorkb
 
 	}
 
-	private class FileSpecComparator extends ViewerComparator {
+	private static class FileSpecComparator extends ViewerComparator {
 		@Override
 		public int category(Object element) {
 			// only Spec objects in here - unchecked cast
@@ -192,7 +192,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements IWorkb
 		}
 	}
 
-	private class FileSpecContentProvider implements IStructuredContentProvider {
+	private static class FileSpecContentProvider implements IStructuredContentProvider {
 
 		@Override
 		public Object[] getElements(Object inputElement) {
@@ -251,7 +251,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements IWorkb
 		}
 	}
 
-	private class ContentTypesLabelProvider extends LabelProvider {
+	private static class ContentTypesLabelProvider extends LabelProvider {
 		@Override
 		public String getText(Object element) {
 			IContentType contentType = (IContentType) element;
@@ -259,7 +259,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements IWorkb
 		}
 	}
 
-	private class ContentTypesContentProvider implements ITreeContentProvider {
+	private static class ContentTypesContentProvider implements ITreeContentProvider {
 
 		private IContentTypeManager manager;
 
