@@ -730,3 +730,13 @@ button {
         background-color: #4d4d4d;
     }
 }
+/*******************************************************************************
+ * Printing                                                                    */
+@media print {
+    #t, #s, #f, #a, #h, .i, .k0, .k1, .kf, .ke0, .ke1, .kef, .help_breadcrumbs {
+        display: none;
+    }
+    #t, #a, #m, .u ul, .c, .j, .s span, .p ol {
+        overflow: hidden !important; /* important is required by IE */
+    }
+}
