@@ -18,20 +18,25 @@ package org.eclipse.ui.dialogs;
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.widgets.WidgetFactory;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -70,6 +75,16 @@ public class ListSelectionDialog extends SelectionDialog {
 	// the visual selection widget group
 	CheckboxTableViewer listViewer;
 
+	// optional checkbox
+	private final String optionalCheckboxText;
+	private boolean optionalCheckboxValue;
+	private Button optionalCheckbox;
+
+	// OK and Cancel buttons
+	private final String okButtonText;
+	private final String okButtonTextWhenNoSelection;
+	private final boolean canCancel;
+
 	// sizing constants
 	private static final int SIZING_SELECTION_WIDGET_HEIGHT = 250;
 
@@ -84,19 +99,258 @@ public class ListSelectionDialog extends SelectionDialog {
 	 * @param labelProvider   the label provider for displaying model elements
 	 * @param message         the message to be displayed at the top of this dialog,
 	 *                        or <code>null</code> to display a default message
+	 * @deprecated since 3.123; use {@link #of(Object)} instead:
+	 *             {@code ListSelectionDialog.of(input).contentProvider(contentProvider).labelProvider(labelProvider).message(message).create(parentShell)}
 	 */
+	@Deprecated
 	public ListSelectionDialog(Shell parentShell, Object input, IStructuredContentProvider contentProvider,
 			ILabelProvider labelProvider, String message) {
+		this(parentShell, input, contentProvider, labelProvider, message, null, null, true, null);
+	}
+
+	private ListSelectionDialog(Shell parentShell, Object input, IStructuredContentProvider contentProvider,
+			ILabelProvider labelProvider, String message, String okButtonText, String okButtonTextWhenNoSelection,
+			boolean canCancel, String optionalCheckboxText) {
 		super(parentShell);
-		setTitle(WorkbenchMessages.ListSelection_title);
-		inputElement = input;
+		this.inputElement = input;
 		this.contentProvider = contentProvider;
 		this.labelProvider = labelProvider;
-		if (message != null) {
-			setMessage(message);
-		} else {
-			setMessage(WorkbenchMessages.ListSelection_message);
+		setMessage(message == null ? WorkbenchMessages.ListSelection_message : message);
+		this.okButtonText = okButtonText;
+		this.okButtonTextWhenNoSelection = okButtonTextWhenNoSelection;
+		this.canCancel = canCancel;
+		this.optionalCheckboxText = optionalCheckboxText;
+	}
+
+	/**
+	 * Creates a new {@link ListSelectionDialog} {@link Builder} for the given
+	 * input.
+	 * <p>
+	 * Example:
+	 *
+	 * <pre>
+	 * ListSelectionDialog dialog = ListSelectionDialog.of(input).title(title).message(message).create(shell);
+	 * </pre>
+	 *
+	 * @param input the root element to populate this dialog with
+	 * @return a new {@link Builder} instance
+	 * @since 3.123
+	 */
+	public static Builder of(Object input) {
+		return new Builder(input);
+	}
+
+	/**
+	 * The Builder to create {@link ListSelectionDialog} instances. It has a fluent
+	 * API (every method returns the same builder instance).
+	 *
+	 * @see ListSelectionDialog#of(Object)
+	 * @since 3.123
+	 */
+	public static final class Builder {
+
+		private final Object input;
+		private IStructuredContentProvider contentProvider;
+		private ILabelProvider labelProvider;
+		private Object[] initialSelections;
+		private String title;
+		private String message;
+		private String okButtonLabelWhenNoSelection;
+		private String okButtonLabelWhenAnySelection;
+		private boolean canCancel = true;
+		private boolean asSheet = false;
+		private String checkboxText;
+		boolean checkboxValue = false;
+
+		private Builder(Object input) {
+			this.input = input;
 		}
+
+		/**
+		 * Sets the content provider.
+		 * <p>
+		 * When this method is not called or when set to {@code null},
+		 * {@link ArrayContentProvider} will be used.
+		 *
+		 * @param contentProvider the content provider for navigating the model
+		 * @return this
+		 */
+		public Builder contentProvider(IStructuredContentProvider contentProvider) {
+			this.contentProvider = contentProvider;
+			return this;
+		}
+
+		/**
+		 * Sets the label provider.
+		 * <p>
+		 * When this method is not called or when set to {@code null},
+		 * {@link LabelProvider} will be used.
+		 *
+		 * @param labelProvider the label provider for displaying model elements
+		 * @return this
+		 */
+		public Builder labelProvider(ILabelProvider labelProvider) {
+			this.labelProvider = labelProvider;
+			return this;
+		}
+
+		/**
+		 * Sets the initial selection to the given elements.
+		 * <p>
+		 * When this method is not called, no element will be preselected.
+		 *
+		 * @param initialSelections the array of elements to preselect
+		 * @return this
+		 * @see SelectionDialog#setInitialSelections(Object...)
+		 */
+		public Builder preselect(Object... initialSelections) {
+			this.initialSelections = initialSelections;
+			return this;
+		}
+
+		/**
+		 * Sets the title for this dialog.
+		 * <p>
+		 * When this method is not called or when set to {@code null},
+		 * {@link WorkbenchMessages#ListSelection_title} will be used as dialog title.
+		 *
+		 * @param title the title
+		 * @return this
+		 * @see SelectionDialog#setTitle(String)
+		 */
+		public Builder title(String title) {
+			this.title = title;
+			return this;
+		}
+
+		/**
+		 * Sets the message.
+		 * <p>
+		 * When this method is not called or when set to {@code null}, a default message
+		 * will shown.
+		 *
+		 * @param message the message to be displayed at the top of this dialog, or
+		 *                {@code null} to display a default message
+		 * @return this
+		 */
+		public Builder message(String message) {
+			this.message = message;
+			return this;
+		}
+
+		/**
+		 * Sets the OK button label.
+		 *
+		 * @param text the label of the OK button; can contain the placeholder
+		 *             <code>{0}</code> for the number of currently selected elements
+		 *             and the placeholder <code>{1}</code> for the total number of
+		 *             elements
+		 * @return this
+		 * @see #okButtonTextWhenNoSelection(String)
+		 */
+		public Builder okButtonText(String text) {
+			this.okButtonLabelWhenAnySelection = text;
+			return this;
+		}
+
+		/**
+		 * Sets the OK button label that will be displayed when no item is selected;
+		 * otherwise the label of {@link #okButtonText(String)} will be displayed.
+		 *
+		 * @param text the label of the OK button when no item is selected which can
+		 *             contain the placeholder <code>{0}</code> for the number of
+		 *             currently selected elements and the placeholder <code>{1}</code>
+		 *             for the total number of elements
+		 * @return this
+		 * @see #okButtonText(String)
+		 */
+		public Builder okButtonTextWhenNoSelection(String text) {
+			this.okButtonLabelWhenNoSelection = text;
+			return this;
+		}
+
+		/**
+		 * Sets whether the dialog can be canceled.
+		 *
+		 * @param canCancel whether selecting can be canceled or not (via the
+		 *                  <i>Cancel</i> button or by closing the dialog)
+		 * @return this
+		 */
+		public Builder canCancel(boolean canCancel) {
+			this.canCancel = canCancel;
+			return this;
+		}
+
+		/**
+		 * Sets whether to show the dialog as sheet.
+		 *
+		 * @param asSheet whether to use {@link SWT#SHEET} (modal dialog that is
+		 *                attached to a parent window)
+		 * @return this
+		 * @see SWT#SHEET
+		 */
+		public Builder asSheet(boolean asSheet) {
+			this.asSheet = asSheet;
+			return this;
+		}
+
+		/**
+		 * Sets the label of the optional check box.
+		 * <p>
+		 * When this method is not called or when set to {@code null}, the optional
+		 * check box will be hidden.
+		 *
+		 * @param checkboxText the check box label
+		 * @return this
+		 * @see Button#setText(String)
+		 * @see #checkboxValue(boolean)
+		 */
+		public Builder checkboxText(String checkboxText) {
+			this.checkboxText = checkboxText;
+			return this;
+		}
+
+		/**
+		 * Sets the selection state of the optional check box.
+		 *
+		 * @param checkboxValue the initial selection state
+		 * @return this
+		 * @see Button#setSelection(boolean)
+		 * @see #checkboxText(String)
+		 */
+		public Builder checkboxValue(boolean checkboxValue) {
+			this.checkboxValue = checkboxValue;
+			return this;
+		}
+
+		/**
+		 * Creates and assembles the dialog.
+		 *
+		 * @param parentShell the parent shell
+		 * @return the new assembled {@link ListSelectionDialog}
+		 */
+		public ListSelectionDialog create(Shell parentShell) {
+			ListSelectionDialog dialog = new ListSelectionDialog(parentShell, input,
+					contentProvider == null ? ArrayContentProvider.getInstance() : contentProvider,
+					labelProvider == null ? new LabelProvider() : labelProvider, message,
+					okButtonLabelWhenNoSelection, okButtonLabelWhenAnySelection, canCancel,
+					checkboxText);
+			int shellStyle = dialog.getShellStyle();
+			if (!canCancel) {
+				shellStyle &= ~SWT.CLOSE;
+			}
+			if (asSheet) {
+				shellStyle |= SWT.SHEET;
+			}
+			dialog.setShellStyle(shellStyle);
+			dialog.setTitle(title == null ? WorkbenchMessages.ListSelection_title : title);
+			if (initialSelections != null) {
+				dialog.setInitialSelections(initialSelections);
+			}
+			dialog.optionalCheckboxValue = checkboxValue;
+			return dialog;
+		}
+
 	}
 
 	/**
@@ -112,17 +366,33 @@ public class ListSelectionDialog extends SelectionDialog {
 		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		buttonComposite.setLayout(layout);
 		buttonComposite.setLayoutData(new GridData(SWT.END, SWT.TOP, true, false));
-
-		Button selectButton = createButton(buttonComposite, IDialogConstants.SELECT_ALL_ID, SELECT_ALL_TITLE, false);
-
-		SelectionListener listener = widgetSelectedAdapter(e -> listViewer.setAllChecked(true));
-		selectButton.addSelectionListener(listener);
-
-		Button deselectButton = createButton(buttonComposite, IDialogConstants.DESELECT_ALL_ID, DESELECT_ALL_TITLE,
+		Button selectAllButton = createButton(buttonComposite, IDialogConstants.SELECT_ALL_ID,
+				WorkbenchMessages.SelectionDialog_selectLabel, false);
+		selectAllButton.setToolTipText(WorkbenchMessages.SelectionDialog_selectLabel);
+		selectAllButton.addSelectionListener(widgetSelectedAdapter(e -> setAllChecked(true)));
+		Button deselectAllButton = createButton(buttonComposite, IDialogConstants.DESELECT_ALL_ID,
+				WorkbenchMessages.SelectionDialog_deselectLabel,
 				false);
+		deselectAllButton.setToolTipText(WorkbenchMessages.SelectionDialog_deselectLabel);
+		deselectAllButton.addSelectionListener(widgetSelectedAdapter(e -> setAllChecked(false)));
+	}
 
-		listener = widgetSelectedAdapter(e -> listViewer.setAllChecked(false));
-		deselectButton.addSelectionListener(listener);
+	private void setAllChecked(boolean state) {
+		listViewer.setAllChecked(state);
+		updateButtonsOnSelection();
+	}
+
+	private void updateButtonsOnSelection() {
+		long selectedCount = Arrays.stream(getViewer().getTable().getItems()).filter(TableItem::getChecked).count();
+		int totalCount = getViewer().getTable().getItemCount();
+		getButton(IDialogConstants.SELECT_ALL_ID).setEnabled(selectedCount < totalCount);
+		getButton(IDialogConstants.DESELECT_ALL_ID).setEnabled(selectedCount > 0);
+		if (okButtonText != null) {
+			getButton(IDialogConstants.OK_ID).setText(
+					NLS.bind(selectedCount == 0 && okButtonTextWhenNoSelection != null ? okButtonTextWhenNoSelection
+							: okButtonText,
+							selectedCount, totalCount));
+		}
 	}
 
 	/**
@@ -144,6 +414,13 @@ public class ListSelectionDialog extends SelectionDialog {
 	}
 
 	@Override
+	protected Control createContents(Composite parent) {
+		Control contents = super.createContents(parent);
+		updateButtonsOnSelection();
+		return contents;
+	}
+
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		// page group
 		Composite composite = (Composite) super.createDialogArea(parent);
@@ -160,6 +437,7 @@ public class ListSelectionDialog extends SelectionDialog {
 
 		listViewer.setLabelProvider(labelProvider);
 		listViewer.setContentProvider(contentProvider);
+		listViewer.addCheckStateListener(e -> updateButtonsOnSelection());
 
 		addSelectionButtons(composite);
 
@@ -170,9 +448,23 @@ public class ListSelectionDialog extends SelectionDialog {
 			checkInitialSelections();
 		}
 
-		Dialog.applyDialogFont(composite);
+		// optional check box
+		if (optionalCheckboxText != null) {
+			optionalCheckbox = WidgetFactory.button(SWT.CHECK).text(optionalCheckboxText).layoutData(new GridData())
+					.onSelect(e -> optionalCheckboxValue = optionalCheckbox.getSelection()).create(composite);
+			optionalCheckbox.setSelection(optionalCheckboxValue);
+		}
 
+		Dialog.applyDialogFont(composite);
 		return composite;
+	}
+
+	@Override
+	protected void createButtonsForButtonBar(Composite parent) {
+		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+		if (canCancel) {
+			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+		}
 	}
 
 	/**
@@ -182,6 +474,19 @@ public class ListSelectionDialog extends SelectionDialog {
 	 */
 	protected CheckboxTableViewer getViewer() {
 		return listViewer;
+	}
+
+	/**
+	 * @return the current or, if the dialog has been closed, the last value of the
+	 *         optional check box; {@code false} when there is no optional check box
+	 *         and no default value has been set
+	 * @see #ListSelectionDialog(Shell, Object, IStructuredContentProvider,
+	 *      ILabelProvider, String, String, String, String, boolean, boolean,
+	 *      String, boolean)
+	 * @since 3.123
+	 */
+	public boolean getCheckboxValue() {
+		return optionalCheckboxValue;
 	}
 
 	/**
