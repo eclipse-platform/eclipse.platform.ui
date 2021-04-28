@@ -1,42 +1,42 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.core.runtime" version="2">
     <resource path="META-INF/MANIFEST.MF">
-        <filter comment="Planned_deletion-we-increase the minor version" id="926941240">
+        <filter comment="Bug 572013-Planned deletion-we-increase the minor version" id="932184123">
             <message_arguments>
-                <message_argument value="3.21.0"/>
+                <message_argument value="3.22.0"/>
                 <message_argument value="3.20.100"/>
             </message_arguments>
         </filter>
     </resource>
     <resource path="META-INF/MANIFEST.MF" type="org.eclipse.core.runtime.ILibrary">
-        <filter comment="Planned deletion" id="305324134">
+        <filter comment="Bug 572013-Planned deletion" id="305324134">
             <message_arguments>
                 <message_argument value="org.eclipse.core.runtime.ILibrary"/>
-                <message_argument value="org.eclipse.core.runtime_3.21.0"/>
+                <message_argument value="org.eclipse.core.runtime_3.22.0"/>
             </message_arguments>
         </filter>
     </resource>
     <resource path="META-INF/MANIFEST.MF" type="org.eclipse.core.runtime.IPlatformRunnable">
-        <filter comment="Planned-Deletion" id="305324134">
+        <filter comment="Bug 572013-Planned deletion" id="305324134">
             <message_arguments>
                 <message_argument value="org.eclipse.core.runtime.IPlatformRunnable"/>
-                <message_argument value="org.eclipse.core.runtime_3.21.0"/>
+                <message_argument value="org.eclipse.core.runtime_3.22.0"/>
             </message_arguments>
         </filter>
     </resource>
     <resource path="META-INF/MANIFEST.MF" type="org.eclipse.core.runtime.IPluginPrerequisite">
-        <filter comment="Planned deletion" id="305324134">
+        <filter comment="Bug 572013-Planned deletion" id="305324134">
             <message_arguments>
                 <message_argument value="org.eclipse.core.runtime.IPluginPrerequisite"/>
-                <message_argument value="org.eclipse.core.runtime_3.21.0"/>
+                <message_argument value="org.eclipse.core.runtime_3.22.0"/>
             </message_arguments>
         </filter>
     </resource>
     <resource path="META-INF/MANIFEST.MF" type="org.eclipse.core.runtime.IPluginRegistry">
-        <filter comment="Planned deletion" id="305324134">
+        <filter comment="Bug 572013-Planned deletion" id="305324134">
             <message_arguments>
                 <message_argument value="org.eclipse.core.runtime.IPluginRegistry"/>
-                <message_argument value="org.eclipse.core.runtime_3.21.0"/>
+                <message_argument value="org.eclipse.core.runtime_3.22.0"/>
             </message_arguments>
         </filter>
     </resource>

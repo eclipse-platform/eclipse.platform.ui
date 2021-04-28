@@ -349,6 +349,14 @@ public final class Platform {
 	public static final String ARCH_X86_64 = "x86_64";//$NON-NLS-1$
 
 	/**
+	 * Constant string (value "aarch64") indicating the platform is running on an
+	 * AARCH64bit-based architecture.
+	 *
+	 * @since 3.22
+	 */
+	public static final String ARCH_AARCH64 = "aarch64";//$NON-NLS-1$
+
+	/**
 	 * Constant string (value "amd64") indicating the platform is running on an
 	 * AMD64-based architecture.
 	 *
