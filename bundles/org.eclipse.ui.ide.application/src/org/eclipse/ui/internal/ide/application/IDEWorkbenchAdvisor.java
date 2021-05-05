@@ -438,17 +438,29 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 			}
 		}
 
-		final IContainer root = ResourcesPlugin.getWorkspace().getRoot();
-		Job job = new WorkspaceJob(IDEWorkbenchMessages.Workspace_refreshing) {
-			@Override
-			public IStatus runInWorkspace(IProgressMonitor monitor)
-					throws CoreException {
-				root.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-				return Status.OK_STATUS;
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		final IContainer root = workspace.getRoot();
+
+		// We should try to use RefreshManager which avoids multiple refresh requests
+		// for same objects
+		if (workspace instanceof Workspace) {
+			Workspace wsp = (Workspace) workspace;
+			if (!wsp.isCrashed()) {
+				// Only refresh if no crash happened before: the workspace itself
+				// triggers refresh in that case, see Workspace.open()
+				wsp.getRefreshManager().refresh(root);
 			}
-		};
-		job.setRule(root);
-		job.schedule();
+		} else {
+			Job job = new WorkspaceJob(IDEWorkbenchMessages.Workspace_refreshing) {
+				@Override
+				public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+					root.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+					return Status.OK_STATUS;
+				}
+			};
+			job.setRule(root);
+			job.schedule();
+		}
 	}
 
 	protected static class CancelableProgressMonitorWrapper extends
