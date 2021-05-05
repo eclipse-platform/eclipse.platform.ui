@@ -134,7 +134,7 @@ public class Eclipse extends Thread {
 	/**
 	 * Reads a stream
 	 */
-	public class StreamConsumer extends Thread {
+	public static class StreamConsumer extends Thread {
 		BufferedReader bReader;
 		public StreamConsumer(InputStream inputStream) {
 			super();

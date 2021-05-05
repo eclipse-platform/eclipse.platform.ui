@@ -34,7 +34,7 @@ import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
 
 public class TaskDependencies {
 
-	private class Dependency {
+	private static class Dependency {
 		private AbstractTask sourceTask;
 
 		private String requiredTaskId;

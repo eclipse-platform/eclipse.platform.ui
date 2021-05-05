@@ -38,7 +38,7 @@ import org.eclipse.ui.internal.cheatsheets.Messages;
  */
 public class CheatSheetRegistryReader extends RegistryReader implements IRegistryChangeListener {
 
-	private class CategoryNode {
+	private static class CategoryNode {
 		private Category category;
 		private String path;
 		public CategoryNode(Category cat) {
@@ -63,7 +63,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	/**
 	 * Represents a taskEditor entry in the registry
 	 */
-	public class TaskEditorNode {
+	public static class TaskEditorNode {
 		private String className;
 		private String iconPath;
 		private String id;
@@ -97,7 +97,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	/**
 	 * Represents a taskExplorer entry in the registry
 	 */
-	public class TaskExplorerNode {
+	public static class TaskExplorerNode {
 		private String className;
 		private String iconPath;
 		private String name;

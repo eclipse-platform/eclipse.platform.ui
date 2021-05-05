@@ -41,7 +41,7 @@ public class TreeLabelProvider extends LabelProvider {
 	/*
 	 * A set of related images
 	 */
-	private class ImageSet {
+	private static class ImageSet {
 		// Use a map rather than array so the nuber of icons is not hard coded
 		Map<String, Image> images = new HashMap<>();
 

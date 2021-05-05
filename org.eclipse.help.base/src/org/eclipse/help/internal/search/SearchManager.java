@@ -250,7 +250,7 @@ public class SearchManager {
 	 * Buffers hits, and only sends them off to the wrapped collector
 	 * when flush() is called.
 	 */
-	private class BufferedSearchHitCollector implements ISearchHitCollector {
+	private static class BufferedSearchHitCollector implements ISearchHitCollector {
 		private Set<SearchHit> allHits = new HashSet<>();
 		private String wordsSearched = null;
 

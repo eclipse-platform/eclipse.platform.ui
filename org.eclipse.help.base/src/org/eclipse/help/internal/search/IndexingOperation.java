@@ -318,7 +318,7 @@ class IndexingOperation {
 		return name;
 	}
 
-	public class IndexingException extends Exception {
+	public static class IndexingException extends Exception {
 		private static final long serialVersionUID = 1L;
 	}
 

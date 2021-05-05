@@ -35,7 +35,7 @@ import org.osgi.framework.ServiceReference;
 
 public class JettyHelpServer extends HelpServer {
 
-	private abstract class WorkerThread extends Thread {
+	private abstract static class WorkerThread extends Thread {
 		private Throwable exception;
 
 		public WorkerThread(String name) {

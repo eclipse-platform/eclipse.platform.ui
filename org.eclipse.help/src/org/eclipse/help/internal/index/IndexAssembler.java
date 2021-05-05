@@ -208,7 +208,7 @@ public class IndexAssembler {
 	 * Normalizes topic hrefs, by prepending the plug-in id to form an href.
 	 * e.g. "path/myfile.html" -> "/my.plugin/path/myfile.html"
 	 */
-	private class NormalizeHandler extends ProcessorHandler {
+	private static class NormalizeHandler extends ProcessorHandler {
 		@Override
 		public short handle(UAElement element, String id) {
 			if (element instanceof Topic) {

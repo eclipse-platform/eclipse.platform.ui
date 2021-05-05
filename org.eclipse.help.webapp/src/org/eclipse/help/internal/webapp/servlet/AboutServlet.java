@@ -43,7 +43,7 @@ public class AboutServlet extends HttpServlet {
 
 	protected Locale locale;
 
-	protected class PluginDetails {
+	protected static class PluginDetails {
 		public String[] columns = new String[NUMBER_OF_COLUMNS];
 
 		public PluginDetails(String[] columns) {
@@ -56,7 +56,7 @@ public class AboutServlet extends HttpServlet {
 		}
 	}
 
-	protected class PluginComparator implements Comparator<PluginDetails> {
+	protected static class PluginComparator implements Comparator<PluginDetails> {
 
 		public PluginComparator(int column) {
 			this.column = column;

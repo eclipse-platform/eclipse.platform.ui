@@ -1151,7 +1151,7 @@ public class CheatSheetParser implements IStatusContainer {
 	 * plug-ins and those tasks have relative paths. It also only applies for cheat sheets
 	 * located in running plug-ins.
 	 */
-	private class NormalizeHandler extends ProcessorHandler {
+	private static class NormalizeHandler extends ProcessorHandler {
 
 		private static final String ELEMENT_PARAM = "param"; //$NON-NLS-1$
 		private static final String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$

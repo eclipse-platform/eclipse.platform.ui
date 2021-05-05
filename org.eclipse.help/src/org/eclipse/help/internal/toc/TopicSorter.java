@@ -52,7 +52,7 @@ public class TopicSorter {
 		}
 	}
 
-	private class TopicComparator implements Comparator<ITopic> {
+	private static class TopicComparator implements Comparator<ITopic> {
 		Collator collator = Collator.getInstance();
 
 		@Override

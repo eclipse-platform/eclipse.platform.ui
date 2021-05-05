@@ -55,7 +55,7 @@ public class ConfirmRestartDialog extends Dialog {
 
 	}
 
-	public class TaskContentProvider  implements IStructuredContentProvider {
+	public static class TaskContentProvider  implements IStructuredContentProvider {
 
 		Object[] input;
 

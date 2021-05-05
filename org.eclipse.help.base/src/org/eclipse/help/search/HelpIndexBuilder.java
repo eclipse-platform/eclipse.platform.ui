@@ -130,7 +130,7 @@ public class HelpIndexBuilder {
 		}
 	}
 
-	class LocaleDir {
+	static class LocaleDir {
 		String locale;
 		String relativePath;
 		ArrayList<File> dirs = new ArrayList<>();

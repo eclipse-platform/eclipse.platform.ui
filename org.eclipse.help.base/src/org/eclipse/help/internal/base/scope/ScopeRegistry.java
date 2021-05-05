@@ -190,7 +190,7 @@ public class ScopeRegistry {
 	 * returning each part of the phrase as a separate element
 	 *
 	 */
-	class ScopePhrase{
+	static class ScopePhrase{
 
 		private String phrase;
 		private int cursor;
@@ -240,7 +240,7 @@ public class ScopeRegistry {
 	 * on one Scope, or a union/intersection of scopes.
 	 *
 	 */
-	private class TempScope
+	private static class TempScope
 	{
 		public final static int SELF=0;
 		public final static int UNION=1;
