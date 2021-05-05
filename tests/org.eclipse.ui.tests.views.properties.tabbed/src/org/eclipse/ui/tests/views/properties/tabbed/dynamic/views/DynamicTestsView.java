@@ -44,7 +44,7 @@ import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 public class DynamicTestsView extends ViewPart implements
 		ITabbedPropertySheetPageContributor {
 
-	class DynamicTestsViewLabelProvider extends LabelProvider {
+	static class DynamicTestsViewLabelProvider extends LabelProvider {
 
 		@Override
 		public Image getImage(Object obj) {

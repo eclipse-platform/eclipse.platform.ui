@@ -50,7 +50,7 @@ import org.osgi.service.event.EventHandler;
 
 public class UIEventsTest extends HeadlessApplicationElementTest {
 
-	class EventTester {
+	static class EventTester {
 		String testerName;
 		IEventBroker eventBroker;
 		String topic;
@@ -119,7 +119,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		}
 	}
 
-	public class AppElementTester extends EventTester {
+	public static class AppElementTester extends EventTester {
 		AppElementTester(IEventBroker eventBroker) {
 			super("AppElement", ApplicationElement.TOPIC_ALL, new String[] {
 					ApplicationElement.ELEMENTID, ApplicationElement.TAGS,
@@ -127,21 +127,21 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		}
 	}
 
-	public class CommandTester extends EventTester {
+	public static class CommandTester extends EventTester {
 		CommandTester(IEventBroker eventBroker) {
 			super("Command", Command.TOPIC_ALL,
 					new String[] { Command.COMMANDNAME }, eventBroker);
 		}
 	}
 
-	public class ContextTester extends EventTester {
+	public static class ContextTester extends EventTester {
 		ContextTester(IEventBroker eventBroker) {
 			super("Context", Context.TOPIC_ALL, new String[] { Context.CONTEXT,
 					Context.VARIABLES }, eventBroker);
 		}
 	}
 
-	public class ContributionTester extends EventTester {
+	public static class ContributionTester extends EventTester {
 		ContributionTester(IEventBroker eventBroker) {
 			super("Contribution", Contribution.TOPIC_ALL, new String[] {
 					Contribution.CONTRIBUTIONURI, Contribution.OBJECT },
@@ -149,7 +149,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		}
 	}
 
-	public class ElementContainerTester extends EventTester {
+	public static class ElementContainerTester extends EventTester {
 		ElementContainerTester(IEventBroker eventBroker) {
 			super("ElementContainer", ElementContainer.TOPIC_ALL,
 					new String[] { ElementContainer.CHILDREN,
@@ -157,21 +157,21 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		}
 	}
 
-	public class DirtyableTester extends EventTester {
+	public static class DirtyableTester extends EventTester {
 		DirtyableTester(IEventBroker eventBroker) {
 			super("Dirtyable", Dirtyable.TOPIC_ALL,
 					new String[] { Dirtyable.DIRTY }, eventBroker);
 		}
 	}
 
-	public class ParameterTester extends EventTester {
+	public static class ParameterTester extends EventTester {
 		ParameterTester(IEventBroker eventBroker) {
 			super("Parameter", Parameter.TOPIC_ALL, new String[] {
 					Parameter.NAME, Parameter.VALUE }, eventBroker);
 		}
 	}
 
-	public class UIElementTester extends EventTester {
+	public static class UIElementTester extends EventTester {
 		UIElementTester(IEventBroker eventBroker) {
 			super("UIElement", UIElement.TOPIC_ALL, new String[] {
 					UIElement.RENDERER, UIElement.TOBERENDERED,
@@ -180,14 +180,14 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		}
 	}
 
-	public class UIItemTester extends EventTester {
+	public static class UIItemTester extends EventTester {
 		UIItemTester(IEventBroker eventBroker) {
 			super("UIItem", UILabel.TOPIC_ALL, new String[] { UILabel.LABEL,
 					UILabel.ICONURI, UILabel.TOOLTIP }, eventBroker);
 		}
 	}
 
-	public class WindowTester extends EventTester {
+	public static class WindowTester extends EventTester {
 		WindowTester(IEventBroker eventBroker) {
 			super("Window", Window.TOPIC_ALL, new String[] { Window.MAINMENU,
 					Window.X, Window.Y, Window.WIDTH, Window.HEIGHT },

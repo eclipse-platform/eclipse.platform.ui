@@ -57,7 +57,7 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class LabelProviderTest extends BasicPerformanceTest {
 
-	private class CountryEntry {
+	private static class CountryEntry {
 		private String name;
 		private String cupYear;
 		private String baseName;
@@ -109,7 +109,7 @@ public class LabelProviderTest extends BasicPerformanceTest {
 		}
 	}
 
-	private class TestCellLabelProvider extends CellLabelProvider implements IStyledLabelProvider, IFontProvider {
+	private static class TestCellLabelProvider extends CellLabelProvider implements IStyledLabelProvider, IFontProvider {
 
 		private boolean useColor;
 
@@ -291,7 +291,7 @@ public class LabelProviderTest extends BasicPerformanceTest {
 		return new TestLabelDecorator();
 	}
 
-	private class TestLabelDecorator implements ILabelDecorator, IColorDecorator {
+	private static class TestLabelDecorator implements ILabelDecorator, IColorDecorator {
 
 		@Override
 		public Image decorateImage(Image image, Object element) {

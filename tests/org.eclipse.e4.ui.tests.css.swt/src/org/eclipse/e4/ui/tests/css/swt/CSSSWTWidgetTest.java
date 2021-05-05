@@ -34,7 +34,7 @@ public class CSSSWTWidgetTest extends CSSSWTTestCase {
 
 
 
-	private final class WidgetElementWithSupplierReturningNull extends WidgetElement {
+	private static final class WidgetElementWithSupplierReturningNull extends WidgetElement {
 		private WidgetElementWithSupplierReturningNull(Widget widget, CSSEngine engine) {
 			super(widget, engine);
 		}

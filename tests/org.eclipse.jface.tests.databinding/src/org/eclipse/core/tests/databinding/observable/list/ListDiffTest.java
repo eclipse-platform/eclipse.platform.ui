@@ -148,7 +148,7 @@ public class ListDiffTest {
 		return Diffs.createListDiff(differences);
 	}
 
-	class ListDiffVisitorStub extends ListDiffVisitor<Object> {
+	static class ListDiffVisitorStub extends ListDiffVisitor<Object> {
 		String log = "";
 
 		@Override

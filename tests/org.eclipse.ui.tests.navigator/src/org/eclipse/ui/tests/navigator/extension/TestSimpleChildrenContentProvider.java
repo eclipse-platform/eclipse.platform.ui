@@ -31,7 +31,7 @@ public class TestSimpleChildrenContentProvider implements ITreeContentProvider {
 
 	private Object[] _children;
 
-	public class SimpleChild {
+	public static class SimpleChild {
 		public String _name;
 		public Object _parent;
 

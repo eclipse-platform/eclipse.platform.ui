@@ -47,7 +47,7 @@ public class PersonTests {
 		assertEquals("new state", person.getState());
 	}
 
-	private class Listener implements PropertyChangeListener {
+	private static class Listener implements PropertyChangeListener {
 		private int count;
 		private PropertyChangeEvent lastEvent;
 

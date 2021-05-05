@@ -28,7 +28,7 @@ public class InnerClassElementTest extends CSSSWTTestCase {
 
 
 	// create an inner class to address via CSS
-	class CustomComposite extends Composite {
+	static class CustomComposite extends Composite {
 		public CustomComposite(Composite parent, int style) {
 			super(parent, style);
 		}

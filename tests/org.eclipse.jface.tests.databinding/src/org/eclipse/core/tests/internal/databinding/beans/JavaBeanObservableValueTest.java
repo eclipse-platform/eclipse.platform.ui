@@ -223,7 +223,7 @@ public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
 	 *
 	 * @since 3.2
 	 */
-	/* package */class ThrowsSetException {
+	static /* package */class ThrowsSetException {
 		private String value;
 
 		/* package */NullPointerException thrownException;
@@ -237,7 +237,7 @@ public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
 		}
 	}
 
-	/* package */class ThrowsGetException {
+	/* package */static class ThrowsGetException {
 		public String value;
 
 		/* package */NullPointerException thrownException;

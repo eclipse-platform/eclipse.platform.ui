@@ -59,7 +59,7 @@ public class ExpandableCompositeTest {
 	// change this to true if you want to see test is slow motion
 	private boolean humanWatching = false;
 
-	private class ExpandableCompositeForTest extends ExpandableComposite {
+	private static class ExpandableCompositeForTest extends ExpandableComposite {
 		private Control separator;
 		private Control description;
 

@@ -9982,7 +9982,7 @@ public class EPartServiceTest extends UITest {
 		});
 	}
 
-	class PartListener implements IPartListener {
+	static class PartListener implements IPartListener {
 
 		private List<MPart> activatedParts = new ArrayList<>();
 		private List<MPart> deactivatedParts = new ArrayList<>();
@@ -10099,7 +10099,7 @@ public class EPartServiceTest extends UITest {
 
 	}
 
-	class ExceptionListener implements IPartListener {
+	static class ExceptionListener implements IPartListener {
 
 		@Override
 		public void partActivated(MPart part) {

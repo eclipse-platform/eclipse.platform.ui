@@ -35,7 +35,7 @@ public class TestsView
 
 	public static final String TESTS_VIEW_ID = "org.eclipse.ui.tests.views.properties.tabbed.views.TestsView"; //$NON-NLS-1$
 
-	class ViewLabelProvider
+	static class ViewLabelProvider
 		extends LabelProvider {
 
 		@Override
