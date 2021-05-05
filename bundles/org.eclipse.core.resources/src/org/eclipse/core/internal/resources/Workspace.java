@@ -2376,6 +2376,13 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 	}
 
+	/**
+	 * @return true if workspace crash in previous session was detected at startup
+	 */
+	public boolean isCrashed() {
+		return crashed;
+	}
+
 	@Override
 	public void setDescription(IWorkspaceDescription value) {
 		// if both the old and new description's build orders are null, leave the
