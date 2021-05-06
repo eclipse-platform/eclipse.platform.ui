@@ -113,7 +113,7 @@ public class LocalFile extends FileStore {
 			//two equivalent files in an environment that supports symbolic links.
 			//in these nothing needs to be copied (and doing so would likely lose data)
 			try {
-				if (source.getCanonicalFile().equals(destination.getCanonicalFile())) {
+				if (isSameFile(source, destination)) {
 					//nothing to do
 					return;
 				}
@@ -352,7 +352,7 @@ public class LocalFile extends FileStore {
 			//in these cases we NEVER want to delete anything
 			boolean sourceEqualsDest = false;
 			try {
-				sourceEqualsDest = source.getCanonicalFile().equals(destination.getCanonicalFile());
+				sourceEqualsDest = isSameFile(source, destination);
 			} catch (IOException e) {
 				String message = NLS.bind(Messages.couldNotMove, source.getAbsolutePath());
 				Policy.error(EFS.ERROR_WRITE, message, e);
@@ -394,6 +394,21 @@ public class LocalFile extends FileStore {
 			super.move(destFile, options, subMonitor.newChild(1));
 		} finally {
 			subMonitor.done();
+		}
+	}
+
+	private boolean isSameFile(File source, File destination) throws IOException {
+		try {
+			if (!destination.exists()) {
+				// avoid NoSuchFileException for performance reasons
+				return false;
+			}
+			// isSameFile is faster then using getCanonicalPath 
+			return java.nio.file.Files.isSameFile(source.toPath(), destination.toPath());
+		} catch (NoSuchFileException e) {
+			// ignore - it is the normal case that the destination does not exist.
+			// slowest path though
+			return false;
 		}
 	}
 
