@@ -19,6 +19,7 @@ package org.eclipse.core.internal.runtime;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.core.internal.preferences.exchange.ILegacyPreferences;
 import org.eclipse.core.internal.preferences.exchange.IProductPreferencesService;
 import org.eclipse.core.internal.preferences.legacy.InitLegacyPreferences;
@@ -60,8 +61,7 @@ public final class InternalPlatform {
 	private static final String KEYRING = "-keyring"; //$NON-NLS-1$
 	private String keyringFile;
 
-	//XXX This is not synchronized
-	private Map<Bundle,Log> logs = new HashMap<>(5);
+	private Map<Bundle, Log> logs = new ConcurrentHashMap<>(5);
 
 	private static final String[] OS_LIST = { Platform.OS_LINUX, Platform.OS_MACOSX, Platform.OS_WIN32 };
 	private String password = ""; //$NON-NLS-1$
@@ -355,16 +355,14 @@ public final class InternalPlatform {
 	 * The system log listener needs to be optional: turned on or off. What about a system property? :-)
 	 */
 	public ILog getLog(Bundle bundle) {
-		Log result = logs.get(bundle);
-		if (result != null)
-			return result;
-		ExtendedLogService logService = extendedLogTracker.getService();
-		Logger logger = logService != null ? logService.getLogger(bundle, PlatformLogWriter.EQUINOX_LOGGER_NAME) : null;
-		result = new Log(bundle, logger);
-		ExtendedLogReaderService logReader = logReaderTracker.getService();
-		logReader.addLogListener(result, result);
-		logs.put(bundle, result);
-		return result;
+		return logs.computeIfAbsent(bundle, b -> {
+			ExtendedLogService logService = extendedLogTracker.getService();
+			Logger logger = logService != null ? logService.getLogger(b, PlatformLogWriter.EQUINOX_LOGGER_NAME) : null;
+			Log log = new Log(b, logger);
+			ExtendedLogReaderService logReader = logReaderTracker.getService();
+			logReader.addLogListener(log, log);
+			return log;
+		});
 	}
 
 	public String getNL() {
