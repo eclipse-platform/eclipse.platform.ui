@@ -28,6 +28,7 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	protected int maxBuildIterations;
 	protected int maxFileStates;
 	protected long maxFileStateSize;
+	private boolean keepDerivedState;
 	protected boolean applyFileStatePolicy;
 	private long snapshotInterval;
 	protected int operationsPerSnapshot;
@@ -44,6 +45,8 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 		fileStateLongevity = node.getLong(ResourcesPlugin.PREF_FILE_STATE_LONGEVITY, PreferenceInitializer.PREF_FILE_STATE_LONGEVITY_DEFAULT);
 		maxFileStates = node.getInt(ResourcesPlugin.PREF_MAX_FILE_STATES, PreferenceInitializer.PREF_MAX_FILE_STATES_DEFAULT);
 		maxFileStateSize = node.getLong(ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE, PreferenceInitializer.PREF_MAX_FILE_STATE_SIZE_DEFAULT);
+		keepDerivedState = node.getBoolean(ResourcesPlugin.PREF_KEEP_DERIVED_STATE,
+				PreferenceInitializer.PREF_KEEP_DERIVED_STATE_DEFAULT);
 		snapshotInterval = node.getLong(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL, PreferenceInitializer.PREF_SNAPSHOT_INTERVAL_DEFAULT);
 		operationsPerSnapshot = node.getInt(PreferenceInitializer.PREF_OPERATIONS_PER_SNAPSHOT, PreferenceInitializer.PREF_OPERATIONS_PER_SNAPSHOT_DEFAULT);
 		deltaExpiration = node.getLong(PreferenceInitializer.PREF_DELTA_EXPIRATION, PreferenceInitializer.PREF_DELTA_EXPIRATION_DEFAULT);
@@ -212,5 +215,15 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	@Override
 	public void setMaxConcurrentBuilds(int n) {
 		this.parallelBuildsCount = n;
+	}
+
+	@Override
+	public boolean isKeepDerivedState() {
+		return keepDerivedState;
+	}
+
+	@Override
+	public void setKeepDerivedState(boolean keepDerivedState) {
+		this.keepDerivedState = keepDerivedState;
 	}
 }

@@ -294,6 +294,7 @@ public class ModelObjectWriter implements IModelObjectConstants {
 			writer.printSimpleTag(FILE_STATE_LONGEVITY, description.getFileStateLongevity());
 			writer.printSimpleTag(MAX_FILE_STATE_SIZE, description.getMaxFileStateSize());
 			writer.printSimpleTag(MAX_FILE_STATES, description.getMaxFileStates());
+			writer.printSimpleTag(KEEP_DERIVED_STATE, description.isKeepDerivedState() ? "1" : "0"); //$NON-NLS-1$ //$NON-NLS-2$
 			String[] order = description.getBuildOrder(false);
 			if (order != null)
 				write(BUILD_ORDER, PROJECT, order, writer);

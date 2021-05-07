@@ -101,6 +101,11 @@ public class WorkspacePreferencesTest extends ResourceTest {
 		assertEquals("3.2", defaultSnapshotInterval, workspace.getDescription().getSnapshotInterval());
 		assertEquals("Description not synchronized", workspace.getDescription(), preferences);
 
+		preferences.setValue(ResourcesPlugin.PREF_KEEP_DERIVED_STATE, false);
+		assertFalse("4.0", workspace.getDescription().isKeepDerivedState());
+
+		preferences.setValue(ResourcesPlugin.PREF_KEEP_DERIVED_STATE, true);
+		assertTrue("4.1", workspace.getDescription().isKeepDerivedState());
 	}
 
 	/**
@@ -126,6 +131,8 @@ public class WorkspacePreferencesTest extends ResourceTest {
 		modified.setMaxFileStateSize((original.getMaxFileStateSize() + 1) * 2);
 		// 8 - PREF_SNAPSHOT_INTERVAL
 		modified.setSnapshotInterval((original.getSnapshotInterval() + 1) * 2);
+		// 9 - PREF_SNAPSHOT_INTERVAL
+		modified.setKeepDerivedState(!original.isKeepDerivedState());
 
 		final List<String> changedProperties = new LinkedList<>();
 		Preferences.IPropertyChangeListener listener = event -> changedProperties.add(event.getProperty());
@@ -144,7 +151,7 @@ public class WorkspacePreferencesTest extends ResourceTest {
 				fail("2.0", e);
 			}
 			// the right number of events should have been fired
-			assertEquals("2.1 - wrong number of properties changed ", 9, changedProperties.size());
+			assertEquals("2.1 - wrong number of properties changed ", 10, changedProperties.size());
 		} finally {
 			preferences.removePropertyChangeListener(listener);
 		}
@@ -181,6 +188,7 @@ public class WorkspacePreferencesTest extends ResourceTest {
 			modified.setMaxFileStates((original.getMaxFileStates() + 1) * 2);
 			modified.setMaxFileStateSize((original.getMaxFileStateSize() + 1) * 2);
 			modified.setSnapshotInterval((original.getSnapshotInterval() + 1) * 2);
+			modified.setKeepDerivedState(!original.isKeepDerivedState());
 
 			// sets modified description
 			try {
@@ -234,6 +242,7 @@ public class WorkspacePreferencesTest extends ResourceTest {
 		description.setMaxFileStates(16);
 		description.setMaxFileStateSize(100050);
 		description.setSnapshotInterval(1234567);
+		description.setKeepDerivedState(true);
 		try {
 			workspace.setDescription(description);
 		} catch (CoreException ce) {
@@ -270,6 +279,7 @@ public class WorkspacePreferencesTest extends ResourceTest {
 		description.setMaxFileStates(Math.abs((int) (Math.random() * 100000L)));
 		description.setMaxFileStateSize(Math.abs((long) (Math.random() * 100000L)));
 		description.setSnapshotInterval(Math.abs((long) (Math.random() * 100000L)));
+		description.setKeepDerivedState(true);
 		LocalMetaArea localMetaArea = ((Workspace) workspace).getMetaArea();
 		try {
 			localMetaArea.write(description);
@@ -296,6 +306,8 @@ public class WorkspacePreferencesTest extends ResourceTest {
 		assertEquals(message + " - 7", description.getMaxFileStateSize(), preferences.getLong(ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE));
 		assertEquals(message + " - 8", description.getSnapshotInterval(), preferences.getLong(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL));
 		assertEquals(message + " - 9", description.getMaxBuildIterations(), preferences.getLong(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS));
+		assertEquals(message + " -10", description.isKeepDerivedState(),
+				preferences.getBoolean(ResourcesPlugin.PREF_KEEP_DERIVED_STATE));
 	}
 
 	/**
@@ -311,5 +323,6 @@ public class WorkspacePreferencesTest extends ResourceTest {
 		assertEquals(message + " - 7", description1.getMaxFileStateSize(), description2.getMaxFileStateSize());
 		assertEquals(message + " - 8", description1.getSnapshotInterval(), description2.getSnapshotInterval());
 		assertEquals(message + " - 9", description1.getMaxBuildIterations(), description2.getMaxBuildIterations());
+		assertEquals(message + " -10", description1.isKeepDerivedState(), description2.isKeepDerivedState());
 	}
 }

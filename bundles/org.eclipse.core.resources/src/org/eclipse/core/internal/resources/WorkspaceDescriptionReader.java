@@ -116,6 +116,8 @@ public class WorkspaceDescriptionReader implements IModelObjectConstants {
 		String fileStateLongevity = getString(node, FILE_STATE_LONGEVITY);
 		String maxFileStateSize = getString(node, MAX_FILE_STATE_SIZE);
 		String maxFileStates = getString(node, MAX_FILE_STATES);
+		String keepDerivedState = getString(node, KEEP_DERIVED_STATE);
+
 		String[] buildOrder = getStrings(searchNode(node, BUILD_ORDER));
 
 		// build instance
@@ -145,6 +147,9 @@ public class WorkspaceDescriptionReader implements IModelObjectConstants {
 		} catch (NumberFormatException e) {
 			logNumberFormatException(maxFileStates, e);
 		}
+		if (keepDerivedState != null)
+			// if in doubt keep derived off
+			description.setKeepDerivedState(keepDerivedState.equals(Integer.toString(1)));
 		if (buildOrder != null)
 			description.internalSetBuildOrder(buildOrder);
 		try {

@@ -263,6 +263,16 @@ public final class ResourcesPlugin extends Plugin {
 	public static final String PREF_MAX_FILE_STATE_SIZE = PREF_DESCRIPTION_PREFIX + "maxfilestatesize"; //$NON-NLS-1$
 
 	/**
+	 * Name of a preference for configuring whether derived files should be stored
+	 * in the local history.
+	 *
+	 * @see IWorkspaceDescription#isKeepDerivedState()
+	 * @see IWorkspaceDescription#setKeepDerivedState(boolean)
+	 * @since 3.15
+	 */
+	public static final String PREF_KEEP_DERIVED_STATE = PREF_DESCRIPTION_PREFIX + "keepDerivedState"; //$NON-NLS-1$
+
+	/**
 	 * Name of a preference for configuring the maximum number of states per
 	 * file that can be stored in the local history.
 	 *

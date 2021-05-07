@@ -41,6 +41,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	public static final boolean PREF_APPLY_FILE_STATE_POLICY_DEFAULT = true;
 	public static final long PREF_FILE_STATE_LONGEVITY_DEFAULT = 7 * 24 * 3600 * 1000l; // 7 days
 	public static final long PREF_MAX_FILE_STATE_SIZE_DEFAULT = 1024 * 1024l; // 1 MB
+	public static final boolean PREF_KEEP_DERIVED_STATE_DEFAULT = false;
 	public static final int PREF_MAX_FILE_STATES_DEFAULT = 50;
 	public static final long PREF_DELTA_EXPIRATION_DEFAULT = 30 * 24 * 3600 * 1000l; // 30 days
 	/**
@@ -76,11 +77,13 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		node.putBoolean(ResourcesPlugin.PREF_DEFAULT_BUILD_ORDER, PREF_DEFAULT_BUILD_ORDER_DEFAULT);
 		node.putInt(ResourcesPlugin.PREF_MISSING_NATURE_MARKER_SEVERITY, PREF_MISSING_NATURE_MARKER_SEVERITY_DEFAULT);
 
+
 		// history store defaults
 		node.putBoolean(ResourcesPlugin.PREF_APPLY_FILE_STATE_POLICY, PREF_APPLY_FILE_STATE_POLICY_DEFAULT);
 		node.putLong(ResourcesPlugin.PREF_FILE_STATE_LONGEVITY, PREF_FILE_STATE_LONGEVITY_DEFAULT);
 		node.putLong(ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE, PREF_MAX_FILE_STATE_SIZE_DEFAULT);
 		node.putInt(ResourcesPlugin.PREF_MAX_FILE_STATES, PREF_MAX_FILE_STATES_DEFAULT);
+		node.putBoolean(ResourcesPlugin.PREF_KEEP_DERIVED_STATE, PREF_KEEP_DERIVED_STATE_DEFAULT);
 
 		// save manager defaults
 		node.putLong(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL, PREF_SNAPSHOT_INTERVAL_DEFAULT);

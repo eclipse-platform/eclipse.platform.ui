@@ -89,6 +89,16 @@ public interface IWorkspaceDescription {
 	long getMaxFileStateSize();
 
 	/**
+	 * Returns whether derived files are tracked in the local history.
+	 *
+	 * @return <code>true</code> if local history for derived files is created
+	 * @see #setKeepDerivedState(boolean)
+	 * @see ResourcesPlugin#PREF_KEEP_DERIVED_STATE
+	 * @since 3.15
+	 */
+	boolean isKeepDerivedState();
+
+	/**
 	 * Returns whether file states are discarded according to the policy specified by
 	 * <code>setFileStateLongevity(long)</code>, <code>setMaxFileStates(int)</code>
 	 * and <code>setMaxFileStateSize(long)</code> methods.
@@ -231,6 +241,22 @@ public interface IWorkspaceDescription {
 	 * @see ResourcesPlugin#PREF_MAX_FILE_STATE_SIZE
 	 */
 	void setMaxFileStateSize(long size);
+
+	/**
+	 * Sets whether derived files are tracked in the local history.
+	 * <p>
+	 * Users must call <code>IWorkspace.setDescription</code> before changes made to
+	 * this description take effect.
+	 * </p>
+	 *
+	 * @param keepDerivedState <code>true</code> if a history of derived files is
+	 *                         needed.
+	 * @see IWorkspace#setDescription(IWorkspaceDescription)
+	 * @see #isKeepDerivedState()
+	 * @see ResourcesPlugin#PREF_KEEP_DERIVED_STATE
+	 * @since 3.15
+	 */
+	void setKeepDerivedState(boolean keepDerivedState);
 
 	/**
 	 * Sets whether file states are discarded according to the policy specified by

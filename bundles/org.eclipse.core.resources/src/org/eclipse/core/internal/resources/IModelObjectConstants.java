@@ -37,6 +37,8 @@ public interface IModelObjectConstants {
 	String FILE_STATE_LONGEVITY = "fileStateLongevity"; //$NON-NLS-1$
 	String MAX_FILE_STATE_SIZE = "maxFileStateSize"; //$NON-NLS-1$
 	String MAX_FILE_STATES = "maxFileStates"; //$NON-NLS-1$
+	String KEEP_DERIVED_STATE = "keepDerivedState"; //$NON-NLS-1$
+
 	/**
 	 * The project relative path is called the link name for backwards compatibility
 	 */

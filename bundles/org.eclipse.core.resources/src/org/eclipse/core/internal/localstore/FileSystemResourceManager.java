@@ -1149,7 +1149,8 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 				}
 			}
 			// add entry to History Store.
-			if (BitMask.isSet(updateFlags, IResource.KEEP_HISTORY) && fileInfo.exists())
+			if (BitMask.isSet(updateFlags, IResource.KEEP_HISTORY) && fileInfo.exists()
+					&& FileSystemResourceManager.storeHistory(target))
 				//never move to the history store, because then the file is missing if write fails
 				getHistoryStore().addState(target.getFullPath(), store, fileInfo, false);
 			if (!fileInfo.exists()) {
@@ -1250,4 +1251,10 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 		//for backwards compatibility, ensure the old .prj file is deleted
 		getWorkspace().getMetaArea().clearOldDescription(target);
 	}
+
+	public static boolean storeHistory(IResource file) {
+		WorkspaceDescription description = ((Workspace) file.getWorkspace()).internalGetDescription();
+		return description.isKeepDerivedState() || !file.isDerived();
+	}
+
 }

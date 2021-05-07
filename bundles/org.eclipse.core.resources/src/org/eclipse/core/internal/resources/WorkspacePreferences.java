@@ -75,6 +75,7 @@ public class WorkspacePreferences extends WorkspaceDescription {
 		target.setFileStateLongevity(source.getFileStateLongevity());
 		target.setMaxFileStates(source.getMaxFileStates());
 		target.setMaxFileStateSize(source.getMaxFileStateSize());
+		target.setKeepDerivedState(source.isKeepDerivedState());
 		target.setSnapshotInterval(source.getSnapshotInterval());
 		target.setOperationsPerSnapshot(source.getOperationsPerSnapshot());
 		target.setDeltaExpiration(source.getDeltaExpiration());
@@ -100,6 +101,7 @@ public class WorkspacePreferences extends WorkspaceDescription {
 		super.setOperationsPerSnapshot(preferences.getInt(PreferenceInitializer.PREF_OPERATIONS_PER_SNAPSHOT));
 		super.setDeltaExpiration(preferences.getLong(PreferenceInitializer.PREF_DELTA_EXPIRATION));
 		super.setMaxConcurrentBuilds(preferences.getInt(ResourcesPlugin.PREF_MAX_CONCURRENT_BUILDS));
+		super.setKeepDerivedState(preferences.getBoolean(ResourcesPlugin.PREF_KEEP_DERIVED_STATE));
 
 		// This property listener ensures we are being updated properly when changes
 		// are done directly to the preference store.
@@ -215,6 +217,11 @@ public class WorkspacePreferences extends WorkspaceDescription {
 		preferences.setValue(ResourcesPlugin.PREF_MAX_CONCURRENT_BUILDS, n);
 	}
 
+	@Override
+	public void setKeepDerivedState(boolean keepDerivedState) {
+		preferences.setValue(ResourcesPlugin.PREF_KEEP_DERIVED_STATE, keepDerivedState);
+	}
+
 	/**
 	 * @see org.eclipse.core.resources.IWorkspaceDescription#setSnapshotInterval(long)
 	 */
@@ -245,8 +252,10 @@ public class WorkspacePreferences extends WorkspaceDescription {
 			super.setOperationsPerSnapshot(preferences.getInt(PreferenceInitializer.PREF_OPERATIONS_PER_SNAPSHOT));
 		else if (property.equals(PreferenceInitializer.PREF_DELTA_EXPIRATION))
 			super.setDeltaExpiration(preferences.getLong(PreferenceInitializer.PREF_DELTA_EXPIRATION));
-		else if (property.equals(ResourcesPlugin.PREF_MAX_CONCURRENT_BUILDS)) {
+		else if (property.equals(ResourcesPlugin.PREF_MAX_CONCURRENT_BUILDS))
 			super.setMaxConcurrentBuilds(preferences.getInt(ResourcesPlugin.PREF_MAX_CONCURRENT_BUILDS));
+		else if (property.equals(ResourcesPlugin.PREF_KEEP_DERIVED_STATE)) {
+			super.setKeepDerivedState(preferences.getBoolean(ResourcesPlugin.PREF_KEEP_DERIVED_STATE));
 		}
 	}
 
