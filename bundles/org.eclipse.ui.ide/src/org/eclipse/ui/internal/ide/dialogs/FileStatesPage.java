@@ -62,6 +62,8 @@ public class FileStatesPage extends PreferencePage implements
 
 	private Button applyPolicyButton;
 
+	private Button keepDerivedStateButton;
+
 	private ArrayList<Control> dependentControls = new ArrayList<>();
 
 	//Choose a maximum to prevent OutOfMemoryErrors
@@ -117,8 +119,8 @@ public class FileStatesPage extends PreferencePage implements
 	 */
 	private void checkState() {
 		// Assume invalid if the controls not created yet
-		if (longevityText == null || maxStatesText == null || maxStateSizeText == null
-				|| applyPolicyButton == null) {
+		if (longevityText == null || maxStatesText == null || maxStateSizeText == null || applyPolicyButton == null
+				|| keepDerivedStateButton == null) {
 			setValid(false);
 			return;
 		}
@@ -178,6 +180,9 @@ public class FileStatesPage extends PreferencePage implements
 		layout.marginLeft= INDENT;
 		layout.marginWidth= 0;
 		composite.setLayout(layout);
+
+		this.keepDerivedStateButton = addCheckBox(IDEWorkbenchMessages.FileHistory_keepDerivedState,
+				description.isKeepDerivedState(), composite);
 
 		this.applyPolicyButton = addCheckBox(IDEWorkbenchMessages.FileHistory_applyPolicy, description
 				.isApplyFileStatePolicy(), composite);
@@ -260,6 +265,7 @@ public class FileStatesPage extends PreferencePage implements
 		this.maxStatesText.setText(prefs
 				.getDefaultString(ResourcesPlugin.PREF_MAX_FILE_STATES));
 		this.maxStateSizeText.setText(String.valueOf(megabytes));
+		this.keepDerivedStateButton.setSelection(prefs.getDefaultBoolean(ResourcesPlugin.PREF_KEEP_DERIVED_STATE));
 		this.applyPolicyButton.setSelection(prefs
 				.getDefaultBoolean(ResourcesPlugin.PREF_APPLY_FILE_STATE_POLICY));
 		checkState();
@@ -274,6 +280,7 @@ public class FileStatesPage extends PreferencePage implements
 		long longevityValue = validateLongTextEntry(longevityText, DAY_LENGTH);
 		int maxFileStates = validateMaxFileStates();
 		long maxStateSize = validateMaxFileStateSize();
+		boolean keepDerivedState = keepDerivedStateButton.getSelection();
 		boolean applyPolicy = applyPolicyButton.getSelection();
 		if (longevityValue == FAILED_VALUE || maxFileStates == FAILED_VALUE
 				|| maxStateSize == FAILED_VALUE) {
@@ -284,6 +291,7 @@ public class FileStatesPage extends PreferencePage implements
 		description.setFileStateLongevity(longevityValue * DAY_LENGTH);
 		description.setMaxFileStates(maxFileStates);
 		description.setMaxFileStateSize(maxStateSize * MEGABYTES);
+		description.setKeepDerivedState(keepDerivedState);
 		description.setApplyFileStatePolicy(applyPolicy);
 
 		try {

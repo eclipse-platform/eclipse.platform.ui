@@ -624,6 +624,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String FileHistory_entries;
 	public static String FileHistory_diskSpace;
 	public static String FileHistory_applyPolicy;
+	public static String FileHistory_keepDerivedState;
 	public static String FileHistory_mustBePositive;
 	public static String FileHistory_invalid;
 	public static String FileHistory_exceptionSaving;
