@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -335,7 +335,6 @@ public class ResourceInfoPage extends PropertyPage {
 			goToLocationButton.setToolTipText(LOCATION_BUTTON_TOOLTIP);
 			goToLocationButton.addSelectionListener(new SelectionAdapter() {
 
-				@SuppressWarnings("restriction")
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					ECommandService commandService = PlatformUI.getWorkbench().getService(ECommandService.class);
