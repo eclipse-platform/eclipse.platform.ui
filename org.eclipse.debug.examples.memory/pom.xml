@@ -18,7 +18,7 @@
   </parent>
   <groupId>org.eclipse.debug</groupId>
   <artifactId>org.eclipse.debug.examples.memory</artifactId>
-  <version>1.102.200-SNAPSHOT</version>
+  <version>1.103.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
   <properties>
     <skipAPIAnalysis>true</skipAPIAnalysis>
