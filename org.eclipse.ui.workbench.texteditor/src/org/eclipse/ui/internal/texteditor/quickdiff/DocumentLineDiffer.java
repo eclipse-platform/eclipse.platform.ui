@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -1482,7 +1482,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			copy= new ArrayList<>(differences);
 		}
 		final Iterator<QuickDiffRangeDifference> iter= copy.iterator();
-		return new Iterator<Annotation>() {
+		return new Iterator<>() {
 
 			@Override
 			public void remove() {
