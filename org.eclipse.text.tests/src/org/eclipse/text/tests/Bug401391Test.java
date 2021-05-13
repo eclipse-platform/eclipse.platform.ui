@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020 Sebastian Zarnekow and others.
+ * Copyright (c) 2020, 2021 Sebastian Zarnekow and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -83,7 +83,7 @@ public class Bug401391Test {
 			public Set<Object> keySet() {
 				Set<Object> delegate = original.keySet();
 
-				return new AbstractSet<Object>() {
+				return new AbstractSet<>() {
 
 					@Override
 					public Iterator<Object> iterator() {
