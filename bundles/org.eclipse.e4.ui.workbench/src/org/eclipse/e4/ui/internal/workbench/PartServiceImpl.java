@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2019 IBM Corporation and others.
+ * Copyright (c) 2009, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     Lars Vogel (Lars.Vogel@vogella.com) - Bug 416082,  472654, 395825
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 450411, 486876, 461063
  *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 463962
+ *     Christoph Läubrich - Bug 573537
  ******************************************************************************/
 package org.eclipse.e4.ui.internal.workbench;
 
@@ -586,10 +587,10 @@ public class PartServiceImpl implements EPartService {
 
 			// if that is a shared part, check the placeholders
 			if (workbenchWindow.getSharedElements().contains(part)) {
-				List<MPlaceholder> placeholders = modelService.findElements(perspective, elementId,
-						MPlaceholder.class, null);
+				List<MPlaceholder> placeholders = modelService.findElements(perspective, null, MPlaceholder.class,
+						null);
 				for (MPlaceholder mPlaceholder : placeholders) {
-					if (mPlaceholder.isVisible() && mPlaceholder.isToBeRendered()) {
+					if (mPlaceholder.getRef() == part && mPlaceholder.isVisible() && mPlaceholder.isToBeRendered()) {
 						return true;
 					}
 				}
