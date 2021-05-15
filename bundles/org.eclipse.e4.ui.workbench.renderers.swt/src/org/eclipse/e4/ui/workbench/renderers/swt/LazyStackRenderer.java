@@ -293,7 +293,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			}
 		}
 
-		if (element instanceof MPlaceholder && element.getWidget() != null) {
+		if (element instanceof MPlaceholder) {
 			MPlaceholder ph = (MPlaceholder) element;
 			MUIElement ref = ph.getRef();
 			ref.setCurSharedRef(ph);
@@ -301,7 +301,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			Composite phComp = (Composite) ph.getWidget();
 			Control refCtrl = (Control) ph.getRef().getWidget();
 
-			if (refCtrl != null && refCtrl.getParent() != phComp) {
+			if (phComp != null && refCtrl != null && refCtrl.getParent() != phComp) {
 				refCtrl.setParent(phComp);
 				refCtrl.requestLayout();
 			}

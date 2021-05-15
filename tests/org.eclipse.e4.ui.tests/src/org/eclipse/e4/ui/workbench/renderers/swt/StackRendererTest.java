@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.InvocationHandler;
@@ -331,6 +332,71 @@ public class StackRendererTest {
 		assertFalse(((Widget) part.getWidget()).isDisposed());
 		assertNotNull(toolbar.getWidget());
 		assertFalse(((Widget) toolbar.getWidget()).isDisposed());
+	}
+
+	@Test
+	public void testBug573518_SharedPartToolbarShown1() {
+		MPart part1 = ems.createModelElement(MPart.class);
+		window.getSharedElements().add(part1);
+
+		MPart part2 = ems.createModelElement(MPart.class);
+		window.getSharedElements().add(part2);
+
+		MToolBar toolbar = ems.createModelElement(MToolBar.class);
+		part2.setToolbar(toolbar);
+
+		MPlaceholder ph1 = ems.createModelElement(MPlaceholder.class);
+		ph1.setRef(part1);
+		partStack.getChildren().add(ph1);
+		partStack.setSelectedElement(ph1);
+
+		MPlaceholder ph2 = ems.createModelElement(MPlaceholder.class);
+		ph2.setRef(part2);
+		partStack.getChildren().add(ph2);
+
+		contextRule.createAndRunWorkbench(window);
+
+		// Current reference is not pointing to ph2, toolbar is marked visible but not
+		// rendereded
+		assertTrue(toolbar.isVisible());
+		assertNull(toolbar.getWidget());
+
+		partStack.setSelectedElement(ph2);
+
+		assertTrue(toolbar.isVisible());
+		assertNotNull(toolbar.getWidget());
+	}
+
+	@Test
+	public void testBug573518_SharedPartToolbarShown2() {
+		MPart part1 = ems.createModelElement(MPart.class);
+		window.getSharedElements().add(part1);
+
+		MPart part2 = ems.createModelElement(MPart.class);
+		window.getSharedElements().add(part2);
+
+		MToolBar toolbar = ems.createModelElement(MToolBar.class);
+		part2.setToolbar(toolbar);
+
+		MPlaceholder ph1 = ems.createModelElement(MPlaceholder.class);
+		ph1.setRef(part1);
+		partStack.getChildren().add(ph1);
+		partStack.setSelectedElement(ph1);
+
+		MPlaceholder ph2 = ems.createModelElement(MPlaceholder.class);
+		ph2.setRef(part2);
+		part2.setCurSharedRef(ph2);
+		partStack.getChildren().add(ph2);
+
+		contextRule.createAndRunWorkbench(window);
+
+		assertFalse(toolbar.isVisible());
+		assertNull(toolbar.getWidget());
+
+		partStack.setSelectedElement(ph2);
+
+		assertTrue(toolbar.isVisible());
+		assertNotNull(toolbar.getWidget());
 	}
 
 	// helper functions
