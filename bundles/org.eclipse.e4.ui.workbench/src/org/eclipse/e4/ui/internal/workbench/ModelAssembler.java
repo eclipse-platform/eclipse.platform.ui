@@ -811,10 +811,10 @@ public class ModelAssembler {
 
 					commands.add(() -> {
 						if (internalFeature.isMany()) {
-							log(LogLevel.ERROR, MessageFormat.format(
+							log(LogLevel.ERROR,
 									"Replacing in {}.\n\nFeature={}.\n\nInternalElement={} contributed by {}.\n\nImportObject={}", //$NON-NLS-1$
 									interalTarget, internalFeature.getName(), internalElement.getElementId(),
-									internalElement.getContributorURI(), internalImportObject));
+									internalElement.getContributorURI(), internalImportObject);
 							@SuppressWarnings("unchecked")
 							List<Object> l = (List<Object>) interalTarget.eGet(internalFeature);
 							int index = l.indexOf(internalImportObject);
