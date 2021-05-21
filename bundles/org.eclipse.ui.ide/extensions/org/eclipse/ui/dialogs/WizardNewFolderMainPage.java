@@ -217,6 +217,12 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 
 	boolean setupLinkedResourceTargetRecursiveFlag = false;
 
+	private Image virtualFolderImage;
+
+	private Image linkedFolderImage;
+
+	private Image folderImage;
+
 	private void setupLinkedResourceTarget() {
 		if (!setupLinkedResourceTargetRecursiveFlag) {
 			setupLinkedResourceTargetRecursiveFlag = true;
@@ -481,18 +487,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 		Composite composite = (Composite) getControl();
 
 		if (linkedResourceComposite != null) {
-			linkedResourceComposite.dispose();
-			linkedResourceComposite = null;
-			filterButton.dispose();
-			useDefaultLocation.dispose();
-			useVirtualFolder.dispose();
-			useLinkedResource.dispose();
-			linkedGroupComposite.dispose();
-			filterButton = null;
-			useDefaultLocation = null;
-			useVirtualFolder = null;
-			useLinkedResource = null;
-			linkedGroupComposite = null;
+			disposeAdvancedControls();
 			composite.layout();
 			shell.setSize(shellSize.x, shellSize.y - linkedResourceGroupHeight);
 			advancedButton.setText(IDEWorkbenchMessages.showAdvanced);
@@ -518,7 +513,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 			CompositeImageDescriptor virtualFolderDescriptor = new OverlayIcon(folderDescriptor,
 					virtualFolderOverlayMap, new Point(16, 16));
 
-			Image folderImage = folderDescriptor.createImage();
+			folderImage = folderDescriptor.createImage();
 			useDefaultLocation = new Button(advancedComposite, SWT.RADIO);
 
 			int indent = useDefaultLocation.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
@@ -531,7 +526,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 			data.horizontalIndent = indent;
 			useDefaultLocation.setLayoutData(data);
 
-			Image virtualFolderImage = virtualFolderDescriptor.createImage();
+			virtualFolderImage = virtualFolderDescriptor.createImage();
 
 			useVirtualFolder = new Button(advancedComposite, SWT.RADIO);
 			useVirtualFolder.setFont(advancedComposite.getFont());
@@ -542,7 +537,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 			data.horizontalIndent = indent;
 			useVirtualFolder.setLayoutData(data);
 
-			Image linkedFolderImage = linkedFolderDescriptor.createImage();
+			linkedFolderImage = linkedFolderDescriptor.createImage();
 
 			useLinkedResource = new Button(advancedComposite, SWT.RADIO);
 			useLinkedResource.setFont(advancedComposite.getFont());
@@ -605,6 +600,32 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 			linkedResourceGroupHeight = newCompositeSize.y - oldCompositeSize.y;
 			getShell().setSize(shellSize.x, shellSize.y + linkedResourceGroupHeight);
 			composite.layout(true);
+		}
+	}
+
+	@Override
+	public void dispose() {
+		disposeAdvancedControls();
+		super.dispose();
+	}
+
+	private void disposeAdvancedControls() {
+		if (linkedResourceComposite != null) {
+			linkedResourceComposite.dispose();
+			linkedResourceComposite = null;
+			filterButton.dispose();
+			useDefaultLocation.dispose();
+			useVirtualFolder.dispose();
+			useLinkedResource.dispose();
+			linkedGroupComposite.dispose();
+			folderImage.dispose();
+			virtualFolderImage.dispose();
+			linkedFolderImage.dispose();
+			filterButton = null;
+			useDefaultLocation = null;
+			useVirtualFolder = null;
+			useLinkedResource = null;
+			linkedGroupComposite = null;
 		}
 	}
 
