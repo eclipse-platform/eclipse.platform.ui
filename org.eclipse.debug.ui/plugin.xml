@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <!--
-     Copyright (c) 2005, 2020 IBM Corporation and others.
+     Copyright (c) 2005, 2021 IBM Corporation and others.
 
      This program and the accompanying materials
      are made available under the terms of the Eclipse Public License 2.0
@@ -1915,6 +1915,15 @@ M4 = Platform-specific fourth key
             id="org.eclipse.debug.ui.commands.TerminateAndRelaunch">
          <defaultHandler
                class="org.eclipse.debug.internal.ui.commands.actions.TerminateAndRelaunchHandler">
+         </defaultHandler>
+      </command>
+      <command
+            name="%ActionDefinition.terminateAll.name"
+            categoryId="org.eclipse.debug.ui.category.run"
+            description="%ActionDefinition.terminateAll.description"
+            id="org.eclipse.debug.ui.commands.TerminateAll">
+         <defaultHandler
+               class="org.eclipse.debug.internal.ui.commands.actions.TerminateAllHandler">
          </defaultHandler>
       </command>
       <command

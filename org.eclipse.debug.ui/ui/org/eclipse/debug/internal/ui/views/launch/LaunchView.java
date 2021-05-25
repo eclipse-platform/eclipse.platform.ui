@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -163,7 +163,7 @@ public class LaunchView extends AbstractDebugView
 
 	public static final String TERMINATE_AND_REMOVE = "terminate_and_remove"; //$NON-NLS-1$
 
-	private static final String TERMINATE_ALL = "terminate_all"; //$NON-NLS-1$
+	public static final String TERMINATE_ALL = "terminate_all"; //$NON-NLS-1$
 
 	public static final String TERMINATE_AND_RELAUNCH = "terminate_relaunch"; //$NON-NLS-1$
 
@@ -550,7 +550,9 @@ public class LaunchView extends AbstractDebugView
 		addCapabilityAction(action, TERMINATE_AND_RELAUNCH);
 		setHandler(TERMINATE_AND_RELAUNCH, new ActionHandler(action));
 		addCapabilityAction(new RestartCommandAction(), RESTART);
-		addCapabilityAction(new TerminateAllAction(), TERMINATE_ALL);
+		action = new TerminateAllAction();
+		addCapabilityAction(action, TERMINATE_ALL);
+		setHandler(TERMINATE_ALL, new ActionHandler(action));
 		addCapabilityAction(new ToggleStepFiltersAction(), TOGGLE_STEP_FILTERS);
 	}
 
