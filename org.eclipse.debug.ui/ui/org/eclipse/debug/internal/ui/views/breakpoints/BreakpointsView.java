@@ -1,5 +1,5 @@
 /*****************************************************************
- * Copyright (c) 2009, 2018 Texas Instruments and others
+ * Copyright (c) 2009, 2021 Texas Instruments and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -196,8 +196,11 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 		menu.add(getAction(ACTION_GOTO_MARKER));
 		menu.add(new Separator(IDebugUIConstants.EMPTY_BREAKPOINT_GROUP));
 		menu.add(new Separator(IDebugUIConstants.BREAKPOINT_GROUP));
-		menu.add(getAction(PASTE_ACTION));
-		IAction action = getAction(ACTION_REMOVE_FROM_GROUP);
+		IAction action = getAction(PASTE_ACTION);
+		if (action != null) {
+			menu.add(action);
+		}
+		action = getAction(ACTION_REMOVE_FROM_GROUP);
 		if (action != null && action.isEnabled()) {
 			menu.add(action);
 		}
