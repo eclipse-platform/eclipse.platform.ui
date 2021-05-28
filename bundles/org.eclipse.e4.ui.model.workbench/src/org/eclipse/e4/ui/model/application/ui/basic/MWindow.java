@@ -54,7 +54,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
  * @generated
  */
 public interface MWindow
-		extends MElementContainer<MWindowElement>, MUILabel, MContext, MHandlerContainer, MBindings, MSnippetContainer {
+extends MElementContainer<MWindowElement>, MUILabel, MContext, MHandlerContainer, MBindings, MSnippetContainer {
 	/**
 	 * Returns the value of the '<em><b>Main Menu</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
@@ -92,8 +92,10 @@ public interface MWindow
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>X</em>' attribute.
+	 * @see #isSetX()
+	 * @see #unsetX()
 	 * @see #setX(int)
-	 * @model default="-2147483648"
+	 * @model default="-2147483648" unsettable="true"
 	 * @generated
 	 */
 	int getX();
@@ -103,10 +105,37 @@ public interface MWindow
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>X</em>' attribute.
+	 * @see #isSetX()
+	 * @see #unsetX()
 	 * @see #getX()
 	 * @generated
 	 */
 	void setX(int value);
+
+	/**
+	 * Unsets the value of the '{@link org.eclipse.e4.ui.model.application.ui.basic.MWindow#getX <em>X</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * @since 2.2
+	 * <!-- end-user-doc -->
+	 * @see #isSetX()
+	 * @see #getX()
+	 * @see #setX(int)
+	 * @generated
+	 */
+	void unsetX();
+
+	/**
+	 * Returns whether the value of the '{@link org.eclipse.e4.ui.model.application.ui.basic.MWindow#getX <em>X</em>}' attribute is set.
+	 * <!-- begin-user-doc -->
+	 * @since 2.2
+	 * <!-- end-user-doc -->
+	 * @return whether the value of the '<em>X</em>' attribute is set.
+	 * @see #unsetX()
+	 * @see #getX()
+	 * @see #setX(int)
+	 * @generated
+	 */
+	boolean isSetX();
 
 	/**
 	 * Returns the value of the '<em><b>Y</b></em>' attribute.
@@ -119,8 +148,10 @@ public interface MWindow
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Y</em>' attribute.
+	 * @see #isSetY()
+	 * @see #unsetY()
 	 * @see #setY(int)
-	 * @model default="-2147483648"
+	 * @model default="-2147483648" unsettable="true"
 	 * @generated
 	 */
 	int getY();
@@ -130,10 +161,37 @@ public interface MWindow
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Y</em>' attribute.
+	 * @see #isSetY()
+	 * @see #unsetY()
 	 * @see #getY()
 	 * @generated
 	 */
 	void setY(int value);
+
+	/**
+	 * Unsets the value of the '{@link org.eclipse.e4.ui.model.application.ui.basic.MWindow#getY <em>Y</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * @since 2.2
+	 * <!-- end-user-doc -->
+	 * @see #isSetY()
+	 * @see #getY()
+	 * @see #setY(int)
+	 * @generated
+	 */
+	void unsetY();
+
+	/**
+	 * Returns whether the value of the '{@link org.eclipse.e4.ui.model.application.ui.basic.MWindow#getY <em>Y</em>}' attribute is set.
+	 * <!-- begin-user-doc -->
+	 * @since 2.2
+	 * <!-- end-user-doc -->
+	 * @return whether the value of the '<em>Y</em>' attribute is set.
+	 * @see #unsetY()
+	 * @see #getY()
+	 * @see #setY(int)
+	 * @generated
+	 */
+	boolean isSetY();
 
 	/**
 	 * Returns the value of the '<em><b>Width</b></em>' attribute.
@@ -146,8 +204,10 @@ public interface MWindow
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Width</em>' attribute.
+	 * @see #isSetWidth()
+	 * @see #unsetWidth()
 	 * @see #setWidth(int)
-	 * @model default="-1"
+	 * @model default="-1" unsettable="true"
 	 * @generated
 	 */
 	int getWidth();
@@ -157,10 +217,37 @@ public interface MWindow
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Width</em>' attribute.
+	 * @see #isSetWidth()
+	 * @see #unsetWidth()
 	 * @see #getWidth()
 	 * @generated
 	 */
 	void setWidth(int value);
+
+	/**
+	 * Unsets the value of the '{@link org.eclipse.e4.ui.model.application.ui.basic.MWindow#getWidth <em>Width</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * @since 2.2
+	 * <!-- end-user-doc -->
+	 * @see #isSetWidth()
+	 * @see #getWidth()
+	 * @see #setWidth(int)
+	 * @generated
+	 */
+	void unsetWidth();
+
+	/**
+	 * Returns whether the value of the '{@link org.eclipse.e4.ui.model.application.ui.basic.MWindow#getWidth <em>Width</em>}' attribute is set.
+	 * <!-- begin-user-doc -->
+	 * @since 2.2
+	 * <!-- end-user-doc -->
+	 * @return whether the value of the '<em>Width</em>' attribute is set.
+	 * @see #unsetWidth()
+	 * @see #getWidth()
+	 * @see #setWidth(int)
+	 * @generated
+	 */
+	boolean isSetWidth();
 
 	/**
 	 * Returns the value of the '<em><b>Height</b></em>' attribute.
@@ -173,8 +260,10 @@ public interface MWindow
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Height</em>' attribute.
+	 * @see #isSetHeight()
+	 * @see #unsetHeight()
 	 * @see #setHeight(int)
-	 * @model default="-1"
+	 * @model default="-1" unsettable="true"
 	 * @generated
 	 */
 	int getHeight();
@@ -184,10 +273,37 @@ public interface MWindow
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Height</em>' attribute.
+	 * @see #isSetHeight()
+	 * @see #unsetHeight()
 	 * @see #getHeight()
 	 * @generated
 	 */
 	void setHeight(int value);
+
+	/**
+	 * Unsets the value of the '{@link org.eclipse.e4.ui.model.application.ui.basic.MWindow#getHeight <em>Height</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * @since 2.2
+	 * <!-- end-user-doc -->
+	 * @see #isSetHeight()
+	 * @see #getHeight()
+	 * @see #setHeight(int)
+	 * @generated
+	 */
+	void unsetHeight();
+
+	/**
+	 * Returns whether the value of the '{@link org.eclipse.e4.ui.model.application.ui.basic.MWindow#getHeight <em>Height</em>}' attribute is set.
+	 * <!-- begin-user-doc -->
+	 * @since 2.2
+	 * <!-- end-user-doc -->
+	 * @return whether the value of the '<em>Height</em>' attribute is set.
+	 * @see #unsetHeight()
+	 * @see #getHeight()
+	 * @see #setHeight(int)
+	 * @generated
+	 */
+	boolean isSetHeight();
 
 	/**
 	 * Returns the value of the '<em><b>Windows</b></em>' containment reference list.

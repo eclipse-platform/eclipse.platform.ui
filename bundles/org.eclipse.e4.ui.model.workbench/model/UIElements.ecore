@@ -995,25 +995,25 @@
           </eAnnotations>
         </eStructuralFeatures>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="x" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
-            defaultValueLiteral="-2147483648">
+            defaultValueLiteral="-2147483648" unsettable="true">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
             <details key="documentation" value="&lt;p>&#xD;&#xA;The 'X' position of this window&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="y" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
-            defaultValueLiteral="-2147483648">
+            defaultValueLiteral="-2147483648" unsettable="true">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
             <details key="documentation" value="&lt;p>&#xD;&#xA;The 'Y' position of this window&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="width" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
-            defaultValueLiteral="-1">
+            defaultValueLiteral="-1" unsettable="true">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
             <details key="documentation" value="&lt;p>&#xD;&#xA;The width of this window&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="height" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
-            defaultValueLiteral="-1">
+            defaultValueLiteral="-1" unsettable="true">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
             <details key="documentation" value="&lt;p>&#xD;&#xA;The heigfht of this window&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>

@@ -270,6 +270,15 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	protected int x = X_EDEFAULT;
 
 	/**
+	 * This is true if the X attribute has been set.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean xESet;
+
+	/**
 	 * The default value of the '{@link #getY() <em>Y</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -288,6 +297,15 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	 * @ordered
 	 */
 	protected int y = Y_EDEFAULT;
+
+	/**
+	 * This is true if the Y attribute has been set.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean yESet;
 
 	/**
 	 * The default value of the '{@link #getWidth() <em>Width</em>}' attribute.
@@ -310,6 +328,15 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	protected int width = WIDTH_EDEFAULT;
 
 	/**
+	 * This is true if the Width attribute has been set.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean widthESet;
+
+	/**
 	 * The default value of the '{@link #getHeight() <em>Height</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -328,6 +355,15 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	 * @ordered
 	 */
 	protected int height = HEIGHT_EDEFAULT;
+
+	/**
+	 * This is true if the Height attribute has been set.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean heightESet;
 
 	/**
 	 * The cached value of the '{@link #getWindows() <em>Windows</em>}' containment reference list.
@@ -661,8 +697,36 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	public void setX(int newX) {
 		int oldX = x;
 		x = newX;
+		boolean oldXESet = xESet;
+		xESet = true;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.WINDOW__X, oldX, x));
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.WINDOW__X, oldX, x, !oldXESet));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void unsetX() {
+		int oldX = x;
+		boolean oldXESet = xESet;
+		x = X_EDEFAULT;
+		xESet = false;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.UNSET, BasicPackageImpl.WINDOW__X, oldX, X_EDEFAULT,
+					oldXESet));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public boolean isSetX() {
+		return xESet;
 	}
 
 	/**
@@ -684,8 +748,36 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	public void setY(int newY) {
 		int oldY = y;
 		y = newY;
+		boolean oldYESet = yESet;
+		yESet = true;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.WINDOW__Y, oldY, y));
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.WINDOW__Y, oldY, y, !oldYESet));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void unsetY() {
+		int oldY = y;
+		boolean oldYESet = yESet;
+		y = Y_EDEFAULT;
+		yESet = false;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.UNSET, BasicPackageImpl.WINDOW__Y, oldY, Y_EDEFAULT,
+					oldYESet));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public boolean isSetY() {
+		return yESet;
 	}
 
 	/**
@@ -707,8 +799,37 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	public void setWidth(int newWidth) {
 		int oldWidth = width;
 		width = newWidth;
+		boolean oldWidthESet = widthESet;
+		widthESet = true;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.WINDOW__WIDTH, oldWidth, width));
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.WINDOW__WIDTH, oldWidth, width,
+					!oldWidthESet));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void unsetWidth() {
+		int oldWidth = width;
+		boolean oldWidthESet = widthESet;
+		width = WIDTH_EDEFAULT;
+		widthESet = false;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.UNSET, BasicPackageImpl.WINDOW__WIDTH, oldWidth,
+					WIDTH_EDEFAULT, oldWidthESet));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public boolean isSetWidth() {
+		return widthESet;
 	}
 
 	/**
@@ -730,8 +851,37 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	public void setHeight(int newHeight) {
 		int oldHeight = height;
 		height = newHeight;
+		boolean oldHeightESet = heightESet;
+		heightESet = true;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.WINDOW__HEIGHT, oldHeight, height));
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.WINDOW__HEIGHT, oldHeight, height,
+					!oldHeightESet));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void unsetHeight() {
+		int oldHeight = height;
+		boolean oldHeightESet = heightESet;
+		height = HEIGHT_EDEFAULT;
+		heightESet = false;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.UNSET, BasicPackageImpl.WINDOW__HEIGHT, oldHeight,
+					HEIGHT_EDEFAULT, oldHeightESet));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public boolean isSetHeight() {
+		return heightESet;
 	}
 
 	/**
@@ -965,16 +1115,16 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 			setMainMenu((MMenu) null);
 			return;
 		case BasicPackageImpl.WINDOW__X:
-			setX(X_EDEFAULT);
+			unsetX();
 			return;
 		case BasicPackageImpl.WINDOW__Y:
-			setY(Y_EDEFAULT);
+			unsetY();
 			return;
 		case BasicPackageImpl.WINDOW__WIDTH:
-			setWidth(WIDTH_EDEFAULT);
+			unsetWidth();
 			return;
 		case BasicPackageImpl.WINDOW__HEIGHT:
-			setHeight(HEIGHT_EDEFAULT);
+			unsetHeight();
 			return;
 		case BasicPackageImpl.WINDOW__WINDOWS:
 			getWindows().clear();
@@ -1023,13 +1173,13 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 		case BasicPackageImpl.WINDOW__MAIN_MENU:
 			return mainMenu != null;
 		case BasicPackageImpl.WINDOW__X:
-			return x != X_EDEFAULT;
+			return isSetX();
 		case BasicPackageImpl.WINDOW__Y:
-			return y != Y_EDEFAULT;
+			return isSetY();
 		case BasicPackageImpl.WINDOW__WIDTH:
-			return width != WIDTH_EDEFAULT;
+			return isSetWidth();
 		case BasicPackageImpl.WINDOW__HEIGHT:
-			return height != HEIGHT_EDEFAULT;
+			return isSetHeight();
 		case BasicPackageImpl.WINDOW__WINDOWS:
 			return windows != null && !windows.isEmpty();
 		case BasicPackageImpl.WINDOW__SHARED_ELEMENTS:
@@ -1257,13 +1407,25 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 		result.append(", variables: "); //$NON-NLS-1$
 		result.append(variables);
 		result.append(", x: "); //$NON-NLS-1$
-		result.append(x);
+		if (xESet)
+			result.append(x);
+		else
+			result.append("<unset>"); //$NON-NLS-1$
 		result.append(", y: "); //$NON-NLS-1$
-		result.append(y);
+		if (yESet)
+			result.append(y);
+		else
+			result.append("<unset>"); //$NON-NLS-1$
 		result.append(", width: "); //$NON-NLS-1$
-		result.append(width);
+		if (widthESet)
+			result.append(width);
+		else
+			result.append("<unset>"); //$NON-NLS-1$
 		result.append(", height: "); //$NON-NLS-1$
-		result.append(height);
+		if (heightESet)
+			result.append(height);
+		else
+			result.append("<unset>"); //$NON-NLS-1$
 		result.append(')');
 		return result.toString();
 	}
