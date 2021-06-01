@@ -141,6 +141,9 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	//used for the build cycle looping mechanism
 	private boolean rebuildRequested = false;
 
+	// Shows if we are in the parallel build loop or not
+	private boolean parallelBuild;
+
 	private final Bundle systemBundle = Platform.getBundle("org.eclipse.osgi"); //$NON-NLS-1$
 
 	// protects against concurrent access of session stored builders during builder initialization
@@ -265,7 +268,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		try {
 			for (int i = 0; i < commands.length; i++) {
 				checkCanceled(trigger, monitor);
-				if (EARLY_EXIT_FROM_INNER_BUILD_LOOP_ALLOWED && rebuildRequested) {
+				if (EARLY_EXIT_FROM_INNER_BUILD_LOOP_ALLOWED && rebuildRequested && !parallelBuild) {
 					// Don't build following configs if one of the predecessors
 					// requested rebuild anyway, just start from scratch
 					break;
@@ -419,6 +422,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * @return A status indicating if the build succeeded or failed
 	 */
 	public IStatus buildParallel(Digraph<IBuildConfiguration> configs, IBuildConfiguration[] requestedConfigs, int trigger, JobGroup buildJobGroup, IProgressMonitor monitor) {
+		parallelBuild = true;
 		monitor = Policy.monitorFor(monitor);
 		try {
 			monitor.beginTask(Messages.events_building_0, TOTAL_BUILD_WORK);
@@ -433,6 +437,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			}
 		} finally {
 			endBuild(trigger, monitor);
+			parallelBuild = false;
 		}
 	}
 
@@ -476,6 +481,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 */
 	public IStatus build(IBuildConfiguration buildConfiguration, int trigger, String builderName, Map<String, String> args, IProgressMonitor monitor) {
 		monitor = Policy.monitorFor(monitor);
+		rebuildRequested = false;
 		if (builderName == null) {
 			IBuildContext context = new BuildContext(buildConfiguration);
 			return basicBuild(buildConfiguration, trigger, context, monitor);
