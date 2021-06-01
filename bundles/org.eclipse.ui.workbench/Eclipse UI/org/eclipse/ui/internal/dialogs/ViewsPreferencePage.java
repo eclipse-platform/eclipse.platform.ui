@@ -536,7 +536,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			parent.setLayout(new RowLayout());
 
 			Link link = new Link(parent, SWT.WRAP);
-			link.setText(WorkbenchMessages.ThemeChangeWarningText);
+			link.setText(WorkbenchMessages.ThemeChangeWarningHyperlinkedText);
 			link.addSelectionListener(widgetSelectedAdapter(e -> PlatformUI.getWorkbench().restart(true)));
 		}
 	}
