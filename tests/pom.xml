@@ -14,7 +14,7 @@
   <parent>
     <groupId>eclipse.platform.resources</groupId>
     <artifactId>eclipse.platform.resources</artifactId>
-    <version>4.20.0-SNAPSHOT</version>
+    <version>4.21.0-SNAPSHOT</version>
   </parent>
   <artifactId>eclipse.platform.resources.tests</artifactId>
   <packaging>pom</packaging>
