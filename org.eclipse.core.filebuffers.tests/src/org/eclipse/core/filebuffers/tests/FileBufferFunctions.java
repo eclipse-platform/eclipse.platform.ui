@@ -106,7 +106,7 @@ public abstract class FileBufferFunctions {
 	@Rule
 	public TestFailReporter failReporter= new TestFailReporter();
 
-	public class TestFailReporter extends TestWatcher {
+	public static class TestFailReporter extends TestWatcher {
 
 		private static final String BUNDLE_ID= "org.eclipse.core.filebuffers.tests";
 
