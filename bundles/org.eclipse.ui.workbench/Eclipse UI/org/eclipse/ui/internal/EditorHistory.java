@@ -31,7 +31,7 @@ public class EditorHistory {
 	/**
 	 * The maximum of entries in the history.
 	 */
-	public static final int MAX_SIZE = 20;
+	public static final int MAX_SIZE = 100;
 
 	/**
 	 * The list of editor entries, in FIFO order.
