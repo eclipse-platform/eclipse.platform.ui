@@ -232,7 +232,7 @@ public class FileCharSequenceProvider {
 		}
 	}
 
-	private final class FileCharSequence implements CharSequence {
+	private static final class FileCharSequence implements CharSequence {
 		private Reader fReader;
 		private int fReaderPos;
 

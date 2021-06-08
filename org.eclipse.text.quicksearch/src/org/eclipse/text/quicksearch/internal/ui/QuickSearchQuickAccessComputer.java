@@ -85,7 +85,7 @@ public class QuickSearchQuickAccessComputer extends QuickTextSearchRequestor imp
 		return false;
 	}
 
-	private class LineItemQuickAccessElement extends QuickAccessElement {
+	private static class LineItemQuickAccessElement extends QuickAccessElement {
 
 		private final LineItem item;
 
