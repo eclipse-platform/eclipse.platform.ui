@@ -356,7 +356,7 @@ public class HTMLPrinter {
 		if (styles == null || styles.length == 0)
 			return;
 
-		StringBuffer styleBuf= new StringBuffer(10 * styles.length);
+		StringBuilder styleBuf= new StringBuilder(10 * styles.length);
 		for (String style : styles) {
 			styleBuf.append(" style=\""); //$NON-NLS-1$
 			styleBuf.append(style);
