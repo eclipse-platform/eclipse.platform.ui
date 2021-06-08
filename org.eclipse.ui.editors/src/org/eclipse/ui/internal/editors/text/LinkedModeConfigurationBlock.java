@@ -108,7 +108,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 		}
 	}
 
-	private final class ItemLabelProvider extends LabelProvider {
+	private static final class ItemLabelProvider extends LabelProvider {
 
 		@Override
 		public String getText(Object element) {

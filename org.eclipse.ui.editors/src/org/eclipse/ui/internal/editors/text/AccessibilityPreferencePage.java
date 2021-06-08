@@ -59,7 +59,7 @@ import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
 public class AccessibilityPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 
-	private abstract class Initializer {
+	private abstract static class Initializer {
 
 		protected final Preference fPreference;
 
