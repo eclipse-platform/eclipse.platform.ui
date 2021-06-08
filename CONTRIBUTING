@@ -42,8 +42,8 @@ The project maintains the following source code repositories
 
 This project uses Bugzilla to track ongoing development and issues.
 
-* Search for issues: https://eclipse.org/bugs/buglist.cgi?product=Platform
-* Create a new report: https://eclipse.org/bugs/enter_bug.cgi?product=Platform
+* Search for issues: https://bugs.eclipse.org/bugs/buglist.cgi?product=Platform
+* Create a new report: https://bugs.eclipse.org/bugs/enter_bug.cgi?product=Platform
 
 Be sure to search for existing bugs before you create another one. Remember that
 contributions are always welcome!
