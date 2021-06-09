@@ -514,6 +514,37 @@ public class IResourceChangeListenerTest extends ResourceTest {
 		}
 	}
 
+	/**
+	 * Checks that even with autobuild disabled,
+	 * {@code IResourceChangeEvent.PRE_BUILD} and
+	 * {@code IResourceChangeEvent.POST_BUILD} are fired.
+	 */
+	public void testTouchFileWithAutobuildOff() throws Exception {
+		SimpleListener preBuild = new SimpleListener();
+		SimpleListener postBuild = new SimpleListener();
+		final IWorkspace workspace = getWorkspace();
+		try {
+			setAutoBuilding(false);
+			workspace.addResourceChangeListener(preBuild, IResourceChangeEvent.PRE_BUILD);
+			workspace.addResourceChangeListener(postBuild, IResourceChangeEvent.POST_BUILD);
+
+			file1.touch(getMonitor());
+
+			// wait for autobuild so POST_BUILD will fire
+			waitForBuild();
+
+			int trigger = IncrementalProjectBuilder.AUTO_BUILD;
+			assertEquals("Should see PRE_BUILD event", trigger, preBuild.trigger);
+			assertEquals("Should see POST_BUILD event", trigger, postBuild.trigger);
+			assertEquals("Should see workspace root on PRE_BUILD event", workspace, preBuild.source);
+			assertEquals("Should see workspace root on POST_BUILD event", workspace, postBuild.source);
+		} finally {
+			setAutoBuilding(true);
+			workspace.removeResourceChangeListener(preBuild);
+			workspace.removeResourceChangeListener(postBuild);
+		}
+	}
+
 	public void testChangeFileToFolder() {
 		try {
 			/* change file1 into a folder */

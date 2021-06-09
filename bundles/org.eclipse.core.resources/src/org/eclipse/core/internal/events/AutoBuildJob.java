@@ -44,6 +44,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	private Preferences preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
 	private final Bundle systemBundle = Platform.getBundle("org.eclipse.osgi"); //$NON-NLS-1$
 	private Workspace workspace;
+	private final Job noBuildJob;
 
 	AutoBuildJob(Workspace workspace) {
 		super(Messages.events_building_0);
@@ -52,6 +53,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 		isAutoBuilding = workspace.isAutoBuilding();
 		this.workspace = workspace;
 		this.preferences.addPropertyChangeListener(this);
+		noBuildJob = new AutoBuildOffJob();
 	}
 
 	/**
@@ -98,12 +100,16 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 				wakeUp(delay);
 				break;
 			case NONE :
-				try {
-					setSystem(!isAutoBuilding);
-				} catch (IllegalStateException e) {
-					//ignore - the job has been scheduled since we last checked its state
+				if (isAutoBuilding) {
+					schedule(delay);
+				} else {
+					// The code below is required to maintain the ancient contract
+					// in IResourceChangeEvent, stating that even if autobuild is
+					// switched off, we still send PRE_BUILD/POST_BUILD events
+					if (noBuildJob.getState() != Job.RUNNING) {
+						noBuildJob.schedule(delay);
+					}
 				}
-				schedule(delay);
 				break;
 		}
 	}
@@ -223,7 +229,8 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 		boolean wasAutoBuilding = isAutoBuilding;
 		isAutoBuilding = preferences.getBoolean(ResourcesPlugin.PREF_AUTO_BUILDING);
 		//force a build if autobuild has been turned on
-		if (!forceBuild && !wasAutoBuilding && isAutoBuilding) {
+		if (!wasAutoBuilding && isAutoBuilding) {
+			noBuildJob.cancel();
 			forceBuild = true;
 			build(false);
 		}
@@ -280,6 +287,47 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 		} finally {
 			//regardless of the result, clear the build flags for next time
 			forceBuild = avoidBuild = buildNeeded = false;
+		}
+	}
+
+	/**
+	 * The class is required to maintain the ancient contract in
+	 * IResourceChangeEvent, stating that even if autobuild is switched off, we
+	 * still should send PRE_BUILD/POST_BUILD events. This job only send events, and
+	 * never triggers a build.
+	 */
+	private final class AutoBuildOffJob extends Job {
+
+		private AutoBuildOffJob() {
+			super("Sending build events with disabled autobuild"); //$NON-NLS-1$
+			setRule(workspace.getRoot());
+			setSystem(true);
+		}
+
+		@Override
+		public boolean belongsTo(Object family) {
+			return family == ResourcesPlugin.FAMILY_AUTO_BUILD;
+		}
+
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			final ISchedulingRule rule = workspace.getRuleFactory().buildRule();
+			try {
+				workspace.prepareOperation(rule, monitor);
+				workspace.beginOperation(true);
+				final int trigger = IncrementalProjectBuilder.AUTO_BUILD;
+				workspace.broadcastBuildEvent(workspace, IResourceChangeEvent.PRE_BUILD, trigger);
+				workspace.broadcastBuildEvent(workspace, IResourceChangeEvent.POST_BUILD, trigger);
+			} catch (CoreException e) {
+				return e.getStatus();
+			} finally {
+				try {
+					workspace.endOperation(rule, false);
+				} catch (CoreException e) {
+					return e.getStatus();
+				}
+			}
+			return Status.OK_STATUS;
 		}
 	}
 }
