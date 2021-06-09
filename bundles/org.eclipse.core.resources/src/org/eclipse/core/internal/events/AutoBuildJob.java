@@ -98,9 +98,12 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 				wakeUp(delay);
 				break;
 			case NONE :
-				if (isAutoBuilding) {
-					schedule(delay);
+				try {
+					setSystem(!isAutoBuilding);
+				} catch (IllegalStateException e) {
+					//ignore - the job has been scheduled since we last checked its state
 				}
+				schedule(delay);
 				break;
 		}
 	}
@@ -220,7 +223,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 		boolean wasAutoBuilding = isAutoBuilding;
 		isAutoBuilding = preferences.getBoolean(ResourcesPlugin.PREF_AUTO_BUILDING);
 		//force a build if autobuild has been turned on
-		if (!wasAutoBuilding && isAutoBuilding) {
+		if (!forceBuild && !wasAutoBuilding && isAutoBuilding) {
 			forceBuild = true;
 			build(false);
 		}
