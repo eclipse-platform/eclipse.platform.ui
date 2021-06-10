@@ -110,18 +110,23 @@ public class URLHyperlinkDetector extends AbstractHyperlinkDetector {
 				}
 			}
 			// Right to "://"
-			int end= urlSeparatorOffset + 3;
+			int afterSeparator= urlSeparatorOffset + 3;
+			int end= afterSeparator;
 			while (end < lineEnd && STOP_CHARACTERS.indexOf(line.charAt(end)) < 0) {
 				end++;
 			}
-			if (end > urlSeparatorOffset + 3) {
+			// Remove trailing periods.
+			while (end > afterSeparator && line.charAt(end - 1) == '.') {
+				end--;
+			}
+			if (end > afterSeparator) {
 				urlLength= end - urlOffsetInLine;
 				if (offsetInLine >= urlOffsetInLine && offsetInLine <= urlOffsetInLine + urlLength) {
 					break;
 				}
 			}
 
-			urlSeparatorOffset= line.indexOf("://", urlSeparatorOffset + 3); //$NON-NLS-1$
+			urlSeparatorOffset= line.indexOf("://", afterSeparator); //$NON-NLS-1$
 		}
 
 		if (urlSeparatorOffset < 0)

@@ -57,6 +57,7 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
+import org.eclipse.jface.text.hyperlink.URLHyperlink;
 import org.eclipse.jface.text.hyperlink.URLHyperlinkDetector;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.tests.util.DisplayHelper;
@@ -382,7 +383,11 @@ public class TextViewerTest {
 		return Arrays.stream(links).map(l -> {
 			IRegion region= l.getHyperlinkRegion();
 			try {
-				return document.get(region.getOffset(), region.getLength());
+				String fromDocument= document.get(region.getOffset(), region.getLength());
+				if (l instanceof URLHyperlink) {
+					assertEquals(((URLHyperlink) l).getURLString(), fromDocument);
+				}
+				return fromDocument;
 			} catch (BadLocationException e) {
 				return "Invalid region <" + region + '>';
 			}
@@ -417,6 +422,9 @@ public class TextViewerTest {
 			checkHyperlink(textViewer, 24, "https:// foo https://bar bar", "[https://bar]");
 			checkHyperlink(textViewer, 15, "<a href=\"test:https://bugs.eclipse.org/bugs\"></a>", "[https://bugs.eclipse.org/bugs]");
 			checkHyperlink(textViewer, 19, "<a href=\"scm:git:https://bugs.eclipse.org/bugs\"></a>", "[https://bugs.eclipse.org/bugs]");
+			checkHyperlink(textViewer, 40, "Find more information at https://www.eclipse.org.", "[https://www.eclipse.org]");
+			checkHyperlink(textViewer, 3, "http://... links should not be used anymore; use https://... instead.", "[]");
+			checkHyperlink(textViewer, 50, "http://... links should not be used anymore; use https://... instead.", "[]");
 		} finally {
 			shell.dispose();
 		}
