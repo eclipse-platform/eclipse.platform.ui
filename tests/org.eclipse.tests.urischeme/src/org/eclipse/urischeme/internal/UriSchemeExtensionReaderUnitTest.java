@@ -86,7 +86,7 @@ public class UriSchemeExtensionReaderUnitTest {
 		extensionReader.configurationElements = element;
 	}
 
-	private final class ConfigurationElementMock implements IConfigurationElement {
+	private static final class ConfigurationElementMock implements IConfigurationElement {
 		private final String uriScheme;
 		private final String uriSchemeDescription;
 		private final Object handler;

@@ -25,7 +25,7 @@ public class ProcessSpy implements IProcessExecutor {
 		return result == null ? null : result.replaceAll("\r\n", "\n");
 	}
 
-	class Record {
+	static class Record {
 		String process;
 		String[] args;
 

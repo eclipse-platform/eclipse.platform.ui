@@ -173,7 +173,7 @@ public class TestUnitAutoRegisterSchemeHandlersJob {
 
 	}
 
-	private final class ExtensionReaderStub implements IUriSchemeExtensionReader {
+	private static final class ExtensionReaderStub implements IUriSchemeExtensionReader {
 		public Collection<IScheme> schemes;
 
 		public ExtensionReaderStub(Collection<IScheme> schemes) {
@@ -191,7 +191,7 @@ public class TestUnitAutoRegisterSchemeHandlersJob {
 		}
 	}
 
-	private final class OperatingSystemRegistrationMock implements IOperatingSystemRegistration {
+	private static final class OperatingSystemRegistrationMock implements IOperatingSystemRegistration {
 
 		private List<ISchemeInformation> schemeInformations;
 		public Exception schemeInformationReadException = null;
