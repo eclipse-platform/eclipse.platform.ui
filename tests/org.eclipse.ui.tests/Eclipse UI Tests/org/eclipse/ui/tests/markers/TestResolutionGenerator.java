@@ -32,7 +32,7 @@ import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
  */
 public class TestResolutionGenerator implements IMarkerResolutionGenerator2 {
 
-	private class TestMarkerResolution extends WorkbenchMarkerResolution {
+	private static class TestMarkerResolution extends WorkbenchMarkerResolution {
 
 		@Override
 		public IMarker[] findOtherMarkers(IMarker[] markers) {
@@ -78,7 +78,7 @@ public class TestResolutionGenerator implements IMarkerResolutionGenerator2 {
 
 	}
 
-	private class CompatibilityTestMarkerResolution implements
+	private static class CompatibilityTestMarkerResolution implements
 			IMarkerResolution {
 
 		@Override

@@ -38,7 +38,7 @@ public final class CommandManagerTest {
 	 *
 	 * @since 3.1
 	 */
-	private final class ExecutionListener implements IExecutionListener {
+	private static final class ExecutionListener implements IExecutionListener {
 
 		/**
 		 * The last command identifier to be not handled, or <code>null</code> if none.

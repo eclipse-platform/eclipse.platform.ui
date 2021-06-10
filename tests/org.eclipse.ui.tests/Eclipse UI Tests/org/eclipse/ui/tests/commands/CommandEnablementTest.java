@@ -225,7 +225,7 @@ public class CommandEnablementTest {
 		}
 	}
 
-	class UpdatingHandler extends AbstractHandler implements IElementUpdater {
+	static class UpdatingHandler extends AbstractHandler implements IElementUpdater {
 
 		private final String text;
 

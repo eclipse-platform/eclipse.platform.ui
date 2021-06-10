@@ -43,7 +43,7 @@ public class IActionBarsTest extends UITestCase {
 
 	protected IWorkbenchPage fPage;
 
-	private class MockAction extends Action {
+	private static class MockAction extends Action {
 		public boolean hasRun = false;
 
 		public MockAction() {

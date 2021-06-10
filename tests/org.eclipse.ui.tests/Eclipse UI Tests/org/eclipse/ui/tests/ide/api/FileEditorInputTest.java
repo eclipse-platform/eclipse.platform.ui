@@ -57,7 +57,7 @@ public class FileEditorInputTest extends UITestCase {
 		assertTrue(inputA2.equals(inputA1));
 	}
 
-	class OtherFileEditorInput implements IFileEditorInput {
+	static class OtherFileEditorInput implements IFileEditorInput {
 		private IFile file;
 
 		public OtherFileEditorInput(IFile file) {

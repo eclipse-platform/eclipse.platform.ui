@@ -269,7 +269,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		}
 	}
 
-	class MarkerSnapshot {
+	static class MarkerSnapshot {
 		String type;
 
 		Map<String, Object> attributes;
@@ -347,7 +347,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		}
 	}
 
-	abstract class ResourceSnapshot {
+	abstract static class ResourceSnapshot {
 		String name;
 
 		abstract boolean isValid(IResource parent) throws CoreException;

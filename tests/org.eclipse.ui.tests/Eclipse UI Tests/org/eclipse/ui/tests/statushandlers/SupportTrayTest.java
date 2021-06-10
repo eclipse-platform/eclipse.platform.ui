@@ -48,14 +48,14 @@ public class SupportTrayTest {
 		Policy.setErrorSupportProvider(null);
 	}
 
-	private final class NullErrorSupportProvider extends ErrorSupportProvider {
+	private static final class NullErrorSupportProvider extends ErrorSupportProvider {
 		@Override
 		public Control createSupportArea(Composite parent, IStatus status) {
 			return null;
 		}
 	}
 
-	private final class NullListener implements Listener {
+	private static final class NullListener implements Listener {
 		@Override
 		public void handleEvent(Event event) {
 

@@ -30,7 +30,7 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class ListenerRemovalTestCase extends UITestCase {
 
-	class TestPropertyListener implements IPropertyChangeListener {
+	static class TestPropertyListener implements IPropertyChangeListener {
 		boolean listened = false;
 
 		/**

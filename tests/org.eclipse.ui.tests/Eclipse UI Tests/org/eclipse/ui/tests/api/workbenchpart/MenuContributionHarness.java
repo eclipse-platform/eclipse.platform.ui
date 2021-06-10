@@ -70,7 +70,7 @@ public class MenuContributionHarness extends ViewPart {
 	 * example).
 	 */
 
-	class ViewContentProvider implements IStructuredContentProvider {
+	static class ViewContentProvider implements IStructuredContentProvider {
 		@Override
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 		}
@@ -104,7 +104,7 @@ public class MenuContributionHarness extends ViewPart {
 		}
 	}
 
-	class NameSorter extends ViewerSorter {
+	static class NameSorter extends ViewerSorter {
 	}
 
 	/**

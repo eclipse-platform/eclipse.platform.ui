@@ -63,7 +63,7 @@ public class PropertySheetAuto extends UITestCase {
 	 * it does not include that property in its list
 	 * of property descriptors.
 	 */
-	private class Car implements IPropertySource {
+	private static class Car implements IPropertySource {
 		private int modelYear = 0;
 
 		private RGB color = null;

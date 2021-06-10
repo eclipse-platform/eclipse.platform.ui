@@ -215,7 +215,7 @@ public class WorkbenchSiteProgressServiceTest extends UITestCase {
 		System.out.println(message + dateFormat.format(new Date()));
 	}
 
-	class LongJob extends Job{
+	static class LongJob extends Job{
 
 
 		public LongJob() {

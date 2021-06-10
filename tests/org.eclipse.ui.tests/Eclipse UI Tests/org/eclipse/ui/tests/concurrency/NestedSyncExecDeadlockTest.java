@@ -39,7 +39,7 @@ import org.junit.Test;
  */
 public class NestedSyncExecDeadlockTest {
 
-	private class ResourceListener implements IResourceChangeListener {
+	private static class ResourceListener implements IResourceChangeListener {
 		@Override
 		public void resourceChanged(IResourceChangeEvent event) {
 			Display.getDefault().syncExec(() -> {

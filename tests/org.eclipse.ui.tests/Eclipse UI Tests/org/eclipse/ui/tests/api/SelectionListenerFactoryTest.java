@@ -759,9 +759,9 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 		fEventReceived = true;
 	}
 
-	public class Bird {
+	public static class Bird {
 	}
 
-	public class Sparrow {
+	public static class Sparrow {
 	}
 }

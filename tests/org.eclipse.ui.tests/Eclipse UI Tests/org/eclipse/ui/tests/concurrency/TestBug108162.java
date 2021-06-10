@@ -38,7 +38,7 @@ import org.junit.Test;
  * This test asserts that the exception is thrown and that deadlock does not occur.
  */
 public class TestBug108162 {
-	class LockAcquiringOperation extends WorkspaceModifyOperation {
+	static class LockAcquiringOperation extends WorkspaceModifyOperation {
 		@Override
 		public void execute(final IProgressMonitor pm) {
 			//empty operation is sufficient to cause deadlock

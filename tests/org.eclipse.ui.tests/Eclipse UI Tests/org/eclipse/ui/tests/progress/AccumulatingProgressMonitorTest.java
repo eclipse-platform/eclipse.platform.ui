@@ -48,7 +48,7 @@ public class AccumulatingProgressMonitorTest {
 	 * call is in the correct thread. Most will be on the UI thread but some
 	 * methods are exempt.
 	 */
-	private class UIThreadAsserterMonitor implements IProgressMonitor {
+	private static class UIThreadAsserterMonitor implements IProgressMonitor {
 		public boolean beginTaskCalled = false;
 		public boolean setTaskNameCalled = false;
 		public boolean subTaskCalled = false;
@@ -127,7 +127,7 @@ public class AccumulatingProgressMonitorTest {
 	 * will keep a reference to every setTaskName call and be able to provide
 	 * the list later for inspection.
 	 */
-	private class CollectorAsserterMonitor implements IProgressMonitor {
+	private static class CollectorAsserterMonitor implements IProgressMonitor {
 		ArrayList<String> receivedTaskNames = new ArrayList<>();
 
 		public ArrayList<String> getTaskNames() {

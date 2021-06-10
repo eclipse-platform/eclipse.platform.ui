@@ -34,7 +34,7 @@ import org.junit.runners.JUnit4;
  */
 @RunWith(JUnit4.class)
 public class TransferRuleTest extends UITestCase {
-	class TestRule implements ISchedulingRule {
+	static class TestRule implements ISchedulingRule {
 		@Override
 		public boolean contains(ISchedulingRule rule) {
 			return rule == this;
@@ -50,7 +50,7 @@ public class TransferRuleTest extends UITestCase {
 	 * A simple runnable that uses the IThreadListener interface to transfer
 	 * a scheduling rule.
 	 */
-	class TestRunnable implements IRunnableWithProgress, IThreadListener {
+	static class TestRunnable implements IRunnableWithProgress, IThreadListener {
 		Throwable error;
 		private final ISchedulingRule rule;
 

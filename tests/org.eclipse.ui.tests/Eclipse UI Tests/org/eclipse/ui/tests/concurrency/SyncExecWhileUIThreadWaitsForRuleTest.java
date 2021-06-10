@@ -31,7 +31,7 @@ import org.junit.Test;
  * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=296056.
  */
 public class SyncExecWhileUIThreadWaitsForRuleTest {
-	class TestRule implements ISchedulingRule {
+	static class TestRule implements ISchedulingRule {
 		@Override
 		public boolean contains(ISchedulingRule rule) {
 			return rule == this;

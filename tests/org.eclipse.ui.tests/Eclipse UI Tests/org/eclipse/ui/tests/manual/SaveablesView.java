@@ -104,7 +104,7 @@ public class SaveablesView extends ViewPart {
 		}
 	}
 
-	class NameSorter extends ViewerSorter {
+	static class NameSorter extends ViewerSorter {
 		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			return ((Saveable)e1).getName().compareTo(((Saveable)e2).getName());

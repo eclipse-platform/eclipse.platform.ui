@@ -46,7 +46,7 @@ public class MenusTest extends UITestCase {
 	 * @since 3.3
 	 *
 	 */
-	private final class TestFactory extends AbstractContributionFactory {
+	private static final class TestFactory extends AbstractContributionFactory {
 		private CommandContributionItem fooItemWithNoVisibilityClause;
 		private CommandContributionItem barItemWithNoVisibilityClause;
 

@@ -26,7 +26,7 @@ import org.junit.Test;
  *
  */
 public class TestBug138695 {
-	class SampleJob extends UIJob {
+	static class SampleJob extends UIJob {
 
 		/**
 		 * @param name
@@ -48,7 +48,7 @@ public class TestBug138695 {
 
 	}
 
-	class SerialPerObjectRule implements ISchedulingRule {
+	static class SerialPerObjectRule implements ISchedulingRule {
 
 		private Object fObject = null;
 
