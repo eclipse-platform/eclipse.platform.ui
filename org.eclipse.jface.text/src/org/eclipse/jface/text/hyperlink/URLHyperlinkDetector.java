@@ -95,7 +95,20 @@ public class URLHyperlinkDetector extends AbstractHyperlinkDetector {
 					quote= ch;
 			} while (Character.isUnicodeIdentifierStart(ch));
 			urlOffsetInLine++;
-
+			// Handle prefixes like "scm:https://foo": scan further back
+			if (ch == ':') {
+				int i= urlOffsetInLine - 1;
+				while (i >= 0) {
+					ch= line.charAt(i--);
+					if (ch == '"' || ch == '\'') {
+						quote= ch;
+						break;
+					}
+					if (ch != ':' && !Character.isUnicodeIdentifierStart(ch)) {
+						break;
+					}
+				}
+			}
 			// Right to "://"
 			int end= urlSeparatorOffset + 3;
 			while (end < lineEnd && STOP_CHARACTERS.indexOf(line.charAt(end)) < 0) {
