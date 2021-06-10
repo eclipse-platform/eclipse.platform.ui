@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.TreeColumn;
  *
  */
 public class Bug201002TreeViewerTest extends ViewerTestCase {
-	public class MyModel {
+	public static class MyModel {
 		public MyModel parent;
 
 		public ArrayList<MyModel> child = new ArrayList<>();

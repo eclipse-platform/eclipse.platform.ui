@@ -136,7 +136,7 @@ public class Bug205700TreeViewerTest extends TestCase {
 		return rootNode;
 	}
 
-	private class TreeNode {
+	private static class TreeNode {
 
 		private final String name;
 
@@ -172,7 +172,7 @@ public class Bug205700TreeViewerTest extends TestCase {
 		}
 	}
 
-	private class InternalLabelProvider extends LabelProvider {
+	private static class InternalLabelProvider extends LabelProvider {
 		@Override
 		public String getText(Object element) {
 			if (element instanceof TreeNode) {
@@ -182,7 +182,7 @@ public class Bug205700TreeViewerTest extends TestCase {
 		}
 	}
 
-	private class InternalContentProvider implements ITreeContentProvider {
+	private static class InternalContentProvider implements ITreeContentProvider {
 		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof TreeNode) {

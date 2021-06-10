@@ -42,7 +42,7 @@ public class Bug566936TreeViewerTest {
 
 	public static boolean flag = true;
 
-	private class MyModel {
+	private static class MyModel {
 		public int counter;
 
 		public MyModel(int counter) {
@@ -86,7 +86,7 @@ public class Bug566936TreeViewerTest {
 
 	}
 
-	private class MyColumnLabelProvider extends ColumnLabelProvider implements ITreeContentProvider {
+	private static class MyColumnLabelProvider extends ColumnLabelProvider implements ITreeContentProvider {
 
 		public MyColumnLabelProvider(Tree tree, int columnIndex) {
 			super();

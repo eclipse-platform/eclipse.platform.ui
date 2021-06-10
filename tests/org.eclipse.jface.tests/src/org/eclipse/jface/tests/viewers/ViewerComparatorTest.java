@@ -55,7 +55,7 @@ public abstract class ViewerComparatorTest extends ViewerTestCase {
 	/*
 	 * model object - parent
 	 */
-	protected class Team {
+	protected static class Team {
 		Vector<IComparatorModelListener> fListeners = new Vector<>();
 
 		TeamMember[] members;
@@ -103,7 +103,7 @@ public abstract class ViewerComparatorTest extends ViewerTestCase {
 	/*
 	 * model object - child
 	 */
-	protected class TeamMember {
+	protected static class TeamMember {
 		String name;
 		Team team;
 
@@ -116,7 +116,7 @@ public abstract class ViewerComparatorTest extends ViewerTestCase {
 	/*
 	 * label provider
 	 */
-	protected class TeamModelLabelProvider extends LabelProvider {
+	protected static class TeamModelLabelProvider extends LabelProvider {
 		@Override
 		public String getText(Object element) {
 			if (element instanceof Team) {

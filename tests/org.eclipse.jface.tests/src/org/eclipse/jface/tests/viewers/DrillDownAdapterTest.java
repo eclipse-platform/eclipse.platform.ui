@@ -74,7 +74,7 @@ public class DrillDownAdapterTest {
 		assertSame(home, viewer.getInput());
 	}
 
-	class MyContentProvider implements ITreeContentProvider {
+	static class MyContentProvider implements ITreeContentProvider {
 
 		@Override
 		public Object[] getElements(Object inputElement) {
@@ -101,7 +101,7 @@ public class DrillDownAdapterTest {
 		}
 	}
 
-	class MyModel {
+	static class MyModel {
 		public MyModel parent;
 		public List<MyModel> children = new ArrayList<>();
 		public String name;

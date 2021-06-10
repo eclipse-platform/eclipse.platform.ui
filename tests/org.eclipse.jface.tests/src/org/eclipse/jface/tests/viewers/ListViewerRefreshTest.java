@@ -146,7 +146,7 @@ public class ListViewerRefreshTest extends TestCase {
 		}
 	}
 
-	private class ContentProvider implements IStructuredContentProvider {
+	private static class ContentProvider implements IStructuredContentProvider {
 
 		@Override
 		public Object[] getElements(Object inputElement) {
