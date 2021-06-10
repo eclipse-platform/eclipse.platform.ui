@@ -418,6 +418,9 @@ public class TextViewerTest {
 			checkHyperlink(textViewer, 3, "https:// ", "[]");
 			checkHyperlink(textViewer, 3, "https:// foo", "[]");
 			checkHyperlink(textViewer, 3, "https://foo bar", "[https://foo]");
+			checkHyperlink(textViewer, 3, "\"https://\" foo bar", "[]");
+			checkHyperlink(textViewer, 3, "\"https:// \" foo bar", "[]");
+			checkHyperlink(textViewer, 3, "\"https:// foo\" bar", "[]");
 			checkHyperlink(textViewer, 15, "https:// foo https://bar bar", "[https://bar]");
 			checkHyperlink(textViewer, 24, "https:// foo https://bar bar", "[https://bar]");
 			checkHyperlink(textViewer, 15, "<a href=\"test:https://bugs.eclipse.org/bugs\"></a>", "[https://bugs.eclipse.org/bugs]");

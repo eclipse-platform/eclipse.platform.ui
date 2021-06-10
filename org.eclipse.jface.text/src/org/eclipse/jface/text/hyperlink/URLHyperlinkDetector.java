@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -144,6 +144,10 @@ public class URLHyperlinkDetector extends AbstractHyperlinkDetector {
 				endOffset= nextWhitespace;
 			if (endOffset != -1)
 				urlLength= endOffset - urlOffsetInLine;
+		}
+
+		if (urlOffsetInLine + urlLength == urlSeparatorOffset + 3) {
+			return null; // Only "scheme://"
 		}
 
 		// Set and validate URL string
