@@ -16,7 +16,6 @@ package org.eclipse.jface.text.hyperlink;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.StringTokenizer;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -32,6 +31,7 @@ import org.eclipse.jface.text.Region;
  */
 public class URLHyperlinkDetector extends AbstractHyperlinkDetector {
 
+	private static final String STOP_CHARACTERS= " \t\n\r\f<>"; //$NON-NLS-1$
 
 	/**
 	 * Creates a new URL hyperlink detector.
@@ -78,6 +78,7 @@ public class URLHyperlinkDetector extends AbstractHyperlinkDetector {
 		char quote= 0;
 		int urlOffsetInLine= 0;
 		int urlLength= 0;
+		int lineEnd= line.length();
 
 		int urlSeparatorOffset= line.indexOf("://"); //$NON-NLS-1$
 		while (urlSeparatorOffset >= 0) {
@@ -96,15 +97,18 @@ public class URLHyperlinkDetector extends AbstractHyperlinkDetector {
 			urlOffsetInLine++;
 
 			// Right to "://"
-			StringTokenizer tokenizer= new StringTokenizer(line.substring(urlSeparatorOffset + 3), " \t\n\r\f<>", false); //$NON-NLS-1$
-			if (!tokenizer.hasMoreTokens())
-				return null;
+			int end= urlSeparatorOffset + 3;
+			while (end < lineEnd && STOP_CHARACTERS.indexOf(line.charAt(end)) < 0) {
+				end++;
+			}
+			if (end > urlSeparatorOffset + 3) {
+				urlLength= end - urlOffsetInLine;
+				if (offsetInLine >= urlOffsetInLine && offsetInLine <= urlOffsetInLine + urlLength) {
+					break;
+				}
+			}
 
-			urlLength= tokenizer.nextToken().length() + 3 + urlSeparatorOffset - urlOffsetInLine;
-			if (offsetInLine >= urlOffsetInLine && offsetInLine <= urlOffsetInLine + urlLength)
-				break;
-
-			urlSeparatorOffset= line.indexOf("://", urlSeparatorOffset + 1); //$NON-NLS-1$
+			urlSeparatorOffset= line.indexOf("://", urlSeparatorOffset + 3); //$NON-NLS-1$
 		}
 
 		if (urlSeparatorOffset < 0)

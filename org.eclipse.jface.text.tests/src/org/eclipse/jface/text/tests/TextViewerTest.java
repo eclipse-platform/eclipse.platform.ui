@@ -20,7 +20,9 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeNotNull;
 
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import org.junit.Assume;
 import org.junit.Rule;
@@ -42,15 +44,20 @@ import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.jface.util.Util;
 
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BlockTextSelection;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentAdapter;
 import org.eclipse.jface.text.IDocumentExtension3;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextViewer;
+import org.eclipse.jface.text.hyperlink.IHyperlink;
+import org.eclipse.jface.text.hyperlink.URLHyperlinkDetector;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.tests.util.DisplayHelper;
 
@@ -363,6 +370,51 @@ public class TextViewerTest {
 
 				assertEquals("line1\nline2", textViewer.getDocument().get());
 			}
+		} finally {
+			shell.dispose();
+		}
+	}
+
+	private String toString(Document document, IHyperlink[] links) {
+		if (links == null) {
+			return "[]";
+		}
+		return Arrays.stream(links).map(l -> {
+			IRegion region= l.getHyperlinkRegion();
+			try {
+				return document.get(region.getOffset(), region.getLength());
+			} catch (BadLocationException e) {
+				return "Invalid region <" + region + '>';
+			}
+		}).collect(Collectors.joining(",", "[", "]"));
+	}
+
+	private void checkHyperlink(TextViewer textViewer, int pos, String text, String expected) {
+		Document document= new Document(text);
+		textViewer.setDocumentPartitioning(IDocumentExtension3.DEFAULT_PARTITIONING);
+		textViewer.setDocument(document);
+		IRegion region= new Region(pos, 0);
+		URLHyperlinkDetector detector= new URLHyperlinkDetector();
+		IHyperlink[] hyperlinks= detector.detectHyperlinks(textViewer, region, false);
+		String found= toString(document, hyperlinks);
+		assertEquals(expected, found);
+	}
+
+	@Test
+	public void testURLHyperlinkDetector() {
+		Shell shell = new Shell();
+
+		try {
+			TextViewer textViewer= new TextViewer(shell, SWT.NONE);
+			checkHyperlink(textViewer, 3, "https://foo ", "[https://foo]");
+			checkHyperlink(textViewer, 0, "", "[]");
+			checkHyperlink(textViewer, 3, "https", "[]");
+			checkHyperlink(textViewer, 3, "https://", "[]");
+			checkHyperlink(textViewer, 3, "https:// ", "[]");
+			checkHyperlink(textViewer, 3, "https:// foo", "[]");
+			checkHyperlink(textViewer, 3, "https://foo bar", "[https://foo]");
+			checkHyperlink(textViewer, 15, "https:// foo https://bar bar", "[https://bar]");
+			checkHyperlink(textViewer, 24, "https:// foo https://bar bar", "[https://bar]");
 		} finally {
 			shell.dispose();
 		}
