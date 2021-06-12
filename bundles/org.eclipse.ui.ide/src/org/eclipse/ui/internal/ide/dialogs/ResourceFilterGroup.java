@@ -132,12 +132,12 @@ import org.eclipse.ui.internal.ide.misc.StringFileInfoMatcher;
  */
 public class ResourceFilterGroup {
 
-	private Button addButton = null;
-	private Button addGroupButton = null;
-	private Button removeButton = null;
-	private Button upButton = null;
-	private Button downButton = null;
-	private Button editButton = null;
+	private Button addButton;
+	private Button addGroupButton;
+	private Button removeButton;
+	private Button upButton;
+	private Button downButton;
+	private Button editButton;
 
 	private TreeViewer filterView;
 	private TreeContentProvider filterViewContentProvider;
@@ -146,13 +146,13 @@ public class ResourceFilterGroup {
 	private LabelProvider labelProvider;
 	private Font boldFont;
 	private Font plainFont;
-	private Image fileIcon = null;
-	private Image folderIcon = null;
-	private Image fileFolderIcon = null;
-	private Image includeIcon = null;
-	private Image excludeIcon = null;
-	private Image inheritableIcon = null;
-	private boolean tableViewCellEditorAdequatlyUsable = false;
+	private Image fileIcon;
+	private Image folderIcon;
+	private Image fileFolderIcon;
+	private Image includeIcon;
+	private Image excludeIcon;
+	private Image inheritableIcon;
+	private boolean tableViewCellEditorAdequatlyUsable;
 	private Shell shell;
 	private IContainer nonExistantResource = getNonExistantResource();
 	private IContainer resource = nonExistantResource;
@@ -1215,6 +1215,9 @@ public class ResourceFilterGroup {
 	 */
 	public void dispose() {
 		disposeIcons();
+		if (boldFont != null) {
+			boldFont.dispose();
+		}
 	}
 
 	private void disposeIcons() {
