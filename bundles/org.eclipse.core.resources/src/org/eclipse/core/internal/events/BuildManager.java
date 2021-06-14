@@ -133,10 +133,10 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	/**
 	 * {@code true} if we can exit inner build loop cycle early after
 	 * rebuildRequested is set by one build config and before following build
-	 * configs are executed. Default is {@code false} to keep legacy behavior.
+	 * configs are executed. Default is {@code true}.
 	 */
 	private static final boolean EARLY_EXIT_FROM_INNER_BUILD_LOOP_ALLOWED = System
-			.getProperty("org.eclipse.core.resources.allowEarlyInnerBuildLoopExit") != null; //$NON-NLS-1$
+			.getProperty("org.eclipse.core.resources.disallowEarlyInnerBuildLoopExit") == null; //$NON-NLS-1$
 
 	//used for the build cycle looping mechanism
 	private boolean rebuildRequested = false;
