@@ -862,8 +862,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 		TableItem item= (TableItem) event.item;
 		int index= fProposalTable.indexOf(item);
 
-		if (0 <= index && index < fFilteredProposals.size()) {
-			ICompletionProposal current= fFilteredProposals.get(index);
+		List<ICompletionProposal> proposals= fFilteredProposals;
+		if (0 <= index && index < proposals.size()) {
+			ICompletionProposal current= proposals.get(index);
 
 			String displayString;
 			StyleRange[] styleRanges= null;
@@ -930,9 +931,11 @@ class CompletionProposalPopup implements IContentAssistListener {
 			return null;
 
 		int i= fProposalTable.getSelectionIndex();
-		if (fFilteredProposals == null || i < 0 || i >= fFilteredProposals.size())
+		List<ICompletionProposal> proposals= fFilteredProposals;
+		if (proposals == null || i < 0 || i >= proposals.size()) {
 			return null;
-		return fFilteredProposals.get(i);
+		}
+		return proposals.get(i);
 	}
 
 	/**
@@ -1411,12 +1414,13 @@ class CompletionProposalPopup implements IContentAssistListener {
 		if (oldProposal instanceof ICompletionProposalExtension2 && fViewer != null)
 			((ICompletionProposalExtension2) oldProposal).unselected(fViewer);
 
-		if (fFilteredProposals == null) {
+		List<ICompletionProposal> proposals= fFilteredProposals;
+		if (proposals == null || index >= proposals.size()) {
 			fireSelectionEvent(null, smartToggle);
 			return;
 		}
 
-		ICompletionProposal proposal= fFilteredProposals.get(index);
+		ICompletionProposal proposal= proposals.get(index);
 		if (proposal instanceof ICompletionProposalExtension2 && fViewer != null)
 			((ICompletionProposalExtension2) proposal).selected(fViewer, smartToggle);
 
@@ -1624,19 +1628,20 @@ class CompletionProposalPopup implements IContentAssistListener {
 				fLastCompletionOffset= fFilterOffset;
 				fFilteredProposals= computeProposals(fInvocationOffset);
 
-				int count= (fFilteredProposals == null ? 0 : fFilteredProposals.size());
+				List<ICompletionProposal> proposals= fFilteredProposals;
+				int count= (proposals == null ? 0 : proposals.size());
 				if (count == 0 && hideWhenNoProposals(false))
 					return;
 
-				if (count == 1 && canAutoInsert(fFilteredProposals.get(0))) {
-					insertProposal(fFilteredProposals.get(0), (char) 0, 0, fInvocationOffset);
+				if (count == 1 && canAutoInsert(proposals.get(0))) {
+					insertProposal(proposals.get(0), (char) 0, 0, fInvocationOffset);
 					hide();
 				} else {
 					ensureDocumentListenerInstalled();
 					if (count > 0 && completeCommonPrefix())
 						hide();
 					else {
-						fComputedProposals= fFilteredProposals;
+						fComputedProposals= proposals;
 						createProposalSelector();
 						setProposals(fComputedProposals, false);
 						displayProposals();
