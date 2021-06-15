@@ -890,11 +890,29 @@ public class IWorkspaceTest extends ResourceTest {
 			assertTrue("2.10", !getWorkspace().validateName("\\dsasf", IResource.FILE).isOK());
 			assertTrue("2.11", !getWorkspace().validateName("...", IResource.PROJECT).isOK());
 			assertTrue("2.12", !getWorkspace().validateName("foo.", IResource.FILE).isOK());
+			for (int i = 0; i <= 31; i++) {
+				assertTrue("2.13 Windows should NOT accept character #" + i,
+						!getWorkspace().validateName("anything" + ((char) i) + "something", IResource.FILE).isOK());
+			}
+			assertTrue("2.14 Windows should accept character #" + 32,
+					getWorkspace().validateName("anything" + ((char) 32) + "something", IResource.FILE).isOK());
+			assertTrue("2.15 Windows should NOT accept space at the end",
+					!getWorkspace().validateName("foo ", IResource.FILE).isOK());
+			assertTrue("2.16 Windows should accept space in the middle",
+					getWorkspace().validateName("fo o", IResource.FILE).isOK());
+			assertTrue("2.17 Windows should accept space in at the beginning",
+					getWorkspace().validateName(" foo", IResource.FILE).isOK());
 		} else {
 			//trailing dots are ok on other platforms
 			assertTrue("3.3", getWorkspace().validateName("...", IResource.FILE).isOK());
 			assertTrue("3.4", getWorkspace().validateName("....", IResource.PROJECT).isOK());
 			assertTrue("3.7", getWorkspace().validateName("abc.", IResource.FILE).isOK());
+			for (int i = 1; i <= 32; i++) {
+				assertTrue("3.8 Unix-style filesystems should accept character #" + i,
+						getWorkspace().validateName("anything" + ((char) i) + "something", IResource.FILE).isOK());
+			}
+			assertTrue("3.9 Unix-style filesystems should accept space at the end",
+					getWorkspace().validateName("foo ", IResource.FILE).isOK());
 		}
 		/* invalid characters on all platforms */
 		assertTrue("2.9", !getWorkspace().validateName("/dsasf", IResource.FILE).isOK());
