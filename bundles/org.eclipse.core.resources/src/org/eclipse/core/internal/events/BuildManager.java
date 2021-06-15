@@ -268,7 +268,8 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		try {
 			for (int i = 0; i < commands.length; i++) {
 				checkCanceled(trigger, monitor);
-				if (EARLY_EXIT_FROM_INNER_BUILD_LOOP_ALLOWED && rebuildRequested && !parallelBuild) {
+				if (EARLY_EXIT_FROM_INNER_BUILD_LOOP_ALLOWED && rebuildRequested && !parallelBuild
+						&& workspace.isAutoBuilding()) {
 					// Don't build following configs if one of the predecessors
 					// requested rebuild anyway, just start from scratch
 					break;
