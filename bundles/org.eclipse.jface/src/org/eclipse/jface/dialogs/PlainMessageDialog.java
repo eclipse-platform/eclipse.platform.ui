@@ -67,6 +67,8 @@ public class PlainMessageDialog extends IconAndMessageDialog {
 		private String dialogTitle;
 		private Image titleImage;
 		private Image image;
+
+		private int iconId = -1;
 		private String message;
 		private List<String> buttonLabels = Arrays.asList(IDialogConstants.OK_LABEL);
 		private int defaultButtonIndex = 0;
@@ -96,6 +98,23 @@ public class PlainMessageDialog extends IconAndMessageDialog {
 		 */
 		public Builder image(Image image) {
 			this.image = image;
+			return this;
+		}
+
+		/**
+		 * Sets the dialog's image (e.g. information icon).
+		 *
+		 * @param iconId SWT style of the image, see below for support styles
+		 *
+		 * @return this
+		 * @see SWT#ICON_ERROR
+		 * @see SWT#ICON_INFORMATION
+		 * @see SWT#ICON_QUESTION
+		 * @see SWT#ICON_WARNING
+		 * @see SWT#ICON_WORKING
+		 */
+		public Builder image(int iconId) {
+			this.iconId = iconId;
 			return this;
 		}
 
@@ -163,7 +182,11 @@ public class PlainMessageDialog extends IconAndMessageDialog {
 
 		this.title = builder.dialogTitle;
 		this.titleImage = builder.titleImage;
-		this.image = builder.image;
+		if (builder.image == null && builder.iconId != -1) {
+			this.image = builder.shell.getDisplay().getSystemImage(builder.iconId);
+		} else {
+			this.image = builder.image;
+		}
 		this.message = builder.message;
 		this.buttonLabels = builder.buttonLabels;
 		this.defaultButtonIndex = builder.defaultButtonIndex;

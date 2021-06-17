@@ -128,7 +128,7 @@ public class FileEditorsPreferencePage extends PreferencePage implements IWorkbe
 				// Same resource type not allowed!
 				PlainMessageDialog.getBuilder(getShell(),
 						WorkbenchMessages.FileEditorPreference_existsTitle)
-								.image(getShell().getDisplay().getSystemImage(SWT.ICON_INFORMATION))
+						.image(SWT.ICON_INFORMATION)
 						.message(WorkbenchMessages.FileEditorPreference_existsMessage).build().open();
 				return;
 			}
