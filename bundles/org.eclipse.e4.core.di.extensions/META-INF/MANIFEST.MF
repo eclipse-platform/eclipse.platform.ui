@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Bundle-SymbolicName: org.eclipse.e4.core.di.extensions;singleton:=true
-Bundle-Version: 0.16.0.qualifier
+Bundle-Version: 0.16.100.qualifier
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.e4.core.di.extensions;version="0.16.0"
