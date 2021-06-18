@@ -133,9 +133,6 @@ public class PlainMessageDialog extends IconAndMessageDialog {
 		 * Sets the dialog's button labels. Without calling
 		 * {@link #defaultButtonIndex(int)} the first entry is used for the default
 		 * button.
-		 * <p>
-		 * {@link List#of(Object...)} can be used to call this method in a handy way.
-		 * </p>
 		 *
 		 * @param buttonLabels the button labels
 		 * @return this
