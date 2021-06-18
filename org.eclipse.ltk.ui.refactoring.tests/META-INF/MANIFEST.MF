@@ -3,7 +3,7 @@ Automatic-Module-Name: org.eclipse.ltk.ui.refactoring.tests
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.ltk.ui.refactoring.tests;singleton:=true
-Bundle-Version: 3.9.900.qualifier
+Bundle-Version: 3.10.0.qualifier
 Bundle-Activator: org.eclipse.ltk.ui.refactoring.tests.RefactoringUITestPlugin
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
@@ -19,6 +19,6 @@ Require-Bundle:
  org.eclipse.core.resources;bundle-version="[3.5.0,4.0.0)",
  org.eclipse.core.filebuffers;bundle-version="[3.5.0,4.0.0)",
  org.eclipse.text;bundle-version="[3.5.0,4.0.0)"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Eclipse-BundleShape: dir
 Import-Package: org.junit.jupiter.api
