@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -133,7 +133,7 @@ public class AboutTextManager {
 					}
 				} else if (item != null && item.isLinkAt(offset)) {
 					styledText.setCursor(busyCursor);
-					AboutUtils.openLink(styledText.getShell(), item.getLinkAt(offset));
+					AboutUtils.openLink(item.getLinkAt(offset));
 					StyleRange selectionRange = getCurrentRange();
 					styledText.setSelectionRange(selectionRange.start, selectionRange.length);
 					styledText.setCursor(null);
@@ -223,7 +223,7 @@ public class AboutTextManager {
 
 						if (item.isLinkAt(offset)) {
 							text.setCursor(busyCursor);
-							AboutUtils.openLink(styledText.getShell(), item.getLinkAt(offset));
+							AboutUtils.openLink(item.getLinkAt(offset));
 							StyleRange selectionRange = getCurrentRange();
 							text.setSelectionRange(selectionRange.start, selectionRange.length);
 							text.setCursor(null);

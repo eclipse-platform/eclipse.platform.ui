@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2017 IBM Corporation and others.
+ * Copyright (c) 2004, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -280,7 +280,7 @@ public class SaveableHelper {
 			String title = NLS.bind(WorkbenchMessages.EditorManager_operationFailed, opName);
 			Throwable targetExc = e.getTargetException();
 			WorkbenchPlugin.log(title, new Status(IStatus.WARNING, PlatformUI.PLUGIN_ID, 0, title, targetExc));
-			StatusUtil.handleStatus(title, targetExc, StatusManager.SHOW, shellProvider.getShell());
+			StatusUtil.handleStatus(title, targetExc, StatusManager.SHOW);
 			// Fall through to return failure
 		} catch (InterruptedException | OperationCanceledException e) {
 			// The user pressed cancel. Fall through to return failure
@@ -340,7 +340,7 @@ public class SaveableHelper {
 					// thread
 					IStatus result = backgroundSaveRunnable[0].run(subMonitor.split(1));
 					if (!result.isOK()) {
-						StatusUtil.handleStatus(result, StatusManager.SHOW, shellProvider.getShell());
+						StatusUtil.handleStatus(result, StatusManager.SHOW);
 						progressMonitor.setCanceled(true);
 					}
 					return;
@@ -396,7 +396,7 @@ public class SaveableHelper {
 				// we can get from the parts...
 				notifySaveAction(parts);
 			} catch (CoreException e) {
-				StatusUtil.handleStatus(e.getStatus(), StatusManager.SHOW, shellProvider.getShell());
+				StatusUtil.handleStatus(e.getStatus(), StatusManager.SHOW);
 				progressMonitor.setCanceled(true);
 			}
 		} finally {

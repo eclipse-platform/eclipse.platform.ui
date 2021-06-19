@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2018 IBM Corporation and others.
+ * Copyright (c) 2003, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -473,7 +473,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 					msg = WorkbenchMessages.FilteredPreferenceDialog_PreferenceSaveFailed;
 				}
 				StatusUtil.handleStatus(WorkbenchMessages.PreferencesExportDialog_ErrorDialogTitle + ": " + msg, e, //$NON-NLS-1$
-						StatusManager.SHOW, getShell());
+						StatusManager.SHOW);
 			}
 		}
 

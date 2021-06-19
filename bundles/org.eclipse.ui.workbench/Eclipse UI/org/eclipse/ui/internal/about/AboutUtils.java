@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -125,14 +125,14 @@ public class AboutUtils {
 		if (url == null) {
 			return false;
 		}
-		openLink(shell, url.toString());
+		openLink(url.toString());
 		return true;
 	}
 
 	/**
 	 * Open a link
 	 */
-	public static void openLink(Shell shell, String href) {
+	public static void openLink(String href) {
 		// format the href for an html file (file:///<filename.html>
 		// required for Mac only.
 		if (href.startsWith("file:")) { //$NON-NLS-1$
@@ -147,7 +147,7 @@ public class AboutUtils {
 			IWebBrowser browser = support.getExternalBrowser();
 			browser.openURL(new URL(urlEncodeForSpaces(href.toCharArray())));
 		} catch (MalformedURLException | PartInitException e) {
-			openWebBrowserError(shell, href, e);
+			openWebBrowserError(href, e);
 		}
 	}
 
@@ -172,12 +172,11 @@ public class AboutUtils {
 	/**
 	 * display an error message
 	 */
-	private static void openWebBrowserError(Shell shell, final String href, final Throwable t) {
+	private static void openWebBrowserError(final String href, final Throwable t) {
 		String title = WorkbenchMessages.ProductInfoDialog_errorTitle;
 		String msg = NLS.bind(WorkbenchMessages.ProductInfoDialog_unableToOpenWebBrowser, href);
 		IStatus status = WorkbenchPlugin.getStatus(t);
-		StatusUtil.handleStatus(status, title + ": " + msg, StatusManager.SHOW, //$NON-NLS-1$
-				shell);
+		StatusUtil.handleStatus(status, title + ": " + msg, StatusManager.SHOW); //$NON-NLS-1$
 	}
 
 	public static void openErrorLogBrowser(Shell shell) {
@@ -192,7 +191,7 @@ public class AboutUtils {
 			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=97783
 			File logCopy = makeDisplayCopy(log);
 			if (logCopy != null) {
-				AboutUtils.openLink(shell, "file:///" + logCopy.getAbsolutePath()); //$NON-NLS-1$
+				AboutUtils.openLink("file:///" + logCopy.getAbsolutePath()); //$NON-NLS-1$
 				return;
 			}
 			// Couldn't make copy, try to open the original log.
@@ -205,7 +204,7 @@ public class AboutUtils {
 			// (vs. an error) but we'd rather
 			// try again than put up an error dialog on platforms where the
 			// ability to view the original log works just fine.
-			AboutUtils.openLink(shell, "file:///" + filename); //$NON-NLS-1$
+			AboutUtils.openLink("file:///" + filename); //$NON-NLS-1$
 			return;
 		}
 		MessageDialog.openInformation(shell, WorkbenchMessages.AboutSystemDialog_noLogTitle,

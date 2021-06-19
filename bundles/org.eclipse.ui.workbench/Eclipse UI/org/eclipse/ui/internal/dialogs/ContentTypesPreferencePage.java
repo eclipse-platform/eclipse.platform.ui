@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2018 IBM Corporation and others.
+ * Copyright (c) 2005, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -446,7 +446,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements IWorkb
 				getSelectedContentType().setDefaultCharset(text);
 				setButton.setEnabled(false);
 			} catch (CoreException e1) {
-				StatusUtil.handleStatus(e1.getStatus(), StatusManager.SHOW, parent.getShell());
+				StatusUtil.handleStatus(e1.getStatus(), StatusManager.SHOW);
 			}
 		}));
 
@@ -533,7 +533,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements IWorkb
 				try {
 					selectedContentType.addFileSpec(dialog.getSpecText(), dialog.getSpecType());
 				} catch (CoreException ex) {
-					StatusUtil.handleStatus(ex.getStatus(), StatusManager.SHOW, shell);
+					StatusUtil.handleStatus(ex.getStatus(), StatusManager.SHOW);
 					WorkbenchPlugin.log(ex);
 				} finally {
 					fileAssociationViewer.refresh(false);
@@ -562,7 +562,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements IWorkb
 					// add the new one
 					selectedContentType.addFileSpec(dialog.getSpecText(), dialog.getSpecType());
 				} catch (CoreException ex) {
-					StatusUtil.handleStatus(ex.getStatus(), StatusManager.SHOW, shell);
+					StatusUtil.handleStatus(ex.getStatus(), StatusManager.SHOW);
 					WorkbenchPlugin.log(ex);
 				} finally {
 					fileAssociationViewer.refresh(false);
@@ -587,7 +587,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements IWorkb
 				}
 			}
 			if (!result.isOK()) {
-				StatusUtil.handleStatus(result, StatusManager.SHOW, composite.getShell());
+				StatusUtil.handleStatus(result, StatusManager.SHOW);
 			}
 			fileAssociationViewer.refresh(false);
 		}));

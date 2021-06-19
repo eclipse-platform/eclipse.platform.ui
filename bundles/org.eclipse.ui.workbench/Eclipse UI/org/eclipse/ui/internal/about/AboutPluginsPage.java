@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2020 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -550,7 +550,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 			String message = NLS.bind(WorkbenchMessages.AboutPluginsDialog_unableToOpenFile, PLUGININFO,
 					bundleInfo.getId());
 			StatusUtil.handleStatus(WorkbenchMessages.AboutPluginsDialog_errorTitle + ": " + message, //$NON-NLS-1$
-					StatusManager.SHOW, getShell());
+					StatusManager.SHOW);
 		}
 	}
 

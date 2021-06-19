@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -450,7 +450,7 @@ public abstract class OperationHistoryActionHandler extends Action
 
 		// Log and show the problem
 		WorkbenchPlugin.log(exceptionMessage, status);
-		StatusUtil.handleStatus(status, StatusManager.SHOW, getWorkbenchWindow().getShell());
+		StatusUtil.handleStatus(status, StatusManager.SHOW);
 	}
 
 	/*
