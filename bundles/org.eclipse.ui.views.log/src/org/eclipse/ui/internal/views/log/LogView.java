@@ -188,8 +188,7 @@ public class LogView extends ViewPart implements LogListener {
 	@Override
 	public void createPartControl(Composite parent) {
 		BundleContext context = FrameworkUtil.getBundle(getClass()).getBundleContext();
-		this.logReaderServiceTracker = new ServiceTracker<LogReaderService, LogReaderService>(context,
-				LogReaderService.class, null) {
+		this.logReaderServiceTracker = new ServiceTracker<>(context, LogReaderService.class, null) {
 			@Override
 			public LogReaderService addingService(ServiceReference<LogReaderService> reference) {
 				LogReaderService service = context.getService(reference);
