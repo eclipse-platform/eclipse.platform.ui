@@ -209,7 +209,7 @@ public class StructuredContentProviderTest {
 
 		// sumOfOutputSet stores the current sum of the the Doubles in the
 		// output set
-		sumOfOutputSet = new ComputedValue<Double>(realm) {
+		sumOfOutputSet = new ComputedValue<>(realm) {
 			@Override
 			protected Double calculate() {
 				double sum = 0.0;

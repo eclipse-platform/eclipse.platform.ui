@@ -99,7 +99,7 @@ public class Snippet008ComputedValue {
 		// then exposes those observables and ComputedValue can listen to
 		// changes in those objects and react accordingly.
 		//
-		ComputedValue<String> name = new ComputedValue<String>() {
+		ComputedValue<String> name = new ComputedValue<>() {
 			@Override
 			protected String calculate() {
 				String lastName = lastNameValue.getValue();

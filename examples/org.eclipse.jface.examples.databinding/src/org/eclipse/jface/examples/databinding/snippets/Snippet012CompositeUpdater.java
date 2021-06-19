@@ -72,7 +72,7 @@ public class Snippet012CompositeUpdater {
 		final Composite composite = new Composite(shell, SWT.None);
 
 		// TODO: This class is marked as "NON-API", why is it used in a snippet?
-		new CompositeUpdater<Counter>(composite, list) {
+		new CompositeUpdater<>(composite, list) {
 			@Override
 			protected Widget createWidget(int index) {
 				Label label = new Label(composite, SWT.BORDER);

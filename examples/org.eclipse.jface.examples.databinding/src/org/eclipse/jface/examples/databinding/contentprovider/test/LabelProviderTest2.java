@@ -92,7 +92,7 @@ public class LabelProviderTest2 {
 		list = new ListViewer(shell);
 		ObservableListContentProvider<RenamableItem> contentProvider = new ObservableListContentProvider<>();
 		list.setContentProvider(contentProvider);
-		list.setLabelProvider(new ListeningLabelProvider<RenamableItem>(contentProvider.getKnownElements()) {
+		list.setLabelProvider(new ListeningLabelProvider<>(contentProvider.getKnownElements()) {
 			RenamableItem.Listener listener = item -> fireChangeEvent(Collections.singleton(item));
 
 			@Override

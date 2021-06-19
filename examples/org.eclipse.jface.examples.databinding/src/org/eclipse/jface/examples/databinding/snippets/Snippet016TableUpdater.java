@@ -70,7 +70,7 @@ public class Snippet016TableUpdater {
 		createColumn(t, "Values");
 		t.setLinesVisible(true);
 		final WritableList<Stuff> list = new WritableList<>();
-		new TableUpdater<Stuff>(t, list) {
+		new TableUpdater<>(t, list) {
 			@Override
 			protected void updateItem(int index, TableItem item, Stuff element) {
 				item.setText(element.toString());

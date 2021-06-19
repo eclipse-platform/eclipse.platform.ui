@@ -329,7 +329,7 @@ public class Snippet026AnonymousBeanProperties {
 	}
 
 	private void bindUI() {
-		ISetProperty<Object, Object> treeChildrenProperty = new DelegatingSetProperty<Object, Object>() {
+		ISetProperty<Object, Object> treeChildrenProperty = new DelegatingSetProperty<>() {
 			ISetProperty<ApplicationModel, ContactGroup> modelGroups = BeanProperties.set(ApplicationModel.class,
 					"groups", ContactGroup.class);
 			ISetProperty<ContactGroup, Contact> groupContacts = BeanProperties.set(ContactGroup.class, "contacts",

@@ -177,7 +177,7 @@ public class Snippet006Spreadsheet {
 			}
 		}
 
-		new TableUpdater<Object>(table, list) {
+		new TableUpdater<>(table, list) {
 			@Override
 			protected void updateItem(int rowIndex, TableItem item, Object element) {
 				if (DEBUG_LEVEL >= 1) {

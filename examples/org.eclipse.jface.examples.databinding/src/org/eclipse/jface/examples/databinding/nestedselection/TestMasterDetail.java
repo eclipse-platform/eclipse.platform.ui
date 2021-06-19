@@ -33,8 +33,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
-import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.examples.databinding.model.SimpleModel;
 import org.eclipse.jface.examples.databinding.model.SimpleOrder;
 import org.eclipse.jface.examples.databinding.model.SimplePerson;
@@ -233,7 +233,7 @@ public class TestMasterDetail {
 				return new CustomUpdateValueStrategy<>();
 			}
 		};
-		IConverter<String, String> upperCaseConverter = new IConverter<String, String>() {
+		IConverter<String, String> upperCaseConverter = new IConverter<>() {
 			@Override
 			public String convert(String fromObject) {
 				return fromObject.toUpperCase();

@@ -90,7 +90,7 @@ public class Snippet022ComputedListCombo {
 		viewer.setContentProvider(new ObservableListContentProvider<>());
 
 		// We should really have an out-of-the box filtered list...
-		IObservableList<Thing> filteredList = new ComputedList<Thing>() {
+		IObservableList<Thing> filteredList = new ComputedList<>() {
 			@Override
 			protected List<Thing> calculate() {
 				List<Thing> result = new ArrayList<>();
