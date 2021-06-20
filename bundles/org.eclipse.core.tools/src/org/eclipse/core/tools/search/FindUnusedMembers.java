@@ -104,7 +104,7 @@ public class FindUnusedMembers implements IRunnableWithProgress {
 		IType[] allTypes = cu.getAllTypes();
 		SubMonitor subMonitor = SubMonitor.convert(monitor, "Processing " + cu.getElementName(), allTypes.length + 1); //$NON-NLS-1$
 
-		ASTParser astParser = ASTParser.newParser(AST.JLS15);
+		ASTParser astParser = ASTParser.newParser(AST.JLS_Latest);
 		astParser.setResolveBindings(true);
 		astParser.setProject(cu.getJavaProject());
 

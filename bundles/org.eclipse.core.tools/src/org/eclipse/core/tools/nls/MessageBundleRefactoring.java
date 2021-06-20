@@ -97,7 +97,7 @@ public class MessageBundleRefactoring extends Refactoring {
 
 	private void processCompilationUnit(RefactoringStatus result, ICompilationUnit unit, IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask("", 2);
-		CompilationUnit root = new RefactoringASTParser(AST.JLS15).parse(unit, true,
+		CompilationUnit root = new RefactoringASTParser(AST.JLS_Latest).parse(unit, true,
 				new SubProgressMonitor(monitor, 1));
 		ASTRewrite rewriter = ASTRewrite.create(root.getAST());
 
@@ -184,7 +184,7 @@ public class MessageBundleRefactoring extends Refactoring {
 	}
 
 	private ITypeBinding computeAccessorClassBinding(IProgressMonitor monitor) {
-		ASTParser parser = ASTParser.newParser(AST.JLS15);
+		ASTParser parser = ASTParser.newParser(AST.JLS_Latest);
 		parser.setProject(fAccessorClass.getJavaProject());
 		return (ITypeBinding) parser.createBindings(new IJavaElement[] {fAccessorClass}, monitor)[0];
 	}

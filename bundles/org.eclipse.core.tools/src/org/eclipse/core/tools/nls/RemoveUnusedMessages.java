@@ -63,7 +63,7 @@ public class RemoveUnusedMessages extends Refactoring {
 		change = new CompositeChange("Accessor Class Changes");
 		RefactoringStatus result = new RefactoringStatus();
 		ICompilationUnit unit = JavaCore.createCompilationUnitFrom((IFile) accessorClass.getResource());
-		CompilationUnit root = new RefactoringASTParser(AST.JLS15).parse(unit, true, null);
+		CompilationUnit root = new RefactoringASTParser(AST.JLS_Latest).parse(unit, true, null);
 		ASTRewrite rewriter = ASTRewrite.create(root.getAST());
 
 		// Search for references
