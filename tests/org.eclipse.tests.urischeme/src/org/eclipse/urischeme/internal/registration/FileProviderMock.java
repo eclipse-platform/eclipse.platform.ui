@@ -90,7 +90,7 @@ public class FileProviderMock implements IFileProvider {
 
 	@Override
 	public DirectoryStream<Path> newDirectoryStream(String dir, String glob) throws IOException {
-		return new DirectoryStream<Path>() {
+		return new DirectoryStream<>() {
 
 			@Override
 			public void close() throws IOException {
