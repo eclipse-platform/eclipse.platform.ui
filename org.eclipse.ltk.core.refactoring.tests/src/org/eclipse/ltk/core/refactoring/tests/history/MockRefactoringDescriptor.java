@@ -50,7 +50,7 @@ public class MockRefactoringDescriptor extends RefactoringDescriptor {
 	@Override
 	public String toString() {
 
-		final StringBuffer buffer= new StringBuffer(128);
+		final StringBuilder buffer= new StringBuilder(128);
 
 		buffer.append(getClass().getName());
 		if (ID_UNKNOWN.equals(getID()))
