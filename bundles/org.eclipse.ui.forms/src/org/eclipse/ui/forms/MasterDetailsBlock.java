@@ -17,6 +17,7 @@ package org.eclipse.ui.forms;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.GC;
@@ -184,7 +185,7 @@ public abstract class MasterDetailsBlock {
 	 * @since 3.4
 	 */
 	protected void applyLayoutData(SashForm sashForm) {
-		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridDataFactory.create(GridData.FILL_BOTH).applyTo(sashForm);
 	}
 
 	/**

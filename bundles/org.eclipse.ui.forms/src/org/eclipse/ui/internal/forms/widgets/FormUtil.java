@@ -16,6 +16,7 @@ package org.eclipse.ui.internal.forms.widgets;
 
 import java.text.BreakIterator;
 
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.MouseEvent;
@@ -121,9 +122,7 @@ public class FormUtil {
 		Text text = factory.createText(parent, ""); //$NON-NLS-1$
 		int hfill = span == 1 ? GridData.FILL_HORIZONTAL
 				: GridData.HORIZONTAL_ALIGN_FILL;
-		GridData gd = new GridData(hfill | GridData.VERTICAL_ALIGN_CENTER);
-		gd.horizontalSpan = span;
-		text.setLayoutData(gd);
+		GridDataFactory.create(hfill | GridData.VERTICAL_ALIGN_CENTER).span(span, 1).applyTo(text);
 		return text;
 	}
 
@@ -131,15 +130,12 @@ public class FormUtil {
 			FormToolkit factory, int span, int style) {
 		Label l = factory.createLabel(parent, label);
 		if ((style & SWT.MULTI) != 0) {
-			GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
-			l.setLayoutData(gd);
+			GridDataFactory.create(GridData.VERTICAL_ALIGN_BEGINNING).applyTo(l);
 		}
 		Text text = factory.createText(parent, "", style); //$NON-NLS-1$
 		int hfill = span == 1 ? GridData.FILL_HORIZONTAL
 				: GridData.HORIZONTAL_ALIGN_FILL;
-		GridData gd = new GridData(hfill | GridData.VERTICAL_ALIGN_CENTER);
-		gd.horizontalSpan = span;
-		text.setLayoutData(gd);
+		GridDataFactory.create(hfill | GridData.VERTICAL_ALIGN_CENTER).span(span, 1).applyTo(text);
 		return text;
 	}
 
@@ -148,9 +144,7 @@ public class FormUtil {
 		Text text = factory.createText(parent, ""); //$NON-NLS-1$
 		int hfill = span == 1 ? GridData.FILL_HORIZONTAL
 				: GridData.HORIZONTAL_ALIGN_FILL;
-		GridData gd = new GridData(hfill | GridData.VERTICAL_ALIGN_CENTER);
-		gd.horizontalSpan = span;
-		text.setLayoutData(gd);
+		GridDataFactory.create(hfill | GridData.VERTICAL_ALIGN_CENTER).span(span, 1).applyTo(text);
 		return text;
 	}
 
