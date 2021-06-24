@@ -208,7 +208,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 		// Re-parent the control based on the visible state
 		if (changedElement.isVisible()) {
 			if (changedElement.isToBeRendered()) {
-				if (changedElement.getWidget() instanceof Control) {
+				if (changedElement.getWidget() instanceof Control && //
+						renderer.getUIContainer(changedElement) instanceof Composite) {
 					// Ensure that the control is under its 'real' parent if
 					// it's visible
 					Composite realComp = (Composite) renderer.getUIContainer(changedElement);
