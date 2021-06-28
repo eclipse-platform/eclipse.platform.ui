@@ -7099,6 +7099,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		/** The cached document. */
 		private IDocument fDocument;
 
+		/** for debug only. see Bug 569286 **/
+		private Exception disconnectStack;
+		private boolean disconnectStackShown;
+
 		/**
 		 * Creates a new savable for this text editor.
 		 *
@@ -7116,7 +7120,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 */
 		public void disconnectEditor() {
 			getAdapter(IDocument.class); // make sure the document is cached
-			fTextEditor= null;
+			if (disconnectStack == null && !disconnectStackShown) {
+				disconnectStack = new IllegalStateException(
+						"Disconnected before saving. Please post stacktrace to https://bugs.eclipse.org/bugs/show_bug.cgi?id=569286 " //$NON-NLS-1$
+								+ fTextEditor.getClass().getName() + " " + getName()); //$NON-NLS-1$
+			}
+			fTextEditor = null;
 		}
 
 		@Override
@@ -7136,31 +7145,41 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		@Override
 		public void doSave(IProgressMonitor monitor) throws CoreException {
-			try {
-				fTextEditor.doSave(monitor);
-			} catch (NullPointerException e) {
+			ITextEditor textEditor = fTextEditor;
+			if (textEditor == null) { // disconnected Editor - for example due to disposed
 				// This should not happen. Code added to handle the below bug.
-				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=550336
-				Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
-				ILog log = Platform.getLog(bundle);
-				Status status = new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, null, e);
-				log.log(status);
+				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=569286
+				if (disconnectStack != null && !disconnectStackShown) {
+					Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
+					ILog log = Platform.getLog(bundle);
+					disconnectStack.addSuppressed(new IllegalStateException("doSave after disconnect")); //$NON-NLS-1$
+					Status status = new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, null, disconnectStack);
+					log.log(status);
+					disconnectStackShown = true; // shut up
+				}
+				return;
 			}
+			textEditor.doSave(monitor);
 		}
 
 		@Override
 		public boolean isDirty() {
-			try {
-				return fTextEditor.isDirty();
-			} catch (NullPointerException e) {
+			ITextEditor textEditor = fTextEditor;
+			if (textEditor == null) { // disconnected Editor - for example due to disposed
 				// This should not happen. Code added to handle the below bug.
-				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=550336
-				Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
-				ILog log = Platform.getLog(bundle);
-				Status status = new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, null, e);
-				log.log(status);
+				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=569286
+				if (disconnectStack != null && !disconnectStackShown) {
+					Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
+					ILog log = Platform.getLog(bundle);
+					disconnectStack.addSuppressed(new IllegalStateException("isDirty check after disconnect")); //$NON-NLS-1$
+					Status status = new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, disconnectStack.getMessage(),
+							disconnectStack);
+					log.log(status);
+					disconnectStackShown = true; // shut up
+				}
 				return false;
 			}
+			return textEditor.isDirty();
 		}
 
 		/*
