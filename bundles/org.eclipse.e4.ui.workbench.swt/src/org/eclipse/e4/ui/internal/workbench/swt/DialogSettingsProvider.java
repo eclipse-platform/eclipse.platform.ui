@@ -17,6 +17,7 @@ package org.eclipse.e4.ui.internal.workbench.swt;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
@@ -43,10 +44,13 @@ import org.osgi.service.prefs.Preferences;
 public final class DialogSettingsProvider implements IDialogSettingsProvider {
 
 
-	/**
-	 * Dialog settings are store in the instance scope of org.eclipse.ui
-	 */
-	private static final String INSTANCESCOPE = "instance"; //$NON-NLS-1$
+	/** instance scope */
+	private static final String INSTANCE_SCOPE = "instance"; //$NON-NLS-1$
+
+	/** default scope */
+	private static final String DEFAULT_SCOPE = "default"; //$NON-NLS-1$
+
+	/** Platform UI (org.eclipse.ui.workbench) preferences node id */
 	private static final String ORG_ECLIPSE_UI = "org.eclipse.ui"; //$NON-NLS-1$
 
 	/**
@@ -110,11 +114,15 @@ public final class DialogSettingsProvider implements IDialogSettingsProvider {
 	 */
 	private static Optional<IDialogSettings> loadDefaultDialogSettingsFromProduct(Bundle bundle) {
 		IPreferencesService preferencesService = Platform.getPreferencesService();
-		Preferences node = preferencesService.getRootNode().node(INSTANCESCOPE).node(ORG_ECLIPSE_UI);
+		Preferences node = preferencesService.getRootNode().node(INSTANCE_SCOPE).node(ORG_ECLIPSE_UI);
 		String rootUrl = node.get(KEY_DEFAULT_DIALOG_SETTINGS_ROOTURL, ""); //$NON-NLS-1$
 
 		if (rootUrl == null || rootUrl.isEmpty()) {
-			return Optional.empty();
+			node = preferencesService.getRootNode().node(DEFAULT_SCOPE).node(ORG_ECLIPSE_UI);
+			rootUrl = node.get(KEY_DEFAULT_DIALOG_SETTINGS_ROOTURL, ""); //$NON-NLS-1$
+			if (rootUrl == null || rootUrl.isEmpty()) {
+				return Optional.empty();
+			}
 		}
 		String bundlePart = bundle.getSymbolicName() + "/" + FN_DIALOG_SETTINGS; //$NON-NLS-1$
 		String fullUrl = rootUrl.endsWith("/") ? rootUrl + bundlePart : rootUrl + "/" + bundlePart; //$NON-NLS-1$//$NON-NLS-2$
@@ -129,6 +137,9 @@ public final class DialogSettingsProvider implements IDialogSettingsProvider {
 
 		try {
 			url = FileLocator.resolve(url);
+		} catch (FileNotFoundException e) {
+			// ignore, it is expected that not every bundle provides product dialog settings
+			return Optional.empty();
 		} catch (IOException e) {
 			Platform.getLog(bundle).log(new Status(IStatus.ERROR, bundle.getSymbolicName(),
 					"Failed to load dialog settings from: " + fullUrl, e)); //$NON-NLS-1$
