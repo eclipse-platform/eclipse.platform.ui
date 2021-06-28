@@ -30,7 +30,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.viewers.DecorationContext;
 import org.eclipse.jface.viewers.IDecorationContext;
@@ -130,6 +132,30 @@ public class DecorationScheduler {
 	private boolean shutdown = false;
 
 	private Job decorationJob;
+
+	// Notifies about updateJob or clearJob finishing
+	private final class JobChangeListener extends JobChangeAdapter {
+
+		// is called after changeState(job, Job.NONE);
+		@Override
+		public void done(IJobChangeEvent event) {
+			synchronized (this) {
+				if (!updatesPending()) { // signal only if no more updates pending
+					this.notifyAll(); // also notify if nobody is waiting.
+				}
+			}
+		}
+
+		void sleep(long timeoutMillis) throws InterruptedException {
+			synchronized (this) {
+				if (updatesPending()) { // avoid wait if no updates pending
+					this.wait(timeoutMillis);
+				}
+			}
+		}
+	}
+
+	private final JobChangeListener jobFinishListener = new JobChangeListener();
 
 	private UIJob updateJob;
 
@@ -338,7 +364,7 @@ public class DecorationScheduler {
 				while (updatesPending()) {
 
 					try {
-						Thread.sleep(100);
+						jobFinishListener.sleep(100);
 					} catch (InterruptedException e) {
 						// Cancel and try again if there was an error
 						schedule();
@@ -468,7 +494,7 @@ public class DecorationScheduler {
 
 		};
 		clear.setSystem(true);
-
+		clear.addJobChangeListener(jobFinishListener);
 		return clear;
 	}
 
@@ -591,6 +617,7 @@ public class DecorationScheduler {
 		};
 
 		job.setSystem(true);
+		job.addJobChangeListener(jobFinishListener);
 		return job;
 	}
 
