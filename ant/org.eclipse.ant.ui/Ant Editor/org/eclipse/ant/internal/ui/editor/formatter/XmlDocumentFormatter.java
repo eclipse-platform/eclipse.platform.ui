@@ -226,7 +226,7 @@ public class XmlDocumentFormatter {
 		@Override
 		protected String readTag() throws IOException {
 
-			StringBuffer node = new StringBuffer();
+			StringBuilder node = new StringBuilder();
 
 			while (!complete) {
 
@@ -251,7 +251,7 @@ public class XmlDocumentFormatter {
 
 			} else if (node.toString().trim().length() == 0) {
 				String whitespace = node.toString();
-				node = new StringBuffer();
+				node = new StringBuilder();
 				for (int i = 0; i < whitespace.length(); i++) {
 					char whitespaceCharacter = whitespace.charAt(i);
 					if (whitespaceCharacter == '\n' || whitespaceCharacter == '\r') {

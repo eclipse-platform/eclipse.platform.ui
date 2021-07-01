@@ -287,9 +287,9 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 		try {
 			BufferedReader r = new BufferedReader(new StringReader(message));
 			String line = r.readLine();
-			StringBuffer messageLine;
+			StringBuilder messageLine;
 			while (line != null) {
-				messageLine = new StringBuffer();
+				messageLine = new StringBuilder();
 				if (priority != -1) {
 					messageLine.append(priority);
 					messageLine.append(',');
@@ -311,7 +311,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 		}
 		BufferedReader r = new BufferedReader(new StringReader(eventMessage));
 		String line = r.readLine();
-		StringBuffer message;
+		StringBuilder message;
 		String taskName = event.getTask().getTaskName();
 		if (taskName != null && taskName.equals(fLastTaskName)) {
 			taskName = IAntCoreConstants.EMPTY_STRING;
@@ -335,7 +335,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 		}
 		int priority = event.getPriority();
 		while (line != null) {
-			message = new StringBuffer(MessageIds.TASK);
+			message = new StringBuilder(MessageIds.TASK);
 			message.append(priority);
 			message.append(',');
 			message.append(taskName);

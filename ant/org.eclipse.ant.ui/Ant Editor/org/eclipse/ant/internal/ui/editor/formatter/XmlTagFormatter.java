@@ -285,8 +285,8 @@ public class XmlTagFormatter {
 			Mode mode = new Mode();
 			mode.setAttributeNameSearching();
 			char attributeQuote = '"';
-			StringBuffer currentAttributeName = null;
-			StringBuffer currentAttributeValue = null;
+			StringBuilder currentAttributeName = null;
+			StringBuilder currentAttributeValue = null;
 
 			char c = iter.first();
 			while (iter.getIndex() < iter.getEndIndex()) {
@@ -301,7 +301,7 @@ public class XmlTagFormatter {
 							// start of an attribute value
 							attributeQuote = c;
 							mode.setAttributeValueFound();
-							currentAttributeValue = new StringBuffer(1024);
+							currentAttributeValue = new StringBuilder(1024);
 
 						} else if (mode.isAttributeValueFound() && attributeQuote == c) {
 
@@ -376,7 +376,7 @@ public class XmlTagFormatter {
 								if (mode.isAttributeNameSearching()) {
 									// we found the start of an attribute name
 									mode.setAttributeNameFound();
-									currentAttributeName = new StringBuffer(255);
+									currentAttributeName = new StringBuilder(255);
 									currentAttributeName.append(c);
 								} else if (mode.isAttributeNameFound()) {
 									currentAttributeName.append(c);

@@ -291,21 +291,21 @@ public class AntThread extends AntDebugElement implements IThread {
 			if (fOldFrames != null && (strings.length - 1) / 4 != fOldFrames.size()) {
 				fOldFrames = null; // stack size changed..do not preserve
 			}
-			StringBuffer name;
+			StringBuilder name;
 			String filePath;
 			int lineNumber;
 			int stackFrameId = 0;
 			String taskName;
 			for (int i = 1; i < strings.length; i++) {
 				if (strings[i].length() > 0) {
-					name = new StringBuffer(strings[i]);
+					name = new StringBuilder(strings[i]);
 					taskName = strings[++i];
 					if (taskName.length() > 0) {
 						name.append(": "); //$NON-NLS-1$
 						name.append(taskName);
 					}
 				} else {
-					name = new StringBuffer(strings[++i]);
+					name = new StringBuilder(strings[++i]);
 				}
 				filePath = strings[++i];
 				lineNumber = Integer.parseInt(strings[++i]);
