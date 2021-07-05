@@ -23,6 +23,7 @@ import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
@@ -70,7 +71,10 @@ public class ContentTypeDecorator implements ILightweightLabelDecorator {
 			if (contentDescription != null) {
 				IContentType contentType = contentDescription.getContentType();
 				if (contentType != null) {
-					image= workbench.getEditorRegistry().getImageDescriptor(file.getName(), contentType);
+					IEditorRegistry editorRegistry = workbench.getEditorRegistry();
+					if (editorRegistry != null) { // on shutdown there is no registry anymore (bug 574657)
+						image = editorRegistry.getImageDescriptor(file.getName(), contentType);
+					}
 				}
 			}
 		}
