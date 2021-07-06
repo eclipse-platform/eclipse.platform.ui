@@ -43,6 +43,11 @@ pipeline {
 			}
 		}
 		stage('Check freeze period') {
+			when {
+				not {
+					branch 'master'
+				}
+			}
 			steps {
 				sh "wget https://git.eclipse.org/c/platform/eclipse.platform.releng.aggregator.git/plain/scripts/verifyFreezePeriod.sh"
 				sh "chmod +x verifyFreezePeriod.sh"
