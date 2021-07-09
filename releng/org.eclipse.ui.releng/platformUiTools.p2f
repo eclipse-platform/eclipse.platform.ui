@@ -57,42 +57,42 @@
         <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
       </repositories>
     </iu>
-    <iu id='org.objectweb.asm.analysis' name='org.objectweb.asm.analysis' version='8.0.1'>
+    <iu id='org.objectweb.asm.analysis' name='org.objectweb.asm.analysis' version='9.1.0'>
       <repositories size='1'>
         <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
       </repositories>
     </iu>
-    <iu id='org.objectweb.asm.util' name='org.objectweb.asm.util' version='8.0.1'>
+    <iu id='org.objectweb.asm.util' name='org.objectweb.asm.util' version='9.1.0'>
       <repositories size='1'>
         <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
       </repositories>
     </iu>
-    <iu id='org.objectweb.asm.commons' name='org.objectweb.asm.commons' version='8.0.1'>
+    <iu id='org.objectweb.asm.commons' name='org.objectweb.asm.commons' version='9.1.0'>
       <repositories size='1'>
         <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
       </repositories>
     </iu>
-    <iu id='org.objectweb.asm.analysis.source' name='org.objectweb.asm.analysis.source' version='8.0.1'>
+    <iu id='org.objectweb.asm.analysis.source' name='org.objectweb.asm.analysis.source' version='9.1.0'>
       <repositories size='1'>
         <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
       </repositories>
     </iu>
-    <iu id='org.objectweb.asm.util.source' name='org.objectweb.asm.util.source' version='8.0.1'>
+    <iu id='org.objectweb.asm.util.source' name='org.objectweb.asm.util.source' version='9.1.0'>
       <repositories size='1'>
         <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
       </repositories>
     </iu>
-    <iu id='org.objectweb.asm.commons.source' name='org.objectweb.asm.commons.source' version='8.0.1'>
+    <iu id='org.objectweb.asm.commons.source' name='org.objectweb.asm.commons.source' version='9.1.0'>
       <repositories size='1'>
         <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
       </repositories>
     </iu>
-    <iu id='org.apache.sshd.osgi' name='org.apache.sshd.osgi' version='2.2.0'>
+    <iu id='org.apache.sshd.osgi' name='org.apache.sshd.osgi' version='2.7.0'>
       <repositories size='1'>
         <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
       </repositories>
     </iu>
-    <iu id='org.apache.sshd.sftp' name='org.apache.sshd.sftp' version='2.2.0'>
+    <iu id='org.apache.sshd.sftp' name='org.apache.sshd.sftp' version='2.7.0'>
       <repositories size='1'>
         <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
       </repositories>
