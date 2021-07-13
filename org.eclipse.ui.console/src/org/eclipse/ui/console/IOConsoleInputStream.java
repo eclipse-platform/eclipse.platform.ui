@@ -56,7 +56,7 @@ public class IOConsoleInputStream extends InputStream {
 	/**
 	 * Flag to indicate that the stream has been closed.
 	 */
-	private boolean closed = false;
+	private volatile boolean closed;
 
 	/**
 	 * The console that this stream is connected to.
@@ -251,13 +251,19 @@ public class IOConsoleInputStream extends InputStream {
 	}
 
 	@Override
-	public synchronized void close() throws IOException {
+	public void close() throws IOException {
 		if(closed) {
 			// Closeable#close() has no effect if already closed
 			return;
 		}
-		closed = true;
-		notifyAll();
+		synchronized (this) {
+			if (closed) {
+				return;
+			}
+			closed = true;
+			notifyAll();
+		}
+		// Locked in the console
 		console.streamClosed(this);
 	}
 }
