@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.di.Focus;
@@ -67,5 +68,14 @@ public class E4PartWrapper extends ViewPart {
 					"Focus not set, object or context missing: " + object + ", " + context, //$NON-NLS-1$ //$NON-NLS-2$
 					new IllegalStateException());
 		}
+	}
+
+	@Override
+	public <T> T getAdapter(Class<T> adapter) {
+		T result = Adapters.adapt(wrappedPart.getObject(), adapter);
+		if (result == null) {
+			result = super.getAdapter(adapter);
+		}
+		return result;
 	}
 }
