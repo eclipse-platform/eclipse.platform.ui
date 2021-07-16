@@ -776,7 +776,7 @@ public class DeadlockDetectionTest extends TestCase {
 
 		//the third and fourth jobs will now compete in non-deterministic order
 		int runningCount = 0;
-		long waitStart = System.currentTimeMillis();
+		long waitStart = AbstractJobTest.now();
 		while (runningCount < 2) {
 			if (status[2] == TestBarrier.STATUS_WAIT_FOR_RUN) {
 				//the third job got the rule - let it finish
@@ -789,7 +789,7 @@ public class DeadlockDetectionTest extends TestCase {
 				status[3] = TestBarrier.STATUS_RUNNING;
 			}
 			//timeout if the two jobs don't start within a reasonable time
-			long elapsed = System.currentTimeMillis() - waitStart;
+			long elapsed = AbstractJobTest.now() - waitStart;
 			assertTrue("Timeout waiting for job to end: " + elapsed, elapsed < 30000);
 		}
 		//wait until all jobs are done

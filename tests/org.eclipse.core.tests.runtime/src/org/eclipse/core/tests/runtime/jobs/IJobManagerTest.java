@@ -541,13 +541,13 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		//schedule a delayed job and ensure it doesn't start until instructed
 		int[] sleepTimes = new int[] {0, 10, 50, 100, 500, 1000, 2000, 2500};
 		for (int i = 0; i < sleepTimes.length; i++) {
-			long start = System.currentTimeMillis();
+			long start = now();
 			TestJob job = new TestJob("Noop", 0, 0);
 			assertEquals("1.0", 0, job.getRunCount());
 			job.schedule(sleepTimes[i]);
 			waitForCompletion();
 			assertEquals("1.1." + i, 1, job.getRunCount());
-			long duration = System.currentTimeMillis() - start;
+			long duration = now() - start;
 			assertTrue("1.2: duration: " + duration + " sleep: " + sleepTimes[i], duration >= sleepTimes[i]);
 			//a no-op job shouldn't take any real time
 			if (PEDANTIC) {
@@ -1160,10 +1160,10 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		//let the thread execute the join call
 		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_START);
 		assertTrue("1.0", status[0] == TestBarrier.STATUS_START);
-		long startTime = System.currentTimeMillis();
+		long startTime = now();
 		status[0] = TestBarrier.STATUS_WAIT_FOR_RUN;
 		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_DONE);
-		long endTime = System.currentTimeMillis();
+		long endTime = now();
 
 		assertTrue("2.0", status[0] == TestBarrier.STATUS_DONE);
 		assertTrue("2.1", endTime > startTime);

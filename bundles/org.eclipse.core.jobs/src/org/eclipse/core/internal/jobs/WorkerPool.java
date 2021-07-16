@@ -227,7 +227,7 @@ class WorkerPool {
 		try {
 			job = manager.startJob(worker);
 			//spin until a job is found or until we have been idle for too long
-			long idleStart = System.currentTimeMillis();
+			long idleStart = manager.now();
 			while (manager.isActive() && job == null) {
 				long hint = manager.sleepHint();
 				if (hint > 0) {
@@ -245,7 +245,7 @@ class WorkerPool {
 				//if we were already idle, and there are still no new jobs, then
 				// the thread can expire
 				synchronized (this) {
-					if (job == null && (System.currentTimeMillis() - idleStart > BEST_BEFORE) && (numThreads - busyThreads) > MIN_THREADS) {
+					if (job == null && (manager.now() - idleStart > BEST_BEFORE) && (numThreads - busyThreads) > MIN_THREADS) {
 						//must remove the worker immediately to prevent all threads from expiring
 						endWorker(worker);
 						decrementBusyThreads();

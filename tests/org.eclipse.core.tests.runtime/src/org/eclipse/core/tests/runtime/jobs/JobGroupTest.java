@@ -515,9 +515,9 @@ public class JobGroupTest extends AbstractJobTest {
 		Thread t = new Thread(() -> {
 			status[0] = TestBarrier.STATUS_START;
 			try {
-				long start = System.currentTimeMillis();
+				long start = now();
 				firstJobGroup.join(timeout, null);
-				duration[0] = System.currentTimeMillis() - start;
+				duration[0] = now() - start;
 			} catch (OperationCanceledException | InterruptedException e) {
 				// ignore
 			}

@@ -52,12 +52,13 @@ public class AbstractJobTest extends TestCase {
 	}
 
 	protected void indent(OutputStream output, int indent) {
-		for (int i = 0; i < indent; i++)
+		for (int i = 0; i < indent; i++) {
 			try {
 				output.write("\t".getBytes());
 			} catch (IOException e) {
 				//ignore
 			}
+		}
 	}
 
 	protected void sleep(long duration) {
@@ -99,10 +100,11 @@ public class AbstractJobTest extends TestCase {
 		int i = 0;
 		int tickLength = 10;
 		int ticks = waitTime / tickLength;
-		while (job.getState() != Job.NONE) {
+		long start = now();
+		while (job.getState() != Job.NONE && now() - start < waitTime) {
 			sleep(tickLength);
 			// sanity test to avoid hanging tests
-			if (i++ > ticks) {
+			if (i++ > ticks && now() - start > waitTime) {
 				dumpState();
 				assertTrue("Timeout waiting for job to complete", false);
 			}
@@ -122,9 +124,13 @@ public class AbstractJobTest extends TestCase {
 	protected void dumpState() {
 		System.out.println("**** BEGIN DUMP JOB MANAGER INFORMATION ****");
 		Job[] jobs = Job.getJobManager().find(null);
-		for (Job job : jobs)
+		for (Job job : jobs) {
 			System.out.println("" + job + " state: " + JobManager.printState(job));
+		}
 		System.out.println("**** END DUMP JOB MANAGER INFORMATION ****");
 	}
 
+	public static long now() {
+		return ((JobManager) (Job.getJobManager())).now();
+	}
 }

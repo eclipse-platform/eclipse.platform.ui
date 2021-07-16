@@ -19,6 +19,7 @@ import java.util.Objects;
 public class Semaphore {
 	protected long notifications;
 	protected Runnable runnable;
+	private static final int NANOS_IN_MS = 1_000_000;
 
 	public Semaphore(Runnable runnable) {
 		this.runnable = runnable;
@@ -32,7 +33,7 @@ public class Semaphore {
 	public synchronized boolean acquire(long delay) throws InterruptedException {
 		if (Thread.interrupted())
 			throw new InterruptedException();
-		long start = System.currentTimeMillis();
+		long start = System.nanoTime();
 		long timeLeft = delay;
 		while (true) {
 			if (notifications > 0) {
@@ -42,7 +43,7 @@ public class Semaphore {
 			if (timeLeft <= 0)
 				return false;
 			wait(timeLeft);
-			timeLeft = start + delay - System.currentTimeMillis();
+			timeLeft = ((start - System.nanoTime()) / NANOS_IN_MS) + delay;
 		}
 	}
 
