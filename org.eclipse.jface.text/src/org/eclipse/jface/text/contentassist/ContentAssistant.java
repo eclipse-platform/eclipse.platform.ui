@@ -349,6 +349,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		}
 
 		protected void showAssist(final int showStyle) {
+			if (fContentAssistSubjectControlAdapter == null)
+				return;
 			final Control control= fContentAssistSubjectControlAdapter.getControl();
 			if (control == null)
 				return;
