@@ -1205,6 +1205,43 @@ public class ContentProposalAdapter {
 	private boolean watchModify = false;
 
 	/**
+	 * A flag that indicates that we want to activate the popup for any alphanumeric
+	 * character and on any modification of the content.
+	 */
+	private boolean autoActivateOnAllModifications = false;
+
+	/**
+	 * Construct a content proposal adapter that can assist the user with
+	 * choosing content for the field.
+	 * Use this constructor if you want to specify a <code>keyStroke</code>
+	 * and still want the content assist to be triggered by any modification 
+	 * to the content.
+	 *
+	 *
+	 * @param control
+	 *            the control for which the adapter is providing content assist.
+	 *            May not be <code>null</code>.
+	 * @param controlContentAdapter
+	 *            the <code>IControlContentAdapter</code> used to obtain and
+	 *            update the control's contents as proposals are accepted. May
+	 *            not be <code>null</code>.
+	 * @param proposalProvider
+	 *            the <code>IContentProposalProvider</code> used to obtain
+	 *            content proposals for this control, or <code>null</code> if
+	 *            no content proposal is available.
+	 * @param keyStroke
+	 *            the keystroke that will invoke the content proposal popup.
+	 *            The content proposal popup will additionally be triggered by
+	 *            all modifications to the content.
+	 * @since 3.23
+	 */
+	public ContentProposalAdapter(Control control, IControlContentAdapter controlContentAdapter,
+			IContentProposalProvider proposalProvider, KeyStroke keyStroke) {
+		this(control, controlContentAdapter, proposalProvider, keyStroke, null);
+		this.autoActivateOnAllModifications = true;
+	}
+
+	/**
 	 * Construct a content proposal adapter that can assist the user with
 	 * choosing content for the field.
 	 *
@@ -1221,8 +1258,8 @@ public class ContentProposalAdapter {
 	 *            no content proposal is available.
 	 * @param keyStroke
 	 *            the keystroke that will invoke the content proposal popup. If
-	 *            this value is <code>null</code>, then proposals will be
-	 *            activated automatically when any of the auto activation
+	 *            this value is <code>null</code>, then proposals will still be
+	 *            activated when any of the auto activation
 	 *            characters are typed.
 	 * @param autoActivationCharacters
 	 *            An array of characters that trigger auto-activation of content
@@ -1232,7 +1269,7 @@ public class ContentProposalAdapter {
 	 *            parameter is <code>null</code>, then only a specified
 	 *            keyStroke will invoke content proposal. If this parameter is
 	 *            <code>null</code> and the keyStroke parameter is
-	 *            <code>null</code>, then all alphanumeric characters will
+	 *            <code>null</code>, then all modifications to the content will
 	 *            auto-activate content proposal.
 	 */
 	public ContentProposalAdapter(Control control,
@@ -1725,7 +1762,7 @@ public class ContentProposalAdapter {
 							// is also null, we want to act on any modification
 							// to the content. Set a flag so we'll catch this
 							// in the modify event.
-							if (triggerKeyStroke == null) {
+							if (triggerKeyStroke == null || autoActivateOnAllModifications) {
 								watchModify = true;
 							}
 
@@ -2128,7 +2165,8 @@ public class ContentProposalAdapter {
 	 */
 	private boolean allowsAutoActivate() {
 		return (autoActivateString != null && autoActivateString.length() > 0) // there are specific autoactivation chars supplied
-			|| (autoActivateString == null && triggerKeyStroke == null);    // we autoactivate on everything
+			|| (autoActivateString == null && triggerKeyStroke == null    // we autoactivate on everything
+			|| autoActivateOnAllModifications);
 	}
 
 	/**
