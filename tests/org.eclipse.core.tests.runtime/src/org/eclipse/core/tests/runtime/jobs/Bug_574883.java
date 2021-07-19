@@ -54,11 +54,11 @@ public class Bug_574883 extends AbstractJobManagerTest {
 		protected IStatus run(IProgressMonitor monitor) {
 			Runnable action = queue.remove(0);
 			try {
-				if (action != null) {
+				if (action != null && !monitor.isCanceled()) {
 					action.run();
 				}
 			} finally {
-				if (!queue.isEmpty()) {
+				if (!queue.isEmpty() && !monitor.isCanceled()) {
 					// this call confuses JobManager and causes bug 574883 if the action above
 					// runs *too fast*
 					schedule();
@@ -108,6 +108,9 @@ public class Bug_574883 extends AbstractJobManagerTest {
 			// TODO: print the fail only, as long as bug 574883 is not fixed yet
 			t.printStackTrace(System.out);
 			t.printStackTrace(System.err);
+			Job.getJobManager().cancel(this);
+			Thread.sleep(1000);
+			Job.getJobManager().join(this, null);
 		}
 	}
 
@@ -140,6 +143,9 @@ public class Bug_574883 extends AbstractJobManagerTest {
 			// TODO: print the fail only, as long as bug 574883 is not fixed yet
 			t.printStackTrace(System.out);
 			t.printStackTrace(System.err);
+			Job.getJobManager().cancel(this);
+			Thread.sleep(1000);
+			Job.getJobManager().join(this, null);
 		}
 	}
 
@@ -182,6 +188,9 @@ public class Bug_574883 extends AbstractJobManagerTest {
 			// TODO: print the fail only, as long as bug 574883 is not fixed yet
 			t.printStackTrace(System.out);
 			t.printStackTrace(System.err);
+			Job.getJobManager().cancel(this);
+			Thread.sleep(1000);
+			Job.getJobManager().join(this, null);
 		}
 	}
 
