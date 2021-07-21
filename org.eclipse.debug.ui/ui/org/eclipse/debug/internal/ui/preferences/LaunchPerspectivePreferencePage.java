@@ -127,7 +127,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 	/**
 	 * Provides content for the configuration tree viewer
 	 */
-	final class PerspectiveContentProvider implements ITreeContentProvider {
+	static final class PerspectiveContentProvider implements ITreeContentProvider {
 		@Override
 		public Object[] getChildren(Object parentElement) {
 			if(parentElement instanceof ILaunchConfigurationType) {

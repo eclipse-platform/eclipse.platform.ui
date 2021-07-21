@@ -49,7 +49,7 @@ abstract public class FilterTests extends AbstractViewerModelTest implements ITe
 		return fViewer;
 	}
 
-	class TestViewerFilter extends ViewerFilter {
+	static class TestViewerFilter extends ViewerFilter {
 
 		Pattern fPattern;
 		TestViewerFilter(String pattern) {
@@ -68,7 +68,7 @@ abstract public class FilterTests extends AbstractViewerModelTest implements ITe
 		}
 	}
 
-	class TestTMVFilter extends TreeModelViewerFilter {
+	static class TestTMVFilter extends TreeModelViewerFilter {
 		Pattern fPattern;
 		Object fParentElement;
 		TestTMVFilter(String pattern, Object parentElement) {

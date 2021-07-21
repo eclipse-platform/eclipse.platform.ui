@@ -989,7 +989,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 		}
 	}
 
-	private class ConsoleLogFileHyperlink implements IHyperlink {
+	private static class ConsoleLogFileHyperlink implements IHyperlink {
 		String fFilePath;
 		ConsoleLogFileHyperlink(String filePath) {
 			fFilePath = filePath;
@@ -1024,7 +1024,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 		}
 	}
 
-	class StorageEditorInput extends PlatformObject implements IStorageEditorInput {
+	static class StorageEditorInput extends PlatformObject implements IStorageEditorInput {
 		private File fFile;
 		private IStorage fStorage;
 

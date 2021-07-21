@@ -58,7 +58,7 @@ public class MemoryViewSynchronizationService implements IMemoryRenderingSynchro
 	 * Wrapper for ISynchronizedMemoryBlockView Holds a list of property filters
 	 * for the view.
 	 */
-	class PropertyListener {
+	static class PropertyListener {
 		IPropertyChangeListener fListener;
 		String[] fFilters;
 

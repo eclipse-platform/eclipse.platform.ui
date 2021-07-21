@@ -43,7 +43,7 @@ public class SelectLaunchModesDialog extends AbstractDebugListSelectionDialog{
 	/**
 	 * Builds labels for list control
 	 */
-	class OptionsLabelProvider implements ILabelProvider {
+	static class OptionsLabelProvider implements ILabelProvider {
 		@Override
 		public Image getImage(Object element) {return null;}
 		@Override

@@ -27,7 +27,7 @@ import org.osgi.service.prefs.BackingStoreException;
  * @since 3.6 TODO can we roll this into general preference listening?
  */
 public class PreferredDelegateModifyListener extends PreferenceModifyListener {
-	class Visitor implements IPreferenceNodeVisitor {
+	static class Visitor implements IPreferenceNodeVisitor {
 
 		@Override
 		public boolean visit(IEclipsePreferences node) throws BackingStoreException {

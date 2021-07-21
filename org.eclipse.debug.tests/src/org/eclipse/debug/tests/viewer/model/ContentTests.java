@@ -95,7 +95,7 @@ abstract public class ContentTests extends AbstractViewerModelTest implements IT
 	 * Modified test model that optionally captures (i.e. doesn't compete)
 	 * udpates after filling in their data.
 	 */
-	class TestModelWithCapturedUpdates extends TestModel {
+	static class TestModelWithCapturedUpdates extends TestModel {
 
 		boolean fCaptureLabelUpdates = false;
 		boolean fCaptureChildrenUpdates = false;

@@ -365,7 +365,7 @@ public class MultipleInputDialog extends Dialog {
 		getButton(IDialogConstants.OK_ID).setEnabled(true);
 	}
 
-	protected class FieldSummary {
+	protected static class FieldSummary {
 		int type;
 		String name;
 		String initialValue;
@@ -379,7 +379,7 @@ public class MultipleInputDialog extends Dialog {
 		}
 	}
 
-	protected class Validator {
+	protected static class Validator {
 		boolean validate() {
 			return true;
 		}

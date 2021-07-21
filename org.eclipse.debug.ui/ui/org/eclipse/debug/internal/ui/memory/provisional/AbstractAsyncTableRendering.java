@@ -337,7 +337,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		}
 	}
 
-	private class SerialByObjectRule implements ISchedulingRule {
+	private static class SerialByObjectRule implements ISchedulingRule {
 		private Object fObject = null;
 
 		public SerialByObjectRule(Object lock) {

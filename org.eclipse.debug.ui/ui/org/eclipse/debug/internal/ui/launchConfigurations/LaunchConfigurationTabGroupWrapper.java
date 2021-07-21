@@ -45,7 +45,7 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 	 *
 	 * @since 3.5
 	 */
-	class TabCollector implements Iterator<ILaunchConfigurationTab> {
+	static class TabCollector implements Iterator<ILaunchConfigurationTab> {
 
 		private HashSet<String> idSet = null;
 		private ArrayList<ILaunchConfigurationTab> tabList = null;

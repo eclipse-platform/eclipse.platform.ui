@@ -124,7 +124,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 
 	private String fActivePaneId;
 
-	class MemoryViewSelectionProvider implements ISelectionProvider, ISelectionChangedListener {
+	static class MemoryViewSelectionProvider implements ISelectionProvider, ISelectionChangedListener {
 		ArrayList<ISelectionChangedListener> fListeners = new ArrayList<>();
 
 		IStructuredSelection fSelections = new StructuredSelection();

@@ -61,7 +61,7 @@ public class DetailPaneManager {
 	 * to the extension point.  Only loads information from the plug-in xml and only
 	 * instantiates the specified factory if required (lazy loading).
 	 */
-	private class DetailPaneFactoryExtension implements IDetailPaneFactory{
+	private static class DetailPaneFactoryExtension implements IDetailPaneFactory{
 
 		private IConfigurationElement fConfigElement;
 		private IDetailPaneFactory fFactory;

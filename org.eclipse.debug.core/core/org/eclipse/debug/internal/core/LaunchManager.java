@@ -442,7 +442,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * Collects files whose extension matches the launch configuration file
 	 * extension.
 	 */
-	class ResourceProxyVisitor implements IResourceProxyVisitor {
+	static class ResourceProxyVisitor implements IResourceProxyVisitor {
 
 		private List<IResource> fList;
 
@@ -467,7 +467,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 *
 	 * @since 3.3
 	 */
-	class PreferredDelegate {
+	static class PreferredDelegate {
 		private ILaunchDelegate fDelegate = null;
 		private String fTypeid = null;
 		private Set<String> fModes = null;

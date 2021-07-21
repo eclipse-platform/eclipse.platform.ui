@@ -65,7 +65,7 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 	/**
 	 * Class to collect and persist attributes to sufficiently describe a duplicate launch delegate
 	 */
-	class DuplicateDelegate {
+	static class DuplicateDelegate {
 		private ILaunchConfigurationType fType = null;
 		private ILaunchDelegate[] fDelegates = null;
 		private Set<String> fModes = null;

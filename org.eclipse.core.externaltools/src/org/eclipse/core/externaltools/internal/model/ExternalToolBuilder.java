@@ -43,7 +43,7 @@ import org.osgi.framework.Bundle;
  * build process.
  */
 public final class ExternalToolBuilder extends IncrementalProjectBuilder {
-	private final class IgnoreTeamPrivateChanges implements IResourceDeltaVisitor {
+	private static final class IgnoreTeamPrivateChanges implements IResourceDeltaVisitor {
 		private boolean[] fTrueChange;
 		private IgnoreTeamPrivateChanges(boolean[] trueChange) {
 			super();

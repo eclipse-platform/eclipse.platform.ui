@@ -112,7 +112,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		job.schedule();
 	};
 
-	class MemoryRenderingLabelProvider implements ILabelProvider {
+	static class MemoryRenderingLabelProvider implements ILabelProvider {
 
 		@Override
 		public Image getImage(Object element) {
@@ -147,7 +147,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 
 	}
 
-	class MemoryRenderingContentProvider implements IStructuredContentProvider {
+	static class MemoryRenderingContentProvider implements IStructuredContentProvider {
 
 		@Override
 		public Object[] getElements(Object inputElement) {

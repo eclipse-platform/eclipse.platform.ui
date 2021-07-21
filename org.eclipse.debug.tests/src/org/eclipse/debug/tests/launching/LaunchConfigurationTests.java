@@ -101,7 +101,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 	 * Class to hold resource description infos
 	 * @since 3.9.0
 	 */
-	class ResourceItem {
+	static class ResourceItem {
 		public ResourceItem(String path, Integer type) {
 			this.path = path;
 			this.type = type;
@@ -110,7 +110,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		Integer type;
 	}
 
-	class Listener implements ILaunchConfigurationListener {
+	static class Listener implements ILaunchConfigurationListener {
 
 		private final List<ILaunchConfiguration> addedList = new ArrayList<>();
 		private final List<ILaunchConfiguration> removedList = new ArrayList<>();

@@ -102,7 +102,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * A comparator for the ordering of launch shortcut extensions
 	 * @since 3.3
 	 */
-	class ShortcutComparator implements Comparator<LaunchShortcutExtension> {
+	static class ShortcutComparator implements Comparator<LaunchShortcutExtension> {
 		/**
 		 * @see Comparator#compare(Object, Object)
 		 */

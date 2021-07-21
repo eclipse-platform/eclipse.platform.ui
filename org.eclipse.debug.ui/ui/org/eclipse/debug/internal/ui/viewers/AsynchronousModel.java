@@ -66,7 +66,7 @@ public abstract class AsynchronousModel {
 	private AsynchronousViewer fViewer; // viewer this model works for
 	private boolean fDisposed = false; // whether disposed
 
-	class EmptyContentAdapter extends AsynchronousContentAdapter {
+	static class EmptyContentAdapter extends AsynchronousContentAdapter {
 
 		@Override
 		protected Object[] getChildren(Object parent, IPresentationContext context) throws CoreException {

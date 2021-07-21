@@ -79,7 +79,7 @@ public class ExternalToolsBuildTab extends AbstractLaunchConfigurationTab {
 	// projects to build (empty if none)
 	private List<IProject> fProjects = new ArrayList<>();
 
-	class ProjectsContentProvider implements IStructuredContentProvider {
+	static class ProjectsContentProvider implements IStructuredContentProvider {
 
 		@Override
 		public Object[] getElements(Object inputElement) {

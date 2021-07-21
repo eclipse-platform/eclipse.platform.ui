@@ -179,7 +179,7 @@ public class ConsolePatternMatcher implements IDocumentListener {
 
 	}
 
-	private class CompiledPatternMatchListener {
+	private static class CompiledPatternMatchListener {
 		Pattern pattern;
 
 		Pattern qualifier;

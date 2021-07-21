@@ -194,7 +194,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 *
 	 * @since 3.5
 	 */
-	class DefaultImportParticipant implements IBreakpointImportParticipant {
+	static class DefaultImportParticipant implements IBreakpointImportParticipant {
 
 		@Override
 		public boolean matches(Map<String, Object> attributes, IBreakpoint breakpoint) throws CoreException {

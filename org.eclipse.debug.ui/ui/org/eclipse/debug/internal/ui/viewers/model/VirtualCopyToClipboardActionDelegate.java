@@ -171,7 +171,7 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 		return label.trim();
 	}
 
-	private class ItemsToCopyVirtualItemValidator implements IVirtualItemValidator {
+	private static class ItemsToCopyVirtualItemValidator implements IVirtualItemValidator {
 
 		Set<VirtualItem> fItemsToCopy = Collections.EMPTY_SET;
 		Set<VirtualItem> fItemsToValidate = Collections.EMPTY_SET;

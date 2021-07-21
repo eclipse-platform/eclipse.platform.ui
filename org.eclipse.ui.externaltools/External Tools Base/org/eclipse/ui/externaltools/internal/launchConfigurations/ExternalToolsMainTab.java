@@ -626,7 +626,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		control.getAccessible().addAccessibleListener(new ControlAccessibleListener(stripped.toString()));
 	}
 
-	private class ControlAccessibleListener extends AccessibleAdapter {
+	private static class ControlAccessibleListener extends AccessibleAdapter {
 		private String controlName;
 		ControlAccessibleListener(String name) {
 			controlName = name;

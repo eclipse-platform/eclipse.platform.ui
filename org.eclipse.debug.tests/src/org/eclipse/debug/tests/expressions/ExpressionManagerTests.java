@@ -37,7 +37,7 @@ import org.junit.Test;
  */
 public class ExpressionManagerTests extends AbstractDebugTest {
 
-	class SinlgeListener implements IExpressionListener {
+	static class SinlgeListener implements IExpressionListener {
 
 		List<IExpression> added = new ArrayList<>();
 		List<IExpression> removed = new ArrayList<>();
@@ -66,7 +66,7 @@ public class ExpressionManagerTests extends AbstractDebugTest {
 
 	}
 
-	class MultiListener implements IExpressionsListener {
+	static class MultiListener implements IExpressionsListener {
 
 		List<IExpression> added = new ArrayList<>();
 		List<IExpression> removed = new ArrayList<>();
@@ -95,7 +95,7 @@ public class ExpressionManagerTests extends AbstractDebugTest {
 
 	}
 
-	class InsertMoveListener extends MultiListener implements IExpressionsListener2 {
+	static class InsertMoveListener extends MultiListener implements IExpressionsListener2 {
 
 		List<IExpression> moved = new ArrayList<>();
 		List<IExpression> inserted = new ArrayList<>();

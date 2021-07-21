@@ -64,7 +64,7 @@ public class NullStreamsProxy implements IBinaryStreamsProxy {
 	public void write(byte[] data, int offset, int length) throws IOException {
 	}
 
-	private class NullStreamMonitor implements IBinaryStreamMonitor {
+	private static class NullStreamMonitor implements IBinaryStreamMonitor {
 		private InputStream fStream;
 
 		public NullStreamMonitor(InputStream stream) {

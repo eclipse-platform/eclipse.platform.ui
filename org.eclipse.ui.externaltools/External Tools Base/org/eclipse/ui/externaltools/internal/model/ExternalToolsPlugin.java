@@ -63,7 +63,7 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin implements
 	 * A window listener that warns the user about any running programs when the
 	 * workbench closes. Programs are killed when the VM exits.
 	 */
-	private class ProgramLaunchWindowListener implements IWindowListener {
+	private static class ProgramLaunchWindowListener implements IWindowListener {
 		@Override
 		public void windowActivated(IWorkbenchWindow window) {
 		}

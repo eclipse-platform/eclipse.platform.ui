@@ -43,7 +43,7 @@ public class ConfigureColumnsAction extends Action implements IUpdate {
 
 	private TreeModelViewer fViewer;
 
-	class ColumnContentProvider implements IStructuredContentProvider {
+	static class ColumnContentProvider implements IStructuredContentProvider {
 
 		@Override
 		public Object[] getElements(Object inputElement) {

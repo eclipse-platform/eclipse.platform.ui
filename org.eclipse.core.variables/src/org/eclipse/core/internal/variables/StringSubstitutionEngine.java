@@ -56,7 +56,7 @@ public class StringSubstitutionEngine {
 	 */
 	private Deque<VariableReference> fStack;
 
-	class VariableReference {
+	static class VariableReference {
 
 		// the text inside the variable reference
 		private StringBuilder fText;

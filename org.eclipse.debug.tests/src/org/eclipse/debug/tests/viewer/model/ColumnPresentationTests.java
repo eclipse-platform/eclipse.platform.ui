@@ -213,7 +213,7 @@ public class ColumnPresentationTests extends AbstractDebugTest implements ITestM
 		}
 	}
 
-	class MyModel extends TestModel implements IColumnPresentationFactory {
+	static class MyModel extends TestModel implements IColumnPresentationFactory {
 		MyColumnPresentation colPresenation;
 
 		MyModel(MyColumnPresentation cp1) {

@@ -509,7 +509,7 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 	 * Provides the labels for the favorites table
 	 *
 	 */
-	class FavoritesLabelProvider implements ITableLabelProvider {
+	static class FavoritesLabelProvider implements ITableLabelProvider {
 
 		private Map<Object, Image> fImages = new HashMap<>();
 

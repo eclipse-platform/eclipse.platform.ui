@@ -78,7 +78,7 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 		fContainer = container;
 	}
 
-	class MemoryRenderingLabelProvider implements ILabelProvider
+	static class MemoryRenderingLabelProvider implements ILabelProvider
 	{
 
 		@Override
@@ -116,7 +116,7 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 
 	}
 
-	class MemoryRenderingContentProvider implements IStructuredContentProvider
+	static class MemoryRenderingContentProvider implements IStructuredContentProvider
 	{
 
 		@Override

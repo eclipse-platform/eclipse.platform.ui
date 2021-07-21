@@ -27,7 +27,7 @@ public class AsynchronousSchedulingRuleFactory {
 	/**
 	 * Rule allows only one job to run at a time
 	 */
-	class SerialRule implements ISchedulingRule {
+	static class SerialRule implements ISchedulingRule {
 
 		public SerialRule() {
 		}
@@ -43,7 +43,7 @@ public class AsynchronousSchedulingRuleFactory {
 		}
 	}
 
-	class SerialPerObjectRule implements ISchedulingRule {
+	static class SerialPerObjectRule implements ISchedulingRule {
 
 		private Object fObject = null;
 

@@ -67,7 +67,7 @@ public class PDAVirtualFindAction extends Action implements IUpdate {
 
 	private final TreeModelViewer fClientViewer;
 
-	protected class VirtualViewerListener implements IViewerUpdateListener, ILabelUpdateListener {
+	protected static class VirtualViewerListener implements IViewerUpdateListener, ILabelUpdateListener {
 
 		private boolean fViewerUpdatesComplete = false;
 		private boolean fLabelUpdatesComplete = false;

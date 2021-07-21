@@ -340,7 +340,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	/**
 	 * Visits deltas to determine if details should be displayed
 	 */
-	class Visitor implements IModelDeltaVisitor {
+	static class Visitor implements IModelDeltaVisitor {
 		/**
 		 * Whether to trigger details display.
 		 *

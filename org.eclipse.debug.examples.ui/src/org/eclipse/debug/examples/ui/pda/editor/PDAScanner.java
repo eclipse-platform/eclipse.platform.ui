@@ -39,7 +39,7 @@ public class PDAScanner extends BufferedRuleBasedScanner {
 	/**
 	 * Detects potential keywords
 	 */
-	class PDAWordDetector implements IWordDetector {
+	static class PDAWordDetector implements IWordDetector {
 
 		@Override
 		public boolean isWordStart(char c) {

@@ -116,7 +116,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	 * Error configs are objects representing entries pointing to
 	 * invalid launch configurations
 	 */
-	public class ErrorConfig {
+	public static class ErrorConfig {
 		private ICommand command;
 		public ErrorConfig(ICommand command) {
 			this.command= command;

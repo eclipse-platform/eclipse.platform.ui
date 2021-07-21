@@ -61,7 +61,7 @@ public class VirtualFindAction extends Action implements IUpdate {
 
 	private TreeModelViewer fClientViewer;
 
-	private class VirtualViewerListener implements IViewerUpdateListener, ILabelUpdateListener {
+	private static class VirtualViewerListener implements IViewerUpdateListener, ILabelUpdateListener {
 
 		private boolean fViewerUpdatesComplete = false;
 		private boolean fLabelUpdatesComplete = false;

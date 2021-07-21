@@ -564,7 +564,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 
 	}
 
-	class VariableWrapper {
+	static class VariableWrapper {
 
 		protected IValueVariable fVariable;
 		protected String fNewName = null;
@@ -722,7 +722,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 		}
 	}
 
-	class VariableFilter extends ViewerFilter {
+	static class VariableFilter extends ViewerFilter {
 
 		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {

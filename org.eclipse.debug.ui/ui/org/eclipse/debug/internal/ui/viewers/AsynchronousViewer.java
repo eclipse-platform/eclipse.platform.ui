@@ -643,7 +643,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	/**
 	 * A content provider that does nothing.
 	 */
-	private class NullContentProvider implements IStructuredContentProvider {
+	private static class NullContentProvider implements IStructuredContentProvider {
 		@Override
 		public void dispose() {
 		}
