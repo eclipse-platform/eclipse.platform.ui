@@ -71,6 +71,28 @@ public final class EditPosition {
 		return fEditorId;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("EditPosition ["); //$NON-NLS-1$
+		if (fEditorInput != null) {
+			builder.append("input="); //$NON-NLS-1$
+			builder.append(fEditorInput);
+			builder.append(", "); //$NON-NLS-1$
+		}
+		if (fEditorId != null) {
+			builder.append("editorId="); //$NON-NLS-1$
+			builder.append(fEditorId);
+			builder.append(", "); //$NON-NLS-1$
+		}
+		if (fPosition != null) {
+			builder.append("position="); //$NON-NLS-1$
+			builder.append(fPosition);
+		}
+		builder.append("]"); //$NON-NLS-1$
+		return builder.toString();
+	}
+
 	/**
 	 * Returns the position.
 	 *

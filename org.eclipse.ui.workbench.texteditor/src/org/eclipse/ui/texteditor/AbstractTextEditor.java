@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 import org.osgi.framework.Bundle;
 
@@ -682,25 +683,25 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		@Override
 		public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
-			HistoryTracker<EditPosition> positionHistory = TextEditorPlugin.getDefault().getEditPositionHistory();
-			if (oldInput != null && !positionHistory.isEmpty()) {
-				for (int i = 0; i < positionHistory.getSize(); i++)
-					oldInput.removePosition(positionHistory.browseBackward().getPosition());
-			}
+			discardHistoryFor(oldInput, newInput);
 		}
 
 		@Override
 		public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
-			discardHistoryFor(oldInput);
+			discardHistoryFor(oldInput, newInput);
 		}
 
-		private void discardHistoryFor(IDocument input) {
-			HistoryTracker<EditPosition> positionHistory = TextEditorPlugin.getDefault().getEditPositionHistory();
-			if (input != null && !positionHistory.isEmpty()) {
-				for (int i = 0; i < positionHistory.getSize(); i++)
-					input.removePosition(positionHistory.browseBackward().getPosition());
+		private void discardHistoryFor(IDocument oldInput, IDocument newInput) {
+			// Only discard history from document if it is replaced by other real document,
+			// don't care otherwise
+			if (oldInput == null || newInput == null) {
+				return;
 			}
-
+			HistoryTracker<EditPosition> positionHistory = TextEditorPlugin.getDefault().getEditPositionHistory();
+			if (!positionHistory.isEmpty()) {
+				Stream<EditPosition> rawHistory = positionHistory.rawHistory();
+				rawHistory.forEach(p -> oldInput.removePosition(p.getPosition()));
+			}
 		}
 	}
 

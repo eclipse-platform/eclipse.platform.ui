@@ -15,6 +15,9 @@
 package org.eclipse.ui.internal.texteditor;
 
 import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Ari Kast
@@ -345,6 +348,33 @@ public class HistoryTracker<T> {
 	 */
 	public static interface CandidateEvaluator<T> {
 		public boolean canReplace(T a, T b);
+	}
+
+	/**
+	 * @return Stream with all non-null history elements, may be empty
+	 */
+	public Stream<T> rawHistory() {
+		return Arrays.asList(fHistory).stream().filter(x -> x != null);
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("HistoryTracker ["); //$NON-NLS-1$
+		builder.append("history="); //$NON-NLS-1$
+		builder.append(rawHistory().map(x -> x.toString()).collect(Collectors.joining(", "))); //$NON-NLS-1$
+		builder.append(", "); //$NON-NLS-1$
+		if (fBrowsePoint != null) {
+			builder.append("browsePoint="); //$NON-NLS-1$
+			builder.append(fBrowsePoint);
+			builder.append(", "); //$NON-NLS-1$
+		}
+		builder.append("size="); //$NON-NLS-1$
+		builder.append(fSize);
+		builder.append(", circular="); //$NON-NLS-1$
+		builder.append(fUseCircularNavigation);
+		builder.append("]"); //$NON-NLS-1$
+		return builder.toString();
 	}
 
 	/**
