@@ -674,7 +674,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	private VertexOrder<IProject> computeFullProjectOrder() {
 		// determine the full set of accessible projects in the workspace
 		// order the set in descending alphabetical order of project name
-		SortedSet<IProject> allAccessibleProjects = new TreeSet<>((px, py) -> py.getName().compareTo(px.getName()));
+		SortedSet<IProject> allAccessibleProjects = new TreeSet<>(Comparator.comparing(IProject::getName).reversed());
 		IProject[] allProjects = getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 		// List<IProject[]> edges
 		List<IProject[]> edges = new ArrayList<>(allProjects.length);
