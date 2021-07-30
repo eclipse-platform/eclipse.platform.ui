@@ -16,6 +16,7 @@ package org.eclipse.debug.internal.ui.views.breakpoints;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -117,7 +118,7 @@ public class BreakpointOrganizerManager {
 			Collection<IBreakpointOrganizer> collection = fOrganizers.values();
 			fSorted = new ArrayList<>();
 			fSorted.addAll(collection);
-			Collections.sort(fSorted, (o1, o2) -> o1.getLabel().compareTo(o2.getLabel()));
+			Collections.sort(fSorted, Comparator.comparing(IBreakpointOrganizer::getLabel));
 		}
 		return fSorted.toArray(new IBreakpointOrganizer[fSorted.size()]);
 	}
