@@ -155,8 +155,8 @@ public class ListSelectionDialog extends SelectionDialog {
 		private Object[] initialSelections;
 		private String title;
 		private String message;
-		private String okButtonLabelWhenNoSelection;
-		private String okButtonLabelWhenAnySelection;
+		private String okButtonText;
+		private String okButtonTextWhenNoSelection;
 		private boolean canCancel = true;
 		private boolean asSheet = false;
 		private String checkboxText;
@@ -249,7 +249,7 @@ public class ListSelectionDialog extends SelectionDialog {
 		 * @see #okButtonTextWhenNoSelection(String)
 		 */
 		public Builder okButtonText(String text) {
-			this.okButtonLabelWhenAnySelection = text;
+			this.okButtonText = text;
 			return this;
 		}
 
@@ -265,7 +265,7 @@ public class ListSelectionDialog extends SelectionDialog {
 		 * @see #okButtonText(String)
 		 */
 		public Builder okButtonTextWhenNoSelection(String text) {
-			this.okButtonLabelWhenNoSelection = text;
+			this.okButtonTextWhenNoSelection = text;
 			return this;
 		}
 
@@ -332,9 +332,8 @@ public class ListSelectionDialog extends SelectionDialog {
 		public ListSelectionDialog create(Shell parentShell) {
 			ListSelectionDialog dialog = new ListSelectionDialog(parentShell, input,
 					contentProvider == null ? ArrayContentProvider.getInstance() : contentProvider,
-					labelProvider == null ? new LabelProvider() : labelProvider, message,
-					okButtonLabelWhenNoSelection, okButtonLabelWhenAnySelection, canCancel,
-					checkboxText);
+					labelProvider == null ? new LabelProvider() : labelProvider, message, okButtonText,
+					okButtonTextWhenNoSelection, canCancel, checkboxText);
 			int shellStyle = dialog.getShellStyle();
 			if (!canCancel) {
 				shellStyle &= ~SWT.CLOSE;
