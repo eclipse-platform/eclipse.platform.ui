@@ -239,7 +239,7 @@ public final class InternalPlatform {
 		Bundle[] results = matchingBundleCapabilities.stream().map(c -> c.getRevision().getBundle())
 				// Remove all the bundles that are installed or uninstalled
 				.filter(bundle -> (bundle.getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0)
-				.sorted((b1, b2) -> b2.getVersion().compareTo(b1.getVersion())) // highest version first
+				.sorted(Comparator.comparing(Bundle::getVersion).reversed()) // highest version first
 				.toArray(Bundle[]::new);
 
 		return results.length > 0 ? results : null;
