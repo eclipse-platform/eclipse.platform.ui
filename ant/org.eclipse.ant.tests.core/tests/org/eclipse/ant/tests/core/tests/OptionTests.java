@@ -37,8 +37,8 @@ public class OptionTests extends AbstractAntTest {
 
 	protected static final String UNKNOWN_ARG = "Unknown argument: "; //$NON-NLS-1$
 	protected static final String START_OF_HELP = "ant [options] [target [target2 [target3] ...]]"; //$NON-NLS-1$
-	protected static final String VERSION = "Apache Ant(TM) version 1.10.10"; //$NON-NLS-1$
-	protected static final String PLUGIN_VERSION = "org.apache.ant_1.10.10"; //$NON-NLS-1$
+	protected static final String VERSION = "Apache Ant(TM) version 1.10.11"; //$NON-NLS-1$
+	protected static final String PLUGIN_VERSION = "org.apache.ant_1.10.11"; //$NON-NLS-1$
 
 	/**
 	 * Tests the "-help" option
