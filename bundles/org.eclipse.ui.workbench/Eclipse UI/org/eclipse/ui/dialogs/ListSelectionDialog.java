@@ -479,9 +479,6 @@ public class ListSelectionDialog extends SelectionDialog {
 	 * @return the current or, if the dialog has been closed, the last value of the
 	 *         optional check box; {@code false} when there is no optional check box
 	 *         and no default value has been set
-	 * @see #ListSelectionDialog(Shell, Object, IStructuredContentProvider,
-	 *      ILabelProvider, String, String, String, String, boolean, boolean,
-	 *      String, boolean)
 	 * @since 3.123
 	 */
 	public boolean getCheckboxValue() {
