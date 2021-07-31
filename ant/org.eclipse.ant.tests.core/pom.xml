@@ -20,8 +20,37 @@
   <groupId>org.eclipse.ant</groupId>
   <artifactId>org.eclipse.ant.tests.core</artifactId>
   <version>3.6.100-SNAPSHOT</version>
-  <packaging>eclipse-plugin</packaging>
+  <packaging>eclipse-test-plugin</packaging>
   <properties>
     <code.ignoredWarnings>${tests.ignoredWarnings}</code.ignoredWarnings>
   </properties>
+  <build>
+  	<plugins>
+  	    <plugin>
+			<groupId>org.eclipse.tycho</groupId>
+			<artifactId>target-platform-configuration</artifactId>
+			<configuration>
+				<dependency-resolution>
+					<extraRequirements>
+						<requirement>
+							<type>eclipse-plugin</type>
+							<id>org.eclipse.pde.core</id>
+							<versionRange>0.0.0</versionRange>
+						</requirement>
+					</extraRequirements>
+				</dependency-resolution>
+			</configuration>
+		</plugin>
+  		<plugin>
+  			<groupId>org.eclipse.tycho</groupId>
+  			<artifactId>tycho-surefire-plugin</artifactId>
+			<configuration>
+				<testClass>org.eclipse.ant.tests.core.AutomatedSuite</testClass>
+				<testClassesDirectory>target/anttestscore.jar-classes</testClassesDirectory>
+				<useUIHarness>true</useUIHarness>
+				<useUIThread>true</useUIThread>
+			</configuration>
+  		</plugin>
+  	</plugins>
+  </build>
 </project>

@@ -23,6 +23,7 @@ import java.util.Enumeration;
 
 public class AntClassLoader extends URLClassLoader {
 
+	private static final String CORE_TESTS_SUPPORT_PREFIX = "org.eclipse.ant.tests.core.support"; //$NON-NLS-1$
 	private static final String ANT_PACKAGES_PREFIX = "org.apache.tools"; //$NON-NLS-1$
 	private static final String ANT_URL_PREFIX = "org/apache/tools"; //$NON-NLS-1$
 
@@ -42,7 +43,7 @@ public class AntClassLoader extends URLClassLoader {
 		Class<?> result = null;
 		// check whether to load the Apache Ant classes from the plug-in class loaders
 		// or to only load from the URLs specified from the Ant runtime classpath preferences setting
-		if (fAllowPluginLoading || !(name.startsWith(ANT_PACKAGES_PREFIX))) {
+		if (fAllowPluginLoading || !(name.startsWith(ANT_PACKAGES_PREFIX) || name.startsWith(CORE_TESTS_SUPPORT_PREFIX))) {
 			result = loadClassPlugins(name);
 		}
 
