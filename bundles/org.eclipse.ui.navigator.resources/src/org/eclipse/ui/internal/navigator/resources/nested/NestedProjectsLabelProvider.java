@@ -110,9 +110,16 @@ public class NestedProjectsLabelProvider extends ResourceExtensionLabelProvider 
 		}
 		IProject project = (IProject)element;
 		IPath location = project.getLocation();
-		if (location != null && !location.lastSegment().equals(project.getName())) {
+		if (location == null) {
+			return input;
+		}
+		String lastSegment = location.lastSegment();
+		if (lastSegment == null) {
+			return input;
+		}
+		if (!lastSegment.equals(project.getName())) {
 			return NLS.bind(WorkbenchNavigatorMessages.NestedProjectLabelProvider_nestedProjectLabel, input,
-					location.lastSegment());
+					lastSegment);
 		}
 		return input;
 	}
