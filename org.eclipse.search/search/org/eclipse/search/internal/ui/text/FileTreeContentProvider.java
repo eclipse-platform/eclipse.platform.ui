@@ -194,27 +194,35 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 
 	@Override
 	public synchronized void elementsChanged(Object[] updatedElements) {
-		for (Object updatedElement : updatedElements) {
-			if (!(updatedElement instanceof LineElement)) {
-				// change events to elements are reported in file search
-				if (fResult.getMatchCount(updatedElement) > 0) {
-					insert(updatedElement, true);
-				} else {
-					remove(updatedElement, true);
-				}
-			} else {
-				// change events to line elements are reported in text search
-				LineElement lineElement = (LineElement) updatedElement;
-				int nMatches= lineElement.getNumberOfMatches(fResult);
-				if (nMatches > 0) {
-					if (hasChild(lineElement.getParent(), lineElement)) {
-						fTreeViewer.update(new Object[] { lineElement, lineElement.getParent() }, null);
+		boolean singleElement = updatedElements.length == 1;
+		try {
+			for (Object updatedElement : updatedElements) {
+				if (!(updatedElement instanceof LineElement)) {
+					// change events to elements are reported in file search
+					if (fResult.getMatchCount(updatedElement) > 0) {
+						insert(updatedElement, singleElement);
 					} else {
-						insert(lineElement, true);
+						remove(updatedElement, singleElement);
 					}
 				} else {
-					remove(lineElement, true);
+					// change events to line elements are reported in text
+					// search
+					LineElement lineElement = (LineElement) updatedElement;
+					int nMatches = lineElement.getNumberOfMatches(fResult);
+					if (nMatches > 0) {
+						if (singleElement && hasChild(lineElement.getParent(), lineElement)) {
+							fTreeViewer.update(new Object[] { lineElement, lineElement.getParent() }, null);
+						} else {
+							insert(lineElement, singleElement);
+						}
+					} else {
+						remove(lineElement, singleElement);
+					}
 				}
+			}
+		} finally {
+			if (updatedElements.length > 0 && !singleElement) {
+				fTreeViewer.refresh();
 			}
 		}
 	}
