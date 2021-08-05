@@ -292,24 +292,25 @@ public class ReplaceRefactoring extends Refactoring {
 	private boolean isMatchToBeIncluded(FileMatch match) {
 		IFile file= match.getFile();
 		URI uri= file.getLocationURI();
-		if (uri == null)
+		if (uri == null) {
 			return true;
+		}
+		if (file.equals(fAlreadyCollected.get(uri))) {
+			return true; // another FileMatch for an IFile which already had
+							// matches
+		}
 
 		for (URI uri2 : fAlreadyCollected.keySet()) {
 			if (URIUtil.equals(uri2, uri)) {
-				if (file.equals(fAlreadyCollected.get(uri)))
-					return true; // another FileMatch for an IFile which already had matches
-
-				if (fIgnoredMatches == null)
+				if (fIgnoredMatches == null) {
 					fIgnoredMatches= new HashMap<>();
-
+				}
 				ArrayList<FileMatch> matches= fIgnoredMatches.get(uri);
 				if (matches == null) {
 					matches= new ArrayList<>();
 					fIgnoredMatches.put(uri, matches);
 				}
 				matches.add(match);
-
 				return false;
 			}
 		}
