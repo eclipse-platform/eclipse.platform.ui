@@ -34,6 +34,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -211,13 +212,17 @@ public class ReplaceRefactoring extends Refactoring {
 		fMatches.clear();
 
 		if (fSelection != null) {
+			SubMonitor progress = SubMonitor.convert(pm);
+			// "Unknown" progress, because selected elements can be containers
+			progress.setWorkRemaining(100_000);
 			for (Object element : fSelection) {
-				collectMatches(element);
+				collectMatches(element, progress);
 			}
 		} else {
 			Object[] elements= fResult.getElements();
+			SubMonitor progress = SubMonitor.convert(pm, elements.length);
 			for (Object element : elements) {
-				collectMatches(element);
+				collectMatches(element, progress.split(1));
 			}
 		}
 		if (!hasMatches()) {
@@ -226,7 +231,8 @@ public class ReplaceRefactoring extends Refactoring {
 		return new RefactoringStatus();
 	}
 
-	private void collectMatches(Object object) throws CoreException {
+	private void collectMatches(Object object, SubMonitor progress) throws CoreException {
+		progress.checkCanceled();
 		if (object instanceof LineElement) {
 			LineElement lineElement= (LineElement) object;
 			FileMatch[] matches= lineElement.getMatches(fResult);
@@ -239,7 +245,7 @@ public class ReplaceRefactoring extends Refactoring {
 			IContainer container= (IContainer) object;
 			IResource[] members= container.members();
 			for (IResource member : members) {
-				collectMatches(member);
+				collectMatches(member, progress);
 			}
 		} else if (object instanceof IFile) {
 			Match[] matches= fResult.getMatches(object);
@@ -256,6 +262,7 @@ public class ReplaceRefactoring extends Refactoring {
 				}
 			}
 		}
+		progress.worked(1);
 	}
 
 	public int getNumberOfFiles() {
@@ -345,11 +352,13 @@ public class ReplaceRefactoring extends Refactoring {
 				return fCollator.compare(p1, p2);
 			}
 		});
-		checkFilesToBeChanged(allFiles, resultingStatus);
+		int workSize = allFiles.length;
+		SubMonitor progress = SubMonitor.convert(pm, workSize * 2);
+		checkFilesToBeChanged(allFiles, resultingStatus, progress.split(workSize));
 		if (resultingStatus.hasFatalError()) {
 			return resultingStatus;
 		}
-
+		progress.setWorkRemaining(workSize);
 		CompositeChange compositeChange= new CompositeChange(SearchMessages.ReplaceRefactoring_composite_change_name);
 		compositeChange.markAsSynthetic();
 
@@ -357,10 +366,12 @@ public class ReplaceRefactoring extends Refactoring {
 		boolean hasChanges= false;
 		try {
 			for (IFile file : allFiles) {
+				progress.checkCanceled();
 				Set<FileMatch> bucket= fMatches.get(file);
 				if (!bucket.isEmpty()) {
 					try {
-						TextChange change= createFileChange(file, pattern, bucket, resultingStatus, matchGroups);
+						TextChange change = createFileChange(file, pattern, bucket, resultingStatus, matchGroups,
+								progress);
 						if (change != null) {
 							compositeChange.add(change);
 							hasChanges= true;
@@ -370,6 +381,7 @@ public class ReplaceRefactoring extends Refactoring {
 						return RefactoringStatus.createFatalErrorStatus(message);
 					}
 				}
+				progress.worked(1);
 			}
 		} catch (PatternSyntaxException e) {
 			String message= Messages.format(SearchMessages.ReplaceRefactoring_error_replacement_expression, e.getLocalizedMessage());
@@ -385,9 +397,11 @@ public class ReplaceRefactoring extends Refactoring {
 		return resultingStatus;
 	}
 
-	private void checkFilesToBeChanged(IFile[] filesToBeChanged, RefactoringStatus resultingStatus) throws CoreException {
+	private void checkFilesToBeChanged(IFile[] filesToBeChanged, RefactoringStatus resultingStatus, SubMonitor pm)
+			throws CoreException {
 		ArrayList<IFile> readOnly= new ArrayList<>();
 		for (IFile file : filesToBeChanged) {
+			pm.checkCanceled();
 			if (file.isReadOnly())
 				readOnly.add(file);
 		}
@@ -404,7 +418,9 @@ public class ReplaceRefactoring extends Refactoring {
 		resultingStatus.merge(ResourceChangeChecker.checkFilesToBeChanged(filesToBeChanged, null));
 	}
 
-	private TextChange createFileChange(IFile file, Pattern pattern, Set<FileMatch> matches, RefactoringStatus resultingStatus, Collection<MatchGroup> matchGroups) throws PatternSyntaxException, CoreException {
+	private TextChange createFileChange(IFile file, Pattern pattern, Set<FileMatch> matches,
+			RefactoringStatus resultingStatus, Collection<MatchGroup> matchGroups, SubMonitor pm)
+			throws PatternSyntaxException, CoreException {
 		PositionTracker tracker= InternalSearchUI.getInstance().getPositionTracker();
 
 		TextFileChange change= new TextFileChange(Messages.format(SearchMessages.ReplaceRefactoring_group_label_change_for_file, file.getName()), file);
@@ -422,6 +438,7 @@ public class ReplaceRefactoring extends Refactoring {
 			String lineDelimiter= TextUtilities.getDefaultLineDelimiter(document);
 
 			for (FileMatch match : matches) {
+				pm.checkCanceled();
 				int offset= match.getOffset();
 				int length= match.getLength();
 				Position currentPosition= tracker.getCurrentPosition(match);
