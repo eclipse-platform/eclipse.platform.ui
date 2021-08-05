@@ -239,7 +239,7 @@
     </iu>
     <iu id='com.yourkit.profiler.feature.group' name='Yourkit' version='0.0.0'>
         <repositories size='1'>
-            <repository location='https://www.yourkit.com/download/yjp2020_9_for_eclipse'/>
+            <repository location='https://www.yourkit.com/download/yjp2021_3_for_eclipse'/>
         </repositories>
     </iu>
     <iu id='com.sun.xml.bind' name='com.sun.xml.bind' version='0.0.0'>
