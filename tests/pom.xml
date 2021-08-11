@@ -37,6 +37,7 @@
     <module>org.eclipse.jface.tests</module>
     <module>org.eclipse.jface.tests.databinding</module>
     <module>org.eclipse.jface.tests.databinding.conformance</module>
+    <module>org.eclipse.jface.tests.notifications</module>
     <module>org.eclipse.ui.monitoring.tests</module>
     <module>org.eclipse.ui.tests</module>
     <module>org.eclipse.ui.tests.forms</module>

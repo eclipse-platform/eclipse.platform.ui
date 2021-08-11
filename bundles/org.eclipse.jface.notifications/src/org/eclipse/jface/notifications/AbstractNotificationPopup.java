@@ -49,7 +49,7 @@ import org.eclipse.swt.widgets.Shell;
  */
 public abstract class AbstractNotificationPopup extends Window {
 
-	private static final int TITLE_HEIGHT = 24;
+	static final int TITLE_HEIGHT = 24;
 
 	private static final String LABEL_NOTIFICATION = Messages.AbstractNotificationPopup_Label;
 
@@ -240,6 +240,10 @@ public abstract class AbstractNotificationPopup extends Window {
 		titleTextLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
 		titleTextLabel.setCursor(parent.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
 
+		createCloseButton(parent);
+	}
+
+	void createCloseButton(Composite parent) {
 		final Label button = new Label(parent, SWT.NONE);
 		button.setImage(CommonImages.getImage(CommonImages.NOTIFICATION_CLOSE));
 		button.addMouseTrackListener(new MouseTrackAdapter() {
