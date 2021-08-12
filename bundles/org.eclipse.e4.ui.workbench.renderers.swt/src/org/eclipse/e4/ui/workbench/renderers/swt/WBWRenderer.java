@@ -61,8 +61,6 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.ui.workbench.modeling.IWindowCloseHandler;
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.util.Util;
@@ -398,23 +396,19 @@ public class WBWRenderer extends SWTPartRenderer {
 		wbwShell.setBackgroundMode(SWT.INHERIT_DEFAULT);
 
 		Rectangle modelBounds = wbwShell.getBounds();
-		if (wbwModel instanceof EObject) {
-			EObject wbw = (EObject) wbwModel;
-			EClass wbwclass = wbw.eClass();
-			// use eIsSet rather than embed sentinel values
-			if (wbw.eIsSet(wbwclass.getEStructuralFeature("x"))) { //$NON-NLS-1$
-				modelBounds.x = wbwModel.getX();
-			}
-			if (wbw.eIsSet(wbwclass.getEStructuralFeature("y"))) { //$NON-NLS-1$
-				modelBounds.y = wbwModel.getY();
-			}
-			if (wbw.eIsSet(wbwclass.getEStructuralFeature("height"))) { //$NON-NLS-1$
-				modelBounds.height = wbwModel.getHeight();
-			}
-			if (wbw.eIsSet(wbwclass.getEStructuralFeature("width"))) { //$NON-NLS-1$
-				modelBounds.width = wbwModel.getWidth();
-			}
+		if (wbwModel.isSetX()) {
+			modelBounds.x = wbwModel.getX();
 		}
+		if (wbwModel.isSetY()) {
+			modelBounds.y = wbwModel.getY();
+		}
+		if (wbwModel.isSetHeight()) {
+			modelBounds.height = wbwModel.getHeight();
+		}
+		if (wbwModel.isSetWidth()) {
+			modelBounds.width = wbwModel.getWidth();
+		}
+
 		// Force the shell onto the display if it would be invisible otherwise
 		Display display = Display.getCurrent();
 		Monitor closestMonitor = Util.getClosestMonitor(display, Geometry.centerPoint(modelBounds));
