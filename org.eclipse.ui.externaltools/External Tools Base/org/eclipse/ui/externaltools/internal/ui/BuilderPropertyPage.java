@@ -50,9 +50,7 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -84,7 +82,6 @@ import org.eclipse.ui.externaltools.internal.launchConfigurations.IgnoreWhiteSpa
 import org.eclipse.ui.externaltools.internal.model.BuilderUtils;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
-import org.eclipse.ui.externaltools.internal.model.IPreferenceConstants;
 import org.eclipse.ui.progress.IProgressService;
 
 /**
@@ -214,15 +211,9 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			return;
 		}
 
-		boolean projectNeedsMigration= false;
 		for (ICommand command : commands) {
 			String[] version= new String[] {IExternalToolConstants.EMPTY_STRING};
 			ILaunchConfiguration config = BuilderUtils.configFromBuildCommandArgs(project, command.getArguments(), version);
-			if (BuilderCoreUtils.VERSION_2_1.equals(version[0])) {
-				// Storing the .project file of a project with 2.1 configs, will
-				// edit the file in a way that isn't backwards compatible.
-				projectNeedsMigration= true;
-			}
 			Object element= null;
 			if (config != null) {
 				if (!config.isWorkingCopy() && !config.exists()) {
@@ -250,29 +241,6 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			if (element != null) {
 				viewer.add(element);
 				viewer.setChecked(element, isEnabled(element));
-			}
-		}
-		if (projectNeedsMigration) {
-			IPreferenceStore store= ExternalToolsPlugin.getDefault().getPreferenceStore();
-			boolean prompt= store.getBoolean(IPreferenceConstants.PROMPT_FOR_PROJECT_MIGRATION);
-			boolean proceed= true;
-			if (prompt) {
-				Shell shell= getShell();
-				if (shell == null) {
-					return;
-				}
-				MessageDialogWithToggle dialog= MessageDialogWithToggle.openYesNoQuestion(shell, ExternalToolsUIMessages.BuilderPropertyPage_0, ExternalToolsUIMessages.BuilderPropertyPage_1, ExternalToolsUIMessages.BuilderPropertyPage_2, false, null, null);
-				proceed= dialog.getReturnCode() == IDialogConstants.YES_ID;
-				store.setValue(IPreferenceConstants.PROMPT_FOR_PROJECT_MIGRATION, !dialog.getToggleState());
-			}
-			if (!proceed) {
-				// Open the page read-only
-				viewer.getTable().setEnabled(false);
-				downButton.setEnabled(false);
-				editButton.setEnabled(false);
-				importButton.setEnabled(false);
-				newButton.setEnabled(false);
-				removeButton.setEnabled(false);
 			}
 		}
 	}
@@ -693,19 +661,6 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			Object data = selection.getData();
 			if (data instanceof ILaunchConfiguration) {
 				ILaunchConfiguration config= (ILaunchConfiguration) data;
-				if (BuilderUtils.isUnmigratedConfig(config)) {
-					if (!shouldProceedWithMigration()) {
-						return;
-					}
-					try {
-						config= BuilderUtils.migrateBuilderConfiguration(getInputProject(), (ILaunchConfigurationWorkingCopy) config);
-					} catch (CoreException e) {
-						handleException(e);
-						return;
-					}
-					// Replace the working copy in the table with the migrated configuration
-					selection.setData(config);
-				}
 				userHasMadeChanges= true;
 				boolean wasAutobuilding= ResourcesPlugin.getWorkspace().getDescription().isAutoBuilding();
 				try {
@@ -736,32 +691,6 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		return Window.OK == dialog.open();
 	}
 
-	/**
-	 * Prompts the user to proceed with the migration of a project builder from
-	 * the old format to the new, launch configuration-based, format and returns
-	 * whether or not the user wishes to proceed with the migration.
-	 *
-	 * @return boolean whether or not the user wishes to proceed with migration
-	 */
-	private boolean shouldProceedWithMigration() {
-		if (!ExternalToolsPlugin.getDefault().getPreferenceStore().getBoolean(IPreferenceConstants.PROMPT_FOR_TOOL_MIGRATION)) {
-			// User has asked not to be prompted
-			return true;
-		}
-		Shell shell= getShell();
-		if (shell == null) {
-			return false;
-		}
-		// Warn the user that editing an old config will cause storage migration.
-		MessageDialogWithToggle dialog= MessageDialogWithToggle.openYesNoQuestion(getShell(),
-			ExternalToolsUIMessages.BuilderPropertyPage_Migrate_project_builder_10,
-			ExternalToolsUIMessages.BuilderPropertyPage_Not_Support,
-			ExternalToolsUIMessages.BuilderPropertyPage_Prompt,
-			false,
-			ExternalToolsPlugin.getDefault().getPreferenceStore(),
-			IPreferenceConstants.PROMPT_FOR_TOOL_MIGRATION);
-		return dialog.getReturnCode() == IDialogConstants.YES_ID;
-	}
 
 	/**
 	 * Handles unexpected internal exceptions
@@ -988,17 +917,17 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 					}
 				} catch (CoreException e1) {
 				}
-
-				if (!BuilderUtils.isUnmigratedConfig(config) && (config instanceof ILaunchConfigurationWorkingCopy)) {
-					ILaunchConfigurationWorkingCopy workingCopy= ((ILaunchConfigurationWorkingCopy) config);
+				if (config instanceof ILaunchConfigurationWorkingCopy) {
+					ILaunchConfigurationWorkingCopy workingCopy = ((ILaunchConfigurationWorkingCopy) config);
 					// Save any changes to the config (such as enable/disable)
 					if (workingCopy.isDirty()) {
 						try {
 							workingCopy.doSave();
 						} catch (CoreException e) {
-							Shell shell= getShell();
+							Shell shell = getShell();
 							if (shell != null) {
-								MessageDialog.openError(shell, ExternalToolsUIMessages.BuilderPropertyPage_39, NLS.bind(ExternalToolsUIMessages.BuilderPropertyPage_40, new String[] {workingCopy.getName()}));
+								MessageDialog.openError(shell, ExternalToolsUIMessages.BuilderPropertyPage_39, NLS.bind(ExternalToolsUIMessages.BuilderPropertyPage_40, new String[] {
+										workingCopy.getName() }));
 							}
 						}
 					}
