@@ -462,34 +462,6 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	}
 
 	/**
-	 * Tests the
-	 * {@link BuilderCoreUtils#migrateBuilderConfiguration(org.eclipse.core.resources.IProject, org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)}
-	 * method
-	 * 
-	 * @throws Exception
-	 */
-	public void testMigrateBuilderConfiguration1() throws Exception {
-		ILaunchConfigurationWorkingCopy copy = createExternalToolBuilderWorkingCopy(getProject(), "testMigrateBuilderConfiguration1", null); //$NON-NLS-1$
-		ILaunchConfiguration config = BuilderCoreUtils.migrateBuilderConfiguration(getProject(), copy);
-		assertNotNull("The un-saved working copy should have been migrated", config); //$NON-NLS-1$
-		assertTrue("The name of the migrated configuration should be testMigrateBuilderConfiguration1", config.getName().equals("testMigrateBuilderConfiguration1")); //$NON-NLS-1$ //$NON-NLS-2$
-	}
-
-	/**
-	 * Tests the
-	 * {@link BuilderCoreUtils#migrateBuilderConfiguration(org.eclipse.core.resources.IProject, org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)}
-	 * method
-	 * 
-	 * @throws Exception
-	 */
-	public void testMigrateBuilderConfiguration2() throws Exception {
-		ILaunchConfigurationWorkingCopy copy = createExternalToolBuilderWorkingCopy(getProject(), "testMigra/teBuilderConfi/guration2", null); //$NON-NLS-1$
-		ILaunchConfiguration config = BuilderCoreUtils.migrateBuilderConfiguration(getProject(), copy);
-		assertNotNull("The un-saved working copy should have been migrated", config); //$NON-NLS-1$
-		assertTrue("The name of the migrated configuration should be testMigra.teBuilderConfi.guration2", config.getName().equals("testMigra.teBuilderConfi.guration2")); //$NON-NLS-1$ //$NON-NLS-2$
-	}
-
-	/**
 	 * Tests the {@link BuilderCoreUtils#buildTypesToArray(String)} method
 	 * 
 	 * @throws Exception
