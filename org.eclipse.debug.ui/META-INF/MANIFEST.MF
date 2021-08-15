@@ -49,6 +49,7 @@ Export-Package: org.eclipse.debug.internal.ui;
  org.eclipse.debug.internal.ui.viewers.model;x-friends:="org.eclipse.debug.tests,org.eclipse.jdt.debug.tests,org.eclipse.debug.examples.ui",
  org.eclipse.debug.internal.ui.viewers.model.provisional;
   x-friends:="org.eclipse.cdt.dsf.gdb.ui,
+ org.eclipse.debug.internal.ui.views.memory.renderings;x-internal:=true,
    org.eclipse.cdt.dsf.ui,
    org.eclipse.debug.examples.ui,
    org.eclipse.debug.tests,

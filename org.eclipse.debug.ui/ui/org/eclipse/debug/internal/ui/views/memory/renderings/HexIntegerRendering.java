@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     David Pickens - [Memory View] Endian in hex view and ASCII view doesn't work
+ *     John Dallaway - Accommodate addressableSize != 1 (bug 575413)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.memory.renderings;
 
@@ -39,9 +40,10 @@ public class HexIntegerRendering extends AbstractIntegerRendering {
 		String paddedStr = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_PADDED_STR);
 
 		if (endianess == RenderingsUtil.LITTLE_ENDIAN) {
+			int addressableSize = getAddressableSize();
 			MemoryByte[] swapped = new MemoryByte[data.length];
-			for (int i = 0; i < data.length; i++){
-				swapped[data.length-i-1] = data[i];
+			for (int i = 0; i < data.length; i += addressableSize) {
+				System.arraycopy(data, i, swapped, data.length - i - addressableSize, addressableSize);
 			}
 			data = swapped;
 		}
@@ -82,9 +84,10 @@ public class HexIntegerRendering extends AbstractIntegerRendering {
 
 
 		if (endianess == RenderingsUtil.LITTLE_ENDIAN) {
+			int addressableSize = getAddressableSize();
 			byte[] swapped = new byte[bytes.length];
-			for (int i = 0; i < bytes.length; i++){
-				swapped[bytes.length-i-1] = bytes[i];
+			for (int i = 0; i < bytes.length; i += addressableSize) {
+				System.arraycopy(bytes, i, swapped, bytes.length - i - addressableSize, addressableSize);
 			}
 			bytes = swapped;
 		}
