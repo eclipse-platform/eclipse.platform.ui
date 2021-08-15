@@ -22,7 +22,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.SelectionProviderView;
 import org.eclipse.ui.tests.harness.util.UITestCase;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -100,8 +99,7 @@ public class ISelectionServiceTest extends UITestCase implements
 	 * Tests getActivePage.
 	 */
 	@Test
-	@Ignore
-	public void XXXtestGetSelection() throws Throwable {
+	public void testGetSelection() throws Throwable {
 		// From Javadoc: "Returns the current selection in the active part.
 		// If the selection in the active part is <em>undefined</em> (the
 		// active part has no selection provider) the result will be
