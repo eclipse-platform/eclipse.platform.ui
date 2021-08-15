@@ -35,7 +35,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorPart;
@@ -297,16 +296,9 @@ public class PropertySheet extends PageBookView
 			return null;
 		}
 
-		// Only if a part is a selection provider, it could have properties for the
-		// default PropertySheetPage. Every part gets its own PropertySheetPage
-		ISelectionProvider provider = part.getSite().getSelectionProvider();
-		if (provider != null) {
-			IPage dPage = createPropertySheetPage(getPageBook());
-			return new PageRec(part, dPage);
-		}
-
-		// No properties to be shown, use the default page
-		return null;
+		// Every part gets its own PropertySheetPage
+		IPage dPage = createPropertySheetPage(getPageBook());
+		return new PageRec(part, dPage);
 	}
 
 	/**
