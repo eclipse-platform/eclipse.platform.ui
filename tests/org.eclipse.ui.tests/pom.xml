@@ -37,16 +37,6 @@
         <useUIHarness>true</useUIHarness>
         <useUIThread>true</useUIThread>
           <dependencies>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>org.eclipse.equinox.event</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>org.eclipse.osgi.compatibility.state</artifactId>
-              <version>0.0.0</version>
-            </dependency>
           <dependency>
             <type>eclipse-plugin</type>
             <artifactId>org.eclipse.jdt.ui</artifactId>

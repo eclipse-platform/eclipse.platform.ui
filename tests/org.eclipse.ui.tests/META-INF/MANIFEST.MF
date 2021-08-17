@@ -55,4 +55,9 @@ Eclipse-AutoStart: true
 Export-Package: org.eclipse.ui.tests.api,
  org.eclipse.ui.tests.menus
 Bundle-RequiredExecutionEnvironment: JavaSE-11
+Require-Capability: osgi.extender;
+  filter:="(&(osgi.extender=osgi.component)(version>=1.2)(!(version>=2.0)))",
+ osgi.service;
+  filter:="(objectClass=org.osgi.service.event.EventAdmin)";
+  effective:="active"
 Automatic-Module-Name: org.eclipse.ui.tests
