@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.PlainMessageDialog;
 import org.eclipse.jface.dialogs.PlainMessageDialog.Builder;
 import org.eclipse.swt.widgets.Button;
@@ -60,9 +61,18 @@ public class PlainMessageDialogTest {
 		Button middle = (Button) buttonComposite.getChildren()[1];
 		Button right = (Button) buttonComposite.getChildren()[2];
 
-		assertEquals("No", left.getText());
-		assertEquals("Cancel", middle.getText());
-		assertEquals("Yes", right.getText());
+		// default button on windows is as declared
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			assertEquals("Yes", left.getText());
+			assertEquals("No", middle.getText());
+			assertEquals("Cancel", right.getText());
+		} else {
+			// on Linux / Mac default button is moved to the right
+			assertEquals("No", left.getText());
+			assertEquals("Cancel", middle.getText());
+			assertEquals("Yes", right.getText());
+		}
+
 	}
 
 	@Test
@@ -76,8 +86,16 @@ public class PlainMessageDialogTest {
 		Button right = (Button) buttonComposite.getChildren()[2];
 
 		assertEquals("Yes", left.getText());
-		assertEquals("Cancel", middle.getText());
-		assertEquals("No", right.getText());
+
+		// default button on windows is as declared
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			assertEquals("No", middle.getText());
+			assertEquals("Cancel", right.getText());
+		} else {
+			// on Linux / Mac default button is moved to the right
+			assertEquals("Cancel", middle.getText());
+			assertEquals("No", right.getText());
+		}
 	}
 
 	private void createAndOpenDialog() {
