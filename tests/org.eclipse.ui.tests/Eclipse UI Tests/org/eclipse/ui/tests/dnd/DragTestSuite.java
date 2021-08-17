@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -60,7 +60,7 @@ public class DragTestSuite extends AutoTestSuite {
 	public DragTestSuite() {
 		super(Platform.find(TestPlugin.getDefault().getBundle(), new Path("data/dragtests.xml")));
 
-		String resNav = IPageLayout.ID_RES_NAV;
+		String resNav = IPageLayout.ID_PROJECT_EXPLORER;
 		String probView = IPageLayout.ID_PROBLEM_VIEW;
 
 		// Drag sources for views
@@ -140,7 +140,7 @@ public class DragTestSuite extends AutoTestSuite {
 	 */
 	private TestDropLocation[] getViewDropTargets(IWorkbenchWindowProvider dragSource) {
 
-		String resNav = IPageLayout.ID_RES_NAV;
+		String resNav = IPageLayout.ID_PROJECT_EXPLORER;
 		String probView = IPageLayout.ID_PROBLEM_VIEW;
 
 		return new TestDropLocation[] {
@@ -194,7 +194,7 @@ public class DragTestSuite extends AutoTestSuite {
 	}
 
 	private TestDropLocation[] getEditorDropTargets(IWorkbenchWindowProvider originatingWindow) {
-		String resNav = IPageLayout.ID_RES_NAV;
+		String resNav = IPageLayout.ID_PROJECT_EXPLORER;
 		// Drop targets that will only be tested for editors
 		return new TestDropLocation[] {
 		// A view

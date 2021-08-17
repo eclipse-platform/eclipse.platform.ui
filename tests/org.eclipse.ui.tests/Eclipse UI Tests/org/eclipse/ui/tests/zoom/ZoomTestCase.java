@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -38,8 +38,6 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Assert;
 
 public class ZoomTestCase extends UITestCase {
-//    protected static final String view1Id = IPageLayout.ID_RES_NAV;
-//
 //    protected static final String view2Id = IPageLayout.ID_OUTLINE;
 
 	protected WorkbenchWindow window;
@@ -98,7 +96,6 @@ public class ZoomTestCase extends UITestCase {
 
 		stackedView1 = findView(ZoomPerspectiveFactory.STACK1_VIEW1);
 		stackedView2 = findView(ZoomPerspectiveFactory.STACK1_VIEW2);
-		unstackedView = findView(ZoomPerspectiveFactory.UNSTACKED_VIEW1);
 //        fastView = findView(ZoomPerspectiveFactory.FASTVIEW1);
 	}
 

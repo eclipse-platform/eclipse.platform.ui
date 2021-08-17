@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 Andrei Loskutov.
+ * Copyright (c) 2009, 2021 Andrei Loskutov.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -46,7 +46,6 @@ public class PropertySheetPerspectiveFactory2 implements IPerspectiveFactory {
 		bottomRight.addPlaceholder(NonRestorableView.ID);
 		bottomRight.addPlaceholder(SaveableMockViewPart.ID);
 		bottomRight.addPlaceholder(IPageLayout.ID_PROJECT_EXPLORER);
-		bottomRight.addPlaceholder(IPageLayout.ID_RES_NAV);
 	}
 
 	public static void applyPerspective(IWorkbenchPage activePage){

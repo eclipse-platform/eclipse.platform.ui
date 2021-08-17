@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2017 IBM Corporation and others.
+ * Copyright (c) 2004, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -230,7 +230,7 @@ public class LeakTests extends UITestCase {
 		proj = FileUtil.createProject("projectToSelect");
 
 		// show the 'Navigator'
-		IViewPart navigator = fActivePage.showView(IPageLayout.ID_RES_NAV);
+		IViewPart navigator = fActivePage.showView(IPageLayout.ID_PROJECT_EXPLORER);
 		// show the 'Properties' view
 		IViewPart propertiesView = fActivePage.showView(IPageLayout.ID_PROP_SHEET);
 

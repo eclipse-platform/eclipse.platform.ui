@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -53,7 +53,7 @@ public class ShowResourceByPathHandler extends AbstractHandler {
 		}
 
 		try {
-			IViewPart view = activePage.showView(IPageLayout.ID_RES_NAV);
+			IViewPart view = activePage.showView(IPageLayout.ID_PROJECT_EXPLORER);
 			if (view instanceof ISetSelectionTarget) {
 				ISelection selection = new StructuredSelection(resource);
 				((ISetSelectionTarget) view).selectReveal(selection);

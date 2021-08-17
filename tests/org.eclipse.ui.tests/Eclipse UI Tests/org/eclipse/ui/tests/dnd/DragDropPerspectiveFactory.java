@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -40,7 +40,7 @@ public class DragDropPerspectiveFactory implements IPerspectiveFactory {
 		folder.addView(IPageLayout.ID_PROBLEM_VIEW);
 		folder.addView(IPageLayout.ID_PROP_SHEET);
 
-		layout.addView(IPageLayout.ID_RES_NAV, IPageLayout.LEFT, 0.5f,
+		layout.addView(IPageLayout.ID_PROBLEM_VIEW, IPageLayout.LEFT, 0.5f,
 				IPageLayout.ID_EDITOR_AREA);
 
 		// Extra stacks and views that will be shown and detached during the 'Detached Window' tests

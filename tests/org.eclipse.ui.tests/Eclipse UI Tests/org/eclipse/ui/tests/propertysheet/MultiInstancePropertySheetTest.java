@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 Versant Corp. and others.
+ * Copyright (c) 2008, 2021 Versant Corp. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -520,7 +520,7 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	 */
 	@Test
 	public void testBug278514NormalProperties() throws Exception {
-		testBug278514(IPageLayout.ID_RES_NAV, true);
+		testBug278514(IPageLayout.ID_PROGRESS_VIEW, true);
 	}
 
 	/**
