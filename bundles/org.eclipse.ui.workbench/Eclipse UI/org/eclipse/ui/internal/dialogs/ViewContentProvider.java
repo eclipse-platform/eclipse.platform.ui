@@ -183,11 +183,10 @@ public class ViewContentProvider implements ITreeContentProvider {
 	private boolean isFilteredByActivity(String elementId) {
 		IViewDescriptor[] views = viewRegistry.getViews();
 		for (IViewDescriptor descriptor : views) {
-			if (descriptor.getId().equals(elementId)) {
-				return WorkbenchActivityHelper.filterItem(descriptor);
+			if (descriptor.getId().equals(elementId) && WorkbenchActivityHelper.filterItem(descriptor)) {
+				return true;
 			}
 		}
-		// if we didn't find the view, we should list it
-		return true;
+		return false;
 	}
 }
