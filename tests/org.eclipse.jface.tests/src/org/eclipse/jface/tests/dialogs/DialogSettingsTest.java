@@ -410,12 +410,6 @@ public class DialogSettingsTest extends TestCase {
 
 	}
 
-	public void testGetSection() {
-	}
-
-	public void testGetSections() {
-	}
-
 	private interface DialogSettingsChecker {
 		void prepareAndCheckBeforeSerialization(IDialogSettings dialogSettingsToSerialize);
 
