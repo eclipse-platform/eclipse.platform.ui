@@ -30,16 +30,16 @@ import org.osgi.framework.Bundle;
  * of whether autobuild is on or off.
  */
 class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
-	private boolean avoidBuild = false;
-	private boolean buildNeeded = false;
-	private boolean forceBuild = false;
+	private volatile boolean avoidBuild;
+	private volatile boolean buildNeeded;
+	private volatile boolean forceBuild;
 	/**
 	 * Indicates that another thread tried to modify the workspace during
 	 * the autobuild.  The autobuild should be immediately rescheduled
 	 * so that it will run as soon as the next workspace modification completes.
 	 */
-	private boolean interrupted = false;
-	private boolean isAutoBuilding = false;
+	private volatile boolean interrupted;
+	private volatile boolean isAutoBuilding;
 	private volatile long lastBuild = 0L;
 	private Preferences preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
 	private final Bundle systemBundle = Platform.getBundle("org.eclipse.osgi"); //$NON-NLS-1$
