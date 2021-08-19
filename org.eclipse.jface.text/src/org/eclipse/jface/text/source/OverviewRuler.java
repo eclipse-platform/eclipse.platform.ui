@@ -815,7 +815,9 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 							gc.setLineWidth(0); // NOTE: 0 means width is 1 but with optimized performance
 							gc.drawRectangle(r);
 						}
-					} catch (BadLocationException x) {
+					} catch (BadLocationException | IllegalArgumentException x) {
+						// We don't care if the widget's content is changed since the annotation was created
+						// and do not match the annotation line/offset etc
 					}
 				}
 			}
