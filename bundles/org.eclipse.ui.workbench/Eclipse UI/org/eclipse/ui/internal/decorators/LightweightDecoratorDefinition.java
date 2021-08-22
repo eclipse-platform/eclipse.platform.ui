@@ -233,6 +233,9 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements IObj
 	 */
 	public void decorate(Object element, IDecoration decoration) {
 		try {
+			if (!isEnabled()) {
+				return;
+			}
 			// Internal decorator might be null so be prepared
 			ILightweightLabelDecorator currentDecorator = internalGetDecorator();
 			if (currentDecorator == null) {

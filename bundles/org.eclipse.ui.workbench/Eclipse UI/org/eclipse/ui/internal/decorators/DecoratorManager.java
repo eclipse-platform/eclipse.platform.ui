@@ -758,6 +758,7 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 	 * dispose() will be called on them.
 	 */
 	public void shutdown() {
+		scheduler.shutdown();
 		// Disable all of the enabled decorators
 		// so as to force a dispose of thier decorators
 		FullDecoratorDefinition[] full = getFullDefinitions();
@@ -769,7 +770,6 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 		if (lightweightManager != null) {
 			getLightweightManager().shutdown();
 		}
-		scheduler.shutdown();
 		dispose();
 	}
 
