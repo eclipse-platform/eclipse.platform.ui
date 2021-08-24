@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020 SAP SE and others.
+ * Copyright (c) 2020, 2021 SAP SE and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
 package org.eclipse.jface.text.tests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 
@@ -39,6 +40,19 @@ public class DefaultTextDoubleClickStrategyTest {
 				assertEquals(word, actualWord);
 			}
 		}
+	}
+
+	@Test
+	public void testClickAtLineEnd() throws Exception {
+		String content= "Hello world\nhow are you";
+		IDocument document= new Document(content);
+		TestSpecificDefaultTextDoubleClickStrategy doubleClickStrategy= new TestSpecificDefaultTextDoubleClickStrategy();
+		IRegion selection= doubleClickStrategy.findWord(document, 11);
+		assertNotNull("Should have selected a word", selection);
+		assertEquals("Unexpected selection", "world", document.get(selection.getOffset(), selection.getLength()));
+		selection= doubleClickStrategy.findWord(document, document.getLength());
+		assertNotNull("Should have selected a word", selection);
+		assertEquals("Unexpected selection", "you", document.get(selection.getOffset(), selection.getLength()));
 	}
 
 	private static final class TestSpecificDefaultTextDoubleClickStrategy extends DefaultTextDoubleClickStrategy {
