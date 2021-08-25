@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2013 IBM Corporation and others.
+ *  Copyright (c) 2003, 2021 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -88,7 +88,7 @@ public abstract class AbstractAntUITest extends TestCase {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name
 	 */
 	public AbstractAntUITest(String name) {
@@ -97,7 +97,7 @@ public abstract class AbstractAntUITest extends TestCase {
 
 	/**
 	 * Returns the {@link IFile} for the given build file name
-	 * 
+	 *
 	 * @param buildFileName
 	 * @return the associated {@link IFile} for the given build file name
 	 */
@@ -107,7 +107,7 @@ public abstract class AbstractAntUITest extends TestCase {
 
 	/**
 	 * Returns the {@link File} for the given build file name
-	 * 
+	 *
 	 * @param buildFileName
 	 * @return the {@link File} for the given build file name
 	 */
@@ -119,7 +119,7 @@ public abstract class AbstractAntUITest extends TestCase {
 
 	/**
 	 * When a test throws the 'try again' exception, try it again.
-	 * 
+	 *
 	 * @see junit.framework.TestCase#runBare()
 	 */
 	@Override
@@ -151,7 +151,7 @@ public abstract class AbstractAntUITest extends TestCase {
 
 	/**
 	 * Ensure the welcome screen is closed because in 4.x the debug perspective opens a giant fast-view causing issues
-	 * 
+	 *
 	 * @throws Exception
 	 * @since 3.8
 	 */
@@ -182,9 +182,9 @@ public abstract class AbstractAntUITest extends TestCase {
 
 	/**
 	 * Asserts that the testing project has been setup in the test workspace
-	 * 
+	 *
 	 * @throws Exception
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public static void assertProject() throws Exception {
@@ -226,7 +226,7 @@ public abstract class AbstractAntUITest extends TestCase {
 
 	/**
 	 * Returns the 'AntUITests' project.
-	 * 
+	 *
 	 * @return the test project
 	 */
 	protected static IProject getProject() {
@@ -235,7 +235,7 @@ public abstract class AbstractAntUITest extends TestCase {
 
 	/**
 	 * Returns the underlying {@link IDocument} for the given file name
-	 * 
+	 *
 	 * @param fileName
 	 * @return the underlying {@link IDocument} for the given file name
 	 */
@@ -254,7 +254,7 @@ public abstract class AbstractAntUITest extends TestCase {
 
 	/**
 	 * Returns the contents of the given {@link InputStream} as a {@link String}
-	 * 
+	 *
 	 * @param inputStream
 	 * @return the {@link InputStream} as a {@link String}
 	 */
@@ -274,7 +274,7 @@ public abstract class AbstractAntUITest extends TestCase {
 
 	/**
 	 * Returns the contents of the given {@link BufferedReader} as a {@link String}
-	 * 
+	 *
 	 * @param bufferedReader
 	 * @return the contents of the given {@link BufferedReader} as a {@link String}
 	 */
@@ -298,7 +298,7 @@ public abstract class AbstractAntUITest extends TestCase {
 
 	/**
 	 * Returns the contents of the given {@link BufferedReader} as a {@link String}
-	 * 
+	 *
 	 * @param bufferedReader
 	 * @return the contents of the given {@link BufferedReader} as a {@link String}
 	 */
@@ -325,7 +325,7 @@ public abstract class AbstractAntUITest extends TestCase {
 
 	/**
 	 * Returns the {@link AntModel} for the given file name
-	 * 
+	 *
 	 * @param fileName
 	 * @return the {@link AntModel} for the given file name
 	 */
@@ -345,7 +345,7 @@ public abstract class AbstractAntUITest extends TestCase {
 
 	/**
 	 * Allows the current {@link IDocument} context to be set. This method accepts <code>null</code>
-	 * 
+	 *
 	 * @param currentDocument
 	 */
 	public void setCurrentDocument(IDocument currentDocument) {
@@ -354,7 +354,7 @@ public abstract class AbstractAntUITest extends TestCase {
 
 	/**
 	 * Launches the Ant build with the build file name (no extension).
-	 * 
+	 *
 	 * @param buildFileName
 	 *            the ant build file name
 	 */
@@ -366,7 +366,7 @@ public abstract class AbstractAntUITest extends TestCase {
 
 	/**
 	 * Launches the Ant build with the build file name (no extension).
-	 * 
+	 *
 	 * @param buildFileName
 	 *            the build file
 	 * @param arguments
@@ -382,7 +382,7 @@ public abstract class AbstractAntUITest extends TestCase {
 
 	/**
 	 * Launches the Ant build in debug output mode with the build file name (no extension).
-	 * 
+	 *
 	 * @param buildFileName
 	 *            build file to launch
 	 * @return thread in which the first suspend event occurred
@@ -397,7 +397,7 @@ public abstract class AbstractAntUITest extends TestCase {
 
 	/**
 	 * Returns the launch configuration for the given build file
-	 * 
+	 *
 	 * @param buildFileName
 	 *            build file to launch
 	 * @see ProjectCreationDecorator
@@ -439,7 +439,7 @@ public abstract class AbstractAntUITest extends TestCase {
 
 	/**
 	 * Parses the given input stream with the given parser using the given handler
-	 * 
+	 *
 	 * @param stream
 	 * @param parser
 	 * @param handler
@@ -458,7 +458,7 @@ public abstract class AbstractAntUITest extends TestCase {
 
 	/**
 	 * Returns the launch manager
-	 * 
+	 *
 	 * @return launch manager
 	 */
 	public static ILaunchManager getLaunchManager() {
@@ -467,7 +467,7 @@ public abstract class AbstractAntUITest extends TestCase {
 
 	/**
 	 * Returns the 'AntUITests' project.
-	 * 
+	 *
 	 * @return the test project
 	 */
 	public static IJavaProject getJavaProject() {
@@ -476,7 +476,7 @@ public abstract class AbstractAntUITest extends TestCase {
 
 	/**
 	 * Launches the given configuration and waits for the terminated event or the length of the given timeout, whichever comes first
-	 * 
+	 *
 	 * @param config
 	 * @param timeout
 	 * @throws CoreException
@@ -495,7 +495,7 @@ public abstract class AbstractAntUITest extends TestCase {
 	/**
 	 * Launches the given configuration and waits for an event. Returns the source of the event. If the event is not received, the launch is
 	 * terminated and an exception is thrown.
-	 * 
+	 *
 	 * @param configuration
 	 *            the configuration to launch
 	 * @param waiter
@@ -528,7 +528,7 @@ public abstract class AbstractAntUITest extends TestCase {
 	/**
 	 * Returns the {@link IHyperlink} at the given offset on the given document, or <code>null</code> if there is no {@link IHyperlink} at that offset
 	 * on the document.
-	 * 
+	 *
 	 * @param offset
 	 * @param doc
 	 * @return the {@link IHyperlink} at the given offset on the given document or <code>null</code>
@@ -555,7 +555,7 @@ public abstract class AbstractAntUITest extends TestCase {
 	/**
 	 * Returns the {@link Color} at the given offset on the given document, or <code>null</code> if there is no {@link Color} at that offset on the
 	 * document.
-	 * 
+	 *
 	 * @param offset
 	 * @param document
 	 * @return the {@link Color} at the given offset on the given document or <code>null</code>
@@ -577,7 +577,7 @@ public abstract class AbstractAntUITest extends TestCase {
 	/**
 	 * This is to help in increasing the test coverage by enabling access to fields and execution of methods irrespective of their Java language
 	 * access permissions.
-	 * 
+	 *
 	 * More accessor methods can be added to this on a need basis
 	 */
 	protected static abstract class TypeProxy {
@@ -590,7 +590,7 @@ public abstract class AbstractAntUITest extends TestCase {
 
 		/**
 		 * Gets the method with the given method name and argument types.
-		 * 
+		 *
 		 * @param methodName
 		 *            the method name
 		 * @param types
@@ -602,10 +602,7 @@ public abstract class AbstractAntUITest extends TestCase {
 			try {
 				method = master.getClass().getDeclaredMethod(methodName, types);
 			}
-			catch (SecurityException e) {
-				fail();
-			}
-			catch (NoSuchMethodException ex) {
+			catch (SecurityException | NoSuchMethodException e) {
 				fail();
 			}
 			Assert.isNotNull(method);
@@ -615,7 +612,7 @@ public abstract class AbstractAntUITest extends TestCase {
 
 		/**
 		 * Invokes the given method with the given arguments.
-		 * 
+		 *
 		 * @param method
 		 *            the given method
 		 * @param arguments
@@ -626,13 +623,7 @@ public abstract class AbstractAntUITest extends TestCase {
 			try {
 				return method.invoke(master, arguments);
 			}
-			catch (IllegalArgumentException e) {
-				fail();
-			}
-			catch (InvocationTargetException e) {
-				fail();
-			}
-			catch (IllegalAccessException e) {
+			catch (IllegalArgumentException | InvocationTargetException | IllegalAccessException e) {
 				fail();
 			}
 			return null;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -130,7 +130,7 @@ public class AntRunner implements IApplication {
 			} else {
 				if (token.equals("\"")) { //$NON-NLS-1$
 					// test if we have something like -Dproperty="value"
-					if (result.size() > 0) {
+					if (!result.isEmpty()) {
 						int index = result.size() - 1;
 						String last = result.get(index);
 						if (last.charAt(last.length() - 1) == '=') {
@@ -239,8 +239,8 @@ public class AntRunner implements IApplication {
 			basicConfigure(classInternalAntRunner, runner);
 
 			// get the info for each targets
-			Method getTargets = classInternalAntRunner.getMethod("getTargets", (Class[]) null); //$NON-NLS-1$
-			Object results = getTargets.invoke(runner, (Object[]) null);
+			Method getTargets = classInternalAntRunner.getMethod("getTargets"); //$NON-NLS-1$
+			Object results = getTargets.invoke(runner);
 			// collect the info into target objects
 			List<?> infos = (List<?>) results;
 			TargetInfo[] targetInfo = new TargetInfo[infos.size()];
@@ -250,12 +250,7 @@ public class AntRunner implements IApplication {
 			}
 			return targetInfo;
 		}
-		catch (NoClassDefFoundError e) {
-			problemLoadingClass(e);
-			// not possible to reach this line
-			return new TargetInfo[0];
-		}
-		catch (ClassNotFoundException e) {
+		catch (NoClassDefFoundError | ClassNotFoundException e) {
 			problemLoadingClass(e);
 			// not possible to reach this line
 			return new TargetInfo[0];
@@ -275,12 +270,12 @@ public class AntRunner implements IApplication {
 	}
 
 	private void basicConfigure(Class<?> classInternalAntRunner, Object runner) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-		Method setBuildFileLocation = classInternalAntRunner.getMethod("setBuildFileLocation", new Class[] { String.class }); //$NON-NLS-1$
-		setBuildFileLocation.invoke(runner, new Object[] { buildFileLocation });
+		Method setBuildFileLocation = classInternalAntRunner.getMethod("setBuildFileLocation", String.class); //$NON-NLS-1$
+		setBuildFileLocation.invoke(runner, buildFileLocation);
 
 		if (antHome != null) {
-			Method setAntHome = classInternalAntRunner.getMethod("setAntHome", new Class[] { String.class }); //$NON-NLS-1$
-			setAntHome.invoke(runner, new Object[] { antHome });
+			Method setAntHome = classInternalAntRunner.getMethod("setAntHome", String.class); //$NON-NLS-1$
+			setAntHome.invoke(runner, antHome);
 		}
 
 		setProperties(runner, classInternalAntRunner);
@@ -319,8 +314,8 @@ public class AntRunner implements IApplication {
 			classInternalAntRunner = getInternalAntRunner();
 			runner = classInternalAntRunner.getConstructor().newInstance();
 			// set build file
-			Method setBuildFileLocation = classInternalAntRunner.getMethod("setBuildFileLocation", new Class[] { String.class }); //$NON-NLS-1$
-			setBuildFileLocation.invoke(runner, new Object[] { buildFileLocation });
+			Method setBuildFileLocation = classInternalAntRunner.getMethod("setBuildFileLocation", String.class); //$NON-NLS-1$
+			setBuildFileLocation.invoke(runner, buildFileLocation);
 
 			// set the custom classpath
 			if (customClasspath != null) {
@@ -330,8 +325,8 @@ public class AntRunner implements IApplication {
 
 			// add listeners
 			if (buildListeners != null) {
-				Method addBuildListeners = classInternalAntRunner.getMethod("addBuildListeners", new Class[] { List.class }); //$NON-NLS-1$
-				addBuildListeners.invoke(runner, new Object[] { buildListeners });
+				Method addBuildListeners = classInternalAntRunner.getMethod("addBuildListeners", List.class); //$NON-NLS-1$
+				addBuildListeners.invoke(runner, buildListeners);
 			}
 
 			if (buildLoggerClassName == null) {
@@ -339,13 +334,13 @@ public class AntRunner implements IApplication {
 				buildLoggerClassName = IAntCoreConstants.EMPTY_STRING;
 			}
 			// add build logger
-			Method addBuildLogger = classInternalAntRunner.getMethod("addBuildLogger", new Class[] { String.class }); //$NON-NLS-1$
-			addBuildLogger.invoke(runner, new Object[] { buildLoggerClassName });
+			Method addBuildLogger = classInternalAntRunner.getMethod("addBuildLogger", String.class); //$NON-NLS-1$
+			addBuildLogger.invoke(runner, buildLoggerClassName);
 
 			if (inputHandlerClassName != null) {
 				// add the input handler
-				Method setInputHandler = classInternalAntRunner.getMethod("setInputHandler", new Class[] { String.class }); //$NON-NLS-1$
-				setInputHandler.invoke(runner, new Object[] { inputHandlerClassName });
+				Method setInputHandler = classInternalAntRunner.getMethod("setInputHandler", String.class); //$NON-NLS-1$
+				setInputHandler.invoke(runner, inputHandlerClassName);
 			}
 
 			basicConfigure(classInternalAntRunner, runner);
@@ -353,14 +348,14 @@ public class AntRunner implements IApplication {
 			// add progress monitor
 			if (monitor != null) {
 				progressMonitor = monitor;
-				Method setProgressMonitor = classInternalAntRunner.getMethod("setProgressMonitor", new Class[] { IProgressMonitor.class }); //$NON-NLS-1$
-				setProgressMonitor.invoke(runner, new Object[] { monitor });
+				Method setProgressMonitor = classInternalAntRunner.getMethod("setProgressMonitor", IProgressMonitor.class); //$NON-NLS-1$
+				setProgressMonitor.invoke(runner, monitor);
 			}
 
 			// set message output level
 			if (messageOutputLevel != 2) { // changed from the default Project.MSG_INFO
-				Method setMessageOutputLevel = classInternalAntRunner.getMethod("setMessageOutputLevel", new Class[] { int.class }); //$NON-NLS-1$
-				setMessageOutputLevel.invoke(runner, new Object[] { Integer.valueOf(messageOutputLevel) });
+				Method setMessageOutputLevel = classInternalAntRunner.getMethod("setMessageOutputLevel", int.class); //$NON-NLS-1$
+				setMessageOutputLevel.invoke(runner, Integer.valueOf(messageOutputLevel));
 			}
 
 			// set execution targets
@@ -370,13 +365,10 @@ public class AntRunner implements IApplication {
 			}
 
 			// run
-			Method run = classInternalAntRunner.getMethod("run", (Class[]) null); //$NON-NLS-1$
-			run.invoke(runner, (Object[]) null);
+			Method run = classInternalAntRunner.getMethod("run"); //$NON-NLS-1$
+			run.invoke(runner);
 		}
-		catch (NoClassDefFoundError e) {
-			problemLoadingClass(e);
-		}
-		catch (ClassNotFoundException e) {
+		catch (NoClassDefFoundError | ClassNotFoundException e) {
 			problemLoadingClass(e);
 		}
 		catch (InvocationTargetException e) {
@@ -402,8 +394,8 @@ public class AntRunner implements IApplication {
 	private void setProperties(Object runner, Class<?> classInternalAntRunner) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		// add properties
 		if (userProperties != null) {
-			Method addUserProperties = classInternalAntRunner.getMethod("addUserProperties", new Class[] { Map.class }); //$NON-NLS-1$
-			addUserProperties.invoke(runner, new Object[] { userProperties });
+			Method addUserProperties = classInternalAntRunner.getMethod("addUserProperties", Map.class); //$NON-NLS-1$
+			addUserProperties.invoke(runner, userProperties);
 		}
 
 		// add property files
@@ -426,8 +418,8 @@ public class AntRunner implements IApplication {
 		String message = null;
 		if (runner != null) {
 			try {
-				Method getBuildErrorMessage = classInternalAntRunner.getMethod("getBuildExceptionErrorMessage", new Class[] { Throwable.class }); //$NON-NLS-1$
-				message = (String) getBuildErrorMessage.invoke(runner, new Object[] { realException });
+				Method getBuildErrorMessage = classInternalAntRunner.getMethod("getBuildExceptionErrorMessage", Throwable.class); //$NON-NLS-1$
+				message = (String) getBuildErrorMessage.invoke(runner, realException);
 			}
 			catch (Exception ex) {
 				// do nothing as already in error state
@@ -510,8 +502,8 @@ public class AntRunner implements IApplication {
 			Thread.currentThread().setContextClassLoader(loader);
 			Class<?> classInternalAntRunner = loader.loadClass("org.eclipse.ant.internal.core.ant.InternalAntRunner"); //$NON-NLS-1$
 			Object runner = classInternalAntRunner.getConstructor().newInstance();
-			Method run = classInternalAntRunner.getMethod("run", new Class[] { Object.class }); //$NON-NLS-1$
-			run.invoke(runner, new Object[] { argArray });
+			Method run = classInternalAntRunner.getMethod("run", Object.class); //$NON-NLS-1$
+			run.invoke(runner, argArray);
 		}
 		finally {
 			Thread.currentThread().setContextClassLoader(originalClassLoader);
