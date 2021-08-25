@@ -56,9 +56,12 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
@@ -2453,6 +2456,35 @@ public class WorkbenchPage implements IWorkbenchPage {
 		return ModeledPageLayout.getIds(perspective, ModeledPageLayout.SHOW_IN_PART_TAG);
 	}
 
+	/** @return showInId configured by perspective or null if not configured **/
+	public String getShowInId() {
+		String perspectiveId = getPerspective().getId();
+		String showInIdFromRegistry = getShowInIdFromRegistry(perspectiveId);
+		return showInIdFromRegistry;
+	}
+
+	public static String getShowInIdFromRegistry(String perspectiveId) {
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID,
+				IWorkbenchRegistryConstants.PL_PERSPECTIVES);
+		if (point == null) {
+			return null;
+		}
+		IExtension[] extensions = point.getExtensions();
+		if (extensions == null) {
+			return null;
+		}
+		for (IExtension extension : extensions) {
+			IConfigurationElement[] configElements = extension.getConfigurationElements();
+			for (IConfigurationElement configElement : configElements) {
+				String id = configElement.getAttribute("id"); //$NON-NLS-1$
+				if (Objects.equals(perspectiveId, id)) {
+					String showInId = configElement.getAttribute("showInId"); //$NON-NLS-1$
+					return showInId;
+				}
+			}
+		}
+		return null;
+	}
 	/**
 	 * The user successfully performed a Show In... action on the specified part.
 	 * Update the list of Show In items accordingly.

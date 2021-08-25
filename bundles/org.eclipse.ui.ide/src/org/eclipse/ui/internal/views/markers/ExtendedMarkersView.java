@@ -99,6 +99,7 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.internal.WorkbenchPage;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.menus.IMenuService;
@@ -1605,17 +1606,23 @@ public class ExtendedMarkersView extends ViewPart {
 				MarkerSupportInternalUtilities.showViewError(e);
 			}
 		}
-		for (String id : ((WorkbenchPage) page).getShowInPartIds()) {
-			if (showIn(marker, page, id)) {
-				return;
-			}
+
+		String showInId = ((WorkbenchPage) page).getShowInId();
+		if (showIn(marker, page, showInId)) {
+			return;
 		}
 	}
 
-	private static boolean showIn(IMarker marker, IWorkbenchPage page, String targetId) {
+	private static boolean showIn(IMarker marker, IWorkbenchPage page, String targetPartId) {
 		try {
+			if (targetPartId == null) {
+				return false;
+			}
+			if (WorkbenchPlugin.getDefault().getViewRegistry().find(targetPartId) == null) {
+				return false;
+			}
 			ISelection selection = new StructuredSelection(marker.getResource());
-			IViewPart view = page.showView(targetId);
+			IViewPart view = page.showView(targetPartId);
 			if (view == null) {
 				return false;
 			}
@@ -1624,7 +1631,7 @@ public class ExtendedMarkersView extends ViewPart {
 				return false;
 			}
 			target.selectReveal(selection);
-			((WorkbenchPage) page).performedShowIn(targetId);
+			((WorkbenchPage) page).performedShowIn(targetPartId);
 			return true;
 		} catch (PartInitException e) {
 			MarkerSupportInternalUtilities.showViewError(e);

@@ -43,6 +43,7 @@
             name="%Perspective.resourcePerspective"
             icon="$nl$/icons/full/eview16/resource_persp.png"
             class="org.eclipse.ui.internal.ide.application.ResourcePerspective"
+            showInId="org.eclipse.ui.navigator.ProjectExplorer"
             id="org.eclipse.ui.resourcePerspective">
          <description>
             %Perspective.resourceDescription

@@ -98,6 +98,16 @@ with this perspective.
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="showInId" type="string">
+            <annotation>
+               <documentation>
+                  the identifier of the view which will be shown by doubleclicking on a (problem) marker without file resource. The view needs to implement ISetSelectionTarget.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id,org.eclipse.ui.views/e4view/@id"/>
+               </appInfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
