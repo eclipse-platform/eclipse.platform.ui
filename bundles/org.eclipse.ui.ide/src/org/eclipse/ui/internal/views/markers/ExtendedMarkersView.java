@@ -98,11 +98,13 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.ResourceUtil;
+import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.operations.RedoActionHandler;
 import org.eclipse.ui.operations.UndoActionHandler;
+import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.ui.part.MarkerTransfer;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
@@ -1596,10 +1598,37 @@ public class ExtendedMarkersView extends ViewPart {
 
 		if (marker != null && marker.getResource() instanceof IFile) {
 			try {
-				IDE.openEditor(page, marker, OpenStrategy.activateOnOpen());
+				if (IDE.openEditor(page, marker, OpenStrategy.activateOnOpen()) != null) {
+					return;
+				}
 			} catch (PartInitException e) {
 				MarkerSupportInternalUtilities.showViewError(e);
 			}
+		}
+		for (String id : ((WorkbenchPage) page).getShowInPartIds()) {
+			if (showIn(marker, page, id)) {
+				return;
+			}
+		}
+	}
+
+	private static boolean showIn(IMarker marker, IWorkbenchPage page, String targetId) {
+		try {
+			ISelection selection = new StructuredSelection(marker.getResource());
+			IViewPart view = page.showView(targetId);
+			if (view == null) {
+				return false;
+			}
+			ISetSelectionTarget target = Adapters.adapt(view, ISetSelectionTarget.class);
+			if (target == null) {
+				return false;
+			}
+			target.selectReveal(selection);
+			((WorkbenchPage) page).performedShowIn(targetId);
+			return true;
+		} catch (PartInitException e) {
+			MarkerSupportInternalUtilities.showViewError(e);
+			return false;
 		}
 	}
 
