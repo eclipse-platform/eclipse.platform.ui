@@ -346,7 +346,7 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 			if (!handlePartInitException(e)) {
 				return;
 			}
-		} catch (RuntimeException e) {
+		} catch (Throwable e) {
 			if (!handlePartInitException(new PartInitException(e.getMessage(), e))) {
 				return;
 			}
