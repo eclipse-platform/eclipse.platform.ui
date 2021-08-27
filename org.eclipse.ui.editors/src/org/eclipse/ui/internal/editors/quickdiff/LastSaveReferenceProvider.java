@@ -44,6 +44,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IElementStateListener;
@@ -250,6 +251,7 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 				}
 
 			} catch (CoreException e) {
+				EditorsPlugin.log(e);
 				return;
 			}
 
@@ -375,18 +377,21 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 			StringBuilder buffer= new StringBuilder(DEFAULT_FILE_SIZE);
 			char[] readBuffer= new char[2048];
 			int n= in.read(readBuffer);
-			while (n > 0) {
-				if (monitor != null && monitor.isCanceled())
-					return;
+			try {
+				while (n > 0) {
+					if (monitor != null && monitor.isCanceled())
+						return;
 
-				buffer.append(readBuffer, 0, n);
-				n= in.read(readBuffer);
+					buffer.append(readBuffer, 0, n);
+					n= in.read(readBuffer);
+				}
+			} catch (OutOfMemoryError e) {
+				throw new IOException("OutOfMemoryError occurred while reading " + storage.getFullPath(), e); //$NON-NLS-1$
 			}
-
 			document.set(buffer.toString());
 
 		} catch (IOException x) {
-			throw new CoreException(new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, "Failed to access or read underlying storage", x)); //$NON-NLS-1$
+			throw new CoreException(Status.error("Failed to access or read " + storage.getFullPath(), x)); //$NON-NLS-1$
 		} finally {
 			try {
 				if (in != null)

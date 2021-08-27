@@ -41,6 +41,7 @@ final class FileBuffersMessages extends NLS {
 	public static String ResourceTextFileBuffer_error_unsupported_encoding_message_arg;
 	public static String ResourceTextFileBuffer_error_illegal_encoding_message_arg;
 	public static String ResourceTextFileBuffer_task_saving;
+	public static String ResourceTextFileBuffer_oom_on_file_read;
 	public static String ResourceFileBuffer_task_creatingFileBuffer;
 	public static String JavaTextFileBuffer_error_closeStream;
 	public static String TextFileBufferManager_error_documentSetupFailed;

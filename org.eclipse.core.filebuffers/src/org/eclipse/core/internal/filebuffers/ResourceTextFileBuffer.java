@@ -31,6 +31,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnmappableCharacterException;
 import java.nio.charset.UnsupportedCharsetException;
 
+import org.eclipse.osgi.util.NLS;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -514,9 +516,15 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			StringBuilder buffer= new StringBuilder(BUFFER_SIZE);
 			char[] readBuffer= new char[READER_CHUNK_SIZE];
 			int n= in.read(readBuffer);
-			while (n > 0) {
-				buffer.append(readBuffer, 0, n);
-				n= in.read(readBuffer);
+			try {
+				while (n > 0) {
+					buffer.append(readBuffer, 0, n);
+					n= in.read(readBuffer);
+				}
+			} catch (OutOfMemoryError e) {
+				// give the JVM a hint that it can free the big buffer right away
+				buffer= null;
+				throw new IOException(NLS.bind(FileBuffersMessages.ResourceTextFileBuffer_oom_on_file_read, file.getLocationURI()), e);
 			}
 
 			if (document instanceof IDocumentExtension4)
