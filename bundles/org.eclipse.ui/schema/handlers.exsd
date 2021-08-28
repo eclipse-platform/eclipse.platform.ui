@@ -86,7 +86,7 @@ These conditions are used to avoid unnecessary plug-in loading.  These handler d
          <attribute name="class" type="string">
             <annotation>
                <documentation>
-                  &lt;p&gt;The handler class that imlements &lt;code&gt;org.eclipse.core.commands.IHandler&lt;/code&gt; or extends &lt;code&gt;org.eclipse.core.commands.AbstractHandler&lt;/code&gt;.&lt;/p&gt;
+                  &lt;p&gt;The handler class that implements &lt;code&gt;org.eclipse.core.commands.IHandler&lt;/code&gt; or extends &lt;code&gt;org.eclipse.core.commands.AbstractHandler&lt;/code&gt;.&lt;/p&gt;
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.core.commands.IHandler"/>
@@ -169,7 +169,7 @@ The identifier of the help context that relates to this specific handler.  While
          <attribute name="class" type="string">
             <annotation>
                <documentation>
-                  &lt;p&gt;The handler class that imlements &lt;code&gt;org.eclipse.core.commands.IHandler&lt;/code&gt; or extends &lt;code&gt;org.eclipse.core.commands.AbstractHandler&lt;/code&gt;.&lt;/p&gt;
+                  &lt;p&gt;The handler class that implements &lt;code&gt;org.eclipse.core.commands.IHandler&lt;/code&gt; or extends &lt;code&gt;org.eclipse.core.commands.AbstractHandler&lt;/code&gt;.&lt;/p&gt;
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.core.commands.IHandler"/>
