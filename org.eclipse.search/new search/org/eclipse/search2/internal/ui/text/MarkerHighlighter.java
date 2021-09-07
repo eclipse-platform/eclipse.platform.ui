@@ -17,12 +17,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.WorkspaceJob;
 
 import org.eclipse.core.filebuffers.IFileBuffer;
 
@@ -35,19 +40,46 @@ import org.eclipse.search.ui.text.Match;
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 
 public class MarkerHighlighter extends Highlighter {
-	private IFile fFile;
-	private Map<Match, IMarker> fMatchesToAnnotations;
+	private final IFile fFile;
+	private final Map<Match, IMarker> fMatchesToAnnotations;
+	private final Object addHighlightsJobFamily;
+	private volatile boolean fDisposed;
+	private WorkspaceJob fRemoveAllJob;
+	private WorkspaceJob fContentReplacedJob;
 
 	public MarkerHighlighter(IFile file) {
 		fFile= file;
 		fMatchesToAnnotations= new HashMap<>();
+		fDisposed = false;
+		addHighlightsJobFamily = new Object();
 	}
 
 	@Override
 	public void addHighlights(final Match[] matches) {
+		WorkspaceJob addHighlightsJob = new MarkerHighlighterWorkspaceJob("Adding highlights", fFile) { //$NON-NLS-1$
+			@Override
+			void runOperation(IProgressMonitor monitor) {
+				addHighlightsInternal(matches, monitor);
+			}
+
+			@Override
+			public boolean belongsTo(Object family) {
+				return family == addHighlightsJobFamily || super.belongsTo(family);
+			}
+		};
+		addHighlightsJob.schedule();
+	}
+
+	private void addHighlightsInternal(final Match[] matches, IProgressMonitor monitor) {
 		try {
-			SearchPlugin.getWorkspace().run((IWorkspaceRunnable) monitor -> {
+			SearchPlugin.getWorkspace().run((IWorkspaceRunnable) submonitor -> {
+				if (fDisposed) {
+					return;
+				}
 				for (Match match : matches) {
+					if (monitor.isCanceled() || submonitor.isCanceled()) {
+						return;
+					}
 					IMarker marker;
 					marker = createMarker(match);
 					if (marker != null)
@@ -86,6 +118,18 @@ public class MarkerHighlighter extends Highlighter {
 
 	@Override
 	public void removeHighlights(Match[] matches) {
+		WorkspaceJob removeHighlightsJob = new MarkerHighlighterWorkspaceJob("Removing highlights", fFile) { //$NON-NLS-1$
+			@Override
+			void runOperation(IProgressMonitor monitor) {
+				removeHighlightsInternal(matches);
+			}
+		};
+		// don't cancel the job, as we want to previous highlights removal to go
+		// through
+		removeHighlightsJob.schedule();
+	}
+
+	private void removeHighlightsInternal(Match[] matches) {
 		for (Match match : matches) {
 			IMarker marker= fMatchesToAnnotations.remove(match);
 			if (marker != null) {
@@ -101,6 +145,20 @@ public class MarkerHighlighter extends Highlighter {
 
 	@Override
 	public  void removeAll() {
+		cancelAddingHighlights();
+		if (fRemoveAllJob == null) {
+			fRemoveAllJob = new MarkerHighlighterWorkspaceJob("Removing all search highlights", fFile) { //$NON-NLS-1$
+				@Override
+				void runOperation(IProgressMonitor monitor) {
+					removeAllInternal();
+				}
+			};
+		}
+		fRemoveAllJob.cancel();
+		fRemoveAllJob.schedule();
+	}
+
+	private void removeAllInternal() {
 		try {
 			fFile.deleteMarkers(NewSearchUI.SEARCH_MARKER, true, IResource.DEPTH_INFINITE);
 			fFile.deleteMarkers(SearchPlugin.FILTERED_SEARCH_MARKER, true, IResource.DEPTH_INFINITE);
@@ -115,9 +173,64 @@ public class MarkerHighlighter extends Highlighter {
 	protected void handleContentReplaced(IFileBuffer buffer) {
 		if (!buffer.getLocation().equals(fFile.getFullPath()))
 			return;
+		if (fContentReplacedJob == null) {
+			fContentReplacedJob = new MarkerHighlighterWorkspaceJob("Updating search highlights", fFile) { //$NON-NLS-1$
+				@Override
+				void runOperation(IProgressMonitor monitor) {
+					handleContentReplacedInternal(monitor);
+				}
+			};
+		}
+		fContentReplacedJob.cancel();
+		fContentReplacedJob.schedule();
+	}
+
+	private void handleContentReplacedInternal(IProgressMonitor monitor) {
+		if (fDisposed) {
+			return;
+		}
 		Match[] matches= new Match[fMatchesToAnnotations.size()];
 		fMatchesToAnnotations.keySet().toArray(matches);
-		removeAll();
-		addHighlights(matches);
+		removeAllInternal();
+		addHighlightsInternal(matches, monitor);
+	}
+
+	@Override
+	public void dispose() {
+		fDisposed = true;
+		cancelAddingHighlights();
+		super.dispose();
+	}
+
+	private void cancelAddingHighlights() {
+		if (fContentReplacedJob != null) {
+			fContentReplacedJob.cancel();
+		}
+		Job.getJobManager().cancel(addHighlightsJobFamily);
+	}
+
+	static abstract class MarkerHighlighterWorkspaceJob extends WorkspaceJob {
+
+		public MarkerHighlighterWorkspaceJob(String jobName, IFile file) {
+			super(jobName);
+			setRule(file);
+			setSystem(true);
+		}
+
+		@Override
+		public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+			if (monitor.isCanceled()) {
+				return Status.CANCEL_STATUS;
+			}
+			runOperation(monitor);
+			return Status.OK_STATUS;
+		}
+
+		@Override
+		public boolean belongsTo(Object family) {
+			return family == MarkerHighlighter.class;
+		}
+
+		abstract void runOperation(IProgressMonitor monitor) throws CoreException;
 	}
 }
