@@ -44,6 +44,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.content.IContentType;
@@ -77,6 +78,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.editorsupport.ComponentSupport;
 import org.eclipse.ui.internal.misc.ExternalProgramImageDescriptor;
 import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
+import org.eclipse.ui.internal.misc.StatusUtil;
 
 /**
  * Provides access to the collection of defined editors for resource types.
@@ -308,13 +310,29 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 	}
 
 	private synchronized IEditorDescriptor getOSEditor(String id) {
+		if (id == null || id.isEmpty()) {
+			// can not find external editor anyway.
+			// for example @see org.eclipse.ui.part.MultiPageEditorSite#getId
+			return null;
+		}
+		if (IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID.equals(id)) {
+			// on systems which have ComponentSupport.inPlaceEditorSupported()==false
+			// @see #addSystemEditors
+			return null;
+		}
+
 		if (mapIDtoOSEditors == null) {
 			mapIDtoOSEditors = new HashMap<>();
 			IEditorDescriptor[] sortedEditorsFromOS = getSortedEditorsFromOS();
 			for (IEditorDescriptor desc : sortedEditorsFromOS) {
 				mapIDtoOSEditors.put(desc.getId(), desc); // ignore duplicates
 			}
-			WorkbenchPlugin.log("Initialized OS Editors for '" + id + "' returns:" + mapIDtoOSEditors.get(id)); //$NON-NLS-1$ //$NON-NLS-2$
+			IEditorDescriptor editor = mapIDtoOSEditors.get(id);
+			if (editor == null) {
+				WorkbenchPlugin.getDefault().getLog()
+						.log(StatusUtil.newStatus(IStatus.WARNING, "Editor descriptor for id '" + id + "' not found.", //$NON-NLS-1$ //$NON-NLS-2$
+								new Exception("IEditorRegistry.findEditor(String) called for unknown id"))); //$NON-NLS-1$
+			}
 		}
 		return mapIDtoOSEditors.get(id);
 	}

@@ -1055,7 +1055,10 @@ public class WorkbenchPage implements IWorkbenchPage {
 	public EditorReference createEditorReferenceForPart(final MPart part, IEditorInput input, String editorId,
 			IMemento memento) {
 		IEditorRegistry registry = legacyWindow.getWorkbench().getEditorRegistry();
-		EditorDescriptor descriptor = (EditorDescriptor) registry.findEditor(editorId);
+		EditorDescriptor descriptor = null;
+		if (!CompatibilityEditor.MODEL_ELEMENT_ID.equals(editorId)) { // CompatibilityEditor is not an editor itself
+			descriptor = (EditorDescriptor) registry.findEditor(editorId);
+		}
 		final EditorReference ref = new EditorReference(window.getContext(), this, part, input, descriptor, memento);
 		addEditorReference(ref);
 		ref.subscribe();
