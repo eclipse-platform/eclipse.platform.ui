@@ -31,6 +31,10 @@ import org.junit.Test;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.StyledTextContent;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -431,5 +435,15 @@ public class TextViewerTest {
 		} finally {
 			shell.dispose();
 		}
+	}
+
+	@Test
+	public void testPasteMultiLines() {
+		Shell shell= new Shell();
+		TextViewer textViewer= new TextViewer(shell, SWT.NONE);
+		textViewer.setDocument(new Document());
+		new Clipboard(shell.getDisplay()).setContents(new Object[] { "a\na" }, new Transfer[] { TextTransfer.getInstance() }, DND.CLIPBOARD);
+		textViewer.doOperation(ITextOperationTarget.PASTE);
+		assertEquals("a\na", textViewer.getTextWidget().getText());
 	}
 }

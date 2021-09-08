@@ -1033,7 +1033,7 @@ public final class SelectionProcessor {
 	private <T extends ISelection> Implementation<T> getImplementation(ISelection selection) {
 		if (selection instanceof IBlockTextSelection) {
 			return (Implementation<T>) COLUMN_IMPLEMENTATION;
-		} else if (selection instanceof IMultiTextSelection) {
+		} else if (selection instanceof IMultiTextSelection && ((IMultiTextSelection)selection).getRegions().length > 1) {
 			return (Implementation<T>) RANGES_IMPLEMENTATION;
 		} else if (selection instanceof ITextSelection) {
 			return (Implementation<T>) RANGE_IMPLEMENTATION;
