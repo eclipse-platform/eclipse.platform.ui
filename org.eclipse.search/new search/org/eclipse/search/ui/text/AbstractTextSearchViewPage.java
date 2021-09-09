@@ -15,9 +15,12 @@
 package org.eclipse.search.ui.text;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.LinkedBlockingDeque;
 
 import org.osgi.framework.FrameworkUtil;
 
@@ -226,8 +229,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	private PageBook fPagebook;
 	private boolean fIsBusyShown;
 	private ISearchResultViewPart fViewPart;
-	private Set<Object> fBatchedUpdates;
-	private boolean fBatchedClearAll;
+	private final LinkedBlockingDeque<Object> fBatchedUpdates = new LinkedBlockingDeque<>();
+	private volatile boolean fBatchedClearAll;
 
 	private ISearchResultListener fListener;
 	private IQueryListener fQueryListener;
@@ -299,8 +302,6 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 
 		fSelectAllAction= new SelectAllAction();
 		createLayoutActions();
-		fBatchedUpdates = new HashSet<>();
-		fBatchedClearAll= false;
 
 		fListener = this::handleSearchResultChanged;
 		fFilterActions= null;
@@ -1231,24 +1232,30 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		}
 	}
 
-	private synchronized void postUpdate(Match[] matches) {
-		evaluateChangedElements(matches, fBatchedUpdates);
-		scheduleUIUpdate();
+	private void postUpdate(Match[] matches) {
+		HashSet<Object> collect = new HashSet<>();
+		// for compatibility we do not pass the "fBatchedUpdates" directly:
+		evaluateChangedElements(matches, collect);
+		// nulls are forbidden in concurrent datastructures:
+		collect.removeIf(Objects::isNull);
+		fBatchedUpdates.addAll(collect);
+		scheduleUIUpdate(); // still synchronized
 	}
 
-	private synchronized void runBatchedUpdates() {
-		elementsChanged(fBatchedUpdates.toArray());
-		fBatchedUpdates.clear();
+	private void runBatchedUpdates() {
+		Collection<Object> drain = new ArrayList<>();
+		fBatchedUpdates.drainTo(drain);
+		elementsChanged(drain.toArray());
 		updateBusyLabel();
 	}
 
-	private synchronized void postClear() {
+	private void postClear() {
 		fBatchedClearAll= true;
 		fBatchedUpdates.clear();
-		scheduleUIUpdate();
+		scheduleUIUpdate(); // still synchronized
 	}
 
-	private synchronized boolean hasMoreUpdates() {
+	private boolean hasMoreUpdates() {
 		return fBatchedClearAll || !fBatchedUpdates.isEmpty();
 	}
 

@@ -453,7 +453,10 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 	protected void evaluateChangedElements(Match[] matches, Set<Object> changedElements) {
 		if (showLineMatches()) {
 			for (Match match : matches) {
-				changedElements.add(((FileMatch) match).getLineElement());
+				LineElement lineElement = ((FileMatch) match).getLineElement();
+				if (lineElement != null) {
+					changedElements.add(lineElement);
+				}
 			}
 		} else {
 			super.evaluateChangedElements(matches, changedElements);
