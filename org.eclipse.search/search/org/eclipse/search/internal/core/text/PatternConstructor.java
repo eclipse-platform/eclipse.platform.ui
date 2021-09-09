@@ -66,7 +66,7 @@ public class PatternConstructor {
 			if (isWholeWord && len > 0 && isWordChar(pattern.charAt(len - 1))) {
 				buffer.append("\\b"); //$NON-NLS-1$
 			}
-			pattern= buffer.toString();
+			pattern= buffer.toString();			
 		}
 
 		int regexOptions= Pattern.MULTILINE;
@@ -183,6 +183,12 @@ public class PatternConstructor {
 
 
 	public static StringBuilder appendAsRegEx(boolean isStringMatcher, String pattern, StringBuilder buffer) {
+		if (!isStringMatcher) {
+			buffer.append(Pattern.quote(pattern));
+			return buffer;
+		}
+		// isStringMatcher: '*' and '?' wildcards and '\' as escape
+		StringBuilder quoted = new StringBuilder();
 		boolean isEscaped= false;
 		for (int i = 0; i < pattern.length(); i++) {
 			char c = pattern.charAt(i);
@@ -190,65 +196,56 @@ public class PatternConstructor {
 			// the backslash
 			case '\\':
 				// the backslash is escape char in string matcher
-				if (isStringMatcher && !isEscaped) {
+				if (!isEscaped) {
 					isEscaped= true;
 				}
 				else {
-					buffer.append("\\\\");  //$NON-NLS-1$
+					quoted.append(c);
 					isEscaped= false;
 				}
-				break;
-			// characters that need to be escaped in the regex.
-			case '(':
-			case ')':
-			case '{':
-			case '}':
-			case '.':
-			case '[':
-			case ']':
-			case '$':
-			case '^':
-			case '+':
-			case '|':
-				if (isEscaped) {
-					buffer.append("\\\\");  //$NON-NLS-1$
-					isEscaped= false;
-				}
-				buffer.append('\\');
-				buffer.append(c);
 				break;
 			case '?':
-				if (isStringMatcher && !isEscaped) {
+				if (!isEscaped) {
+					if (quoted.length() > 0) { // flush quote
+						buffer.append(Pattern.quote(quoted.toString()));
+						quoted = new StringBuilder();
+					}
 					buffer.append('.');
 				}
 				else {
-					buffer.append('\\');
-					buffer.append(c);
+					quoted.append(c);
 					isEscaped= false;
 				}
 				break;
 			case '*':
-				if (isStringMatcher && !isEscaped) {
+				if (!isEscaped) {
+					if (quoted.length() > 0) { // flush quote
+						buffer.append(Pattern.quote(quoted.toString()));
+						quoted = new StringBuilder();
+					}
 					buffer.append(".*"); //$NON-NLS-1$
 				}
 				else {
-					buffer.append('\\');
-					buffer.append(c);
+					quoted.append(c);
 					isEscaped= false;
 				}
 				break;
 			default:
 				if (isEscaped) {
-					buffer.append("\\\\");  //$NON-NLS-1$
+					quoted.append("\\"); //$NON-NLS-1$
 					isEscaped= false;
 				}
-				buffer.append(c);
+				quoted.append(c);
 				break;
 			}
 		}
 		if (isEscaped) {
 			buffer.append("\\\\");  //$NON-NLS-1$
 			isEscaped= false;
+		}
+		if (quoted.length() > 0) { // flush quote
+			buffer.append(Pattern.quote(quoted.toString()));
+			quoted = new StringBuilder();
 		}
 		return buffer;
 	}

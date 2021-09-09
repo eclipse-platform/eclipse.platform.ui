@@ -362,6 +362,45 @@ public class FileSearchTests {
 	}
 
 	@Test
+	public void testWildcardQuotes() throws Exception {
+		assertWildcardReplace("H", "Hallo", "-allo");
+		assertWildcardReplace("a", "Hallo", "H-llo");
+		assertWildcardReplace("al", "Hallo", "H-lo");
+		assertWildcardReplace("a*", "Hallo", "H-");
+		assertWildcardReplace("a?", "Hallo", "H-lo");
+		assertWildcardReplace("?", "Hallo", "-----");
+		assertWildcardReplace("{", "Ha({o", "Ha(-o");
+		assertWildcardReplace("(", "Ha({o", "Ha-{o");
+		assertWildcardReplace("\\", "Ha\\\\o", "Ha--o");
+		assertWildcardReplace("\\\\", "Ha\\\\o", "Ha--o");
+		assertWildcardReplace("\\*", "Hall*", "Hall-");
+		assertWildcardReplace("\\?", "Ha??o?", "Ha--o-");
+		assertWildcardReplace("Du?und?ich", "Du und ich nicht", "- nicht");
+		assertWildcardReplace("Du*ich", "Du und ich nicht", "-t");
+		assertWildcardReplace("und*ich", "Du und ich nicht", "Du -t");
+		assertWildcardReplace("*ich", "Du und ich nicht", "-t");
+
+		assertWildcardReplace("*", "Hallo", "--");
+		// XXX i expect it to be "-" but ".*" indeed matches chars 0-5 and 5-5
+		// it would need ".+" to not match the empty string at the end
+	}
+
+	private void assertWildcardReplace(String pattern, String in, String expected) {
+		String regex= asRegEx(true, pattern);
+		try {
+			String replaced= in.replaceAll(regex, "-");
+			assertEquals(expected, replaced);
+		} catch (Exception e) {
+			throw new RuntimeException("Error with pattern:" + pattern + " regex=" + regex, e);
+		}
+	}
+
+	String asRegEx(boolean wildcards, String pattern) {
+		StringBuilder b= new StringBuilder();
+		org.eclipse.search.internal.core.text.PatternConstructor.appendAsRegEx(wildcards, pattern, b);
+		return b.toString();
+	}
+	@Test
 	public void testDerivedFilesParallel() throws Exception {
 		testDerivedFiles(new ParallelTestResultCollector());
 	}
