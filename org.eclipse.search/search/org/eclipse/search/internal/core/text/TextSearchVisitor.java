@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -86,6 +86,11 @@ public class TextSearchVisitor {
 	private static final int NUMBER_OF_LOGICAL_THREADS= Runtime.getRuntime().availableProcessors();
 	private static final int FILES_PER_JOB= 50;
 	private static final int MAX_JOBS_COUNT= 100;
+	/**
+	 * Just any number such that the most source files will fit in. And not too
+	 * big to avoid out of memory.
+	 **/
+	private static final int MAX_BUFFER_LENGTH = 999_999; // max 2MB.
 
 	public static class ReusableMatchAccess extends TextSearchMatchAccess {
 
@@ -519,6 +524,16 @@ public class TextSearchVisitor {
 
 	private List<TextSearchMatchAccess> locateMatches(IFile file, CharSequence searchInput, Matcher matcher, IProgressMonitor monitor) throws CoreException {
 		List<TextSearchMatchAccess> occurences= null;
+		if (searchInput.length() < MAX_BUFFER_LENGTH) {
+			// cache the sequence in a single array
+			String converted = searchInput.toString();
+			if (converted.length() != searchInput.length()) {
+				throw new CoreException(Status.error( //
+						searchInput.getClass().getName() + " does not proper implement CharSequence.toString()", //$NON-NLS-1$
+						new IllegalArgumentException("wrong length"))); //$NON-NLS-1$
+			}
+			searchInput = converted;
+		}
 		matcher.reset(searchInput);
 		int k= 0;
 		while (matcher.find()) {
