@@ -22,11 +22,13 @@ import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -316,6 +318,21 @@ public class TextSearchVisitor {
 		fIsLightweightAutoRefresh= Platform.getPreferencesService().getBoolean(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, false, null);
 	}
 
+	/**
+	 * Just a record pair to avoid multiple file.getLocation() calls during
+	 * sort.
+	 **/
+	private static final class FileWithCachedLocation {
+		final IFile file;
+		final String location; // cached
+
+		FileWithCachedLocation(IFile file) {
+			this.file = file;
+			IPath path = file.getLocation(); // invokes slow OS operation
+			this.location = path == null ? null : path.toString();
+		}
+	}
+
 	public IStatus search(IFile[] files, IProgressMonitor monitor) {
 		if (files.length == 0) {
 			return fStatus;
@@ -387,26 +404,12 @@ public class TextSearchVisitor {
 				fCollector.beginReporting();
 				Map<IFile, IDocument> documentsInEditors= PlatformUI.isWorkbenchRunning() ? evalNonFileBufferDocuments() : Collections.emptyMap();
 				int filesPerJob = Math.max(1, files.length / jobCount);
-				IFile[] filesByLocation= new IFile[files.length];
-				System.arraycopy(files, 0, filesByLocation, 0, files.length);
 				// Sorting files to search by location allows to more easily reuse
 				// search results from one file to the other when they have same location
-				Arrays.sort(filesByLocation, (o1, o2) -> {
-					if (o1 == o2) {
-						return 0;
-					}
-					if (o1.getLocation() == o2.getLocation()) {
-						return 0;
-					}
-					if (o1.getLocation() == null) {
-						return +1;
-					}
-					if (o2.getLocation() == null) {
-						return -1;
-					}
-					return o1.getLocation().toString().compareTo(o2.getLocation().toString());
-				});
-				for (int first= 0; first < filesByLocation.length; first += filesPerJob) {
+				IFile[] filesByLocation = Arrays.stream(files).map(FileWithCachedLocation::new)
+						.sorted(Comparator.nullsFirst(Comparator.comparing(fn -> fn.location))).map(fn -> fn.file)
+						.collect(Collectors.toList()).toArray(IFile[]::new);
+				for (int first = 0; first < filesByLocation.length; first += filesPerJob) {
 					int end= Math.min(filesByLocation.length, first + filesPerJob);
 					Job job= new TextSearchJob(filesByLocation, first, end, documentsInEditors);
 					job.setJobGroup(jobGroup);
