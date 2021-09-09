@@ -77,6 +77,12 @@ class DocumentReader extends Reader {
 				throw new IndexOutOfBoundsException(x.getLocalizedMessage());
 			}
 		}
+
+		/** @see CharSequence#toString **/
+		@Override
+		public String toString() {
+			return fDocument.get();
+		}
 	}
 
 	/**

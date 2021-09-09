@@ -53,4 +53,9 @@ public class DocumentCharSequence implements CharSequence {
 		}
 	}
 
+	/** @see CharSequence#toString **/
+	@Override
+	public String toString() {
+		return fDocument.get();
+	}
 }
