@@ -16,10 +16,17 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
+import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -192,9 +199,19 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 		return getChildren(element).length > 0;
 	}
 
+	static <T> Stream<T> toStream(Enumeration<T> e) {
+		return StreamSupport.stream(Spliterators.spliteratorUnknownSize(e.asIterator(), Spliterator.ORDERED), false);
+	}
+
 	@Override
 	public synchronized void elementsChanged(Object[] updatedElements) {
 		boolean singleElement = updatedElements.length == 1;
+		Set<LineElement> lineMatches = Arrays.stream(updatedElements).filter(LineElement.class::isInstance)
+				// only for distinct files:
+				.map(u -> ((LineElement) u).getParent()).distinct()
+				// query matches:
+				.map(fResult::getMatchSet).flatMap(FileTreeContentProvider::toStream)
+				.map(m -> ((FileMatch) m).getLineElement()).collect(Collectors.toSet());
 		try {
 			for (Object updatedElement : updatedElements) {
 				if (!(updatedElement instanceof LineElement)) {
@@ -208,7 +225,7 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 					// change events to line elements are reported in text
 					// search
 					LineElement lineElement = (LineElement) updatedElement;
-					boolean hasMatches = lineElement.hasMatches(fResult);
+					boolean hasMatches = lineMatches.contains(lineElement);
 					if (hasMatches) {
 						if (singleElement && hasChild(lineElement.getParent(), lineElement)) {
 							fTreeViewer.update(new Object[] { lineElement, lineElement.getParent() }, null);
