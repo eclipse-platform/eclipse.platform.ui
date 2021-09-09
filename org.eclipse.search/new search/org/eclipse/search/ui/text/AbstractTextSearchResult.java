@@ -14,12 +14,16 @@
 package org.eclipse.search.ui.text;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultListener;
@@ -36,7 +40,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 
 	private static final Match[] EMPTY_ARRAY= new Match[0];
 
-	private final Map<Object, List<Match>> fElementsToMatches;
+	private final ConcurrentMap<Object, Set<Match>> fElementsToMatches;
 	private final List<ISearchResultListener> fListeners;
 	private final MatchEvent fMatchEvent;
 
@@ -46,7 +50,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * Constructs a new <code>AbstractTextSearchResult</code>
 	 */
 	protected AbstractTextSearchResult() {
-		fElementsToMatches= new HashMap<>();
+		fElementsToMatches= new ConcurrentHashMap<>();
 		fListeners= new ArrayList<>();
 		fMatchEvent= new MatchEvent(this);
 
@@ -55,19 +59,47 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 
 	/**
 	 * Returns an array with all matches reported against the given element.
-	 * Note that all matches of the given element are returned. The filter state of the matches is not relevant.
+	 * Note that all matches of the given element are returned. The filter state
+	 * of the matches is not relevant. The matches are reported sorted per
+	 * offset and length. The order may be important for example stepping
+	 * between matches (see bug 58417). For calculating just a match count the
+	 * order is not needed and the faster {@link #getMatchSet(Object)} should be used instead.
+	 * The order of reported matches found (with equal offset and length) is not preserved
+	 * (Does not make sense	during parallel search).
 	 *
-	 * @param element the element to report matches for
+	 * @param element
+	 *            the element to report matches for
 	 * @return all matches reported for this element
 	 * @see Match#getElement()
 	 */
 	public Match[] getMatches(Object element) {
-		synchronized (fElementsToMatches) {
-			List<Match> matches= fElementsToMatches.get(element);
-			if (matches != null)
-				return matches.toArray(new Match[matches.size()]);
-			return EMPTY_ARRAY;
+		Set<Match> matches = fElementsToMatches.get(element);
+		if (matches != null) {
+			Match[] sortingCopy = matches.toArray(new Match[matches.size()]);
+			Arrays.sort(sortingCopy, AbstractTextSearchResult::compare);
+			return sortingCopy;
 		}
+		return EMPTY_ARRAY;
+	}
+
+	/**
+	 * Returns an Enumeration of all matches reported against the given element.
+	 * Note that all matches of the given element are returned. The filter state
+	 * of the matches is not relevant. Like {@link #getMatches(Object)} but
+	 * unordered result.
+	 *
+	 * @param element
+	 *            the element to report matches for
+	 * @return all matches reported for this element
+	 * @since 3.14
+	 * @see AbstractTextSearchResult#getMatches(Object)
+	 */
+	public Enumeration<Match> getMatchSet(Object element) {
+		Set<Match> matches = fElementsToMatches.get(element);
+		if (matches != null) {
+			return Collections.enumeration(matches);
+		}
+		return Collections.emptyEnumeration();
 	}
 
 	/**
@@ -80,11 +112,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * @param match the match to add
 	 */
 	public void addMatch(Match match) {
-		boolean hasAdded= false;
-		synchronized (fElementsToMatches) {
-			hasAdded= doAddMatch(match);
-		}
-		if (hasAdded)
+		if (didAddMatch(match))
 			fireChange(getSearchResultEvent(match, MatchEvent.ADDED));
 	}
 
@@ -98,10 +126,9 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 */
 	public void addMatches(Match[] matches) {
 		Collection<Match> reallyAdded= new ArrayList<>();
-		synchronized (fElementsToMatches) {
-			for (Match match : matches) {
-				if (doAddMatch(match))
-					reallyAdded.add(match);
+		for (Match match : matches) {
+			if (didAddMatch(match)) {
+				reallyAdded.add(match);
 			}
 		}
 		if (!reallyAdded.isEmpty())
@@ -121,46 +148,12 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 		return fMatchEvent;
 	}
 
-	private boolean doAddMatch(Match match) {
+	private boolean didAddMatch(Match match) {
 		updateFilterState(match);
-
-		List<Match> matches= fElementsToMatches.get(match.getElement());
-		if (matches == null) {
-			matches= new ArrayList<>();
-			fElementsToMatches.put(match.getElement(), matches);
-			matches.add(match);
-			return true;
-		}
-		if (!matches.contains(match)) {
-			insertSorted(matches, match);
-			return true;
-		}
-		return false;
+		return fElementsToMatches.computeIfAbsent(match.getElement(), k -> ConcurrentHashMap.newKeySet()).add(match);
 	}
 
-	private static void insertSorted(List<Match> matches, Match match) {
-		int insertIndex= getInsertIndex(matches, match);
-		matches.add(insertIndex, match);
-	}
-
-	private static int getInsertIndex(List<Match> matches, Match match) {
-		int count= matches.size();
-		int min = 0;
-		int max = count - 1;
-		while (min <= max) {
-			int mid = (min + max) / 2;
-			Match data = matches.get(mid);
-			int compare = compare(match, data);
-			if (compare > 0)
-				max = mid - 1;
-			else
-				min = mid + 1;
-		}
-		return min;
-	}
-
-
-	private static int compare(Match match1, Match match2) {
+	private static int compare(Match match2, Match match1) {
 		int diff= match2.getOffset()-match1.getOffset();
 		if (diff != 0)
 			return diff;
@@ -174,9 +167,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * </p>
 	 */
 	public void removeAll() {
-		synchronized (fElementsToMatches) {
-			doRemoveAll();
-		}
+		doRemoveAll();
 		fireChange(new RemoveAllEvent(this));
 	}
 	private void doRemoveAll() {
@@ -192,11 +183,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * @param match the match to remove
 	 */
 	public void removeMatch(Match match) {
-		boolean existed= false;
-		synchronized (fElementsToMatches) {
-			existed= doRemoveMatch(match);
-		}
-		if (existed)
+		if (didRemoveMatch(match))
 			fireChange(getSearchResultEvent(match, MatchEvent.REMOVED));
 	}
 
@@ -211,26 +198,25 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 */
 	public void removeMatches(Match[] matches) {
 		Collection<Match> existing= new ArrayList<>();
-		synchronized (fElementsToMatches) {
-			for (Match match : matches) {
-				if (doRemoveMatch(match))
-					existing.add(match); // no duplicate matches at this point
-			}
+		for (Match match : matches) {
+			if (didRemoveMatch(match))
+				existing.add(match); // no duplicate matches at this point
 		}
 		if (!existing.isEmpty())
 			fireChange(getSearchResultEvent(existing, MatchEvent.REMOVED));
 	}
 
 
-	private boolean doRemoveMatch(Match match) {
-		boolean existed= false;
-		List<Match> matches= fElementsToMatches.get(match.getElement());
-		if (matches != null) {
-			existed= matches.remove(match);
-			if (matches.isEmpty())
-				fElementsToMatches.remove(match.getElement());
-		}
-		return existed;
+	private boolean didRemoveMatch(Match match) {
+		boolean[] existed = new boolean[1];
+		fElementsToMatches.computeIfPresent(match.getElement(), (f, matches) -> {
+			existed[0] = matches.remove(match);
+			if (matches.isEmpty()) {
+				return null; // remove
+			}
+			return matches;
+		});
+		return existed[0];
 	}
 
 	@Override
@@ -309,12 +295,9 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * @return total number of matches
 	 */
 	public int getMatchCount() {
-		int count= 0;
-		synchronized (fElementsToMatches) {
-			for (List<Match> element : fElementsToMatches.values()) {
-				if (element != null)
-					count+= element.size();
-			}
+		int count = 0;
+		for (Set<Match> element : fElementsToMatches.values()) {
+			count += element.size();
 		}
 		return count;
 	}
@@ -328,7 +311,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * @return the number of matches reported against the element
 	 */
 	public int getMatchCount(Object element) {
-		List<Match> matches= fElementsToMatches.get(element);
+		Set<Match> matches = fElementsToMatches.get(element);
 		if (matches != null)
 			return matches.size();
 		return 0;
@@ -342,9 +325,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * @return the set of elements in this search result
 	 */
 	public Object[] getElements() {
-		synchronized (fElementsToMatches) {
-			return fElementsToMatches.keySet().toArray();
-		}
+		return fElementsToMatches.keySet().toArray();
 	}
 
 	/**

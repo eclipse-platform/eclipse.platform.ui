@@ -102,23 +102,6 @@ public class TestSearchResult {
 	}
 
 	@Test
-	public void testAddMatchOrderPreserving() {
-		ISearchQuery query= new NullQuery();
-		AbstractTextSearchResult result= (AbstractTextSearchResult) query.getSearchResult();
-
-		String object= "object"; //$NON-NLS-1$
-
-		Match match1= new Match(object, 1, 0);
-		result.addMatch(match1);
-		assertEquals(result.getMatchCount(), 1);
-		Match match2= new Match(object, 1, 0);
-		result.addMatch(match2);
-		Match[] matches= result.getMatches(object);
-		assertTrue("matches[0]", matches[0] == match1);
-		assertTrue("matches[1]", matches[1] == match2);
-	}
-
-	@Test
 	public void testAddMatches() {
 		ISearchQuery query= new NullQuery();
 		AbstractTextSearchResult result= (AbstractTextSearchResult) query.getSearchResult();

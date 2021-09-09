@@ -15,6 +15,7 @@
 package org.eclipse.search.internal.ui.text;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 
 import org.eclipse.core.resources.IResource;
 
@@ -66,9 +67,9 @@ public class LineElement {
 
 	public FileMatch[] getMatches(AbstractTextSearchResult result) {
 		ArrayList<FileMatch> res= new ArrayList<>();
-		Match[] matches= result.getMatches(fParent);
-		for (Match match : matches) {
-			FileMatch curr= (FileMatch) match;
+		Enumeration<Match> matches = result.getMatchSet(fParent);
+		while (matches.hasMoreElements()) {
+			FileMatch curr = (FileMatch) matches.nextElement();
 			if (curr.getLineElement() == this) {
 				res.add(curr);
 			}
@@ -78,9 +79,9 @@ public class LineElement {
 
 	public int getNumberOfMatches(AbstractTextSearchResult result) {
 		int count= 0;
-		Match[] matches= result.getMatches(fParent);
-		for (Match match : matches) {
-			FileMatch curr= (FileMatch) match;
+		Enumeration<Match> matches = result.getMatchSet(fParent);
+		while (matches.hasMoreElements()) {
+			FileMatch curr = (FileMatch) matches.nextElement();
 			if (curr.getLineElement() == this) {
 				count++;
 			}
@@ -88,5 +89,14 @@ public class LineElement {
 		return count;
 	}
 
-
+	public boolean hasMatches(AbstractTextSearchResult result) {
+		Enumeration<Match> matches = result.getMatchSet(fParent);
+		while (matches.hasMoreElements()) {
+			FileMatch curr = (FileMatch) matches.nextElement();
+			if (curr.getLineElement() == this) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

@@ -166,7 +166,7 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 	private boolean hasMatches(Object element) {
 		if (element instanceof LineElement) {
 			LineElement lineElement= (LineElement) element;
-			return lineElement.getNumberOfMatches(fResult) > 0;
+			return lineElement.hasMatches(fResult);
 		}
 		return fResult.getMatchCount(element) > 0;
 	}
@@ -208,8 +208,8 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 					// change events to line elements are reported in text
 					// search
 					LineElement lineElement = (LineElement) updatedElement;
-					int nMatches = lineElement.getNumberOfMatches(fResult);
-					if (nMatches > 0) {
+					boolean hasMatches = lineElement.hasMatches(fResult);
+					if (hasMatches) {
 						if (singleElement && hasChild(lineElement.getParent(), lineElement)) {
 							fTreeViewer.update(new Object[] { lineElement, lineElement.getParent() }, null);
 						} else {
