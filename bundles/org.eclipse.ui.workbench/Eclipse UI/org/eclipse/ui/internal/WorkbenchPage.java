@@ -2445,9 +2445,9 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @return the ids of the parts that should be available in the 'Show In...'
 	 *         prompt
 	 */
-	public ArrayList<?> getShowInPartIds() {
+	public List<String> getShowInPartIds() {
 		MPerspective perspective = getPerspectiveStack().getSelectedElement();
-		return new ArrayList<>(ModeledPageLayout.getIds(perspective, ModeledPageLayout.SHOW_IN_PART_TAG));
+		return ModeledPageLayout.getIds(perspective, ModeledPageLayout.SHOW_IN_PART_TAG);
 	}
 
 	/**

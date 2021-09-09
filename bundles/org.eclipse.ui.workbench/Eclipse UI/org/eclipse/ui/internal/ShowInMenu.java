@@ -282,8 +282,8 @@ public class ShowInMenu extends ContributionItem implements IWorkbenchContributi
 		WorkbenchPage page = (WorkbenchPage) getWindow().getActivePage();
 		if (page != null) {
 			String srcId = sourcePart == null ? null : sourcePart.getSite().getId();
-			ArrayList<?> pagePartIds = page.getShowInPartIds();
-			for (Object pagePartId : pagePartIds) {
+			List<String> pagePartIds = page.getShowInPartIds();
+			for (String pagePartId : pagePartIds) {
 				// Don't add own view, except when explicitly requested with
 				// IShowInTargetList below
 				if (!pagePartId.equals(srcId)) {
