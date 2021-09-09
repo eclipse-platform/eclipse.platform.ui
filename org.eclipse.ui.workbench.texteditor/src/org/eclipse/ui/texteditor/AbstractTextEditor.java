@@ -1248,7 +1248,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 			}
 			st.setSelectionRanges(newSelection.stream().flatMapToInt(
-					p -> caretAtBeginningOfSelection ? IntStream.of(p.y, p.x - p.y) : IntStream.of(p.x, p.y - p.x))
+					p -> IntStream.of(Math.min(p.y, p.x), Math.abs(p.y - p.x)))
 					.toArray());
 			fireSelectionChanged(firstSelection);
 		}
@@ -1365,11 +1365,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				}
 
 				newSelection.add(new Point(
-					fDoSelect ? (caretOffset < oldSelection.y ? oldSelection.y : oldSelection.x) : newCaretOffset,
+						fDoSelect
+								? (caretAtBeginningOfSelection ? Math.max(oldSelection.x, oldSelection.y)
+										: Math.min(oldSelection.x, oldSelection.y))
+								: newCaretOffset,
 					newCaretOffset));
 			}
 			st.setSelectionRanges(newSelection.stream().flatMapToInt(
-					p -> caretAtBeginningOfSelection ? IntStream.of(p.y, p.x - p.y) : IntStream.of(p.x, p.y - p.x))
+					p -> IntStream.of(Math.max(p.x, p.y), -Math.abs(p.x - p.y))) // negative length to put cursor at
+																					// beginning of selection
 					.toArray());
 
 			fireSelectionChanged(firstSelection);

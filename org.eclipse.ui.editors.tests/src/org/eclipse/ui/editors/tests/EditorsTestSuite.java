@@ -35,6 +35,7 @@ import org.junit.runners.Suite.SuiteClasses;
 		FileDocumentProviderTest.class,
 		TextFileDocumentProviderTest.class,
 		StatusEditorTest.class,
+		TextNavigationTest.class,
 		LargeFileTest.class
 })
 public class EditorsTestSuite {
