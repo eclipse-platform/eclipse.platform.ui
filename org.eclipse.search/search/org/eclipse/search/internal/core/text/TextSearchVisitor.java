@@ -239,6 +239,7 @@ public class TextSearchVisitor {
 							break;
 						}
 					}
+					fCollector.flushMatches(file);
 				} else {
 					if (charsequenceForPreviousLocation != null) {
 						try {

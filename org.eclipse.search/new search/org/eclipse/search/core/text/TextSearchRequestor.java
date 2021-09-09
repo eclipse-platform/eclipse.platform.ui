@@ -101,6 +101,21 @@ public abstract class TextSearchRequestor {
 	}
 
 	/**
+	 * Notification that the matches of the given file should be flushed. The
+	 * default behaviour is to ignore this notification. Implementors can use
+	 * this notification to update the progress after a file was searched.
+	 * Otherwise the progress may not be visible until all files have been
+	 * searched.
+	 *
+	 * @param file
+	 *            the file that was just processed.
+	 * @since 3.14
+	 */
+	public void flushMatches(IFile file) {
+		// do nothing
+	}
+
+	/**
 	 * Notification sent that a file might contain binary context.
 	 * It is the choice of the search engine to report binary files and it is the heuristic of the search engine to decide
 	 * that a file could be binary.

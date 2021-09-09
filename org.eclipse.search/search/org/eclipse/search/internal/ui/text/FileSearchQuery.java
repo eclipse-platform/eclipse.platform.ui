@@ -19,9 +19,8 @@
 package org.eclipse.search.internal.ui.text;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.CoreException;
@@ -55,15 +54,15 @@ public class FileSearchQuery implements ISearchQuery {
 		private final boolean fSearchInBinaries;
 
 		private final boolean fIsLightweightAutoRefresh;
-		private Map<IFile, ArrayList<FileMatch>> fCachedMatches;
-		private Object fLock= new Object();
+		private final ConcurrentHashMap<IFile, ArrayList<FileMatch>> fCachedMatches;
+		private volatile boolean stop;
 
 		private TextSearchResultCollector(AbstractTextSearchResult result, boolean isFileSearchOnly, boolean searchInBinaries) {
 			fResult= result;
 			fIsFileSearchOnly= isFileSearchOnly;
 			fSearchInBinaries= searchInBinaries;
 			fIsLightweightAutoRefresh= Platform.getPreferencesService().getBoolean(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, false, null);
-
+			fCachedMatches = new ConcurrentHashMap<>();
 		}
 
 		@Override
@@ -77,11 +76,8 @@ public class FileSearchQuery implements ISearchQuery {
 				return false;
 
 			if (fIsFileSearchOnly) {
-				synchronized (fLock) {
-					fResult.addMatch(new FileMatch(file));
-				}
+				fResult.addMatch(new FileMatch(file));
 			}
-			flushMatches();
 			return true;
 		}
 
@@ -92,45 +88,23 @@ public class FileSearchQuery implements ISearchQuery {
 
 		@Override
 		public boolean acceptPatternMatch(TextSearchMatchAccess matchRequestor) throws CoreException {
-			ArrayList<FileMatch> matches;
-			synchronized(fLock) {
-				// fCachedMatches is set to null when the caller invokes endReporting(),
-				// indicating that no further results are desired/expected, so discard
-				// any additional results.
-				if (fCachedMatches == null) {
-					return false;
-				}
-				matches= fCachedMatches.get(matchRequestor.getFile());
+			if (stop) {
+				return false;
 			}
-
-			int matchOffset= matchRequestor.getMatchOffset();
-
-			/*
-			 * Another job may call flushCaches() at any time, which will clear the cached matches.
-			 * Any addition of matches to the cache needs to be protected against the flushing of
-			 * the cache by other jobs. It is OK to call getLineElement() with an unprotected local
-			 * reference to the matches for this file, because getLineElement() uses previous matches
-			 * as an optimization when creating new matches but doesn't update the cache directly
-			 * (and because each file is processed by at most one job).
-			 */
-			LineElement lineElement= getLineElement(matchOffset, matchRequestor, matches);
-			if (lineElement != null) {
-				FileMatch fileMatch= new FileMatch(matchRequestor.getFile(), matchOffset, matchRequestor.getMatchLength(), lineElement);
-				synchronized(fLock) {
-					// fCachedMatches is set to null when the caller invokes endReporting(),
-					// indicating that no further results are desired/expected, so discard
-					// any additional results.
-					if (fCachedMatches == null) {
-						return false;
-					}
-					matches= fCachedMatches.get(matchRequestor.getFile());
+			fCachedMatches.compute(matchRequestor.getFile(), (f, matches) -> {
+				// each file is processed by at most one job
+				int matchOffset = matchRequestor.getMatchOffset();
+				LineElement lineElement = getLineElement(matchOffset, matchRequestor, matches);
+				if (lineElement != null) {
+					FileMatch fileMatch = new FileMatch(matchRequestor.getFile(), matchOffset,
+							matchRequestor.getMatchLength(), lineElement);
 					if (matches == null) {
-						matches= new ArrayList<>();
-						fCachedMatches.put(matchRequestor.getFile(), matches);
+						matches = new ArrayList<>();
 					}
 					matches.add(fileMatch);
 				}
-			}
+				return matches;
+			});
 			return true;
 		}
 
@@ -191,28 +165,32 @@ public class FileSearchQuery implements ISearchQuery {
 
 		@Override
 		public void beginReporting() {
-			fCachedMatches= new HashMap<>();
+			stop = false;
 		}
 
 		@Override
 		public void endReporting() {
+			stop = true;
 			flushMatches();
-			synchronized (fLock) {
-				fCachedMatches= null;
+			fCachedMatches.clear();
+		}
+
+		@Override
+		public void flushMatches(IFile file) {
+			List<FileMatch> matches = fCachedMatches.remove(file);
+			if (matches != null && !matches.isEmpty()) {
+				fResult.addMatches(matches.toArray(new Match[matches.size()]));
 			}
 		}
 
 		private void flushMatches() {
-			synchronized (fLock) {
-				if (fCachedMatches != null && !fCachedMatches.isEmpty()) {
-					Iterator<ArrayList<FileMatch>> it = fCachedMatches.values().iterator();
-					while(it.hasNext()) {
-						ArrayList<FileMatch> matches= it.next();
-						fResult.addMatches(matches.toArray(new Match[matches.size()]));
-					}
-					fCachedMatches.clear();
+			fCachedMatches.values().removeIf(matches -> {
+				if (matches != null && !matches.isEmpty()) {
+					fResult.addMatches(matches.toArray(new Match[matches.size()]));
+					return true;
 				}
-			}
+				return false;
+			});
 		}
 	}
 
