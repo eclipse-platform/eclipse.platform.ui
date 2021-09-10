@@ -2299,6 +2299,9 @@ public class TextViewer extends Viewer implements
 				.map(rangeAsArray -> new Region(rangeAsArray[0], rangeAsArray[1]))
 				.filter(widgetRange -> widgetRange.getOffset() >= 0)
 				.toArray(IRegion[]::new);
+		if (widgetSelection.length == 0) {
+			return;
+		}
 		int[] widgetRanges= new int[2 * widgetSelection.length];
 		for (int i= 0; i < widgetSelection.length; i++) {
 			widgetRanges[2 * i]= widgetSelection[i].getOffset();
@@ -2434,7 +2437,7 @@ public class TextViewer extends Viewer implements
 			}
 			if (reveal)
 				revealRange(s.getOffset(), s.getLength());
-		} else if (selection instanceof IMultiTextSelection) {
+		} else if (selection instanceof IMultiTextSelection && ((IMultiTextSelection) selection).getRegions().length > 1) {
 			IMultiTextSelection multiSelection= (IMultiTextSelection) selection;
 			setSelectedRanges(Arrays.stream(multiSelection.getRegions())
 					.map(region -> new Region(region.getOffset(), region.getLength()))

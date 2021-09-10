@@ -59,6 +59,7 @@ import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.jface.text.hyperlink.URLHyperlink;
@@ -445,5 +446,13 @@ public class TextViewerTest {
 		new Clipboard(shell.getDisplay()).setContents(new Object[] { "a\na" }, new Transfer[] { TextTransfer.getInstance() }, DND.CLIPBOARD);
 		textViewer.doOperation(ITextOperationTarget.PASTE);
 		assertEquals("a\na", textViewer.getTextWidget().getText());
+	}
+
+	@Test
+	public void testSetSelectionNoDoc() {
+		Shell shell= new Shell();
+		TextViewer textViewer= new TextViewer(shell, SWT.NONE);
+		textViewer.setSelection(TextSelection.emptySelection());
+		// assert no exception is thrown
 	}
 }
