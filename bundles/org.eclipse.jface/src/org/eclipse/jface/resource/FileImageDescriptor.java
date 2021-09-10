@@ -51,7 +51,7 @@ class FileImageDescriptor extends ImageDescriptor {
 			if (xName != null) {
 				return getFilePath(xName, zoom == 100);
 			}
-			return null;
+			return getFilePath(name, zoom == 100);
 		}
 	}
 
