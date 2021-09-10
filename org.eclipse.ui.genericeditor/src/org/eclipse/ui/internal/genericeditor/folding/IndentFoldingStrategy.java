@@ -158,7 +158,7 @@ public class IndentFoldingStrategy implements IReconcilingStrategy, IReconciling
 		}
 	}
 
-	private class LineIndent {
+	private static class LineIndent {
 		public int line;
 		public final int indent;
 
