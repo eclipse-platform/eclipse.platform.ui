@@ -106,7 +106,7 @@ public class MarkerGroup {
 		}
 	}
 
-	class EntryMapping {
+	static class EntryMapping {
 		MarkerGroupingEntry groupingEntry;
 
 		/**
