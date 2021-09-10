@@ -57,7 +57,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.program.Program;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
@@ -483,14 +482,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 	private static IEditorDescriptor[] getStaticSortedEditorsFromOS() {
 		List<IEditorDescriptor> externalEditors = new ArrayList<>();
 
-		final Program[] programs[] = new Program[1][];
-		// Run in UI because Program.getPrograms() requires a
-		// Display.getCurrent() != null on Unix
-		// (See bug 47556)
-		Display.getDefault().syncExec(() -> {
-			programs[0] = Program.getPrograms();
-		});
-		for (Program program : programs[0]) {
+		for (Program program : Program.getPrograms()) {
 			// 1FPLRL2: ITPUI:WINNT - NOTEPAD editor cannot be launched
 			// Some entries start with %SystemRoot%
 			// For such cases just use the file name as they are generally
