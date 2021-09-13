@@ -1120,8 +1120,12 @@ public class TextViewer extends Viewer implements
 		 */
 		public void updateSelection(Position[] selections) {
 			fSelectionSet= true;
-			if (fSelections == null) {
-				fSelections= Arrays.copyOf(selections, selections.length);
+			if (selections == null) {
+				fSelections = new Position[0];
+			} else if (fSelections != null && fSelections.length == selections.length) {
+				for (int i = 0; i < fSelections.length; i++) {
+					updatePosition(fSelections[i], selections[i].getOffset(), selections[i].getLength());
+				}
 			} else {
 				fSelections= Arrays.stream(selections)
 						.map(position -> new Position(position.getOffset(), position.getLength())) /*force deleted=false*/
@@ -1249,6 +1253,20 @@ public class TextViewer extends Viewer implements
 				// ignore and disconnect
 				disconnect();
 			}
+		}
+
+		/**
+		 * Updates a position with the given information and clears its deletion state.
+		 *
+		 * @param position the position to update
+		 * @param offset the new selection offset
+		 * @param length the new selection length
+		 */
+		private void updatePosition(Position position, int offset, int length) {
+			position.setOffset(offset);
+			position.setLength(length);
+			// http://bugs.eclipse.org/bugs/show_bug.cgi?id=32795
+			position.isDeleted= false;
 		}
 
 		/**
@@ -2496,6 +2514,9 @@ public class TextViewer extends Viewer implements
 			}
 		}
 
+		if (!redraws() && fViewerState != null) {
+			return toSelection(Arrays.stream(fViewerState.getSelection()).map(point -> new Region(point.x, point.y)).toArray(IRegion[]::new));
+		}
 		int[] ranges= fTextWidget.getSelectionRanges();
 		IRegion[] selectedRanges= new IRegion[ranges.length / 2];
 		for (int i= 0; i < selectedRanges.length; i++) {
