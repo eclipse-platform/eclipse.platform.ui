@@ -1250,6 +1250,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			st.setSelectionRanges(newSelection.stream().flatMapToInt(
 					p -> IntStream.of(Math.min(p.y, p.x), Math.abs(p.y - p.x)))
 					.toArray());
+			if (newSelection.size() == 1) {
+				st.showSelection();
+			}
 			fireSelectionChanged(firstSelection);
 		}
 	}
@@ -1375,7 +1378,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					p -> IntStream.of(Math.max(p.x, p.y), -Math.abs(p.x - p.y))) // negative length to put cursor at
 																					// beginning of selection
 					.toArray());
-
+			if (newSelection.size() == 1) {
+				st.showSelection();
+			}
 			fireSelectionChanged(firstSelection);
 		}
 	}
