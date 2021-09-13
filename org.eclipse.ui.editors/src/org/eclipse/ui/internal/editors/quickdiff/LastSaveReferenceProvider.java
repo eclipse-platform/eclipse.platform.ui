@@ -44,7 +44,6 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IElementStateListener;
@@ -251,7 +250,6 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 				}
 
 			} catch (CoreException e) {
-				EditorsPlugin.log(e);
 				return;
 			}
 
