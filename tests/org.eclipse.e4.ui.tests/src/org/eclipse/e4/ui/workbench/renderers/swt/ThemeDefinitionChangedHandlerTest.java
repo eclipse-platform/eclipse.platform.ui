@@ -161,7 +161,7 @@ public class ThemeDefinitionChangedHandlerTest {
 	}
 
 	@Test
-	public void testDisposeHandler() throws Exception {
+	public void testDisposeHandler() {
 		// given
 		ThemeDefinitionChangedHandlerTestable handler = spy(new ThemeDefinitionChangedHandlerTestable());
 

@@ -23,7 +23,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -43,13 +42,6 @@ public class InheritTest extends CSSSWTTestCase {
 
 
 		redColor = new Color(display, RED);
-	}
-
-	@After
-	@Override
-	public void tearDown() {
-		redColor.dispose();
-		super.tearDown();
 	}
 
 	/**
