@@ -147,6 +147,10 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 	 */
 	private List<IEditorDescriptor> sortedEditorsFromPlugins = new ArrayList<>();
 
+	/** cache of OS editors **/
+	private IEditorDescriptor[] sortedEditorsFromOS;
+	final Object sortedEditorsFromOSSynchronizer = new Object();
+
 	// Map of EditorDescriptor - map editor id to editor.
 	private Map<String, IEditorDescriptor> mapIDtoInternalEditor = initialIdToEditorMap(10);
 	// Map of EditorDescriptor - map editor id to OS editor.
@@ -304,8 +308,8 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 		}
 
 		// reset external editors from OS
-		synchronized(this){
-			mapIDtoOSEditors=null;
+		synchronized (this) {
+			mapIDtoOSEditors = null;
 		}
 	}
 
@@ -494,7 +498,24 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 	 * @return the editor descriptors
 	 */
 	public IEditorDescriptor[] getSortedEditorsFromOS() {
-		return getStaticSortedEditorsFromOS();
+		synchronized (sortedEditorsFromOSSynchronizer) {
+			if (sortedEditorsFromOS == null) {
+				loadEditorsFromOS();
+			}
+			return sortedEditorsFromOS;
+		}
+	}
+
+	/**
+	 * refreshes cache.
+	 *
+	 * @see #getSortedEditorsFromOS
+	 */
+	// public just in case someone wants to reload
+	public void loadEditorsFromOS() {
+		synchronized (sortedEditorsFromOSSynchronizer) {
+			sortedEditorsFromOS = getStaticSortedEditorsFromOS();
+		}
 	}
 
 	private static IEditorDescriptor[] getStaticSortedEditorsFromOS() {
