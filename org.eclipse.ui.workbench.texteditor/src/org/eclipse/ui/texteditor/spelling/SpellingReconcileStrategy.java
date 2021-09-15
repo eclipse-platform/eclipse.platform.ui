@@ -52,7 +52,7 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 	/**
 	 * Spelling problem collector.
 	 */
-	private class SpellingProblemCollector implements ISpellingProblemCollector {
+	private static class SpellingProblemCollector implements ISpellingProblemCollector {
 
 		/** Annotation model. */
 		private IAnnotationModel fAnnotationModel;
