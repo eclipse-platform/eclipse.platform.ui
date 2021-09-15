@@ -172,7 +172,7 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 	/**
 	 * Scheduling rule to serialize commands on an object
 	 */
-	private class SerialPerObjectRule implements ISchedulingRule {
+	private static class SerialPerObjectRule implements ISchedulingRule {
 
 		private Object fObject = null;
 
