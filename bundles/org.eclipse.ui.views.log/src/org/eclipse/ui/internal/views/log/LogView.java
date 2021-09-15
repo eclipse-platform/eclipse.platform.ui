@@ -27,6 +27,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.*;
 import java.util.List;
 import java.util.Map.Entry;
@@ -43,6 +44,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.Policy;
+import org.eclipse.jface.util.Throttler;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.framework.log.FrameworkLogEntry;
@@ -123,7 +125,7 @@ public class LogView extends ViewPart implements LogListener {
 	private File fInputFile;
 	private String fDirectory;
 
-	private Comparator fComparator;
+	private Comparator<?> fComparator;
 
 	// hover text
 	private boolean fCanOpenTextShell;
@@ -149,6 +151,8 @@ public class LogView extends ViewPart implements LogListener {
 	private Action fOpenLogAction;
 	private Action fExportLogAction;
 	private Action fExportLogEntryAction;
+	private Throttler mutualRefresh;
+	private Throttler mutualActivate;
 
 	/**
 	 * Action called when user selects "Group by -&gt; ..." from menu.
@@ -576,6 +580,9 @@ public class LogView extends ViewPart implements LogListener {
 		fFilteredTree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fFilteredTree.setInitialText(Messages.LogView_show_filter_initialText);
 		fTree = fFilteredTree.getViewer().getTree();
+		mutualRefresh = createMutualRefresh(fTree.getDisplay());
+		mutualActivate = createMutualActivate(fTree.getDisplay());
+
 		fTree.setLinesVisible(true);
 		createColumns(fTree);
 		fFilteredTree.getViewer().setAutoExpandLevel(2);
@@ -1169,38 +1176,48 @@ public class LogView extends ViewPart implements LogListener {
 		asyncRefresh(true);
 	}
 
+	private Throttler createMutualRefresh(Display display) {
+		return new Throttler(display, Duration.ofMillis(16), () -> {
+			if (!fTree.isDisposed()) {
+				TreeViewer viewer = fFilteredTree.getViewer();
+				viewer.refresh();
+				viewer.expandToLevel(2);
+				fTree.setEnabled(true);
+				boolean exists = fInputFile.exists();
+				boolean enabled = exists && fInputFile.equals(Platform.getLogFileLocation().toFile());
+				fDeleteLogAction.setEnabled(enabled);
+				fOpenLogAction.setEnabled(exists);
+				fExportLogAction.setEnabled(exists);
+				fExportLogEntryAction.setEnabled(!viewer.getSelection().isEmpty());
+			}
+			if (!isDisposed()) {
+				// fFilteredTree.getViewer().refresh(); // why again?
+				fFilteredTree.setEnabled(true);
+			}
+		});
+	}
+
+	private Throttler createMutualActivate(Display display) {
+		return new Throttler(display, Duration.ofMillis(500), () -> {
+			if (!fTree.isDisposed()) {
+				IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+				if (window != null) {
+					IWorkbenchPage page = window.getActivePage();
+					if (page != null) {
+						final ViewPart view = LogView.this;
+						page.bringToTop(view);
+					}
+				}
+			}
+		});
+	}
+
 	private void asyncRefresh(final boolean activate) {
 		if (fTree.isDisposed())
 			return;
-		Display display = fTree.getDisplay();
-		final ViewPart view = this;
-		if (display != null) {
-			display.asyncExec(() -> {
-				if (!fTree.isDisposed()) {
-					TreeViewer viewer = fFilteredTree.getViewer();
-					viewer.refresh();
-					viewer.expandToLevel(2);
-					fTree.setEnabled(true);
-					fDeleteLogAction.setEnabled(
-							fInputFile.exists() && fInputFile.equals(Platform.getLogFileLocation().toFile()));
-					fOpenLogAction.setEnabled(fInputFile.exists());
-					fExportLogAction.setEnabled(fInputFile.exists());
-					fExportLogEntryAction.setEnabled(!viewer.getSelection().isEmpty());
-					if (activate && fActivateViewAction.isChecked()) {
-						IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-						if (window != null) {
-							IWorkbenchPage page = window.getActivePage();
-							if (page != null) {
-								page.bringToTop(view);
-							}
-						}
-					}
-				}
-				if (!isDisposed()) {
-					fFilteredTree.getViewer().refresh();
-					fFilteredTree.setEnabled(true);
-				}
-			});
+		mutualRefresh.throttledExec();
+		if (activate && fActivateViewAction.isChecked()) {
+			mutualActivate.throttledExec();
 		}
 	}
 
@@ -1524,7 +1541,7 @@ public class LogView extends ViewPart implements LogListener {
 		return 1 + getNumberOfParents(parent);
 	}
 
-	public Comparator getComparator() {
+	public Comparator<?> getComparator() {
 		return fComparator;
 	}
 
