@@ -13,6 +13,8 @@
  ******************************************************************************/
 package org.eclipse.jface.tests.dialogs;
 
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -20,24 +22,23 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.junit.After;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class DialogTest extends TestCase {
+public class DialogTest {
 
 	/**
 	 * The dialog being tested.
 	 */
 	private Dialog dialog;
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		if (dialog != null) {
 			// close the dialog
 			dialog.close();
 			dialog = null;
 		}
-		super.tearDown();
 	}
 
 	/**
@@ -49,6 +50,7 @@ public class DialogTest extends TestCase {
 	 * buttons to ensure that they are in the right place if the dismissal alignment
 	 * for the current platform is SWT.RIGHT.
 	 */
+	@Test
 	public void testButtonAlignmentBug272583() {
 		// instantiate a new dialog
 		ForceLayoutDialog forceLayoutDialog = new ForceLayoutDialog();
