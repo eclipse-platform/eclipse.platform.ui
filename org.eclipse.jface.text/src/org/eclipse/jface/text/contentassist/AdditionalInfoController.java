@@ -59,7 +59,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		 * elapsed after it was scheduled without a {@link #reset(ICompletionProposal) reset}
 		 * to occur.
 		 */
-		private abstract class Task implements Runnable {
+		private abstract static class Task implements Runnable {
 			/**
 			 * @return the delay in milliseconds before this task should be run
 			 */
