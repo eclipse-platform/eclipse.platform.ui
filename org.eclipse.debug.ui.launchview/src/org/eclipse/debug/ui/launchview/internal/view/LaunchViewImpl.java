@@ -110,7 +110,7 @@ public class LaunchViewImpl implements Supplier<Set<ILaunchObject>> {
 				String txt = ((LaunchObjectModel) element).getLabel().toString();
 				return wordMatches(txt);
 			}
-		}, true);
+		}, true, true);
 		tree.getViewer().setContentProvider(new LaunchViewContentProvider());
 		tree.getViewer().setLabelProvider(new DelegatingStyledCellLabelProvider(new LaunchViewLabelProvider()));
 		tree.getViewer().getTree().setLayout(new GridLayout());
