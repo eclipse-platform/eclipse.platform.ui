@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jface.util;
 
+import java.time.Duration;
+
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -116,12 +118,31 @@ public class OpenStrategy {
 
 	private ListenerList<SelectionListener> postSelectionEventListeners = new ListenerList<>();
 
+	final Throttler throttledPostSelection;
+	final PostSelectionEvent postSelectionEvent = new PostSelectionEvent();
+	class PostSelectionEvent implements Runnable {
+		volatile Event e;
+
+		void setEvent(Event e) {
+			this.e = e;
+		}
+
+		@Override
+		public void run() {
+			firePostSelectionEvent(new SelectionEvent(e));
+			if ((CURRENT_METHOD & ARROW_KEYS_OPEN) != 0) {
+				fireOpenEvent(new SelectionEvent(e));
+			}
+		}
+	}
 	/**
 	 * @param control the control the strategy is applied to
 	 */
 	public OpenStrategy(Control control) {
 		initializeHandler(control.getDisplay());
 		addListener(control);
+		throttledPostSelection = new Throttler(control.getDisplay(), Duration.ofMillis(TIME), postSelectionEvent);
+
 	}
 
 	/**
@@ -405,23 +426,14 @@ public class OpenStrategy {
 						selectionPendent = event;
 					}
 					count[0]++;
-					final int id = count[0];
 					// In the case of arrowUp/arrowDown when in the arrowKeysOpen mode, we
 					// want to delay any selection until the last arrowDown/Up occurs.  This
 					// handles the case where the user presses arrowDown/Up successively.
 					// We only want to open an editor for the last selected item.
 					display.asyncExec(() -> {
 						if (arrowKeyDown) {
-							display.timerExec(TIME, () -> {
-								if (id == count[0]) {
-									firePostSelectionEvent(new SelectionEvent(
-											e));
-									if ((CURRENT_METHOD & ARROW_KEYS_OPEN) != 0) {
-										fireOpenEvent(new SelectionEvent(
-												e));
-									}
-								}
-							});
+							postSelectionEvent.setEvent(e);
+							throttledPostSelection.throttledExec();
 						} else {
 							firePostSelectionEvent(new SelectionEvent(e));
 						}
