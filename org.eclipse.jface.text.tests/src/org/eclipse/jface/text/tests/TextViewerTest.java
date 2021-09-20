@@ -414,10 +414,17 @@ public class TextViewerTest {
 	public void testPasteMultiLines() {
 		fShell= new Shell();
 		TextViewer textViewer= new TextViewer(fShell, SWT.NONE);
-		textViewer.setDocument(new Document());
+		Document document= new Document();
+		textViewer.setDocument(document);
 		new Clipboard(fShell.getDisplay()).setContents(new Object[] { "a\na" }, new Transfer[] { TextTransfer.getInstance() }, DND.CLIPBOARD);
 		textViewer.doOperation(ITextOperationTarget.PASTE);
 		assertEquals("a\na", textViewer.getTextWidget().getText());
+		//
+		document.set("a\na\na\nb");
+		textViewer.setSelectedRange(0, 6);
+		new Clipboard(fShell.getDisplay()).setContents(new Object[] { "b" }, new Transfer[] { TextTransfer.getInstance() }, DND.CLIPBOARD);
+		textViewer.doOperation(ITextOperationTarget.PASTE);
+		assertEquals("bb", textViewer.getTextWidget().getText());
 	}
 
 	@Test

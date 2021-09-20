@@ -3981,7 +3981,7 @@ public class TextViewer extends Viewer implements
 	}
 
 	private void delete() {
-		if (!fTextWidget.getBlockSelection() && fTextWidget.getSelectionRanges().length < 2) {
+		if (!fTextWidget.getBlockSelection() && isWidgetSelectionSingleRange()) {
 			fTextWidget.invokeAction(ST.DELETE_NEXT);
 		} else {
 			wrapCompoundChange(() -> {
@@ -3997,9 +3997,13 @@ public class TextViewer extends Viewer implements
 		fireSelectionChanged(selection.x, selection.y);
 	}
 
+	private boolean isWidgetSelectionSingleRange() {
+		return fTextWidget.getSelectionRanges().length <= 2;
+	}
+
 	private void paste() {
 //		ignoreAutoEditStrategies(true);
-		if (fTextWidget.getSelectionRanges().length < 2) { // single selection
+		if (isWidgetSelectionSingleRange()) { // single selection
 			fTextWidget.paste();
 		} else {
 			wrapCompoundChange(() -> {
