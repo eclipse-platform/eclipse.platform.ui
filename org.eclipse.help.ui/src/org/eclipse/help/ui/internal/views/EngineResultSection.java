@@ -155,7 +155,9 @@ public class EngineResultSection {
 		searchResults.setImage(ISharedImages.IMG_OBJS_ERROR_TSK, PlatformUI.getWorkbench().getSharedImages()
 				.getImage(ISharedImages.IMG_OBJS_ERROR_TSK));
 		searchResults.setImage(desc.getId(), desc.getIconImage());
-		searchResults.setImage(KEY_PREFIX_GRAYED + desc.getId(), getGrayedImage(desc.getIconImage()));
+		Image grayedImage = getGrayedImage(desc.getIconImage());
+		searchResults.setImage(KEY_PREFIX_GRAYED + desc.getId(), grayedImage);
+		searchResults.addDisposeListener(e -> grayedImage.dispose());
 		searchResults.addHyperlinkListener(new IHyperlinkListener() {
 
 			@Override
