@@ -203,6 +203,19 @@ public interface IResourceDelta extends IAdaptable {
 	int DERIVED_CHANGED = 0x400000;
 
 	/**
+	 * Change constant (bit mask) indicating that the content of the resource is
+	 * proposed to be deleted. This flag can only be found in deltas created by
+	 * {@link IResourceChangeDescriptionFactory} and indicates that the underlined
+	 * file object is proposed to be deleted from the file system (as opposite to
+	 * the change where only workspace model is deleted).
+	 *
+	 * @see IResourceChangeDescriptionFactory
+	 * @see IResourceDelta#getFlags()
+	 * @since 3.16
+	 */
+	int DELETE_CONTENT_PROPOSED = 0x800000;
+
+	/**
 	 * Accepts the given visitor.
 	 * The only kinds of resource deltas visited
 	 * are <code>ADDED</code>, <code>REMOVED</code>,

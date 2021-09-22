@@ -210,6 +210,37 @@ public class ChangeValidationTest extends ResourceTest {
 		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.REMOVED, project)});
 	}
 
+	public void testProjectDeletionWithContents() {
+		factory.delete(project, true);
+		IStatus status = validateChange(factory);
+		assertStatusEqual(status, new String[] { ChangeDescription.getMessageFor(ChangeDescription.REMOVED, project) });
+		// Check if the given delta also indicates contents deletion
+		try {
+			TestModelProvider.checkContentsDeletion = true;
+			status = validateChange(factory);
+			assertEquals("Validation should return error status on contents deletion.", IStatus.ERROR,
+				status.getSeverity());
+		} finally {
+			TestModelProvider.checkContentsDeletion = false;
+		}
+	}
+
+	public void testProjectDeletionWithoutContents() {
+		factory.delete(project, false);
+		IStatus status = validateChange(factory);
+		assertStatusEqual(status, new String[] { ChangeDescription.getMessageFor(ChangeDescription.REMOVED, project) });
+		// Check if the given delta does not indicate contents removal
+		try {
+			TestModelProvider.checkContentsDeletion = true;
+			status = validateChange(factory);
+			assertEquals("Validation should return warning status on project removal from workspace.", IStatus.WARNING,
+				status.getSeverity());
+		} finally {
+			TestModelProvider.checkContentsDeletion = false;
+		}
+
+	}
+
 	public void testProjectMove() {
 		factory.move(project, new Path("MovedProject"));
 		IStatus status = validateChange(factory);

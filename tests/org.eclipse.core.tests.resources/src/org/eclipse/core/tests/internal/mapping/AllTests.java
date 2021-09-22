@@ -23,6 +23,9 @@ import org.junit.runners.Suite;
  * @since 3.2
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ ChangeValidationTest.class })
+@Suite.SuiteClasses({ 
+	ChangeValidationTest.class,
+	TestProjectDeletion.class
+	})
 public class AllTests {
 }

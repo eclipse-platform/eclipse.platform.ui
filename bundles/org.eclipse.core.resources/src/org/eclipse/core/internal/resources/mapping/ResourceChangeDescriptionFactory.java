@@ -26,12 +26,25 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 	private ProposedResourceDelta root = new ProposedResourceDelta(ResourcesPlugin.getWorkspace().getRoot());
 
 	/**
-	 * Creates and a delta representing a deleted resource, and adds it to the provided
+	 * Creates a delta representing a deleted resource, and adds it to the provided
 	 * parent delta.
 	 * @param parentDelta The parent of the deletion delta to create
 	 * @param resource The deleted resource to create a delta for
 	 */
 	private ProposedResourceDelta buildDeleteDelta(ProposedResourceDelta parentDelta, IResource resource) {
+		return buildDeleteDelta(parentDelta, resource, false);
+	}
+
+	/**
+	 * Creates a delta representing a deleted resource, and adds it to the provided
+	 * parent delta.
+	 * @param parentDelta     The parent of the deletion delta to create
+	 * @param resource        The deleted resource to create a delta for
+	 * @param deleteContent <code>true</code> if resource should be also deleted
+	 *                        from the disk
+	 */
+	private ProposedResourceDelta buildDeleteDelta(ProposedResourceDelta parentDelta, IResource resource,
+			boolean deleteContent) {
 		//start with the existing delta for this resource, if any, to preserve other flags
 		ProposedResourceDelta delta = parentDelta.getChild(resource.getName());
 		if (delta == null) {
@@ -39,6 +52,8 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 			parentDelta.add(delta);
 		}
 		delta.setKind(IResourceDelta.REMOVED);
+		if (deleteContent)
+			delta.addFlags(IResourceDelta.DELETE_CONTENT_PROPOSED);
 		if (resource.getType() == IResource.FILE)
 			return delta;
 		//recurse to build deletion deltas for children
@@ -48,7 +63,7 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 			if (childCount > 0) {
 				ProposedResourceDelta[] childDeltas = new ProposedResourceDelta[childCount];
 				for (int i = 0; i < childCount; i++)
-					childDeltas[i] = buildDeleteDelta(delta, members[i]);
+					childDeltas[i] = buildDeleteDelta(delta, members[i], deleteContent);
 			}
 		} catch (CoreException e) {
 			//don't need to create deletion deltas for children of inaccessible resources
@@ -93,6 +108,11 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 		} else {
 			buildDeleteDelta(getDelta(resource.getParent()), resource);
 		}
+	}
+
+	@Override
+	public void delete(IProject project, boolean deleteContent) {
+		buildDeleteDelta(root, project, deleteContent);
 	}
 
 	private void fail(CoreException e) {

@@ -28,6 +28,14 @@ public class TestModelProvider extends ModelProvider {
 	 */
 	public static boolean enabled = false;
 
+	/**
+	 * Flag to check if the given delta proposes contents deletion. If set to
+	 * {@code true}, the {@link #validateChange(IResourceDelta, IProgressMonitor)}
+	 * will add {@link IStatus.ERROR} to the change description to indicate contents
+	 * deletion proposal.
+	 */
+	public static boolean checkContentsDeletion;
+
 	public static final String ID = "org.eclipse.core.tests.resources.modelProvider";
 
 	@Override
@@ -46,6 +54,17 @@ public class TestModelProvider extends ModelProvider {
 		} catch (CoreException e) {
 			description.addError(e);
 		}
+
+		if (checkContentsDeletion) {
+			for (IResourceDelta resourceDelta : rootDelta.getAffectedChildren()) {
+				if ((resourceDelta.getFlags() & IResourceDelta.DELETE_CONTENT_PROPOSED) != 0) {
+					// With error status we indicate contents deletion proposal in given delta.
+					description.addError(new CoreException(
+							new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, "Contents deletion proposed.")));
+				}
+			}
+		}
+
 		return description.asStatus();
 	}
 }
