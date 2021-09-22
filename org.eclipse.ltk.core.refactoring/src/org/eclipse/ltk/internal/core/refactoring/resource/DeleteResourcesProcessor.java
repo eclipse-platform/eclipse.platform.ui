@@ -167,7 +167,11 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 				} else if (fDeleteContents && Resources.isReadOnly(fResource)) {
 					result.addFatalError(Messages.format(RefactoringCoreMessages.DeleteResourcesProcessor_delete_error_read_only, BasicElementLabels.getPathLabel(fResource.getFullPath(), false)));
 				} else {
-					deltaFactory.delete(fResource);
+					if (fResource.getType() == IResource.PROJECT) {
+						deltaFactory.delete((IProject) fResource, fDeleteContents);
+					} else {
+						deltaFactory.delete(fResource);
+					}
 				}
 			}
 			return result;
