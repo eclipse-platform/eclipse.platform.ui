@@ -20,3 +20,9 @@ Import-Package: javax.annotation;version="1.0.0";resolution:=optional,
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/org.eclipse.debug.ui.launchview.internal.model.LaunchViewModel.xml,
  OSGI-INF/org.eclipse.debug.ui.launchview.internal.impl.DebugCoreProvider.xml
+Export-Package: org.eclipse.debug.ui.launchview.internal;x-internal:=true,
+ org.eclipse.debug.ui.launchview.internal.impl;x-internal:=true,
+ org.eclipse.debug.ui.launchview.internal.launcher;x-internal:=true,
+ org.eclipse.debug.ui.launchview.internal.model;x-internal:=true,
+ org.eclipse.debug.ui.launchview.internal.services;x-internal:=true,
+ org.eclipse.debug.ui.launchview.internal.view;x-internal:=true
