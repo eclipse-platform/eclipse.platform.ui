@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="ASCII"?>
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmi:id="_DMol4JaZEeyiTd_tdcLiRw">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="_DMpM8JaZEeyiTd_tdcLiRw" contributorURI="platform:/plugin/org.eclipse.platform">
+    <children xsi:type="basic:PartSashContainer" xmi:id="_DMpM8ZaZEeyiTd_tdcLiRw" horizontal="true">
+      <children xsi:type="advanced:PerspectiveStack" xmi:id="_DMpM8paZEeyiTd_tdcLiRw" selectedElement="_DMpM85aZEeyiTd_tdcLiRw">
+        <children xsi:type="advanced:Perspective" xmi:id="_DMpM85aZEeyiTd_tdcLiRw" elementId="ResourceExport" label="ResourceExport">
+          <children xsi:type="basic:PartSashContainer" xmi:id="_DMpM9JaZEeyiTd_tdcLiRw" horizontal="true">
+            <children xsi:type="basic:PartSashContainer" xmi:id="_DMpM9ZaZEeyiTd_tdcLiRw" horizontal="true">
+              <children xsi:type="basic:PartSashContainer" xmi:id="_DMpM9paZEeyiTd_tdcLiRw" containerData="7497">
+                <children xsi:type="basic:PartStack" xmi:id="_DMpM95aZEeyiTd_tdcLiRw" elementId="topLeft" containerData="5000" selectedElement="_DMpM-JaZEeyiTd_tdcLiRw">
+                  <children xsi:type="advanced:Placeholder" xmi:id="_DMpM-JaZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.navigator.ProjectExplorer" ref="_DMpNQpaZEeyiTd_tdcLiRw"/>
+                  <children xsi:type="advanced:Placeholder" xmi:id="_DMpM-ZaZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.views.BookmarkView" toBeRendered="false" ref="_DMpNUZaZEeyiTd_tdcLiRw"/>
+                  <children xsi:type="advanced:Placeholder" xmi:id="_DMpM-paZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.views.ResourceNavigator" toBeRendered="false" ref="_DMpNSJaZEeyiTd_tdcLiRw"/>
+                  <children xsi:type="advanced:Placeholder" xmi:id="_DMpM-5aZEeyiTd_tdcLiRw" elementId="org.eclipse.team.ccvs.ui.RepositoriesView" toBeRendered="false" ref="_DMpNWpaZEeyiTd_tdcLiRw"/>
+                </children>
+                <children xsi:type="basic:PartStack" xmi:id="_DMpM_JaZEeyiTd_tdcLiRw" elementId="bottomLeft" containerData="5000" selectedElement="_DMpM_ZaZEeyiTd_tdcLiRw">
+                  <children xsi:type="advanced:Placeholder" xmi:id="_DMpM_ZaZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.views.ContentOutline" ref="_DMpNQ5aZEeyiTd_tdcLiRw"/>
+                  <children xsi:type="advanced:Placeholder" xmi:id="_DMpM_paZEeyiTd_tdcLiRw" elementId="org.eclipse.mylyn.tasks.ui.views.tasks" ref="_DMpNRJaZEeyiTd_tdcLiRw"/>
+                  <children xsi:type="advanced:Placeholder" xmi:id="_DMpM_5aZEeyiTd_tdcLiRw" elementId="org.eclipse.ant.ui.views.AntView" toBeRendered="false" ref="_DMpNVZaZEeyiTd_tdcLiRw"/>
+                </children>
+              </children>
+              <children xsi:type="basic:PartStack" xmi:id="_DMpNAJaZEeyiTd_tdcLiRw" elementId="stickyFolderRight" toBeRendered="false" visible="false" containerData="2503">
+                <children xsi:type="advanced:Placeholder" xmi:id="_DMpNAZaZEeyiTd_tdcLiRw" elementId="org.eclipse.help.ui.HelpView" toBeRendered="false" ref="_DMpNSpaZEeyiTd_tdcLiRw"/>
+                <children xsi:type="advanced:Placeholder" xmi:id="_DMpNApaZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.internal.introview" toBeRendered="false" ref="_DMpNS5aZEeyiTd_tdcLiRw"/>
+                <children xsi:type="advanced:Placeholder" xmi:id="_DMpNA5aZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.cheatsheets.views.CheatSheetView" toBeRendered="false" ref="_DMpNTJaZEeyiTd_tdcLiRw"/>
+              </children>
+            </children>
+            <children xsi:type="basic:PartStack" xmi:id="_DMpNBJaZEeyiTd_tdcLiRw" elementId="bottomRight" selectedElement="_DMpNBZaZEeyiTd_tdcLiRw">
+              <children xsi:type="advanced:Placeholder" xmi:id="_DMpNBZaZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.views.TaskList" ref="_DMpNRZaZEeyiTd_tdcLiRw"/>
+              <children xsi:type="advanced:Placeholder" xmi:id="_DMpNBpaZEeyiTd_tdcLiRw" elementId="org.eclipse.team.ui.GenericHistoryView" toBeRendered="false" ref="_DMpNW5aZEeyiTd_tdcLiRw"/>
+            </children>
+            <children xsi:type="advanced:Placeholder" xmi:id="_DMpNB5aZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.editorss" ref="_DMpNQJaZEeyiTd_tdcLiRw"/>
+          </children>
+        </children>
+        <children xsi:type="advanced:Perspective" xmi:id="_DMpNCJaZEeyiTd_tdcLiRw" elementId="org.eclipse.debug.ui.DebugPerspective" label="Debug">
+          <children xsi:type="basic:PartSashContainer" xmi:id="_DMpNCZaZEeyiTd_tdcLiRw" horizontal="true">
+            <children xsi:type="basic:PartSashContainer" xmi:id="_DMpNCpaZEeyiTd_tdcLiRw" horizontal="true">
+              <children xsi:type="basic:PartSashContainer" xmi:id="_DMpNC5aZEeyiTd_tdcLiRw" containerData="7498">
+                <children xsi:type="basic:PartSashContainer" xmi:id="_DMpNDJaZEeyiTd_tdcLiRw" containerData="7492">
+                  <children xsi:type="basic:PartSashContainer" xmi:id="_DMpNDZaZEeyiTd_tdcLiRw" containerData="4489" horizontal="true">
+                    <children xsi:type="basic:PartStack" xmi:id="_DMpNDpaZEeyiTd_tdcLiRw" elementId="org.eclipse.debug.internal.ui.NavigatorFolderView" containerData="4997" selectedElement="_DMpND5aZEeyiTd_tdcLiRw">
+                      <children xsi:type="advanced:Placeholder" xmi:id="_DMpND5aZEeyiTd_tdcLiRw" elementId="org.eclipse.debug.ui.DebugView" ref="_DMpNUJaZEeyiTd_tdcLiRw"/>
+                      <children xsi:type="advanced:Placeholder" xmi:id="_DMpNEJaZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.views.ResourceNavigator" toBeRendered="false" ref="_DMpNSJaZEeyiTd_tdcLiRw"/>
+                      <children xsi:type="advanced:Placeholder" xmi:id="_DMpNEZaZEeyiTd_tdcLiRw" elementId="org.eclipse.jdt.ui.PackageExplorer" toBeRendered="false" ref="_DMpNRpaZEeyiTd_tdcLiRw"/>
+                      <children xsi:type="advanced:Placeholder" xmi:id="_DMpNEpaZEeyiTd_tdcLiRw" elementId="org.eclipse.jdt.ui.TypeHierarchy" toBeRendered="false" ref="_DMpNSZaZEeyiTd_tdcLiRw"/>
+                    </children>
+                    <children xsi:type="basic:PartStack" xmi:id="_DMpNE5aZEeyiTd_tdcLiRw" elementId="org.eclipse.debug.internal.ui.ToolsFolderView" containerData="5003" selectedElement="_DMpNFZaZEeyiTd_tdcLiRw">
+                      <children xsi:type="advanced:Placeholder" xmi:id="_DMpNFJaZEeyiTd_tdcLiRw" elementId="org.eclipse.debug.ui.VariableView" ref="_DMpNVpaZEeyiTd_tdcLiRw"/>
+                      <children xsi:type="advanced:Placeholder" xmi:id="_DMpNFZaZEeyiTd_tdcLiRw" elementId="org.eclipse.debug.ui.BreakpointView" ref="_DMpNV5aZEeyiTd_tdcLiRw"/>
+                      <children xsi:type="advanced:Placeholder" xmi:id="_DMpNFpaZEeyiTd_tdcLiRw" elementId="org.eclipse.debug.ui.ExpressionView" toBeRendered="false" ref="_DMpNWJaZEeyiTd_tdcLiRw"/>
+                      <children xsi:type="advanced:Placeholder" xmi:id="_DMpNF5aZEeyiTd_tdcLiRw" elementId="org.eclipse.debug.ui.RegisterView" toBeRendered="false" ref="_DMpNWZaZEeyiTd_tdcLiRw"/>
+                    </children>
+                  </children>
+                  <children xsi:type="basic:PartSashContainer" xmi:id="_DMpNGJaZEeyiTd_tdcLiRw" containerData="5511" horizontal="true">
+                    <children xsi:type="advanced:Placeholder" xmi:id="_DMpNGZaZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.editorss" containerData="7498" ref="_DMpNQJaZEeyiTd_tdcLiRw"/>
+                    <children xsi:type="basic:PartStack" xmi:id="_DMpNGpaZEeyiTd_tdcLiRw" elementId="org.eclipse.debug.internal.ui.OutlineFolderView" containerData="2502" selectedElement="_DMpNG5aZEeyiTd_tdcLiRw">
+                      <children xsi:type="advanced:Placeholder" xmi:id="_DMpNG5aZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.views.ContentOutline" ref="_DMpNQ5aZEeyiTd_tdcLiRw"/>
+                      <children xsi:type="advanced:Placeholder" xmi:id="_DMpNHJaZEeyiTd_tdcLiRw" elementId="org.eclipse.ant.ui.views.AntView" toBeRendered="false" ref="_DMpNVZaZEeyiTd_tdcLiRw"/>
+                    </children>
+                  </children>
+                </children>
+                <children xsi:type="basic:PartStack" xmi:id="_DMpNHZaZEeyiTd_tdcLiRw" elementId="org.eclipse.debug.internal.ui.ConsoleFolderView" containerData="2508" selectedElement="_DMpNHpaZEeyiTd_tdcLiRw">
+                  <children xsi:type="advanced:Placeholder" xmi:id="_DMpNHpaZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.console.ConsoleView" ref="_DMpNT5aZEeyiTd_tdcLiRw"/>
+                  <children xsi:type="advanced:Placeholder" xmi:id="_DMpNH5aZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.views.TaskList" ref="_DMpNRZaZEeyiTd_tdcLiRw"/>
+                  <children xsi:type="advanced:Placeholder" xmi:id="_DMpNIJaZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.views.BookmarkView" toBeRendered="false" ref="_DMpNUZaZEeyiTd_tdcLiRw"/>
+                  <children xsi:type="advanced:Placeholder" xmi:id="_DMpNIZaZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.views.PropertySheet" toBeRendered="false" ref="_DMpNUpaZEeyiTd_tdcLiRw"/>
+                  <children xsi:type="advanced:Placeholder" xmi:id="_DMpNIpaZEeyiTd_tdcLiRw" elementId="org.eclipse.jdt.debug.ui.DisplayView" toBeRendered="false" ref="_DMpNU5aZEeyiTd_tdcLiRw"/>
+                  <children xsi:type="advanced:Placeholder" xmi:id="_DMpNI5aZEeyiTd_tdcLiRw" elementId="org.eclipse.search.SearchResultView" toBeRendered="false" ref="_DMpNVJaZEeyiTd_tdcLiRw"/>
+                </children>
+              </children>
+              <children xsi:type="basic:PartStack" xmi:id="_DMpNJJaZEeyiTd_tdcLiRw" elementId="stickyFolderRight" toBeRendered="false" visible="false" containerData="2502">
+                <children xsi:type="advanced:Placeholder" xmi:id="_DMpNJZaZEeyiTd_tdcLiRw" elementId="org.eclipse.help.ui.HelpView" toBeRendered="false" ref="_DMpNSpaZEeyiTd_tdcLiRw"/>
+                <children xsi:type="advanced:Placeholder" xmi:id="_DMpNJpaZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.internal.introview" toBeRendered="false" ref="_DMpNS5aZEeyiTd_tdcLiRw"/>
+                <children xsi:type="advanced:Placeholder" xmi:id="_DMpNJ5aZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.cheatsheets.views.CheatSheetView" toBeRendered="false" ref="_DMpNTJaZEeyiTd_tdcLiRw"/>
+              </children>
+            </children>
+          </children>
+        </children>
+        <children xsi:type="advanced:Perspective" xmi:id="_DMpNKJaZEeyiTd_tdcLiRw" elementId="org.eclipse.pde.ui.PDEPerspective" label="Plug-in Development">
+          <children xsi:type="basic:PartSashContainer" xmi:id="_DMpNKZaZEeyiTd_tdcLiRw" horizontal="true">
+            <children xsi:type="basic:PartSashContainer" xmi:id="_DMpNKpaZEeyiTd_tdcLiRw" horizontal="true">
+              <children xsi:type="basic:PartSashContainer" xmi:id="_DMpNK5aZEeyiTd_tdcLiRw" containerData="7495" horizontal="true">
+                <children xsi:type="basic:PartStack" xmi:id="_DMpNLJaZEeyiTd_tdcLiRw" elementId="topLeft" containerData="2235" selectedElement="_DMpNLZaZEeyiTd_tdcLiRw">
+                  <children xsi:type="advanced:Placeholder" xmi:id="_DMpNLZaZEeyiTd_tdcLiRw" elementId="org.eclipse.jdt.ui.PackageExplorer" ref="_DMpNRpaZEeyiTd_tdcLiRw"/>
+                  <children xsi:type="advanced:Placeholder" xmi:id="_DMpNLpaZEeyiTd_tdcLiRw" elementId="org.eclipse.pde.ui.PluginsView" ref="_DMpNR5aZEeyiTd_tdcLiRw"/>
+                  <children xsi:type="advanced:Placeholder" xmi:id="_DMpNL5aZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.views.ResourceNavigator" toBeRendered="false" ref="_DMpNSJaZEeyiTd_tdcLiRw"/>
+                  <children xsi:type="advanced:Placeholder" xmi:id="_DMpNMJaZEeyiTd_tdcLiRw" elementId="org.eclipse.jdt.ui.TypeHierarchy" toBeRendered="false" ref="_DMpNSZaZEeyiTd_tdcLiRw"/>
+                </children>
+                <children xsi:type="basic:PartSashContainer" xmi:id="_DMpNMZaZEeyiTd_tdcLiRw" containerData="7765">
+                  <children xsi:type="basic:PartSashContainer" xmi:id="_DMpNMpaZEeyiTd_tdcLiRw" containerData="6666" horizontal="true">
+                    <children xsi:type="advanced:Placeholder" xmi:id="_DMpNM5aZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.editorss" containerData="7493" ref="_DMpNQJaZEeyiTd_tdcLiRw"/>
+                    <children xsi:type="basic:PartStack" xmi:id="_DMpNNJaZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.internal.ViewStack@4441d567" containerData="2507" selectedElement="_DMpNNpaZEeyiTd_tdcLiRw">
+                      <children xsi:type="advanced:Placeholder" xmi:id="_DMpNNZaZEeyiTd_tdcLiRw" elementId="org.eclipse.mylyn.tasks.ui.views.tasks" ref="_DMpNRJaZEeyiTd_tdcLiRw"/>
+                      <children xsi:type="advanced:Placeholder" xmi:id="_DMpNNpaZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.views.ContentOutline" ref="_DMpNQ5aZEeyiTd_tdcLiRw"/>
+                    </children>
+                  </children>
+                  <children xsi:type="basic:PartStack" xmi:id="_DMpNN5aZEeyiTd_tdcLiRw" elementId="bottomRight" containerData="3334" selectedElement="_DMpNO5aZEeyiTd_tdcLiRw">
+                    <children xsi:type="advanced:Placeholder" xmi:id="_DMpNOJaZEeyiTd_tdcLiRw" elementId="org.eclipse.pde.runtime.LogView" ref="_DMpNTZaZEeyiTd_tdcLiRw"/>
+                    <children xsi:type="advanced:Placeholder" xmi:id="_DMpNOZaZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.views.TaskList" ref="_DMpNRZaZEeyiTd_tdcLiRw"/>
+                    <children xsi:type="advanced:Placeholder" xmi:id="_DMpNOpaZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.views.ProblemView" ref="_DMpNTpaZEeyiTd_tdcLiRw"/>
+                    <children xsi:type="advanced:Placeholder" xmi:id="_DMpNO5aZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.console.ConsoleView" ref="_DMpNT5aZEeyiTd_tdcLiRw"/>
+                  </children>
+                </children>
+              </children>
+              <children xsi:type="basic:PartStack" xmi:id="_DMpNPJaZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.internal.ViewStack@3e4f80cb" toBeRendered="false" visible="false" containerData="2505">
+                <children xsi:type="advanced:Placeholder" xmi:id="_DMpNPZaZEeyiTd_tdcLiRw" elementId="org.eclipse.help.ui.HelpView" toBeRendered="false" ref="_DMpNSpaZEeyiTd_tdcLiRw"/>
+                <children xsi:type="advanced:Placeholder" xmi:id="_DMpNPpaZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.internal.introview" toBeRendered="false" ref="_DMpNS5aZEeyiTd_tdcLiRw"/>
+                <children xsi:type="advanced:Placeholder" xmi:id="_DMpNP5aZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.cheatsheets.views.CheatSheetView" toBeRendered="false" ref="_DMpNTJaZEeyiTd_tdcLiRw"/>
+              </children>
+            </children>
+          </children>
+        </children>
+      </children>
+    </children>
+    <sharedElements xsi:type="advanced:Area" xmi:id="_DMpNQJaZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.editorss">
+      <children xsi:type="basic:PartStack" xmi:id="_DMpNQZaZEeyiTd_tdcLiRw" elementId="org.eclipse.e4.primaryDataStack">
+        <tags>org.eclipse.e4.primaryDataStack</tags>
+        <tags>EditorStack</tags>
+      </children>
+    </sharedElements>
+    <sharedElements xsi:type="basic:Part" xmi:id="_DMpNQpaZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.navigator.ProjectExplorer" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="Project Explorer"/>
+    <sharedElements xsi:type="basic:Part" xmi:id="_DMpNQ5aZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.views.ContentOutline" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="Outline"/>
+    <sharedElements xsi:type="basic:Part" xmi:id="_DMpNRJaZEeyiTd_tdcLiRw" elementId="org.eclipse.mylyn.tasks.ui.views.tasks" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="Task List"/>
+    <sharedElements xsi:type="basic:Part" xmi:id="_DMpNRZaZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.views.TaskList" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="Tasks"/>
+    <sharedElements xsi:type="basic:Part" xmi:id="_DMpNRpaZEeyiTd_tdcLiRw" elementId="org.eclipse.jdt.ui.PackageExplorer" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="fakeorg.eclipse.jdt.ui.PackageExplorer"/>
+    <sharedElements xsi:type="basic:Part" xmi:id="_DMpNR5aZEeyiTd_tdcLiRw" elementId="org.eclipse.pde.ui.PluginsView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="fakeorg.eclipse.pde.ui.PluginsView"/>
+    <sharedElements xsi:type="basic:Part" xmi:id="_DMpNSJaZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.views.ResourceNavigator" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="fakeorg.eclipse.ui.views.ResourceNavigator"/>
+    <sharedElements xsi:type="basic:Part" xmi:id="_DMpNSZaZEeyiTd_tdcLiRw" elementId="org.eclipse.jdt.ui.TypeHierarchy" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="fakeorg.eclipse.jdt.ui.TypeHierarchy"/>
+    <sharedElements xsi:type="basic:Part" xmi:id="_DMpNSpaZEeyiTd_tdcLiRw" elementId="org.eclipse.help.ui.HelpView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="fakeorg.eclipse.help.ui.HelpView"/>
+    <sharedElements xsi:type="basic:Part" xmi:id="_DMpNS5aZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.internal.introview" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="fakeorg.eclipse.ui.internal.introview"/>
+    <sharedElements xsi:type="basic:Part" xmi:id="_DMpNTJaZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.cheatsheets.views.CheatSheetView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="fakeorg.eclipse.ui.cheatsheets.views.CheatSheetView"/>
+    <sharedElements xsi:type="basic:Part" xmi:id="_DMpNTZaZEeyiTd_tdcLiRw" elementId="org.eclipse.pde.runtime.LogView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="fakeorg.eclipse.pde.runtime.LogView"/>
+    <sharedElements xsi:type="basic:Part" xmi:id="_DMpNTpaZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.views.ProblemView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="fakeorg.eclipse.ui.views.ProblemView"/>
+    <sharedElements xsi:type="basic:Part" xmi:id="_DMpNT5aZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.console.ConsoleView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="fakeorg.eclipse.ui.console.ConsoleView"/>
+    <sharedElements xsi:type="basic:Part" xmi:id="_DMpNUJaZEeyiTd_tdcLiRw" elementId="org.eclipse.debug.ui.DebugView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="fakeorg.eclipse.debug.ui.DebugView"/>
+    <sharedElements xsi:type="basic:Part" xmi:id="_DMpNUZaZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.views.BookmarkView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="fakeorg.eclipse.ui.views.BookmarkView"/>
+    <sharedElements xsi:type="basic:Part" xmi:id="_DMpNUpaZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.views.PropertySheet" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="fakeorg.eclipse.ui.views.PropertySheet"/>
+    <sharedElements xsi:type="basic:Part" xmi:id="_DMpNU5aZEeyiTd_tdcLiRw" elementId="org.eclipse.jdt.debug.ui.DisplayView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="fakeorg.eclipse.jdt.debug.ui.DisplayView"/>
+    <sharedElements xsi:type="basic:Part" xmi:id="_DMpNVJaZEeyiTd_tdcLiRw" elementId="org.eclipse.search.SearchResultView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="fakeorg.eclipse.search.SearchResultView"/>
+    <sharedElements xsi:type="basic:Part" xmi:id="_DMpNVZaZEeyiTd_tdcLiRw" elementId="org.eclipse.ant.ui.views.AntView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="fakeorg.eclipse.ant.ui.views.AntView"/>
+    <sharedElements xsi:type="basic:Part" xmi:id="_DMpNVpaZEeyiTd_tdcLiRw" elementId="org.eclipse.debug.ui.VariableView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="fakeorg.eclipse.debug.ui.VariableView"/>
+    <sharedElements xsi:type="basic:Part" xmi:id="_DMpNV5aZEeyiTd_tdcLiRw" elementId="org.eclipse.debug.ui.BreakpointView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="fakeorg.eclipse.debug.ui.BreakpointView"/>
+    <sharedElements xsi:type="basic:Part" xmi:id="_DMpNWJaZEeyiTd_tdcLiRw" elementId="org.eclipse.debug.ui.ExpressionView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="fakeorg.eclipse.debug.ui.ExpressionView"/>
+    <sharedElements xsi:type="basic:Part" xmi:id="_DMpNWZaZEeyiTd_tdcLiRw" elementId="org.eclipse.debug.ui.RegisterView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="fakeorg.eclipse.debug.ui.RegisterView"/>
+    <sharedElements xsi:type="basic:Part" xmi:id="_DMpNWpaZEeyiTd_tdcLiRw" elementId="org.eclipse.team.ccvs.ui.RepositoriesView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="fakeorg.eclipse.team.ccvs.ui.RepositoriesView"/>
+    <sharedElements xsi:type="basic:Part" xmi:id="_DMpNW5aZEeyiTd_tdcLiRw" elementId="org.eclipse.team.ui.GenericHistoryView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="fakeorg.eclipse.team.ui.GenericHistoryView"/>
+  </children>
+  <addons xmi:id="_DMpNXJaZEeyiTd_tdcLiRw" elementId="org.eclipse.e4.core.commands.service" contributorURI="platform:/plugin/org.eclipse.platform" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
+  <addons xmi:id="_DMpNXZaZEeyiTd_tdcLiRw" elementId="org.eclipse.e4.ui.contexts.service" contributorURI="platform:/plugin/org.eclipse.platform" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
+  <addons xmi:id="_DMp0AJaZEeyiTd_tdcLiRw" elementId="org.eclipse.e4.ui.bindings.service" contributorURI="platform:/plugin/org.eclipse.platform" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
+  <addons xmi:id="_DMp0AZaZEeyiTd_tdcLiRw" elementId="org.eclipse.e4.ui.workbench.commands.model" contributorURI="platform:/plugin/org.eclipse.platform" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon"/>
+  <addons xmi:id="_DMp0ApaZEeyiTd_tdcLiRw" elementId="org.eclipse.e4.ui.workbench.contexts.model" contributorURI="platform:/plugin/org.eclipse.platform" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon"/>
+  <addons xmi:id="_DMp0A5aZEeyiTd_tdcLiRw" elementId="org.eclipse.e4.ui.workbench.bindings.model" contributorURI="platform:/plugin/org.eclipse.platform" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon"/>
+  <addons xmi:id="_DMp0BJaZEeyiTd_tdcLiRw" elementId="Cleanup Addon" contributorURI="platform:/plugin/org.eclipse.platform" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.cleanupaddon.CleanupAddon"/>
+  <addons xmi:id="_DMp0BZaZEeyiTd_tdcLiRw" elementId="DnD Addon" contributorURI="platform:/plugin/org.eclipse.platform" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.dndaddon.DnDAddon"/>
+  <addons xmi:id="_DMp0BpaZEeyiTd_tdcLiRw" elementId="MinMax Addon" contributorURI="platform:/plugin/org.eclipse.platform" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.minmax.MinMaxAddon"/>
+  <addons xmi:id="_DMp0B5aZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.workbench.addon.0" contributorURI="platform:/plugin/org.eclipse.platform" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.HandlerProcessingAddon"/>
+  <addons xmi:id="_DMp0CJaZEeyiTd_tdcLiRw" elementId="SplitterAddon" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.splitteraddon.SplitterAddon"/>
+  <addons xmi:id="_DMp0CZaZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.ide.addon.0" contributionURI="bundleclass://org.eclipse.ui.ide/org.eclipse.ui.internal.ide.addons.SaveAllDirtyPartsAddon"/>
+  <addons xmi:id="_DMp0CpaZEeyiTd_tdcLiRw" elementId="org.eclipse.ui.ide.application.addon.0" contributorURI="platform:/plugin/org.eclipse.ui.ide.application" contributionURI="bundleclass://org.eclipse.ui.ide.application/org.eclipse.ui.internal.ide.application.addons.ModelCleanupAddon"/>
+</application:Application>

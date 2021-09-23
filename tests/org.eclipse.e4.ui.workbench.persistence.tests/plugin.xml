@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="org.eclipse.e4.ui.workbench.persistence.tests.util.TestPerspective"
+            id="org.eclipse.e4.ui.workbench.persistence.tests.TestPerspective"
+            name="Test Perspective">
+      </perspective>
+   </extension>
+    <extension
+       point="org.eclipse.ui.views">
+    <view
+          class="org.eclipse.e4.ui.workbench.persistence.tests.util.TestViewPart"
+          id="org.eclipse.ui.tests.harness.TestView"
+          name="TestView"
+          restorable="true">
+    </view>
+ </extension>
+
+</plugin>

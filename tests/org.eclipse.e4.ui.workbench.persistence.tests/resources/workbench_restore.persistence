@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.eclipse.ui.persistence:WorkbenchState xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:org.eclipse.ui.persistence="http://www.eclipse.org/ui/persistence">
+  <perspective elementId="org.eclipse.e4.ui.workbench.persistence.tests.TestPerspective" selectedElement="//@perspective/@children.0" label="Test Perspective" iconURI="platform:/plugin/org.eclipse.ui/icons/full/eview16/default_persp.png">
+    <children xsi:type="basic:PartSashContainer" selectedElement="//@perspective/@children.0/@children.0" horizontal="true">
+      <children xsi:type="basic:PartStack" elementId="org.eclipse.ui.tests.harness.TestViewMStack" containerData="0" selectedElement="//@perspective/@children.0/@children.0/@children.0">
+        <tags>active</tags>
+        <children xsi:type="advanced:Placeholder" elementId="org.eclipse.ui.tests.harness.TestView" closeable="true">
+          <tags>View</tags>
+          <tags>categoryTag:Other</tags>
+        </children>
+      </children>
+      <children xsi:type="advanced:Placeholder" elementId="org.eclipse.ui.editorss" containerData="10000"/>
+    </children>
+  </perspective>
+  <viewSettings partId="org.eclipse.ui.tests.harness.TestView" memento="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xA;&lt;view MyText=&quot;RESTORED TEXT!&quot;/>"/>
+  <editorArea elementId="org.eclipse.ui.editorss">
+    <children xsi:type="basic:PartStack" elementId="org.eclipse.e4.primaryDataStack">
+      <tags>org.eclipse.e4.primaryDataStack</tags>
+      <tags>EditorStack</tags>
+    </children>
+  </editorArea>
+  <trimBars elementId="org.eclipse.ui.trim.vertical1" contributorURI="platform:/plugin/org.eclipse.ui.workbench" side="Left"/>
+  <trimBars elementId="org.eclipse.ui.trim.vertical2" contributorURI="platform:/plugin/org.eclipse.ui.workbench" side="Right"/>
+</org.eclipse.ui.persistence:WorkbenchState>

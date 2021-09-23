@@ -40,6 +40,8 @@
     <module>org.eclipse.e4.ui.widgets</module>
     <module>org.eclipse.e4.ui.workbench</module>
     <module>org.eclipse.e4.ui.workbench.addons.swt</module>
+    <module>org.eclipse.e4.ui.workbench.compatibility.migration</module>
+    <module>org.eclipse.e4.ui.workbench.persistence</module>
     <module>org.eclipse.e4.ui.workbench.renderers.swt</module>
     <module>org.eclipse.e4.ui.workbench.renderers.swt.cocoa</module>
     <module>org.eclipse.e4.ui.workbench.swt</module>

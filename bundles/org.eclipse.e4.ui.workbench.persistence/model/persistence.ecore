@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="persistence" nsURI="http://www.eclipse.org/ui/persistence" nsPrefix="org.eclipse.ui.persistence">
+  <eClassifiers xsi:type="ecore:EClass" name="WorkbenchState">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="perspective" eType="ecore:EClass ../../org.eclipse.e4.ui.model.workbench/model/UIElements.ecore#//ui/advanced/Perspective"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="viewSettings" upperBound="-1"
+        eType="#//PartMemento" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="editorArea" eType="ecore:EClass ../../org.eclipse.e4.ui.model.workbench/model/UIElements.ecore#//ui/advanced/Area"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="trimBars" upperBound="-1"
+        eType="ecore:EClass ../../org.eclipse.e4.ui.model.workbench/model/UIElements.ecore#//ui/basic/TrimBar"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PartMemento">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="partId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="memento" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+</ecore:EPackage>

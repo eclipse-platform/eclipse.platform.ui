@@ -55,6 +55,8 @@
     <module>org.eclipse.e4.ui.tests.css.swt</module>
     <module>org.eclipse.e4.ui.workbench.addons.swt.test</module>
     <module>org.eclipse.tests.urischeme</module>
+	<module>org.eclipse.e4.ui.workbench.compatibility.migration.tests</module>
+    <module>org.eclipse.e4.ui.workbench.persistence.tests</module>
   </modules>
   <properties>
     <code.ignoredWarnings>${tests.ignoredWarnings}</code.ignoredWarnings>

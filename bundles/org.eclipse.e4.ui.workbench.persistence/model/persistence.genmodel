@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" copyrightText="Copyright (c) 2021 EclipseSource GmbH and others.&#xA; &#xA;All rights reserved. This program and the accompanying materials&#xA;are made available under the terms of the Eclipse Public License 2.0&#xA;which accompanies this distribution, and is available at&#xA;https://www.eclipse.org/legal/epl-2.0/&#xA; &#xA;SPDX-License-Identifier: EPL-2.0&#xA;&#xA;Contributors:   &#xA;    EclipseSource GmbH - initial API and implementation"
+    modelDirectory="/org.eclipse.e4.ui.workbench.persistence/src" editDirectory="/org.eclipse.e4.ui.workbench.persistence.edit/src"
+    editorDirectory="/org.eclipse.e4.ui.workbench.persistence.editor/src" modelPluginID="org.eclipse.e4.ui.workbench.persistence"
+    modelName="Persistence" editPluginClass="org.eclipse.ui.internal.persistence.provider.PersistenceEditPlugin"
+    editorPluginClass="org.eclipse.ui.internal.persistence.presentation.PersistenceEditorPlugin"
+    nonNLSMarkers="true" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="8.0" copyrightFields="false"
+    editPluginID="org.eclipse.e4.ui.workbench.persistence.edit" editorPluginID="org.eclipse.e4.ui.workbench.persistence.editor"
+    usedGenPackages="../../org.eclipse.e4.ui.model.workbench/model/UIElements.genmodel#//application"
+    interfaceNamePattern="I{0}" classNamePattern="{0}" operationReflection="true"
+    importOrganizing="true">
+  <foreignModel>persistence.ecore</foreignModel>
+  <genPackages prefix="Persistence" basePackage="org.eclipse.e4.ui.workbench.internal"
+      disposableProviderFactory="true" ecorePackage="persistence.ecore#/">
+    <genClasses documentation="A container for the relevant parts of a workbench state."
+        ecoreClass="persistence.ecore#//WorkbenchState">
+      <genFeatures documentation="The active perspective of the workbench." property="None"
+          children="true" createChild="true" ecoreFeature="ecore:EReference persistence.ecore#//WorkbenchState/perspective"/>
+      <genFeatures documentation="Store view settings with part id and its stringified memento."
+          property="None" children="true" createChild="true" ecoreFeature="ecore:EReference persistence.ecore#//WorkbenchState/viewSettings"/>
+      <genFeatures documentation="The editor area of the workbench." property="None"
+          children="true" createChild="true" ecoreFeature="ecore:EReference persistence.ecore#//WorkbenchState/editorArea"/>
+      <genFeatures documentation="All trimbars of the workbench." property="None"
+          children="true" createChild="true" ecoreFeature="ecore:EReference persistence.ecore#//WorkbenchState/trimBars"/>
+    </genClasses>
+    <genClasses documentation="Container to easily store and restore part settings. To do so the id of the part as well as the stringified memento is stored."
+        ecoreClass="persistence.ecore#//PartMemento">
+      <genFeatures documentation="The id of the part the memento is stored for." createChild="false"
+          ecoreFeature="ecore:EAttribute persistence.ecore#//PartMemento/partId"/>
+      <genFeatures documentation="The stringified memento. This way it can be directly set into the persisted state and thus used by the workbench to pass into the ViewPart#init method."
+          createChild="false" ecoreFeature="ecore:EAttribute persistence.ecore#//PartMemento/memento"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

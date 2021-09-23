@@ -53,6 +53,7 @@
 
   <modules>
     <module>features/org.eclipse.e4.rcp</module>
+    <module>features/org.eclipse.e4.ui.persistence.feature</module>
     <module>bundles</module>
     <module>tests</module>
     <module>examples</module>
