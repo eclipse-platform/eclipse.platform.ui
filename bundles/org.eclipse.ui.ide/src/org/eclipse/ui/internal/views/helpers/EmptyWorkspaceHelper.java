@@ -15,12 +15,6 @@ package org.eclipse.ui.internal.views.helpers;
 
 import java.util.ArrayList;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -39,8 +33,10 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.ISharedImages;
@@ -97,7 +93,8 @@ public final class EmptyWorkspaceHelper {
 	private Composite parent;
 	private Composite emptyArea;
 	private StackLayout layout;
-	private Control control;
+	private Tree control;
+	private boolean controlIsEmpty;
 	private Composite displayArea;
 	private ArrayList<IAction> projectWizardActions;
 	private IAction newProjectAction;
@@ -108,7 +105,7 @@ public final class EmptyWorkspaceHelper {
 	 * This method should be called at the point in time when the view's controls
 	 * are created.
 	 *
-	 * @param parent The composite where the explanatory text should be put into.
+	 * @param aParent The composite where the explanatory text should be put into.
 	 * @return A new composite (a child of "parent") that has to be used by
 	 *         consumers as parent for their UI elements
 	 */
@@ -120,7 +117,6 @@ public final class EmptyWorkspaceHelper {
 		displayArea.setLayout(layout);
 		createEmptyArea(displayArea);
 
-		registerListeners();
 		return displayArea;
 	}
 
@@ -128,12 +124,14 @@ public final class EmptyWorkspaceHelper {
 	 * This method should be used to hand over the "original" control that is
 	 * "normally" visible in the view.
 	 *
-	 * @param control The "original" control of the view.
+	 * @param control The "original" tree control of the view.
 	 */
 	public void setNonEmptyControl(Control control) {
-		this.control = control;
+		this.control = (Tree) control;
+		controlIsEmpty = this.control.getItemCount() == 0;
 		emptyArea.setBackground(control.getBackground());
 		switchTopControl();
+		registerListeners();
 	}
 
 	private void dispose(Listener listener) {
@@ -141,9 +139,9 @@ public final class EmptyWorkspaceHelper {
 		if (activeWorkbenchWindow != null) {
 			activeWorkbenchWindow.removePerspectiveListener(listener);
 		}
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(listener);
 		JFaceResources.getColorRegistry().removeListener(listener);
 		parent.removeDisposeListener(listener);
+		control.removeListener(SWT.EmptinessChanged, listener);
 
 		// paranoia
 		parent = null;
@@ -162,7 +160,7 @@ public final class EmptyWorkspaceHelper {
 		if (activeWorkbenchWindow != null) {
 			activeWorkbenchWindow.addPerspectiveListener(listener);
 		}
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_CHANGE);
+		control.addListener(SWT.EmptinessChanged, listener);
 		JFaceResources.getColorRegistry().addListener(listener);
 		parent.addDisposeListener(listener);
 	}
@@ -309,8 +307,7 @@ public final class EmptyWorkspaceHelper {
 			return false;
 		}
 		Control oldTop = layout.topControl;
-		IProject[] projs = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-		if (projs.length > 0) {
+		if (!controlIsEmpty) {
 			layout.topControl = control;
 			disposeEmptyArea();
 		} else {
@@ -323,32 +320,14 @@ public final class EmptyWorkspaceHelper {
 	}
 
 	private class Listener
-			implements IResourceChangeListener, IPerspectiveListener, IPropertyChangeListener, DisposeListener {
+			implements org.eclipse.swt.widgets.Listener, //
+			IPerspectiveListener, IPropertyChangeListener, DisposeListener {
 
-		/**
-		 * Listener to switch between the "original" control and the empty area. If no
-		 * projects exist in the workspace the empty area is shown. If at least one
-		 * project exists in the workspace the "original" control is shown.
-		 *
-		 * @noreference This method is not intended to be referenced by clients.
-		 */
 		@Override
-		public void resourceChanged(IResourceChangeEvent event) {
-
-			IResourceDelta resourceDelta = event.getDelta();
-			if (resourceDelta != null) {
-
-				IResourceDelta[] affectedChildren = resourceDelta.getAffectedChildren();
-				for (IResourceDelta affectedChildResourceDelta : affectedChildren) {
-					IResource resource = affectedChildResourceDelta.getResource();
-					int kind = affectedChildResourceDelta.getKind();
-					if (resource instanceof IProject
-							&& (kind == IResourceDelta.ADDED || kind == IResourceDelta.REMOVED)) {
-						PlatformUI.getWorkbench().getDisplay().asyncExec(
-								() -> PlatformUI.getWorkbench().getDisplay().timerExec(200, switchTopControlRunnable));
-						return;
-					}
-				}
+		public void handleEvent(Event e) {
+			if (e.type == SWT.EmptinessChanged) {
+				controlIsEmpty = e.detail == 1;
+				switchTopControlRunnable.run();
 			}
 		}
 
@@ -390,7 +369,6 @@ public final class EmptyWorkspaceHelper {
 		public void widgetDisposed(DisposeEvent e) {
 			dispose(this);
 		}
-
 	}
 
 	private static class ImportAction extends Action {
