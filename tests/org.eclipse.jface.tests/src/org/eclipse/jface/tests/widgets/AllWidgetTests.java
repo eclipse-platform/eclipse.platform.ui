@@ -18,6 +18,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({ TestUnitButtonFactory.class, //
 		TestUnitCompositeFactory.class, //
 		TestUnitControlFactory.class, //
+		TestUnitGroupFactory.class, //
 		TestUnitItemFactory.class, //
 		TestUnitLabelFactory.class, //
 		TestUnitLinkFactory.class, //
