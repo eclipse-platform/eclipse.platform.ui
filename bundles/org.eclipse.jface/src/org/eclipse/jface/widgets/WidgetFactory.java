@@ -193,7 +193,7 @@ public final class WidgetFactory {
 	/**
 	 * @param style SWT style applicable for Shell. Refer to
 	 *              {@link Shell#Shell(Shell, int)} for supported styles.
-	 * @return SashFormFactory
+	 * @return ShellFactory
 	 *
 	 * @since 3.21
 	 */
