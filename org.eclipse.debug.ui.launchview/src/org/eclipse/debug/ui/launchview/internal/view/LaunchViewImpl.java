@@ -38,7 +38,7 @@ import org.eclipse.debug.ui.launchview.internal.model.LaunchObjectContainerModel
 import org.eclipse.debug.ui.launchview.internal.model.LaunchObjectFavoriteContainerModel;
 import org.eclipse.debug.ui.launchview.internal.model.LaunchObjectModel;
 import org.eclipse.debug.ui.launchview.internal.model.LaunchViewModel;
-import org.eclipse.debug.ui.launchview.internal.services.ILaunchObject;
+import org.eclipse.debug.ui.launchview.services.ILaunchObject;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;

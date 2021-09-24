@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.ui.launchview.internal.LaunchViewBundleInfo;
 import org.eclipse.debug.ui.launchview.internal.LaunchViewMessages;
-import org.eclipse.debug.ui.launchview.internal.services.ILaunchObject;
+import org.eclipse.debug.ui.launchview.services.ILaunchObject;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;

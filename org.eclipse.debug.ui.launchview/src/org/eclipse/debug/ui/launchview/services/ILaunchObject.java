@@ -11,7 +11,7 @@
  * Contributors:
  *     SSI Schaefer IT Solutions GmbH
  *******************************************************************************/
-package org.eclipse.debug.ui.launchview.internal.services;
+package org.eclipse.debug.ui.launchview.services;
 
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchMode;
@@ -21,6 +21,11 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * A {@link ILaunchObject} describes a single launch-able "thing".
+ * <p>
+ * Instances of this interface are provided by extensions by a custom
+ * {@link ILaunchObjectProvider} implementation in the extension.
+ *
+ * @since 1.0.2
  */
 public interface ILaunchObject extends Comparable<ILaunchObject> {
 

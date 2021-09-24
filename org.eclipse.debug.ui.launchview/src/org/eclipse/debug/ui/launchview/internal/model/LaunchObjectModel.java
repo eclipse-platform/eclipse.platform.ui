@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.debug.ui.launchview.internal.model;
 
-import org.eclipse.debug.ui.launchview.internal.services.ILaunchObject;
+import org.eclipse.debug.ui.launchview.services.ILaunchObject;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Image;
 

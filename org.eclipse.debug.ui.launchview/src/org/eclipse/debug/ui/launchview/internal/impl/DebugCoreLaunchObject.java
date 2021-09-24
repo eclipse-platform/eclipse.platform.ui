@@ -31,10 +31,10 @@ import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchGroup;
+import org.eclipse.debug.ui.launchview.LaunchConfigurationViewPlugin;
 import org.eclipse.debug.ui.launchview.internal.LaunchViewBundleInfo;
 import org.eclipse.debug.ui.launchview.internal.LaunchViewMessages;
-import org.eclipse.debug.ui.launchview.internal.launcher.StandaloneLaunchConfigExecutor;
-import org.eclipse.debug.ui.launchview.internal.services.ILaunchObject;
+import org.eclipse.debug.ui.launchview.services.ILaunchObject;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.PlatformUI;
@@ -69,7 +69,7 @@ public class DebugCoreLaunchObject implements ILaunchObject, Comparable<ILaunchO
 
 	@Override
 	public void launch(ILaunchMode mode) {
-		StandaloneLaunchConfigExecutor.launchProcess(config, mode.getIdentifier(), true, false, null);
+		LaunchConfigurationViewPlugin.getExecutor().launchProcess(config, mode.getIdentifier(), true, false, null);
 	}
 
 	@Override
@@ -117,13 +117,13 @@ public class DebugCoreLaunchObject implements ILaunchObject, Comparable<ILaunchO
 		String launchMode = launch.getLaunchMode();
 		try {
 			launch.terminate();
-			StandaloneLaunchConfigExecutor.launchProcess(config, launchMode, true, false, null);
+			LaunchConfigurationViewPlugin.getExecutor().launchProcess(config, launchMode, true, false, null);
 		} catch (Exception e) {
 			throw new RuntimeException(NLS.bind(LaunchViewMessages.DebugCoreLaunchObject_CannotRelaunch, config.getName()), e);
 		}
 	}
 
-	public static ILaunch findLaunch(String name) {
+	private static ILaunch findLaunch(String name) {
 		for (ILaunch l : DebugPlugin.getDefault().getLaunchManager().getLaunches()) {
 			if (l.getLaunchConfiguration() == null || l.isTerminated()) {
 				continue;

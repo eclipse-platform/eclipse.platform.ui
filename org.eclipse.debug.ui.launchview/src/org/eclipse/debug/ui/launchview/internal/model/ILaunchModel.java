@@ -11,14 +11,12 @@
  * Contributors:
  *     SSI Schaefer IT Solutions GmbH
  *******************************************************************************/
-package org.eclipse.debug.ui.launchview.internal.services;
-
-import org.eclipse.debug.ui.launchview.internal.model.LaunchObjectContainerModel;
+package org.eclipse.debug.ui.launchview.internal.model;
 
 /**
  * Service which controls the lifecycle of the model which the view is based on.
  */
-public interface LaunchModel {
+public interface ILaunchModel {
 
 	/**
 	 * @return the current model. Never <code>null</code>. Always created from

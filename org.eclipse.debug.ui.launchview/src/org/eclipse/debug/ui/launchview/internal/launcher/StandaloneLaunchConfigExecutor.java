@@ -27,6 +27,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.ui.launchview.IBackgroundLaunchExecutor;
 import org.eclipse.debug.ui.launchview.internal.FileLogger;
 import org.eclipse.debug.ui.launchview.internal.LaunchViewMessages;
 import org.eclipse.debug.ui.launchview.internal.SpecificLaunchListener;
@@ -36,7 +37,7 @@ import org.eclipse.osgi.util.NLS;
 /**
  * Wraps launching a certain ILaunchConfiguration into a job
  */
-public class StandaloneLaunchConfigExecutor {
+public class StandaloneLaunchConfigExecutor implements IBackgroundLaunchExecutor {
 
 	/**
 	 * Starts a launch configuration. The return value is only valid if wait is
@@ -51,7 +52,8 @@ public class StandaloneLaunchConfigExecutor {
 	 * @return process exit value if wait is <code>true</code>, always 0 if wait
 	 *         is <code>false</code>. -1 in case waiting was interrupted.
 	 */
-	public static int launchProcess(ILaunchConfiguration launchConf, String mode, boolean build, boolean wait, File logFile) {
+	@Override
+	public int launchProcess(ILaunchConfiguration launchConf, String mode, boolean build, boolean wait, File logFile) {
 		StandaloneLauncherJob launch = new StandaloneLauncherJob(launchConf, mode, build, wait, logFile);
 
 		launch.setPriority(Job.SHORT);

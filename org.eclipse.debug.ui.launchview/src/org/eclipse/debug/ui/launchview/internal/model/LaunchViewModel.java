@@ -19,8 +19,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import org.eclipse.debug.ui.launchview.internal.services.ILaunchObjectProvider;
-import org.eclipse.debug.ui.launchview.internal.services.LaunchModel;
+import org.eclipse.debug.ui.launchview.services.ILaunchObjectProvider;
 import org.eclipse.ui.IWorkbench;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -31,7 +30,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.osgi.service.component.annotations.ReferencePolicyOption;
 
 @Component(immediate = true)
-public class LaunchViewModel implements LaunchModel {
+public class LaunchViewModel implements ILaunchModel {
 
 	public Set<ILaunchObjectProvider> providers = new TreeSet<>((a, b) -> {
 		int x = Integer.compare(b.getPriority(), a.getPriority());

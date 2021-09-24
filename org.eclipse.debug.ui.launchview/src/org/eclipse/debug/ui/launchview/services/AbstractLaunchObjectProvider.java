@@ -11,7 +11,7 @@
  * Contributors:
  *     SSI Schaefer IT Solutions GmbH
  *******************************************************************************/
-package org.eclipse.debug.ui.launchview.internal.services;
+package org.eclipse.debug.ui.launchview.services;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +19,8 @@ import java.util.List;
 /**
  * Base class for {@link ILaunchObjectProvider} implementations which require
  * listeners to be notified on updates.
+ *
+ * @since 1.0.2
  */
 public abstract class AbstractLaunchObjectProvider implements ILaunchObjectProvider {
 

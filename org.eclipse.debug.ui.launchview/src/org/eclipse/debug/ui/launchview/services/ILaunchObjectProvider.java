@@ -11,7 +11,7 @@
  * Contributors:
  *     SSI Schaefer IT Solutions GmbH
  *******************************************************************************/
-package org.eclipse.debug.ui.launchview.internal.services;
+package org.eclipse.debug.ui.launchview.services;
 
 import java.util.Set;
 import java.util.function.Supplier;
@@ -20,9 +20,14 @@ import org.eclipse.debug.ui.launchview.internal.view.LaunchViewImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 
 /**
- * Provides different {@link ILaunchObject} implementations to the view for
- * display. Also allows some interaction with the view by means of an update
- * listener and menu contributions.
+ * Provides different {@link ILaunchObject} instances to the view for display.
+ * Also allows some interaction with the view by means of an update listener and
+ * menu contributions.
+ * <p>
+ * Contribute extensions to the view by implementing this interface and
+ * registering it as a {@literal @Component} (declarative service).
+ *
+ * @since 1.0.2
  */
 public interface ILaunchObjectProvider {
 
