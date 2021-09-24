@@ -76,6 +76,7 @@ public interface IFindReplaceTargetExtension {
 	 *
 	 * @param offset the offset of the selection
 	 * @param length the length of the selection
+	 * @see IFindReplaceTargetExtension4#setSelection(IRegion[])
 	 */
 	void setSelection(int offset, int length);
 

@@ -117,11 +117,14 @@ final class EditorMessages extends NLS {
 	public static String FindReplace_ReplaceFindButton_label;
 	public static String FindReplace_ReplaceSelectionButton_label;
 	public static String FindReplace_ReplaceAllButton_label;
+	public static String FindReplace_SelectAllButton_label;
 	public static String FindReplace_CloseButton_label;
 	public static String FindReplace_Status_noMatch_label;
 	public static String FindReplace_Status_noMatchWithValue_label;
 	public static String FindReplace_Status_replacement_label;
 	public static String FindReplace_Status_replacements_label;
+	public static String FindReplace_Status_selection_label;
+	public static String FindReplace_Status_selections_label;
 	public static String FindReplace_Status_wrapped_label;
 	public static String FindNext_Status_noMatch_label;
 	public static String AbstractDocumentProvider_ok;

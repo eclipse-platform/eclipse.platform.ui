@@ -765,7 +765,7 @@ public class TextViewer extends Viewer implements
 	/**
 	 * This viewer's find/replace target.
 	 */
-	class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtension, IFindReplaceTargetExtension3 {
+	class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtension, IFindReplaceTargetExtension3, IFindReplaceTargetExtension4 {
 
 		/** The range for this target. */
 		private FindReplaceRange fRange;
@@ -905,6 +905,11 @@ public class TextViewer extends Viewer implements
 		@Override
 		public void setSelection(int modelOffset, int modelLength) {
 			TextViewer.this.setSelectedRange(modelOffset, modelLength);
+		}
+
+		@Override
+		public void setSelection(IRegion[] regions) {
+			TextViewer.this.setSelectedRanges(regions);
 		}
 
 		@Override

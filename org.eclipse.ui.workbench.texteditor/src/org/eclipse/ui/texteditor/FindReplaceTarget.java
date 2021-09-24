@@ -19,6 +19,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension;
 import org.eclipse.jface.text.IFindReplaceTargetExtension3;
+import org.eclipse.jface.text.IFindReplaceTargetExtension4;
 import org.eclipse.jface.text.IRegion;
 
 
@@ -26,7 +27,8 @@ import org.eclipse.jface.text.IRegion;
  * Internal find/replace target wrapping the editor's source viewer.
  * @since 2.1
  */
-class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtension, IFindReplaceTargetExtension2, IFindReplaceTargetExtension3 {
+class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtension, IFindReplaceTargetExtension2,
+		IFindReplaceTargetExtension3, IFindReplaceTargetExtension4 {
 
 	/** The editor */
 	private AbstractTextEditor fEditor;
@@ -168,6 +170,13 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 	public void setSelection(int offset, int length) {
 		if (getExtension() != null)
 			getExtension().setSelection(offset, length);
+	}
+
+	@Override
+	public void setSelection(IRegion[] regions) {
+		if (fTarget instanceof IFindReplaceTargetExtension4) {
+			((IFindReplaceTargetExtension4) fTarget).setSelection(regions);
+		}
 	}
 
 	@Override

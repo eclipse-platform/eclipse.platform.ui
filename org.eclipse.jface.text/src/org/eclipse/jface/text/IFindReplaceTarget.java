@@ -20,31 +20,29 @@ import org.eclipse.swt.graphics.Point;
 /**
  * Defines the target for finding and replacing strings.
  * <p>
- * The two main methods are <code>findAndSelect</code> and
- * <code>replaceSelection</code>. The target does not provide any way to
- * modify the content other than replacing the selection.
+ * The two main methods are <code>findAndSelect</code> and <code>replaceSelection</code>. The target
+ * does not provide any way to modify the content other than replacing the selection.
  * <p>
  *
- * In order to provide backward compatibility for clients of
- * <code>IFindReplaceTarget</code>, extension interfaces are used as a means
- * of evolution. The following extension interfaces exist:
+ * In order to provide backward compatibility for clients of <code>IFindReplaceTarget</code>,
+ * extension interfaces are used as a means of evolution. The following extension interfaces exist:
  * <ul>
- * <li>{@link org.eclipse.jface.text.IFindReplaceTargetExtension} since version
- *     2.0 introducing the notion of find/replace session and of a find/replace
- *     scope. In additions, in allows clients to replace all occurrences of a given
- *     find query.</li>
- * <li>{@link org.eclipse.jface.text.IFindReplaceTargetExtension3} since
- *     version 3.0 allowing clients to specify search queries as regular
- *     expressions.</li>
+ * <li>{@link org.eclipse.jface.text.IFindReplaceTargetExtension} since version 2.0 introducing the
+ * notion of find/replace session and of a find/replace scope. In additions, in allows clients to
+ * replace all occurrences of a given find query.</li>
+ * <li>{@link org.eclipse.jface.text.IFindReplaceTargetExtension3} since version 3.0 allowing
+ * clients to specify search queries as regular expressions.</li>
+ * <li>{@link org.eclipse.jface.text.IFindReplaceTargetExtension4} since version 3.19 allowing
+ * clients to select multiple text ranges in the target.</li>
  * </ul>
  * <p>
  * Clients of a <code>IFindReplaceTarget</code> that also implements the
- * <code>IFindReplaceTargetExtension</code> have to indicate the start of a find/replace
- * session before using the target and to indicate the end of the session when the
- * target is no longer used.
+ * <code>IFindReplaceTargetExtension</code> have to indicate the start of a find/replace session
+ * before using the target and to indicate the end of the session when the target is no longer used.
  *
  * @see org.eclipse.jface.text.IFindReplaceTargetExtension
  * @see org.eclipse.jface.text.IFindReplaceTargetExtension3
+ * @see org.eclipse.jface.text.IFindReplaceTargetExtension4
  */
 public interface IFindReplaceTarget {
 
