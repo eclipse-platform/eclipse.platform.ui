@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2019 SSI Schaefer IT Solutions GmbH and others.
+ * Copyright (c) 2017, 2021 SSI Schaefer IT Solutions GmbH and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     SSI Schaefer IT Solutions GmbH
+ *     IBM Corporation - Bug fixes
  *******************************************************************************/
 package org.eclipse.debug.ui.launchview.internal.impl;
 
@@ -29,6 +30,7 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.debug.ui.launchview.internal.LaunchViewBundleInfo;
 import org.eclipse.debug.ui.launchview.internal.LaunchViewMessages;
 import org.eclipse.debug.ui.launchview.internal.launcher.StandaloneLaunchConfigExecutor;
@@ -135,11 +137,19 @@ public class DebugCoreLaunchObject implements ILaunchObject, Comparable<ILaunchO
 
 	@Override
 	public void edit() {
-		// TODO: This uses "debug" mode ALWAYS as the Eclipse infrastructure
+		// This prefers "debug" mode as the Eclipse infrastructure
 		// requires a group to be given. This covers most launch configurations
 		// as most of them support debug, whereas e.g. "Remote Java Application"
-		// does not support "run".
-		DebugUITools.openLaunchConfigurationDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), config, DebugUITools.getLaunchGroup(config, "debug").getIdentifier(), null); //$NON-NLS-1$
+		// does not support "run". Ant launch configurations in turn do not
+		// support debug...
+		ILaunchGroup group = DebugUITools.getLaunchGroup(config, "debug"); //$NON-NLS-1$
+		if (group == null) {
+			group = DebugUITools.getLaunchGroup(config, "run"); //$NON-NLS-1$
+		}
+		if (group != null) { // Id Debug & run both not supported and only
+								// profile is supported
+			DebugUITools.openLaunchConfigurationDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), config, group.getIdentifier(), null);
+		}
 	}
 
 	@Override
