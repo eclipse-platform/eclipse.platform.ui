@@ -908,8 +908,8 @@ public class TextViewer extends Viewer implements
 		}
 
 		@Override
-		public void setSelection(IRegion[] regions) {
-			TextViewer.this.setSelectedRanges(regions);
+		public void setSelection(IRegion[] widgetRegions) {
+			TextViewer.this.setSelectedRanges(Arrays.stream(widgetRegions).map(TextViewer.this::widgetRange2ModelRange).toArray(IRegion[]::new));
 		}
 
 		@Override
@@ -2298,19 +2298,19 @@ public class TextViewer extends Viewer implements
 
 	/**
 	 *
-	 * @param ranges are in model (document) domain
+	 * @param modelRanges are in model (document) domain
 	 */
-	private void setSelectedRanges(IRegion[] ranges) {
+	private void setSelectedRanges(IRegion[] modelRanges) {
 		if (!redraws()) {
 			if (fViewerState != null)
-				fViewerState.updateSelection(Arrays.stream(ranges).map(TextViewer::toPosition).toArray(Position[]::new));
+				fViewerState.updateSelection(Arrays.stream(modelRanges).map(TextViewer::toPosition).toArray(Position[]::new));
 			return;
 		}
 
 		if (fTextWidget == null)
 			return;
 
-		IRegion[] widgetSelection= Arrays.stream(ranges)
+		IRegion[] widgetSelection= Arrays.stream(modelRanges)
 				.map(range -> new Region(range.getOffset(), range.getLength()))
 				.map(this::modelRange2ClosestWidgetRange)
 				.filter(Objects::nonNull)
