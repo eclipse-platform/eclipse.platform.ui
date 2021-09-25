@@ -14,7 +14,10 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.properties;
 
-import java.util.ArrayList;
+import static org.junit.Assert.assertNotEquals;
+
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import org.eclipse.core.internal.properties.IPropertyManager;
 import org.eclipse.core.internal.properties.PropertyManager2;
 import org.eclipse.core.internal.resources.Workspace;
@@ -189,6 +192,83 @@ public class PropertyManagerTest extends LocalStoreTest {
 		}
 	}
 
+	public void testCache() throws Throwable {
+		IPropertyManager manager = new PropertyManager2((Workspace) ResourcesPlugin.getWorkspace());
+		IProject source = projects[0];
+		IFolder sourceFolder = source.getFolder("myfolder");
+		IResource sourceFile = sourceFolder.getFile("myfile.txt");
+		QualifiedName propName = new QualifiedName("test", "prop");
+		String propValue = "this is the property value";
+
+		ensureExistsInWorkspace(new IResource[] { source, sourceFolder, sourceFile }, true);
+
+		System.gc();
+		System.runFinalization();
+
+		manager.setProperty(source, propName, propValue);
+		manager.setProperty(sourceFolder, propName, propValue);
+		manager.setProperty(sourceFile, propName, propValue);
+		assertNotNull("1.1", manager.getProperty(source, propName));
+
+		String hint = "Property cache returned another instance. Same instance is not required but expected. Eiter the Garbage Collector deleted the cache or the cache is not working.";
+		assertSame(hint + "1.2", propValue, manager.getProperty(source, propName));
+		assertNotNull("1.3", manager.getProperty(sourceFolder, propName));
+		assertSame(hint + "1.4", propValue, manager.getProperty(sourceFolder, propName));
+		assertNotNull("1.5", manager.getProperty(sourceFile, propName));
+		assertSame(hint + "1.6", propValue, manager.getProperty(sourceFile, propName));
+	}
+
+	public void testOOME() throws Throwable {
+		IPropertyManager manager = new PropertyManager2((Workspace) ResourcesPlugin.getWorkspace());
+		IProject source = projects[0];
+		IFolder sourceFolder = source.getFolder("myfolder");
+		IResource sourceFile = sourceFolder.getFile("myfile.txt");
+		QualifiedName propName = new QualifiedName("test", "prop");
+		int MAX_VALUE_SIZE = 2 * 1024; // PropertyManager2.MAX_VALUE_SIZE
+		String propValue = new String(new byte[MAX_VALUE_SIZE], StandardCharsets.ISO_8859_1);
+
+		ensureExistsInWorkspace(new IResource[] { source, sourceFolder, sourceFile }, true);
+
+		manager.setProperty(source, propName, propValue);
+		manager.setProperty(sourceFolder, propName, propValue);
+		manager.setProperty(sourceFile, propName, propValue);
+
+		String hint = "Property cache returned another instance. Same instance is not required but expected. Eiter the Garbage Collector deleted the cache or the cache is not working.";
+		assertSame(hint + "1.2", propValue, manager.getProperty(source, propName));
+		assertNotNull("1.3", manager.getProperty(sourceFolder, propName));
+		assertSame(hint + "1.4", propValue, manager.getProperty(sourceFolder, propName));
+		assertNotNull("1.5", manager.getProperty(sourceFile, propName));
+		assertSame(hint + "1.6", propValue, manager.getProperty(sourceFile, propName));
+
+		List<byte[]> wastedMemory = new LinkedList<>();
+		try {
+			int quickAllocationSize = 200_000_000; // 200MB, should be smaller then -Xmx, but big to get OOME quick
+			while (wastedMemory.add(new byte[quickAllocationSize])) {
+				// force OOME
+			}
+		} catch (OutOfMemoryError e1) {
+			wastedMemory.clear();
+			// it's not allowed to allocate an array at once that is larger then the Heap:
+			assertNotEquals("Requested array size exceeds VM limit", e1.getMessage());
+			// in case the -Xmx is set too low the quickAllocationSize has to be lowered.
+		}
+
+		// the cache is guaranteed to be emptied before OutOfMemoryError:
+		assertNotNull("2.1", manager.getProperty(source, propName));
+		assertEquals("2.2", propValue, manager.getProperty(source, propName));
+		assertNotSame("2.3", propValue, manager.getProperty(source, propName));
+
+		assertNotNull("3.1", manager.getProperty(sourceFolder, propName));
+		assertEquals("3.2", propValue, manager.getProperty(sourceFolder, propName));
+		assertNotSame("3.3", propValue, manager.getProperty(sourceFolder, propName));
+
+		assertNotNull("4.1", manager.getProperty(sourceFile, propName));
+		assertEquals("4.2", propValue, manager.getProperty(sourceFile, propName));
+
+		// We can not squeeze the active working set.
+		// The cache was emptied but the active Bucket.entries map did survive:
+		assertSame("4.3", propValue, manager.getProperty(sourceFile, propName));
+	}
 	public void testCopy() throws Throwable {
 		IPropertyManager manager = new PropertyManager2((Workspace) ResourcesPlugin.getWorkspace());
 		IProject source = projects[0];

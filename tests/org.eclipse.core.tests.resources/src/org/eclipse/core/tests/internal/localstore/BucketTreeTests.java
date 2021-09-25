@@ -52,7 +52,7 @@ public class BucketTreeTests extends ResourceTest {
 		}
 
 		public SimpleBucket() {
-			super();
+			super(true);
 		}
 
 		@Override

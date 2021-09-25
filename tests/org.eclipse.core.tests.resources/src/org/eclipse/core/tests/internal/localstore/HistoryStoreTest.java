@@ -341,7 +341,7 @@ public class HistoryStoreTest extends ResourceTest {
 
 	public void testBug28238() {
 		// paths to mimic files in the workspace
-		IProject project = getWorkspace().getRoot().getProject("myproject");
+		IProject project = getWorkspace().getRoot().getProject("myproject28238");
 		IFolder folder = project.getFolder("myfolder");
 		IFolder destinationFolder = project.getFolder("myfolder2");
 		IFile file = folder.getFile("myfile.txt");
@@ -352,6 +352,7 @@ public class HistoryStoreTest extends ResourceTest {
 		// location of the data on disk
 		IFileStore fileStore = getTempStore();
 		createFileInFileSystem(fileStore);
+		assertEquals("1.0" + " file already has state", 0, store.getStates(file.getFullPath(), getMonitor()).length);
 
 		// add the data to the history store
 		FileInfo fileInfo = new FileInfo(file.getName());
@@ -369,12 +370,13 @@ public class HistoryStoreTest extends ResourceTest {
 
 	public void testBug28603() {
 		// paths to mimic files in the workspace
-		IProject project = getWorkspace().getRoot().getProject("myproject");
+		IProject project = getWorkspace().getRoot().getProject("myproject28603");
 		IFolder folder1 = project.getFolder("myfolder1");
 		IFolder folder2 = project.getFolder("myfolder2");
 		IFile file1 = folder1.getFile("myfile.txt");
 		IFile file2 = folder2.getFile(file1.getName());
 
+		// directly deletes history files if project did already existed:
 		ensureExistsInWorkspace(new IResource[] {project, folder1, folder2}, true);
 		try {
 			file1.create(getRandomContents(), IResource.FORCE, getMonitor());
@@ -396,7 +398,11 @@ public class HistoryStoreTest extends ResourceTest {
 		}
 		assertEquals("1.1", 3, states.length);
 		int currentStates = 3;
-
+		try {
+			assertEquals("1.2" + " file2 already has history", 0, file2.getHistory(getMonitor()).length);
+		} catch (CoreException e) {
+			fail("1.3", e);
+		}
 		for (int i = 0; i < maxStates + 10; i++) {
 			try {
 				states = file1.getHistory(getMonitor());
@@ -444,7 +450,7 @@ public class HistoryStoreTest extends ResourceTest {
 	 */
 	public void testClean() {
 		/* Create common objects. */
-		IProject project = getWorkspace().getRoot().getProject("Project");
+		IProject project = getWorkspace().getRoot().getProject("ProjectClean");
 		IFile file = project.getFile("file.txt");
 		try {
 			project.create(getMonitor());

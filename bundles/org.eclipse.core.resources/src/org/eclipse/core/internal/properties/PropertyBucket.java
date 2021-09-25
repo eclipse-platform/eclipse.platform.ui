@@ -222,7 +222,7 @@ public class PropertyBucket extends Bucket {
 	private final List<String> qualifierIndex = new ArrayList<>();
 
 	public PropertyBucket() {
-		super();
+		super(!Boolean.getBoolean("org.eclipse.core.PropertyCache.disable")); //$NON-NLS-1$
 	}
 
 	@Override

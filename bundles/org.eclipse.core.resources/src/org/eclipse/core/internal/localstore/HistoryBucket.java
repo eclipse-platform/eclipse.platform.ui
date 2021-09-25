@@ -250,7 +250,7 @@ public class HistoryBucket extends Bucket {
 	public final static byte VERSION = 2;
 
 	public HistoryBucket() {
-		super();
+		super(false); // history is fire and forget
 	}
 
 	public void addBlob(IPath path, UniversalUniqueIdentifier uuid, long lastModified) {

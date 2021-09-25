@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,10 +12,12 @@
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
+ *     Joerg Kubitz    - caching
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
 import java.io.*;
+import java.lang.ref.SoftReference;
 import java.util.*;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.internal.resources.ResourceStatus;
@@ -155,6 +157,8 @@ public abstract class Bucket {
 	 * the value is the history entry data (UUID,timestamp) pairs.
 	 */
 	private final Map<String, Object> entries;
+	private SoftReference<Map<Object, Map<String, Object>>> entriesCache;
+
 	/**
 	 * The file system location of this bucket index file.
 	 */
@@ -169,7 +173,14 @@ public abstract class Bucket {
 	protected String projectName;
 
 	public Bucket() {
+		this(false);
+	}
+
+	public Bucket(boolean cacheEntries) {
 		this.entries = new HashMap<>();
+		if (cacheEntries) {
+			entriesCache = new SoftReference<>(null);
+		}
 	}
 
 	/**
@@ -241,6 +252,9 @@ public abstract class Bucket {
 	 * location. Any uncommitted changes are lost.
 	 */
 	public void flush() {
+		if (isCachingEnabled()) {
+			entriesCache.clear();
+		}
 		projectName = null;
 		location = null;
 		entries.clear();
@@ -299,25 +313,58 @@ public abstract class Bucket {
 			save();
 			this.projectName = newProjectName;
 			this.location = new File(baseLocation, getIndexFileName());
+			Map<String, Object> loadedEntries = null;
 			this.entries.clear();
-			if (!this.location.isFile())
-				return;
-			try (DataInputStream source = new DataInputStream(new BufferedInputStream(new FileInputStream(location), 8192))) {
-				int version = source.readByte();
-				if (version != getVersion()) {
-					// unknown version
-					String message = NLS.bind(Messages.resources_readMetaWrongVersion, location.getAbsolutePath(), Integer.toString(version));
-					ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, message);
-					throw new ResourceException(status);
+			if (force) {
+				loadedEntries = loadEntries(this.location);
+			} else {
+				if (isCachingEnabled()) {
+					Map<Object, Map<String, Object>> cache = entriesCache.get();
+					if (cache != null) {
+						loadedEntries = cache.get(createBucketKey());
+					}
 				}
-				int entryCount = source.readInt();
-				for (int i = 0; i < entryCount; i++)
-					this.entries.put(readEntryKey(source), readEntryValue(source));
+				// errors are not cached, so
+				// loadedEntries == null means cached value is not present:
+				if (loadedEntries == null) {
+					loadedEntries = loadEntries(this.location);
+				}
 			}
+			this.entries.putAll(loadedEntries);
 		} catch (IOException ioe) {
 			String message = NLS.bind(Messages.resources_readMeta, location.getAbsolutePath());
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, null, message, ioe);
 			throw new ResourceException(status);
+		}
+	}
+
+	boolean isCachingEnabled() {
+		return entriesCache != null;
+	}
+
+	private Object createBucketKey() {
+		return this.location == null ? null : this.location.getAbsolutePath();
+	}
+
+	private Map<String, Object> loadEntries(File indexFile) throws CoreException, IOException {
+		if (!indexFile.isFile()) {
+			return Collections.EMPTY_MAP; // remember file does not exist
+		}
+		Map<String, Object> resultEntries = new HashMap<>();
+		try (DataInputStream source = new DataInputStream(
+				new BufferedInputStream(new FileInputStream(indexFile), 8192))) {
+			int version = source.readByte();
+			if (version != getVersion()) {
+				// unknown version
+				String message = NLS.bind(Messages.resources_readMetaWrongVersion, location.getAbsolutePath(), Integer.toString(version));
+				ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, message);
+				throw new ResourceException(status);
+			}
+			int entryCount = source.readInt();
+			for (int i = 0; i < entryCount; i++) {
+				resultEntries.put(readEntryKey(source), readEntryValue(source));
+			}
+			return resultEntries;
 		}
 	}
 
@@ -336,6 +383,21 @@ public abstract class Bucket {
 	 * Saves this bucket's contents back to its location.
 	 */
 	public void save() throws CoreException {
+		if (isCachingEnabled()) {
+			Object key = createBucketKey();
+			if (key != null) {
+				// we do need to make a copy from this.entries because that instance is reused
+				@SuppressWarnings("unchecked")
+				java.util.Map.Entry<String, Object>[] a = new java.util.Map.Entry[0];
+				java.util.Map<String, Object> denseCopy = java.util.Map.ofEntries(this.entries.entrySet().toArray(a));
+				Map<Object, Map<String, Object>> cache = entriesCache.get();
+				if (cache == null) {
+					cache = new WeakHashMap<>();
+					entriesCache = new SoftReference<>(cache);
+				}
+				cache.put(key, denseCopy); // remember the entries in cache
+			}
+		}
 		if (!needSaving)
 			return;
 		try {
