@@ -15,9 +15,14 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.eclipse.swt.custom.StyledText;
+
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IBlockTextSelection;
@@ -26,7 +31,11 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.JFaceTextUtil;
+import org.eclipse.jface.text.MultiTextSelection;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.source.ISourceViewer;
+
+import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 /**
  * Action that converts the current selection to lower case or upper case.
@@ -79,37 +88,44 @@ public class CaseAction extends TextEditorAction {
 
 		ITextSelection selection= (ITextSelection) viewer.getSelectionProvider().getSelection();
 
-		int adjustment= 0;
 		try {
 			if (JFaceTextUtil.isEmpty(viewer, selection))
 				return;
 
 			IRegion[] ranges= JFaceTextUtil.getCoveredRanges(viewer, selection);
+			List<IRegion> newRanges = new ArrayList<>(ranges.length);
 			if (ranges.length > 1 && viewer instanceof ITextViewerExtension)
 				((ITextViewerExtension) viewer).getRewriteTarget().beginCompoundChange();
+			int offsetShift = 0;
 			for (IRegion region : ranges) {
-				String target= document.get(region.getOffset(), region.getLength());
+				int newOffset = region.getOffset() + offsetShift;
+				String target = document.get(newOffset, region.getLength());
 				String replacement= (fToUpper ? target.toUpperCase() : target.toLowerCase());
 				if (!target.equals(replacement)) {
-					document.replace(region.getOffset(), region.getLength(), replacement);
-					// https://bugs.eclipse.org/bugs/show_bug.cgi?id=145326: replacement might be larger than the original
-					adjustment= replacement.length() - target.length();
+					document.replace(newOffset, region.getLength(), replacement);
 				}
+				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=145326: replacement might be
+				// larger than the original
+				int currentAdjustment = replacement.length() - target.length();
+				offsetShift += currentAdjustment;
+				newRanges.add(new Region(newOffset, region.getLength() + currentAdjustment));
 			}
 			if (ranges.length > 1 && viewer instanceof ITextViewerExtension)
 				((ITextViewerExtension) viewer).getRewriteTarget().endCompoundChange();
-		} catch (BadLocationException x) {
-			// ignore and return
-			return;
-		}
 
-		// reinstall selection and move it into view
-		if (!(selection instanceof IBlockTextSelection))
-			viewer.setSelectedRange(selection.getOffset(), selection.getLength() + adjustment);
-		else
-			viewer.getSelectionProvider().setSelection(selection);
-		// don't use the viewer's reveal feature in order to avoid jumping around
-		st.showSelection();
+			// reinstall selection and move it into view
+			if (!(selection instanceof IBlockTextSelection)) {
+				viewer.getSelectionProvider()
+						.setSelection(new MultiTextSelection(viewer.getDocument(), newRanges.toArray(IRegion[]::new)));
+			} else {
+				viewer.getSelectionProvider().setSelection(selection);
+			}
+			// don't use the viewer's reveal feature in order to avoid jumping around
+			st.showSelection();
+		} catch (BadLocationException x) {
+			TextEditorPlugin.getDefault().getLog()
+					.log(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, x.getMessage(), x));
+		}
 	}
 
 }
