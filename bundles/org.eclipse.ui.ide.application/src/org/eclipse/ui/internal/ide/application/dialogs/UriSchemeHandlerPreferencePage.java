@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2018, 2019 SAP SE and others.
+* Copyright (c) 2018, 2021 SAP SE and others.
 * All rights reserved. This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License v1.0
 * which accompanies this distribution, and is available at
@@ -295,7 +295,7 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 		private void handleSelection() {
 			IStructuredSelection selection = tableViewer.getStructuredSelection();
 			Object firstElement = selection != null ? selection.getFirstElement() : null;
-			if (firstElement != null && firstElement instanceof UiSchemeInformation) {
+			if (firstElement instanceof UiSchemeInformation) {
 				setSchemeDetails((UiSchemeInformation) firstElement);
 				handlerComposite.setVisible(true);
 			}
@@ -325,7 +325,7 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 							NLS.bind(UriHandlerPreferencePage_Warning_OtherApp_Confirmation_Description,
 									schemeInformation.information.getHandlerInstanceLocation(),
 									schemeInformation.information.getName()));
-					if (answer == false) {
+					if (!answer) {
 						schemeInformation.checked = false;
 						tableViewer.setChecked(schemeInformation, schemeInformation.checked);
 						return;
@@ -390,8 +390,8 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 	}
 
 	static class UiSchemeInformation {
-		public boolean checked;
-		public ISchemeInformation information;
+		private boolean checked;
+		private ISchemeInformation information;
 
 		public UiSchemeInformation(boolean checked, ISchemeInformation information) {
 			this.checked = checked;
@@ -415,7 +415,7 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 		}
 	}
 
-	final static class LoadingSchemeInformation extends UiSchemeInformation {
+	static final class LoadingSchemeInformation extends UiSchemeInformation {
 
 		private IScheme scheme;
 
@@ -461,10 +461,7 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 			MessageDialog dlg = new MessageDialog(parent, title, null, message, MessageDialog.CONFIRM, 0,
 					UriHandlerPreferencePage_Confirm_Handle, IDialogConstants.CANCEL_LABEL);
 			dlg.open();
-			if (dlg.getReturnCode() != IDialogConstants.OK_ID) {
-				return false;
-			}
-			return true;
+			return dlg.getReturnCode() == IDialogConstants.OK_ID;
 		}
 	}
 
