@@ -157,7 +157,7 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 			}
 			legacyPart.createPartControl(parent);
 
-		} catch (RuntimeException e) {
+		} catch (Throwable e) {
 			logger.error(e);
 
 			try {
