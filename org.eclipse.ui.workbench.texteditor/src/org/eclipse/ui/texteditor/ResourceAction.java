@@ -15,7 +15,6 @@ package org.eclipse.ui.texteditor;
 
 
 
-import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.eclipse.jface.action.Action;
@@ -47,14 +46,7 @@ public abstract class ResourceAction extends Action {
 	 *   <code>null</code>)
 	 */
 	protected static String getString(ResourceBundle bundle, String key, String defaultValue) {
-
-		String value= defaultValue;
-		try {
-			value= bundle.getString(key);
-		} catch (MissingResourceException x) {
-		}
-
-		return value;
+		return bundle.containsKey(key) ? bundle.getString(key) : defaultValue;
 	}
 
 	/**
@@ -152,7 +144,7 @@ public abstract class ResourceAction extends Action {
 		setDescription(getString(bundle, descriptionKey, null));
 
 		String file= getString(bundle, imageKey, null);
-		if (file != null && !file.trim().isEmpty())
+		if (file != null && !file.isBlank())
 			setImageDescriptor(ImageDescriptor.createFromFile(getClass(), file));
 	}
 }
