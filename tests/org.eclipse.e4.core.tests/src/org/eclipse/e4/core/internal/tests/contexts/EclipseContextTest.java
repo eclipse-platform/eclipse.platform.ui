@@ -108,7 +108,7 @@ public class EclipseContextTest {
 		assertEquals("bar", context.get("foo"));
 		context.dispose();
 		assertNull(context.get("foo"));
-		assertTrue(((EclipseContext)parentContext).getChildren().isEmpty());
+		assertFalse(((EclipseContext) parentContext).getChildren().iterator().hasNext());
 	}
 
 	@Test

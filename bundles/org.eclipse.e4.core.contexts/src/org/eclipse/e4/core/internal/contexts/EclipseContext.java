@@ -19,10 +19,10 @@ import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +30,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
@@ -100,7 +101,11 @@ public class EclipseContext implements IEclipseContext {
 
 	private List<Computation> waiting; // list of Computations; null for all non-root entries
 
-	private Set<WeakReference<EclipseContext>> children = new HashSet<>();
+	/** Concurrent Collection of {@link #selfRef} */
+	private final Collection<WeakReference<EclipseContext>> children = new ConcurrentLinkedDeque<>();
+	/** The WeakReference in {@link #getParent()}'s {@link #children} */
+	private WeakReference<EclipseContext> selfRef;
+	private final StrongIterable<EclipseContext> childIterable = new StrongIterable<>(this.children);
 
 	private Set<IContextDisposalListener> notifyOnDisposal = new HashSet<>();
 
@@ -130,24 +135,8 @@ public class EclipseContext implements IEclipseContext {
 			debugAddOn.notify(this, IEclipseContextDebugger.EventType.CONSTRUCTED, null);
 	}
 
-	final static private Set<EclipseContext> noChildren = new HashSet<>(0);
-
-	public Set<EclipseContext> getChildren() {
-		Set<EclipseContext> result;
-		synchronized (children) {
-			if (children.isEmpty())
-				return noChildren;
-			result = new HashSet<>(children.size());
-			for (Iterator<WeakReference<EclipseContext>> i = children.iterator(); i.hasNext();) {
-				EclipseContext referredContext = i.next().get();
-				if (referredContext == null) {
-					i.remove();
-					continue;
-				}
-				result.add(referredContext);
-			}
-		}
-		return result;
+	public Iterable<EclipseContext> getChildren() {
+		return childIterable;
 	}
 
 	@Override
@@ -213,7 +202,7 @@ public class EclipseContext implements IEclipseContext {
 		localValues.clear();
 
 		if (parent != null) {
-			parent.removeChild(this);
+			selfRef.clear(); // remove from parent
 			if (rootContext != null) {
 				rootContext.cleanup();
 			}
@@ -311,13 +300,13 @@ public class EclipseContext implements IEclipseContext {
 				listener.handleInvalid(event, scheduled);
 			}
 		}
-
+		boolean addedOrRemoved = eventType == ContextChangeEvent.ADDED || eventType == ContextChangeEvent.REMOVED;
 		// invalidate this name in child contexts
 		for (EclipseContext childContext : getChildren()) {
 			// unless it is already set in this context (and thus hides the change)
-			if ((eventType == ContextChangeEvent.ADDED || eventType == ContextChangeEvent.REMOVED) && childContext.isSetLocally(name))
-				continue;
-			childContext.invalidate(name, eventType, oldValue, newValue, scheduled);
+			if (!(addedOrRemoved && childContext.isSetLocally(name))) {
+				childContext.invalidate(name, eventType, oldValue, newValue, scheduled);
+			}
 		}
 	}
 
@@ -434,12 +423,15 @@ public class EclipseContext implements IEclipseContext {
 		if (parent == parentContext)
 			return; // no-op
 		if (parentContext != null)
-			parentContext.removeChild(this);
+			selfRef.clear(); // remove from parent
 		Set<Scheduled> scheduled = new LinkedHashSet<>();
-		handleReparent((EclipseContext) parent, scheduled);
+		EclipseContext newParent = (EclipseContext) parent;
+		handleReparent(newParent, scheduled);
 		localValues.put(PARENT, parent);
-		if (parent != null)
-			((EclipseContext) parent).addChild(this);
+		if (parent != null) {
+			selfRef = new WeakReference<>(this);
+			newParent.addChild(selfRef);
+		}
 		processScheduled(scheduled);
 		return;
 	}
@@ -583,26 +575,8 @@ public class EclipseContext implements IEclipseContext {
 		return root;
 	}
 
-	public void addChild(EclipseContext childContext) {
-		synchronized (children) {
-			children.add(new WeakReference<>(childContext));
-		}
-	}
-
-	public void removeChild(EclipseContext childContext) {
-		synchronized (children) {
-			for (Iterator<WeakReference<EclipseContext>> i = children.iterator(); i.hasNext();) {
-				EclipseContext referredContext = i.next().get();
-				if (referredContext == null) {
-					i.remove();
-					continue;
-				}
-				if (referredContext == childContext) {
-					i.remove();
-					return;
-				}
-			}
-		}
+	private void addChild(WeakReference<EclipseContext> ref) {
+		children.add(ref);
 	}
 
 	@Override
