@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.Platform;
  * generated from a selection provider, it only remembers its offset and length
  * and computes the remaining information on request.</p>
  */
-public class TextSelection implements ITextSelection, IMultiTextSelection {
+public class TextSelection implements IMultiTextSelection {
 
 	/**
 	 * Debug option for asserting valid offset and length.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Avaloq Evolution AG and others.
+ * Copyright (c) 2009, 2021 Avaloq Evolution AG and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -193,7 +193,7 @@ public final class SelectionProcessor {
 
 	private final Implementation<ISelection> NULL_IMPLEMENTATION= new Implementation<>();
 
-	private final Implementation<ITextSelection> RANGE_IMPLEMENTATION= new Implementation<ITextSelection>() {
+	private final Implementation<ITextSelection> RANGE_IMPLEMENTATION= new Implementation<>() {
 		@Override
 		TextEdit replace(ITextSelection selection, String replacement) {
 			return new ReplaceEdit(selection.getOffset(), selection.getLength(), replacement);
@@ -254,7 +254,7 @@ public final class SelectionProcessor {
 		}
 	};
 
-	private final Implementation<IMultiTextSelection> RANGES_IMPLEMENTATION= new Implementation<IMultiTextSelection>() {
+	private final Implementation<IMultiTextSelection> RANGES_IMPLEMENTATION= new Implementation<>() {
 
 		private MultiTextEdit rangeEdits(IMultiTextSelection selection, Function<IRegion, TextEdit> regionToTextEdit) {
 			MultiTextEdit res= new MultiTextEdit();
@@ -461,7 +461,7 @@ public final class SelectionProcessor {
 		}
 	};
 
-	private final Implementation<IBlockTextSelection> COLUMN_IMPLEMENTATION= new Implementation<IBlockTextSelection>() {
+		private final Implementation<IBlockTextSelection> COLUMN_IMPLEMENTATION= new Implementation<>() {
 		private TextEdit replace(IBlockTextSelection selection, String replacement, boolean delete) throws BadLocationException {
 			try {
 				MultiTextEdit root;
