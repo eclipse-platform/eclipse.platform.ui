@@ -24,9 +24,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.widgets.Control;
-
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.core.resources.IFile;
@@ -51,7 +48,6 @@ public class CaseActionTest {
 
 	private static IProject project;
 	private static IFile file;
-	private StyledText text;
 	private AbstractTextEditor editor;
 
 	@BeforeClass
@@ -81,7 +77,6 @@ public class CaseActionTest {
 		editor = (AbstractTextEditor) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 				.getActivePage().openEditor(new FileEditorInput(file), desc.getId());
 		editor.setFocus();
-		text = (StyledText) editor.getAdapter(Control.class);
 		// make sure we start from a clean state
 	}
 
@@ -103,10 +98,8 @@ public class CaseActionTest {
 				((IMultiTextSelection) editor.getSelectionProvider().getSelection()).getRegions());
 		//
 		doc.set("foß bar fßo bar ßoo");
-		editor.getSelectionProvider().setSelection(new MultiTextSelection(doc, new IRegion[] { //
-				new Region(0, 3), //
-				new Region(8, 3), //
-				new Region(16, 3) }));
+		editor.getSelectionProvider().setSelection(
+				new MultiTextSelection(doc, new IRegion[] { new Region(0, 3), new Region(8, 3), new Region(16, 3) }));
 		editor.getAction(ITextEditorActionConstants.UPPER_CASE).run();
 		assertEquals("FOSS bar FSSO bar SSOO", doc.get());
 		assertArrayEquals(new IRegion[] { //
