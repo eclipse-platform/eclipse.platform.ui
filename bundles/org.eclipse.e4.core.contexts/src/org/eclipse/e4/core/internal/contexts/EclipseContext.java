@@ -33,6 +33,7 @@ import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.IInjector;
+import org.eclipse.e4.core.internal.contexts.ConcurrentNeutralValueMap.Value;
 import org.eclipse.e4.core.internal.contexts.osgi.ContextDebugHelper;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
@@ -91,7 +92,8 @@ public class EclipseContext implements IEclipseContext {
 	private WeakGroupedListenerList weakListeners = new WeakGroupedListenerList();
 	private Map<String, ValueComputation> localValueComputations = Collections.synchronizedMap(new HashMap<>());
 
-	final protected Map<String, Object> localValues = Collections.synchronizedMap(new HashMap<>());
+	final protected ConcurrentNeutralValueMap<String, Object> localValues = // null values allowed
+			new ConcurrentNeutralValueMap<>(ConcurrentNeutralValueMap.neutralObject());
 
 	private Set<String> modifiable;
 
@@ -256,8 +258,9 @@ public class EclipseContext implements IEclipseContext {
 
 		Object result = null;
 		// 1. try for local value
-		if (localValues.containsKey(name)) {
-			result = localValues.get(name);
+		Value<Object> value = localValues.getValue(name);
+		if (value.isPresent()) {
+			result = value.unwraped();
 			if (result == null)
 				return null;
 		} else
@@ -320,9 +323,10 @@ public class EclipseContext implements IEclipseContext {
 	}
 
 	protected boolean isLocalEquals(String name, Object newValue) {
-		if (!localValues.containsKey(name))
+		Value<Object> value = localValues.getValue(name);
+		if (!value.isPresent())
 			return false;
-		return (localValues.get(name) == newValue);
+		return (value.unwraped() == newValue);
 	}
 
 	private boolean isSetLocally(String name) {
@@ -371,8 +375,9 @@ public class EclipseContext implements IEclipseContext {
 			setParent((IEclipseContext) value);
 			return;
 		}
-		boolean containsKey = localValues.containsKey(name);
-		Object oldValue = localValues.put(name, value);
+		Value<Object> old = localValues.putAndGetOld(name, value);
+		boolean containsKey = old.isPresent();
+		Object oldValue = old.unwraped();
 		if (!containsKey || oldValue != value) {
 			Set<Scheduled> scheduled = new LinkedHashSet<>();
 			invalidate(name, ContextChangeEvent.ADDED, oldValue, value, scheduled);
@@ -407,7 +412,7 @@ public class EclipseContext implements IEclipseContext {
 				String tmp = "Variable " + name + " is not modifiable in the context " + this; //$NON-NLS-1$ //$NON-NLS-2$
 				throw new IllegalArgumentException(tmp);
 			}
-			Object oldValue = localValues.put(name, value);
+			Object oldValue = localValues.putAndGetOld(name, value).unwraped();
 			if (oldValue != value)
 				invalidate(name, ContextChangeEvent.ADDED, oldValue, value, scheduled);
 			return true;
@@ -470,9 +475,7 @@ public class EclipseContext implements IEclipseContext {
 		if (modifiable == null)
 			modifiable = new HashSet<>(3);
 		modifiable.add(name);
-		if (localValues.containsKey(name))
-			return;
-		localValues.put(name, null);
+		localValues.putIfAbsent(name, null);
 	}
 
 	private boolean checkModifiable(String name) {
@@ -709,23 +712,22 @@ public class EclipseContext implements IEclipseContext {
 	// This method is for debug only, do not use externally
 	public Map<String, Object> localData() {
 		Map<String, Object> result = new HashMap<>(localValues.size());
-		for (Map.Entry<String, Object> entry : localValues.entrySet()) {
-			if (entry.getValue() instanceof IContextFunction) {
-				continue;
+		localValues.forEach((k, v) -> {
+			if (!(v instanceof IContextFunction)) {
+				result.put(k, v);
 			}
-			result.put(entry.getKey(), entry.getValue());
-		}
+		});
 		return result;
 	}
 
 	// This method is for debug only, do not use externally
 	public Map<String, Object> localContextFunction() {
 		Map<String, Object> result = new HashMap<>(localValues.size());
-		for (Map.Entry<String, Object> entry : localValues.entrySet()) {
-			if (entry.getValue() instanceof IContextFunction) {
-				result.put(entry.getKey(), entry.getValue());
+		localValues.forEach((k, v) -> {
+			if (v instanceof IContextFunction) {
+				result.put(k, v);
 			}
-		}
+		});
 		return result;
 	}
 
