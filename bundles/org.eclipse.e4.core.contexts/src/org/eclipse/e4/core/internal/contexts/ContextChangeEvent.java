@@ -77,12 +77,12 @@ public final class ContextChangeEvent {
 	 */
 	public static final int RECALC = 6;
 
-	private Object[] args;
-	private IEclipseContext context;
-	private int eventType;
-	private String key;
+	private final Object[] args;
+	private final IEclipseContext context;
+	private final int eventType;
+	private final String key;
 
-	private Object oldValue;
+	private final Object oldValue;
 
 	/**
 	 * Creates a new context event.

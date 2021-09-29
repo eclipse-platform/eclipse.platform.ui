@@ -116,7 +116,7 @@ public class ValueComputation extends Computation {
 		return valid;
 	}
 
-	public void dipose() {
+	public void dispose() {
 		valid = false;
 	}
 }

@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.Stack;
+import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
@@ -90,7 +91,7 @@ public class EclipseContext implements IEclipseContext {
 	}
 
 	private WeakGroupedListenerList weakListeners = new WeakGroupedListenerList();
-	private Map<String, ValueComputation> localValueComputations = Collections.synchronizedMap(new HashMap<>());
+	private Map<String, ValueComputation> localValueComputations = new ConcurrentHashMap<>();
 
 	final protected ConcurrentNeutralValueMap<String, Object> localValues = // null values allowed
 			new ConcurrentNeutralValueMap<>(ConcurrentNeutralValueMap.neutralObject());
@@ -195,11 +196,10 @@ public class EclipseContext implements IEclipseContext {
 			}
 			notifyOnDisposal.clear();
 		}
-
-		for (ValueComputation computation : localValueComputations.values()) {
-			computation.dipose();
-		}
-		localValueComputations.clear();
+		localValueComputations.values().removeIf(computation -> {
+			computation.dispose();
+			return true;
+		});
 
 		// if this was the parent's active child, deactivate it
 		EclipseContext parent = getParent();
@@ -293,21 +293,20 @@ public class EclipseContext implements IEclipseContext {
 	 * computations and listeners that depend on this name.
 	 */
 	public void invalidate(String name, int eventType, Object oldValue, Object newValue, Set<Scheduled> scheduled) {
-		ContextChangeEvent event = null;
-		ValueComputation computation = localValueComputations.get(name);
-		if (computation != null) {
-			event = new ContextChangeEvent(this, eventType, null, name, oldValue);
+		ContextChangeEvent event = new ContextChangeEvent(this, eventType, null, name, oldValue);
+
+		ValueComputation newComputation = localValueComputations.computeIfPresent(name, (k, computation) -> {
 			if (computation.shouldRemove(event)) {
-				localValueComputations.remove(name);
 				weakListeners.remove(computation);
+				return null; // remove
 			}
-			computation.handleInvalid(event, scheduled);
+			return computation; // keep
+		});
+		if (newComputation != null) {
+			newComputation.handleInvalid(event, scheduled);
 		}
 		Set<Computation> namedComputations = weakListeners.getListeners(name);
 		if (namedComputations != null && !namedComputations.isEmpty()) {
-			if (event == null) {
-				event = new ContextChangeEvent(this, eventType, null, name, oldValue);
-			}
 			for (Computation listener : namedComputations) {
 				listener.handleInvalid(event, scheduled);
 			}
@@ -522,11 +521,11 @@ public class EclipseContext implements IEclipseContext {
 
 	protected void invalidateLocalComputations(Set<Scheduled> scheduled) {
 		ContextChangeEvent event = new ContextChangeEvent(this, ContextChangeEvent.ADDED, null, null, null);
-		for (Computation computation : localValueComputations.values()) {
+		localValueComputations.values().removeIf(computation -> {
 			weakListeners.remove(computation);
 			computation.handleInvalid(event, scheduled);
-		}
-		localValueComputations.clear();
+			return true;
+		});
 
 		// We need to cleanup computations recursively see bug 468048
 		for (EclipseContext c : getChildren()) {
