@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,7 +15,6 @@ package org.eclipse.ui.examples.javaeditor.util;
 
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.swt.graphics.Color;
@@ -39,15 +38,6 @@ public class JavaColorProvider {
 	public static final RGB JAVADOC_DEFAULT= new RGB(0, 128, 128);
 
 	protected Map<RGB, Color> fColorTable= new HashMap<>(10);
-
-	/**
-	 * Release all of the color resources held onto by the receiver.
-	 */
-	public void dispose() {
-		Iterator<Color> e= fColorTable.values().iterator();
-		while (e.hasNext())
-			 e.next().dispose();
-	}
 
 	/**
 	 * Return the color that is stored in the color table under the given RGB

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,7 +15,6 @@
  *         (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=60966)
  *******************************************************************************/
 package org.eclipse.search.internal.ui;
-
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -67,7 +66,6 @@ import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.IContextMenuContributor;
 import org.eclipse.search.ui.ISearchResultViewEntry;
 import org.eclipse.search.ui.SearchUI;
-
 
 /**
  * A special viewer to present search results. The viewer implements an
@@ -594,8 +592,6 @@ public class SearchResultViewer extends TableViewer {
 		Menu menu= getTable().getMenu();
 		if (menu != null)
 			menu.dispose();
-		if (fPotentialMatchFgColor != null)
-			fPotentialMatchFgColor.dispose();
 		if (fActionGroup != null) {
 			fActionGroup.dispose();
 			fActionGroup= null;
