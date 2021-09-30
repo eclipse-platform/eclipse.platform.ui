@@ -16,6 +16,7 @@ package org.eclipse.ui.internal.progress;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IconAndMessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
@@ -331,9 +332,15 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	}
 
 	@Override
-	protected Control createButtonBar(Composite parent) {
-		// Do nothing here as we want no buttons
-		return parent;
+	protected void createButtonsForButtonBar(Composite parent) {
+		createButton(parent, IDialogConstants.CANCEL_ID, ProgressMessages.BlockedJobsDialog_CancelButtonText, false);
+	}
+
+	@Override
+	protected void cancelPressed() {
+		setReturnCode(CANCEL);
+		blockingMonitor.clearBlocked(); // clearBlocked() results in calling close()
+		blockingMonitor.setCanceled(true);
 	}
 
 	/**
