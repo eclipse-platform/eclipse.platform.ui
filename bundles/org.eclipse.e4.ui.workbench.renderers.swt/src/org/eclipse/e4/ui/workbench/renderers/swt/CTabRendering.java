@@ -898,15 +898,17 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 			shadowImage = null;
 		}
 		ImageData data = new ImageData(60, 60, 32, new PaletteData(0xFF0000, 0xFF00, 0xFF));
-		Image tmpImage = shadowImage = new Image(display, data);
+		Image tmpImage = new Image(display, data);
 		GC gc = new GC(tmpImage);
-		if (shadowColor == null)
+		if (shadowColor == null) {
 			shadowColor = gc.getDevice().getSystemColor(SWT.COLOR_GRAY);
+		}
 		gc.setBackground(shadowColor);
 		drawTabBody(gc, new Rectangle(0, 0, 60, 60));
 		ImageData blured = blur(tmpImage, 5, 25);
 		shadowImage = new Image(display, blured);
 		tmpImage.dispose();
+		gc.dispose();
 	}
 
 	public ImageData blur(Image src, int radius, int sigma) {
