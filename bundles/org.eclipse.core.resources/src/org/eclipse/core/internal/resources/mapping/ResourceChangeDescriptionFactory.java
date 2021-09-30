@@ -25,15 +25,6 @@ import org.eclipse.core.runtime.IPath;
 public class ResourceChangeDescriptionFactory implements IResourceChangeDescriptionFactory {
 	private ProposedResourceDelta root = new ProposedResourceDelta(ResourcesPlugin.getWorkspace().getRoot());
 
-	/**
-	 * Creates a delta representing a deleted resource, and adds it to the provided
-	 * parent delta.
-	 * @param parentDelta The parent of the deletion delta to create
-	 * @param resource The deleted resource to create a delta for
-	 */
-	private ProposedResourceDelta buildDeleteDelta(ProposedResourceDelta parentDelta, IResource resource) {
-		return buildDeleteDelta(parentDelta, resource, false);
-	}
 
 	/**
 	 * Creates a delta representing a deleted resource, and adds it to the provided
@@ -103,10 +94,14 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 		if (resource.getType() == IResource.ROOT) {
 			//the root itself cannot be deleted, so create deletions for each project
 			IProject[] projects = ((IWorkspaceRoot) resource).getProjects(IContainer.INCLUDE_HIDDEN);
-			for (IProject project : projects)
-				buildDeleteDelta(root, project);
+			for (IProject project : projects) {
+				buildDeleteDelta(root, project, false);
+			}
+		} else if (resource.getType() == IResource.PROJECT) {
+			buildDeleteDelta(root, resource, false);
 		} else {
-			buildDeleteDelta(getDelta(resource.getParent()), resource);
+			// Files and folders are always deleted from disk
+			buildDeleteDelta(getDelta(resource.getParent()), resource, true);
 		}
 	}
 

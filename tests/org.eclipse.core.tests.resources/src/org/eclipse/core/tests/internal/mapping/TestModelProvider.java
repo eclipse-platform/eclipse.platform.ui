@@ -51,19 +51,25 @@ public class TestModelProvider extends ModelProvider {
 		final ChangeDescription description = new ChangeDescription();
 		try {
 			rootDelta.accept(delta -> description.recordChange(delta));
+
+			if (checkContentsDeletion) {
+				IResourceDeltaVisitor visitor = delta -> {
+					if ((delta.getFlags() & IResourceDelta.DELETE_CONTENT_PROPOSED) != 0) {
+						// With error status we indicate contents deletion proposal in given delta.
+						description.addError(new CoreException(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES,
+								"Contents deletion proposed.")));
+						// One error is enough to fail the test
+						return false;
+					}
+					return true;
+				};
+				rootDelta.accept(visitor);
+
+			}
 		} catch (CoreException e) {
 			description.addError(e);
 		}
 
-		if (checkContentsDeletion) {
-			for (IResourceDelta resourceDelta : rootDelta.getAffectedChildren()) {
-				if ((resourceDelta.getFlags() & IResourceDelta.DELETE_CONTENT_PROPOSED) != 0) {
-					// With error status we indicate contents deletion proposal in given delta.
-					description.addError(new CoreException(
-							new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, "Contents deletion proposed.")));
-				}
-			}
-		}
 
 		return description.asStatus();
 	}
