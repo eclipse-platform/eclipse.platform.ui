@@ -27,6 +27,7 @@ public class ConcurrentNeutralValueMap<K, V> {// implements subset of Map<K, V>
 	final ConcurrentHashMap<K, V> delegate = new ConcurrentHashMap<>();
 	/** a value that is used for null elements **/
 	final private V neutralValue;
+	final private static NullValue NULL = new NullValue();
 
 	/**
 	 * @param neutralValue a Element that does not equal any other Value
@@ -34,6 +35,11 @@ public class ConcurrentNeutralValueMap<K, V> {// implements subset of Map<K, V>
 	 */
 	public ConcurrentNeutralValueMap(V neutralValue) {
 		this.neutralValue = neutralValue;
+	}
+
+	@SuppressWarnings("unchecked")
+	public ConcurrentNeutralValueMap() {
+		this((V) NULL);
 	}
 
 	private V wrapValue(V value) {
@@ -49,6 +55,7 @@ public class ConcurrentNeutralValueMap<K, V> {// implements subset of Map<K, V>
 	}
 
 	private static final class NullValue {
+		/** for {@link ConcurrentNeutralValueMap#toString()} **/
 		@Override
 		public String toString() {
 			return "null"; //$NON-NLS-1$
@@ -56,34 +63,42 @@ public class ConcurrentNeutralValueMap<K, V> {// implements subset of Map<K, V>
 
 		@Override
 		public boolean equals(Object obj) {
-			return false;
+			// currently not called since ConcurrentHashMap checks for value1==value2
+			// but just in case the Implementation changes:
+			// in means of ConcurrentNeutralValueMap#equals() every NullValue equals
+			return obj instanceof NullValue;
+			// like java.util.Objects.equals(null, null) would return true,
 		}
 
+		/** for {@link ConcurrentNeutralValueMap#hashCode()} **/
 		@Override
 		public int hashCode() {
+			// in means of ConcurrentNeutralValueMap#hashCode() we need a hashCode
+			// even tough null.hashCode() would normally throw NullPointerException.
 			return 0x55555555;
+			// like java.util.Objects.hashCode(null) would return an int,
 		}
-	}
-
-	/** returns a neutral Element that does not equals any other **/
-	public static Object neutralObject() {
-		return new NullValue();
 	}
 
 	/*
 	 * Method overloads from java.lang.Object:
 	 */
 
+	/** return uses hashCode() of the neutralValue **/
 	@Override
 	public int hashCode() {
 		return delegate.hashCode();
 	}
 
+	/** return does NOT use equals() of the neutralValue **/
 	@Override
 	public boolean equals(Object obj) {
-		return delegate.equals(obj);
+		if (!(obj instanceof ConcurrentNeutralValueMap))
+			return false;
+		return delegate.equals(((ConcurrentNeutralValueMap<?, ?>) obj).delegate);
 	}
 
+	/** return uses toString() of the neutralValue **/
 	@Override
 	public String toString() {
 		return delegate.toString();
@@ -186,9 +201,12 @@ public class ConcurrentNeutralValueMap<K, V> {// implements subset of Map<K, V>
 		boolean isPresent();
 
 		/**
-		 * @return the result of map.get(key)
+		 * Callers are supposed to check #isPresent first to determine whether a
+		 * returned null was a null value or the key was not present.
+		 *
+		 * @return the unwrapped result of map.get(key). May return null.
 		 */
-		V unwraped();
+		V unwrapped();
 	}
 
 	private final class Wrapped implements Value<V> {
@@ -204,7 +222,7 @@ public class ConcurrentNeutralValueMap<K, V> {// implements subset of Map<K, V>
 		}
 
 		@Override
-		public V unwraped() {
+		public V unwrapped() {
 			return unwrapValue(wrappedValue);
 		}
 	}
@@ -212,7 +230,7 @@ public class ConcurrentNeutralValueMap<K, V> {// implements subset of Map<K, V>
 	/**
 	 * @return a value that is wrapped into a Value Object.
 	 * @see Value#isPresent()
-	 * @see Value#unwraped()
+	 * @see Value#unwrapped()
 	 */
 	public Value<V> getValue(K key) {
 		return new Wrapped(delegate.get(key));

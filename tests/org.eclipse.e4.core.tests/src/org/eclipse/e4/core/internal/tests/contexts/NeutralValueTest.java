@@ -28,14 +28,6 @@ import org.junit.Test;
 public class NeutralValueTest {
 
 	@Test
-	public void testNeutralObject() {
-		assertFalse(new Object().equals(ConcurrentNeutralValueMap.neutralObject()));
-		assertFalse(ConcurrentNeutralValueMap.neutralObject().equals(new Object()));
-		assertNotEquals(ConcurrentNeutralValueMap.neutralObject(), ConcurrentNeutralValueMap.neutralObject());
-		assertEquals("" + null, ConcurrentNeutralValueMap.neutralObject().toString());
-	}
-
-	@Test
 	public void testConcurrentNeutralValueMap() {
 		ConcurrentNeutralValueMap<String, Double> map = new ConcurrentNeutralValueMap<>(Double.NaN);
 		map.put("nix", null); // modify
@@ -78,29 +70,29 @@ public class NeutralValueTest {
 		{
 			Value<Double> v = map.getValue("nix");
 			assertTrue(v.isPresent());
-			assertEquals(null, v.unwraped());
+			assertEquals(null, v.unwrapped());
 		}
 		{
 			Value<Double> v = map.getValue("1");
 			assertFalse(v.isPresent());
-			assertEquals(null, v.unwraped());
+			assertEquals(null, v.unwrapped());
 		}
 		{
 			Value<Double> v = map.getValue("2");
 			assertTrue(v.isPresent());
-			assertEquals(Double.valueOf(2.0), v.unwraped());
+			assertEquals(Double.valueOf(2.0), v.unwrapped());
 		}
 
 		{
 			Value<Double> v = map.putAndGetOld("5", 5555.0); // modify
 			assertFalse(v.isPresent());
-			assertEquals(null, v.unwraped());
+			assertEquals(null, v.unwrapped());
 			assertEquals(Double.valueOf(5555.0), map.get("5"));
 		}
 		{
 			Value<Double> v = map.putAndGetOld("5", 5.0); // modify
 			assertTrue(v.isPresent());
-			assertEquals(Double.valueOf(5555.0), v.unwraped());
+			assertEquals(Double.valueOf(5555.0), v.unwrapped());
 			assertEquals(Double.valueOf(5.0), map.get("5"));
 		}
 		map.putIfAbsent("5", 5555.0); // modify
@@ -111,27 +103,27 @@ public class NeutralValueTest {
 		{
 			Value<Double> v = map.putAndGetOld("five", null); // modify
 			assertFalse(v.isPresent());
-			assertEquals(null, v.unwraped());
+			assertEquals(null, v.unwrapped());
 			assertEquals(null, map.get("five"));
 		}
 		{
 			Value<Double> v = map.putAndGetOld("five", 5.0); // modify
 			assertTrue(v.isPresent());
-			assertEquals(null, v.unwraped());
+			assertEquals(null, v.unwrapped());
 			assertEquals(Double.valueOf(5.0), map.get("five"));
 		}
 		{
 			map.putIfAbsent("five", null); // modify
 			Value<Double> v = map.getValue("five");
 			assertTrue(v.isPresent());
-			assertEquals(Double.valueOf(5.0), v.unwraped());
+			assertEquals(Double.valueOf(5.0), v.unwrapped());
 		}
 		map.remove("five"); // modify
 		{
 			map.putIfAbsent("five", null); // modify
 			Value<Double> v = map.getValue("five");
 			assertTrue(v.isPresent());
-			assertEquals(null, v.unwraped());
+			assertEquals(null, v.unwrapped());
 		}
 		map.remove("five"); // modify
 		assertFalse(map.containsKey("five"));
@@ -141,4 +133,73 @@ public class NeutralValueTest {
 		assertTrue(map.isEmpty());
 	}
 
+	@Test
+	public void testToString() {
+		ConcurrentNeutralValueMap<String, Float> map1 = new ConcurrentNeutralValueMap<>();
+		map1.put("0", 0f);
+		map1.put("NULL", null);
+		map1.put("nothing", null);
+		map1.put("1", 1f);
+		map1.put("~2", 2.1f);
+		assertTrue(map1.toString().contains("0=0.0"));
+		assertTrue(map1.toString().contains("1=1.0"));
+		assertTrue(map1.toString().contains("~2=2.1"));
+		assertTrue(map1.toString().contains("NULL=null"));
+		assertTrue(map1.toString().contains("nothing=null"));
+	}
+
+	@Test
+	public void testCustomToString() {
+		ConcurrentNeutralValueMap<String, Float> map1 = new ConcurrentNeutralValueMap<>(Float.NaN);
+		map1.put("0", 0f);
+		map1.put("NULL", null);
+		assertTrue(map1.toString().contains("0=0.0"));
+		assertTrue(map1.toString().contains("NULL=NaN"));
+	}
+
+	@Test
+	public void testEquals() {
+		{
+			ConcurrentNeutralValueMap<String, Float> map1 = new ConcurrentNeutralValueMap<>();
+			ConcurrentNeutralValueMap<String, Float> map2 = new ConcurrentNeutralValueMap<>();
+			map1.put("0", 0f);
+			map1.put("NULL", null);
+			map2.put("NULL", null);
+			map2.put("0", 0f);
+			assertEquals(map1.hashCode(), map2.hashCode());
+			assertEquals(map1, map2);
+		}
+		{
+			ConcurrentNeutralValueMap<String, Float> map1 = new ConcurrentNeutralValueMap<>();
+			ConcurrentNeutralValueMap<String, Float> map2 = new ConcurrentNeutralValueMap<>();
+			map1.put("0", 0f);
+			map1.put("1", 1f);
+			map1.put("NULL", null);
+			map2.put("NULL", null);
+			map2.put("0", 0f);
+			assertNotEquals(map1.hashCode(), map2.hashCode());
+			assertNotEquals(map1, map2);
+		}
+		{
+			ConcurrentNeutralValueMap<String, Float> map1 = new ConcurrentNeutralValueMap<>(Float.NaN);
+			ConcurrentNeutralValueMap<String, Float> map2 = new ConcurrentNeutralValueMap<>(Float.NaN);
+			map1.put("0", 0f);
+			map1.put("NULL", null);
+			map2.put("NULL", null);
+			map2.put("0", 0f);
+			assertEquals(map1.hashCode(), map2.hashCode());
+			assertEquals(map1, map2);
+		}
+		{
+			ConcurrentNeutralValueMap<String, Float> map1 = new ConcurrentNeutralValueMap<>(Float.NaN);
+			ConcurrentNeutralValueMap<String, Float> map2 = new ConcurrentNeutralValueMap<>(Float.NaN);
+			map1.put("0", 0f);
+			map1.put("1", 1f);
+			map1.put("NULL", null);
+			map2.put("NULL", null);
+			map2.put("0", 0f);
+			assertNotEquals(map1.hashCode(), map2.hashCode());
+			assertNotEquals(map1, map2);
+		}
+	}
 }

@@ -95,7 +95,7 @@ public class EclipseContext implements IEclipseContext {
 	private Map<String, ValueComputation> localValueComputations = new ConcurrentHashMap<>();
 
 	final protected ConcurrentNeutralValueMap<String, Object> localValues = // null values allowed
-			new ConcurrentNeutralValueMap<>(ConcurrentNeutralValueMap.neutralObject());
+			new ConcurrentNeutralValueMap<>();
 
 	private Set<String> modifiable;
 
@@ -249,7 +249,7 @@ public class EclipseContext implements IEclipseContext {
 		// 1. try for local value
 		Value<Object> value = localValues.getValue(name);
 		if (value.isPresent()) {
-			result = value.unwraped();
+			result = value.unwrapped();
 			if (result == null)
 				return null;
 		} else
@@ -314,7 +314,7 @@ public class EclipseContext implements IEclipseContext {
 		Value<Object> value = localValues.getValue(name);
 		if (!value.isPresent())
 			return false;
-		return (value.unwraped() == newValue);
+		return (value.unwrapped() == newValue);
 	}
 
 	private boolean isSetLocally(String name) {
@@ -365,7 +365,7 @@ public class EclipseContext implements IEclipseContext {
 		}
 		Value<Object> old = localValues.putAndGetOld(name, value);
 		boolean containsKey = old.isPresent();
-		Object oldValue = old.unwraped();
+		Object oldValue = old.unwrapped();
 		if (!containsKey || oldValue != value) {
 			Set<Scheduled> scheduled = new LinkedHashSet<>();
 			invalidate(name, ContextChangeEvent.ADDED, oldValue, value, scheduled);
@@ -400,7 +400,7 @@ public class EclipseContext implements IEclipseContext {
 				String tmp = "Variable " + name + " is not modifiable in the context " + this; //$NON-NLS-1$ //$NON-NLS-2$
 				throw new IllegalArgumentException(tmp);
 			}
-			Object oldValue = localValues.putAndGetOld(name, value).unwraped();
+			Object oldValue = localValues.putAndGetOld(name, value).unwrapped();
 			if (oldValue != value)
 				invalidate(name, ContextChangeEvent.ADDED, oldValue, value, scheduled);
 			return true;
