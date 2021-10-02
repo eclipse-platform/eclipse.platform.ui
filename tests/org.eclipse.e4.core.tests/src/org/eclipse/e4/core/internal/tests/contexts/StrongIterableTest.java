@@ -49,6 +49,52 @@ public class StrongIterableTest {
 		testRemoveWhileIterate(constructor.get());
 		testRemoveAll(constructor.get());
 		testRemoveByClear(constructor.get());
+		testNextWithoutHasNext(constructor.get());
+	}
+
+	private void testNextWithoutHasNext(Collection<Reference<Integer>> iterable) {
+		WeakReference<Integer> EMPTY1 = new WeakReference<>(null);
+		WeakReference<Integer> EMPTY2 = new WeakReference<>(null);
+		WeakReference<Integer> ONE = new WeakReference<>(1);
+		WeakReference<Integer> TWO = new WeakReference<>(2);
+		WeakReference<Integer> THREE = new WeakReference<>(3);
+		iterable.add(EMPTY1); // ignored
+		iterable.add(ONE);
+		iterable.add(TWO);
+		iterable.add(EMPTY2); // ignored
+		iterable.add(THREE);
+		StrongIterable<Integer> strongIterable = new StrongIterable<>(iterable);
+		{
+			Iterator<Integer> i = strongIterable.iterator();
+			assertEquals(1, i.next().intValue());
+			assertEquals(2, i.next().intValue());
+			assertEquals(3, i.next().intValue());
+			try {
+				i.next();
+			} catch (NoSuchElementException e) {
+				assertNotNull(e);
+			}
+		}
+		{
+			Iterator<Integer> i = strongIterable.iterator();
+			assertEquals(1, i.next().intValue());
+			assertEquals(3L, count(strongIterable));
+			assertEquals(3L, poorMansCount(strongIterable));
+			i.remove();
+			assertEquals(2L, count(strongIterable));
+			assertEquals(2L, poorMansCount(strongIterable));
+			assertEquals(2, i.next().intValue());
+			i.remove();
+			assertEquals(3, i.next().intValue());
+			i.remove();
+			try {
+				i.next();
+			} catch (NoSuchElementException e) {
+				assertNotNull(e);
+			}
+		}
+		assertEquals(0L, count(strongIterable));
+		assertEquals(0L, poorMansCount(strongIterable));
 	}
 
 	void testRemoveWhileIterate(Collection<Reference<Integer>> iterable) {
@@ -59,20 +105,25 @@ public class StrongIterableTest {
 		iterable.add(TWO);
 		iterable.add(THREE);
 
+		assertEquals(3L, poorMansCount(iterable));
 		StrongIterable<Integer> strongIterable = new StrongIterable<>(iterable);
 		{
 			Iterator<Integer> i = strongIterable.iterator();
 			assertEquals(3L, count(strongIterable));
+			assertEquals(3L, poorMansCount(strongIterable));
+
 			assertTrue(i.hasNext());
 			assertEquals(1, i.next().intValue());
 			assertTrue(i.hasNext());
 			assertEquals(2, i.next().intValue());
 			i.remove(); // remove TWO
 			assertEquals(2L, count(strongIterable));
+			assertEquals(2L, poorMansCount(strongIterable));
 			assertTrue(i.hasNext());
 			assertEquals(3, i.next().intValue());
 			i.remove(); // remove THREE
 			assertEquals(1L, count(strongIterable));
+			assertEquals(1L, poorMansCount(strongIterable));
 			assertFalse(i.hasNext());
 			try {
 				i.next();
@@ -97,6 +148,7 @@ public class StrongIterableTest {
 			i.remove();
 		}
 		assertEquals(0L, count(strongIterable));
+		assertEquals(0L, poorMansCount(strongIterable));
 	}
 
 	void testRemoveByClear(Collection<Reference<Integer>> iterable) {
@@ -203,8 +255,18 @@ public class StrongIterableTest {
 		}
 	}
 
-	private long count(StrongIterable<?> i) {
+	private long count(Iterable<?> i) {
 		return StreamSupport.stream(i.spliterator(), false).count();
 	}
 
+	private long poorMansCount(Iterable<?> i) {
+		long count = -1;
+		try {
+			for (Iterator<?> it = i.iterator();; it.next()) {
+				count++;
+			}
+		} catch (NoSuchElementException expected) {
+		}
+		return count;
+	}
 }

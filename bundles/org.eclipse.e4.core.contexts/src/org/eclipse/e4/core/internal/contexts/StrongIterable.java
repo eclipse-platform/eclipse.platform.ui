@@ -65,10 +65,11 @@ public final class StrongIterable<T> implements Iterable<T> {
 
 			@Override
 			public T next() {
+				if (!hasNext()) {
+					throw new NoSuchElementException();
+				}
 				T result = next;
 				next = null;
-				if (result == null)
-					throw new NoSuchElementException();
 				return result;
 			}
 
