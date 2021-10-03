@@ -11,7 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 483465
- *     Christoph Läubrich - Bug 567898 - [JFace][HiDPI] ImageDescriptor support alternative naming scheme for high dpi 
+ *     Christoph Läubrich - Bug 567898 - [JFace][HiDPI] ImageDescriptor support alternative naming scheme for high dpi
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
@@ -107,6 +107,7 @@ class URLImageDescriptor extends ImageDescriptor {
 	 *            The URL to load the image from. Must be non-null.
 	 */
 	URLImageDescriptor(URL url) {
+		super(true);
 		this.url = url.toExternalForm();
 	}
 
@@ -333,4 +334,5 @@ class URLImageDescriptor extends ImageDescriptor {
 		}
 		return result;
 	}
+
 }

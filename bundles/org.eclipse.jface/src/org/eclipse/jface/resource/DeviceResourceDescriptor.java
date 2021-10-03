@@ -30,6 +30,47 @@ import org.eclipse.swt.graphics.Device;
  * @since 3.1
  */
 public abstract class DeviceResourceDescriptor {
+	private final boolean shouldBeCached;
+
+	/**
+	 * default constructor with shouldBeCached=false
+	 */
+	public DeviceResourceDescriptor() {
+		this(false);
+	}
+
+	/**
+	 * @param shouldBeCached Indicates if the resource instance described by the
+	 *                       descriptor should to be kept by {@link ResourceManager}
+	 *                       even if all references to the resource are lost (due to
+	 *                       {@link ResourceManager#destroy(DeviceResourceDescriptor)}).<br>
+	 *                       Should return true for resources that are costly to
+	 *                       create (for example by involving I/O Operation). Has
+	 *                       only an effect if caching is enabled (see
+	 *                       org.eclipse.jface.resource.JFaceResources#cacheSize).
+	 *                       Caching relies on {@link #equals(Object)} and
+	 *                       {@link #hashCode()}. For equal
+	 *                       DeviceResourceDescriptors the same Resource instance is
+	 *                       returned by the {@link ResourceManager} instance return
+	 *                       by
+	 *                       {@link org.eclipse.jface.resource.JFaceResources#getResources(org.eclipse.swt.widgets.Display)}
+	 *                       as long as the cache is big enough to cache all
+	 *                       resources.<br>
+	 *                       Instances which equal (in terms of
+	 *                       {@link #equals(Object)}) must have the same
+	 *                       shouldBeCached mode.
+	 * @see LazyResourceManager
+	 * @since 3.24
+	 */
+	protected DeviceResourceDescriptor(boolean shouldBeCached) {
+		this.shouldBeCached = shouldBeCached;
+
+	}
+
+	final boolean shouldBeCached() {
+		return shouldBeCached;
+	}
+
 	/**
 	 * Creates the resource described by this descriptor
 	 *

@@ -57,6 +57,7 @@ final class DeferredImageDescriptor extends ImageDescriptor {
 	 * @param supplier        the supplier of the URL
 	 */
 	DeferredImageDescriptor(boolean useMissingImage, Supplier<URL> supplier) {
+		super(true);
 		this.supplier = Objects.requireNonNull(supplier);
 		this.useMissingImage = useMissingImage;
 	}
@@ -78,4 +79,5 @@ final class DeferredImageDescriptor extends ImageDescriptor {
 		}
 		return ImageDescriptor.createFromURL(url).createImage(returnMissingImageOnError, device);
 	}
+
 }

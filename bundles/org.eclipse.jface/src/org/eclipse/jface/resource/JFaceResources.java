@@ -66,7 +66,7 @@ public class JFaceResources {
 	 * Map of Display onto DeviceResourceManager. Holds all the resources for
 	 * the associated display.
 	 */
-	private static final Map<Display,DeviceResourceManager> registries = new HashMap<>();
+	private static final Map<Display, ResourceManager> registries = new HashMap<>();
 
 	/**
 	 * The symbolic font name for the banner font (value
@@ -196,19 +196,29 @@ public class JFaceResources {
 	}
 
 	/**
+	 * 300 is big enough to cache common images of eclipse IDE, and small enough to
+	 * not blow OS.
+	 */
+	private static final int cacheSize = Integer.getInteger("org.eclipse.jface.resource.cacheSize", 300).intValue(); //$NON-NLS-1$
+
+	/**
 	 * Returns the global resource manager for the given display
 	 *
 	 * @since 3.1
 	 *
-	 * @param toQuery
-	 *            display to query
+	 * @param toQuery display to query
 	 * @return the global resource manager for the given display
 	 */
 	public static ResourceManager getResources(final Display toQuery) {
 		ResourceManager reg = registries.get(toQuery);
 
 		if (reg == null) {
-			final DeviceResourceManager mgr = new DeviceResourceManager(toQuery);
+			final ResourceManager mgr;
+			if (cacheSize == 0) {
+				mgr = new DeviceResourceManager(toQuery);
+			} else {
+				mgr = new LazyResourceManager(cacheSize, new DeviceResourceManager(toQuery));
+			}
 			reg = mgr;
 			registries.put(toQuery, mgr);
 			toQuery.disposeExec(() -> {

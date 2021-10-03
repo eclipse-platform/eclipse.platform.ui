@@ -73,6 +73,9 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor {
 		// do nothing
 	}
 
+	ImageDescriptor(boolean shouldBeCached) {
+		super(shouldBeCached);
+	}
 	/**
 	 * Creates and returns a new image descriptor from a file.
 	 *

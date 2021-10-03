@@ -81,6 +81,7 @@ class FileImageDescriptor extends ImageDescriptor {
 	 *            the name of the file
 	 */
 	FileImageDescriptor(Class<?> clazz, String filename) {
+		super(true);
 		this.location = clazz;
 		this.name = filename;
 	}
