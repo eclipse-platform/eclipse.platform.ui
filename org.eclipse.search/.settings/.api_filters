@@ -16,12 +16,4 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="search/org/eclipse/search/internal/ui/SearchResultViewer.java" type="org.eclipse.search.internal.ui.SearchResultViewer">
-        <filter id="571473929">
-            <message_arguments>
-                <message_argument value="TableViewer"/>
-                <message_argument value="SearchResultViewer"/>
-            </message_arguments>
-        </filter>
-    </resource>
 </component>

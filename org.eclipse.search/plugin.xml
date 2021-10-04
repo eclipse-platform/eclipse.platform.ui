@@ -375,14 +375,6 @@
 	     </specification>
 	</extension>
 	
-	<extension point="org.eclipse.core.runtime.adapters">
-		<factory 
-			class="org.eclipse.search.internal.ui.SearchResultViewEntryAdapterFactory" 
-			adaptableType="org.eclipse.search.ui.ISearchResultViewEntry">
-				<adapter type="org.eclipse.core.resources.IResource"/>
-				<adapter type="org.eclipse.core.resources.IMarker"/>
-		</factory>
-	</extension>
  <extension
        point="org.eclipse.core.runtime.preferences">
     <initializer class="org.eclipse.search.internal.ui.SearchPreferenceInitializer"/>

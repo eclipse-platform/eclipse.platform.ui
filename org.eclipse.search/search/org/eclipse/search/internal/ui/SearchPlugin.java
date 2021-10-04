@@ -208,18 +208,8 @@ public class SearchPlugin extends AbstractUIPlugin {
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		InternalSearchUI.shutdown();
-		disposeOldSearchManager();
 		super.stop(context);
 		fgSearchPlugin= null;
-	}
-
-	/**
-	 * @deprecated old search
-	 */
-	@Deprecated
-	private void disposeOldSearchManager() {
-		if (SearchManager.fgDefault != null)
-			SearchManager.fgDefault.dispose();
 	}
 
 	/**
@@ -246,32 +236,6 @@ public class SearchPlugin extends AbstractUIPlugin {
 				enabledDescriptors.add(desc);
 		}
 		return enabledDescriptors;
-	}
-
-	/**
-	 * @return Returns the help context ID for the Search view
-	 * as provided by the current search page extension.
-	 *
-	 * @since 3.0
-	 * @deprecated old search
-	 */
-	@Deprecated
-	public String getSearchViewHelpContextId() {
-		Search currentSearch= SearchManager.getDefault().getCurrentSearch();
-		if (currentSearch != null) {
-			String pageId= currentSearch.getPageId();
-			Iterator<SearchPageDescriptor> iter= getSearchPageDescriptors().iterator();
-			while (iter.hasNext()) {
-				SearchPageDescriptor desc= iter.next();
-				if (desc.getId().equals(pageId)) {
-					String helpId= desc.getSearchViewHelpContextId();
-					if (helpId == null)
-						return ISearchHelpContextIds.SEARCH_VIEW;
-					return desc.getSearchViewHelpContextId();
-				}
-			}
-		}
-		return ISearchHelpContextIds.SEARCH_VIEW;
 	}
 
 	/**
