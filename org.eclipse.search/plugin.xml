@@ -262,13 +262,6 @@
 	</extension>
 		
 	<extension point="org.eclipse.ui.views">
-		<view
-		   id="org.eclipse.search.SearchResultView"
-		   name="%searchResultViewName"
-		   category="org.eclipse.ui"
-		   class="org.eclipse.search.internal.ui.SearchResultView"
-		   icon="$nl$/icons/full/eview16/searchres.png">
-		</view>
       	<view
             name="%newSearchResultViewName"
             icon="$nl$/icons/full/eview16/searchres.png"
