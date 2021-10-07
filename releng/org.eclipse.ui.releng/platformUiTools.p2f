@@ -4,37 +4,37 @@
   <ius size='43'>
     <iu id='org.eclipse.emf.ecore.editor.feature.group' name='org.eclipse.emf.ecore.editor.feature.group' version='0.0.0'>
       <repositories size='1'>
-        <repository location='http://download.eclipse.org/modeling/emf/emf/builds/nightly/latest'/>
+        <repository location='https://download.eclipse.org/modeling/emf/emf/builds/nightly/latest'/>
       </repositories>
     </iu>
     <iu id='org.eclipse.emf.codegen.ecore.ui.feature.group' name='org.eclipse.emf.codegen.ecore.ui.feature.group' version='0.0.0'>
       <repositories size='1'>
-        <repository location='http://download.eclipse.org/modeling/emf/emf/builds/nightly/latest'/>
+        <repository location='https://download.eclipse.org/modeling/emf/emf/builds/nightly/latest'/>
       </repositories>
     </iu>
     <iu id='org.jsoup' name='org.jsoup' version='0.0.0'>
       <repositories size='1'>
-        <repository location='http://download.eclipse.org/releases/latest/'/>
+        <repository location='https://download.eclipse.org/releases/latest/'/>
       </repositories>
     </iu>
     <iu id='org.json' name='org.json' version='0.0.0'>
       <repositories size='1'>
-        <repository location='http://download.eclipse.org/releases/latest/'/>
+        <repository location='https://download.eclipse.org/releases/latest/'/>
       </repositories>
     </iu>
     <iu id='org.apache.commons.lang' name='org.apache.commons.lang' version='0.0.0'>
       <repositories size='1'>
-        <repository location='http://download.eclipse.org/releases/latest/'/>
+        <repository location='https://download.eclipse.org/releases/latest/'/>
       </repositories>
     </iu>
     <iu id='org.apache.commons.lang.source' name='org.apache.commons.lang.source' version='0.0.0'>
       <repositories size='1'>
-        <repository location='http://download.eclipse.org/releases/latest/'/>
+        <repository location='https://download.eclipse.org/releases/latest/'/>
       </repositories>
     </iu>
     <iu id='org.dojotoolkit' name='org.dojotoolkit' version='0.0.0'>
       <repositories size='1'>
-        <repository location='http://download.eclipse.org/releases/latest/'/>
+        <repository location='https://download.eclipse.org/releases/latest/'/>
       </repositories>
     </iu>
     <iu id='org.easymock' name='org.easymock' version='2.4.0'>
@@ -124,57 +124,57 @@
     </iu>
     <iu id='org.eclipse.pde.api.tools.ee.feature.feature.group' name='API Tools Execution Environment Descriptions' >
       <repositories size='2'>
-        <repository location='http://download.eclipse.org/releases/latest/'/>
+        <repository location='https://download.eclipse.org/releases/latest/'/>
       </repositories>
     </iu>
     <iu id='org.eclipse.egit.feature.group' name='Eclipse Git Team Provider' >
       <repositories size='1'>
-        <repository location='http://download.eclipse.org/egit/updates-nightly'/>
+        <repository location='https://download.eclipse.org/egit/updates-nightly'/>
       </repositories>
     </iu>
     <iu id='org.eclipse.jgit.lfs.feature.group' name='Eclipse Git LFS support' >
       <repositories size='1'>
-        <repository location='http://download.eclipse.org/egit/updates-nightly'/>
+        <repository location='https://download.eclipse.org/egit/updates-nightly'/>
       </repositories>
     </iu>
     <iu id='org.eclipse.swtbot.forms.feature.group' name='SWTBot for Eclipse Forms Testing (incubation)' version='0.0.0'>
         <repositories size='1'>
-            <repository location='http://download.eclipse.org/releases/latest/'/>
+            <repository location='https://download.eclipse.org/releases/latest/'/>
         </repositories>
     </iu>
     <iu id='org.eclipse.swtbot.eclipse.feature.group' name='SWTBot for Eclipse Testing (incubation)' version='0.0.0'>
         <repositories size='1'>
-            <repository location='http://download.eclipse.org/releases/latest/'/>
+            <repository location='https://download.eclipse.org/releases/latest/'/>
         </repositories>
     </iu>
     <iu id='org.eclipse.swtbot.feature.group' name='SWTBot for SWT Testing (incubation)' version='0.0.0'>
         <repositories size='1'>
-            <repository location='http://download.eclipse.org/releases/latest/'/>
+            <repository location='https://download.eclipse.org/releases/latest/'/>
         </repositories>
     </iu>
     <iu id='org.eclipse.swtbot.ide.feature.group' name='SWTBot IDE Features (incubation)' version='0.0.0'>
         <repositories size='1'>
-            <repository location='http://download.eclipse.org/releases/latest/'/>
+            <repository location='https://download.eclipse.org/releases/latest/'/>
         </repositories>
     </iu>
     <iu id='org.eclipse.swtbot.eclipse.test.junit.feature.group' name='SWTBot JUnit Headless launchers for Eclipse (incubation)' version='0.0.0'>
         <repositories size='1'>
-            <repository location='http://download.eclipse.org/releases/latest/'/>
+            <repository location='https://download.eclipse.org/releases/latest/'/>
         </repositories>
     </iu>
     <iu id='org.eclipse.eclemma.feature.feature.group' name='EclEmma Java Code Coverage' version='0.0.0'>
         <repositories size='1'>
-            <repository location='http://download.eclipse.org/releases/latest/'/>
+            <repository location='https://download.eclipse.org/releases/latest/'/>
         </repositories>
     </iu>
     <iu id='org.apache.commons.compress' name='Apache Commons Compress Plug-in' version='0.0.0'>
         <repositories size='1'>
-            <repository location='http://download.eclipse.org/releases/latest/'/>
+            <repository location='https://download.eclipse.org/releases/latest/'/>
         </repositories>
     </iu>
     <iu id='org.apache.log4j' name='Apache Jakarta log4j Plug-in' version='0.0.0'>
         <repositories size='1'>
-            <repository location='http://download.eclipse.org/releases/latest/'/>
+            <repository location='https://download.eclipse.org/releases/latest/'/>
         </repositories>
     </iu>
     <iu id='org.slf4j.binding.log4j12' name='SLF4J LOG4J-12 Binding Plug-in' version='0.0.0'>
@@ -184,7 +184,7 @@
     </iu>
     <iu id='org.kohsuke.args4j' name='Args4j' version='2.33.0'>
         <repositories size='1'>
-            <repository location='http://download.eclipse.org/releases/latest/'/>
+            <repository location='https://download.eclipse.org/releases/latest/'/>
         </repositories>
     </iu>
     <iu id='org.hamcrest.generator' name='Hamcrest Generator' version='0.0.0'>
@@ -194,12 +194,12 @@
     </iu>
     <iu id='javaewah' name='JavaEWAH' version='0.0.0'>
         <repositories size='1'>
-            <repository location='http://download.eclipse.org/releases/latest/'/>
+            <repository location='https://download.eclipse.org/releases/latest/'/>
         </repositories>
     </iu>
     <iu id='org.objenesis' name='org.objenesis' version='0.0.0'>
         <repositories size='1'>
-            <repository location='http://download.eclipse.org/releases/latest/'/>
+            <repository location='https://download.eclipse.org/releases/latest/'/>
         </repositories>
     </iu>
     <iu id='org.mockito' name='Java Mocking and Stubbing Framework' version='2.13.0'>
