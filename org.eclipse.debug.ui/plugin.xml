@@ -3385,4 +3385,11 @@ M4 = Platform-specific fourth key
             class="org.eclipse.debug.internal.ui.quickaccess.ProfileQuickAccessComputer"
             name="%ProfileDropDownAction.label"/>
    </extension>
+   <extension
+         point="org.eclipse.ui.genericeditor.icons">
+      <icon
+            contentType="org.eclipse.debug.core.launch"
+            icon="icons/full/obj16/launchConfiguration.png">
+      </icon>
+   </extension>
 </plugin>

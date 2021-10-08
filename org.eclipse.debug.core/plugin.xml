@@ -280,4 +280,14 @@
           public="true">
     </launchConfigurationType>
  </extension>
+ <extension
+       point="org.eclipse.core.contenttype.contentTypes">
+    <content-type
+          base-type="org.eclipse.core.runtime.xml"
+          file-extensions="launch"
+          id="org.eclipse.debug.core.launch"
+          name="%LaunchConfiguration"
+          priority="normal">
+    </content-type>
+ </extension>
 </plugin>
