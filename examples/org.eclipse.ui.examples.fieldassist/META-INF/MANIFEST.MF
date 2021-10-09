@@ -2,9 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui.examples.fieldassist; singleton:=true
-Bundle-Version: 1.2.100.qualifier
+Bundle-Version: 1.2.200.qualifier
 Bundle-Activator: org.eclipse.ui.examples.fieldassist.FieldAssistPlugin
 Bundle-Localization: plugin
+Bundle-Vendor: %Bundle-Vendor
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime
 Bundle-ActivationPolicy: lazy

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.e4.core.commands.tests;singleton:=true
-Bundle-Version: 0.13.0.qualifier
+Bundle-Version: 0.13.100.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.eclipse.core.commands,
  org.eclipse.e4.core.commands,
@@ -15,6 +15,7 @@ Import-Package: javax.inject;version="1.0.0",
  org.osgi.service.log;version="1.3.0",
  org.osgi.service.packageadmin;version="1.2.0"
 Bundle-ActivationPolicy: lazy
+Bundle-Localization: plugin
 Eclipse-BundleShape: dir
 Automatic-Module-Name: org.eclipse.e4.core.commands.tests
 Bundle-Vendor: %providerName
