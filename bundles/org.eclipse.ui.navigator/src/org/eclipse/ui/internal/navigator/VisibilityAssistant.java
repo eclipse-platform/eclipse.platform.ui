@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -33,11 +33,11 @@ public class VisibilityAssistant implements IExtensionActivationListener {
 
 	private final INavigatorViewerDescriptor viewerDescriptor;
 
-	private final Set programmaticVisibilityBindings = new HashSet();
+	private final Set<String> programmaticVisibilityBindings = new HashSet<>();
 
-	private final Set programmaticRootBindings = new HashSet();
+	private final Set<String> programmaticRootBindings = new HashSet<>();
 
-	private final ListenerList listeners = new ListenerList();
+	private final ListenerList<VisibilityListener> listeners = new ListenerList<>();
 
 	private final INavigatorActivationService activationService;
 
@@ -123,9 +123,8 @@ public class VisibilityAssistant implements IExtensionActivationListener {
 	}
 
 	private void notifyClients() {
-		Object[] clients = listeners.getListeners();
-		for (Object client : clients) {
-			((VisibilityListener) client).onVisibilityOrActivationChange();
+		for (VisibilityListener client : listeners) {
+			client.onVisibilityOrActivationChange();
 		}
 	}
 

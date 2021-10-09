@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -66,10 +66,7 @@ public final class NavigatorActivationService implements
 	 */
 	private final Map<String, Boolean> activatedExtensionsMap = new HashMap<>();
 
-	/*
-	 * IExtensionActivationListeners
-	 */
-	private final ListenerList listeners = new ListenerList();
+	private final ListenerList<IExtensionActivationListener> listeners = new ListenerList<>();
 
 	private INavigatorContentService contentService;
 
@@ -250,11 +247,8 @@ public final class NavigatorActivationService implements
 			if(navigatorExtensionIds.length > 1)
 				Arrays.sort(navigatorExtensionIds);
 
-			Object[] listenerArray = listeners.getListeners();
-			for (Object element : listenerArray) {
-				((IExtensionActivationListener) element)
-						.onExtensionActivation(contentService.getViewerId(),
-								navigatorExtensionIds, toEnable);
+			for (IExtensionActivationListener element : listeners) {
+				element.onExtensionActivation(contentService.getViewerId(), navigatorExtensionIds, toEnable);
 			}
 		}
 
