@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,6 +16,7 @@
 package org.eclipse.jface.tests.dialogs;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -110,7 +111,7 @@ public class DialogSettingsTest {
 	 *
 	 */
 	protected void check(IDialogSettings dialogSettings) {
-		assertEquals(true, dialogSettings.getBoolean("booleanKey"));
+		assertTrue(dialogSettings.getBoolean("booleanKey"));
 		assertEquals(0.4f, dialogSettings.getFloat("floatKey"), 0.4f);
 		assertEquals(0.4f, dialogSettings.getDouble("doubleKey"), 0.5);
 		assertEquals(324765, dialogSettings.getInt("integerKey"));
@@ -310,14 +311,14 @@ public class DialogSettingsTest {
 			public void prepareAndCheckBeforeSerialization(IDialogSettings dialogSettingsToSerialize) {
 				dialogSettingsToSerialize.put("true", true);
 				dialogSettingsToSerialize.put("false", false);
-				assertEquals(true, dialogSettingsToSerialize.getBoolean("true"));
-				assertEquals(false, dialogSettingsToSerialize.getBoolean("false"));
+				assertTrue(dialogSettingsToSerialize.getBoolean("true"));
+				assertFalse(dialogSettingsToSerialize.getBoolean("false"));
 			}
 
 			@Override
 			public void checkAfterDeserialization(IDialogSettings deserializedDialogSettings) {
-				assertEquals(true, deserializedDialogSettings.getBoolean("true"));
-				assertEquals(false, deserializedDialogSettings.getBoolean("false"));
+				assertTrue(deserializedDialogSettings.getBoolean("true"));
+				assertFalse(deserializedDialogSettings.getBoolean("false"));
 			}
 		});
 	}
