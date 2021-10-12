@@ -401,6 +401,9 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 
 	private class DelayedDoModelChangedJob extends WorkbenchJob {
 
+		// limit batch size to avoid freezing the UI.
+		private static final int MAX_BATCH_SIZE = 100;
+
 		// queue of submitted deltas to process
 		private final List<Object> fQueue = new ArrayList<>();
 		private boolean shutdown;
@@ -418,8 +421,18 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 				if (shutdown || fQueue.isEmpty()) {
 					return Status.OK_STATUS;
 				}
-				currentBatch = new ArrayList<>(fQueue);
-				fQueue.clear();
+				fQueue.removeIf(o -> {
+					if (currentBatch.size() < MAX_BATCH_SIZE) {
+						currentBatch.add(o);
+						return true;
+					}
+					return false;
+				});
+				if (!fQueue.isEmpty()) {
+					// There is work left.
+					// Give other UI tasks chance to work instead of freezing UI
+					schedule();
+				}
 			}
 			if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER) {
 				DebugUIPlugin.trace("Delayed batch size: " + currentBatch.size()); //$NON-NLS-1$
