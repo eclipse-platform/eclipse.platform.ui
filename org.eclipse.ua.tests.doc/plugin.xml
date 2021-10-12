@@ -30,12 +30,12 @@
          point="org.eclipse.ui.actionSets">
       <actionSet
             id="org.eclipse.help.pageloader.actionSet"
-            label="Link Check Action Set"
+            label="%actionSet.label"
             visible="true">
          <action
                class="org.eclipse.ua.tests.doc.internal.actions.LoadTocAction"
                id="org.eclipse.ua.tests.loadToc"
-               label="Check TOC links"
+               label="%action.label"
                menubarPath="help/group.tutorials"
                style="push">
          </action>
