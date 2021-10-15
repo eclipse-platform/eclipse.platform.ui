@@ -17,9 +17,8 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 
 /**
- * Specifies a search result view entry.
- * This entry provides information about the markers
- * it groups by a client defined key. Each entry in the search
+ * Specifies a search result view entry. This entry provides information about
+ * the markers it groups by a client defined key. Each entry in the search
  * result view corresponds to a different key.
  * <p>
  * The UI allows stepping through this entry's markers grouped by the key.
@@ -27,13 +26,24 @@ import org.eclipse.core.resources.IResource;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- * @deprecated Part of the old ('classic') search result view. Since 3.0 clients can create their own search result view pages (see {@link ISearchResultPage}), leaving it up to the search
- * how to model search results. {@link org.eclipse.search.ui.text.AbstractTextSearchResult} and {@link org.eclipse.search.ui.text.Match} can be used to port old searches to the new API design.
+ * 
+ * @deprecated Part of the old ('classic') search result view. Since 3.0 clients
+ *             can create their own search result view pages (see
+ *             {@link ISearchResultPage}), leaving it up to the search how to
+ *             model search results.
+ *             {@link org.eclipse.search.ui.text.AbstractTextSearchResult} and
+ *             {@link org.eclipse.search.ui.text.Match} can be used to port old
+ *             searches to the new API design. This class will be removed after
+ *             2023-09 release. See
+ *             https://bugs.eclipse.org/bugs/show_bug.cgi?id=487303 for more
+ *             information.
  *
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noreference
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public interface ISearchResultViewEntry {
 
 	/**

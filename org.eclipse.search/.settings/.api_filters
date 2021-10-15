@@ -16,4 +16,160 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="search/org/eclipse/search/ui/IActionGroupFactory.java" type="org.eclipse.search.ui.IActionGroupFactory">
+        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=487303" id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.search.ui.IActionGroupFactory"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=487303" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.search.ui.IActionGroupFactory"/>
+                <message_argument value="createActionGroup(ISearchResultView)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="search/org/eclipse/search/ui/IContextMenuContributor.java" type="org.eclipse.search.ui.IContextMenuContributor">
+        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=487303" id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.search.ui.IContextMenuContributor"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=487303" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.search.ui.IContextMenuContributor"/>
+                <message_argument value="fill(IMenuManager, IInputSelectionProvider)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="search/org/eclipse/search/ui/IGroupByKeyComputer.java" type="org.eclipse.search.ui.IGroupByKeyComputer">
+        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=487303" id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.search.ui.IGroupByKeyComputer"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=487303" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.search.ui.IGroupByKeyComputer"/>
+                <message_argument value="computeGroupByKey(IMarker)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="search/org/eclipse/search/ui/ISearchResultView.java" type="org.eclipse.search.ui.ISearchResultView">
+        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=487303" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.search.ui.ISearchResultView"/>
+                <message_argument value="addMatch(String, Object, IResource, IMarker)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=487303" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.search.ui.ISearchResultView"/>
+                <message_argument value="getLabelProvider()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=487303" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.search.ui.ISearchResultView"/>
+                <message_argument value="getSelection()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=487303" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.search.ui.ISearchResultView"/>
+                <message_argument value="searchFinished()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=487303" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.search.ui.ISearchResultView"/>
+                <message_argument value="searchStarted(IActionGroupFactory, String, String, ImageDescriptor, String, ILabelProvider, IAction, IGroupByKeyComputer, IRunnableWithProgress)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=487303" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.search.ui.ISearchResultView"/>
+                <message_argument value="searchStarted(String, String, ImageDescriptor, IContextMenuContributor, ILabelProvider, IAction, IGroupByKeyComputer, IRunnableWithProgress)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=487303" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.search.ui.ISearchResultView"/>
+                <message_argument value="searchStarted(String, String, String, ImageDescriptor, IContextMenuContributor, ILabelProvider, IAction, IGroupByKeyComputer, IRunnableWithProgress)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="search/org/eclipse/search/ui/ISearchResultViewEntry.java" type="org.eclipse.search.ui.ISearchResultViewEntry">
+        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=487303" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.search.ui.ISearchResultViewEntry"/>
+                <message_argument value="getGroupByKey()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=487303" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.search.ui.ISearchResultViewEntry"/>
+                <message_argument value="getMatchCount()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=487303" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.search.ui.ISearchResultViewEntry"/>
+                <message_argument value="getResource()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=487303" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.search.ui.ISearchResultViewEntry"/>
+                <message_argument value="getSelectedMarker()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="search/org/eclipse/search/ui/SearchUI.java" type="org.eclipse.search.ui.SearchUI">
+        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=487303" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.search.ui.SearchUI"/>
+                <message_argument value="activateSearchResultView()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=487303" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.search.ui.SearchUI"/>
+                <message_argument value="arePotentialMatchesIgnored()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=487303" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.search.ui.SearchUI"/>
+                <message_argument value="getDefaultPerspectiveId()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=487303" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.search.ui.SearchUI"/>
+                <message_argument value="getSearchMarkerImage()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=487303" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.search.ui.SearchUI"/>
+                <message_argument value="getSearchResultView()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=487303" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.search.ui.SearchUI"/>
+                <message_argument value="openSearchDialog(IWorkbenchWindow, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=487303" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.search.ui.SearchUI"/>
+                <message_argument value="reuseEditor()"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

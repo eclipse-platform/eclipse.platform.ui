@@ -25,25 +25,32 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IViewPart;
 
 /**
- * Provides client access to the search result view.
- * Each element in the view is a <code>ISearchResultViewEntry</code>,
- * which groups markers based on the <code>groupByKey</code> provided
- * by the client each time when adding a match. If every match should
- * show up in the search result view then the match itself can be used
- * as key.
+ * Provides client access to the search result view. Each element in the view is
+ * a <code>ISearchResultViewEntry</code>, which groups markers based on the
+ * <code>groupByKey</code> provided by the client each time when adding a match.
+ * If every match should show up in the search result view then the match itself
+ * can be used as key.
  * <p>
- * The search result view has id <code>"org.eclipse.search.SearchResultView"</code>.
+ * The search result view has id
+ * <code>"org.eclipse.search.SearchResultView"</code>.
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- * @deprecated Part of the old ('classic') search result view. Since 3.0 clients can create their own search result view pages.
- * To access the parent view, {@link org.eclipse.search.ui.ISearchResultViewPart} is used instead.
+ * 
+ * @deprecated Part of the old ('classic') search result view. Since 3.0 clients
+ *             can create their own search result view pages. To access the
+ *             parent view, {@link org.eclipse.search.ui.ISearchResultViewPart}
+ *             is used instead. This class will be removed after 2023-09
+ *             release. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=487303
+ *             for more information.
  *
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noreference
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public interface ISearchResultView extends IViewPart {
 
 	/**

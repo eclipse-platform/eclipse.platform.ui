@@ -16,17 +16,25 @@ package org.eclipse.search.ui;
 import org.eclipse.core.resources.IMarker;
 
 /**
- * Computes the key by which the markers in the search result view
- * are grouped.
+ * Computes the key by which the markers in the search result view are grouped.
  *
  * <p>
  * Clients may implement this interface.
  * </p>
  *
- * @deprecated Part of the old ('classic') search result view. Since 3.0 clients can create their own search result view pages (see {@link ISearchResultPage}), leaving it up to the page
- * how to group search results.
+ * @deprecated Part of the old ('classic') search result view. Since 3.0 clients
+ *             can create their own search result view pages (see
+ *             {@link ISearchResultPage}), leaving it up to the page how to
+ *             group search results. This class will be removed after 2023-09
+ *             release. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=487303
+ *             for more information.
+ *
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noreference
+ * @noextend
+ * @noimplement
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public interface IGroupByKeyComputer {
 
 	/**

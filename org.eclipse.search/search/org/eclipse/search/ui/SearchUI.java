@@ -28,22 +28,30 @@ import org.eclipse.search.internal.ui.SearchPreferencePage;
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
 
 /**
- * The central class for access to the Search Plug-in's User Interface.
- * This class cannot be instantiated; all functionality is provided by
- * static methods.
+ * The central class for access to the Search Plug-in's User Interface. This
+ * class cannot be instantiated; all functionality is provided by static
+ * methods.
  *
  * Features provided:
  * <ul>
  * <li>convenient access to the search result view of the active workbench
- *   window.</li>
+ * window.</li>
  * </ul>
  *
  * @see ISearchResultView
- * @deprecated Part of the old ('classic') search. Since 3.0 clients can create their own search result view pages and use {@link org.eclipse.search.ui.NewSearchUI} instead.
+ * @deprecated Part of the old ('classic') search. Since 3.0 clients can create
+ *             their own search result view pages and use
+ *             {@link org.eclipse.search.ui.NewSearchUI} instead. This class
+ *             will be removed after 2023-09 release. See
+ *             https://bugs.eclipse.org/bugs/show_bug.cgi?id=487303 for more
+ *             information.
  *
  * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noreference
+ * @noextend
+ * @noimplement
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public final class SearchUI {
 
 	/**

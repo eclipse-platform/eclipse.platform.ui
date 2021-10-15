@@ -21,17 +21,27 @@ import org.eclipse.jface.viewers.IInputSelectionProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 
 /**
- * Specify how clients can add menu items
- * to the context menu of the search result view.
- * A class that contributes context menu items
- * must implement this interface and pass an
- * instance of itself to the search result view.
+ * Specify how clients can add menu items to the context menu of the search
+ * result view. A class that contributes context menu items must implement this
+ * interface and pass an instance of itself to the search result view.
  *
- * @see	ISearchResultView#searchStarted(IActionGroupFactory, String, String, ImageDescriptor, String, ILabelProvider, IAction, IGroupByKeyComputer, IRunnableWithProgress)
- * @deprecated Part of the old ('classic') search result view. Since 3.0 clients can create their own search result view pages (see {@link ISearchResultPage}), leaving it up to the page
- * how to create actions in context menus.
+ * @see ISearchResultView#searchStarted(IActionGroupFactory, String, String,
+ *      ImageDescriptor, String, ILabelProvider, IAction, IGroupByKeyComputer,
+ *      IRunnableWithProgress)
+ * @deprecated Part of the old ('classic') search result view. Since 3.0 clients
+ *             can create their own search result view pages (see
+ *             {@link ISearchResultPage}), leaving it up to the page how to
+ *             create actions in context menus. This class will be removed after
+ *             2023-09 release. See
+ *             https://bugs.eclipse.org/bugs/show_bug.cgi?id=487303 for more
+ *             information.
+ *
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noreference
+ * @noextend
+ * @noimplement
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public interface IContextMenuContributor {
 
 	/**
