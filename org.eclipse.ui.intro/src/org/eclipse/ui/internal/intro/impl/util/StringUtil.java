@@ -13,9 +13,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.util;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-
 public class StringUtil {
 
 	public static String concat(String... strings) {
@@ -24,16 +21,6 @@ public class StringUtil {
 			buffer.append(string);
 		}
 		return buffer.toString();
-	}
-
-	public static String decode(String s, String enc) throws UnsupportedEncodingException {
-		try {
-			return URLDecoder.decode(s, enc);
-		}
-		catch (Exception ex) {
-			// fall back to original string
-			return s;
-		}
 	}
 
 	// Removes leading and trailing whitespace and replaces other

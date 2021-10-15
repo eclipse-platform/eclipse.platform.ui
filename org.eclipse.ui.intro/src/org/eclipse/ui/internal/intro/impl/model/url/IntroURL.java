@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.internal.intro.impl.model.url;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.Properties;
 
@@ -581,7 +583,7 @@ public class IntroURL implements IIntroURL {
 					// we are told to decode the parameters of the url through
 					// the decode parameter. Assume that parameters are
 					// UTF-8 encoded.
-					return StringUtil.decode(value, "UTF-8"); //$NON-NLS-1$
+					return URLDecoder.decode(value, StandardCharsets.UTF_8);
 				return value;
 			} catch (Exception e) {
 				// should never be here.

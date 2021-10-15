@@ -18,11 +18,11 @@ package org.eclipse.ui.intro.contentproviders;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -266,11 +266,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 
 
 	private String createExternalURL(String url) {
-		try {
-			return INTRO_SHOW_IN_BROWSER + URLEncoder.encode(url, "UTF-8"); //$NON-NLS-1$
-		} catch (UnsupportedEncodingException e) {
-			return INTRO_SHOW_IN_BROWSER + url;
-		}
+		return INTRO_SHOW_IN_BROWSER + URLEncoder.encode(url, StandardCharsets.UTF_8);
 	}
 
 	@Override
