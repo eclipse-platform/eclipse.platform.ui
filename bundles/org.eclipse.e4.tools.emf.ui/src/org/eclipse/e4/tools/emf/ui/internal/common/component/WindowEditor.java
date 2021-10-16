@@ -274,8 +274,8 @@ public class WindowEditor extends AbstractComponentEditor<MWindow> {
 
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context,
 				WidgetProperties.buttonSelection(), E4Properties.toBeRendered(getEditingDomain()));
-		ControlFactory.createCheckBox(parent, "Visible", getMaster(), context, WidgetProperties.buttonSelection(), //$NON-NLS-1$
-				E4Properties.visible(getEditingDomain()));
+		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context,
+				WidgetProperties.buttonSelection(), E4Properties.visible(getEditingDomain()));
 
 		ControlFactory.createSelectedElement(parent, this, context, Messages.WindowEditor_SelectedElement);
 		ControlFactory.createBindingContextWiget(parent, Messages, this, Messages.WindowEditor_BindingContexts);
