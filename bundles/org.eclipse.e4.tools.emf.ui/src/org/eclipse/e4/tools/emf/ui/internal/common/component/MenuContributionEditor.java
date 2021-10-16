@@ -280,9 +280,9 @@ public class MenuContributionEditor extends AbstractComponentEditor<MMenuContrib
 
 		}
 
-		ControlFactory.createCheckBox(parent, "To Be Rendered", getMaster(), context, //$NON-NLS-1$
+		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context,
 				WidgetProperties.buttonSelection(), E4Properties.toBeRendered(getEditingDomain()));
-		ControlFactory.createCheckBox(parent, "Visible", getMaster(), context, //$NON-NLS-1$
+		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context,
 				WidgetProperties.buttonSelection(), E4Properties.visible(getEditingDomain()));
 		item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabSupplementary);
