@@ -46,7 +46,7 @@ public class FormImages {
 	private FormImages() {
 	}
 
-	private abstract class AbstractImageDescriptor extends ImageDescriptor {
+	private abstract static class AbstractImageDescriptor extends ImageDescriptor {
 		RGB[] fRGBs;
 		int fLength;
 
