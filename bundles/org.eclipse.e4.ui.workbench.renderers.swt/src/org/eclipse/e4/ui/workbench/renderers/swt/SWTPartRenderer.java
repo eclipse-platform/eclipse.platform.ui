@@ -67,7 +67,8 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 			// this is *not* the correct place for this
 			// hope that the ADD event will pick up the new part.
 			IPresentationEngine renderer = context.get(IPresentationEngine.class);
-			for (MUIElement childME : parts) {
+			for (int i = 0; i < parts.size(); i++) {
+				MUIElement childME = parts.get(i);
 				renderer.createGui(childME);
 			}
 		}
