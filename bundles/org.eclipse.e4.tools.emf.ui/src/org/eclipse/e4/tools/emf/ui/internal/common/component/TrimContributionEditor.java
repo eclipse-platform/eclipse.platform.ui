@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 BestSolution.at and others.
+ * Copyright (c) 2010, 2021 BestSolution.at and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -36,6 +36,7 @@ import org.eclipse.e4.tools.emf.ui.internal.E4Properties;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
+import org.eclipse.e4.tools.emf.ui.internal.common.EClassLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.TrimIdDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.E;
@@ -61,7 +62,6 @@ import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -253,14 +253,9 @@ public class TrimContributionEditor extends AbstractComponentEditor<MTrimContrib
 			viewer.setInput(E4Properties.<MTrimElement>children().observeDetail(getMaster()));
 
 			pickList.setContentProvider(ArrayContentProvider.getInstance());
-			pickList.setLabelProvider(new LabelProvider() {
-				@Override
-				public String getText(Object element) {
-					return ((EClass) element).getName();
-				}
-			});
-			pickList
-			.setInput(new Object[] { MenuPackageImpl.Literals.TOOL_BAR, MenuPackageImpl.Literals.TOOL_CONTROL });
+			pickList.setLabelProvider(new EClassLabelProvider(getEditor()));
+			pickList.setInput(
+					new EClass[] { MenuPackageImpl.Literals.TOOL_BAR, MenuPackageImpl.Literals.TOOL_CONTROL });
 			pickList.setSelection(new StructuredSelection(MenuPackageImpl.Literals.TOOL_BAR));
 		}
 
