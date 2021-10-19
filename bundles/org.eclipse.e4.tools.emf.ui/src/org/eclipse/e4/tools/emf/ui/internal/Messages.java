@@ -820,6 +820,10 @@ public class Messages {
 	public String CompositePartEditor_SelectedElement;
 	public String CompositePartEditor_Controls;
 
+	public String ItemType_Push;
+	public String ItemType_Check;
+	public String ItemType_Radio;
+
 	public String SideValue_Bottom;
 	public String SideValue_Left;
 	public String SideValue_Right;

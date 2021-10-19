@@ -189,6 +189,17 @@ public abstract class MenuItemEditor<M extends MMenuItem> extends AbstractCompon
 
 				final ComboViewer viewer = new ComboViewer(parent);
 				viewer.setContentProvider(ArrayContentProvider.getInstance());
+				viewer.setLabelProvider(new LabelProvider() {
+					@Override
+					public String getText(Object element) {
+						if ((ItemType) element == ItemType.CHECK) {
+							return Messages.ItemType_Check;
+						} else if ((ItemType) element == ItemType.PUSH) {
+							return Messages.ItemType_Push;
+						}
+						return Messages.ItemType_Radio;
+					}
+				});
 				viewer.setInput(new ItemType[] { ItemType.CHECK, ItemType.PUSH, ItemType.RADIO });
 				final GridData gd = new GridData();
 				gd.horizontalSpan = 2;
