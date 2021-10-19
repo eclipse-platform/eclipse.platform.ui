@@ -820,4 +820,8 @@ public class Messages {
 	public String CompositePartEditor_SelectedElement;
 	public String CompositePartEditor_Controls;
 
+	public String SideValue_Bottom;
+	public String SideValue_Left;
+	public String SideValue_Right;
+	public String SideValue_Top;
 }

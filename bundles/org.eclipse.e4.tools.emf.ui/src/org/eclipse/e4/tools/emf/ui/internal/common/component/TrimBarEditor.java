@@ -57,6 +57,7 @@ import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -195,6 +196,19 @@ public class TrimBarEditor extends AbstractComponentEditor<MTrimBar> {
 
 			final ComboViewer viewer = new ComboViewer(parent);
 			viewer.setContentProvider(ArrayContentProvider.getInstance());
+			viewer.setLabelProvider(new LabelProvider() {
+				@Override
+				public String getText(Object element) {
+					if ((SideValue) element == SideValue.BOTTOM) {
+						return Messages.SideValue_Bottom;
+					} else if ((SideValue) element == SideValue.LEFT) {
+						return Messages.SideValue_Left;
+					} else if ((SideValue) element == SideValue.RIGHT) {
+						return Messages.SideValue_Right;
+					}
+					return Messages.SideValue_Top;
+				}
+			});
 			viewer.setInput(SideValue.values());
 			final GridData gd = new GridData();
 			gd.horizontalSpan = 2;
