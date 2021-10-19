@@ -15,3 +15,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Vendor: %providerName
 Export-Package: org.eclipse.text.quicksearch.tests
 Automatic-Module-Name: org.eclipse.text.quicksearch.tests
+Bundle-Localization: plugin
