@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Jface
+Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.jface.tests
 Bundle-Version: 1.3.400.qualifier
 Bundle-ClassPath: .
@@ -16,3 +16,4 @@ Import-Package: org.osgi.framework
 Export-Package: org.eclipse.jface.tests.fieldassist;x-internal:=true,
  org.eclipse.jface.tests.preferences;x-internal:=true,
  org.eclipse.jface.tests.viewers;x-internal:=true
+Bundle-Vendor: %Bundle-Vendor
