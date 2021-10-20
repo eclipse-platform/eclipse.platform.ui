@@ -345,8 +345,7 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		}
 
 		final int lastDot = initialString2.lastIndexOf('.');
-		final String packageString = initialString2.substring(iSecondSlash + 1, lastDot);
-		return packageString;
+		return initialString2.substring(iSecondSlash + 1, lastDot);
 	}
 
 	private String parseInitialStringForClassName(String initialString) {
