@@ -20,7 +20,6 @@ package org.eclipse.ui.internal.genericeditor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,8 +29,12 @@ import java.util.Set;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.DefaultInformationControl;
@@ -85,23 +88,41 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 	Set<IContentType> getContentTypes(ITextViewer viewer) {
 		if (this.contentTypes == null) {
 			this.contentTypes = new LinkedHashSet<>();
-			String fileName = null;
-			fileName = getCurrentFileName(viewer);
-			if (fileName == null) {
-				return Collections.emptySet();
+			ITextFileBuffer buffer = getCurrentBuffer(viewer);
+			if (buffer != null) {
+				try {
+					IContentType contentType = buffer.getContentType();
+					if (contentType != null) {
+						this.contentTypes.add(contentType);
+					}
+				} catch (CoreException ex) {
+					GenericEditorPlugin.getDefault().getLog()
+							.log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, ex.getMessage(), ex));
+				}
 			}
-			Queue<IContentType> types = new LinkedList<>(
-					Arrays.asList(Platform.getContentTypeManager().findContentTypesFor(fileName)));
-			while (!types.isEmpty()) {
-				IContentType type = types.poll();
-				this.contentTypes.add(type);
-				IContentType parent = type.getBaseType();
-				if (parent != null) {
-					types.add(parent);
+			String fileName = getCurrentFileName(viewer);
+			if (fileName != null) {
+				Queue<IContentType> types = new LinkedList<>(
+						Arrays.asList(Platform.getContentTypeManager().findContentTypesFor(fileName)));
+				while (!types.isEmpty()) {
+					IContentType type = types.poll();
+					this.contentTypes.add(type);
+					IContentType parent = type.getBaseType();
+					if (parent != null) {
+						types.add(parent);
+					}
 				}
 			}
 		}
 		return this.contentTypes;
+	}
+
+	private static ITextFileBuffer getCurrentBuffer(ITextViewer viewer) {
+		IDocument viewerDocument = viewer.getDocument();
+		if (viewerDocument != null) {
+			return FileBuffers.getTextFileBufferManager().getTextFileBuffer(viewerDocument);
+		}
+		return null;
 	}
 
 	private String getCurrentFileName(ITextViewer viewer) {
@@ -110,11 +131,11 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 			fileName = editor.getEditorInput().getName();
 		}
 		if (fileName == null) {
-			IDocument viewerDocument = viewer.getDocument();
-			if (viewerDocument != null) {
-				ITextFileBuffer buffer = FileBuffers.getTextFileBufferManager().getTextFileBuffer(viewerDocument);
-				if (buffer != null) {
-					fileName = buffer.getLocation().lastSegment();
+			ITextFileBuffer buffer = getCurrentBuffer(viewer);
+			if (buffer != null) {
+				IPath path = buffer.getLocation();
+				if (path != null) {
+					fileName = path.lastSegment();
 				}
 			}
 		}
