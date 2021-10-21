@@ -80,4 +80,17 @@ public interface IPerspectiveDescriptor {
 	 * @return the label
 	 */
 	String getLabel();
+
+	/**
+	 * Returns this perspective's preferred view to show resources when no better
+	 * editor or view can be deduced from context.
+	 * <p>
+	 * For perspectives declared via an extension, this is the value of its
+	 * <code>defaultShowIn</code> attribute.
+	 * </p>
+	 *
+	 * @return the preferred view id, or <code>null</code>.
+	 * @since 3.124
+	 */
+	String getDefaultShowIn();
 }

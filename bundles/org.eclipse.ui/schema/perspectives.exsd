@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui">
+<schema targetNamespace="org.eclipse.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.ui" id="perspective" name="Perspectives"/>
@@ -11,6 +11,11 @@
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="perspective" minOccurs="0" maxOccurs="unbounded"/>
@@ -98,10 +103,10 @@ with this perspective.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="showInId" type="string">
+         <attribute name="defaultShowIn" type="string">
             <annotation>
                <documentation>
-                  the identifier of the view which will be shown by doubleclicking on a (problem) marker without file resource. The view needs to implement ISetSelectionTarget.
+                  the identifier of a preferred view which will be shown when trying to open a resource and no better view or editor can be deduced by the context. This can be for example doubleclicking on a (problem) marker without file resource, or to prioritize this view in the Show In context-menu. The view needs to implement &lt;code&gt;org.eclipse.ui.part.ISetSelectionTarget&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id,org.eclipse.ui.views/e4view/@id"/>
@@ -121,6 +126,7 @@ with this perspective.
          </documentation>
       </annotation>
    </element>
+
 
    <annotation>
       <appInfo>

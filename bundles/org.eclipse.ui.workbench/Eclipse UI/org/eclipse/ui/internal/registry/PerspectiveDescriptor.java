@@ -51,6 +51,7 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor, IPluginCon
 	private String pluginId;
 	private String originalId; // ID of ancestor that was based on a config
 								// element
+	private String defaultShowIn;
 
 	public PerspectiveDescriptor(String id, String label, PerspectiveDescriptor originalDescriptor) {
 		this.id = id;
@@ -60,6 +61,7 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor, IPluginCon
 			this.image = originalDescriptor.getImageDescriptor();
 			this.pluginId = originalDescriptor.getPluginId();
 			this.hasCustomDefinition = true;
+			this.defaultShowIn = originalDescriptor.getDefaultShowIn();
 		}
 	}
 
@@ -179,5 +181,12 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor, IPluginCon
 	@Override
 	public String toString() {
 		return this.getClass().getName() + " {id=" + getId() + "}"; //$NON-NLS-1$//$NON-NLS-2$
+	}
+
+	@Override
+	public String getDefaultShowIn() {
+		return defaultShowIn == null && configElement != null
+				? configElement.getAttribute(IWorkbenchRegistryConstants.ATT_DEFAULT_SHOW_IN)
+				: defaultShowIn;
 	}
 }

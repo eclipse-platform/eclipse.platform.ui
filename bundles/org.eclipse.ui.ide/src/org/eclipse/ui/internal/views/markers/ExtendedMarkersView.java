@@ -1607,21 +1607,15 @@ public class ExtendedMarkersView extends ViewPart {
 			}
 		}
 
-		String showInId = ((WorkbenchPage) page).getShowInId();
-		if (showIn(marker, page, showInId)) {
-			return;
-		}
+		showIn(marker, page, page.getPerspective().getDefaultShowIn());
 	}
 
 	private static boolean showIn(IMarker marker, IWorkbenchPage page, String targetPartId) {
+		if (targetPartId == null || WorkbenchPlugin.getDefault().getViewRegistry().find(targetPartId) == null) {
+			return false;
+		}
+		ISelection selection = new StructuredSelection(marker.getResource());
 		try {
-			if (targetPartId == null) {
-				return false;
-			}
-			if (WorkbenchPlugin.getDefault().getViewRegistry().find(targetPartId) == null) {
-				return false;
-			}
-			ISelection selection = new StructuredSelection(marker.getResource());
 			IViewPart view = page.showView(targetPartId);
 			if (view == null) {
 				return false;

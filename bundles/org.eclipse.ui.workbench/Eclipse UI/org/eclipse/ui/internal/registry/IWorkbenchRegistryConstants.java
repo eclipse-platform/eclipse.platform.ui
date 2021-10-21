@@ -1358,4 +1358,11 @@ public interface IWorkbenchRegistryConstants {
 	String ATT_COLOR_AND_FONT_ID = "colorAndFontId"; //$NON-NLS-1$
 
 	String ATT_OS_VERSION = "os_version"; //$NON-NLS-1$
+
+	/**
+	 * See {@link PerspectiveDescriptor#getDefaultShowIn()}
+	 *
+	 * @since 3.123
+	 */
+	String ATT_DEFAULT_SHOW_IN = "defaultShowIn"; //$NON-NLS-1$
 }
