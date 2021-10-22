@@ -271,9 +271,6 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 			impExpHandlerContext.dispose();
 		}
 		PlatformUI.getWorkbench().getExtensionTracker().unregisterHandler(this);
-		// FIXME: what was this listener for?
-		// WorkbenchPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(
-		// preferenceListener);
 	}
 
 	@Override
