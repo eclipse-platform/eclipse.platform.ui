@@ -113,6 +113,7 @@ abstract public class AbstractReconciler implements IReconciler {
 		 * emptied the dirty region queue.
 		 */
 		public void suspendCallerWhileDirty() {
+			AbstractReconciler.this.signalWaitForFinish();
 			boolean isDirty;
 			do {
 				synchronized (fDirtyRegionQueue) {
@@ -150,6 +151,7 @@ abstract public class AbstractReconciler implements IReconciler {
 				}
 			}
 
+			informNotFinished();
 			reconcilerReset();
 		}
 
@@ -164,12 +166,7 @@ abstract public class AbstractReconciler implements IReconciler {
 		@Override
 		public void run() {
 
-			synchronized (fDirtyRegionQueue) {
-				try {
-					fDirtyRegionQueue.wait(fDelay);
-				} catch (InterruptedException x) {
-				}
-			}
+			delay();
 
 			if (fCanceled)
 				return;
@@ -178,12 +175,7 @@ abstract public class AbstractReconciler implements IReconciler {
 
 			while (!fCanceled) {
 
-				synchronized (fDirtyRegionQueue) {
-					try {
-						fDirtyRegionQueue.wait(fDelay);
-					} catch (InterruptedException x) {
-					}
-				}
+				delay();
 
 				if (fCanceled)
 					break;
@@ -238,7 +230,7 @@ abstract public class AbstractReconciler implements IReconciler {
 			if (fThread.isActive() || !fThread.isDirty() && fThread.isAlive()) {
 				if (!fIsAllowedToModifyDocument && Thread.currentThread() == fThread)
 					throw new UnsupportedOperationException("The reconciler thread is not allowed to modify the document"); //$NON-NLS-1$
-				aboutToBeReconciled();
+				aboutToBeReconciledInternal();
 			}
 
 			/*
@@ -292,7 +284,7 @@ abstract public class AbstractReconciler implements IReconciler {
 			fDocument.addDocumentListener(this);
 
 			if (!fThread.isDirty())
-				aboutToBeReconciled();
+				aboutToBeReconciledInternal();
 
 			startReconciling();
 		}
@@ -306,6 +298,8 @@ abstract public class AbstractReconciler implements IReconciler {
 	private Listener fListener;
 	/** The background thread delay. */
 	private int fDelay= 500;
+	/** Signal that the the background thread should not delay. */
+	volatile boolean waitFinish;
 	/** Are there incremental reconciling strategies? */
 	private boolean fIsIncrementalReconciler= true;
 	/** The progress monitor used by this reconciler. */
@@ -527,6 +521,56 @@ abstract public class AbstractReconciler implements IReconciler {
 	}
 
 	/**
+	 * Hook for subclasses which want to perform some action as soon as the reconciler starts work
+	 * (initial or reconciling) or waiting.
+	 * <p>
+	 * Default implementation is to do nothing. Implementors may call
+	 * {@link #signalWaitForFinish()}.
+	 * </p>
+	 *
+	 * @since 3.20
+	 * @see #signalWaitForFinish
+	 */
+	protected void aboutToWork() {
+	}
+
+	/**
+	 * Signal reconciling should finish as soon as possible.
+	 *
+	 * @since 3.20
+	 * @see #aboutToWork
+	 */
+	public void signalWaitForFinish() {
+		synchronized (fDirtyRegionQueue) {
+			waitFinish= true;
+			fDirtyRegionQueue.notifyAll(); // notify AbstractReconciler#delay about waitFinish
+		}
+	}
+
+	private void informNotFinished() {
+		waitFinish= false;
+		aboutToWork();
+	}
+
+	private void aboutToBeReconciledInternal() {
+		aboutToBeReconciled();
+		informNotFinished();
+	}
+
+
+	private void delay() {
+		synchronized (fDirtyRegionQueue) {
+			if (waitFinish) {
+				return; // do not delay when waiting;
+			}
+			try {
+				fDirtyRegionQueue.wait(fDelay);
+			} catch (InterruptedException x) {
+			}
+		}
+	}
+
+	/**
 	 * This method is called on startup of the background activity. It is called only
 	 * once during the life time of the reconciler. Clients may reimplement this method.
 	 */
@@ -542,7 +586,7 @@ abstract public class AbstractReconciler implements IReconciler {
 		if (fDocument != null) {
 
 			if (!fThread.isDirty()&& fThread.isAlive())
-				aboutToBeReconciled();
+				aboutToBeReconciledInternal();
 
 			if (fThread.isActive())
 				fProgressMonitor.setCanceled(true);

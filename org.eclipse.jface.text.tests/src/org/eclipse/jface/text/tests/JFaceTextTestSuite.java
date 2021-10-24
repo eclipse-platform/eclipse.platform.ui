@@ -25,6 +25,7 @@ import org.eclipse.jface.text.tests.contentassist.ContextInformationTest;
 import org.eclipse.jface.text.tests.contentassist.FilteringAsyncContentAssistTests;
 import org.eclipse.jface.text.tests.contentassist.IncrementalAsyncContentAssistTests;
 import org.eclipse.jface.text.tests.reconciler.AbstractReconcilerTest;
+import org.eclipse.jface.text.tests.reconciler.FastAbstractReconcilerTest;
 import org.eclipse.jface.text.tests.rules.DefaultPartitionerTest;
 import org.eclipse.jface.text.tests.rules.DefaultPartitionerZeroLengthTest;
 import org.eclipse.jface.text.tests.rules.FastPartitionerTest;
@@ -59,6 +60,7 @@ import org.eclipse.jface.text.tests.templates.persistence.TemplatePersistenceDat
 		ContextInformationPresenterTest.class,
 
 		AbstractReconcilerTest.class,
+		FastAbstractReconcilerTest.class,
 
 		DefaultPartitionerTest.class,
 		DefaultPartitionerZeroLengthTest.class,

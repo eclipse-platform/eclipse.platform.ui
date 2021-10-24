@@ -164,6 +164,10 @@ public class AbstractReconcilerTest {
 						fCallLog.add("reconcilerDocumentChanged");
 					}
 					@Override
+					protected void aboutToWork() {
+				AbstractReconcilerTest.this.aboutToWork(this);
+					}
+					@Override
 					protected void aboutToBeReconciled() {
 						fCallLog.add("aboutToBeReconciled");
 					}
@@ -177,7 +181,7 @@ public class AbstractReconcilerTest {
 					}
 				};
 		fReconciler.setIsIncrementalReconciler(false);
-		fReconciler.setDelay(50); // make tests run faster
+		fReconciler.setDelay(getDelay());
 
 		fProgressMonitor= new NullProgressMonitor();
 		fReconciler.setProgressMonitor(fProgressMonitor);
@@ -188,6 +192,14 @@ public class AbstractReconcilerTest {
 		fAccessor= new Accessor(fReconciler, AbstractReconciler.class);
 		Object object= fAccessor.get("fThread");
 		fAccessor= new Accessor(object, object.getClass());
+	}
+
+	int getDelay() {
+		return 50; // make tests run faster
+	}
+
+	void aboutToWork(@SuppressWarnings("unused") AbstractReconciler reconciler) {
+		// nothing
 	}
 
 	@After
