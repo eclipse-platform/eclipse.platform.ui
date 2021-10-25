@@ -19,6 +19,7 @@
  *     Stefan Prieschl <stefan.prieschl@gmail.com> - Bug 374132
  *     Paul Pazderski <paul-eclipse@ppazderski.de> - Bug 549361
  *     Christoph Läubrich - Bug 538151
+ *     Dennis Hendriks - Bug 576877
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -3172,6 +3173,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 				// the user pressed cancel in the editor selection dialog
 				return null;
 			}
+			editorId = desc.getId();
 		}
 		if (desc == null) {
 			throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_unknownEditorIDMessage, editorId));
