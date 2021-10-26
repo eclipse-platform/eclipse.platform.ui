@@ -434,7 +434,9 @@ public class ScopePart {
 
 	private boolean canSearchInSelection() {
 		ISelection selection= fSearchDialog.getSelection();
-		return (selection instanceof IStructuredSelection) && !selection.isEmpty() || fActiveEditorCanProvideScopeSelection && fSearchDialog.getActiveEditorInput() != null;
+		return (selection instanceof IStructuredSelection) && !selection.isEmpty()
+				&& !selectedResourcesFromContainer(fSearchDialog).isEmpty()
+				|| fActiveEditorCanProvideScopeSelection && fSearchDialog.getActiveEditorInput() != null;
 
 	}
 
