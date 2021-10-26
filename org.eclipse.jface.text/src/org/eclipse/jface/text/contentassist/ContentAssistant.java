@@ -75,6 +75,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.util.OpenStrategy;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -133,6 +134,12 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		 */
 		private Control fControl;
 
+		private Point fCaretLocation;
+
+		private int fCaretOffset;
+
+		private final ISelectionChangedListener fSelectionListener= e -> updateCurrentCaretInfo();
+
 		/**
 		 * Installs this closer on it's viewer's text widget.
 		 */
@@ -154,8 +161,19 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 				 */
 				control.addDisposeListener(this);
 			}
-			if (fViewer != null)
+			if (fViewer != null) {
 				fViewer.addViewportListener(this);
+				fViewer.getSelectionProvider().addSelectionChangedListener(fSelectionListener);
+				updateCurrentCaretInfo();
+			}
+		}
+
+		private void updateCurrentCaretInfo() {
+			if (fViewer == null) {
+				return;
+			}
+			fCaretLocation= fViewer.getTextWidget().getCaret().getLocation();
+			fCaretOffset= fViewer.getSelectedRange().x;
 		}
 
 		/**
@@ -181,8 +199,10 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 				control.removeDisposeListener(this);
 			}
 
-			if (fViewer != null)
+			if (fViewer != null) {
 				fViewer.removeViewportListener(this);
+				fViewer.getSelectionProvider().removeSelectionChangedListener(fSelectionListener);
+			}
 		}
 
 		@Override
@@ -241,6 +261,12 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 		@Override
 		public void viewportChanged(int topIndex) {
+			if (fViewer != null && fCaretLocation != null && //
+					fViewer.getTextWidget().getCaret().getLocation().equals(fCaretLocation) && //
+					fViewer.getSelectedRange().x == fCaretOffset) {
+				// Most likely some codemining altered viewport but didn't modify the caret position
+				return;
+			}
 			hide();
 		}
 	}
