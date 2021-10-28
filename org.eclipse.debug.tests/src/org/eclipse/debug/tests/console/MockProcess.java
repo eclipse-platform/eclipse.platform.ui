@@ -15,6 +15,7 @@ package org.eclipse.debug.tests.console;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
@@ -71,6 +72,31 @@ public class MockProcess extends Process {
 
 	/** The delay after a call to destroy() until actual termination. */
 	private int terminationDelay = 0;
+
+	/**
+	 * For mode used by constructor {@link MockProcess#MockProcess()} this
+	 * indicates via stdout what the state of the process is.
+	 */
+	public static enum ProcessState {
+		RUNNING('R'), DESTROYING('D'),
+		/**
+		 * Last read is special as it should only be returned once to ensure
+		 * that we get the last character on the stream.
+		 */
+		LASTREAD('L'), TERMINATED(-1);
+
+		private int code;
+
+		ProcessState(int c) {
+			this.code = c;
+		}
+
+		public int getCode() {
+			return code;
+		}
+	}
+
+	private volatile ProcessState processState = ProcessState.RUNNING;
 
 	/**
 	 * Create new silent mockup process which runs for a given amount of time.
@@ -141,6 +167,34 @@ public class MockProcess extends Process {
 	}
 
 	/**
+	 * Create a new mock process that the stdout stream will indicate status of
+	 * the process. The codes are defined by {@link ProcessState#getCode()}
+	 */
+	public MockProcess() {
+		super();
+		this.stderr = new ByteArrayInputStream(new byte[0]);
+		this.endTime = RUN_FOREVER;
+		this.stdout = new InputStream() {
+			@Override
+			public int read() throws IOException {
+				if (processState == ProcessState.LASTREAD) {
+
+					// Uncomment this sleep and the test will fail because
+					// RuntimeProcess.terminate does not wait until
+					// the monitor threads complete.
+					// try {
+					// Thread.sleep(1000);
+					// } catch (InterruptedException e) {
+					// }
+					processState = ProcessState.TERMINATED;
+					return ProcessState.LASTREAD.getCode();
+				}
+				return processState.getCode();
+			}
+		};
+	}
+
+	/**
 	 * Get bytes received through stdin since last invocation of this method.
 	 * <p>
 	 * Not thread safe. It may miss some input if new content is written while
@@ -194,7 +248,7 @@ public class MockProcess extends Process {
 				}
 			}
 		}
-		handle.ifPresent(MockProcessHandle::setTerminated);
+		setTerminated();
 		return exitCode;
 	}
 
@@ -213,7 +267,7 @@ public class MockProcess extends Process {
 			}
 		}
 		if (isTerminated()) {
-			handle.ifPresent(MockProcessHandle::setTerminated);
+			setTerminated();
 		}
 		return isTerminated();
 	}
@@ -239,11 +293,12 @@ public class MockProcess extends Process {
 	 *            and before the mockup process goes in terminated state
 	 */
 	public void destroy(int delay) {
+		processState = ProcessState.DESTROYING;
 		synchronized (waitForTerminationLock) {
 			endTime = System.currentTimeMillis() + delay;
 			waitForTerminationLock.notifyAll();
 			if (delay <= 0) {
-				handle.ifPresent(MockProcessHandle::setTerminated);
+				setTerminated();
 			}
 		}
 	}
@@ -332,5 +387,17 @@ public class MockProcess extends Process {
 			launchConfiguration.setAttributes(launchConfigAttributes);
 		}
 		return (RuntimeProcess) DebugPlugin.newProcess(new Launch(launchConfiguration, ILaunchManager.RUN_MODE, null), this, name);
+	}
+
+	/**
+	 * Move state machines to terminated.
+	 */
+	private void setTerminated() {
+		synchronized (this) {
+			if (processState != ProcessState.TERMINATED) {
+				processState = ProcessState.LASTREAD;
+			}
+		}
+		handle.ifPresent(MockProcessHandle::setTerminated);
 	}
 }

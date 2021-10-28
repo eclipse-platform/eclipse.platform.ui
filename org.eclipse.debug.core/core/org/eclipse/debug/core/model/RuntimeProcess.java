@@ -216,37 +216,41 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	@Override
 	public void terminate() throws DebugException {
 		if (!isTerminated()) {
-			if (fStreamsProxy instanceof StreamsProxy) {
-				((StreamsProxy) fStreamsProxy).kill();
-			}
-			Process process = getSystemProcess();
-			if (process == null) {
-				return;
-			}
-
-			List<ProcessHandle> descendants = Collections.emptyList();
-			if (fTerminateDescendants) {
-				try { // List of descendants of process is only a snapshot!
-					descendants = process.descendants().collect(Collectors.toList());
-				} catch (UnsupportedOperationException e) {
-					// JVM may not support toHandle() -> assume no descendants
+			try {
+				Process process = getSystemProcess();
+				if (process == null) {
+					return;
 				}
-			}
 
-			process.destroy();
-			descendants.forEach(ProcessHandle::destroy);
-
-			// await termination of process and descendants
-			try { // (in total don't wait longer than TERMINATION_TIMEOUT)
-				long waitStart = System.currentTimeMillis();
-				if (process.waitFor(TERMINATION_TIMEOUT, TimeUnit.MILLISECONDS)) {
-					fExitValue = process.exitValue();
-					if (waitFor(descendants, waitStart)) {
-						return;
+				List<ProcessHandle> descendants = Collections.emptyList();
+				if (fTerminateDescendants) {
+					try { // List of descendants of process is only a snapshot!
+						descendants = process.descendants().collect(Collectors.toList());
+					} catch (UnsupportedOperationException e) {
+						// JVM may not support toHandle() -> assume no
+						// descendants
 					}
 				}
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
+
+				process.destroy();
+				descendants.forEach(ProcessHandle::destroy);
+
+				// await termination of process and descendants
+				try { // (in total don't wait longer than TERMINATION_TIMEOUT)
+					long waitStart = System.currentTimeMillis();
+					if (process.waitFor(TERMINATION_TIMEOUT, TimeUnit.MILLISECONDS)) {
+						fExitValue = process.exitValue();
+						if (waitFor(descendants, waitStart)) {
+							return;
+						}
+					}
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+				}
+			} finally {
+				if (fStreamsProxy instanceof StreamsProxy) {
+					((StreamsProxy) fStreamsProxy).kill();
+				}
 			}
 
 			// clean-up
