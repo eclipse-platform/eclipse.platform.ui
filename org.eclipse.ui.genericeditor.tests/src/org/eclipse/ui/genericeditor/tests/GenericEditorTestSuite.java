@@ -25,6 +25,7 @@ import org.junit.runners.Suite.SuiteClasses;
 		ContextInfoTest.class,
 		StylingTest.class,
 		HoverTest.class,
+		ShowInformationTest.class,
 		EditorTest.class,
 		FoldingTest.class,
 		AutoEditTest.class,

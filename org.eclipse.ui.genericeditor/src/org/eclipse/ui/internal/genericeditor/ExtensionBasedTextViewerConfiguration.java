@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2017 Red Hat Inc. and others.
+ * Copyright (c) 2016, 2021 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,12 +20,15 @@ package org.eclipse.ui.internal.genericeditor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
@@ -37,22 +40,37 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.AbstractReusableInformationControlCreator;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioningListener;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextHover;
+import org.eclipse.jface.text.ITextHoverExtension;
+import org.eclipse.jface.text.ITextHoverExtension2;
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
+import org.eclipse.jface.text.information.IInformationPresenter;
+import org.eclipse.jface.text.information.IInformationProvider;
+import org.eclipse.jface.text.information.IInformationProviderExtension;
+import org.eclipse.jface.text.information.IInformationProviderExtension2;
+import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
 import org.eclipse.jface.text.quickassist.IQuickAssistProcessor;
 import org.eclipse.jface.text.quickassist.QuickAssistAssistant;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.internal.genericeditor.folding.DefaultFoldingReconciler;
+import org.eclipse.ui.internal.genericeditor.hover.CompositeInformationControlCreator;
 import org.eclipse.ui.internal.genericeditor.hover.CompositeTextHover;
 import org.eclipse.ui.internal.genericeditor.markers.MarkerResoltionQuickAssistProcessor;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -269,6 +287,109 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		Map<String, IAdaptable> targets = super.getHyperlinkDetectorTargets(sourceViewer);
 		targets.put(ExtensionBasedTextEditor.GENERIC_EDITOR_ID, editor);
 		return targets;
+	}
+
+	@Override
+	public IInformationPresenter getInformationPresenter(ISourceViewer sourceViewer) {
+		// Register information provider
+		List<ITextHover> hovers = GenericEditorPlugin.getDefault().getHoverRegistry().getAvailableHovers(sourceViewer,
+				editor, getContentTypes(sourceViewer.getDocument()));
+
+		InformationPresenter presenter = new InformationPresenter(new CompositeInformationControlCreator(hovers));
+		// By default the InformationPresented is set to take the focus when visible,
+		// which makes the Browser to overtake all the focus/mouse etc. control over the
+		// 'org.eclipse.jface.text.information.InformationPresenter.Closer`.
+		// As we want to make t possible to close the information presenter by clicking
+		// outside of the information control or resizing the editor etc. - we need to
+		// disable such focus overtake by calling `takesFocusWhenVisible(false)` on the
+		// presenter.
+		//
+		presenter.takesFocusWhenVisible(false);
+		presenter.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
+
+		IInformationProvider provider = new ExtensionBaseInformationProvider(hovers);
+		// Register information provider
+		if (hovers != null && !hovers.isEmpty()) {
+			for (String contentType : getConfiguredContentTypes(sourceViewer)) {
+				presenter.setInformationProvider(provider, contentType);
+			}
+		}
+
+		// sizes: see org.eclipse.jface.text.TextViewer.TEXT_HOVER_*_CHARS
+		presenter.setSizeConstraints(100, 12, false, true);
+		return presenter;
+	}
+
+	class ExtensionBaseInformationProvider
+			implements IInformationProvider, IInformationProviderExtension, IInformationProviderExtension2 {
+		List<ITextHover> fHovers;
+		private LinkedHashMap<ITextHover, Object> currentHovers;
+
+		ExtensionBaseInformationProvider(List<ITextHover> hovers) {
+			this.fHovers = hovers;
+		}
+
+		@Override
+		public Object getInformation2(ITextViewer textViewer, IRegion subject) {
+			currentHovers = new LinkedHashMap<>();
+			for (ITextHover hover : this.fHovers) {
+				Object res = hover instanceof ITextHoverExtension2
+						? ((ITextHoverExtension2) hover).getHoverInfo2(textViewer, subject)
+						: hover.getHoverInfo(textViewer, subject);
+				if (res != null) {
+					currentHovers.put(hover, res);
+				}
+			}
+			if (currentHovers.isEmpty()) {
+				return null;
+			} else if (currentHovers.size() == 1) {
+				return currentHovers.values().iterator().next();
+			}
+			return currentHovers;
+		}
+
+		@Override
+		public IRegion getSubject(ITextViewer textViewer, int offset) {
+			IRegion res = null;
+			for (ITextHover hover : this.fHovers) {
+				IRegion region = hover.getHoverRegion(textViewer, offset);
+				if (region != null) {
+					if (res == null) {
+						res = region;
+					} else {
+						int startOffset = Math.max(res.getOffset(), region.getOffset());
+						int endOffset = Math.min(res.getOffset() + res.getLength(),
+								region.getOffset() + region.getLength());
+						res = new Region(startOffset, endOffset - startOffset);
+					}
+				}
+			}
+			return res;
+		}
+
+		@Override
+		public String getInformation(ITextViewer textViewer, IRegion subject) {
+			return this.fHovers.stream().map(hover -> hover.getHoverInfo(textViewer, subject)).filter(Objects::nonNull)
+					.collect(Collectors.joining("\n")); //$NON-NLS-1$
+		}
+
+		@Override
+		public IInformationControlCreator getInformationPresenterControlCreator() {
+			if (this.currentHovers == null || this.currentHovers.isEmpty()) {
+				return null;
+			} else if (currentHovers.size() == 1) {
+				ITextHover hover = this.currentHovers.keySet().iterator().next();
+				return hover instanceof ITextHoverExtension ? ((ITextHoverExtension) hover).getHoverControlCreator()
+						: new AbstractReusableInformationControlCreator() {
+							@Override
+							protected IInformationControl doCreateInformationControl(Shell parent) {
+								return new DefaultInformationControl(parent);
+							};
+						};
+			} else {
+				return new CompositeInformationControlCreator(new ArrayList<>(this.currentHovers.keySet()));
+			}
+		}
 	}
 
 	/**
