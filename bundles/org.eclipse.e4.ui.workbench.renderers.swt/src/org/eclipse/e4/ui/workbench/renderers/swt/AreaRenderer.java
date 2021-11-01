@@ -128,10 +128,13 @@ public class AreaRenderer extends SWTPartRenderer {
 	}
 
 	private void ensureCTF(MArea areaModel, List<MPartStack> stacks) {
-		if (areaModel.getWidget() instanceof CTabFolder)
+		Object widget = areaModel.getWidget();
+		if (widget instanceof CTabFolder)
 			return;
-
-		Composite curComp = (Composite) areaModel.getWidget();
+		if (!(widget instanceof Composite))
+			return;
+		// if not assigned to CTabFolder but any other Composite create CTabFolder
+		Composite curComp = (Composite) widget;
 		Composite parentComp = curComp.getParent();
 		CTabFolder ctf = new CTabFolder(parentComp, SWT.BORDER | SWT.SINGLE);
 		// don't paint the split editor area tab highlighted, it looks ugly
