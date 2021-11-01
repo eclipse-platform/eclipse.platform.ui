@@ -328,10 +328,11 @@ public class MinMaxAddon {
 
 		MPerspectiveStack ps = (MPerspectiveStack) changedElement;
 		MWindow window = modelService.getTopLevelWindowFor(ps);
-		final Shell winShell = (Shell) window.getWidget();
-		if (winShell == null) {
+		Object widget = window.getWidget();
+		if (!(widget instanceof Shell)) {
 			return;
 		}
+		final Shell winShell = (Shell) widget;
 		List<MToolControl> tcList = modelService.findElements(window, null, MToolControl.class);
 
 		final MPerspective curPersp = ps.getSelectedElement();
