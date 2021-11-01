@@ -1024,7 +1024,11 @@ public class PartRenderingEngine implements IPresentationEngine {
 	}
 
 	protected AbstractPartRenderer getRendererFor(MUIElement element) {
-		return (AbstractPartRenderer) element.getRenderer();
+		Object renderer = element.getRenderer();
+		if (renderer instanceof AbstractPartRenderer) {
+			return (AbstractPartRenderer) renderer;
+		}
+		return null; // renderer may be HeadlessContextPresentationEngine
 	}
 
 	@Override
