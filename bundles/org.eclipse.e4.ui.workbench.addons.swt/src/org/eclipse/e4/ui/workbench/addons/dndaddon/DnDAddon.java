@@ -24,7 +24,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.UIEvents.EventTags;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Widget;
 import org.osgi.service.event.Event;
 
 /**
@@ -50,12 +49,13 @@ public class DnDAddon {
 			return;
 		}
 
-		Widget widget = (Widget) event.getProperty(EventTags.NEW_VALUE);
-		if (widget instanceof Shell && !widget.isDisposed()) {
-			DnDManager theManager = (DnDManager) widget.getData("DnDManager"); //$NON-NLS-1$
+		Object widget = event.getProperty(EventTags.NEW_VALUE);
+		if (widget instanceof Shell && !((Shell) widget).isDisposed()) {
+			Shell shell = (Shell) widget;
+			DnDManager theManager = (DnDManager) shell.getData("DnDManager"); //$NON-NLS-1$
 			if (theManager == null) {
 				theManager = new DnDManager((MWindow) changedElement);
-				widget.setData("DnDManager", theManager); //$NON-NLS-1$
+				shell.setData("DnDManager", theManager); //$NON-NLS-1$
 			}
 		}
 	}
