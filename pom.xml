@@ -61,6 +61,7 @@
     <module>org.eclipse.debug.tests</module>
     <module>org.eclipse.debug.ui</module>
     <module>org.eclipse.debug.ui.launchview</module>
+    <module>org.eclipse.debug.ui.launchview.tests</module>
     <module>org.eclipse.ui.console</module>
     <module>org.eclipse.ui.externaltools</module>
     <module>org.eclipse.unittest.ui</module>
