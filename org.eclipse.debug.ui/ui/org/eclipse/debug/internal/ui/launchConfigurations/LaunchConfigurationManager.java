@@ -983,6 +983,9 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 				base = DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_OVR_TRANSPARENT);
 			}
 			base = new Image(Display.getCurrent(), base, SWT.IMAGE_COPY);
+			// register the base image, to avoid nondisposed resource error
+			fErrorImages.put(key + "-baseImage", base); //$NON-NLS-1$
+
 			LaunchConfigurationTabImageDescriptor desc = new LaunchConfigurationTabImageDescriptor(base, LaunchConfigurationTabImageDescriptor.ERROR);
 			image = desc.createImage();
 			fErrorImages.put(key, image);
