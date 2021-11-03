@@ -13,17 +13,11 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.dialogs.filteredtree;
 
-import java.net.URL;
-
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.ui.dialogs.textbundles.E4DialogMessages;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -49,8 +43,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
 
 /**
  * Based on org.eclipse.ui.dialogs.FilteredTree.
@@ -104,48 +96,11 @@ public class FilteredTree extends Composite {
 	private Composite treeComposite;
 
 	/**
-	 * Image descriptor for enabled clear button.
-	 */
-	private static final String CLEAR_ICON = "org.eclipse.ui.internal.dialogs.CLEAR_ICON"; //$NON-NLS-1$
-
-	/**
-	 * Image descriptor for disabled clear button.
-	 */
-	private static final String DISABLED_CLEAR_ICON = "org.eclipse.ui.internal.dialogs.DCLEAR_ICON"; //$NON-NLS-1$
-
-	/**
-	 * Image descriptor for disabled clear button.
-	 */
-	private static final String PRESSED_CLEAR_ICON = "org.eclipse.ui.internal.dialogs.PRESSED_CLEAR_ICON"; //$NON-NLS-1$
-
-	/**
 	 * Maximum time spent expanding the tree after the filter text has been
 	 * updated (this is only used if we were able to at least expand the visible
 	 * nodes)
 	 */
 	private static final long SOFT_MAX_EXPAND_TIME = 200;
-
-	/**
-	 * Get image descriptors for the clear button.
-	 */
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(FilteredTree.class);
-		IPath enabledPath = new Path("$nl$/icons/full/etool16/clear_co.png"); //$NON-NLS-1$
-		URL enabledURL = FileLocator.find(bundle, enabledPath, null);
-		ImageDescriptor enabledDesc = ImageDescriptor.createFromURL(enabledURL);
-		if (enabledDesc != null) {
-			JFaceResources.getImageRegistry().put(CLEAR_ICON, enabledDesc);
-			JFaceResources.getImageRegistry().put(PRESSED_CLEAR_ICON,
-					ImageDescriptor.createWithFlags(enabledDesc, SWT.IMAGE_GRAY));
-		}
-
-		IPath disabledPath = new Path("$nl$/icons/full/dtool16/clear_co.png"); //$NON-NLS-1$
-		URL disabledURL = FileLocator.find(bundle, disabledPath, null);
-		ImageDescriptor disabledDesc = ImageDescriptor.createFromURL(disabledURL);
-		if (disabledDesc != null) {
-			JFaceResources.getImageRegistry().put(DISABLED_CLEAR_ICON, disabledDesc);
-		}
-	}
 
 	/**
 	 * Create a new instance of the receiver.
