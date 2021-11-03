@@ -22,3 +22,4 @@ Service-Component: OSGI-INF/org.eclipse.debug.ui.launchview.internal.model.Launc
  OSGI-INF/org.eclipse.debug.ui.launchview.internal.impl.DebugCoreProvider.xml
 Export-Package: org.eclipse.debug.ui.launchview;x-internal:=true,
  org.eclipse.debug.ui.launchview.services;x-internal:=true
+Automatic-Module-Name: org.eclipse.debug.ui.launchview
