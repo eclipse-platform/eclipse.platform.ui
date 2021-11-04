@@ -114,9 +114,9 @@ class ItemDetailToolTip extends NameAndDescriptionToolTip {
 		// Show any relevant action set info
 		if (showActionSet) {
 			String text = null;
-			Image image = null;
 
-			if (CustomizePerspectiveDialog.isEffectivelyAvailable(item, filter)) {
+			boolean effectivelyAvailable = CustomizePerspectiveDialog.isEffectivelyAvailable(item, filter);
+			if (effectivelyAvailable) {
 				if (item.actionSet != null) {
 					// give information on which command group the item is in
 
@@ -126,8 +126,6 @@ class ItemDetailToolTip extends NameAndDescriptionToolTip {
 				}
 			} else {
 				// give feedback on why item is unavailable
-
-				image = dialog.warningImageDescriptor.createImage();
 
 				if (item.getChildren().isEmpty() && item.getActionSet() != null) {
 					// i.e. is a leaf
@@ -174,7 +172,14 @@ class ItemDetailToolTip extends NameAndDescriptionToolTip {
 			}
 
 			if (text != null) {
-				Link link = createEntryWithLink(destination, image, text);
+				Image warningImage;
+				if (!effectivelyAvailable) {
+					warningImage = dialog.warningImageDescriptor.createImage();
+					destination.addDisposeListener(e -> warningImage.dispose());
+				} else {
+					warningImage = null;
+				}
+				Link link = createEntryWithLink(destination, warningImage, text);
 				link.addSelectionListener(new SelectionListener() {
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
