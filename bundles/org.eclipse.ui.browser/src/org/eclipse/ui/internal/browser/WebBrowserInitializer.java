@@ -29,7 +29,7 @@ public class WebBrowserInitializer extends AbstractPreferenceInitializer {
 	public void initializeDefaultPreferences() {
 		IEclipsePreferences node = DefaultScope.INSTANCE.getNode(WebBrowserUIPlugin.PLUGIN_ID);
 		if (node != null) {
-			node.putInt(WebBrowserPreference.PREF_BROWSER_CHOICE, 2);
+			node.putInt(WebBrowserPreference.PREF_BROWSER_CHOICE, WebBrowserPreference.EXTERNAL);
 			try {
 				node.flush();
 			} catch (BackingStoreException e) {
