@@ -541,10 +541,8 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 	 */
 	@Override
 	protected void performDefaults() {
-		internal.setSelection(WebBrowserPreference
-				.isDefaultUseInternalBrowser());
-		external.setSelection(!WebBrowserPreference.
-				isDefaultUseInternalBrowser());
+		internal.setSelection(false);
+		external.setSelection(true);
 
 		BrowserManager.getInstance().currentBrowser = null;
 		BrowserManager.getInstance().setupDefaultBrowsers();
@@ -563,10 +561,8 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 	 * appeared after the Eclipse Platform update.
 	 */
 	protected void addDefaults() {
-		internal.setSelection(WebBrowserPreference
-				.isDefaultUseInternalBrowser());
-		external.setSelection(!WebBrowserPreference.
-				isDefaultUseInternalBrowser());
+		internal.setSelection(false);
+		external.setSelection(true);
 
 		BrowserManager.getInstance().currentBrowser = null;
 		BrowserManager.getInstance().addDefaultBrowsers();
