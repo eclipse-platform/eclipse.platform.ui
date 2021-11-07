@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     John Dallaway - Accommodate addressableSize != 1 (bug 577106)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.memory.renderings;
 
@@ -72,7 +73,7 @@ public class RenderingsUtil {
 		return array;
 	}
 
-	static public BigInteger convertByteArrayToUnsignedLong(byte[] array, int endianess)
+	static public BigInteger convertByteArrayToUnsignedLong(byte[] array, int endianess, int addressableSize)
 	{
 		if (array.length < 8)
 		{
@@ -82,14 +83,15 @@ public class RenderingsUtil {
 		BigInteger value = new BigInteger("0"); //$NON-NLS-1$
 		if (endianess == RenderingsUtil.LITTLE_ENDIAN)
 		{
-			for (int i=0; i< 8; i++)
-			{
-				byte[] temp = new byte[1];
-				temp[0] = array[i];
-				BigInteger b = new BigInteger(temp);
-				b = b.and(new BigInteger("ff", 16)); //$NON-NLS-1$
-				b = b.shiftLeft(i*8);
-				value = value.or(b);
+			for (int i = 0; i < 8; i += addressableSize) {
+				for (int j = 0; j < addressableSize; j++) {
+					byte[] temp = new byte[1];
+					temp[0] = array[i + j];
+					BigInteger b = new BigInteger(temp);
+					b = b.and(new BigInteger("ff", 16)); //$NON-NLS-1$
+					b = b.shiftLeft((i + addressableSize - j - 1) * 8);
+					value = value.or(b);
+				}
 			}
 		}
 		else
@@ -111,9 +113,10 @@ public class RenderingsUtil {
 	 * Convert byte array to long.
 	 * @param array
 	 * @param endianess
+	 * @param addressableSize
 	 * @return result of the conversion in long
 	 */
-	static public long convertByteArrayToLong(byte[] array, int endianess)
+	static public long convertByteArrayToLong(byte[] array, int endianess, int addressableSize)
 	{
 		if (array.length < 8)
 		{
@@ -123,10 +126,12 @@ public class RenderingsUtil {
 		if (endianess == RenderingsUtil.LITTLE_ENDIAN)
 		{
 			long value = 0;
-			for (int i = 0; i < 8; i++) {
-				long b = array[i];
-				b &= 0xff;
-				value |= (b << (i * 8));
+			for (int i = 0; i < 8; i += addressableSize) {
+				for (int j = 0; j < addressableSize; j++) {
+					long b = array[i + j];
+					b &= 0xff;
+					value |= (b << ((i + addressableSize - j - 1) * 8));
+				}
 			}
 			return value;
 		}
@@ -141,7 +146,7 @@ public class RenderingsUtil {
 		return value;
 	}
 
-	static public BigInteger convertByteArrayToSignedBigInt(byte[] array, int endianess)
+	static public BigInteger convertByteArrayToSignedBigInt(byte[] array, int endianess, int addressableSize)
 	{
 		if (array.length < 16)
 		{
@@ -152,10 +157,10 @@ public class RenderingsUtil {
 		{
 			// reverse bytes
 			byte[] holder = new byte[16];
-			int j=15;
-			for (int i=0; i<16; i++, j--)
-			{
-				holder[i] = array[j];
+			for (int i = 0; i < 16; i += addressableSize) {
+				for (int j = 0; j < addressableSize; j++) {
+					holder[i + j] = array[16 + j - i - addressableSize];
+				}
 			}
 
 			// create BigInteger
@@ -166,7 +171,7 @@ public class RenderingsUtil {
 		return value;
 	}
 
-	static public BigInteger convertByteArrayToSignedBigInt(byte[] array, int endianess, int arraySize)
+	static public BigInteger convertByteArrayToSignedBigInt(byte[] array, int endianess, int arraySize, int addressableSize)
 	{
 		if (array.length < arraySize)
 		{
@@ -177,10 +182,10 @@ public class RenderingsUtil {
 		{
 			// reverse bytes
 			byte[] holder = new byte[arraySize];
-			int j=arraySize-1;
-			for (int i=0; i<arraySize; i++, j--)
-			{
-				holder[i] = array[j];
+			for (int i = 0; i < arraySize; i += addressableSize) {
+				for (int j = 0; j < addressableSize; j++) {
+					holder[i + j] = array[arraySize + j - i - addressableSize];
+				}
 			}
 
 			// create BigInteger
@@ -191,7 +196,7 @@ public class RenderingsUtil {
 		return value;
 	}
 
-	static public BigInteger convertByteArrayToUnsignedBigInt(byte[] array, int endianess)
+	static public BigInteger convertByteArrayToUnsignedBigInt(byte[] array, int endianess, int addressableSize)
 	{
 		if (array.length < 16)
 		{
@@ -201,14 +206,15 @@ public class RenderingsUtil {
 		BigInteger value = new BigInteger("0"); //$NON-NLS-1$
 		if (endianess == RenderingsUtil.LITTLE_ENDIAN)
 		{
-			for (int i=0; i< 16; i++)
-			{
-				byte[] temp = new byte[1];
-				temp[0] = array[i];
-				BigInteger b = new BigInteger(temp);
-				b = b.and(new BigInteger("ff", 16)); //$NON-NLS-1$
-				b = b.shiftLeft(i*8);
-				value = value.or(b);
+			for (int i = 0; i < 16; i += addressableSize) {
+				for (int j = 0; j < addressableSize; j++) {
+					byte[] temp = new byte[1];
+					temp[0] = array[i + j];
+					BigInteger b = new BigInteger(temp);
+					b = b.and(new BigInteger("ff", 16)); //$NON-NLS-1$
+					b = b.shiftLeft((i + addressableSize - j - 1) * 8);
+					value = value.or(b);
+				}
 			}
 		}
 		else
@@ -226,7 +232,7 @@ public class RenderingsUtil {
 		return value;
 	}
 
-	static public BigInteger convertByteArrayToUnsignedBigInt(byte[] array, int endianess, int arraySize)
+	static public BigInteger convertByteArrayToUnsignedBigInt(byte[] array, int endianess, int arraySize, int addressableSize)
 	{
 		if (array.length < arraySize)
 		{
@@ -236,14 +242,15 @@ public class RenderingsUtil {
 		BigInteger value = new BigInteger("0"); //$NON-NLS-1$
 		if (endianess == RenderingsUtil.LITTLE_ENDIAN)
 		{
-			for (int i=0; i< arraySize; i++)
-			{
-				byte[] temp = new byte[1];
-				temp[0] = array[i];
-				BigInteger b = new BigInteger(temp);
-				b = b.and(new BigInteger("ff", 16)); //$NON-NLS-1$
-				b = b.shiftLeft(i*8);
-				value = value.or(b);
+			for (int i = 0; i < arraySize; i += addressableSize) {
+				for (int j = 0; j < addressableSize; j++) {
+					byte[] temp = new byte[1];
+					temp[0] = array[i + j];
+					BigInteger b = new BigInteger(temp);
+					b = b.and(new BigInteger("ff", 16)); //$NON-NLS-1$
+					b = b.shiftLeft((i + addressableSize - j - 1) * 8);
+					value = value.or(b);
+				}
 			}
 		}
 		else
@@ -265,9 +272,10 @@ public class RenderingsUtil {
 	 * Convert byte array to integer.
 	 * @param array
 	 * @param endianess
+	 * @param addressableSize
 	 * @return result of the conversion in int
 	 */
-	static public int convertByteArrayToInt(byte[] array, int endianess)
+	static public int convertByteArrayToInt(byte[] array, int endianess, int addressableSize)
 	{
 		if (array.length < 4)
 		{
@@ -277,10 +285,12 @@ public class RenderingsUtil {
 		if (endianess == RenderingsUtil.LITTLE_ENDIAN)
 		{
 			int value = 0;
-			for (int i = 0; i < 4; i++) {
-				int b = array[i];
-				b &= 0xff;
-				value |= (b << (i * 8));
+			for (int i = 0; i < 4; i += addressableSize) {
+				for (int j = 0; j < addressableSize; j++) {
+					int b = array[i + j];
+					b &= 0xff;
+					value |= (b << ((i + addressableSize - j - 1) * 8));
+				}
 			}
 			return value;
 		}
@@ -299,9 +309,10 @@ public class RenderingsUtil {
 	 * Convert byte array to short.
 	 * @param array
 	 * @param endianess
+	 * @param addressableSize
 	 * @return result of teh conversion in short
 	 */
-	static public short convertByteArrayToShort(byte[] array, int endianess)
+	static public short convertByteArrayToShort(byte[] array, int endianess, int addressableSize)
 	{
 		if (array.length < 2)
 		{
@@ -311,10 +322,12 @@ public class RenderingsUtil {
 		if (endianess == RenderingsUtil.LITTLE_ENDIAN)
 		{
 			short value = 0;
-			for (int i = 0; i < 2; i++) {
-				short b = array[i];
-				b &= 0xff;
-				value |= (b << (i * 8));
+			for (int i = 0; i < 2; i += addressableSize) {
+				for (int j = 0; j < addressableSize; j++) {
+					short b = array[i + j];
+					b &= 0xff;
+					value |= (b << ((i + addressableSize - j - 1) * 8));
+				}
 			}
 			return value;
 		}
@@ -332,18 +345,20 @@ public class RenderingsUtil {
 	 * Convert big integer to byte array.
 	 * @param i
 	 * @param endianess
+	 * @param addressableSize
 	 * @return result of the conversion in raw byte array
 	 */
-	static public byte[] convertBigIntegerToByteArray(BigInteger i, int endianess)
+	static public byte[] convertBigIntegerToByteArray(BigInteger i, int endianess, int addressableSize)
 	{
 		byte buf[]=new byte[16];
 
 		if (endianess == RenderingsUtil.LITTLE_ENDIAN)
 		{
-			for (int j=0; j<16; j++)
-			{
-				BigInteger x = i.shiftRight(j*8);
-				buf[j] = x.byteValue();
+			for (int j = 0; j < 16; j += addressableSize) {
+				for (int k = 0; k < addressableSize; k++) {
+					BigInteger x = i.shiftRight((j + addressableSize - k - 1) * 8);
+					buf[j + k] = x.byteValue();
+				}
 			}
 			return buf;
 		}
@@ -355,16 +370,17 @@ public class RenderingsUtil {
 		return buf;
 	}
 
-	static public byte[] convertSignedBigIntToByteArray(BigInteger i, int endianess, int arraySize)
+	static public byte[] convertSignedBigIntToByteArray(BigInteger i, int endianess, int arraySize, int addressableSize)
 	{
 		byte buf[]=new byte[arraySize];
 
 		if (endianess == RenderingsUtil.LITTLE_ENDIAN)
 		{
-			for (int j=0; j<arraySize; j++)
-			{
-				BigInteger x = i.shiftRight(j*8);
-				buf[j] = x.byteValue();
+			for (int j = 0; j < arraySize; j += addressableSize) {
+				for (int k = 0; k < addressableSize; k++) {
+					BigInteger x = i.shiftRight((j + addressableSize - k - 1) * 8);
+					buf[j + k] = x.byteValue();
+				}
 			}
 			return buf;
 		}
@@ -380,18 +396,20 @@ public class RenderingsUtil {
 	 * Convert big integer to byte array.
 	 * @param i
 	 * @param endianess
+	 * @param addressableSize
 	 * @return result of the conversion in raw byte array
 	 */
-	static public byte[] convertUnsignedBigIntegerToByteArray(BigInteger i, int endianess)
+	static public byte[] convertUnsignedBigIntegerToByteArray(BigInteger i, int endianess, int addressableSize)
 	{
 		byte buf[]=new byte[32];
 
 		if (endianess == RenderingsUtil.LITTLE_ENDIAN)
 		{
-			for (int j=0; j<32; j++)
-			{
-				BigInteger x = i.shiftRight(j*8);
-				buf[j] = x.byteValue();
+			for (int j = 0; j < 32; j += addressableSize) {
+				for (int k = 0; k < addressableSize; k++) {
+					BigInteger x = i.shiftRight((j + addressableSize - k - 1) * 8);
+					buf[j + k] = x.byteValue();
+				}
 			}
 			return buf;
 		}
@@ -403,16 +421,17 @@ public class RenderingsUtil {
 		return buf;
 	}
 
-	static public byte[] convertUnsignedBigIntToByteArray(BigInteger i, int endianess, int arraySize)
+	static public byte[] convertUnsignedBigIntToByteArray(BigInteger i, int endianess, int arraySize, int addressableSize)
 	{
 		byte buf[]=new byte[arraySize*2];
 
 		if (endianess == RenderingsUtil.LITTLE_ENDIAN)
 		{
-			for (int j=0; j<arraySize*2; j++)
-			{
-				BigInteger x = i.shiftRight(j*8);
-				buf[j] = x.byteValue();
+			for (int j = 0; j < arraySize * 2; j += addressableSize) {
+				for (int k = 0; k < addressableSize; k++) {
+					BigInteger x = i.shiftRight((j + addressableSize - k - 1) * 8);
+					buf[j + k] = x.byteValue();
+				}
 			}
 			return buf;
 		}
@@ -428,17 +447,19 @@ public class RenderingsUtil {
 	 * Convert long to byte array.
 	 * @param i
 	 * @param endianess
+	 * @param addressableSize
 	 * @return result of the conversion in raw byte array
 	 */
-	static public byte[] convertLongToByteArray(long i, int endianess)
+	static public byte[] convertLongToByteArray(long i, int endianess, int addressableSize)
 	{
 		byte buf[]=new byte[8];
 
 		if (endianess == RenderingsUtil.LITTLE_ENDIAN)
 		{
-			for (int j=0; j<8; j++)
-			{
-				buf[j] = Long.valueOf(i>>j*8).byteValue();
+			for (int j = 0; j < 8; j += addressableSize) {
+				for (int k = 0; k < addressableSize; k++) {
+					buf[j + k] = Long.valueOf(i >> (j + addressableSize - k - 1) * 8).byteValue();
+				}
 			}
 			return buf;
 		}
@@ -453,17 +474,19 @@ public class RenderingsUtil {
 	 * Convert integer to byte array.
 	 * @param i
 	 * @param endianess
+	 * @param addressableSize
 	 * @return result of the conversion in raw byte array
 	 */
-	static public byte[] convertIntToByteArray(int i, int endianess)
+	static public byte[] convertIntToByteArray(int i, int endianess, int addressableSize)
 	{
 		byte buf[]=new byte[4];
 
 		if (endianess == RenderingsUtil.LITTLE_ENDIAN)
 		{
-			for (int j=0; j<4; j++)
-			{
-				buf[j] = Integer.valueOf(i>>j*8).byteValue();
+			for (int j = 0; j < 4; j += addressableSize) {
+				for (int k = 0; k < addressableSize; k++) {
+					buf[j + k] = Integer.valueOf(i >> (j + addressableSize - k - 1) * 8).byteValue();
+				}
 			}
 			return buf;
 		}
@@ -478,17 +501,19 @@ public class RenderingsUtil {
 	 * Convert short to byte array.
 	 * @param i
 	 * @param endianess
+	 * @param addressableSize
 	 * @return result of the conversion in raw byte array
 	 */
-	static public byte[] convertShortToByteArray(short i, int endianess)
+	static public byte[] convertShortToByteArray(short i, int endianess, int addressableSize)
 	{
 		byte buf[]=new byte[2];
 
 		if (endianess == RenderingsUtil.LITTLE_ENDIAN)
 		{
-			for (short j=0; j<2; j++)
-			{
-				buf[j] = Integer.valueOf(i>>j*8).byteValue();
+			for (short j = 0; j < 2; j += addressableSize) {
+				for (int k = 0; k < addressableSize; k++) {
+					buf[j + k] = Integer.valueOf(i >> (j + addressableSize - k - 1) * 8).byteValue();
+				}
 			}
 			return buf;
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     John Dallaway - Accommodate addressableSize != 1 (bug 577106)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.memory.renderings;
 
@@ -43,22 +44,22 @@ public class UnsignedIntegerRendering extends AbstractIntegerRendering {
 			result &= 0xff;
 			break;
 		case 2:
-			result = RenderingsUtil.convertByteArrayToInt(byteArray, endianess);
+			result = RenderingsUtil.convertByteArrayToInt(byteArray, endianess, getAddressableSize());
 			break;
 		case 4:
-			result = RenderingsUtil.convertByteArrayToLong(byteArray, endianess);
+			result = RenderingsUtil.convertByteArrayToLong(byteArray, endianess, getAddressableSize());
 			break;
 		case 8:
-			BigInteger value = RenderingsUtil.convertByteArrayToUnsignedLong(byteArray, endianess);
+			BigInteger value = RenderingsUtil.convertByteArrayToUnsignedLong(byteArray, endianess, getAddressableSize());
 			return value.toString();
 		case 16:
 		{
-			BigInteger bigRet = RenderingsUtil.convertByteArrayToUnsignedBigInt(byteArray, endianess);
+			BigInteger bigRet = RenderingsUtil.convertByteArrayToUnsignedBigInt(byteArray, endianess, getAddressableSize());
 			return bigRet.toString();
 		}
 		default:
 		{
-			BigInteger bigRet = RenderingsUtil.convertByteArrayToUnsignedBigInt(byteArray, endianess, columnSize);
+			BigInteger bigRet = RenderingsUtil.convertByteArrayToUnsignedBigInt(byteArray, endianess, columnSize, getAddressableSize());
 			return bigRet.toString();
 		}
 		}
@@ -76,7 +77,7 @@ public class UnsignedIntegerRendering extends AbstractIntegerRendering {
 			case 1:
 			{
 				short i = Short.parseShort(newValue);
-				bytes = RenderingsUtil.convertShortToByteArray(i, endianess);
+				bytes = RenderingsUtil.convertShortToByteArray(i, endianess, getAddressableSize());
 				bytes = extractBytes(bytes, endianess, colSize);
 				break;
 			}
@@ -84,28 +85,28 @@ public class UnsignedIntegerRendering extends AbstractIntegerRendering {
 			case 2:
 			{
 				int i = Integer.parseInt(newValue);
-				bytes = RenderingsUtil.convertIntToByteArray(i, endianess);
+				bytes = RenderingsUtil.convertIntToByteArray(i, endianess, getAddressableSize());
 				bytes = extractBytes(bytes, endianess, colSize);
 				break;
 			}
 			case 4:
 			{
 				long i = Long.parseLong(newValue);
-				bytes = RenderingsUtil.convertLongToByteArray(i, endianess);
+				bytes = RenderingsUtil.convertLongToByteArray(i, endianess, getAddressableSize());
 				bytes = extractBytes(bytes, endianess, colSize);
 				break;
 			}
 			case 8:
 			{
 				BigInteger i = new BigInteger(newValue);
-				bytes = RenderingsUtil.convertBigIntegerToByteArray(i, endianess);
+				bytes = RenderingsUtil.convertBigIntegerToByteArray(i, endianess, getAddressableSize());
 				bytes = extractBytes(bytes, endianess, colSize);
 				break;
 			}
 			case 16:
 			{
 				BigInteger i = new BigInteger(newValue);
-				bytes = RenderingsUtil.convertUnsignedBigIntegerToByteArray(i, endianess);
+				bytes = RenderingsUtil.convertUnsignedBigIntegerToByteArray(i, endianess, getAddressableSize());
 				bytes = extractBytes(bytes, endianess, colSize);
 
 				return bytes;
@@ -113,7 +114,7 @@ public class UnsignedIntegerRendering extends AbstractIntegerRendering {
 			default:
 			{
 				BigInteger i = new BigInteger(newValue);
-				bytes = RenderingsUtil.convertUnsignedBigIntToByteArray(i, endianess, colSize);
+				bytes = RenderingsUtil.convertUnsignedBigIntToByteArray(i, endianess, colSize, getAddressableSize());
 				bytes = extractBytes(bytes, endianess, colSize);
 				return bytes;
 			}

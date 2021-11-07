@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     John Dallaway - Accommodate addressableSize != 1 (bug 577106)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.memory.renderings;
 
@@ -47,22 +48,22 @@ public class SignedIntegerRendering extends AbstractIntegerRendering {
 			result = byteArray[0];
 			break;
 		case 2:
-			result = RenderingsUtil.convertByteArrayToShort(byteArray, endianess);
+			result = RenderingsUtil.convertByteArrayToShort(byteArray, endianess, getAddressableSize());
 			break;
 		case 4:
-			result = RenderingsUtil.convertByteArrayToInt(byteArray, endianess);
+			result = RenderingsUtil.convertByteArrayToInt(byteArray, endianess, getAddressableSize());
 			break;
 		case 8:
-			result = RenderingsUtil.convertByteArrayToLong(byteArray, endianess);
+			result = RenderingsUtil.convertByteArrayToLong(byteArray, endianess, getAddressableSize());
 			break;
 		case 16:
 		{
-			BigInteger bigRet = RenderingsUtil.convertByteArrayToSignedBigInt(byteArray, endianess);
+			BigInteger bigRet = RenderingsUtil.convertByteArrayToSignedBigInt(byteArray, endianess, getAddressableSize());
 			return bigRet.toString();
 		}
 		default:
 		{
-			BigInteger bigRet = RenderingsUtil.convertByteArrayToSignedBigInt(byteArray, endianess, columnSize);
+			BigInteger bigRet = RenderingsUtil.convertByteArrayToSignedBigInt(byteArray, endianess, columnSize, getAddressableSize());
 			return bigRet.toString();
 		}
 		}
@@ -85,19 +86,19 @@ public class SignedIntegerRendering extends AbstractIntegerRendering {
 			case 2:
 			{
 				short i = Short.parseShort(newValue);
-				bytes = RenderingsUtil.convertShortToByteArray(i, endianess);
+				bytes = RenderingsUtil.convertShortToByteArray(i, endianess, getAddressableSize());
 				break;
 			}
 			case 4:
 			{
 				int i = Integer.parseInt(newValue);
-				bytes = RenderingsUtil.convertIntToByteArray(i, endianess);
+				bytes = RenderingsUtil.convertIntToByteArray(i, endianess, getAddressableSize());
 				break;
 			}
 			case 8:
 			{
 				long i = Long.parseLong(newValue);
-				bytes = RenderingsUtil.convertLongToByteArray(i, endianess);
+				bytes = RenderingsUtil.convertLongToByteArray(i, endianess, getAddressableSize());
 				break;
 			}
 			case 16:
@@ -105,7 +106,7 @@ public class SignedIntegerRendering extends AbstractIntegerRendering {
 				// special case for colSize == 16
 				// need to represent number in Big Integer
 				BigInteger i = new BigInteger(newValue);
-				bytes = RenderingsUtil.convertBigIntegerToByteArray(i, endianess);
+				bytes = RenderingsUtil.convertBigIntegerToByteArray(i, endianess, getAddressableSize());
 
 				return bytes;
 			}
@@ -128,7 +129,7 @@ public class SignedIntegerRendering extends AbstractIntegerRendering {
 					throw new NumberFormatException();
 				}
 
-				bytes = RenderingsUtil.convertSignedBigIntToByteArray(i, endianess, colSize);
+				bytes = RenderingsUtil.convertSignedBigIntToByteArray(i, endianess, colSize, getAddressableSize());
 				return bytes;
 			}
 			}
