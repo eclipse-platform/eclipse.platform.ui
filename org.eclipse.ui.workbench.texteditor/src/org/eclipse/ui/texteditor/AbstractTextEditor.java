@@ -3959,7 +3959,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			Color color= createColor(store, PREFERENCE_COLOR_FIND_SCOPE, styledText.getDisplay());
 
 			IFindReplaceTarget target= viewer.getFindReplaceTarget();
-			if (target != null && target instanceof IFindReplaceTargetExtension)
+			if (target instanceof IFindReplaceTargetExtension)
 				((IFindReplaceTargetExtension) target).setScopeHighlightColor(color);
 
 		}
