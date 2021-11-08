@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.DeviceResourceDescriptor;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LazyResourceManager;
@@ -358,5 +359,26 @@ public class LazyResourceManagerTest extends TestCase {
 		}
 		assertDestroyed(expected3, mgr, tst, descriptor3); // lru size exceeded: not cached anymore
 		assertCached(expected2, mgr, tst, descriptor2); // 2 still cached, because recently used
+	}
+
+	@SuppressWarnings("unchecked")
+	public void testNullDescriptor() {
+		TestResourceManager tst = new TestResourceManager();
+		LazyResourceManager mgr = new LazyResourceManager(2, tst);
+		ImageDescriptor nullDescriptor = null;
+
+		// Test with "test" resources manager
+		AtomicReference<DeviceResourceDescriptor> expected = (AtomicReference<DeviceResourceDescriptor>) mgr
+				.create(nullDescriptor);
+		assertAlife(expected, mgr, tst, nullDescriptor);
+		mgr.destroy(nullDescriptor);
+		assertDestroyed(expected, mgr, tst, nullDescriptor);
+
+		// Test with real resource manager
+		ResourceManager real = JFaceResources.getResources();
+		mgr = new LazyResourceManager(2, real);
+		Object created = mgr.createImageWithDefault(nullDescriptor);
+		assertNotNull(created);
+		mgr.destroy(nullDescriptor);
 	}
 }

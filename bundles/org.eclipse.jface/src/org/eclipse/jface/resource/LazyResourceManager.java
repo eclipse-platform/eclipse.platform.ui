@@ -75,7 +75,7 @@ public class LazyResourceManager extends ResourceManager {
 	 * @return if a resource based on this descriptor should be cached.
 	 */
 	private boolean shouldBeCached(DeviceResourceDescriptor descriptor) {
-		return descriptor.shouldBeCached();
+		return descriptor != null && descriptor.shouldBeCached();
 	}
 
 	@Override
