@@ -37,6 +37,7 @@ import org.eclipse.debug.internal.core.DebugCoreMessages;
 import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.debug.tests.TestUtil;
 import org.eclipse.debug.tests.sourcelookup.TestLaunch;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class RuntimeProcessTests extends AbstractDebugTest {
@@ -212,7 +213,12 @@ public class RuntimeProcessTests extends AbstractDebugTest {
 		assertThat(timeoutException.getMessage(), is(DebugCoreMessages.RuntimeProcess_terminate_failed));
 	}
 
+	/**
+	 * See comment in MockProcess.MockProcess().new InputStream() {...}.read()
+	 * for why this test fails
+	 */
 	@Test
+	@Ignore("See https://bugs.eclipse.org/bugs/show_bug.cgi?id=577189")
 	public void testOutputAfterDestroy() throws Exception {
 		MockProcess proc = new MockProcess();
 

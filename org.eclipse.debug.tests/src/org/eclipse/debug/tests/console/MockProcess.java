@@ -178,14 +178,19 @@ public class MockProcess extends Process {
 			@Override
 			public int read() throws IOException {
 				if (processState == ProcessState.LASTREAD) {
-
-					// Uncomment this sleep and the test will fail because
-					// RuntimeProcess.terminate does not wait until
-					// the monitor threads complete.
-					// try {
-					// Thread.sleep(1000);
-					// } catch (InterruptedException e) {
-					// }
+					/*
+					 * This sleep makes
+					 * RuntimeProcessTests.testOutputAfterDestroy() fail because
+					 * RuntimeProcess.terminate does not wait until the monitor
+					 * threads completes. The sleep here just helps amplify a
+					 * the thread scheduling decision that otherwise makes
+					 * testOutputAfterDestroy unstable (as reported in Bug
+					 * 577185)
+					 */
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+					}
 					processState = ProcessState.TERMINATED;
 					return ProcessState.LASTREAD.getCode();
 				}
