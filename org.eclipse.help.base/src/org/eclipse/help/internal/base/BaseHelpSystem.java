@@ -325,7 +325,7 @@ public final class BaseHelpSystem {
 			Class<?> c = bundle.loadClass(className);
 			Object o = c.getDeclaredConstructor().newInstance();
 			//Runnable runnable = null;
-			if (o != null && o instanceof ILiveHelpAction) {
+			if (o instanceof ILiveHelpAction) {
 				ILiveHelpAction helpExt = (ILiveHelpAction) o;
 				if (arg != null)
 					helpExt.setInitializationString(arg);
@@ -352,7 +352,7 @@ public final class BaseHelpSystem {
 	/**
 	 * Check supplied token against stored token. Clears the stored token if
 	 * successful.
-	 * 
+	 *
 	 * @param helpSessionToken
 	 * @return true if match successful
 	 */
