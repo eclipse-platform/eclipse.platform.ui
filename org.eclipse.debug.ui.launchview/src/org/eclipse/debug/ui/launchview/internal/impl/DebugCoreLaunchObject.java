@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.debug.ui.launchview.internal.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 
 import org.eclipse.core.runtime.CoreException;
@@ -74,11 +76,7 @@ public class DebugCoreLaunchObject implements ILaunchObject, Comparable<ILaunchO
 
 	@Override
 	public boolean canTerminate() {
-		ILaunch launch = findLaunch(config.getName());
-		if (launch != null && launch.canTerminate()) {
-			return true;
-		}
-		return false;
+		return !findTerminateableLaunches(config.getName()).isEmpty();
 	}
 
 	@Override
@@ -87,8 +85,8 @@ public class DebugCoreLaunchObject implements ILaunchObject, Comparable<ILaunchO
 		// the processes takes longer than a few seconds.
 		// Instead we start a job that tries to terminate processes. If the job
 		// itself is stopped, we give up like Eclipse does.
-		ILaunch launch = findLaunch(config.getName());
-		if (launch != null && launch.canTerminate()) {
+		Collection<ILaunch> launches = findTerminateableLaunches(config.getName());
+		for (ILaunch launch: launches) {
 			Job terminateJob = new Job(NLS.bind(LaunchViewMessages.DebugCoreLaunchObject_Terminate, config.getName())) {
 
 				@Override
@@ -133,6 +131,19 @@ public class DebugCoreLaunchObject implements ILaunchObject, Comparable<ILaunchO
 			}
 		}
 		return null;
+	}
+
+	private static Collection<ILaunch> findTerminateableLaunches(String name) {
+		Collection<ILaunch> result = new ArrayList<>();
+		for (ILaunch l : DebugPlugin.getDefault().getLaunchManager().getLaunches()) {
+			if (l.getLaunchConfiguration() == null || l.isTerminated()) {
+				continue;
+			}
+			if (l.getLaunchConfiguration().getName().equals(name) && l.canTerminate()) {
+				result.add(l);
+			}
+		}
+		return result;
 	}
 
 	@Override

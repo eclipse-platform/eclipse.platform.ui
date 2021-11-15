@@ -68,7 +68,7 @@ public interface ILaunchObject extends Comparable<ILaunchObject> {
 	public boolean canTerminate();
 
 	/**
-	 * Terminates any running instance of this {@link ILaunchObject}.
+	 * Terminates all running instances of this {@link ILaunchObject}.
 	 */
 	public void terminate();
 
