@@ -14,9 +14,12 @@
 package org.eclipse.ui.internal.keys.show;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.jface.bindings.Trigger;
+import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -97,15 +100,25 @@ public class ShowKeysUI implements IDisposable {
 		if (trigger != null) {
 			int accelerator = SWTKeySupport.convertEventToUnmodifiedAccelerator(trigger);
 			KeyStroke keyStroke = SWTKeySupport.convertAcceleratorToKeyStroke(accelerator);
+			IBindingService bindingService = serviceLocator.getService(IBindingService.class);
 			// keyboard trigger
 			if (preferenceStore.getBoolean(IPreferenceConstants.SHOW_KEYS_ENABLED_FOR_KEYBOARD)
 					&& KeyStroke.NO_KEY != keyStroke.getNaturalKey()) {
-				return SWTKeySupport.getKeyFormatterForPlatform().format(keyStroke);
+				// return a binding that completes on the same keystroke (no guarantee it's the
+				// right one that was actually used, but usually correct enough)
+				return Arrays.stream(bindingService.getActiveBindingsFor(commandId)) //
+						.filter(binding -> {
+							Trigger[] triggers = binding.getTriggers();
+							Trigger lastTrigger = triggers[triggers.length - 1];
+							return lastTrigger.equals(keyStroke);
+						}).findFirst() //
+						.map(TriggerSequence::format) //
+						.orElse(null);
 			}
 			// mouse-triggered event
 			else if (preferenceStore.getBoolean(IPreferenceConstants.SHOW_KEYS_ENABLED_FOR_MOUSE_EVENTS)
 					&& KeyStroke.NO_KEY == keyStroke.getNaturalKey()) {
-				return serviceLocator.getService(IBindingService.class).getBestActiveBindingFormattedFor(commandId);
+				return bindingService.getBestActiveBindingFormattedFor(commandId);
 			}
 		}
 		return null;
