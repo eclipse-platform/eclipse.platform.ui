@@ -134,15 +134,21 @@ public class OutputStreamMonitor implements IBinaryStreamMonitor {
 	 * underlying stream by waiting for the thread to terminate.
 	 */
 	protected void close() {
-		if (fThread != null) {
-			Thread thread = fThread;
+		Thread thread = null;
+
+		synchronized (this) {
+			thread = fThread;
 			fThread = null;
+		}
+
+		if (thread != null) {
 			try {
 				thread.join();
 			} catch (InterruptedException ie) {
 			}
-			fListeners = new ListenerList<>();
-			fBinaryListeners = new ListenerList<>();
+
+			fListeners.clear();
+			fBinaryListeners.clear();
 		}
 	}
 
@@ -304,12 +310,14 @@ public class OutputStreamMonitor implements IBinaryStreamMonitor {
 	 * Starts a thread which reads from the stream
 	 */
 	protected void startMonitoring() {
-		if (fThread == null) {
-			fDone.set(false);
-			fThread = new Thread((Runnable) this::read, DebugCoreMessages.OutputStreamMonitor_label);
-			fThread.setDaemon(true);
-			fThread.setPriority(Thread.MIN_PRIORITY);
-			fThread.start();
+		synchronized (this) {
+			if (fThread == null) {
+				fDone.set(false);
+				fThread = new Thread((Runnable) this::read, DebugCoreMessages.OutputStreamMonitor_label);
+				fThread.setDaemon(true);
+				fThread.setPriority(Thread.MIN_PRIORITY);
+				fThread.start();
+			}
 		}
 	}
 

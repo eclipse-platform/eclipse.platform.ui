@@ -131,10 +131,12 @@ public class InputStreamMonitor {
 	 * Starts a thread which writes the stream.
 	 */
 	public void startMonitoring() {
-		if (fThread == null) {
-			fThread = new Thread((Runnable) this::write, DebugCoreMessages.InputStreamMonitor_label);
-			fThread.setDaemon(true);
-			fThread.start();
+		synchronized (this) {
+			if (fThread == null) {
+				fThread = new Thread((Runnable) this::write, DebugCoreMessages.InputStreamMonitor_label);
+				fThread.setDaemon(true);
+				fThread.start();
+			}
 		}
 	}
 
@@ -143,9 +145,12 @@ public class InputStreamMonitor {
 	 * monitor and the underlying stream.
 	 */
 	public void close() {
-		if (fThread != null) {
-			Thread thread= fThread;
-			fThread= null;
+		Thread thread = null;
+		synchronized (this) {
+			thread = fThread;
+			fThread = null;
+		}
+		if (thread != null) {
 			thread.interrupt();
 		}
 	}
