@@ -636,7 +636,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 */
 	@Override
 	public boolean isFocusControl() {
-		return fShell.getDisplay().getActiveShell() == fShell;
+		return !fShell.isDisposed() && fShell.getDisplay().getActiveShell() == fShell;
 	}
 
 	/**
