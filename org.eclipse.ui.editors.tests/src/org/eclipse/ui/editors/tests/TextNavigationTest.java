@@ -31,6 +31,7 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
@@ -39,6 +40,7 @@ import org.eclipse.jface.text.TextSelection;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 import org.eclipse.ui.texteditor.AbstractTextEditor;
@@ -66,6 +68,24 @@ public class TextNavigationTest {
 	public void tearDown() {
 		editor.dispose();
 		file.delete();
+	}
+
+	@Test
+	public void testHome() {
+		IPreferenceStore preferenceStore = EditorsPlugin.getDefault().getPreferenceStore();
+		boolean previousPrefValue = preferenceStore.getBoolean(AbstractTextEditor.PREFERENCE_NAVIGATION_SMART_HOME_END);
+		preferenceStore.setValue(AbstractTextEditor.PREFERENCE_NAVIGATION_SMART_HOME_END, false);
+		IDocument doc = editor.getDocumentProvider().getDocument(editor.getEditorInput());
+		doc.set("line1\nline2");
+		editor.selectAndReveal(doc.getLength(), 0);
+		editor.getAction(ITextEditorActionDefinitionIds.LINE_START).run();
+		try {
+			assertEquals(6, ((ITextSelection) editor.getSelectionProvider().getSelection()).getOffset());
+			editor.getAction(ITextEditorActionDefinitionIds.LINE_START).run();
+			assertEquals(6, ((ITextSelection) editor.getSelectionProvider().getSelection()).getOffset());
+		} finally {
+			preferenceStore.setValue(AbstractTextEditor.PREFERENCE_NAVIGATION_SMART_HOME_END, previousPrefValue);
+		}
 	}
 
 	@Test

@@ -1362,7 +1362,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					// Compute the line start offset
 					int index = getLineStartPosition(document, line, lineLength, caretOffsetInDocument);
 					newCaretOffset = (caretOffset - lineOffset == index) ? lineOffset : lineOffset + index;
-				} else if (caretOffset > lineOffset) {
+				} else if (caretOffset >= lineOffset) {
 					// to beginning of line
 					newCaretOffset = lineOffset;
 				}
