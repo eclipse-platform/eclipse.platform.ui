@@ -20,8 +20,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.dialogs.PreferenceLinkArea;
 import org.eclipse.ui.internal.dialogs.EditorsPreferencePage;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.tweaklets.TabBehaviour;
-import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 /**
@@ -60,12 +58,10 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 		createEditorHistoryGroup(composite);
 
 		createSpace(composite);
-		createShowMultipleEditorTabsPref(composite);
 		createAllowInplaceEditorPref(composite);
 		createUseIPersistablePref(composite);
 		createPromptWhenStillOpenPref(composite);
 		createEditorReuseGroup(composite);
-		((TabBehaviour)Tweaklets.get(TabBehaviour.KEY)).setPreferenceVisibility(editorReuseGroup, showMultipleEditorTabs);
 
 		applyDialogFont(composite);
 

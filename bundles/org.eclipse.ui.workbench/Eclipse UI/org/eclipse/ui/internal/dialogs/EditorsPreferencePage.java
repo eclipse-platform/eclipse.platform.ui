@@ -52,8 +52,6 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 
 	private Button reuseEditors;
 
-	protected Button showMultipleEditorTabs;
-
 	protected Button useIPersistableEditor;
 
 	private Composite editorReuseIndentGroup;
@@ -81,7 +79,6 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		createEditorHistoryGroup(composite);
 
 		createSpace(composite);
-		createShowMultipleEditorTabsPref(composite);
 		createAllowInplaceEditorPref(composite);
 		createUseIPersistablePref(composite);
 		createPromptWhenStillOpenPref(composite);
@@ -108,13 +105,6 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		WorkbenchPreferencePage.createSpace(parent);
 	}
 
-	protected void createShowMultipleEditorTabsPref(Composite composite) {
-		showMultipleEditorTabs = new Button(composite, SWT.CHECK);
-		showMultipleEditorTabs.setText(WorkbenchMessages.WorkbenchPreference_showMultipleEditorTabsButton);
-		showMultipleEditorTabs.setSelection(
-				getAPIPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS));
-		setButtonLayoutData(showMultipleEditorTabs);
-	}
 
 	protected void createAllowInplaceEditorPref(Composite composite) {
 		allowInplaceEditor = new Button(composite, SWT.CHECK);
@@ -158,8 +148,6 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	@Override
 	protected void performDefaults() {
 		IPreferenceStore store = getPreferenceStore();
-		showMultipleEditorTabs.setSelection(
-				getAPIPreferenceStore().getDefaultBoolean(IWorkbenchPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS));
 		allowInplaceEditor.setSelection(
 				!getAPIPreferenceStore().getDefaultBoolean(IWorkbenchPreferenceConstants.DISABLE_OPEN_EDITOR_IN_PLACE));
 		useIPersistableEditor.setSelection(store.getDefaultBoolean(IPreferenceConstants.USE_IPERSISTABLE_EDITORS));
@@ -175,8 +163,6 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	@Override
 	public boolean performOk() {
 		IPreferenceStore store = getPreferenceStore();
-		getAPIPreferenceStore().setValue(IWorkbenchPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS,
-				showMultipleEditorTabs.getSelection());
 		getAPIPreferenceStore().setValue(IWorkbenchPreferenceConstants.DISABLE_OPEN_EDITOR_IN_PLACE,
 				!allowInplaceEditor.getSelection());
 		store.setValue(IPreferenceConstants.USE_IPERSISTABLE_EDITORS, useIPersistableEditor.getSelection());
