@@ -24,6 +24,15 @@ public class SourceLocatorMementoComparator implements Comparator<String> {
 
 	@Override
 	public int compare(String o1, String o2) {
+		if (o1 == null && o2 == null) {
+			return 0;
+		}
+		if (o1 == null) {
+			return -1;
+		}
+		if (o2 == null) {
+			return 1;
+		}
 		String m1 = o1;
 		String m2 = o2;
 		int i1 = 0, i2 = 0;
@@ -32,13 +41,16 @@ public class SourceLocatorMementoComparator implements Comparator<String> {
 			i2 = skipWhitespace(m2, i2);
 			if (i1 < m1.length() && i2 < m2.length()) {
 				if (m1.charAt(i1) != m2.charAt(i2)) {
-					return -1;
+					return m1.charAt(i1) - m2.charAt(i2);
 				}
 				i1++;
 				i2++;
 			} else {
 				if (i2 < m2.length()) {
 					return -1;
+				}
+				if (i1 < m1.length()) {
+					return 1;
 				}
 				return 0;
 			}

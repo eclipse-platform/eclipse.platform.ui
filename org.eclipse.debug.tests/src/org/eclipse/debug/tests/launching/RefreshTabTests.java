@@ -27,6 +27,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.RefreshUtil;
 import org.eclipse.debug.internal.core.RefreshScopeComparator;
+import org.eclipse.debug.internal.core.sourcelookup.SourceLocatorMementoComparator;
 import org.eclipse.debug.tests.TestsPlugin;
 import org.eclipse.debug.ui.RefreshTab;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -180,11 +181,30 @@ public class RefreshTabTests extends AbstractLaunchTest {
 	 *
 	 * @throws CoreException
 	 */
+	@SuppressWarnings("restriction")
 	@Test
 	public void testRefreshScopeComparator() throws CoreException {
 		String oldStyle = "${working_set:<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<launchConfigurationWorkingSet factoryID=\"org.eclipse.ui.internal.WorkingSetFactory\" name=\"workingSet\" editPageId=\"org.eclipse.ui.resourceWorkingSetPage\">\n<item factoryID=\"org.eclipse.ui.internal.model.ResourceFactory\" path=\"/RefreshTabTests/some.file\" type=\"1\"/>\n</launchConfigurationWorkingSet>}"; //$NON-NLS-1$
 		String newStyle = "${working_set:<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<resources>\n<item path=\"/RefreshTabTests/some.file\" type=\"1\"/>\n</resources>}"; //$NON-NLS-1$
 		assertEquals("Comparator should return 0", 0, new RefreshScopeComparator().compare(oldStyle, newStyle)); //$NON-NLS-1$
+		String s1 = "${working_set:<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<resources>\n<item path=\"/RefreshTabTests/some.file1\" type=\"1\"/>\n</resources>}"; //$NON-NLS-1$
+		String s2 = "${working_set:<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<resources>\n<item path=\"/RefreshTabTests/some.file2\" type=\"1\"/>\n</resources>}"; //$NON-NLS-1$
+		assertEquals("Comparator should return 0", 0, new RefreshScopeComparator().compare(s1, s1)); //$NON-NLS-1$
+		assertEquals("Comparator should return 0", 0, new RefreshScopeComparator().compare(s2, s2)); //$NON-NLS-1$
+		assertEquals("Comparator should return -1", -1, new RefreshScopeComparator().compare(s1, s2)); //$NON-NLS-1$
+		assertEquals("Comparator should return 1", 1, new RefreshScopeComparator().compare(s2, s1)); //$NON-NLS-1$
+		assertEquals("Comparator should return 1", 1, new RefreshScopeComparator().compare(s1, null)); //$NON-NLS-1$
+		assertEquals("Comparator should return -1", -1, new RefreshScopeComparator().compare(null, s1)); //$NON-NLS-1$
+		assertEquals("Comparator should return 0", 0, new RefreshScopeComparator().compare(null, null)); //$NON-NLS-1$
+		String o1 = "${working_set:<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<launchConfigurationWorkingSet factoryID=\"org.eclipse.ui.internal.WorkingSetFactory\" name=\"workingSet\" editPageId=\"org.eclipse.ui.resourceWorkingSetPage\">\n<item factoryID=\"org.eclipse.ui.internal.model.ResourceFactory\" path=\"/RefreshTabTests/some.file1\" type=\"1\"/>\n</launchConfigurationWorkingSet>}"; //$NON-NLS-1$
+		String o2 = "${working_set:<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<launchConfigurationWorkingSet factoryID=\"org.eclipse.ui.internal.WorkingSetFactory\" name=\"workingSet\" editPageId=\"org.eclipse.ui.resourceWorkingSetPage\">\n<item factoryID=\"org.eclipse.ui.internal.model.ResourceFactory\" path=\"/RefreshTabTests/some.file2\" type=\"1\"/>\n</launchConfigurationWorkingSet>}"; //$NON-NLS-1$
+		assertEquals("Comparator should return 0", 0, new SourceLocatorMementoComparator().compare(o1, o1)); //$NON-NLS-1$
+		assertEquals("Comparator should return 0", 0, new SourceLocatorMementoComparator().compare(o2, o2)); //$NON-NLS-1$
+		assertEquals("Comparator should return -1", -1, new SourceLocatorMementoComparator().compare(o1, o2)); //$NON-NLS-1$
+		assertEquals("Comparator should return 1", 1, new SourceLocatorMementoComparator().compare(o2, o1)); //$NON-NLS-1$
+		assertEquals("Comparator should return 1", 1, new SourceLocatorMementoComparator().compare(o1, null)); //$NON-NLS-1$
+		assertEquals("Comparator should return -1", -1, new SourceLocatorMementoComparator().compare(null, o1)); //$NON-NLS-1$
+		assertEquals("Comparator should return 0", 0, new SourceLocatorMementoComparator().compare(null, null)); //$NON-NLS-1$
 	}
 
 	/**
@@ -197,6 +217,7 @@ public class RefreshTabTests extends AbstractLaunchTest {
 		IResource[] resources = new IResource[] { getProject(), getProject().getFile("not.exist"), getProject().getFile("some.file") }; //$NON-NLS-1$ //$NON-NLS-2$
 		String memento = RefreshUtil.toMemento(resources);
 		IResource[] restore = RefreshUtil.toResources(memento);
+		assertNotNull(resources);
 		assertEquals(resources.length, restore.length);
 		assertEquals(resources[0], restore[0]);
 		assertEquals(resources[1], restore[1]);

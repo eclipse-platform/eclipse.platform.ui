@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.core;
 
+import java.util.Arrays;
 import java.util.Comparator;
 
 import org.eclipse.core.resources.IResource;
@@ -27,26 +28,21 @@ import org.eclipse.debug.core.RefreshUtil;
  * @since 3.6
  */
 public class RefreshScopeComparator implements Comparator<String> {
+	private static IResource[] toResources(String memento) {
+		try {
+			return RefreshUtil.toResources(memento);
+		} catch (CoreException e) {
+			return null;
+		}
+	}
+
+	private static final Comparator<IResource> RESOURCE = Comparator.nullsFirst(Comparator.comparing(r -> r.toString()));
+	private static final Comparator<IResource[]> ARRAY = Comparator.nullsFirst((IResource[] s1, IResource[] s2) -> Arrays.compare(s1, s2, RESOURCE));
+	private static final Comparator<String> MEMENTO = Comparator.nullsFirst(Comparator.comparing(m -> toResources(m), ARRAY));
 
 	@Override
 	public int compare(String o1, String o2) {
-		String m1 = o1;
-		String m2 = o2;
-		try {
-			IResource[] r1 = RefreshUtil.toResources(m1);
-			IResource[] r2 = RefreshUtil.toResources(m2);
-			if (r1.length == r2.length) {
-				for (int i = 0; i < r2.length; i++) {
-					if (!r1[i].equals(r2[i])) {
-						return -1;
-					}
-				}
-				return 0;
-			}
-		} catch (CoreException e) {
-			return -1;
-		}
-		return -1;
+		return MEMENTO.compare(o1, o2);
 	}
 
 }
