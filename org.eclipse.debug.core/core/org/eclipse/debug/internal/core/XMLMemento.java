@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,6 +19,7 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -43,6 +44,8 @@ public final class XMLMemento {
 
 	private Element element;
 
+	private static String FILE_STRING = "file"; //$NON-NLS-1$
+
 	/**
 	 * Creates a <code>Document</code> from the <code>Reader</code>
 	 * and returns a memento on the first <code>Element</code> for reading
@@ -61,6 +64,27 @@ public final class XMLMemento {
 	}
 
 	/**
+	 * Clients who need to use the "file" protocol can override this method to
+	 * return the original attribute value
+	 *
+	 * @param attributeOldValue
+	 * @return return the new attribute value after concatenating the "file"
+	 *         protocol restriction if does not exist already
+	 */
+	private static String getAttributeNewValue(Object attributeOldValue) {
+		StringBuffer strNewValue = new StringBuffer(FILE_STRING);
+		if (attributeOldValue instanceof String && ((String) attributeOldValue).length() != 0) {
+			String strOldValue = (String) attributeOldValue;
+			boolean exists = Arrays.asList(strOldValue.split(",")).stream().anyMatch(x -> x.trim().equals(FILE_STRING)); //$NON-NLS-1$
+			if (!exists) {
+				strNewValue.append(", ").append(strOldValue); //$NON-NLS-1$
+			} else {
+				strNewValue = new StringBuffer(strOldValue);
+			}
+		}
+		return strNewValue.toString();
+	}
+	/**
 	 * Creates a <code>Document</code> from the <code>Reader</code>
 	 * and returns a memento on the first <code>Element</code> for reading
 	 * the document.
@@ -78,10 +102,20 @@ public final class XMLMemento {
 			throws Exception {
 		String errorMessage = null;
 		Exception exception = null;
-
+		DocumentBuilderFactory factory = null;
+		Object attributeDTDOldValue = null;
+		Object attributeSchemaOldValue = null;
 		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory
-					.newInstance();
+			factory = DocumentBuilderFactory.newInstance();
+			try {
+				attributeDTDOldValue = factory.getAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_DTD);
+				attributeSchemaOldValue = factory.getAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_SCHEMA);
+			} catch (NullPointerException | IllegalArgumentException e) {
+				// Attributes not defined
+			}
+			factory.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_DTD, getAttributeNewValue(attributeDTDOldValue));
+			factory.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_SCHEMA, getAttributeNewValue(attributeSchemaOldValue));
+
 			DocumentBuilder parser = factory.newDocumentBuilder();
 			InputSource source = new InputSource(reader);
 			if (baseDir != null) {
@@ -104,6 +138,11 @@ public final class XMLMemento {
 		} catch (SAXException e) {
 			exception = e;
 			// errorMessage = WorkbenchMessages.XMLMemento_formatError;
+		} finally {
+			if (factory != null) {
+				factory.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_DTD, attributeDTDOldValue);
+				factory.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_SCHEMA, attributeSchemaOldValue);
+			}
 		}
 
 		String problemText = null;
