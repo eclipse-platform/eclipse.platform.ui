@@ -995,6 +995,7 @@ public class WorkbenchMessages extends NLS {
 	// Zoom change messages
 	public static String Workbench_zoomChangedTitle;
 	public static String Workbench_zoomChangedMessage;
-	public static String Workbench_zoomChangedRestart;
+	public static String Workbench_RestartButton;
+	public static String Workbench_DontRestartButton;
 
 }

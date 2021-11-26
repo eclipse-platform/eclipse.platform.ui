@@ -945,7 +945,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 					int dialogResponse = MessageDialog.open(MessageDialog.QUESTION, getShell(),
 							WorkbenchMessages.Workbench_zoomChangedTitle,
 							WorkbenchMessages.Workbench_zoomChangedMessage, SWT.NONE,
-							WorkbenchMessages.Workbench_zoomChangedRestart, IDialogConstants.NO_LABEL);
+							WorkbenchMessages.Workbench_RestartButton, WorkbenchMessages.Workbench_DontRestartButton);
 					if (event.doit && dialogResponse == 0) {
 						getWorkbenchImpl().restart(true);
 					}

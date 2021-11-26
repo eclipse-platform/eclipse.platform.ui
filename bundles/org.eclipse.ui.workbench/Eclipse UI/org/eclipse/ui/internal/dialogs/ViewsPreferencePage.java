@@ -20,7 +20,6 @@
 package org.eclipse.ui.internal.dialogs;
 
 import static org.eclipse.jface.viewers.LabelProvider.createTextProvider;
-import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 import static org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants.ATT_COLOR_AND_FONT_ID;
 import static org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants.ATT_OS_VERSION;
 import static org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants.ATT_THEME_ASSOCIATION;
@@ -49,9 +48,9 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering;
 import org.eclipse.e4.ui.workbench.renderers.swt.StackRenderer;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
-import org.eclipse.jface.notifications.AbstractNotificationPopup;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.util.Util;
@@ -60,18 +59,16 @@ import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Link;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -108,8 +105,6 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	private boolean highContrastMode;
 
 	private Button themingEnabled;
-
-	private NotificationPopUp notificationPopUp;
 
 	@Override
 	protected Control createContents(Composite parent) {
@@ -304,20 +299,27 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			colorFontsDecorator.hide();
 
 			if (themeChanged || colorsAndFontsThemeChanged) {
-				if (notificationPopUp == null) {
-					notificationPopUp = new NotificationPopUp(getShell().getDisplay());
-					notificationPopUp.open();
-				}
+				showRestartDialog();
 			}
 		}
 		if (themingEnabledChanged) {
-			if (notificationPopUp == null) {
-				notificationPopUp = new NotificationPopUp(getShell().getDisplay());
-				notificationPopUp.open();
-			}
+			showRestartDialog();
 		}
 
 		return super.performOk();
+	}
+
+	/**
+	 *
+	 */
+	private void showRestartDialog() {
+		if (new MessageDialog(null, WorkbenchMessages.ThemeChangeWarningTitle, null,
+				WorkbenchMessages.ThemeChangeWarningText,
+				MessageDialog.QUESTION, 2, WorkbenchMessages.Workbench_RestartButton,
+				WorkbenchMessages.Workbench_DontRestartButton)
+						.open() == Window.OK) {
+			PlatformUI.getWorkbench().restart();
+		}
 	}
 
 	private IEclipsePreferences getSwtRendererPreferences() {
@@ -515,30 +517,6 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			return Objects.equals(id, other.id);
 		}
 
-	}
-
-	private class NotificationPopUp extends AbstractNotificationPopup {
-
-		public NotificationPopUp(Display display) {
-			super(display);
-			setDelayClose(0);
-			setParentShell(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
-		}
-
-		@Override
-		protected String getPopupShellTitle() {
-			return WorkbenchMessages.ThemeChangeWarningTitle;
-		}
-
-
-		@Override
-		protected void createContentArea(Composite parent) {
-			parent.setLayout(new RowLayout());
-
-			Link link = new Link(parent, SWT.WRAP);
-			link.setText(WorkbenchMessages.ThemeChangeWarningHyperlinkedText);
-			link.addSelectionListener(widgetSelectedAdapter(e -> PlatformUI.getWorkbench().restart(true)));
-		}
 	}
 
 }
