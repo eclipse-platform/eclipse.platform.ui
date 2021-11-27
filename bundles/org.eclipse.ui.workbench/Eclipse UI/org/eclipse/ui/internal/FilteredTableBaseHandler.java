@@ -302,16 +302,24 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 			addKeyListener(table, dialog);
 			addTraverseListener(table);
 
-			while (!dialog.isDisposed()) {
-				if (!display.readAndDispatch()) {
-					display.sleep();
-				}
-			}
+			keepOpen(display, dialog);
 		} finally {
 			if (!dialog.isDisposed()) {
 				cancel(dialog);
 			}
 			contextService.unregisterShell(dialog);
+		}
+	}
+
+	/**
+	 * Intended to be overwritten by test classes so the handler won't block the UI
+	 * thread
+	 */
+	protected void keepOpen(Display display, Shell dialog) {
+		while (!dialog.isDisposed()) {
+			if (!display.readAndDispatch()) {
+				display.sleep();
+			}
 		}
 	}
 

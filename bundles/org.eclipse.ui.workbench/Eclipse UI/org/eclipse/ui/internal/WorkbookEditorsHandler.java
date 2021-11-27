@@ -17,9 +17,19 @@
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.runtime.Adapters;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -36,6 +46,8 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IPathEditorInput;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.dialogs.SearchPattern;
@@ -67,6 +79,8 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 
 	private SearchPattern searchPattern;
 
+	private Map<EditorReference, String> editorReferenceColumnLabelTexts;
+
 	/**
 	 * Gets the preference "show most recently used tabs" (MRU tabs)
 	 *
@@ -80,7 +94,9 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 
 	@Override
 	protected Object getInput(WorkbenchPage page) {
-		return getParts(page);
+		List<EditorReference> editorReferences = getParts(page);
+		editorReferenceColumnLabelTexts = generateColumnLabelTexts(editorReferences);
+		return editorReferences;
 	}
 
 	private List<EditorReference> getParts(WorkbenchPage page) {
@@ -96,6 +112,159 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 			}
 		}
 		return refs;
+	}
+
+	/**
+	 * Generates a mapping of EditorReferences to display label texts. If display
+	 * names collide parent directories will be added until the EditorReference can
+	 * be differentiated from all references that share the same file name. If the
+	 * collisions share multiple paths segments only the first differing path
+	 * segment will be prepended.<br>
+	 * <br>
+	 * Example where all collisions share the same segments:
+	 *
+	 * <pre>
+	 * /project/test1/foo/bar/file -> test1/file
+	 * /project/test2/foo/bar/file -> test2/file
+	 * /project/test3/foo/bar/file -> test3/file
+	 * </pre>
+	 *
+	 * Example with differing segments:
+	 *
+	 * <pre>
+	 * /project/test1/foo/bar/file -> test1/foo/bar/file
+	 * /project/test2/foo/bar/file -> test2/foo/bar/file
+	 * /project/file               -> project/file
+	 * </pre>
+	 *
+	 * @param editorReferences the references for which the display label should be
+	 *                         generated
+	 * @return Mapping of EditorReferences to their display label
+	 */
+	private Map<EditorReference, String> generateColumnLabelTexts(List<EditorReference> editorReferences) {
+		Map<EditorReference, String> editorReferenceLabelTexts = new HashMap<>(editorReferences.size());
+		Map<String, List<Entry<EditorReference, IPath>>> collisionsMap = new HashMap<>(editorReferences.size());
+		editorReferences.forEach(editorReference -> {
+			try {
+				IPathEditorInput iPathEditorInput = Adapters.adapt(editorReference.getEditorInput(),
+						IPathEditorInput.class);
+				if (iPathEditorInput != null && iPathEditorInput.getPath() != null) {
+					IPath path = iPathEditorInput.getPath();
+
+					List<Entry<EditorReference, IPath>> referencesWithSameTitle = collisionsMap
+							.get(editorReference.getTitle());
+					if (referencesWithSameTitle == null) {
+						referencesWithSameTitle = new ArrayList<>();
+						collisionsMap.put(editorReference.getTitle(), referencesWithSameTitle);
+					}
+
+					referencesWithSameTitle.add(Map.entry(editorReference, path));
+				} else {
+					// we only detect collisions for IPathEditorInput
+					editorReferenceLabelTexts.put(editorReference, getWorkbenchPartReferenceText(editorReference));
+				}
+			} catch (PartInitException e) {
+				// This should never happen as all the parts are initialized?
+				String message = "Expected parts to be initialized"; //$NON-NLS-1$
+				final IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
+				WorkbenchPlugin.log(message, status);
+			}
+		});
+
+		for (List<Entry<EditorReference, IPath>> groupedEditorReferences : collisionsMap.values()) {
+			if (groupedEditorReferences.size() == 1) {
+				EditorReference editorReference = groupedEditorReferences.get(0).getKey();
+				editorReferenceLabelTexts.put(editorReference, getWorkbenchPartReferenceText(editorReference));
+			} else {
+				Set<Integer> differingMaxSegmentsCounter = new HashSet<>();
+				List<Integer> maxMatchingSegmentsList = new ArrayList<>(groupedEditorReferences.size());
+				for (Entry<EditorReference, IPath> entry : groupedEditorReferences) {
+					IPath path = entry.getValue();
+					int maxMatchingSegments = -1;
+					for (int i = 0; i < groupedEditorReferences.size(); i++) {
+						IPath currentPath = groupedEditorReferences.get(i).getValue();
+						if (currentPath.equals(path)) {
+							continue;
+						}
+						int currentMatchingSegments = matchingLastSegments(path, currentPath);
+						maxMatchingSegments = maxMatchingSegments < currentMatchingSegments ? currentMatchingSegments
+								: maxMatchingSegments;
+					}
+					differingMaxSegmentsCounter.add(maxMatchingSegments);
+					maxMatchingSegmentsList.add(maxMatchingSegments);
+				}
+
+				for (int i = 0; i < maxMatchingSegmentsList.size(); i++) {
+					EditorReference editorReference = groupedEditorReferences.get(i).getKey();
+					Integer maxMatchingSegment = maxMatchingSegmentsList.get(i);
+					IPath path = groupedEditorReferences.get(i).getValue();
+
+					String labelText = generateLabelText(editorReference, path, differingMaxSegmentsCounter,
+							maxMatchingSegment);
+					editorReferenceLabelTexts.put(editorReference, labelText);
+				}
+			}
+		}
+		return editorReferenceLabelTexts;
+	}
+
+	/**
+	 * Generates the display text for the editor reference.
+	 *
+	 * @param matchingSegmentCounter contains all unique max segment numbers
+	 * @param maxMatchingSegment     the maximal amount of sections this reference
+	 *                               shares with a conflicting reference
+	 * @param path                   path of the editorReference
+	 * @return the final label text for the editor reference
+	 */
+	private String generateLabelText(EditorReference editorReference, IPath path,
+			Set<Integer> differingMaxSegmentsCounter, Integer maxMatchingSegment) {
+		String labelText;
+		if (differingMaxSegmentsCounter.size() == 1) {
+			String lastSegment = path.lastSegment();
+			labelText = Path.fromPortableString(path.segment(path.segmentCount() - 1 - maxMatchingSegment))
+					.append(lastSegment).toOSString();
+		} else {
+			labelText = path.removeFirstSegments(path.segmentCount() - 1 - maxMatchingSegment).toOSString();
+		}
+		return prependDirtyIndicationIfDirty(editorReference, labelText);
+	}
+
+	/**
+	 * Prepends a {@code *} to the labelText if editorReference is dirty.
+	 *
+	 * @param editorReference reference to check for dirty state
+	 * @param labelText       the label text for the editorReference
+	 * @return text with dirty indication when appropriate
+	 */
+	private String prependDirtyIndicationIfDirty(EditorReference editorReference, String labelText) {
+		if (editorReference.isDirty()) {
+			return "*" + labelText; //$NON-NLS-1$
+		}
+		return labelText;
+	}
+
+	/**
+	 * Returns a count of the number of segments which match in this path and the
+	 * given path (device ids are ignored), comparing in decreasing segment number
+	 * order starting at the last segment.
+	 *
+	 * @param path
+	 * @param anotherPath the other path to compare with
+	 * @return the number of matching segments
+	 */
+	private int matchingLastSegments(IPath path, IPath anotherPath) {
+		int thisPathLen = path.segmentCount();
+		int anotherPathLen = anotherPath.segmentCount();
+		int max = Math.min(thisPathLen, anotherPathLen);
+		int count = 0;
+		for (int i = 1; i <= max; i++) {
+			if (!path.segment(thisPathLen - i).equals(anotherPath.segment(anotherPathLen - i))) {
+				return count;
+			}
+			count++;
+		}
+		return count;
 	}
 
 	@Override
@@ -134,7 +303,7 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 				Object element = cell.getElement();
 				if (element instanceof WorkbenchPartReference) {
 					WorkbenchPartReference ref = (WorkbenchPartReference) element;
-					String text = getWorkbenchPartReferenceText(ref);
+					String text = editorReferenceColumnLabelTexts.get(ref);
 					cell.setText(text);
 					cell.setImage(ref.getTitleImage());
 
