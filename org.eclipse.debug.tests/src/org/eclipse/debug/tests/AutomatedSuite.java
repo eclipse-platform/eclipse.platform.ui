@@ -44,6 +44,7 @@ import org.eclipse.debug.tests.logicalstructure.LogicalStructureCacheTest;
 import org.eclipse.debug.tests.sourcelookup.SourceLookupFacilityTests;
 import org.eclipse.debug.tests.statushandlers.StatusHandlerTests;
 import org.eclipse.debug.tests.stepfilters.StepFiltersTests;
+import org.eclipse.debug.tests.ui.VariableValueEditorManagerTests;
 import org.eclipse.debug.tests.view.memory.MemoryRenderingTests;
 import org.eclipse.debug.tests.view.memory.TableRenderingTests;
 import org.eclipse.debug.tests.viewer.model.ChildrenUpdateTests;
@@ -89,6 +90,7 @@ import org.junit.runners.Suite;
 		FilterTransformTests.class,
 		ChildrenUpdateTests.class,
 		PresentationContextTests.class,
+		VariableValueEditorManagerTests.class,
 
 		// Memory view
 		MemoryRenderingTests.class,

@@ -33,6 +33,14 @@ import org.eclipse.debug.ui.actions.IVariableValueEditor;
  */
 public class VariableValueEditorManager {
 
+	private static final int MAX_PRIORITY = 10;
+
+	private static final int DEFAULT_PRIORITY = 0;
+
+	private static final String MODEL_ID = "modelId"; //$NON-NLS-1$
+
+	private static final String PRIORITY = "priority";//$NON-NLS-1$
+
 	/**
 	 * Mapping of debug model identifiers to variable value editors.
 	 * The keys in this map are always Strings (model ids).
@@ -101,10 +109,39 @@ public class VariableValueEditorManager {
 		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_VARIABLE_VALUE_EDITORS);
 		IConfigurationElement[] elements = ep.getConfigurationElements();
 		for (IConfigurationElement element : elements) {
-			String modelId = element.getAttribute("modelId"); //$NON-NLS-1$
+			String modelId = element.getAttribute(MODEL_ID);
 			if (modelId != null) {
-				fEditorMap.put(modelId, element);
+				Object original = fEditorMap.put(modelId, element);
+				// Check if the original contribution had higher priority
+				if (original instanceof IConfigurationElement) {
+					int newPrio = getPriority(element);
+					int oldPrio = getPriority((IConfigurationElement) original);
+					if (oldPrio > newPrio) {
+						// restore
+						fEditorMap.put(modelId, original);
+					}
+				}
 			}
 		}
+	}
+
+	private static int getPriority(IConfigurationElement element) {
+		String attribute = element.getAttribute(PRIORITY);
+		int priority = DEFAULT_PRIORITY;
+		if (attribute != null) {
+			try {
+				priority = Integer.parseInt(attribute);
+			} catch (Exception e) {
+				String error = "Unexpected value: '" + attribute + //$NON-NLS-1$
+						"' for '" + PRIORITY + "' attribute " //$NON-NLS-1$//$NON-NLS-2$
+						+ " in extension point '" + IDebugUIConstants.EXTENSION_POINT_VARIABLE_VALUE_EDITORS //$NON-NLS-1$
+						+ "' was specified by " + element.getNamespaceIdentifier(); //$NON-NLS-1$
+				IllegalArgumentException ie = new IllegalArgumentException(error, e);
+				DebugUIPlugin.log(ie);
+			}
+			priority = Math.max(DEFAULT_PRIORITY, priority);
+			priority = Math.min(MAX_PRIORITY, priority);
+		}
+		return priority;
 	}
 }

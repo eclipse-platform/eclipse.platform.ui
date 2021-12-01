@@ -29,6 +29,7 @@ Export-Package: org.eclipse.debug.tests,
  org.eclipse.debug.tests.sourcelookup,
  org.eclipse.debug.tests.statushandlers,
  org.eclipse.debug.tests.stepfilters,
+ org.eclipse.debug.tests.ui,
  org.eclipse.debug.tests.view.memory,
  org.eclipse.debug.tests.viewer.model
 Eclipse-BundleShape: dir

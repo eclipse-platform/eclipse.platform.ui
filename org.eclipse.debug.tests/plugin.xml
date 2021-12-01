@@ -142,4 +142,19 @@
             modelIdentifier="org.eclipse.debug.tests">
       </logicalStructureType>
    </extension>
+   <extension
+       point="org.eclipse.debug.ui.variableValueEditors">
+     <variableValueEditor
+         modelId="testModel"
+         priority="x"
+         class="org.eclipse.debug.tests.ui.TestVariableValueEditor1"/>
+     <variableValueEditor
+         modelId="testModel"
+         priority="10"
+         class="org.eclipse.debug.tests.ui.TestVariableValueEditor2"/>
+     <variableValueEditor
+         modelId="testModel"
+         priority="-1"
+         class="org.eclipse.debug.tests.ui.TestVariableValueEditor3"/>
+   </extension>
 </plugin>
