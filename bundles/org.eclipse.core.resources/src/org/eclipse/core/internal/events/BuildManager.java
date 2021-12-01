@@ -377,6 +377,9 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	private void basicBuildLoop(IBuildConfiguration[] configs, IBuildConfiguration[] requestedConfigs, int trigger, MultiStatus status, IProgressMonitor monitor) {
 		int projectWork = configs.length > 0 ? TOTAL_BUILD_WORK / configs.length : 0;
 		int maxIterations = workspace.getDescription().getMaxBuildIterations();
+		// Scale allowed iterations count depending on affected projects -
+		// allow at least two build cycles per project
+		maxIterations = Math.max(configs.length * 2, maxIterations);
 		if (maxIterations <= 0)
 			maxIterations = 1;
 		rebuildRequested = true;
