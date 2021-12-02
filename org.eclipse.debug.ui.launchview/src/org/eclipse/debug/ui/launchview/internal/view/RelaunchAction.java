@@ -13,8 +13,11 @@
  *******************************************************************************/
 package org.eclipse.debug.ui.launchview.internal.view;
 
+import java.util.Set;
+
 import org.eclipse.debug.ui.launchview.internal.LaunchViewBundleInfo;
 import org.eclipse.debug.ui.launchview.internal.LaunchViewMessages;
+import org.eclipse.debug.ui.launchview.services.ILaunchObject;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
@@ -42,7 +45,8 @@ public class RelaunchAction {
 
 	@CanExecute
 	public boolean isEnabled() {
-		return view.get().stream().allMatch(m -> m.canTerminate());
+		Set<ILaunchObject> elements = view.get();
+		return !elements.isEmpty() && elements.stream().allMatch(m -> m.canTerminate());
 	}
 
 	@Execute

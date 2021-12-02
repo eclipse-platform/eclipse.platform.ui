@@ -254,7 +254,7 @@ public class LaunchViewImpl implements Supplier<Set<ILaunchObject>> {
 		// expand selection if containers are selected
 		for (Object selected : structuredSelection.toList()) {
 			if (selected instanceof LaunchObjectContainerModel) {
-				elements.addAll(((LaunchObjectContainerModel) selected).getChildren());
+				// skip container nodes (Bug 577581)
 			} else if (selected instanceof LaunchObjectModel) {
 				elements.add((LaunchObjectModel) selected);
 			}

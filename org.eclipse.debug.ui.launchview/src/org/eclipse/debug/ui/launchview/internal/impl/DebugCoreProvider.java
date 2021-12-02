@@ -131,7 +131,8 @@ public class DebugCoreProvider extends AbstractLaunchObjectProvider implements I
 
 			@CanExecute
 			public boolean isEnabled() {
-				return selected.get().stream().allMatch(e -> e instanceof DebugCoreLaunchObject && findLaunchConfiguration(e.getType(), e.getId()) != null);
+				Set<ILaunchObject> elements = selected.get();
+				return !elements.isEmpty() && elements.stream().allMatch(e -> e instanceof DebugCoreLaunchObject && findLaunchConfiguration(e.getType(), e.getId()) != null);
 			}
 		});
 
