@@ -17,7 +17,6 @@ package org.eclipse.ui.tests.themes;
 import static org.eclipse.ui.internal.themes.WorkbenchThemeManager.EMPTY_COLOR_VALUE;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
@@ -90,7 +89,7 @@ public class WorkbenchThemeChangedHandlerTest {
 		handler.handleEvent(mock(Event.class));
 
 		//then
-		verify(stylingEngine, times(4)).style(anyObject());
+		verify(stylingEngine, times(4)).style(any());
 		verify(stylingEngine, times(1)).style(themesExtension);
 		verify(stylingEngine, times(1)).style(fontDefinition1);
 		verify(stylingEngine, times(1)).style(fontDefinition2);
@@ -220,7 +219,7 @@ public class WorkbenchThemeChangedHandlerTest {
 		handler.handleEvent(mock(Event.class));
 
 		//then
-		verify(stylingEngine, times(3)).style(anyObject());
+		verify(stylingEngine, times(3)).style(any());
 		verify(stylingEngine, times(1)).style(themesExtension);
 		verify(stylingEngine, times(1)).style(fontDefinition);
 		verify(stylingEngine, times(1)).style(colorDefinition);
@@ -283,7 +282,7 @@ public class WorkbenchThemeChangedHandlerTest {
 		handler.handleEvent(mock(Event.class));
 
 		//then
-		verify(stylingEngine, times(5)).style(anyObject());
+		verify(stylingEngine, times(5)).style(any());
 		verify(stylingEngine, times(1)).style(themesExtension);
 		verify(stylingEngine, times(1)).style(fontDefinition1);
 		verify(stylingEngine, times(1)).style(fontDefinition2);

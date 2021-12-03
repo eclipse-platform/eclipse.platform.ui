@@ -14,8 +14,8 @@
 package org.eclipse.ui.tests.themes;
 
 import static org.junit.Assert.assertFalse;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -61,7 +61,7 @@ public class StylingPreferencesHandlerTest {
 
 		//then
 		verify(handler, times(1)).resetOverriddenPreferences();
-		verify(themeEngine, times(2)).applyStyles(anyObject(), anyBoolean());
+		verify(themeEngine, times(2)).applyStyles(any(), anyBoolean());
 		verify(themeEngine, times(1)).applyStyles(pref1, false);
 		verify(themeEngine, times(1)).applyStyles(pref2, false);
 	}
