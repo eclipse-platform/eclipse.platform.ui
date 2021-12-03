@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Eclipse UI Tests
 Bundle-SymbolicName: org.eclipse.ui.tests; singleton:=true
-Bundle-Version: 3.15.400.qualifier
+Bundle-Version: 3.15.500.qualifier
 Eclipse-BundleShape: dir
 Bundle-Activator: org.eclipse.ui.tests.TestPlugin
 Bundle-Vendor: Eclipse.org
@@ -46,7 +46,8 @@ Require-Bundle: org.eclipse.core.resources;bundle-version="3.14.0",
  org.eclipse.osgi.services;bundle-version="3.3.100",
  org.hamcrest.core;bundle-version="1.3.0",
  org.hamcrest.library;bundle-version="1.3.0",
- org.mockito;bundle-version="2.13.0",
+ org.mockito.mockito-core;bundle-version="2.13.0",
+ net.bytebuddy.byte-buddy,
  org.eclipse.jface;bundle-version="[3.18.0,4.0.0)",
  org.eclipse.ui.views.log;bundle-version="1.2.1300"
 Import-Package: javax.annotation,
