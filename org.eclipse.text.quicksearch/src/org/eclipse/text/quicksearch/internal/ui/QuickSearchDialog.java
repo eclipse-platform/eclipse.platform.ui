@@ -1115,7 +1115,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 				//element is available in the list.
 				openButton.setEnabled(itemCount>0);
 			}
-
+			refreshDetails();
 		}
 	}
 
