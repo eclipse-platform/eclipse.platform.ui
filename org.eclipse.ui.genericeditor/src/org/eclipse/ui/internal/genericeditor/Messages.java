@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Red Hat Inc. and others.
+ * Copyright (c) 2018, 2021 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,6 +18,10 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.genericeditor.messages"; //$NON-NLS-1$
 	public static String DefaultWordHighlightStrategy_OccurrencesOf;
+
+	public static String TextViewer_open_hyperlink_error_title;
+	public static String TextViewer_open_hyperlink_error_message;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
