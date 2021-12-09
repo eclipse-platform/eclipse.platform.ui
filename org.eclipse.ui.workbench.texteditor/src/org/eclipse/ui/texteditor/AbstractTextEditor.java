@@ -1352,9 +1352,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					line = st.getText(lineOffset, end);
 				}
 
-				// Remember current selection
-				Point oldSelection = new Point(offset, offset + length);
-
 				// The new caret position
 				int newCaretOffset = -1;
 
@@ -1367,16 +1364,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					newCaretOffset = lineOffset;
 				}
 
-				newSelection.add(new Point(
-						fDoSelect
-								? (caretAtBeginningOfSelection ? Math.max(oldSelection.x, oldSelection.y)
-										: Math.min(oldSelection.x, oldSelection.y))
-								: newCaretOffset,
-					newCaretOffset));
+				newSelection.add(
+						new Point(fDoSelect ? (caretAtBeginningOfSelection ? offset + length : offset) : newCaretOffset,
+								newCaretOffset));
 			}
 			st.setSelectionRanges(newSelection.stream().flatMapToInt(
-					p -> IntStream.of(Math.max(p.x, p.y), -Math.abs(p.x - p.y))) // negative length to put cursor at
-																					// beginning of selection
+					p -> IntStream.of(p.x, p.y - p.x))
 					.toArray());
 			if (newSelection.size() == 1) {
 				st.showSelection();

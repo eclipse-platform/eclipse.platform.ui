@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2021 Red Hat Inc.
+ * Copyright (c) 2021 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -113,6 +113,30 @@ public class TextNavigationTest {
 		assertEquals(0, selection.getOffset());
 		assertEquals(5, selection.getLength());
 		assertEquals(5, widget.getCaretOffset());
+	}
+
+	@Test
+	public void testShiftEndHomeHome() {
+		editor.getSelectionProvider().setSelection(new TextSelection(0, 0));
+		assertEquals(0, widget.getCaretOffset());
+
+		editor.getAction(ITextEditorActionDefinitionIds.SELECT_LINE_END).run();
+		ITextSelection selection = (ITextSelection) editor.getSelectionProvider().getSelection();
+		assertEquals(0, selection.getOffset());
+		assertEquals(5, selection.getLength());
+		assertEquals(5, widget.getCaretOffset());
+
+		editor.getAction(ITextEditorActionDefinitionIds.SELECT_LINE_START).run();
+		selection = (ITextSelection) editor.getSelectionProvider().getSelection();
+		assertEquals(0, selection.getOffset());
+		assertEquals(2, selection.getLength());
+		assertEquals(2, widget.getCaretOffset()); // Bug 577727
+
+		editor.getAction(ITextEditorActionDefinitionIds.SELECT_LINE_START).run();
+		selection = (ITextSelection) editor.getSelectionProvider().getSelection();
+		assertEquals(0, selection.getOffset());
+		assertEquals(0, selection.getLength());
+		assertEquals(0, widget.getCaretOffset());
 	}
 
 	@Test
