@@ -25,7 +25,7 @@
   <packaging>pom</packaging>
 
 	<properties>
-		<tycho.scmUrl>scm:git:https://git.eclipse.org/r/e4/org.eclipse.e4.tools.git</tycho.scmUrl>
+		<tycho.scmUrl>scm:git:https://git.eclipse.org/r/platform/org.eclipse.ui.tools.git</tycho.scmUrl>
 	</properties>
 
   <!--
