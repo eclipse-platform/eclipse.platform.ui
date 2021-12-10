@@ -329,13 +329,25 @@ public class TextSearchVisitor {
 	 * sort.
 	 **/
 	private static final class FileWithCachedLocation {
-		final IFile file;
-		final String location; // cached
+		private final IFile file;
+		private final String location; // cached
+
+		private static Comparator<String> NULLS_FIRST = Comparator.nullsFirst(Comparator.naturalOrder());
+		private static Comparator<FileWithCachedLocation> BY_LOCATION = Comparator
+				.comparing(FileWithCachedLocation::getLocation, NULLS_FIRST);
 
 		FileWithCachedLocation(IFile file) {
 			this.file = file;
 			IPath path = file.getLocation(); // invokes slow OS operation
 			this.location = path == null ? null : path.toString();
+		}
+
+		String getLocation() {
+			return location;
+		}
+
+		IFile getFile() {
+			return file;
 		}
 	}
 
@@ -413,7 +425,8 @@ public class TextSearchVisitor {
 				// Sorting files to search by location allows to more easily reuse
 				// search results from one file to the other when they have same location
 				IFile[] filesByLocation = Arrays.stream(files).map(FileWithCachedLocation::new)
-						.sorted(Comparator.nullsFirst(Comparator.comparing(fn -> fn.location))).map(fn -> fn.file)
+						.sorted(FileWithCachedLocation.BY_LOCATION)
+						.map(FileWithCachedLocation::getFile)
 						.collect(Collectors.toList()).toArray(IFile[]::new);
 				for (int first = 0; first < filesByLocation.length; first += filesPerJob) {
 					int end= Math.min(filesByLocation.length, first + filesPerJob);
