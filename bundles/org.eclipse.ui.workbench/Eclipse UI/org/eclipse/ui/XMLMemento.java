@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,6 +19,7 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -52,6 +53,8 @@ public final class XMLMemento implements IMemento {
 
     private Element element;
 
+	private static String FILE_STRING = "file"; //$NON-NLS-1$
+
     /**
      * Creates a <code>Document</code> from the <code>Reader</code>
      * and returns a memento on the first <code>Element</code> for reading
@@ -68,26 +71,60 @@ public final class XMLMemento implements IMemento {
         return createReadRoot(reader, null);
     }
 
-    /**
-     * Creates a <code>Document</code> from the <code>Reader</code>
-     * and returns a memento on the first <code>Element</code> for reading
-     * the document.
-     *
-     * @param reader the <code>Reader</code> used to create the memento's document
-     * @param baseDir the directory used to resolve relative file names
-     * 		in the XML document. This directory must exist and include the
-     * 		trailing separator. The directory format, including the separators,
-     * 		must be valid for the platform. Can be <code>null</code> if not
-     * 		needed.
-     * @return a memento on the first <code>Element</code> for reading the document
-     * @throws WorkbenchException if IO problems, invalid format, or no element.
-     */
+	/**
+	 * Clients who need to use the "file" protocol can override this method to
+	 * return the original attribute value
+	 *
+	 * @param attributeOldValue
+	 * @return return the new attribute value after concatenating the "file"
+	 *         protocol restriction if does not exist already
+	 */
+	private static String getAttributeNewValue(Object attributeOldValue) {
+		StringBuffer strNewValue = new StringBuffer(FILE_STRING);
+		if (attributeOldValue instanceof String && ((String) attributeOldValue).length() != 0) {
+			String strOldValue = (String) attributeOldValue;
+			boolean exists = Arrays.asList(strOldValue.split(",")).stream().anyMatch(x -> x.trim().equals(FILE_STRING)); //$NON-NLS-1$
+			if (!exists) {
+				strNewValue.append(", ").append(strOldValue); //$NON-NLS-1$
+			} else {
+				strNewValue = new StringBuffer(strOldValue);
+			}
+		}
+		return strNewValue.toString();
+	}
+
+	/**
+	 * Creates a <code>Document</code> from the <code>Reader</code> and returns a
+	 * memento on the first <code>Element</code> for reading the document.
+	 *
+	 * @param reader  the <code>Reader</code> used to create the memento's document
+	 * @param baseDir the directory used to resolve relative file names in the XML
+	 *                document. This directory must exist and include the trailing
+	 *                separator. The directory format, including the separators,
+	 *                must be valid for the platform. Can be <code>null</code> if
+	 *                not needed.
+	 * @return a memento on the first <code>Element</code> for reading the document
+	 * @throws WorkbenchException if IO problems, invalid format, or no element.
+	 */
 	public static XMLMemento createReadRoot(Reader reader, String baseDir) throws WorkbenchException {
         String errorMessage = null;
-        Exception exception = null;
+		Exception exception = null;
+		DocumentBuilderFactory factory = null;
+		Object attributeDTDOldValue = null;
+		Object attributeSchemaOldValue = null;
+		try {
+			factory = DocumentBuilderFactory.newInstance();
+			try {
+				attributeDTDOldValue = factory.getAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_DTD);
+				attributeSchemaOldValue = factory.getAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_SCHEMA);
+			} catch (NullPointerException | IllegalArgumentException e) {
+				// Attributes not defined
+			}
+			factory.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_DTD,
+					getAttributeNewValue(attributeDTDOldValue));
+			factory.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_SCHEMA,
+					getAttributeNewValue(attributeSchemaOldValue));
 
-        try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder parser = factory.newDocumentBuilder();
             InputSource source = new InputSource(reader);
             if (baseDir != null) {
@@ -134,7 +171,12 @@ public final class XMLMemento implements IMemento {
         } catch (SAXException e) {
             exception = e;
             errorMessage = WorkbenchMessages.XMLMemento_formatError;
-        }
+		} finally {
+			if (factory != null) {
+				factory.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_DTD, attributeDTDOldValue);
+				factory.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_SCHEMA, attributeSchemaOldValue);
+			}
+		}
 
         String problemText = null;
         if (exception != null) {
