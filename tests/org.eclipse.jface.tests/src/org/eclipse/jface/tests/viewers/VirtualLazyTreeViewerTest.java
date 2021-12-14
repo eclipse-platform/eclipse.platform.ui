@@ -74,7 +74,6 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
 		assertTrue(fTreeViewer.isExpandable(nodeElement));
 	}
 
-
 	@Override
 	public void testRefreshWithDuplicateChild() {
 		// Test leads to infinite loop. Duplicate children are a bad idea in virtual trees.
@@ -128,6 +127,11 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
 	@Override
 	public void testSorter() {
 		// no need to test since virtual trees do not support sorting
+	}
+
+	@Override
+	public void testChildIsNotDuplicatedWhenCompareEquals() {
+		// test is not relevant for lazy tree viewer
 	}
 
 	// Temporary overrides for bug 347491:

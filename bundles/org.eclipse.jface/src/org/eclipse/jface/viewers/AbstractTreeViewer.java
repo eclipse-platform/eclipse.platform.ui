@@ -138,20 +138,19 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	}
 
 	/**
-	 * Adds the given child elements to this viewer as children of the given
-	 * parent element. If this viewer does not have a sorter, the elements are
-	 * added at the end of the parent's list of children in the order given;
-	 * otherwise, the elements are inserted at the appropriate positions.
+	 * Adds the given child elements to this viewer as children of the given parent
+	 * element. If this viewer does not have a sorter, the elements are added at the
+	 * end of the parent's list of children in the order given; otherwise, the
+	 * elements are inserted at the appropriate positions. If a child already exists
+	 * under the given parent, the child gets refreshed and not added twice.
 	 * <p>
 	 * This method should be called (by the content provider) when elements have
-	 * been added to the model, in order to cause the viewer to accurately
-	 * reflect the model. This method only affects the viewer, not the model.
+	 * been added to the model, in order to cause the viewer to accurately reflect
+	 * the model. This method only affects the viewer, not the model.
 	 * </p>
 	 *
-	 * @param parentElementOrTreePath
-	 *            the parent element
-	 * @param childElements
-	 *            the child elements to add
+	 * @param parentElementOrTreePath the parent element
+	 * @param childElements           the child elements to add
 	 */
 	public void add(Object parentElementOrTreePath, Object... childElements) {
 		Assert.isNotNull(parentElementOrTreePath);
@@ -331,12 +330,11 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	}
 
 	/**
-	 * Create the new elements in the parent widget. If the child already exists
-	 * do nothing.
+	 * Create the new elements in the parent widget. If the child already exists it
+	 * will be refreshed to handle potential changes within its children.
 	 *
 	 * @param widget
-	 * @param elements
-	 *            Sorted list of elements to add.
+	 * @param elements Sorted list of elements to add.
 	 */
 	private void createAddedElements(Widget widget, Object[] elements) {
 
@@ -391,22 +389,38 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 				// Use a separate index variable to search within the existing
 				// elements that compare equally, see
 				// TreeViewerTestBug205700.testAddEquallySortedElements.
-				int insertionIndexInItems = indexInItems;
-				while( insertionIndexInItems < items.length
-						&& internalCompare(comparator, parentPath, element,
-								items[insertionIndexInItems].getData()) == 0) {
-					// As we cannot assume the sorter is consistent with
-					// equals() - therefore we can
-					// just check against the item prior to this index (if
-					// any)
-					if (items[insertionIndexInItems].getData().equals(element)) {
-						// Found the item for the element.
-						// Refresh the element in case it has new children.
-						internalRefresh(element);
-						// Do not create a new item - continue with the next element.
-						continue elementloop;
+				int insertionIndexInItems = indexInItems - 1;
+				// Searching not only forward but also backward while trying to find an equal
+				// element.
+				// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=571844.
+				int directionStep = -1;
+				while (insertionIndexInItems < items.length) {
+					if (insertionIndexInItems >= 0 && internalCompare(comparator, parentPath, element,
+							items[insertionIndexInItems].getData()) == 0) {
+						// As we cannot assume the sorter is consistent with
+						// equals() - therefore we can
+						// just check against the item prior to this index (if
+						// any)
+						if (items[insertionIndexInItems].getData().equals(element)) {
+							// Found the item for the element.
+							// Refresh the element in case it has new children.
+							internalRefresh(element);
+							// Do not create a new item - continue with the next element.
+							continue elementloop;
+						}
+						insertionIndexInItems += directionStep;
+					} else {
+						if (directionStep < 0) {
+							// Reached an non equal item or the first item in forwardDirection
+							// change search direction
+							directionStep = 1;
+							insertionIndexInItems = indexInItems;
+						} else {
+							// Reached an non equal item in forwardDirection, break the while loop
+							// The last item is detected by the while loop itself.
+							break;
+						}
 					}
-					insertionIndexInItems++;
 				}
 				// Did we get to the end?
 				if (insertionIndexInItems == items.length) {
@@ -650,22 +664,21 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	}
 
 	/**
-	 * Adds the given child element to this viewer as a child of the given
-	 * parent element. If this viewer does not have a sorter, the element is
-	 * added at the end of the parent's list of children; otherwise, the element
-	 * is inserted at the appropriate position.
+	 * Adds the given child element to this viewer as a child of the given parent
+	 * element. If this viewer does not have a sorter, the element is added at the
+	 * end of the parent's list of children; otherwise, the element is inserted at
+	 * the appropriate position. If the child already exists under the given parent,
+	 * the child gets refreshed and not added twice.
 	 * <p>
-	 * This method should be called (by the content provider) when a single
-	 * element has been added to the model, in order to cause the viewer to
-	 * accurately reflect the model. This method only affects the viewer, not
-	 * the model. Note that there is another method for efficiently processing
-	 * the simultaneous addition of multiple elements.
+	 * This method should be called (by the content provider) when a single element
+	 * has been added to the model, in order to cause the viewer to accurately
+	 * reflect the model. This method only affects the viewer, not the model. Note
+	 * that there is another method for efficiently processing the simultaneous
+	 * addition of multiple elements.
 	 * </p>
 	 *
-	 * @param parentElementOrTreePath
-	 *            the parent element or path
-	 * @param childElement
-	 *            the child element
+	 * @param parentElementOrTreePath the parent element or path
+	 * @param childElement            the child element
 	 */
 	public void add(Object parentElementOrTreePath, Object childElement) {
 		add(parentElementOrTreePath, new Object[] { childElement });

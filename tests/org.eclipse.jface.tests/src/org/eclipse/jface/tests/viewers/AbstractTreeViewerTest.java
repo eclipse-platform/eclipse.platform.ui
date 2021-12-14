@@ -19,6 +19,7 @@ import java.util.List;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
@@ -280,6 +281,33 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		fRootElement.addChild(child, new TestModelChange(TestModelChange.INSERT, fRootElement, child));
 		int postCount = getItemCount(parent);
 		assertEquals("Same element added to a parent twice.", initialCount, postCount);
+	}
+
+	/**
+	 * Test for Bug 571844 - assert that an item is not added twice if the
+	 * comparator returns 0 = equal for more than one tree item. Problem was that
+	 * the method AbstractTreeViewer#createAddedElements only searched forward but
+	 * not backwards for an equal element, if the comparator returned 0. The example
+	 * below is a case where the previous implementation would fail.
+	 */
+	public void testChildIsNotDuplicatedWhenCompareEquals() {
+		fTreeViewer.setComparator(new TestLabelComparator());
+		fRootElement.deleteChildren();
+
+		TestElement child1 = fRootElement.addChild(TestModelChange.INSERT);
+		child1.setLabel("1");
+		TestElement child2 = fRootElement.addChild(TestModelChange.INSERT);
+		child2.setLabel("1");
+		TestElement child3 = fRootElement.addChild(TestModelChange.INSERT);
+		child3.setLabel("0");
+
+		// Every duplicated element must not be added as TreeItem.
+		fRootElement.addChild(child1, new TestModelChange(TestModelChange.INSERT, fRootElement, child1));
+		fRootElement.addChild(child2, new TestModelChange(TestModelChange.INSERT, fRootElement, child2));
+		fRootElement.addChild(child3, new TestModelChange(TestModelChange.INSERT, fRootElement, child3));
+
+		Tree tree = (Tree) fTreeViewer.getControl();
+		assertEquals("Same element added to parent twice.", 3, tree.getItems().length);
 	}
 
 	@Override
