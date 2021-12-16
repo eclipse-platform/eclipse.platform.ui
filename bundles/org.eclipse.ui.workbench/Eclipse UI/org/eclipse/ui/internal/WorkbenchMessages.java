@@ -619,6 +619,10 @@ public class WorkbenchMessages extends NLS {
 	public static String EditorManager_backgroundSaveJobName;
 	public static String EditorManager_largeDocumentWarning;
 
+	public static String LargeFileAssociation_Dialog_chooseEditorTitle;
+	public static String LargeFileAssociation_Dialog_rememberSelectedEditor;
+	public static String LargeFileAssociation_Dialog_configureFileAssociationsLink;
+
 	public static String ExternalEditor_errorMessage;
 	public static String Save;
 	public static String Save_Resource;

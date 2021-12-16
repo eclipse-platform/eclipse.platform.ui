@@ -618,6 +618,18 @@
          </keywordReference>
       </page>
       <page
+            name="%PreferencePages.LargeDocumentEditors"
+            category="org.eclipse.ui.preferencePages.Editors"
+            class="org.eclipse.ui.internal.ide.LargeFileAssociationsPreferencePage"
+            id="org.eclipse.ui.preferencePages.LargeFileAssociations">
+         <keywordReference id="org.eclipse.ui.ide.editing"/>
+         <keywordReference id="org.eclipse.ui.ide.editors"/>
+         <keywordReference id="org.eclipse.ui.ide.unassociated"/>
+         <keywordReference
+               id="org.eclipse.ui.ide.open">
+         </keywordReference>
+      </page>
+      <page
             name="%PreferencePages.Views"
             category="org.eclipse.ui.preferencePages.Workbench"
             class="org.eclipse.ui.ExtensionFactory:appearancePreferencePage"

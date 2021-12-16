@@ -262,6 +262,19 @@ public interface IPreferenceConstants {
 	String LARGE_DOC_SIZE_FOR_EDITORS = "LARGE_DOC_SIZE_FOR_EDITORS"; //$NON-NLS-1$
 
 	/**
+	 * This preference specifies file types which support a custom editor for large
+	 * files.
+	 * <p>
+	 * This preference is a <code>String</code> value that list comma-separated file
+	 * extensions (without a dot), for which a custom editor is specified when the
+	 * input file exceeds a given file size.
+	 * </p>
+	 *
+	 * @since 3.124.100
+	 */
+	String LARGE_FILE_LIMITS = "largeFileLimits"; //$NON-NLS-1$
+
+	/**
 	 * Preference id for whether the editors may save automatically.
 	 * <p>
 	 * The boolean default value for this preference is: <code>false</code>.
