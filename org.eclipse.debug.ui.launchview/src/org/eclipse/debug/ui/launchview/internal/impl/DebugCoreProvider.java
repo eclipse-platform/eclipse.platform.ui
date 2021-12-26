@@ -114,14 +114,14 @@ public class DebugCoreProvider extends AbstractLaunchObjectProvider implements I
 
 	@Override
 	public void contributeContextMenu(Supplier<Set<ILaunchObject>> selected, MMenu menu) {
-		MDirectMenuItem cleanup = MMenuFactory.INSTANCE.createDirectMenuItem();
-		cleanup.setLabel(LaunchViewMessages.DebugCoreProvider_delete);
-		cleanup.setTooltip(LaunchViewMessages.DebugCoreProvider_deleteHint);
-		cleanup.setIconURI("platform:/plugin/" + LaunchViewBundleInfo.PLUGIN_ID + "/icons/remove_exc.png"); //$NON-NLS-1$ //$NON-NLS-2$
-		cleanup.setObject(new Object() {
+		MDirectMenuItem delete = MMenuFactory.INSTANCE.createDirectMenuItem();
+		delete.setLabel(LaunchViewMessages.DebugCoreProvider_delete);
+		delete.setTooltip(LaunchViewMessages.DebugCoreProvider_deleteHint);
+		delete.setIconURI("platform:/plugin/" + LaunchViewBundleInfo.PLUGIN_ID + "/icons/delete_exc.png"); //$NON-NLS-1$ //$NON-NLS-2$
+		delete.setObject(new Object() {
 
 			@Execute
-			public void cleanup() throws CoreException {
+			public void delete() throws CoreException {
 				for (ILaunchObject e : selected.get()) {
 					findLaunchConfiguration(e.getType(), e.getId()).delete();
 				}
@@ -137,7 +137,7 @@ public class DebugCoreProvider extends AbstractLaunchObjectProvider implements I
 		});
 
 		menu.getChildren().add(MMenuFactory.INSTANCE.createMenuSeparator());
-		menu.getChildren().add(cleanup);
+		menu.getChildren().add(delete);
 	}
 
 	ILaunchConfiguration findLaunchConfiguration(ILaunchConfigurationType type, String name) {
