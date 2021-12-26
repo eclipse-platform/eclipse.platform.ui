@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="ASCII"?>
 <fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmi:id="_GxnD8Ly2EeOxWJvPH-7sUQ">
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_Kmj8QLy2EeOxWJvPH-7sUQ" featurename="commands" parentElementId="xpath:/">
-    <elements xsi:type="commands:Command" xmi:id="_RRp7QLy2EeOxWJvPH-7sUQ" elementId="org.eclipse.e4.tools.emf.ui.command.mark_duplicate_ids" commandName="Mark Duplicate Model Element Ids" description="Marks Duplicate Model Element Ids">
+    <elements xsi:type="commands:Command" xmi:id="_RRp7QLy2EeOxWJvPH-7sUQ" elementId="org.eclipse.e4.tools.emf.ui.command.mark_duplicate_ids" commandName="%mark_duplicate_ids_commandName" description="%mark_duplicate_ids_description">
       <persistedState key="persistState" value="false"/>
     </elements>
-    <elements xsi:type="commands:Command" xmi:id="_9ITpgL2IEeOqSr2XZwfnmA" elementId="org.eclipse.e4.tools.emf.ui.command.mark_duplicate_labels" commandName="Mark Duplicate Model Labels" description="Marks Duplicate Model Labels">
+    <elements xsi:type="commands:Command" xmi:id="_9ITpgL2IEeOqSr2XZwfnmA" elementId="org.eclipse.e4.tools.emf.ui.command.mark_duplicate_labels" commandName="%mark_duplicate_labels_commandName" description="%mark_duplicate_labels_description">
       <persistedState key="persistState" value="false"/>
     </elements>
-    <elements xsi:type="commands:Command" xmi:id="_RObi4L2MEeOqSr2XZwfnmA" elementId="org.eclipse.e4.tools.emf.ui.command.mark_duplicate_attributes" commandName="Mark Duplicate Model Attributes..." description="Marks Duplicate Model Attributes">
+    <elements xsi:type="commands:Command" xmi:id="_RObi4L2MEeOqSr2XZwfnmA" elementId="org.eclipse.e4.tools.emf.ui.command.mark_duplicate_attributes" commandName="%mark_duplicate_attributes_commandName" description="%mark_duplicate_attributes_description">
       <persistedState key="persistState" value="false"/>
     </elements>
-    <elements xsi:type="commands:Command" xmi:id="_dySeYLzDEeO8eO1Rpb-rFA" elementId="org.eclipse.e4.tools.emf.ui.command.repair_duplicate_ids" commandName="Repair Duplicate Model Element IDs" description="Repairs Duplicate Model Element IDs">
+    <elements xsi:type="commands:Command" xmi:id="_dySeYLzDEeO8eO1Rpb-rFA" elementId="org.eclipse.e4.tools.emf.ui.command.repair_duplicate_ids" commandName="%repair_duplicate_ids_commandName" description="%repair_duplicate_ids_description">
       <persistedState key="persistState" value="false"/>
     </elements>
-    <elements xsi:type="commands:Command" xmi:id="_CFlw8L2LEeOqSr2XZwfnmA" elementId="org.eclipse.e4.tools.emf.ui.command.unmark" commandName="Unmark Model Items" description="Unmarks All Model Items">
+    <elements xsi:type="commands:Command" xmi:id="_CFlw8L2LEeOqSr2XZwfnmA" elementId="org.eclipse.e4.tools.emf.ui.command.unmark" commandName="%unmark_commandName" description="%unmark_description">
       <persistedState key="persistState" value="false"/>
     </elements>
-    <elements xsi:type="commands:Command" xmi:id="_jd7xgO5mEeOQXaYP-M2JBA" elementId="org.eclipse.e4.tools.emf.ui.command.autosizeColumns" commandName="Autosize Columns" description="Autosizes all columns to their content">
+    <elements xsi:type="commands:Command" xmi:id="_jd7xgO5mEeOQXaYP-M2JBA" elementId="org.eclipse.e4.tools.emf.ui.command.autosizeColumns" commandName="%autosizeColumns_commandName" description="%autosizeColumns_description">
       <persistedState key="persistState" value="false"/>
     </elements>
-    <elements xsi:type="commands:Command" xmi:id="_vsQXAPFwEeOSJuCPb-hb7A" elementId="org.eclipse.e4.tools.emf.ui.command.resetToDefault" commandName="Reset To Default" description="Resets the table to default values">
+    <elements xsi:type="commands:Command" xmi:id="_vsQXAPFwEeOSJuCPb-hb7A" elementId="org.eclipse.e4.tools.emf.ui.command.resetToDefault" commandName="%resetToDefault_commandName" description="%resetToDefault_description">
       <persistedState key="persistState" value="false"/>
     </elements>
   </fragments>
