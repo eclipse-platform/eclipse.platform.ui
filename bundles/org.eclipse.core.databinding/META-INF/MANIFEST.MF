@@ -7,6 +7,8 @@ Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.core.databinding,
+ org.eclipse.core.databinding.bind,
+ org.eclipse.core.databinding.bind.steps,
  org.eclipse.core.databinding.conversion;x-internal:=false,
  org.eclipse.core.databinding.conversion.text;x-internal:=false,
  org.eclipse.core.databinding.validation;x-internal:=false,
