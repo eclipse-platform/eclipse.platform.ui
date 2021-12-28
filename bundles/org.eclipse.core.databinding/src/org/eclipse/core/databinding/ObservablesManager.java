@@ -115,15 +115,17 @@ public class ObservablesManager {
 	 * Executes the specified runnable and adds to this manager all observables
 	 * created while executing the runnable.
 	 * <p>
-	 * <em>NOTE: As of 1.2 (Eclipse 3.5), there are unresolved problems with this
-	 * API, see <a href="https://bugs.eclipse.org/278550">bug 278550</a>. If we
-	 * cannot find a way to make this API work, it will be deprecated as of
-	 * 3.6.</em>
-	 * </p>
+	 *
+	 * @deprecated This method is very error prone. If any class creates internal
+	 *             observables without hiding them with
+	 *             {@link ObservableTracker#setIgnore} the result can be that
+	 *             objects are disposed involuntary or in the wrong order. Prefer
+	 *             instead to use {@link #addContext}.
 	 *
 	 * @param runnable the runnable to execute
 	 * @since 1.2
 	 */
+	@Deprecated(since = "1.11.0")
 	public void runAndCollect(Runnable runnable) {
 		IObservable[] collected = ObservableTracker.runAndCollect(runnable);
 		for (IObservable observable : collected) {
