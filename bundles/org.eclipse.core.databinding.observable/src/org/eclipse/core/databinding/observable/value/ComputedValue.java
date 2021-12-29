@@ -17,6 +17,7 @@
  *******************************************************************************/
 package org.eclipse.core.databinding.observable.value;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import org.eclipse.core.databinding.observable.ChangeEvent;
@@ -87,23 +88,24 @@ public abstract class ComputedValue<T> extends AbstractObservableValue<T> {
 
 	/**
 	 * Factory method to create {@link ComputedValue} objects in an easy manner.
-	 * <br>
-	 * <br>
+	 * <p>
+	 * The created list has a null {@link IObservableValue#getValueType}.
+	 * <p>
 	 * Example observing the size of an {@link IObservableList}:
 	 *
 	 * <pre>
 	 * IObservableValue&lt;Integer&gt; listSizeObservable = ComputedValue.create(() -&gt; observableList.size());
 	 * </pre>
 	 *
-	 * @param supplier {@link Supplier}, whose {@link Supplier#get()} method is a
-	 *                 TrackedGetter. See
-	 *                 {@link ObservableTracker#getterCalled(IObservable)} for
-	 *                 details.
+	 * @param supplier {@link Supplier}, which is tracked using
+	 *                 {@link ObservableTracker} to find out observables it uses, in
+	 *                 the same manner as {@link #calculate}.
 	 * @return {@link ComputedValue} whose value is computed using the given
 	 *         {@link Supplier}.
 	 * @since 1.6
 	 */
 	public static <T> IObservableValue<T> create(Supplier<T> supplier) {
+		Objects.requireNonNull(supplier);
 		return new ComputedValue<T>() {
 			@Override
 			protected T calculate() {

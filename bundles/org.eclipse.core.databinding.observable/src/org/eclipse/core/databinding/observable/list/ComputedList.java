@@ -20,6 +20,8 @@ package org.eclipse.core.databinding.observable.list;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Supplier;
 
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.Diffs;
@@ -87,6 +89,28 @@ public abstract class ComputedList<E> extends AbstractObservableList<E> {
 	private boolean stale = false;
 
 	private IObservable[] dependencies = new IObservable[0];
+
+	/**
+	 * Factory method to create {@link ComputedList} objects in an easy manner.
+	 * <p>
+	 * The created list has a null {@link IObservableList#getElementType}.
+	 *
+	 * @param supplier {@link Supplier}, which is tracked using
+	 *                 {@link ObservableTracker} to find out observables it uses, in
+	 *                 the same manner as {@link #calculate}.
+	 * @return {@link ComputedList} whose elements are computed using the given
+	 *         {@link Supplier}.
+	 * @since 1.12
+	 */
+	public static <E> IObservableList<E> create(Supplier<List<E>> supplier) {
+		Objects.requireNonNull(supplier);
+		return new ComputedList<E>() {
+			@Override
+			protected List<E> calculate() {
+				return supplier.get();
+			}
+		};
+	}
 
 	/**
 	 * Creates a computed list in the default realm and with an unknown (null)

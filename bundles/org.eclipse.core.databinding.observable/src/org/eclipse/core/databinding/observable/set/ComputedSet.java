@@ -18,7 +18,9 @@ package org.eclipse.core.databinding.observable.set;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.Diffs;
@@ -83,6 +85,28 @@ public abstract class ComputedSet<E> extends AbstractObservableSet<E> {
 	private boolean stale = false;
 
 	private IObservable[] dependencies = new IObservable[0];
+
+	/**
+	 * Factory method to create {@link ComputedSet} objects in an easy manner.
+	 * <p>
+	 * The created list has a null {@link IObservableSet#getElementType}.
+	 *
+	 * @param supplier {@link Supplier}, which is tracked using
+	 *                 {@link ObservableTracker} to find out observables it uses, in
+	 *                 the same manner as {@link #calculate}.
+	 * @return {@link ComputedSet} whose elements are computed using the given
+	 *         {@link Supplier}.
+	 * @since 1.12
+	 */
+	public static <E> IObservableSet<E> create(Supplier<Set<E>> supplier) {
+		Objects.requireNonNull(supplier);
+		return new ComputedSet<E>() {
+			@Override
+			protected Set<E> calculate() {
+				return supplier.get();
+			}
+		};
+	}
 
 	/**
 	 * Creates a computed set in the default realm and with an unknown (null)

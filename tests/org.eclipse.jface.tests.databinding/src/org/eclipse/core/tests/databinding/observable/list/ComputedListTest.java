@@ -29,6 +29,8 @@ import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.ComputedList;
+import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.jface.databinding.conformance.ObservableListContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.ListChangeEventTracker;
@@ -96,6 +98,16 @@ public class ComputedListTest extends AbstractDefaultRealmTestCase {
 		assertEquals(
 				"ComputedList should fire list change event when its dependency changes",
 				2, tracker.count);
+	}
+
+	@Test
+	public void testCreate() throws Exception {
+		WritableList<Integer> writeList = new WritableList<>();
+		writeList.add(44);
+		IObservableList<Integer> compList = ComputedList.create(() -> new ArrayList<>(writeList));
+		assertEquals(writeList, compList);
+		writeList.add(55);
+		assertEquals(writeList, compList);
 	}
 
 	static class ComputedListStub<E> extends ComputedList<E> {

@@ -29,6 +29,8 @@ import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.ComputedSet;
+import org.eclipse.core.databinding.observable.set.IObservableSet;
+import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.jface.databinding.conformance.ObservableCollectionContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.SetChangeEventTracker;
@@ -94,6 +96,16 @@ public class ComputedSetTest extends AbstractDefaultRealmTestCase {
 		assertEquals(
 				"ComputedSet should fire set change event when its dependency changes",
 				2, tracker.count);
+	}
+
+	@Test
+	public void testCreate() throws Exception {
+		WritableSet<Integer> writeSet = new WritableSet<>();
+		writeSet.add(44);
+		IObservableSet<Integer> compSet = ComputedSet.create(() -> new HashSet<>(writeSet));
+		assertEquals(writeSet, compSet);
+		writeSet.add(55);
+		assertEquals(writeSet, compSet);
 	}
 
 	static class ComputedSetStub extends ComputedSet<Object> {
