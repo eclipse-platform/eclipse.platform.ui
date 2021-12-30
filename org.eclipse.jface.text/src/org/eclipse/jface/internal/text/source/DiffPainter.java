@@ -63,6 +63,8 @@ public final class DiffPainter {
 	private CompositeRuler fParentRuler;
 	/** The column's control, typically a {@link Canvas}, possibly <code>null</code>. */
 	private Control fControl;
+	/** Display on which to post async runnables. */
+	private Display fDisplay;
 	/** The text viewer that the column is attached to. */
 	private ITextViewer fViewer;
 	/** The viewer's text widget. */
@@ -179,6 +181,7 @@ public final class DiffPainter {
 			return;
 
 		fControl.addDisposeListener(e -> handleDispose());
+		fDisplay= fControl.getDisplay();
 	}
 
 	/**
@@ -356,7 +359,7 @@ public final class DiffPainter {
 	 */
 	private final void postRedraw() {
 		if (isConnected() && !fControl.isDisposed()) {
-			Display d= fControl.getDisplay();
+			Display d= fDisplay;
 			if (d != null) {
 				d.asyncExec(this::redraw);
 			}
@@ -367,7 +370,9 @@ public final class DiffPainter {
 	 * Triggers redrawing of the column.
 	 */
 	private void redraw() {
-		fColumn.redraw();
+		if (!fControl.isDisposed()) {
+			fColumn.redraw();
+		}
 	}
 
 	/**
