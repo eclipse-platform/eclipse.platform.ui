@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -306,18 +306,10 @@ public class FindReplaceDocumentAdapterContentProposalProvider implements IConte
 		 * @param additionalInfo the additional information
 		 */
 		private void addBsProposal(String proposal, String displayString, String additionalInfo) {
-			String prolog= fExpression.substring(0, fDocumentOffset);
-			int position= proposal.length();
-			// If the string already contains the backslash, do not include in the proposal
-			if (prolog.endsWith("\\")) { //$NON-NLS-1$
-				position--;
-				proposal= proposal.substring(1);
-			}
-
 			if (fIsEscape) {
-				fPriorityProposals.add(new ContentProposal(proposal, displayString, additionalInfo, position));
+				fPriorityProposals.add(new ContentProposal(proposal.substring(1), displayString, additionalInfo, proposal.length() - 1));
 			} else {
-				addProposal(proposal, position, displayString, additionalInfo);
+				addProposal(proposal, proposal.length(), displayString, additionalInfo);
 			}
 		}
 	}
