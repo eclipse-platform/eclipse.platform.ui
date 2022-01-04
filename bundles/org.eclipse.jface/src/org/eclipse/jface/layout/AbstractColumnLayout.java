@@ -231,7 +231,7 @@ public abstract class AbstractColumnLayout extends Layout {
 		} while (recalculate);
 
 		if (increase) {
-			scrollable.setSize(area.width, area.height);
+			scrollable.setBounds(0, 0, area.width, area.height);
 		}
 
 		inupdateMode = true;
@@ -240,7 +240,7 @@ public abstract class AbstractColumnLayout extends Layout {
 		inupdateMode = false;
 
 		if (!increase) {
-			scrollable.setSize(area.width, area.height);
+			scrollable.setBounds(0, 0, area.width, area.height);
 		}
 	}
 
