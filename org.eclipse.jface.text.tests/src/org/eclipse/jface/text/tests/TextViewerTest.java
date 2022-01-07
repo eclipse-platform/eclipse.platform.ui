@@ -416,9 +416,9 @@ public class TextViewerTest {
 		TextViewer textViewer= new TextViewer(fShell, SWT.NONE);
 		Document document= new Document();
 		textViewer.setDocument(document);
-		new Clipboard(fShell.getDisplay()).setContents(new Object[] { "a\na" }, new Transfer[] { TextTransfer.getInstance() }, DND.CLIPBOARD);
+		new Clipboard(fShell.getDisplay()).setContents(new Object[] { "a" + System.lineSeparator() + "a" }, new Transfer[] { TextTransfer.getInstance() }, DND.CLIPBOARD);
 		textViewer.doOperation(ITextOperationTarget.PASTE);
-		assertEquals("a\na", textViewer.getTextWidget().getText());
+		assertEquals("a" + System.lineSeparator() + "a", textViewer.getTextWidget().getText());
 		//
 		document.set("a\na\na\nb");
 		textViewer.setSelectedRange(0, 6);
