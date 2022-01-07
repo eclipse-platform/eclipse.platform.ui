@@ -42,62 +42,62 @@
         <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
       </repositories>
     </iu>
-    <iu id='org.bouncycastle.bcpg' name='org.bouncycastle.bcpg' version='1.61.0'>
+    <iu id='org.bouncycastle.bcpg' name='org.bouncycastle.bcpg' version='1.69.0'>
       <repositories size='1'>
         <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
       </repositories>
     </iu>
-    <iu id='org.bouncycastle.bcpkix' name='org.bouncycastle.bcpkix' version='1.61.0'>
+    <iu id='org.bouncycastle.bcpkix' name='org.bouncycastle.bcpkix' version='1.69.0'>
       <repositories size='1'>
         <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
       </repositories>
     </iu>
-    <iu id='org.bouncycastle.bcprov' name='org.bouncycastle.bcprov' version='1.61.0'>
+    <iu id='org.bouncycastle.bcprov' name='org.bouncycastle.bcprov' version='1.69.0'>
       <repositories size='1'>
         <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
       </repositories>
     </iu>
-    <iu id='org.objectweb.asm.analysis' name='org.objectweb.asm.analysis' version='9.1.0'>
+    <iu id='org.objectweb.asm.analysis' name='org.objectweb.asm.analysis' version='9.2.0'>
       <repositories size='1'>
         <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
       </repositories>
     </iu>
-    <iu id='org.objectweb.asm.util' name='org.objectweb.asm.util' version='9.1.0'>
+    <iu id='org.objectweb.asm.util' name='org.objectweb.asm.util' version='9.2.0'>
       <repositories size='1'>
         <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
       </repositories>
     </iu>
-    <iu id='org.objectweb.asm.commons' name='org.objectweb.asm.commons' version='9.1.0'>
+    <iu id='org.objectweb.asm.commons' name='org.objectweb.asm.commons' version='9.2.0'>
       <repositories size='1'>
         <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
       </repositories>
     </iu>
-    <iu id='org.objectweb.asm.analysis.source' name='org.objectweb.asm.analysis.source' version='9.1.0'>
+    <iu id='org.objectweb.asm.analysis.source' name='org.objectweb.asm.analysis.source' version='9.2.0'>
       <repositories size='1'>
         <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
       </repositories>
     </iu>
-    <iu id='org.objectweb.asm.util.source' name='org.objectweb.asm.util.source' version='9.1.0'>
+    <iu id='org.objectweb.asm.util.source' name='org.objectweb.asm.util.source' version='9.2.0'>
       <repositories size='1'>
         <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
       </repositories>
     </iu>
-    <iu id='org.objectweb.asm.commons.source' name='org.objectweb.asm.commons.source' version='9.1.0'>
+    <iu id='org.objectweb.asm.commons.source' name='org.objectweb.asm.commons.source' version='9.2.0'>
       <repositories size='1'>
         <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
       </repositories>
     </iu>
-    <iu id='org.apache.sshd.osgi' name='org.apache.sshd.osgi' version='2.7.0'>
+    <iu id='org.apache.sshd.osgi' name='org.apache.sshd.osgi' version='2.8.0'>
       <repositories size='1'>
         <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
       </repositories>
     </iu>
-    <iu id='org.apache.sshd.sftp' name='org.apache.sshd.sftp' version='2.7.0'>
+    <iu id='org.apache.sshd.sftp' name='org.apache.sshd.sftp' version='2.8.0'>
       <repositories size='1'>
         <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
       </repositories>
     </iu>
-    <iu id='org.assertj' name='org.assertj' version='3.14.0'>
+    <iu id='org.assertj' name='org.assertj' version='3.20.2'>
       <repositories size='1'>
         <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
       </repositories>
@@ -172,12 +172,12 @@
             <repository location='https://download.eclipse.org/releases/latest/'/>
         </repositories>
     </iu>
-    <iu id='org.apache.log4j' name='Apache Jakarta log4j Plug-in' version='0.0.0'>
+    <iu id='org.slf4j.binding.simple' name='SLF4J Simple Binding Plug-in' version='0.0.0'>
         <repositories size='1'>
-            <repository location='https://download.eclipse.org/releases/latest/'/>
+            <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
         </repositories>
     </iu>
-    <iu id='org.slf4j.binding.log4j12' name='SLF4J LOG4J-12 Binding Plug-in' version='0.0.0'>
+    <iu id='org.slf4j.binding.source' name='SLF4J Simple Binding Plug-in Source' version='0.0.0'>
         <repositories size='1'>
             <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
         </repositories>
@@ -202,7 +202,7 @@
             <repository location='https://download.eclipse.org/releases/latest/'/>
         </repositories>
     </iu>
-    <iu id='org.mockito' name='Java Mocking and Stubbing Framework' version='2.13.0'>
+    <iu id='org.mockito' name='Java Mocking and Stubbing Framework' version='2.33.0'>
         <repositories size='1'>
             <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
         </repositories>
@@ -229,7 +229,7 @@
     </iu>
     <iu id='org.eclipse.wst.xml_ui.feature.feature.group' name='XML Editor UI' version='0.0.0'>
         <repositories size='1'>
-            <repository location='https://download.eclipse.org/webtools/downloads/drops/R3.24.0/R-3.24.0-20211122101137/repository/'/>
+            <repository location='https://download.eclipse.org/webtools/downloads/drops/R3.25.0/S-3.25.0.M1-20220106092734/repository/'/>
         </repositories>
     </iu>
     <iu id='zipeditor.feature.group' name='ZipEditor' version='0.0.0'>
@@ -239,7 +239,7 @@
     </iu>
     <iu id='com.yourkit.profiler.feature.group' name='Yourkit' version='0.0.0'>
         <repositories size='1'>
-            <repository location='https://www.yourkit.com/download/yjp2021_3_for_eclipse'/>
+            <repository location='https://www.yourkit.com/download/yjp2021_11_for_eclipse/'/>
         </repositories>
     </iu>
     <iu id='com.sun.xml.bind' name='com.sun.xml.bind' version='0.0.0'>
