@@ -122,6 +122,11 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 		setLaunch(launch);
 		initializeAttributes(attributes);
 		fProcess = process;
+		try {
+			setAttribute(IProcess.ATTR_PROCESS_ID, Long.toString(process.pid()));
+		} catch (UnsupportedOperationException e) {
+			// ignore, pid() is not implemented in this JVM
+		}
 		fName = name;
 		fTerminated = true;
 		try {

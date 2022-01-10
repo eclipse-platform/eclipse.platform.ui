@@ -18,10 +18,12 @@ import org.eclipse.osgi.util.NLS;
 public class ExternalToolsProgramMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.core.externaltools.internal.launchConfigurations.ExternalToolsProgramMessages";//$NON-NLS-1$
 
+
 	public static String BackgroundResourceRefresher_0;
 
 	public static String ProgramLaunchDelegate_3;
 	public static String ProgramLaunchDelegate_4;
+	public static String ProgramLaunchDelegate_5;
 
 	public static String ExternalToolsUtil_Location_not_specified_by__0__1;
 	public static String ExternalToolsUtil_invalidLocation__0_;

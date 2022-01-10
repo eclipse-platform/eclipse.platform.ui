@@ -361,6 +361,13 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 						buffer.append(MessageFormat.format(ConsoleMessages.ProcessConsole_commandLabel_withEnd,
 								procLabel, dateTimeFormat.format(terminateTime)));
 					}
+
+					String pid = process.getAttribute(IProcess.ATTR_PROCESS_ID);
+					if (pid != null && !pid.isBlank()) {
+						buffer.append(" [pid: "); //$NON-NLS-1$
+						buffer.append(pid);
+						buffer.append("]"); //$NON-NLS-1$
+					}
 					label = buffer.toString();
 				}
 			}

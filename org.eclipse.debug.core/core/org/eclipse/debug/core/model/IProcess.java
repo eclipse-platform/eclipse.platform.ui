@@ -62,6 +62,15 @@ public interface IProcess extends IAdaptable, ITerminate {
 	String ATTR_PROCESS_LABEL = DebugPlugin.getUniqueIdentifier() + ".ATTR_PROCESS_LABEL"; //$NON-NLS-1$
 
 	/**
+	 * Attribute key for a common, optional, process property. The value of this
+	 * attribute specifies process id, displayed in the console description or
+	 * in the debug view.
+	 *
+	 * @since 3.19
+	 */
+	String ATTR_PROCESS_ID = DebugPlugin.getUniqueIdentifier() + ".ATTR_PROCESS_ID"; //$NON-NLS-1$
+
+	/**
 	 * Returns a human-readable label for this process.
 	 *
 	 * @return a label for this process

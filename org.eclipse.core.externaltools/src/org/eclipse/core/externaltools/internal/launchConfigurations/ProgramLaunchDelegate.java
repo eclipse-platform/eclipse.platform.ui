@@ -119,7 +119,8 @@ public class ProgramLaunchDelegate extends LaunchConfigurationDelegate {
 					ExternalToolsProgramMessages.ProgramLaunchDelegate_3,
 					new String[] { configuration.getName() }),
 					IProgressMonitor.UNKNOWN);
-			process = DebugPlugin.newProcess(launch, p, location.toOSString(), processAttributes);
+			String label = getProcessLabel(location, p);
+			process = DebugPlugin.newProcess(launch, p, label, processAttributes);
 		}
 		if (p == null || process == null) {
 			if (p != null) {
@@ -156,6 +157,17 @@ public class ProgramLaunchDelegate extends LaunchConfigurationDelegate {
 			// refresh resources
 			RefreshUtil.refreshResources(configuration, monitor);
 		}
+	}
+
+	private String getProcessLabel(IPath location, Process p) {
+		String label = location.toOSString();
+		try {
+			label += " " + NLS.bind(ExternalToolsProgramMessages.ProgramLaunchDelegate_5, new Object[] { //$NON-NLS-1$
+					p.pid() });
+		} catch (UnsupportedOperationException e) {
+			// ignore, pid() is not implemented in this JVM
+		}
+		return label;
 	}
 
 	private String[] buildCommandLine(ILaunchConfiguration configuration, IPath location) throws CoreException {

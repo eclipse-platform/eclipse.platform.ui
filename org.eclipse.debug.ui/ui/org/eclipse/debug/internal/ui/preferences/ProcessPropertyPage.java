@@ -57,10 +57,18 @@ public class ProcessPropertyPage extends PropertyPage {
 		Composite parent = SWTFactory.createComposite(ancestor, ancestor.getFont(), 1, 1, GridData.FILL_BOTH);
 
 		IProcess proc = getProcess();
-
+		Text text;
+		if (proc.getAttribute(IProcess.ATTR_PROCESS_ID) != null) {
+			SWTFactory.createLabel(parent, DebugPreferencesMessages.ProcessPropertyPage_11, fHeadingFont, 1);
+			text = SWTFactory.createText(parent, SWT.READ_ONLY, 1);
+			((GridData) text.getLayoutData()).horizontalIndent = 10;
+			text.setText(proc.getAttribute(IProcess.ATTR_PROCESS_ID));
+			text.setBackground(parent.getBackground());
+			SWTFactory.createVerticalSpacer(parent, 2);
+		}
 		// create the process launch time section
 		SWTFactory.createLabel(parent, DebugPreferencesMessages.ProcessPropertyPage_0, fHeadingFont, 1);
-		Text text = SWTFactory.createText(parent, SWT.READ_ONLY, 1);
+		text = SWTFactory.createText(parent, SWT.READ_ONLY, 1);
 		((GridData)text.getLayoutData()).horizontalIndent = 10;
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(text, IDebugHelpContextIds.PROCESS_PAGE_RUN_AT);
 		text.setText(getLaunchTimeText(proc));
