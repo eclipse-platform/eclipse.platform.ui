@@ -176,13 +176,13 @@ final class ColumnLayout extends Layout {
 		}
 
 		if (increase) {
-			table.setSize(area.width, area.height);
+			table.setBounds(0, 0, area.width, area.height);
 		}
 		for (int i= 0; i < size; i++) {
 			tableColumns[i].setWidth(widths[i]);
 		}
 		if (!increase) {
-			table.setSize(area.width, area.height);
+			table.setBounds(0, 0, area.width, area.height);
 		}
 	}
 
