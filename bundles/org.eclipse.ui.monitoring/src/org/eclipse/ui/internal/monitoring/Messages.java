@@ -39,7 +39,6 @@ final class Messages extends NLS {
 	public static String EventLoopMonitorThread_logging_disabled_error;
 	public static String EventLoopMonitorThread_warning_threshold_error_1;
 	public static String EventLoopMonitorThread_max_event_loop_depth_exceeded_1;
-	public static String EventLoopMonitorThread_workbench_was_null;
 	public static String FilterHandler_missing_thread_error;
 	public static String MonitoringStartup_initialization_error;
 
