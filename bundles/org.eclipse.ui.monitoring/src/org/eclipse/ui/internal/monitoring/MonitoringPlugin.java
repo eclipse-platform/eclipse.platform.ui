@@ -40,9 +40,7 @@ public class MonitoringPlugin {
 		logger.log(new Status(IStatus.WARNING, PreferenceConstants.PLUGIN_ID, message));
 	}
 
-	public static void log(IStatus status) {
-		logger.log(status);
-	}
+
 
 	public static IPreferenceStore getPreferenceStore() {
 		if (store == null) {
