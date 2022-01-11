@@ -22,6 +22,7 @@ import java.util.Date;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.monitoring.IUiFreezeEventLogger;
@@ -116,7 +117,7 @@ public class DefaultUiFreezeEventLogger implements IUiFreezeEventLogger {
 			lastTimestamp = sample.getTimestamp();
 		}
 
-		MonitoringPlugin.log(loggedEvent);
+		Platform.getLog(getClass()).log(loggedEvent);
 	}
 
 	private static IStatus createThreadStatus(ThreadInfo thread) {
