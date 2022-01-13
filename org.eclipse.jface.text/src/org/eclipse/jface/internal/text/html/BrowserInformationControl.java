@@ -42,6 +42,7 @@ import org.eclipse.core.runtime.ListenerList;
 
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Util;
 
 import org.eclipse.jface.text.AbstractInformationControl;
 import org.eclipse.jface.text.IDelayedInputChangeProvider;
@@ -288,11 +289,16 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		boolean RTL= (getShell().getStyle() & SWT.RIGHT_TO_LEFT) != 0;
 		boolean resizable= isResizable();
 
+		String scrollbarStyle= "overflow:scroll;"; //$NON-NLS-1$
+		// workaround for bug 546870, don't use a horizontal scrollbar on Linux as its broken for GTK3 and WebKit
+		if (Util.isLinux()) {
+			scrollbarStyle= "word-wrap:break-word;"; //$NON-NLS-1$
+		}
 		// The default "overflow:auto" would not result in a predictable width for the client area
 		// and the re-wrapping would cause visual noise
 		String[] styles= null;
 		if (RTL && resizable)
-			styles= new String[] { "direction:rtl;", "overflow:scroll;", "word-wrap:break-word;" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			styles= new String[] { "direction:rtl;", scrollbarStyle, "word-wrap:break-word;" }; //$NON-NLS-1$ //$NON-NLS-2$
 		else if (RTL && !resizable)
 			styles= new String[] { "direction:rtl;", "overflow:hidden;", "word-wrap:break-word;" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		else if (!resizable)
@@ -300,7 +306,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 			// Re-check whether we really still need this now that the Javadoc Hover header already sets this style.
 			styles= new String[] { "overflow:hidden;"/*, "word-wrap: break-word;"*/}; //$NON-NLS-1$
 		else
-			styles= new String[] { "overflow:scroll;" }; //$NON-NLS-1$
+			styles= new String[] { scrollbarStyle };
 
 		StringBuilder buffer= new StringBuilder(content);
 		HTMLPrinter.insertStyles(buffer, styles);
