@@ -14,6 +14,7 @@
 package org.eclipse.jface.widgets;
 
 
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -211,5 +212,16 @@ public final class WidgetFactory {
 	 */
 	public static GroupFactory group(int style) {
 		return GroupFactory.newGroup(style);
+	}
+
+	/**
+	 * @param style SWT style applicable for Browser. Refer to
+	 *              {@link Browser#Browser(Composite, int)} for supported styles.
+	 * @return BrowserFactory
+	 *
+	 * @since 3.25
+	 */
+	public static BrowserFactory browser(int style) {
+		return BrowserFactory.newBrowser(style);
 	}
 }
