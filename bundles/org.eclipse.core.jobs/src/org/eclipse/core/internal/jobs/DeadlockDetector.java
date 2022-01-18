@@ -615,6 +615,16 @@ class DeadlockDetector {
 			}
 			buf.append("and is waiting for lock "); //$NON-NLS-1$
 			buf.append(waitLock);
+			StackTraceElement[] stackTrace = thread.getStackTrace();
+			if (stackTrace.length > 0) {
+				buf.append(System.lineSeparator());
+				for (StackTraceElement stackTraceElement : stackTrace) {
+					buf.append('\t');
+					buf.append("at "); //$NON-NLS-1$
+					buf.append(stackTraceElement);
+					buf.append(System.lineSeparator());
+				}
+			}
 			Status child = new Status(IStatus.ERROR, JobManager.PI_JOBS, JobManager.PLUGIN_ERROR, buf.toString(), null);
 			main.add(child);
 		}
