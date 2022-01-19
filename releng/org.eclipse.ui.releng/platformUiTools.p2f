@@ -207,6 +207,11 @@
             <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
         </repositories>
     </iu>
+    <iu id='org.mockito.mockito-core' name='Mockito Core' version='0.0.0'>
+        <repositories size='1'>
+            <repository location='https://download.eclipse.org/eclipse/updates/I-builds'/>
+        </repositories>
+    </iu>
     <iu id='AnyEditTools.feature.group' name='AnyEditTools' version='0.0.0'>
         <repositories size='1'>
             <repository location='https://raw.githubusercontent.com/iloveeclipse/plugins/latest'/>
@@ -259,12 +264,12 @@
     </iu>
     <iu id='org.eclipse.swt.tools.feature.feature.group' name='SWT Tools' version='0.0.0'>
         <repositories size='1'>
-            <repository location='https://download.eclipse.org/eclipse/updates/4.23-I-builds'/>
+            <repository location='https://download.eclipse.org/eclipse/updates/I-builds'/>
         </repositories>
     </iu>
     <iu id='org.eclipse.equinox.executable.feature.group' name='Eclipse platform launcher executables' version='0.0.0'>
         <repositories size='1'>
-            <repository location='https://download.eclipse.org/eclipse/updates/4.23-I-builds'/>
+            <repository location='https://download.eclipse.org/eclipse/updates/I-builds'/>
         </repositories>
     </iu>
   </ius>
