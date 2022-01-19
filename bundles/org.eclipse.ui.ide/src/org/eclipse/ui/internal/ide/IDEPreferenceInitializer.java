@@ -22,7 +22,6 @@ import org.eclipse.jface.util.Util;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.LargeFileLimitsPreferenceHandler;
 import org.eclipse.ui.internal.ide.handlers.ShowInSystemExplorerHandler;
 import org.eclipse.ui.internal.ide.registry.SystemEditorOrTextEditorStrategy;
 
@@ -97,8 +96,6 @@ public class IDEPreferenceInitializer extends AbstractPreferenceInitializer {
 		// by default the problem view should check whether help context is really
 		// available.
 		node.putBoolean(IDEInternalPreferences.HELP_CONTEXT_AVAILABILITY_CHECK, true);
-
-		LargeFileLimitsPreferenceHandler.setDefaults();
 	}
 
 	/**

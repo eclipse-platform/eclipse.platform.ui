@@ -142,6 +142,7 @@ public class WorkbenchPreferenceInitializer extends AbstractPreferenceInitialize
 			WorkbenchPlugin.getDefault().getLog().log(status);
 		}
 
+		LargeFileLimitsPreferenceHandler.setDefaults();
 	}
 
 }
