@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.internal;
 
+import org.eclipse.ui.tests.largefile.LargeFileLimitsPreferenceHandlerTest;
 import org.eclipse.ui.tests.markers.Bug75909Test;
 import org.eclipse.ui.tests.markers.DeclarativeFilterActivityTest;
 import org.eclipse.ui.tests.markers.DeclarativeFilterDeclarationTest;
@@ -61,5 +62,6 @@ import org.junit.runners.Suite;
 	SaveablesListTest.class,
 	Bug540297WorkbenchPageFindViewTest.class,
 	Bug549139Test.class,
+	LargeFileLimitsPreferenceHandlerTest.class,
 })
 public class InternalTestSuite {}

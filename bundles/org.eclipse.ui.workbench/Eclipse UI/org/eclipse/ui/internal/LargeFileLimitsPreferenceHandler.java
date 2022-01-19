@@ -73,6 +73,11 @@ public class LargeFileLimitsPreferenceHandler {
 			this.editorId = editorId;
 			this.fileSize = fileSize;
 		}
+
+		@Override
+		public String toString() {
+			return '(' + editorId + ',' + fileSize + ')';
+		}
 	}
 
 	/**
@@ -80,6 +85,11 @@ public class LargeFileLimitsPreferenceHandler {
 	 * choose an editor, with which to open the large document.
 	 */
 	public static final String PROMPT_EDITOR_PREFERENCE_VALUE = IPreferenceConstants.LARGE_FILE_LIMITS + "_prompt"; //$NON-NLS-1$
+	/**
+	 * Identifier of the preference page that allows the user to view and set file
+	 * limit associations.
+	 */
+	public static final String LARGE_FILE_ASSOCIATIONS_PREFERENCE_PAGE_ID = "org.eclipse.ui.preferencePages.LargeFileAssociations"; //$NON-NLS-1$
 
 	private static final IPreferenceStore PREFERENCE_STORE = PrefUtil.getInternalPreferenceStore();
 
@@ -94,17 +104,22 @@ public class LargeFileLimitsPreferenceHandler {
 
 	private static final String EMPTY_VALUES = ""; //$NON-NLS-1$
 
-	private static final String LARGE_FILE_ASSOCIATIONS_PREFERENCE_PAGE_ID = "org.eclipse.ui.preferencePages.LargeFileAssociations"; //$NON-NLS-1$
 
 	private static final boolean DEFAULT_REMEMBER_EDITOR_SELECTION = false;
 
 	private final Map<String, List<FileLimit>> preferencesCache;
 	private final IPropertyChangeListener preferencesListener;
+	private final PromptForEditor promptForEditor;
 
 	private long legacyMaxFileSize = 0;
 	private boolean legacyCheckDocumentSize;
 
-	LargeFileLimitsPreferenceHandler() {
+	public LargeFileLimitsPreferenceHandler() {
+		this(new DialogPromptForEditor());
+	}
+
+	public LargeFileLimitsPreferenceHandler(PromptForEditor promptForEditor) {
+		this.promptForEditor = promptForEditor;
 		initLegacyPreference();
 		preferencesCache = new HashMap<>();
 		preferencesListener = e -> {
@@ -211,7 +226,7 @@ public class LargeFileLimitsPreferenceHandler {
 	 *         large documents, or the editor ID specified by the preference or user
 	 *         for the given document type
 	 */
-	Optional<String> getEditorForInput(IEditorInput editorInput) {
+	public Optional<String> getEditorForInput(IEditorInput editorInput) {
 		if (editorInput instanceof IPathEditorInput) {
 			IPathEditorInput pathEditorInput = (IPathEditorInput) editorInput;
 			try {
@@ -247,20 +262,15 @@ public class LargeFileLimitsPreferenceHandler {
 			isPromptPreferenceValue = isPromptPreferenceValue(fileLimit.editorId);
 		}
 		if (isPromptPreferenceValue) {
-			IEditorDescriptor editor = null;
-			Shell shell = ProgressManagerUtil.getDefaultParent();
-			LargeFileEditorSelectionDialog dialog = new LargeFileEditorSelectionDialog(shell, inputPath.getFileExtension(), fileLimit.fileSize);
-			dialog.setMessage(WorkbenchMessages.EditorManager_largeDocumentWarning);
-			if (dialog.open() == Window.OK) {
-				editor = dialog.getSelectedEditor();
-			}
+			promptForEditor.prompt(inputPath, fileLimit);
+			IEditorDescriptor editor = promptForEditor.getSelectedEditor();
 			if (editor == null) {
 				// the user pressed cancel in the editor selection dialog, indicate no editor
 				// should be open
 				return null;
 			}
 			editorId = editor.getId();
-			boolean rememberSelectedEditor = dialog.shouldRememberSelectedEditor();
+			boolean rememberSelectedEditor = promptForEditor.shouldRememberSelectedEditor();
 			if (editorId != null && rememberSelectedEditor) {
 				FileLimit newLimit = new FileLimit(editorId, fileLimit.fileSize);
 				replaceLimitForLargeFile(inputPath, fileLimit, newLimit);
@@ -400,7 +410,7 @@ public class LargeFileLimitsPreferenceHandler {
 		return preferenceValues;
 	}
 
-	private static List<FileLimit> getLargeFilePreferenceValues(String fileExtension) {
+	public static List<FileLimit> getLargeFilePreferenceValues(String fileExtension) {
 		List<FileLimit> preferenceValues = new ArrayList<>();
 		String[] disabled = getDisabledExtensionTypes();
 		boolean isDisabled = Arrays.asList(disabled).contains(fileExtension);
@@ -516,7 +526,42 @@ public class LargeFileLimitsPreferenceHandler {
 		dialog.open();
 	}
 
-	private static class LargeFileEditorSelectionDialog extends EditorSelectionDialog {
+	public interface PromptForEditor {
+
+		void prompt(IPath inputPath, FileLimit fileLimit);
+		IEditorDescriptor getSelectedEditor();
+		boolean shouldRememberSelectedEditor();
+	}
+
+	private static class DialogPromptForEditor implements PromptForEditor {
+
+		IEditorDescriptor selectedEditor = null;
+		boolean rememberSelection = false;
+
+		@Override
+		public void prompt(IPath inputPath, FileLimit fileLimit) {
+			Shell shell = ProgressManagerUtil.getDefaultParent();
+			LargeFileEditorSelectionDialog dialog =
+					new LargeFileEditorSelectionDialog(shell, inputPath.getFileExtension(), fileLimit.fileSize);
+			dialog.setMessage(WorkbenchMessages.EditorManager_largeDocumentWarning);
+			if (dialog.open() == Window.OK) {
+				selectedEditor = dialog.getSelectedEditor();
+				rememberSelection = dialog.shouldRememberSelectedEditor();
+			}
+		}
+
+		@Override
+		public IEditorDescriptor getSelectedEditor() {
+			return selectedEditor;
+		}
+
+		@Override
+		public boolean shouldRememberSelectedEditor() {
+			return rememberSelection;
+		}
+	}
+
+	public static class LargeFileEditorSelectionDialog extends EditorSelectionDialog {
 
 		private final String extension;
 		private final long fileSize;
@@ -524,7 +569,7 @@ public class LargeFileLimitsPreferenceHandler {
 		private Button rememberSelectionButton;
 		private boolean rememberSelection = DEFAULT_REMEMBER_EDITOR_SELECTION;
 
-		LargeFileEditorSelectionDialog(Shell shell, String extension, long size) {
+		public LargeFileEditorSelectionDialog(Shell shell, String extension, long size) {
 			super(shell);
 			this.extension = extension;
 			this.fileSize = size;
@@ -570,7 +615,7 @@ public class LargeFileLimitsPreferenceHandler {
 			return contents;
 		}
 
-		boolean shouldRememberSelectedEditor() {
+		public boolean shouldRememberSelectedEditor() {
 			return rememberSelection;
 		}
 	}

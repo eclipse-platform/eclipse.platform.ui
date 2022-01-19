@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -219,6 +219,8 @@ public interface IWorkbenchHelpContextIds {
 	String WORKSPACES_PREFERENCE_PAGE = PREFIX + "workspaces_preference_page_context"; //$NON-NLS-1$
 
 	String RESPONSIVE_UI = PREFIX + "responsive_ui_context"; //$NON-NLS-1$
+
+	String LARGE_FILE_ASSOCIATIONS_PREFERENCE_PAGE = PREFIX + "large_file_associations_preference_page_context"; //$NON-NLS-1$
 
 	// // Windows
 	String DETACHED_WINDOW = PREFIX + "detached_window_context"; //$NON-NLS-1$

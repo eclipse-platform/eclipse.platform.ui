@@ -840,6 +840,16 @@
                contentTypeId="org.eclipse.ui.tests.contentType.bug516470-witheditor">
          </contentTypeBinding>
       </editor>
+      <editor
+            name="Test Editor 1 For Large File Associations"
+            default="false"
+            id="org.eclipse.ui.tests.largefile.testeditor1">
+      </editor>
+      <editor
+            name="Test Editor 2 For Large File Associations"
+            default="false"
+            id="org.eclipse.ui.tests.largefile.testeditor2">
+      </editor>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">

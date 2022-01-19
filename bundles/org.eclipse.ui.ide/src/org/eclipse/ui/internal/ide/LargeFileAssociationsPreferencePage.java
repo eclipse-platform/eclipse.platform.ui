@@ -222,9 +222,8 @@ public class LargeFileAssociationsPreferencePage extends PreferencePage implemen
 		} else {
 			createPreferencePageContents(pageComponent);
 		}
-		// TODO: are we adding help for this page?
-		// workbench.getHelpSystem().setHelp(parent,
-		// IWorkbenchHelpContextIds. ...);
+
+		//workbench.getHelpSystem().setHelp(parent, IWorkbenchHelpContextIds.LARGE_FILE_ASSOCIATIONS_PREFERENCE_PAGE);
 
 		return pageComponent;
 	}
