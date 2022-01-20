@@ -16,6 +16,7 @@ package org.eclipse.debug.tests.launching;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -29,6 +30,8 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.tests.launching.CancellingLaunchDelegate.CancellingLaunch;
+import org.eclipse.debug.tests.launching.ThrowingLaunchDelegate.ThrowingEnum;
+import org.eclipse.debug.tests.launching.ThrowingLaunchDelegate.ThrowingLaunch;
 import org.junit.Test;
 
 /**
@@ -255,20 +258,31 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 	}
 
 	/**
+	 * Checks if the expected number of <i>type</i> launches appear in the
+	 * manager
+	 *
+	 * @param count the expected count
+	 * @param type the type of launches to count
+	 */
+	private void hasLaunches(Class<?> type, int count) {
+		ILaunch[] launches = getLaunchManager().getLaunches();
+		int num = 0;
+		for (ILaunch launche : launches) {
+			if (type.isInstance(launche)) {
+				num++;
+			}
+		}
+		assertEquals("The number of expected launches is wrong", count, num); //$NON-NLS-1$
+	}
+
+	/**
 	 * Checks if the expected number of cancelled launches appear in the manager
 	 *
 	 * @param count the expected count
 	 * @since 3.9.100
 	 */
 	void hasCancellingLaunches(int count) {
-		ILaunch[] launches = getLaunchManager().getLaunches();
-		int num = 0;
-		for (ILaunch launche : launches) {
-			if (launche instanceof CancellingLaunch) {
-				num++;
-			}
-		}
-		assertEquals("The number of expected launches is wrong", count, num); //$NON-NLS-1$
+		hasLaunches(CancellingLaunch.class, count);
 	}
 
 	/**
@@ -399,5 +413,97 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 				throw new Exception("Exception in Thread", exception[0]); //$NON-NLS-1$
 			}
 		}
+	}
+
+	/**
+	 * Create a new configuration that will throw exception in one of the four
+	 * launch delegate methods
+	 *
+	 * @param throwingEnum the method that should throw exception
+	 * @return the new {@link ILaunchConfiguration}
+	 */
+	private ILaunchConfiguration getThrowingConfiguration(ThrowingEnum throwingEnum) throws Exception {
+		ILaunchConfigurationType type = getLaunchManager().getLaunchConfigurationType("throwing.type"); //$NON-NLS-1$
+		if (type != null) {
+			ILaunchConfigurationWorkingCopy copy = type.newInstance(null, getLaunchManager().generateLaunchConfigurationName("throwing " + throwingEnum)); //$NON-NLS-1$
+			copy.setAttribute("throw.preLaunchCheck", ThrowingEnum.preLaunchCheck.equals(throwingEnum)); //$NON-NLS-1$
+			copy.setAttribute("throw.finalLaunchCheck", ThrowingEnum.finalLaunchCheck.equals(throwingEnum)); //$NON-NLS-1$
+			copy.setAttribute("throw.buildForLaunch", ThrowingEnum.buildForLaunch.equals(throwingEnum)); //$NON-NLS-1$
+			copy.setAttribute("throw.launch", ThrowingEnum.launch.equals(throwingEnum)); //$NON-NLS-1$
+			return copy.doSave();
+		}
+		return null;
+	}
+
+	/**
+	 * Tests if a launch is properly removed from the launch manager when
+	 * <i>throwingEnum</i> method throws exception
+	 *
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=578302
+	 */
+	private void testThrowingLaunchDelegateMethod(ThrowingEnum throwingEnum) throws Exception {
+		ILaunchConfiguration config = getThrowingConfiguration(throwingEnum);
+		assertNotNull("The throwing config should have been created", config); //$NON-NLS-1$
+		try {
+			hasLaunches(ThrowingLaunch.class, 0);
+			CoreException exception = assertThrows(CoreException.class, () -> config.launch("run", new NullProgressMonitor(), true, true)); //$NON-NLS-1$
+			assertEquals("Wrong method throwed exception", exception.getMessage(), throwingEnum.toString());
+			hasLaunches(ThrowingLaunch.class, 0);
+		} finally {
+			ILaunch[] launches = getLaunchManager().getLaunches();
+			for (ILaunch launche : launches) {
+				getLaunchManager().removeLaunch(launche);
+			}
+			config.delete();
+		}
+	}
+
+	/**
+	 * Tests if a launch is properly removed from the launch manager when
+	 * #preLaunchCheck throws exception
+	 *
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=578302
+	 */
+	@Test
+	public void testThrowingPreLaunchCheck() throws Exception {
+		testThrowingLaunchDelegateMethod(ThrowingEnum.preLaunchCheck);
+	}
+
+	/**
+	 * Tests if a launch is properly removed from the launch manager when
+	 * #finalLaunchCheck throws exception
+	 *
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=578302
+	 */
+	@Test
+	public void testThrowingFinalLaunchCheck() throws Exception {
+		testThrowingLaunchDelegateMethod(ThrowingEnum.finalLaunchCheck);
+	}
+
+	/**
+	 * Tests if a launch is properly removed from the launch manager when
+	 * #buildFoLaunch throws exception
+	 *
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=578302
+	 */
+	@Test
+	public void testThrowingBuildForLaunch() throws Exception {
+		testThrowingLaunchDelegateMethod(ThrowingEnum.buildForLaunch);
+	}
+
+	/**
+	 * Tests if a launch is properly removed from the launch manager when
+	 * #buildFoLaunch throws exception
+	 *
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=578302
+	 */
+	@Test
+	public void testThrowingLaunch() throws Exception {
+		testThrowingLaunchDelegateMethod(ThrowingEnum.launch);
 	}
 }

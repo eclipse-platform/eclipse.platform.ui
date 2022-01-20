@@ -737,62 +737,62 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			}
 			// allow the delegate to provide a launch implementation
 			ILaunch launch = null;
-			if (delegate2 != null) {
-				launch = delegate2.getLaunch(this, mode);
-			}
-			if (launch == null) {
-				launch = new Launch(this, mode, null);
-			} else // ensure the launch mode is valid
-			if (!mode.equals(launch.getLaunchMode())) {
-				IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR,
-						MessageFormat.format(DebugCoreMessages.LaunchConfiguration_14, mode, launch.getLaunchMode()), null);
-				throw new CoreException(status);
-			}
-			launch.setAttribute(DebugPlugin.ATTR_LAUNCH_TIMESTAMP, Long.toString(System.currentTimeMillis()));
-			boolean captureOutput = getAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, true);
-			if(!captureOutput) {
-				launch.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, "false"); //$NON-NLS-1$
-			} else {
-				launch.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, null);
-			}
-			launch.setAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, getLaunchManager().getEncoding(this));
-			if (register) {
-				getLaunchManager().addLaunch(launch);
-			}
-		// perform initial pre-launch sanity checks
-			lmonitor.subTask(DebugCoreMessages.LaunchConfiguration_8);
-
-			if (delegate2 != null) {
-				if (!(delegate2.preLaunchCheck(this, mode, lmonitor.split(1)))) {
-					getLaunchManager().removeLaunch(launch);
-					return launch;
-				}
-			}
-			lmonitor.setWorkRemaining(22);
-		// perform pre-launch build
-			if (build) {
-				lmonitor.subTask(DebugCoreMessages.LaunchConfiguration_7 + DebugCoreMessages.LaunchConfiguration_6);
-				boolean tempbuild = build;
-				if (delegate2 != null) {
-					tempbuild = delegate2.buildForLaunch(this, mode, lmonitor.split(7));
-				}
-				if (tempbuild) {
-					lmonitor.subTask(DebugCoreMessages.LaunchConfiguration_7 + DebugCoreMessages.LaunchConfiguration_5);
-					ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, lmonitor.split(3));
-				}
-			}
-			lmonitor.setWorkRemaining(12);
-		// final validation
-			lmonitor.subTask(DebugCoreMessages.LaunchConfiguration_4);
-			if (delegate2 != null) {
-				if (!(delegate2.finalLaunchCheck(this, mode, lmonitor.split(1)))) {
-					getLaunchManager().removeLaunch(launch);
-					return launch;
-				}
-			}
-			lmonitor.setWorkRemaining(11);
-
 			try {
+				if (delegate2 != null) {
+					launch = delegate2.getLaunch(this, mode);
+				}
+				if (launch == null) {
+					launch = new Launch(this, mode, null);
+				} else // ensure the launch mode is valid
+				if (!mode.equals(launch.getLaunchMode())) {
+					IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR,
+							MessageFormat.format(DebugCoreMessages.LaunchConfiguration_14, mode, launch.getLaunchMode()), null);
+					throw new CoreException(status);
+				}
+				launch.setAttribute(DebugPlugin.ATTR_LAUNCH_TIMESTAMP, Long.toString(System.currentTimeMillis()));
+				boolean captureOutput = getAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, true);
+				if (!captureOutput) {
+					launch.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, "false"); //$NON-NLS-1$
+				} else {
+					launch.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, null);
+				}
+				launch.setAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, getLaunchManager().getEncoding(this));
+				if (register) {
+					getLaunchManager().addLaunch(launch);
+				}
+				// perform initial pre-launch sanity checks
+				lmonitor.subTask(DebugCoreMessages.LaunchConfiguration_8);
+
+				if (delegate2 != null) {
+					if (!(delegate2.preLaunchCheck(this, mode, lmonitor.split(1)))) {
+						getLaunchManager().removeLaunch(launch);
+						return launch;
+					}
+				}
+				lmonitor.setWorkRemaining(22);
+				// perform pre-launch build
+				if (build) {
+					lmonitor.subTask(DebugCoreMessages.LaunchConfiguration_7 + DebugCoreMessages.LaunchConfiguration_6);
+					boolean tempbuild = build;
+					if (delegate2 != null) {
+						tempbuild = delegate2.buildForLaunch(this, mode, lmonitor.split(7));
+					}
+					if (tempbuild) {
+						lmonitor.subTask(DebugCoreMessages.LaunchConfiguration_7 + DebugCoreMessages.LaunchConfiguration_5);
+						ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, lmonitor.split(3));
+					}
+				}
+				lmonitor.setWorkRemaining(12);
+				// final validation
+				lmonitor.subTask(DebugCoreMessages.LaunchConfiguration_4);
+				if (delegate2 != null) {
+					if (!(delegate2.finalLaunchCheck(this, mode, lmonitor.split(1)))) {
+						getLaunchManager().removeLaunch(launch);
+						return launch;
+					}
+				}
+				lmonitor.setWorkRemaining(11);
+
 				//initialize the source locator
 				lmonitor.subTask(DebugCoreMessages.LaunchConfiguration_3);
 				initializeSourceLocator(launch);
@@ -803,13 +803,13 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 				delegate.launch(this, mode, launch, lmonitor.split(10));
 			} catch (CoreException e) {
 				// if there was an exception, and the launch is empty, remove it
-				if (!launch.hasChildren()) {
+				if (launch != null && !launch.hasChildren()) {
 					getLaunchManager().removeLaunch(launch);
 				}
 				throw e;
 			} catch (RuntimeException e) {
 				// if there was a runtime exception, and the launch is empty, remove it
-				if (!launch.hasChildren()) {
+				if (launch != null && !launch.hasChildren()) {
 					getLaunchManager().removeLaunch(launch);
 				}
 				throw e;

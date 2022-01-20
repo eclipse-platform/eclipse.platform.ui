@@ -71,6 +71,12 @@
             modes="run"
             name="%launchConfigurationType.name.0">
       </launchConfigurationType>
+      <launchConfigurationType
+            delegate="org.eclipse.debug.tests.launching.ThrowingLaunchDelegate"
+            id="throwing.type"
+            modes="run"
+            name="%launchConfigurationType.name.1">
+      </launchConfigurationType>
    </extension>
    <extension
         id="debugFS"
