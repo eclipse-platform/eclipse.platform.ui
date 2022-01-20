@@ -13,36 +13,13 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.preferences;
 
-import junit.framework.*;
 import org.eclipse.core.tests.runtime.*;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-public class AllTests extends TestCase {
-	/**
-	 * AllTests constructor comment.
-	 */
-	public AllTests() {
-		super(null);
-	}
-
-	/**
-	 * AllTests constructor comment.
-	 * @param name java.lang.String
-	 */
-	public AllTests(String name) {
-		super(name);
-	}
-
-	@SuppressWarnings("deprecation") // the deprecated tests are testing deprecated functionality with intention
-	public static Test suite() {
-		TestSuite suite = new TestSuite(AllTests.class.getName());
-		suite.addTestSuite(EclipsePreferencesTest.class);
-		suite.addTestSuite(PreferencesServiceTest.class);
-		suite.addTestSuite(IScopeContextTest.class);
-		suite.addTest(TestBug388004.suite());
-		suite.addTest(TestBug380859.suite());
-		suite.addTestSuite(PreferenceExportTest.class);
-		suite.addTestSuite(PreferenceForwarderTest.class);
-		suite.addTestSuite(PreferencesTest.class);
-		return suite;
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ EclipsePreferencesTest.class, PreferencesServiceTest.class, IScopeContextTest.class,
+		TestBug388004.class, TestBug380859.class, PreferenceExportTest.class, PreferenceForwarderTest.class,
+		PreferencesTest.class })
+public class AllTests {
 }

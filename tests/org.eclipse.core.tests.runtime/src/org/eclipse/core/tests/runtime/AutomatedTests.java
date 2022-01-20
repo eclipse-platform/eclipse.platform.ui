@@ -13,38 +13,17 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime;
 
-import junit.framework.*;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
- * Runs the sniff tests for the build. All tests listed here should
- * be automated.
+ * Runs the sniff tests for the build. All tests listed here should be
+ * automated.
  */
-public class AutomatedTests extends TestCase {
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ org.eclipse.core.tests.internal.runtime.AllTests.class,
+		org.eclipse.core.tests.runtime.AllTests.class, org.eclipse.core.tests.runtime.jobs.AllTests.class,
+		org.eclipse.core.tests.internal.preferences.AllTests.class })
+public class AutomatedTests {
 
-	public AutomatedTests() {
-		super(null);
-	}
-
-	public AutomatedTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * Add all of the AllTests suites for each package to be tested.
-	 */
-	public static Test suite() {
-		TestSuite suite = new TestSuite(AutomatedTests.class.getName());
-
-		// Moved to the top: bug 124867
-		suite.addTest(org.eclipse.core.tests.internal.runtime.AllTests.suite());
-
-		suite.addTest(org.eclipse.core.tests.runtime.AllTests.suite());
-		suite.addTest(org.eclipse.core.tests.runtime.jobs.AllTests.suite());
-		suite.addTest(org.eclipse.core.tests.internal.preferences.AllTests.suite());
-
-		// Moved to the top: bug 124867
-		//suite.addTest(org.eclipse.core.tests.internal.runtime.AllTests.suite());
-
-		return suite;
-	}
 }

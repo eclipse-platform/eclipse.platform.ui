@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime.jobs;
 
-import junit.framework.TestSuite;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.tests.harness.TestBarrier;
 import org.eclipse.core.tests.harness.TestJob;
@@ -37,8 +36,9 @@ public class Bug_129551 extends AbstractJobManagerTest {
 		@Override
 		public boolean shouldRun() {
 			//skip everything if the test is already done
-			if (!shouldSleep[0])
+			if (!shouldSleep[0]) {
 				return true;
+			}
 			barrier.setStatus(TestBarrier.STATUS_RUNNING);
 			//wait for blocking jobs to queue up
 			barrier.waitForStatus(TestBarrier.STATUS_START);
@@ -53,17 +53,6 @@ public class Bug_129551 extends AbstractJobManagerTest {
 		}
 	}
 
-	public static TestSuite suite() {
-		return new TestSuite(Bug_129551.class);
-	}
-
-	public Bug_129551() {
-		super();
-	}
-
-	public Bug_129551(String name) {
-		super(name);
-	}
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -93,8 +82,9 @@ public class Bug_129551 extends AbstractJobManagerTest {
 		barrier.waitForStatus(TestBarrier.STATUS_DONE);
 
 		//check for failure
-		if (failure[0] != null)
+		if (failure[0] != null) {
 			fail(failure[0].getMessage());
+		}
 		//tell the job not to sleep this time around
 		shouldSleep[0] = false;
 		job.wakeUp();

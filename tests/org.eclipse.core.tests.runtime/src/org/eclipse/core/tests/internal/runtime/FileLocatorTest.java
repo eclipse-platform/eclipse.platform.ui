@@ -18,8 +18,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.BundleTestingHelper;
 import org.eclipse.core.tests.harness.CoreTest;
@@ -35,10 +33,6 @@ public class FileLocatorTest extends CoreTest {
 	private final static String mostSpecificPath = "/nl/aa/BB/intro/messages.properties";
 	private final static String lessSpecificPath = "/nl/aa/intro/messages.properties";
 	private final static String nonSpecificPath = "/intro/messages.properties";
-
-	public FileLocatorTest(String name) {
-		super(name);
-	}
 
 	public void testFileLocatorFind() throws IOException, BundleException {
 		Bundle bundle = BundleTestingHelper.installBundle("Plugin", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "fileLocator/testFileLocator");
@@ -156,13 +150,5 @@ public class FileLocatorTest extends CoreTest {
 		Bundle hostBundle = getHostBundle(url);
 		assertNotNull(hostBundle);
 		assertTrue(hostBundle.getSymbolicName().equals("fileLocatorTest.nl"));
-	}
-
-	public static Test suite() {
-		TestSuite sameSession = new TestSuite(FileLocatorTest.class.getName());
-		sameSession.addTest(new FileLocatorTest("testFileLocatorFind"));
-		sameSession.addTest(new FileLocatorTest("testFileLocatorGetBundleFile01"));
-		sameSession.addTest(new FileLocatorTest("testFileLocatorGetBundleFile02"));
-		return sameSession;
 	}
 }

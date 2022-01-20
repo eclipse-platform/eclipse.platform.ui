@@ -13,21 +13,11 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime;
 
-import junit.framework.*;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-public class AllTests extends TestCase {
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ PlatformTest.class })
+public class AllTests {
 
-	public AllTests() {
-		super(null);
-	}
-
-	public AllTests(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(AllTests.class.getName());
-		suite.addTestSuite(PlatformTest.class);
-		return suite;
-	}
 }

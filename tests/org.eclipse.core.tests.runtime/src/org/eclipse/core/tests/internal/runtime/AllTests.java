@@ -13,31 +13,11 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.runtime;
 
-import junit.framework.*;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-public class AllTests extends TestCase {
-	/**
-	 * AllTests constructor comment.
-	 * @param name java.lang.String
-	 */
-	public AllTests() {
-		super(null);
-	}
-
-	/**
-	 * AllTests constructor comment.
-	 * @param name java.lang.String
-	 */
-	public AllTests(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(AllTests.class.getName());
-		suite.addTestSuite(LogSerializationTest.class);
-		suite.addTestSuite(PlatformURLLocalTest.class);
-		suite.addTest(PlatformURLSessionTest.suite());
-		suite.addTest(FileLocatorTest.suite());
-		return suite;
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ LogSerializationTest.class, PlatformURLLocalTest.class, PlatformURLSessionTest.class,
+		FileLocatorTest.class })
+public class AllTests {
 }

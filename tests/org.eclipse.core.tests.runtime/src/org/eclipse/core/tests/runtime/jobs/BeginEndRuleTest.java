@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime.jobs;
 
-import junit.framework.TestSuite;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.core.tests.harness.FussyProgressMonitor;
@@ -50,21 +49,6 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		}
 	}
 
-	public static TestSuite suite() {
-		return new TestSuite(BeginEndRuleTest.class);
-		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new BeginEndRuleTest("testComplexRuleStarting"));
-		//		return suite;
-	}
-
-	public BeginEndRuleTest() {
-		super();
-	}
-
-	public BeginEndRuleTest(String name) {
-		super(name);
-	}
-
 	public void testComplexRuleStarting() {
 		//test how the manager reacts when several different threads try to begin conflicting rules
 		final int NUM_THREADS = 3;
@@ -79,12 +63,14 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		jobs[2] = new JobRuleRunner("ComplexJob3", new PathRule("/testComplexRuleStarting/B/C"), status, 2, NUM_REPEATS, true);
 
 		//schedule the jobs
-		for (Job job : jobs)
+		for (Job job : jobs) {
 			job.schedule();
+		}
 
 		//wait until all the jobs start
-		for (int i = 0; i < jobs.length; i++)
+		for (int i = 0; i < jobs.length; i++) {
 			TestBarrier.waitForStatus(status, i, TestBarrier.STATUS_START);
+		}
 
 		//all jobs should be running
 		//the status flag should be set to START
@@ -464,8 +450,9 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		monitor.setCanceled(true);
 
 		TestBarrier.waitForStatus(status, TestBarrier.STATUS_DONE);
-		if (runner.exception != null)
+		if (runner.exception != null) {
 			fail("1.0", runner.exception);
+		}
 
 		//finally clear the rule
 		manager.endRule(rule);
@@ -665,8 +652,9 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		JobChangeAdapter a = new JobChangeAdapter() {
 			@Override
 			public void running(org.eclipse.core.runtime.jobs.IJobChangeEvent event) {
-				if (event.getJob() == job)
+				if (event.getJob() == job) {
 					return;
+				}
 				count[0]++;
 			}
 		};

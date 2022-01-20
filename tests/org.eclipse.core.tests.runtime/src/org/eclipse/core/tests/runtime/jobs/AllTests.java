@@ -14,44 +14,19 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime.jobs;
 
-import junit.framework.*;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Runs all job tests
  */
-public class AllTests extends TestCase {
-	public AllTests() {
-		super(null);
-	}
-
-	public AllTests(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(AllTests.class.getName());
-		suite.addTestSuite(YieldTest.class);
-		suite.addTestSuite(IJobManagerTest.class);
-		suite.addTestSuite(JobGroupTest.class);
-		suite.addTestSuite(JobQueueTest.class);
-		suite.addTestSuite(OrderedLockTest.class);
-		suite.addTestSuite(BeginEndRuleTest.class);
-		suite.addTestSuite(JobTest.class);
-		suite.addTestSuite(DeadlockDetectionTest.class);
-		suite.addTestSuite(Bug_129551.class);
-		suite.addTestSuite(Bug_211799.class);
-		suite.addTestSuite(Bug_307282.class);
-		suite.addTestSuite(Bug_307391.class);
-		suite.addTestSuite(MultiRuleTest.class);
-		suite.addTestSuite(Bug_311756.class);
-		suite.addTestSuite(Bug_311863.class);
-		suite.addTestSuite(Bug_316839.class);
-		suite.addTestSuite(Bug_320329.class);
-		suite.addTestSuite(Bug_478634.class);
-		suite.addTestSuite(Bug_550738.class);
-		suite.addTestSuite(Bug_574883.class);
-		suite.addTest(Bug_412138.suite());
-		suite.addTestSuite(WorkerPoolTest.class);
-		return suite;
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+		YieldTest.class, IJobManagerTest.class, JobGroupTest.class, JobQueueTest.class, OrderedLockTest.class,
+		BeginEndRuleTest.class, JobTest.class, DeadlockDetectionTest.class, Bug_129551.class, Bug_211799.class,
+		Bug_307282.class, Bug_307391.class, MultiRuleTest.class, Bug_311756.class, Bug_311863.class, Bug_316839.class,
+		Bug_320329.class, Bug_478634.class, Bug_550738.class, Bug_574883.class, Bug_412138.class,
+		WorkerPoolTest.class
+})
+public class AllTests {
 }

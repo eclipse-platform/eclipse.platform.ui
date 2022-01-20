@@ -16,7 +16,6 @@ package org.eclipse.core.tests.runtime.jobs;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import junit.framework.TestSuite;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
@@ -65,18 +64,6 @@ public class Bug_550738 extends AbstractJobManagerTest {
 			super.scheduled(event);
 			scheduledCount.incrementAndGet();
 		}
-	}
-
-	public static TestSuite suite() {
-		return new TestSuite(Bug_550738.class);
-	}
-
-	public Bug_550738() {
-		super();
-	}
-
-	public Bug_550738(String name) {
-		super(name);
 	}
 
 	@Override
