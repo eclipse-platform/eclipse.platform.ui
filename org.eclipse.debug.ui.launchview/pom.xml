@@ -18,7 +18,6 @@
   </parent>
   
    <properties>
-    <skipAPIAnalysis>true</skipAPIAnalysis>
     <code.ignoredWarnings>-warn:+resource,-deprecation,unavoidableGenericProblems</code.ignoredWarnings>
   </properties>
   
