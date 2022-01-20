@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -213,8 +214,15 @@ public class LargeFileLimitsPreferenceHandler {
 	Optional<String> getEditorForInput(IEditorInput editorInput) {
 		if (editorInput instanceof IPathEditorInput) {
 			IPathEditorInput pathEditorInput = (IPathEditorInput) editorInput;
-			IPath inputPath = pathEditorInput.getPath();
-			return getEditorForPath(inputPath);
+			try {
+				IPath inputPath = pathEditorInput.getPath();
+				return getEditorForPath(inputPath);
+			} catch (Exception e) {
+				// Path does not exist?
+				Status warning = Status
+						.warning("Exception occurred while checking large file editor for " + editorInput, e); //$NON-NLS-1$
+				WorkbenchPlugin.log(warning);
+			}
 		}
 		return Optional.empty();
 	}
