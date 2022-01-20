@@ -13,34 +13,35 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime.jobs;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.*;
-import junit.framework.TestCase;
 import org.eclipse.core.internal.jobs.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.core.tests.harness.FussyProgressMonitor;
 import org.eclipse.core.tests.harness.TestBarrier;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TestName;
 
 /**
  * Tests implementation of ILock objects
  */
-public class DeadlockDetectionTest extends TestCase {
+public class DeadlockDetectionTest {
 	private final IJobManager manager = Job.getJobManager();
 
-	public DeadlockDetectionTest() {
-		super(null);
-	}
-
-	public DeadlockDetectionTest(String name) {
-		super(name);
-	}
+	@Rule
+	public TestName name = new TestName();
 
 	/**
 	 * Creates n runnables on the given lock and adds them to the given list.
 	 */
 	private void createRunnables(ILock[] locks, int n, ArrayList<RandomTestRunnable> allRunnables, boolean cond) {
 		for (int i = 0; i < n; i++) {
-			allRunnables.add(new RandomTestRunnable(locks, getName() + " # " + (allRunnables.size() + 1), cond));
+			allRunnables
+					.add(new RandomTestRunnable(locks, name.getMethodName() + " # " + (allRunnables.size() + 1), cond));
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
@@ -66,6 +67,7 @@ public class DeadlockDetectionTest extends TestCase {
 	 * Test that deadlock between locks is detected and resolved.
 	 * Test with 6 threads competing for 3 locks from a set of 6.
 	 */
+	@Test
 	public void testComplex() {
 		ArrayList<RandomTestRunnable> allRunnables = new ArrayList<>();
 		LockManager lockManager = new LockManager();
@@ -104,6 +106,7 @@ public class DeadlockDetectionTest extends TestCase {
 	/**
 	 * Test simplest deadlock case (2 threads, 2 locks).
 	 */
+	@Test
 	public void testSimpleDeadlock() {
 		ArrayList<RandomTestRunnable> allRunnables = new ArrayList<>();
 		LockManager localManager = new LockManager();
@@ -136,6 +139,7 @@ public class DeadlockDetectionTest extends TestCase {
 	/**
 	 * Test a more complicated scenario with 3 threads and 3 locks.
 	 */
+	@Test
 	public void testThreeLocks() {
 		ArrayList<RandomTestRunnable> allRunnables = new ArrayList<>();
 		LockManager lockManager = new LockManager();
@@ -170,6 +174,7 @@ public class DeadlockDetectionTest extends TestCase {
 	/**
 	 * Test simple deadlock with 2 threads trying to get 1 rule and 1 lock.
 	 */
+	@Test
 	public void testRuleLockInteraction() {
 		final ILock lock = manager.newLock();
 		final ISchedulingRule rule = new IdentityRule();
@@ -229,6 +234,7 @@ public class DeadlockDetectionTest extends TestCase {
 	/**
 	 * Test the interaction between jobs with rules and the acquisition of locks.
 	 */
+	@Test
 	public void testJobRuleLockInteraction() {
 		final int[] status = {TestBarrier.STATUS_WAIT_FOR_START, TestBarrier.STATUS_WAIT_FOR_START};
 		final ISchedulingRule rule1 = new IdentityRule();
@@ -302,6 +308,7 @@ public class DeadlockDetectionTest extends TestCase {
 	/**
 	 * Regression test for bug 46894. Stale entries left over in graph.
 	 */
+	@Test
 	public void testRuleHierarchyWaitReplace() {
 		final int NUM_JOBS = 3;
 		final int[] status = new int[NUM_JOBS];
@@ -412,6 +419,7 @@ public class DeadlockDetectionTest extends TestCase {
 	/**
 	 * Regression test for bug 46894. Deadlock was not detected (before).
 	 */
+	@Test
 	public void testDetectDeadlock() {
 		final int NUM_JOBS = 3;
 		final int[] status = new int[NUM_JOBS];
@@ -517,6 +525,7 @@ public class DeadlockDetectionTest extends TestCase {
 	/**
 	 * Test that when 3 columns and 1 row are empty, they are correctly removed from the graph.
 	 */
+	@Test
 	public void testMultipleColumnRemoval() {
 		final int NUM_JOBS = 3;
 		final int[] status = new int[NUM_JOBS];
@@ -611,6 +620,7 @@ public class DeadlockDetectionTest extends TestCase {
 	/**
 	 * Test that the graph is cleared after a thread stops waiting for a rule.
 	 */
+	@Test
 	public void testBeginRuleCancelAfterWait() {
 		final ISchedulingRule rule1 = new PathRule("/testBeginRuleCancelAfterWait");
 		final ISchedulingRule rule2 = new PathRule("/testBeginRuleCancelAfterWait/B");
@@ -677,6 +687,7 @@ public class DeadlockDetectionTest extends TestCase {
 	/**
 	 * Test that implicit rules do not create extraneous entries
 	 */
+	@Test
 	public void testImplicitRules() {
 		final int NUM_JOBS = 4;
 		final int[] status = new int[NUM_JOBS];
@@ -963,6 +974,7 @@ public class DeadlockDetectionTest extends TestCase {
 	 * Test that the deadlock detector resolves deadlock correctly.
 	 * 60 threads are competing for 6 locks (need to acquire 3 locks at the same time).
 	 */
+	@Test
 	public void testVeryComplex() {
 		ArrayList<RandomTestRunnable> allRunnables = new ArrayList<>();
 		LockManager lockManager = new LockManager();

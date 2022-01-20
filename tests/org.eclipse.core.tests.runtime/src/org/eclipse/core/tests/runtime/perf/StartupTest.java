@@ -13,17 +13,15 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime.perf;
 
-import junit.framework.TestCase;
 import org.eclipse.test.performance.*;
+import org.junit.Test;
 
-public class StartupTest extends TestCase {
+public class StartupTest {
 
-	public StartupTest(String methodName) {
-		super(methodName);
-	}
-
+	@Test
 	public void testApplicationStartup() {
-		PerformanceMeter meter = Performance.getDefault().createPerformanceMeter(getClass().getName() + '.' + getName());
+		PerformanceMeter meter = Performance.getDefault()
+				.createPerformanceMeter(getClass().getName() + '.' + StartupTest.class.getName());
 		try {
 			meter.stop();
 			// tag for showing in the performance fingerprint graph

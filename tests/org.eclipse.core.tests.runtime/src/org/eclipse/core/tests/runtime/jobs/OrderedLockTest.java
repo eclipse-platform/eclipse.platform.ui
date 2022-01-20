@@ -13,32 +13,28 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime.jobs;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
-import junit.framework.TestCase;
 import org.eclipse.core.internal.jobs.LockManager;
 import org.eclipse.core.internal.jobs.OrderedLock;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.LockListener;
 import org.eclipse.core.tests.harness.TestBarrier;
+import org.junit.Test;
 
 /**
  * Tests implementation of ILock objects
  */
-public class OrderedLockTest extends TestCase {
-	public OrderedLockTest() {
-		super(null);
-	}
-
-	public OrderedLockTest(String name) {
-		super(name);
-	}
+public class OrderedLockTest {
 
 	/**
 	 * Creates n runnables on the given lock and adds them to the given list.
 	 */
 	private void createRunnables(ILock[] locks, int n, ArrayList<LockAcquiringRunnable> allRunnables) {
-		for (int i = 0; i < n; i++)
+		for (int i = 0; i < n; i++) {
 			allRunnables.add(new LockAcquiringRunnable(locks));
+		}
 	}
 
 	private void kill(ArrayList<LockAcquiringRunnable> allRunnables) {
@@ -47,6 +43,7 @@ public class OrderedLockTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testComplex() {
 		ArrayList<LockAcquiringRunnable> allRunnables = new ArrayList<>();
 		LockManager manager = new LockManager();
@@ -70,6 +67,7 @@ public class OrderedLockTest extends TestCase {
 		assertTrue("Locks not removed from graph.", manager.isEmpty());
 	}
 
+	@Test
 	public void testSimple() {
 		ArrayList<LockAcquiringRunnable> allRunnables = new ArrayList<>();
 		LockManager manager = new LockManager();
@@ -91,6 +89,7 @@ public class OrderedLockTest extends TestCase {
 		assertTrue("Locks not removed from graph.", manager.isEmpty());
 	}
 
+	@Test
 	public void testLockAcquireInterrupt() throws InterruptedException {
 		final TestBarrier barrier = new TestBarrier();
 		LockManager manager = new LockManager();
@@ -126,6 +125,7 @@ public class OrderedLockTest extends TestCase {
 	 * test that an acquire call that times out does not
 	 * become the lock owner (regression test)
 	 */
+	@Test
 	public void testLockTimeout() {
 		//create a new lock manager and 1 lock
 		final LockManager manager = new LockManager();
@@ -181,6 +181,7 @@ public class OrderedLockTest extends TestCase {
 	 * test that when a Lock Listener forces the Lock Manager to grant a lock
 	 * to a waiting thread, that other threads in the queue don't get disposed (regression test)
 	 */
+	@Test
 	public void testLockRequestDisappearence() {
 		//create a new lock manager and 1 lock
 		final LockManager manager = new LockManager();

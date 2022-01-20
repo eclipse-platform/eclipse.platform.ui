@@ -13,17 +13,15 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime.perf;
 
-import junit.framework.TestCase;
 import org.eclipse.test.performance.*;
+import org.junit.Test;
 
-public class UIStartupTest extends TestCase {
+public class UIStartupTest {
 
-	public UIStartupTest(String methodName) {
-		super(methodName);
-	}
-
+	@Test
 	public void testUIApplicationStartup() {
-		PerformanceMeter meter = Performance.getDefault().createPerformanceMeter(getClass().getName() + '.' + getName());
+		PerformanceMeter meter = Performance.getDefault()
+				.createPerformanceMeter(getClass().getName() + '.' + UIStartupTest.class.getName());
 		try {
 			meter.stop();
 			Performance performance = Performance.getDefault();

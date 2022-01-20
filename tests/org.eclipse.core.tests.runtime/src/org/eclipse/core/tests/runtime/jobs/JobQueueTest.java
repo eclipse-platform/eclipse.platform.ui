@@ -13,16 +13,19 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime.jobs;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.internal.jobs.InternalJob;
 import org.eclipse.core.internal.jobs.JobQueue;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- *
- */
-public class JobQueueTest extends TestCase {
+public class JobQueueTest {
 	class Entry extends InternalJob {
 		Entry(int value) {
 			super("Entry");
@@ -37,16 +40,12 @@ public class JobQueueTest extends TestCase {
 
 	private JobQueue queue;
 
-	public JobQueueTest(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		this.queue = new JobQueue(false);
 	}
 
+	@Test
 	public void testEqualValues() {
 		//if several equal values are entered, they should come out in FIFO order
 		final int NUM_ENTRIES = 10;
@@ -61,23 +60,25 @@ public class JobQueueTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testBasic() {
 		Entry[] entries = createEntries();
 		assertTrue("1.0", queue.isEmpty());
-		assertTrue("1.1", queue.dequeue() == null);
-		assertTrue("1.2", queue.peek() == null);
+		assertNull("1.1", queue.dequeue());
+		assertNull("1.2", queue.peek());
 		for (Entry entry : entries) {
 			queue.enqueue(entry);
-			assertTrue("1.3", queue.peek() != null);
+			assertNotNull("1.3", queue.peek());
 		}
 		for (int i = 0; i < entries.length; i++) {
 			queue.remove(entries[i]);
-			if (i + 1 < entries.length)
-				assertTrue("1.4." + i, queue.peek() != null);
+			if (i + 1 < entries.length) {
+				assertNotNull("1.4." + i, queue.peek());
+			}
 		}
 		assertTrue("2.0", queue.isEmpty());
-		assertTrue("2.1", queue.dequeue() == null);
-		assertTrue("2.2", queue.peek() == null);
+		assertNull("2.1", queue.dequeue());
+		assertNull("2.2", queue.peek());
 		for (Entry entry : entries) {
 			queue.enqueue(entry);
 		}

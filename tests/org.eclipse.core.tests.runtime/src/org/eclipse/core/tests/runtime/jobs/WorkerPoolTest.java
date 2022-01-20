@@ -13,14 +13,16 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime.jobs;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.concurrent.*;
-import junit.framework.TestCase;
 import org.eclipse.core.internal.jobs.Worker;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
+import org.junit.Test;
 
-public class WorkerPoolTest extends TestCase {
-
+public class WorkerPoolTest {
+	@Test
 	public void testIdleWorkerCap() throws Exception {
 		// See org.eclipse.core.internal.jobs.WorkerPool.MAX_THREADS
 		final int MAX_THREADS = 50;
