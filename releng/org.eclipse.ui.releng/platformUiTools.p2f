@@ -97,9 +97,9 @@
         <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
       </repositories>
     </iu>
-    <iu id='org.assertj' name='org.assertj' version='3.20.2'>
+    <iu id='assertj-core' name='assertj-core' version='3.21.0'>
       <repositories size='1'>
-        <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
+        <repository location='https://download.eclipse.org/eclipse/updates/I-builds'/>
       </repositories>
     </iu>
     <iu id='org.hamcrest' name='org.hamcrest' version='0.0.0'>
