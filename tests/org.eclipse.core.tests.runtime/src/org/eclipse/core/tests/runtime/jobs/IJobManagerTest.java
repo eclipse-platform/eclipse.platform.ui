@@ -691,35 +691,35 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 
 		//try finding all jobs from the first family
 		result = manager.find(first);
-		assertTrue("2.0", result.length == 4);
+		assertEquals("2.0", 4, result.length);
 		for (int i = 0; i < result.length; i++) {
 			assertTrue("2." + (i + 1), result[i].belongsTo(first));
 		}
 
 		//try finding all jobs from the second family
 		result = manager.find(second);
-		assertTrue("3.0", result.length == 4);
+		assertEquals("3.0", 4, result.length);
 		for (int i = 0; i < result.length; i++) {
 			assertTrue("3." + (i + 1), result[i].belongsTo(second));
 		}
 
 		//try finding all jobs from the third family
 		result = manager.find(third);
-		assertTrue("4.0", result.length == 4);
+		assertEquals("4.0", 4, result.length);
 		for (int i = 0; i < result.length; i++) {
 			assertTrue("4." + (i + 1), result[i].belongsTo(third));
 		}
 
 		//try finding all jobs from the fourth family
 		result = manager.find(fourth);
-		assertTrue("5.0", result.length == 4);
+		assertEquals("5.0", 4, result.length);
 		for (int i = 0; i < result.length; i++) {
 			assertTrue("5." + (i + 1), result[i].belongsTo(fourth));
 		}
 
 		//try finding all jobs from the fifth family
 		result = manager.find(fifth);
-		assertTrue("6.0", result.length == 4);
+		assertEquals("6.0", 4, result.length);
 		for (int i = 0; i < result.length; i++) {
 			assertTrue("6." + (i + 1), result[i].belongsTo(fifth));
 		}
@@ -743,7 +743,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 
 		//finding all jobs from the second family should return all the jobs (they are just sleeping)
 		result = manager.find(second);
-		assertTrue("8.0", result.length == 4);
+		assertEquals("8.0", 4, result.length);
 		for (int i = 0; i < result.length; i++) {
 			assertTrue("8." + (i + 1), result[i].belongsTo(second));
 		}
@@ -771,7 +771,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 
 		//finding all jobs from the third family should return all 4 jobs (1 is running, 1 is waiting, 2 are sleeping)
 		result = manager.find(third);
-		assertTrue("10.0", result.length == 4);
+		assertEquals("10.0", 4, result.length);
 		for (int i = 0; i < result.length; i++) {
 			assertTrue("10." + (i + 1), result[i].belongsTo(third));
 		}
@@ -872,7 +872,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 
 			//if the thread is complete then all jobs must be done
 			if (currentStatus == TestBarrier.STATUS_DONE) {
-				assertTrue("2." + i, result.length == 0);
+				assertEquals("2." + i, 0, result.length);
 				break;
 			}
 			sleep(100);
@@ -935,7 +935,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_RUNNING);
 
 		assertState("2.0", jobs[0], Job.RUNNING);
-		assertTrue("2.1", status[0] == TestBarrier.STATUS_RUNNING);
+		assertEquals("2.1", TestBarrier.STATUS_RUNNING, status[0]);
 
 		//cancel the first family of jobs
 		//the join call should be unblocked when all the jobs are canceled
@@ -943,7 +943,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_DONE);
 
 		//all jobs in the first family should be removed from the manager
-		assertTrue("2.2", manager.find(first).length == 0);
+		assertEquals("2.2", 0, manager.find(first).length);
 
 		//cancel the second family of jobs
 		manager.cancel(second);
@@ -1003,7 +1003,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_RUNNING);
 
 		assertState("2.0", jobs[0], Job.RUNNING);
-		assertTrue("2.1", status[0] == TestBarrier.STATUS_RUNNING);
+		assertEquals("2.1", TestBarrier.STATUS_RUNNING, status[0]);
 
 		//cancel the monitor that is attached to the join call
 		canceller.setCanceled(true);
@@ -1011,7 +1011,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 
 		//the first job in the first family should still be running
 		assertState("2.2", jobs[0], Job.RUNNING);
-		assertTrue("2.3", status[0] == TestBarrier.STATUS_DONE);
+		assertEquals("2.3", TestBarrier.STATUS_DONE, status[0]);
 		assertTrue("2.4", manager.find(first).length > 0);
 
 		//cancel the second family of jobs
@@ -1159,13 +1159,13 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 
 		//let the thread execute the join call
 		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_START);
-		assertTrue("1.0", status[0] == TestBarrier.STATUS_START);
+		assertEquals("1.0", TestBarrier.STATUS_START, status[0]);
 		long startTime = now();
 		status[0] = TestBarrier.STATUS_WAIT_FOR_RUN;
 		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_DONE);
 		long endTime = now();
 
-		assertTrue("2.0", status[0] == TestBarrier.STATUS_DONE);
+		assertEquals("2.0", TestBarrier.STATUS_DONE, status[0]);
 		assertTrue("2.1", endTime > startTime);
 
 		//the join call should take no actual time (join call should not block thread at all)
@@ -1538,7 +1538,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		waitForCancel(jobs[0]);
 
 		//no job should now be running
-		assertTrue("4.0", manager.currentJob() == null);
+		assertNull("4.0", manager.currentJob());
 
 		for (int i = 1; i < NUM_JOBS; i++) {
 			//all other jobs in the second family should be sleeping

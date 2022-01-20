@@ -1138,7 +1138,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 			count++;
 			current = current.parent();
 		}
-		assertTrue("2.0." + count, count == 4);
+		assertEquals("2.0." + count, 4, count);
 	}
 
 	/*

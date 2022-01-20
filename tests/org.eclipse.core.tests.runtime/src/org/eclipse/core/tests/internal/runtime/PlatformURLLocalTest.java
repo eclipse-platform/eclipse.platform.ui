@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.runtime;
 
+import static org.junit.Assert.assertNotEquals;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -58,7 +60,7 @@ public class PlatformURLLocalTest extends RuntimeTest {
 		} catch (IOException e) {
 			fail("2.0", e);
 		}
-		assertFalse("3.0", platformURL.equals(resolvedURL));
+		assertNotEquals("3.0", platformURL, resolvedURL);
 		URL expected = null;
 		try {
 			expected = new URL(Platform.getConfigurationLocation().getURL(), "x");
@@ -82,7 +84,7 @@ public class PlatformURLLocalTest extends RuntimeTest {
 		} catch (IOException e) {
 			fail("2.0", e);
 		}
-		assertFalse("3.0", platformURL.equals(resolvedURL));
+		assertNotEquals("3.0", platformURL, resolvedURL);
 		URL expected = null;
 		try {
 			expected = new URL(RuntimeTestsPlugin.getPlugin().getStateLocation().toFile().toURI().toURL(), "x");

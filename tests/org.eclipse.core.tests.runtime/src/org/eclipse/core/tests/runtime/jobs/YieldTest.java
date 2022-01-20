@@ -162,7 +162,7 @@ public class YieldTest extends AbstractJobManagerTest {
 				Thread after = getThread();
 				assertEquals("Thread not restored", before, after);
 				assertTrue("Conflicting job not done", jobs[1].getResult().isOK());
-				assertTrue("Conflicting job still running", jobs[1].getState() == Job.NONE);
+				assertEquals("Conflicting job still running", Job.NONE, jobs[1].getState());
 				return Status.OK_STATUS;
 			}
 		};
@@ -172,8 +172,8 @@ public class YieldTest extends AbstractJobManagerTest {
 		Job conflictingJob = new Job(getName() + " Conflicting") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				assertTrue(jobs[0].getState() == WAITING);
-				assertTrue(jobs[0].getResult() == null);
+				assertEquals(WAITING, jobs[0].getState());
+				assertNull(jobs[0].getResult());
 				return Status.OK_STATUS;
 			}
 		};
@@ -195,13 +195,13 @@ public class YieldTest extends AbstractJobManagerTest {
 		Job yieldJob = new Job(getName() + " Yielding") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				assertTrue(jobs[1].getResult() == null);
+				assertNull(jobs[1].getResult());
 				while (yieldRule(null) == null) {
 					//loop until yield succeeds
 				}
 				waitForCompletion(jobs[1]);
 				assertTrue(jobs[1].getResult().isOK());
-				assertTrue(jobs[1].getState() == Job.NONE);
+				assertEquals(Job.NONE, jobs[1].getState());
 				return Status.OK_STATUS;
 			}
 		};
@@ -212,7 +212,7 @@ public class YieldTest extends AbstractJobManagerTest {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				assertEquals(WAITING, jobs[0].getState());
-				assertTrue(jobs[0].getResult() == null);
+				assertNull(jobs[0].getResult());
 				return Status.OK_STATUS;
 			}
 		};
@@ -616,11 +616,11 @@ public class YieldTest extends AbstractJobManagerTest {
 		Job yieldJob = new Job(getName() + " Yielding") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				assertTrue(jobs[1].getResult() == null);
+				assertNull(jobs[1].getResult());
 				while (yieldRule(null) == null) {
 					//loop until yield succeeds
 				}
-				assertTrue(jobs[1].getState() == Job.WAITING);
+				assertEquals(Job.WAITING, jobs[1].getState());
 				return Status.OK_STATUS;
 			}
 		};

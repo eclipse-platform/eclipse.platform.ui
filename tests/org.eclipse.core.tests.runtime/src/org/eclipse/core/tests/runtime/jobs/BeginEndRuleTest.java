@@ -351,7 +351,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		job.setRule(rule1);
 		job.schedule();
 		waitForEnd(job);
-		assertTrue("1.0", exception[0] != null);
+		assertNotNull("1.0", exception[0]);
 		assertTrue("1.1", exception[0].getMessage().indexOf("does not match outer scope rule") > 0);
 	}
 

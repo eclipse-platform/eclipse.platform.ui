@@ -89,7 +89,7 @@ public class PreferencesTest extends RuntimeTest {
 		assertSame("Different values", Preferences.LONG_DEFAULT_DEFAULT, 0L);
 		assertSame("Different values", Preferences.FLOAT_DEFAULT_DEFAULT, 0.0f);
 		assertSame("Different values", Preferences.DOUBLE_DEFAULT_DEFAULT, 0.0);
-		assertTrue(Preferences.STRING_DEFAULT_DEFAULT.equals(""));
+		assertTrue(Preferences.STRING_DEFAULT_DEFAULT.isEmpty());
 	}
 
 	public void testBasics() {
@@ -103,18 +103,18 @@ public class PreferencesTest extends RuntimeTest {
 		// check that a random property in a newly created store
 		// appearchs to have default-default values of whatever type asked for
 		assertTrue("1.0", ps.isDefault(k1));
-		assertTrue("1.1", ps.getBoolean(k1) == Preferences.BOOLEAN_DEFAULT_DEFAULT);
-		assertTrue("1.2", ps.getInt(k1) == Preferences.INT_DEFAULT_DEFAULT);
-		assertTrue("1.3", ps.getLong(k1) == Preferences.LONG_DEFAULT_DEFAULT);
-		assertTrue("1.4", ps.getFloat(k1) == Preferences.FLOAT_DEFAULT_DEFAULT);
-		assertTrue("1.5", ps.getDouble(k1) == Preferences.DOUBLE_DEFAULT_DEFAULT);
+		assertEquals("1.1", ps.getBoolean(k1), Preferences.BOOLEAN_DEFAULT_DEFAULT);
+		assertEquals("1.2", ps.getInt(k1), Preferences.INT_DEFAULT_DEFAULT);
+		assertEquals("1.3", ps.getLong(k1), Preferences.LONG_DEFAULT_DEFAULT);
+		assertEquals("1.4", ps.getFloat(k1), Preferences.FLOAT_DEFAULT_DEFAULT);
+		assertEquals("1.5", ps.getDouble(k1), Preferences.DOUBLE_DEFAULT_DEFAULT);
 		assertTrue("1.6", ps.getString(k1).equals(Preferences.STRING_DEFAULT_DEFAULT));
 
-		assertTrue("1.7", ps.getDefaultBoolean(k1) == Preferences.BOOLEAN_DEFAULT_DEFAULT);
-		assertTrue("1.8", ps.getDefaultInt(k1) == Preferences.INT_DEFAULT_DEFAULT);
-		assertTrue("1.9", ps.getDefaultLong(k1) == Preferences.LONG_DEFAULT_DEFAULT);
-		assertTrue("1.10", ps.getDefaultFloat(k1) == Preferences.FLOAT_DEFAULT_DEFAULT);
-		assertTrue("1.11", ps.getDefaultDouble(k1) == Preferences.DOUBLE_DEFAULT_DEFAULT);
+		assertEquals("1.7", ps.getDefaultBoolean(k1), Preferences.BOOLEAN_DEFAULT_DEFAULT);
+		assertEquals("1.8", ps.getDefaultInt(k1), Preferences.INT_DEFAULT_DEFAULT);
+		assertEquals("1.9", ps.getDefaultLong(k1), Preferences.LONG_DEFAULT_DEFAULT);
+		assertEquals("1.10", ps.getDefaultFloat(k1), Preferences.FLOAT_DEFAULT_DEFAULT);
+		assertEquals("1.11", ps.getDefaultDouble(k1), Preferences.DOUBLE_DEFAULT_DEFAULT);
 		assertTrue("1.12", ps.getDefaultString(k1).equals(Preferences.STRING_DEFAULT_DEFAULT));
 
 		// test set/getString

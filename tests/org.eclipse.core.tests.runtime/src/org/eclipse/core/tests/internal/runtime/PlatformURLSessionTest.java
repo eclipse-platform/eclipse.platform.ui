@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.runtime;
 
+import static org.junit.Assert.assertNotEquals;
+
 import java.io.*;
 import java.net.*;
 import junit.framework.Test;
@@ -61,8 +63,9 @@ public class PlatformURLSessionTest extends RuntimeTest {
 		String line = null;
 		StringBuilder result = new StringBuilder();
 		try {
-			while ((line = reader.readLine()) != null)
+			while ((line = reader.readLine()) != null) {
 				result.append(line);
+			}
 			return result.toString();
 		} catch (IOException e) {
 			fail(tag + ".99", e);
@@ -82,8 +85,9 @@ public class PlatformURLSessionTest extends RuntimeTest {
 		suite.setReadOnly(true);
 		suite.setCascaded(true);
 		String[] ids = ConfigurationSessionTestSuite.MINIMAL_BUNDLE_SET;
-		for (String id : ids)
+		for (String id : ids) {
 			suite.addBundle(id);
+		}
 		suite.addBundle(PI_RUNTIME_TESTS);
 		return suite;
 	}
@@ -148,12 +152,13 @@ public class PlatformURLSessionTest extends RuntimeTest {
 		} catch (IOException e) {
 			// that is expected - parent configuration area is read-only
 		} finally {
-			if (output != null)
+			if (output != null) {
 				try {
 					output.close();
 				} catch (IOException e) {
 					// not interested
 				}
+			}
 		}
 	}
 
@@ -179,12 +184,13 @@ public class PlatformURLSessionTest extends RuntimeTest {
 		} catch (IOException e) {
 			// that is expected - configuration area is read-only
 		} finally {
-			if (output != null)
+			if (output != null) {
 				try {
 					output.close();
 				} catch (IOException e) {
 					// not interested
 				}
+			}
 		}
 	}
 
@@ -210,7 +216,7 @@ public class PlatformURLSessionTest extends RuntimeTest {
 		} catch (IOException e) {
 			fail("4.0", e);
 		}
-		assertFalse("4.1", none.equals(resolvedURL));
+		assertNotEquals("4.1", none, resolvedURL);
 		assertTrue("4.2", resolvedURL.toExternalForm().startsWith(Platform.getConfigurationLocation().getURL().toExternalForm()));
 	}
 

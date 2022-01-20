@@ -19,6 +19,8 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime.jobs;
 
+import static org.junit.Assert.assertNotEquals;
+
 import java.util.Arrays;
 import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.internal.jobs.Worker;
@@ -68,10 +70,10 @@ public class JobTest extends AbstractJobTest {
 		waitForState(longJob, Job.NONE);
 
 		//the done call should be ignored, and the job status should still be canceled
-		assertTrue("5.0", longJob.getResult().getSeverity() == IStatus.CANCEL);
+		assertEquals("5.0", IStatus.CANCEL, longJob.getResult().getSeverity());
 
 		longJob.done(Status.OK_STATUS);
-		assertTrue("6.0", longJob.getResult().getSeverity() == IStatus.CANCEL);
+		assertEquals("6.0", IStatus.CANCEL, longJob.getResult().getSeverity());
 
 	}
 
@@ -105,12 +107,12 @@ public class JobTest extends AbstractJobTest {
 		//execute a job asynchronously and check the result
 		AsynchTestJob main = new AsynchTestJob("Test Asynch Finish", status, 0);
 
-		assertTrue("1.0", main.getThread() == null);
-		assertTrue("2.0", main.getResult() == null);
+		assertNull("1.0", main.getThread());
+		assertNull("2.0", main.getResult());
 		//schedule the job to run
 		main.schedule();
 		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_RUNNING);
-		assertTrue("3.0", main.getState() == Job.RUNNING);
+		assertEquals("3.0", Job.RUNNING, main.getState());
 		//the asynchronous process that assigns the thread the job is going to run in has not been started yet
 		//the job is running in the thread provided to it by the manager
 		assertTrue("3.1" + main.getThread().getName(), main.getThread() instanceof Worker);
@@ -126,7 +128,7 @@ public class JobTest extends AbstractJobTest {
 		//make sure the job has set the thread it is going to run in
 		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_RUNNING);
 
-		assertTrue("3.3", status[0] == TestBarrier.STATUS_RUNNING);
+		assertEquals("3.3", TestBarrier.STATUS_RUNNING, status[0]);
 		assertTrue("3.4", main.getThread() instanceof AsynchExecThread);
 
 		//let the job run
@@ -135,9 +137,9 @@ public class JobTest extends AbstractJobTest {
 		waitForState(main, Job.NONE);
 
 		//after the job is finished, the thread should be reset
-		assertTrue("4.0", main.getState() == Job.NONE);
-		assertTrue("4.1", main.getResult().getSeverity() == IStatus.OK);
-		assertTrue("4.2", main.getThread() == null);
+		assertEquals("4.0", Job.NONE, main.getState());
+		assertEquals("4.1", IStatus.OK, main.getResult().getSeverity());
+		assertNull("4.2", main.getThread());
 
 		//reset status
 		status[0] = TestBarrier.STATUS_WAIT_FOR_START;
@@ -145,7 +147,7 @@ public class JobTest extends AbstractJobTest {
 		//schedule the job to run again
 		main.schedule();
 		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_RUNNING);
-		assertTrue("5.0", main.getState() == Job.RUNNING);
+		assertEquals("5.0", Job.RUNNING, main.getState());
 
 		//the asynchronous process that assigns the thread the job is going to run in has not been started yet
 		//job is running in the thread provided by the manager
@@ -162,7 +164,7 @@ public class JobTest extends AbstractJobTest {
 		//make sure the job has set the thread it is going to run in
 		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_RUNNING);
 
-		assertTrue("5.3", status[0] == TestBarrier.STATUS_RUNNING);
+		assertEquals("5.3", TestBarrier.STATUS_RUNNING, status[0]);
 		assertTrue("5.4", main.getThread() instanceof AsynchExecThread);
 
 		//cancel the job, then let the job get the cancellation request
@@ -172,9 +174,9 @@ public class JobTest extends AbstractJobTest {
 		waitForState(main, Job.NONE);
 
 		//thread should be reset to null after cancellation
-		assertTrue("6.0", main.getState() == Job.NONE);
-		assertTrue("6.1", main.getResult().getSeverity() == IStatus.CANCEL);
-		assertTrue("6.2", main.getThread() == null);
+		assertEquals("6.0", Job.NONE, main.getState());
+		assertEquals("6.1", IStatus.CANCEL, main.getResult().getSeverity());
+		assertNull("6.2", main.getThread());
 	}
 
 	public void testAsynchJobComplex() {
@@ -185,8 +187,8 @@ public class JobTest extends AbstractJobTest {
 
 		for (int i = 0; i < jobs.length; i++) {
 			jobs[i] = new AsynchTestJob("TestJob" + (i + 1), status, i);
-			assertTrue("1." + i, jobs[i].getThread() == null);
-			assertTrue("2." + i, jobs[i].getResult() == null);
+			assertNull("1." + i, jobs[i].getThread());
+			assertNull("2." + i, jobs[i].getResult());
 			jobs[i].schedule();
 			//status[i] = TestBarrier.STATUS_START;
 		}
@@ -195,7 +197,7 @@ public class JobTest extends AbstractJobTest {
 
 		//every job should now be waiting for the STATUS_START flag
 		for (int i = 0; i < status.length; i++) {
-			assertTrue("3." + i, jobs[i].getState() == Job.RUNNING);
+			assertEquals("3." + i, Job.RUNNING, jobs[i].getState());
 			assertTrue("4." + i, jobs[i].getThread() instanceof Worker);
 			status[i] = TestBarrier.STATUS_START;
 		}
@@ -245,8 +247,8 @@ public class JobTest extends AbstractJobTest {
 
 		for (int i = 0; i < jobs.length; i++) {
 			jobs[i] = new AsynchTestJob("TestJob" + (i + 1), status, i);
-			assertTrue("1." + i, jobs[i].getThread() == null);
-			assertTrue("2." + i, jobs[i].getResult() == null);
+			assertNull("1." + i, jobs[i].getThread());
+			assertNull("2." + i, jobs[i].getResult());
 			if (i < 2) {
 				jobs[i].schedule();
 			} else if (i > 2) {
@@ -261,7 +263,7 @@ public class JobTest extends AbstractJobTest {
 		//these 3 jobs should be waiting for the STATUS_START flag
 		for (int i = 0; i < 3; i++) {
 			TestBarrier.waitForStatus(status, i, TestBarrier.STATUS_RUNNING);
-			assertTrue("3." + i, jobs[i].getState() == Job.RUNNING);
+			assertEquals("3." + i, Job.RUNNING, jobs[i].getState());
 			assertTrue("4." + i, jobs[i].getThread() instanceof Worker);
 			status[i] = TestBarrier.STATUS_START;
 		}
@@ -535,11 +537,11 @@ public class JobTest extends AbstractJobTest {
 		//schedule the job and wait on the barrier until it is running
 		job.schedule();
 		barrier.waitForStatus(TestBarrier.STATUS_WAIT_FOR_RUN);
-		assertTrue("1.0", canceling[0] == 0);
+		assertEquals("1.0", 0, canceling[0]);
 		job.cancel();
-		assertTrue("1.1", canceling[0] == 1);
+		assertEquals("1.1", 1, canceling[0]);
 		job.cancel();
-		assertTrue("1.2", canceling[0] == 1);
+		assertEquals("1.2", 1, canceling[0]);
 		//let the job finish
 		barrier.setStatus(TestBarrier.STATUS_RUNNING);
 		waitForState(job, Job.NONE);
@@ -648,8 +650,8 @@ public class JobTest extends AbstractJobTest {
 	}
 
 	public void testGetName() {
-		assertTrue("1.0", shortJob.getName().equals("Short Test Job"));
-		assertTrue("1.1", longJob.getName().equals("Long Test Job"));
+		assertEquals("1.0", "Short Test Job", shortJob.getName());
+		assertEquals("1.1", "Long Test Job", longJob.getName());
 
 		//try creating a job with a null name
 		try {
@@ -668,7 +670,7 @@ public class JobTest extends AbstractJobTest {
 
 		for (int i = 0; i < priority.length; i++) {
 			shortJob.setPriority(priority[i]);
-			assertTrue("1." + i, shortJob.getPriority() == priority[i]);
+			assertEquals("1." + i, priority[i], shortJob.getPriority());
 		}
 	}
 
@@ -679,7 +681,7 @@ public class JobTest extends AbstractJobTest {
 		shortJob.setProperty(n1, null);
 		assertNull("1.1", shortJob.getProperty(n1));
 		shortJob.setProperty(n1, shortJob);
-		assertTrue("1.2", shortJob.getProperty(n1) == shortJob);
+		assertEquals("1.2", shortJob.getProperty(n1), shortJob);
 		assertNull("1.3", shortJob.getProperty(n2));
 		shortJob.setProperty(n1, "hello");
 		assertEquals("1.4", "hello", shortJob.getProperty(n1));
@@ -690,10 +692,10 @@ public class JobTest extends AbstractJobTest {
 
 	public void testGetResult() {
 		//execute a short job
-		assertTrue("1.0", shortJob.getResult() == null);
+		assertNull("1.0", shortJob.getResult());
 		shortJob.schedule();
 		waitForState(shortJob, Job.NONE);
-		assertTrue("1.1", shortJob.getResult().getSeverity() == IStatus.OK);
+		assertEquals("1.1", IStatus.OK, shortJob.getResult().getSeverity());
 
 		//cancel a long job
 		waitForState(longJob, Job.NONE);
@@ -701,23 +703,23 @@ public class JobTest extends AbstractJobTest {
 		waitForState(longJob, Job.RUNNING);
 		longJob.cancel();
 		waitForState(longJob, Job.NONE);
-		assertTrue("2.0", longJob.getResult().getSeverity() == IStatus.CANCEL);
+		assertEquals("2.0", IStatus.CANCEL, longJob.getResult().getSeverity());
 	}
 
 	public void testGetRule() {
 		//set several rules for the job, check if getRule returns the rule that was set
 		//no rule was set yet
-		assertTrue("1.0", shortJob.getRule() == null);
+		assertNull("1.0", shortJob.getRule());
 
 		shortJob.setRule(new IdentityRule());
 		assertTrue("1.1", (shortJob.getRule() instanceof IdentityRule));
 
 		ISchedulingRule rule = new PathRule("/testGetRule");
 		shortJob.setRule(rule);
-		assertTrue("1.2", shortJob.getRule() == rule);
+		assertEquals("1.2", shortJob.getRule(), rule);
 
 		shortJob.setRule(null);
-		assertTrue("1.3", shortJob.getRule() == null);
+		assertNull("1.3", shortJob.getRule());
 	}
 
 	public void testGetThread() {
@@ -725,17 +727,17 @@ public class JobTest extends AbstractJobTest {
 		//if the job is scheduled, only jobs that return the asynch_exec status will run in the indicated thread
 
 		//main is not running now
-		assertTrue("1.0", shortJob.getThread() == null);
+		assertNull("1.0", shortJob.getThread());
 
 		Thread t = new Thread();
 		shortJob.setThread(t);
-		assertTrue("1.1", shortJob.getThread() == t);
+		assertEquals("1.1", shortJob.getThread(), t);
 
 		shortJob.setThread(new Thread());
-		assertTrue("1.2", shortJob.getThread() != t);
+		assertNotEquals("1.2", shortJob.getThread(), t);
 
 		shortJob.setThread(null);
-		assertTrue("1.3", shortJob.getThread() == null);
+		assertNull("1.3", shortJob.getThread());
 	}
 
 	public void testIsBlocking() {
@@ -987,7 +989,7 @@ public class JobTest extends AbstractJobTest {
 		waitForState(job, Job.RUNNING);
 		t.interrupt();
 		job.join();
-		assertTrue("Thread not interrupted", job.getResult() == Status.CANCEL_STATUS);
+		assertEquals("Thread not interrupted", Status.CANCEL_STATUS, job.getResult());
 	}
 
 	public void testJoinInterruptUIThread() throws InterruptedException {
@@ -1013,7 +1015,7 @@ public class JobTest extends AbstractJobTest {
 			waitForState(job, Job.RUNNING);
 			t.interrupt();
 			job.join();
-			assertTrue("Thread interrupted", job.getResult() == Status.OK_STATUS);
+			assertEquals("Thread interrupted", Status.OK_STATUS, job.getResult());
 		} finally {
 			Job.getJobManager().setLockListener(null);
 		}
@@ -1091,7 +1093,7 @@ public class JobTest extends AbstractJobTest {
 		} catch (InterruptedException e) {
 			fail("Unexpected interrupt");
 		}
-		assertTrue("1.0", failure[0] != null);
+		assertNotNull("1.0", failure[0]);
 	}
 
 	/**
@@ -1236,7 +1238,7 @@ public class JobTest extends AbstractJobTest {
 		status[0] = TestBarrier.STATUS_RUNNING;
 		//make sure the job was not rescheduled while the executing job was sleeping
 		waitForState(job, Job.NONE);
-		assertTrue("1.0", job.getState() == Job.NONE);
+		assertEquals("1.0", Job.NONE, job.getState());
 		assertEquals("1.0", 2, runCount[0]);
 	}
 
@@ -1501,54 +1503,54 @@ public class JobTest extends AbstractJobTest {
 		shortJob.setRule(new PathRule("/testSetRule/B/C/D"));
 		assertTrue("1.2", shortJob.getRule() instanceof PathRule);
 		shortJob.setRule(null);
-		assertTrue("1.3", shortJob.getRule() == null);
+		assertNull("1.3", shortJob.getRule());
 	}
 
 	public void testSetThread() {
 		//setting the thread of a job that is not an asynchronous job should not affect the actual thread the job will run in
-		assertTrue("0.0", longJob.getThread() == null);
+		assertNull("0.0", longJob.getThread());
 
 		longJob.setThread(Thread.currentThread());
-		assertTrue("1.0", longJob.getThread() == Thread.currentThread());
+		assertEquals("1.0", longJob.getThread(), Thread.currentThread());
 		longJob.schedule();
 		waitForState(longJob, Job.RUNNING);
 
 		//the setThread method should have no effect on jobs that execute normally
-		assertTrue("2.0", longJob.getThread() != Thread.currentThread());
+		assertNotEquals("2.0", longJob.getThread(), Thread.currentThread());
 
 		longJob.cancel();
 		waitForState(longJob, Job.NONE);
 
 		//the thread should reset to null when the job finishes execution
-		assertTrue("3.0", longJob.getThread() == null);
+		assertNull("3.0", longJob.getThread());
 
 		longJob.setThread(null);
-		assertTrue("4.0", longJob.getThread() == null);
+		assertNull("4.0", longJob.getThread());
 
 		longJob.schedule();
 		waitForState(longJob, Job.RUNNING);
 
 		//the thread that the job is executing in is not the one that was set
-		assertTrue("5.0 (state=" + JobManager.printState(longJob.getState()) + ')', longJob.getThread() != null);
+		assertNotNull("5.0 (state=" + JobManager.printState(longJob.getState()) + ')', longJob.getThread());
 		longJob.cancel();
 		waitForState(longJob, Job.NONE);
 
 		//thread should reset to null after execution of job
-		assertTrue("6.0", longJob.getThread() == null);
+		assertNull("6.0", longJob.getThread());
 
 		Thread t = new Thread();
 		longJob.setThread(t);
-		assertTrue("7.0", longJob.getThread() == t);
+		assertEquals("7.0", longJob.getThread(), t);
 		longJob.schedule();
 		waitForState(longJob, Job.RUNNING);
 
 		//the thread that the job is executing in is not the one that it was set to
-		assertTrue("8.0", longJob.getThread() != t);
+		assertNotEquals("8.0", longJob.getThread(), t);
 		longJob.cancel();
 		waitForState(longJob, Job.NONE);
 
 		//execution thread should reset to null after job is finished
-		assertTrue("9.0", longJob.getThread() == null);
+		assertNull("9.0", longJob.getThread());
 
 		//when the state is changed to RUNNING, the thread should not be null
 		final Thread[] thread = new Thread[1];
@@ -1601,21 +1603,4 @@ public class JobTest extends AbstractJobTest {
 		}
 	}
 
-	/**
-	 * A job was scheduled to run.  Pause this thread so that a worker thread
-	 * has a chance to finish the job
-	 */
-	//	private void waitForEnd(Job job) {
-	//		int i = 0;
-	//		while(job.getState() != Job.NONE) {
-	//			try {
-	//				Thread.sleep(100);
-	//			} catch (InterruptedException e) {
-	//
-	//			}
-	//
-	//			//sanity test to avoid hanging tests
-	//			assertTrue("Timeout waiting for job to end", i++ < 1000);
-	//		}
-	//	}
 }

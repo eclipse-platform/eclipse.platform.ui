@@ -46,7 +46,7 @@ public class FileLocatorTest extends CoreTest {
 
 		URL oneSolution = FileLocator.find(bundle, path, map);
 		assertNotNull(oneSolution);
-		assertTrue(oneSolution.getPath().equals(mostSpecificPath));
+		assertEquals(mostSpecificPath, oneSolution.getPath());
 		assertBundleURL(oneSolution);
 
 		URL[] solutions = FileLocator.findEntries(bundle, path, map);
@@ -58,19 +58,19 @@ public class FileLocatorTest extends CoreTest {
 		// Fragment/nl/aa/intro/messages.properties,
 		// Bundle/121/intro/messages.properties
 
-		assertTrue(solutions.length == 5);
+		assertEquals(5, solutions.length);
 
-		assertTrue(solutions[0].getPath().equals(mostSpecificPath));
+		assertEquals(mostSpecificPath, solutions[0].getPath());
 		assertBundleURL(solutions[0]);
-		assertTrue(solutions[1].getPath().equals(mostSpecificPath));
+		assertEquals(mostSpecificPath, solutions[1].getPath());
 		assertFragmentURL(solutions[1]);
 
-		assertTrue(solutions[2].getPath().equals(lessSpecificPath));
+		assertEquals(lessSpecificPath, solutions[2].getPath());
 		assertBundleURL(solutions[2]);
-		assertTrue(solutions[3].getPath().equals(lessSpecificPath));
+		assertEquals(lessSpecificPath, solutions[3].getPath());
 		assertFragmentURL(solutions[3]);
 
-		assertTrue(solutions[4].getPath().equals(nonSpecificPath));
+		assertEquals(nonSpecificPath, solutions[4].getPath());
 		assertBundleURL(solutions[4]);
 
 		// remove the first bundle
@@ -92,7 +92,7 @@ public class FileLocatorTest extends CoreTest {
 		assertNotNull(file1);
 
 		URL fileURL = FileLocator.toFileURL(context.getBundle().getEntry(RuntimeTestsPlugin.TEST_FILES_ROOT + "fileLocator/testFileLocatorGetRootFile"));
-		assertTrue(new File(fileURL.getFile()).equals(file1));
+		assertEquals(file1, new File(fileURL.getFile()));
 
 		// remove the bundle
 		bundle.uninstall();
@@ -110,7 +110,7 @@ public class FileLocatorTest extends CoreTest {
 		assertNotNull(file1);
 
 		URL fileURL = FileLocator.toFileURL(context.getBundle().getEntry(RuntimeTestsPlugin.TEST_FILES_ROOT + "fileLocator/testFileLocatorGetRootFile.jar"));
-		assertTrue(new File(fileURL.getFile()).equals(file1));
+		assertEquals(file1, new File(fileURL.getFile()));
 
 		URL manifest = bundle.getEntry("META-INF/MANIFEST.MF");
 		manifest = FileLocator.resolve(manifest);
@@ -143,12 +143,12 @@ public class FileLocatorTest extends CoreTest {
 	private void assertBundleURL(URL url) {
 		Bundle hostBundle = getHostBundle(url);
 		assertNotNull(hostBundle);
-		assertTrue(hostBundle.getSymbolicName().equals("fileLocatorTest"));
+		assertEquals("fileLocatorTest", hostBundle.getSymbolicName());
 	}
 
 	private void assertFragmentURL(URL url) {
 		Bundle hostBundle = getHostBundle(url);
 		assertNotNull(hostBundle);
-		assertTrue(hostBundle.getSymbolicName().equals("fileLocatorTest.nl"));
+		assertEquals("fileLocatorTest.nl", hostBundle.getSymbolicName());
 	}
 }
