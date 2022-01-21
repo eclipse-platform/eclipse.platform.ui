@@ -109,6 +109,7 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.LargeFileLimitsPreferenceHandler.FileLimit;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -223,7 +224,7 @@ public class LargeFileAssociationsPreferencePage extends PreferencePage implemen
 			createPreferencePageContents(pageComponent);
 		}
 
-		//workbench.getHelpSystem().setHelp(parent, IWorkbenchHelpContextIds.LARGE_FILE_ASSOCIATIONS_PREFERENCE_PAGE);
+		workbench.getHelpSystem().setHelp(parent, IWorkbenchHelpContextIds.LARGE_FILE_ASSOCIATIONS_PREFERENCE_PAGE);
 
 		return pageComponent;
 	}

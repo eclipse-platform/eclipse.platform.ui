@@ -384,7 +384,8 @@ public class LargeFileLimitsPreferenceHandler {
 	 * org.eclipse.ui.workbench/largeFileLimits_disabled=cpp
 	 *
 	 * # default, show prompt for all types that don't have a preference
-	 * org.eclipse.ui.workbench/largeFileLimits_DEFAULT=100000
+	 * org.eclipse.ui.workbench/largeFileLimits_default_enabled=true
+	 * org.eclipse.ui.workbench/largeFileLimits_default_value=100000
 	 *
 	 * org.eclipse.ui.workbench/largeFileLimits.java=33333|org.eclipse.ui.DefaultTextEditor|66666|largeFileLimits_prompt
 	 * org.eclipse.ui.workbench/largeFileLimits.xml=44444|org.eclipse.ui.DefaultTextEditor|77777|emacs
