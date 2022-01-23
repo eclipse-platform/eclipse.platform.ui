@@ -211,6 +211,14 @@ public interface IWorkbenchPage extends IPartService, ISelectionService {
 	int MATCH_ID = 2;
 
 	/**
+	 * Editor opening match mode specifying that the editor selection strategy
+	 * should ignore file size
+	 *
+	 * @since 3.125
+	 */
+	int MATCH_IGNORE_SIZE = 4;
+
+	/**
 	 * State of a view in a given page when the view stack is minimized.
 	 *
 	 * @since 3.2

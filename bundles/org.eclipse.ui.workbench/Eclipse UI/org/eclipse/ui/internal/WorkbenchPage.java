@@ -3129,7 +3129,11 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 		IEditorRegistry editorRegistry = getWorkbenchWindow().getWorkbench().getEditorRegistry();
 		IEditorDescriptor desc = editorRegistry.findEditor(editorId);
-		if (desc != null && !desc.isOpenExternal()) {
+		boolean ignoreFileSize = (matchFlags & MATCH_IGNORE_SIZE) != 0;
+		if (ignoreFileSize) {
+			// clear the flag so code below do not need to have extra cases for that
+			matchFlags ^= MATCH_IGNORE_SIZE;
+		} else if (desc != null && !desc.isOpenExternal()) {
 			java.util.Optional<String> largeFileEditorId = largeFileLimitsPreferenceHandler.getEditorForInput(input);
 			if (largeFileEditorId == null) {
 				// the user pressed cancel in the editor selection dialog

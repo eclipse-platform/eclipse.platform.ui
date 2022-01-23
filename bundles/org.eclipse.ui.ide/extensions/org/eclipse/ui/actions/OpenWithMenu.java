@@ -79,7 +79,8 @@ public class OpenWithMenu extends ContributionItem {
 	/**
 	 * Match both the input and id, so that different types of editor can be opened on the same input.
 	 */
-	private static final int MATCH_BOTH = IWorkbenchPage.MATCH_INPUT | IWorkbenchPage.MATCH_ID;
+	private static final int MATCH_BOTH = IWorkbenchPage.MATCH_INPUT | IWorkbenchPage.MATCH_ID
+			| IWorkbenchPage.MATCH_IGNORE_SIZE;
 
 	/**
 	 * Compares the labels from two IEditorDescriptor objects

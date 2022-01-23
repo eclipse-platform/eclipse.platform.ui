@@ -53,13 +53,14 @@ public class NewEditorHandler extends AbstractHandler {
 			return null;
 		}
 		try {
+			int matchFlags = IWorkbenchPage.MATCH_NONE | IWorkbenchPage.MATCH_IGNORE_SIZE;
 			if (editor instanceof IPersistableEditor) {
 				XMLMemento editorState = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_EDITOR_STATE);
 				((IPersistableEditor) editor).saveState(editorState);
-				((WorkbenchPage) page).openEditor(editor.getEditorInput(), editorId, true, IWorkbenchPage.MATCH_NONE,
+				((WorkbenchPage) page).openEditor(editor.getEditorInput(), editorId, true, matchFlags,
 						editorState, true);
 			} else {
-				page.openEditor(editor.getEditorInput(), editorId, true, IWorkbenchPage.MATCH_NONE);
+				page.openEditor(editor.getEditorInput(), editorId, true, matchFlags);
 			}
 		} catch (PartInitException e) {
 			DialogUtil.openError(activeWorkbenchWindow.getShell(), WorkbenchMessages.Error, e.getMessage(), e);

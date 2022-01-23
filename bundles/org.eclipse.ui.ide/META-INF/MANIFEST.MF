@@ -53,7 +53,7 @@ Require-Bundle: org.eclipse.core.resources;bundle-version="[3.15.0,4.0.0)";resol
  org.eclipse.help;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.swt;bundle-version="[3.107.0,4.0.0)",
  org.eclipse.ui;bundle-version="[3.106.0,4.0.0)",
- org.eclipse.ui.workbench;bundle-version="[3.115.100,4.0.0)",
+ org.eclipse.ui.workbench;bundle-version="[3.125.0,4.0.0)",
  org.eclipse.ui.views;bundle-version="[3.2.0,4.0.0)";resolution:=optional,
  org.eclipse.jface.text;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.ui.forms;bundle-version="[3.3.0,4.0.0)";resolution:=optional,
