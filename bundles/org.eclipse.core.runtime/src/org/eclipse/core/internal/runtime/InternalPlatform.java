@@ -224,6 +224,9 @@ public final class InternalPlatform {
 	}
 
 	public Bundle[] getBundles(String symbolicName, String versionRange) {
+		if(!isRunning()) {
+			return null;
+		}
 		if (Constants.SYSTEM_BUNDLE_SYMBOLICNAME.equals(symbolicName)) {
 			symbolicName = context.getBundle(Constants.SYSTEM_BUNDLE_LOCATION).getSymbolicName();
 		}
