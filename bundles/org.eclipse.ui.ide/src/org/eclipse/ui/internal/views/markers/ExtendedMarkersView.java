@@ -1143,8 +1143,11 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * Open the selected markers
+	 *
+	 * @since 3.18
 	 */
-	void openSelectedMarkers() {
+
+	protected void openSelectedMarkers() {
 		IMarker[] markers = getOpenableMarkers();
 		for (IMarker marker : markers) {
 			IWorkbenchPage page = getSite().getPage();
