@@ -34,7 +34,7 @@ import org.junit.Assert;
 
 public class AntUtilTests extends AbstractAntUITest {
 
-	private static final long EXECUTION_THRESHOLD_INCLUDE_TASK = 7500;
+	private static final long EXECUTION_THRESHOLD_INCLUDE_TASK = 10000;
 	private static final long WINDOWS_EXECUTION_THRESHOLD_INCLUDE_TASK = 15000;
 
 	public AntUtilTests(String name) {
@@ -211,7 +211,7 @@ public class AntUtilTests extends AbstractAntUITest {
 		 *
 		 * - 15s on windows (seems to be a general performance issue on windows)
 		 *
-		 * - 7.s elsewhere
+		 * - 10s elsewhere
 		 */
 		long duration = endTime - startTime;
 		// Change this value if it does not fit the performance needs
