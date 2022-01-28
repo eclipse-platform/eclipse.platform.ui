@@ -334,7 +334,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			stream= new ByteArrayInputStream(bytes, 0, byteBuffer.limit());
 		} catch (CharacterCodingException ex) {
 			Assert.isTrue(ex instanceof UnmappableCharacterException);
-			String message= NLSUtility.format(FileBuffersMessages.ResourceTextFileBuffer_error_charset_mapping_failed_message_arg, encoding);
+			String message= NLSUtility.format(FileBuffersMessages.ResourceTextFileBuffer_error_charset_mapping_failed_message_arg, new Object[] {encoding,getLocation().toString()});
 			IStatus s= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IFileBufferStatusCodes.CHARSET_MAPPING_FAILED, message, ex);
 			throw new CoreException(s);
 		}
