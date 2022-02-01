@@ -14,7 +14,7 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>eclipse.platform.resources.tests</artifactId>
-    <groupId>eclipse.platform.resources</groupId>
+    <groupId>org.eclipse.platform</groupId>
     <version>4.23.0-SNAPSHOT</version>
   </parent>
 
@@ -24,7 +24,6 @@
     <skipAPIAnalysis>true</skipAPIAnalysis>
   </properties>
 
-  <groupId>org.eclipse.core</groupId>
   <artifactId>org.eclipse.core.tests.resources.saveparticipant</artifactId>
   <version>3.4.0-SNAPSHOT</version>
   <packaging>eclipse-test-plugin</packaging>
