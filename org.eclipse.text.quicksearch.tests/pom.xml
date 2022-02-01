@@ -17,12 +17,11 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<artifactId>tests-pom</artifactId>
-		<groupId>eclipse.platform.text</groupId>
+		<artifactId>text-tests-pom</artifactId>
+		<groupId>org.eclipse.platform</groupId>
 		<version>4.23.0-SNAPSHOT</version>
 		<relativePath>../tests-pom/</relativePath>
 	</parent>
-	<groupId>org.eclipse.text</groupId>
 	<artifactId>org.eclipse.text.quicksearch.tests</artifactId>
 	<version>1.1.200-SNAPSHOT</version>
 	<packaging>eclipse-test-plugin</packaging>
