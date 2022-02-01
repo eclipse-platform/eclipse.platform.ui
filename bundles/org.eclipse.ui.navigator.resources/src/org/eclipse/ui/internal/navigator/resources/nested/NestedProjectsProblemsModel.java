@@ -93,22 +93,36 @@ public class NestedProjectsProblemsModel {
 			if (currentContainer == null) {
 				continue;
 			}
+
 			IPath currentLocation = currentContainer.getLocation();
-			if (currentLocation == null) {
-				continue;
+			if (currentLocation != null) {
+				// We have a physical location on disk.
+				// Use getLocation() to more efficiently handle nested projects and avoid
+				// redundant updates for identical resources appearing multiple times in the
+				// IResource tree.
+				dirtyLeafContainers.removeIf(leafContainer -> {
+					IPath leafLocation = leafContainer.getLocation();
+					return leafLocation != null && leafLocation.isPrefixOf(currentLocation);
+				});
+				if (dirtyLeafContainers.stream().noneMatch(leafContainer -> {
+					IPath leafLocation = leafContainer.getLocation();
+					return leafLocation != null && currentLocation.isPrefixOf(leafLocation);
+				})) {
+					dirtyLeafContainers.add(currentContainer);
+				}
+			} else {
+				// No physical location on disk (e.g. using a virtual
+				// org.eclipse.core.filesystem.IFileSystem implementation)
+				// Fall back to getFullPath(), which his always available, but could lead to
+				// redundant updates.
+				dirtyLeafContainers.removeIf( //
+						leafContainer -> leafContainer.getFullPath().isPrefixOf(currentContainer.getFullPath()));
+				if (dirtyLeafContainers.stream().noneMatch( //
+						leafContainer -> currentContainer.getFullPath().isPrefixOf(leafContainer.getFullPath()))) {
+					dirtyLeafContainers.add(currentContainer);
+				}
 			}
-			dirtyLeafContainers
-					.removeIf(leafContainer -> {
-						IPath leafLocation = leafContainer.getLocation();
-						return leafLocation != null && leafLocation.isPrefixOf(currentLocation);
-					});
-			if (dirtyLeafContainers.stream().noneMatch(
-					leafContainer -> {
-						IPath leafLocation = leafContainer.getLocation();
-						return leafLocation != null && currentLocation.isPrefixOf(leafLocation);
-					})) {
-				dirtyLeafContainers.add(currentContainer);
-			}
+
 			if (resource.getType() == IResource.FILE) {
 				cache.remove(resource);
 				modifiedSeveritySinceLastRun.add(resource);
