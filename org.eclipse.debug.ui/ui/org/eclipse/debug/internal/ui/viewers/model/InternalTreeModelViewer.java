@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -1776,6 +1776,9 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 
 	@Override
 	protected void handleTreeCollapse(TreeEvent event) {
+		if (event.item.isDisposed()) {
+			return;
+		}
 		super.handleTreeCollapse(event);
 		IContentProvider contentProvider = getContentProvider();
 		if (contentProvider instanceof TreeModelContentProvider && event.item.getData() != null) {
