@@ -20,6 +20,6 @@ import org.junit.runners.Suite;
  * Runs all tests in this package.
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ RefreshProviderTest.class })
+@Suite.SuiteClasses({ RefreshProviderTest.class, RefreshJobTest.class })
 public class AllTests {
 }

@@ -30,7 +30,28 @@ import org.eclipse.core.runtime.*;
  * @since 3.0
  */
 public class RefreshJob extends WorkspaceJob {
-	private static final long UPDATE_DELAY = 200;
+
+	/**
+	 * Threshold (in milliseconds) at which the refresh operation is considered to
+	 * be fast enough to increase refresh depth
+	 */
+	public static final int FAST_REFRESH_THRESHOLD = 1000;
+
+	/**
+	 * Threshold (in milliseconds) at which the refresh operation is considered to
+	 * be slow enough to decrease refresh depth
+	 */
+	public static final int SLOW_REFRESH_THRESHOLD = 2000;
+
+	/** Base depth used for refresh */
+	public static final int BASE_REFRESH_DEPTH = 1000;
+
+	/** Number of refresh rounds before updating refresh depth */
+	public static final int DEPTH_INCREASE_STEP = 1000;
+
+	/** Default refresh job delay (in milliseconds) */
+	public static final int UPDATE_DELAY = 200;
+
 	/**
 	 * List of refresh requests. Requests are processed in order from
 	 * the end of the list. Requests can be added to either the beginning
@@ -45,9 +66,28 @@ public class RefreshJob extends WorkspaceJob {
 	 */
 	private PrefixPool pathPrefixHistory, rootPathHistory;
 
+	private final int fastRefreshThreshold;
+	private final int slowRefreshThreshold;
+	private final int baseRefreshDepth;
+	private final int depthIncreaseStep;
+	private final int updateDelay;
+
 	public RefreshJob() {
+		this(FAST_REFRESH_THRESHOLD, SLOW_REFRESH_THRESHOLD, BASE_REFRESH_DEPTH, DEPTH_INCREASE_STEP, UPDATE_DELAY);
+	}
+
+	/**
+	 * This method is protected for tests
+	 */
+	protected RefreshJob(int fastRefreshThreshold, int slowRefreshThreshold, int baseRefreshDepth,
+			int depthIncreaseStep, int updateDelay) {
 		super(Messages.refresh_jobName);
-		fRequests = new ArrayList<>(1);
+		this.fRequests = new ArrayList<>(1);
+		this.fastRefreshThreshold = fastRefreshThreshold;
+		this.slowRefreshThreshold = slowRefreshThreshold;
+		this.baseRefreshDepth = baseRefreshDepth;
+		this.depthIncreaseStep = depthIncreaseStep;
+		this.updateDelay = updateDelay;
 	}
 
 	/**
@@ -72,7 +112,9 @@ public class RefreshJob extends WorkspaceJob {
 
 	private synchronized void addRequests(List<IResource> list) {
 		//add requests to the end of the queue
-		fRequests.addAll(0, list);
+		if (!list.isEmpty()) {
+			fRequests.addAll(0, list);
+		}
 	}
 
 	@Override
@@ -84,7 +126,7 @@ public class RefreshJob extends WorkspaceJob {
 	 * This method adds all members at the specified depth from the resource
 	 * to the provided list.
 	 */
-	private List<IResource> collectChildrenToDepth(IResource resource, ArrayList<IResource> children, int depth) {
+	protected List<IResource> collectChildrenToDepth(IResource resource, ArrayList<IResource> children, int depth) {
 		if (resource.getType() == IResource.FILE)
 			return children;
 		IResource[] members;
@@ -141,7 +183,7 @@ public class RefreshJob extends WorkspaceJob {
 		if (resource == null)
 			return;
 		addRequest(resource);
-		schedule(UPDATE_DELAY);
+		schedule(updateDelay);
 	}
 
 	@Override
@@ -163,20 +205,26 @@ public class RefreshJob extends WorkspaceJob {
 					subMonitor.setWorkRemaining(Math.max(fRequests.size(), 100));
 					refreshCount++;
 					long refreshTime = -System.currentTimeMillis();
-					toRefresh.refreshLocal(1000 + depth, subMonitor.split(1));
+					toRefresh.refreshLocal(baseRefreshDepth + depth, subMonitor.split(1));
 					refreshTime += System.currentTimeMillis();
 					if (refreshTime > longestRefresh)
 						longestRefresh = refreshTime;
 					//show occasional progress
-					if (refreshCount % 1000 == 0) {
+					if (refreshCount % depthIncreaseStep == 0) {
 						//be polite to other threads (no effect on some platforms)
 						Thread.yield();
 						//throttle depth if it takes too long
-						if (longestRefresh > 2000 && depth > 1) {
+						if (longestRefresh > slowRefreshThreshold && depth > 1) {
 							depth = 1;
+							if (Policy.DEBUG_AUTO_REFRESH) {
+								Policy.debug(RefreshManager.DEBUG_PREFIX + " decreased refresh depth to: " + depth); //$NON-NLS-1$
+							}
 						}
-						if (longestRefresh < 1000) {
+						if (longestRefresh < fastRefreshThreshold) {
 							depth *= 2;
+							if (Policy.DEBUG_AUTO_REFRESH) {
+								Policy.debug(RefreshManager.DEBUG_PREFIX + " increased refresh depth to: " + depth); //$NON-NLS-1$
+							}
 						}
 						longestRefresh = 0;
 					}
