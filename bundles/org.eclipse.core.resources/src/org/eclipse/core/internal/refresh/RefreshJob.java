@@ -32,6 +32,11 @@ import org.eclipse.core.runtime.*;
 public class RefreshJob extends WorkspaceJob {
 
 	/**
+	 * Max refresh recursion deep
+	 */
+	public static final int MAX_RECURSION = 2 << 29; // 1073741824
+
+	/**
 	 * Threshold (in milliseconds) at which the refresh operation is considered to
 	 * be fast enough to increase refresh depth
 	 */
@@ -71,16 +76,18 @@ public class RefreshJob extends WorkspaceJob {
 	private final int baseRefreshDepth;
 	private final int depthIncreaseStep;
 	private final int updateDelay;
+	private final int maxRecursionDeep;
 
 	public RefreshJob() {
-		this(FAST_REFRESH_THRESHOLD, SLOW_REFRESH_THRESHOLD, BASE_REFRESH_DEPTH, DEPTH_INCREASE_STEP, UPDATE_DELAY);
+		this(FAST_REFRESH_THRESHOLD, SLOW_REFRESH_THRESHOLD, BASE_REFRESH_DEPTH, DEPTH_INCREASE_STEP, UPDATE_DELAY,
+				MAX_RECURSION);
 	}
 
 	/**
 	 * This method is protected for tests
 	 */
 	protected RefreshJob(int fastRefreshThreshold, int slowRefreshThreshold, int baseRefreshDepth,
-			int depthIncreaseStep, int updateDelay) {
+			int depthIncreaseStep, int updateDelay, int maxRecursionDeep) {
 		super(Messages.refresh_jobName);
 		this.fRequests = new ArrayList<>(1);
 		this.fastRefreshThreshold = fastRefreshThreshold;
@@ -88,6 +95,7 @@ public class RefreshJob extends WorkspaceJob {
 		this.baseRefreshDepth = baseRefreshDepth;
 		this.depthIncreaseStep = depthIncreaseStep;
 		this.updateDelay = updateDelay;
+		this.maxRecursionDeep = maxRecursionDeep;
 	}
 
 	/**
@@ -222,6 +230,10 @@ public class RefreshJob extends WorkspaceJob {
 						}
 						if (longestRefresh < fastRefreshThreshold) {
 							depth *= 2;
+							if (depth <= 0 || depth > maxRecursionDeep) {
+								// avoid integer overflow
+								depth = maxRecursionDeep;
+							}
 							if (Policy.DEBUG_AUTO_REFRESH) {
 								Policy.debug(RefreshManager.DEBUG_PREFIX + " increased refresh depth to: " + depth); //$NON-NLS-1$
 							}

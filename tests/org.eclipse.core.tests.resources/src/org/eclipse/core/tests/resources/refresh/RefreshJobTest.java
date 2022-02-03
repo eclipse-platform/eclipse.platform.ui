@@ -16,6 +16,7 @@ package org.eclipse.core.tests.resources.refresh;
 import static org.eclipse.core.internal.refresh.RefreshJob.BASE_REFRESH_DEPTH;
 import static org.eclipse.core.internal.refresh.RefreshJob.DEPTH_INCREASE_STEP;
 import static org.eclipse.core.internal.refresh.RefreshJob.FAST_REFRESH_THRESHOLD;
+import static org.eclipse.core.internal.refresh.RefreshJob.MAX_RECURSION;
 import static org.eclipse.core.internal.refresh.RefreshJob.SLOW_REFRESH_THRESHOLD;
 import static org.eclipse.core.internal.refresh.RefreshJob.UPDATE_DELAY;
 import static org.junit.Assert.assertArrayEquals;
@@ -41,6 +42,7 @@ import org.eclipse.core.tests.resources.TestUtil;
  */
 public class RefreshJobTest extends ResourceTest {
 
+	private static final String REFRESH_JOB_FIELD_NAME = "refreshJob";
 	private boolean defaultRefresh;
 	private boolean shouldResetDefault;
 
@@ -49,6 +51,8 @@ public class RefreshJobTest extends ResourceTest {
 	int baseRefreshDepth = BASE_REFRESH_DEPTH;
 	int depthIncreaseStep = DEPTH_INCREASE_STEP;
 	int updateDelay = UPDATE_DELAY;
+	int maxRecursionDeep = MAX_RECURSION;
+
 	private RefreshJob originalJob;
 
 	@Override
@@ -60,7 +64,7 @@ public class RefreshJobTest extends ResourceTest {
 			prefs.putBoolean(ResourcesPlugin.PREF_AUTO_REFRESH, false);
 			shouldResetDefault = true;
 		}
-		TestUtil.waitForJobs("setup", 100, 1000);
+		TestUtil.waitForJobs("setup", 100, 5000);
 		// we don't want to wait extra time
 		updateDelay = 0;
 	}
@@ -80,14 +84,11 @@ public class RefreshJobTest extends ResourceTest {
 
 	/**
 	 * Test to ensure that there is no endless loop on refresh
-	 *
-	 * XXX test is disabled because it demonstrated endless loop from
-	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=578487
 	 */
-	public void XtestBug578487_refreshLoop() throws Exception {
+	public void testBug578487_refreshLoop() throws Exception {
 		String name = "testBug578487_refreshLoop";
 		int minDepth = 0;
-		int maxDepth = 2;
+		int maxDepth = maxRecursionDeep;
 
 		int filesCount = 0;
 		// 9 dirs & 2 depth & 2 depthIncreaseStep == hang
@@ -139,6 +140,52 @@ public class RefreshJobTest extends ResourceTest {
 	}
 
 	/**
+	 * Test that lot of directories can be refreshed with max depth of 8
+	 *
+	 * XXX: test is disabled because it needs 400 seconds on fast SSD on Linux
+	 */
+	public void XtestSmallRecursionRefresh() throws Exception {
+		String name = "testSmallRecursionRefresh";
+		maxRecursionDeep = 8;
+		int minDepth = 0;
+		int maxDepth = maxRecursionDeep;
+
+		int directoriesCount = 6;
+		int filesCount = 0;
+		int createDepth = 600;
+
+		depthIncreaseStep = 1;
+		fastRefreshThreshold = Integer.MAX_VALUE / 2;
+		slowRefreshThreshold = Integer.MAX_VALUE;
+		baseRefreshDepth = BASE_REFRESH_DEPTH;
+
+		runtest(name, minDepth, maxDepth, directoriesCount, filesCount, createDepth);
+	}
+
+	/**
+	 * Test that lot of directories can be refreshed with max possible depth
+	 *
+	 * XXX: test is disabled because it needs 250 seconds on fast SSD on Linux
+	 */
+	public void XtestBigRecursionDeepRefresh() throws Exception {
+		String name = "testBigRecursionDeepRefresh";
+		maxRecursionDeep = MAX_RECURSION;// 2 << 29; // 1073741824
+		int minDepth = 0;
+		int maxDepth = maxRecursionDeep;
+
+		int directoriesCount = 6;
+		int filesCount = 0;
+		int createDepth = 600;
+
+		depthIncreaseStep = 1;
+		fastRefreshThreshold = Integer.MAX_VALUE / 2;
+		slowRefreshThreshold = Integer.MAX_VALUE;
+		baseRefreshDepth = BASE_REFRESH_DEPTH;
+
+		runtest(name, minDepth, maxDepth, directoriesCount, filesCount, createDepth);
+	}
+
+	/**
 	 * Test that few directories can be refreshed with max depth of 1 (simulating a
 	 * very slow file system)
 	 */
@@ -175,7 +222,7 @@ public class RefreshJobTest extends ResourceTest {
 			project.open(null);
 			TestRefreshJob refreshJob = createAndReplaceDefaultJob();
 			refreshJob.refresh(project);
-			waitForRefresh();
+			refreshJob.join();
 			assertAllResourcesRefreshed(project, refreshJob);
 			assertDepth(refreshJob, minDepth, maxDepth);
 		} finally {
@@ -189,7 +236,7 @@ public class RefreshJobTest extends ResourceTest {
 	}
 
 	private void assertAllResourcesRefreshed(IProject project, TestRefreshJob refreshJob) throws Exception {
-		Set<IResource> resources = new LinkedHashSet<>(refreshJob.visitedResources);
+		Set<IResource> resources = refreshJob.visitedResources;
 		project.refreshLocal(IResource.DEPTH_INFINITE, null);
 		Set<IResource> missing = new LinkedHashSet<>();
 		Set<IResource> visited = new LinkedHashSet<>();
@@ -213,10 +260,10 @@ public class RefreshJobTest extends ResourceTest {
 
 	private TestRefreshJob createAndReplaceDefaultJob() throws Exception {
 		TestRefreshJob job = new TestRefreshJob(fastRefreshThreshold, slowRefreshThreshold, baseRefreshDepth,
-				depthIncreaseStep, updateDelay);
+				depthIncreaseStep, updateDelay, maxRecursionDeep);
 
 		RefreshManager refreshManager = ((Workspace) getWorkspace()).getRefreshManager();
-		Field field = RefreshManager.class.getDeclaredField("refreshJob");
+		Field field = RefreshManager.class.getDeclaredField(REFRESH_JOB_FIELD_NAME);
 		field.setAccessible(true);
 		originalJob = (RefreshJob) field.get(refreshManager);
 		field.set(refreshManager, job);
@@ -225,7 +272,7 @@ public class RefreshJobTest extends ResourceTest {
 
 	private void restoreRefreshJob() throws Exception {
 		RefreshManager refreshManager = ((Workspace) getWorkspace()).getRefreshManager();
-		Field field = RefreshManager.class.getDeclaredField("refreshJob");
+		Field field = RefreshManager.class.getDeclaredField(REFRESH_JOB_FIELD_NAME);
 		field.setAccessible(true);
 		field.set(refreshManager, originalJob);
 	}
@@ -235,6 +282,9 @@ public class RefreshJobTest extends ResourceTest {
 			throws Exception {
 		if (createDepth <= 0) {
 			return;
+		}
+		if (directoriesCount <= 0) {
+			directoriesCount = 1;
 		}
 		List<Path> dirs = new ArrayList<>();
 		for (int i = 0; i < directoriesCount; i++) {
@@ -283,14 +333,14 @@ public class RefreshJobTest extends ResourceTest {
 		Set<IResource> visitedResources = new LinkedHashSet<>();
 
 		protected TestRefreshJob(int fastRefreshThreshold, int slowRefreshThreshold, int baseRefreshDepth,
-				int depthIncreaseStep, int updateDelay) {
+				int depthIncreaseStep, int updateDelay, int maxRecursionDeep) {
 			super(fastRefreshThreshold, slowRefreshThreshold, baseRefreshDepth,
-					depthIncreaseStep, updateDelay);
+					depthIncreaseStep, updateDelay, maxRecursionDeep);
 		}
 
 		@Override
 		protected List<IResource> collectChildrenToDepth(IResource resource, ArrayList<IResource> children, int depth) {
-			System.out.println("collectChildrenToDepth " + depth + ":" + resource);
+			// System.out.println("collectChildrenToDepth " + depth);// + ": " + resource);
 			List<IResource> list = super.collectChildrenToDepth(resource, children, depth);
 			visitedResources.add(resource);
 			visitedResources.addAll(list);
