@@ -31,13 +31,16 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.internal.monitoring.MonitoringPlugin;
 import org.eclipse.ui.monitoring.PreferenceConstants;
 
 /**
  * Preference page that allows user to toggle plug in settings from Eclipse preferences.
  */
-public class MonitoringPreferencePage extends FieldEditorPreferencePage {
+public class MonitoringPreferencePage extends FieldEditorPreferencePage
+		implements IWorkbenchPreferencePage {
 	private static final int HOUR_IN_MS = 3600000;
 	private BooleanFieldEditor monitoringEnabled;
 	private IntegerEditor longEventWarningThreshold;
@@ -96,7 +99,6 @@ public class MonitoringPreferencePage extends FieldEditorPreferencePage {
 
 	public MonitoringPreferencePage() {
 		super(GRID);
-		setPreferenceStore(MonitoringPlugin.getPreferenceStore());
 		editors = new HashMap<>();
 	}
 
@@ -185,6 +187,10 @@ public class MonitoringPreferencePage extends FieldEditorPreferencePage {
 		return label;
 	}
 
+	@Override
+	public void init(IWorkbench workbench) {
+		setPreferenceStore(MonitoringPlugin.getPreferenceStore());
+	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
