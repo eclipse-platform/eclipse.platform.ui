@@ -16,13 +16,14 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.decorators;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.core.runtime.Assert;
@@ -113,25 +114,24 @@ public class DecorationScheduler {
 	private static final ILabelProviderListener[] EMPTY_LISTENER_LIST = new ILabelProviderListener[0];
 
 	// When decorations are computed they are added to this cache via
-	// decorated() method
-	private Map<IDecorationContext, Map<Object, DecorationResult>> resultCache = new ConcurrentHashMap<>();
+	// scheduleUpdateJob() method
+	private final Map<IDecorationContext, Map<Object, DecorationResult>> resultCache = new ConcurrentHashMap<>();
 
-	// Objects that need an icon and text computed for display to the user
-	private List<Object> awaitingDecoration = new ArrayList<>();
+	/**
+	 * Objects that are awaiting a label update. manually synchronized on
+	 * DecorationScheduler.pendingUpdate
+	 **/
+	private final Set<Object> pendingUpdate = new LinkedHashSet<>();
 
-	// Objects that are awaiting a label update.
-	private Set<Object> pendingUpdate = new HashSet<>();
+	/** manually synchronized on DecorationScheduler.this **/
+	private final LinkedHashMap<Object, DecorationReference> awaitingDecoration = new LinkedHashMap<>();
 
-	// Key to lock write access to the pending update set
-	private Object pendingKey = new Object();
-
-	private Map<Object, DecorationReference> awaitingDecorationValues = new HashMap<>();
-
-	private DecoratorManager decoratorManager;
-
+	/** manually synchronized on DecorationScheduler.this **/
 	private boolean shutdown = false;
 
-	private Job decorationJob;
+	private final DecoratorManager decoratorManager;
+
+	private final Job decorationJob;
 
 	// Notifies about updateJob or clearJob finishing
 	private final class JobChangeListener extends JobChangeAdapter {
@@ -183,7 +183,7 @@ public class DecorationScheduler {
 	 */
 	DecorationScheduler(DecoratorManager manager) {
 		decoratorManager = manager;
-		createDecorationJob();
+		decorationJob = createDecorationJob();
 	}
 
 	/**
@@ -224,7 +224,7 @@ public class DecorationScheduler {
 			String undecoratedText, IDecorationContext context) {
 
 		Assert.isNotNull(context);
-		DecorationReference reference = awaitingDecorationValues.get(element);
+		DecorationReference reference = awaitingDecoration.get(element);
 		if (reference != null) {
 			if (forceUpdate) {// Make sure we don't loose a force
 				reference.setForceUpdate(forceUpdate);
@@ -234,14 +234,21 @@ public class DecorationScheduler {
 			reference = new DecorationReference(element, adaptedElement, context);
 			reference.setForceUpdate(forceUpdate);
 			reference.setUndecoratedText(undecoratedText);
-			awaitingDecorationValues.put(element, reference);
-			awaitingDecoration.add(element);
+			awaitingDecoration.put(element, reference);
 			if (shutdown) {
 				return;
 			}
-			decorationJob.schedule();
+			schedule();
 		}
 
+	}
+
+	/*
+	 * should not be called before constructor finished. Would leak reference to
+	 * incomplete constructed DecorationScheduler.this
+	 */
+	void schedule() {
+		decorationJob.schedule();
 	}
 
 	/**
@@ -309,7 +316,7 @@ public class DecorationScheduler {
 	/**
 	 * Execute a label update using the pending decorations.
 	 */
-	synchronized void decorated() {
+	synchronized void scheduleUpdateJob() {
 
 		// Don't bother if we are shutdown now
 		if (shutdown) {
@@ -337,21 +344,22 @@ public class DecorationScheduler {
 	 *
 	 * @return IResource
 	 */
-	synchronized DecorationReference nextElement() {
-
-		if (shutdown || awaitingDecoration.isEmpty()) {
+	synchronized DecorationReference removeNextReference() {
+		Iterator<Entry<Object, DecorationReference>> iterator = awaitingDecoration.entrySet().iterator();
+		if (shutdown || !iterator.hasNext()) {
 			return null;
 		}
-		Object element = awaitingDecoration.remove(0);
-
-		return awaitingDecorationValues.remove(element);
+		Entry<Object, DecorationReference> entry = iterator.next();
+		iterator.remove();
+		DecorationReference reference = entry.getValue();
+		return reference;
 	}
 
 	/**
 	 * Create the Thread used for running decoration.
 	 */
-	private void createDecorationJob() {
-		decorationJob = new Job(WorkbenchMessages.DecorationScheduler_CalculationJobName) {
+	private Job createDecorationJob() {
+		Job decorationJob = new Job(WorkbenchMessages.DecorationScheduler_CalculationJobName) {
 			@Override
 			public IStatus run(IProgressMonitor monitor) {
 
@@ -372,29 +380,28 @@ public class DecorationScheduler {
 					}
 				}
 
-				SubMonitor subMonitor = SubMonitor.convert(monitor);
-				subMonitor.setTaskName(WorkbenchMessages.DecorationScheduler_CalculatingTask);
+				SubMonitor subMonitor = SubMonitor.convert(monitor,
+						WorkbenchMessages.DecorationScheduler_CalculatingTask, awaitingDecoration.size() + 1);
 				// will block if there are no resources to be decorated
 				DecorationReference reference;
 
-				while ((reference = nextElement()) != null) {
-
-					SubMonitor loopMonitor = subMonitor.setWorkRemaining(100).split(1);
+				boolean queued = false;
+				// for each in awaitingDecorationValues, but not locking the map during the whole iteration:
+				while ((reference = removeNextReference()) != null) {
+					subMonitor.split(1);
+					queued = true;
 					Object element = reference.getElement();
 					boolean force = reference.shouldForceUpdate();
 					Collection<IDecorationContext> contexts = reference.getContexts();
-					loopMonitor.setWorkRemaining(contexts.size());
 					for (IDecorationContext context : contexts) {
-						ensureResultCached(element, force, context);
-						loopMonitor.split(1);
+						queued |= queue(element, force, context);
 					}
+					subMonitor.setWorkRemaining(awaitingDecoration.size() + 1); // may grow asynchronously
 					// Only notify listeners when we have exhausted the
 					// queue of decoration requests.
-					synchronized (DecorationScheduler.this) {
-						if (awaitingDecoration.isEmpty()) {
-							decorated();
-						}
-					}
+				}
+				if (queued) {
+					scheduleUpdateJob();
 				}
 				return Status.OK_STATUS;
 			}
@@ -406,7 +413,7 @@ public class DecorationScheduler {
 			 * @param force   whether an update should be forced
 			 * @param context the decoration context
 			 */
-			private void ensureResultCached(Object element, boolean force, IDecorationContext context) {
+			private boolean queue(Object element, boolean force, IDecorationContext context) {
 				DecorationBuilder cacheResult = new DecorationBuilder(context);
 				// Calculate the decoration
 				decoratorManager.getLightweightManager().getDecorations(element, cacheResult);
@@ -430,10 +437,12 @@ public class DecorationScheduler {
 					// Add an update for only the original element
 					// to
 					// prevent multiple updates and clear the cache.
-					synchronized (pendingKey) {
+					synchronized (pendingUpdate) {
 						pendingUpdate.add(element);
 					}
+					return true;
 				}
+				return false;
 			}
 
 			@Override
@@ -449,7 +458,7 @@ public class DecorationScheduler {
 
 		decorationJob.setSystem(true);
 		decorationJob.setPriority(Job.DECORATE);
-		decorationJob.schedule();
+		return decorationJob;
 	}
 
 	/**
@@ -563,7 +572,7 @@ public class DecorationScheduler {
 					if (currentIndex >= listeners.length) {
 						resetState();
 						if (!hasPendingUpdates()) {
-							decorated();
+							scheduleUpdateJob();
 						}
 						labelProviderChangedEvent = null;
 						listeners = EMPTY_LISTENER_LIST;
@@ -597,7 +606,7 @@ public class DecorationScheduler {
 				// clear the list
 				removedListeners.clear();
 				currentIndex = 0;
-				synchronized (pendingKey) {
+				synchronized (pendingUpdate) {
 					Object[] elements = pendingUpdate.toArray(new Object[pendingUpdate.size()]);
 					pendingUpdate.clear();
 					labelProviderChangedEvent = new LabelProviderChangedEvent(decoratorManager, elements);
@@ -697,15 +706,6 @@ public class DecorationScheduler {
 	}
 
 	/**
-	 * Return whether or not any updates are being processed/
-	 *
-	 * @return boolean
-	 */
-	public boolean processingUpdates() {
-		return !hasPendingUpdates() && !awaitingDecoration.isEmpty();
-	}
-
-	/**
 	 * A listener has been removed. If we are updating then skip it.
 	 *
 	 * @param listener
@@ -727,7 +727,7 @@ public class DecorationScheduler {
 	 * @return boolean <code>true</code> if the updates are empty
 	 */
 	boolean hasPendingUpdates() {
-		synchronized (pendingKey) {
+		synchronized (pendingUpdate) {
 			return pendingUpdate.isEmpty();
 		}
 

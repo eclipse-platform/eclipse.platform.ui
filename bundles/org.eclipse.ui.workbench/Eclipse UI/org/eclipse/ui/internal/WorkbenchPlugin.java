@@ -1262,6 +1262,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			public Object compute(IEclipseContext context, String contextKey) {
 				if (decoratorManager == null) {
 					decoratorManager = new DecoratorManager();
+					decoratorManager.schedule();
 				}
 				return decoratorManager;
 			}

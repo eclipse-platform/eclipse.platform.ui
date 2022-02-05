@@ -15,8 +15,8 @@
 package org.eclipse.ui.internal.decorators;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.IDecorationContext;
 import org.eclipse.osgi.util.NLS;
@@ -28,17 +28,18 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * scheduled to be calculated asynchonously by the {@link DecorationScheduler}.
  */
 class DecorationReference {
-	static final IDecorationContext[] EMPTY_DECORATION_CONTEXTS = new IDecorationContext[0];
+	// all members are accessed from different threads and therefore have to be
+	// either final or volatile
 
-	final Object element;
+	private final Object element;
 
-	final Object adaptedElement;
+	private final Object adaptedElement;
 
-	String undecoratedText;
+	private volatile String undecoratedText;
 
-	boolean forceUpdate = false;
+	private volatile boolean forceUpdate = false;
 
-	final Set<IDecorationContext> contexts = new HashSet<>();
+	private final Set<IDecorationContext> contexts = ConcurrentHashMap.newKeySet();
 
 	DecorationReference(Object object, Object adaptedObject, IDecorationContext context) {
 		Assert.isNotNull(object);

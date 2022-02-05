@@ -35,7 +35,6 @@ import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.resource.ResourceManager;
-import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.DecorationContext;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IColorDecorator;
@@ -216,11 +215,19 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 	 */
 	public DecoratorManager() {
 
-		scheduler = new DecorationScheduler(this);
+		scheduler = new DecorationScheduler(this); // leaks "this" before this is constructed
 		IExtensionTracker tracker = PlatformUI.getWorkbench().getExtensionTracker();
 		tracker.registerHandler(this, ExtensionTracker.createExtensionPointFilter(getExtensionPointFilter()));
 
 		resourceManager = null;
+	}
+
+	/*
+	 * should not be called before constructor finished. Would leak reference to
+	 * incomplete constructed DecoratorManager.this
+	 */
+	public void schedule() {
+		scheduler.schedule();
 	}
 
 	/**
@@ -341,13 +348,7 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 	 * @param event    the event with the update details
 	 */
 	void fireListener(final LabelProviderChangedEvent event, final ILabelProviderListener listener) {
-		SafeRunner.run(new SafeRunnable() {
-			@Override
-			public void run() {
-				listener.labelProviderChanged(event);
-			}
-		});
-
+		SafeRunner.run(() -> listener.labelProviderChanged(event));
 	}
 
 	/**
@@ -357,12 +358,7 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 	 */
 	void fireListeners(final LabelProviderChangedEvent event) {
 		for (final ILabelProviderListener l : listeners) {
-			SafeRunner.run(new SafeRunnable() {
-				@Override
-				public void run() {
-					l.labelProviderChanged(event);
-				}
-			});
+			SafeRunner.run(() -> l.labelProviderChanged(event));
 		}
 	}
 
