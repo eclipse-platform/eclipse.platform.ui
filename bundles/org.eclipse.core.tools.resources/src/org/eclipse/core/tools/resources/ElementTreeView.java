@@ -144,7 +144,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 			return count;
 		}
 
-		int basicSizeof(MarkerAttributeMap<?> markerMap) {
+		int basicSizeof(MarkerAttributeMap markerMap) {
 			int count = DeepSize.OBJECT_HEADER_SIZE + 8;//object header plus two slots
 			Object[] elements = SpySupport.getElements(markerMap);
 			if (elements != null) {
@@ -277,7 +277,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 			if (object instanceof byte[])
 				return DeepSize.ARRAY_HEADER_SIZE + ((byte[]) object).length;
 			if (object instanceof MarkerAttributeMap)
-				return basicSizeof((MarkerAttributeMap<?>) object);
+				return basicSizeof((MarkerAttributeMap) object);
 			if (object instanceof MarkerInfo)
 				return basicSizeof((MarkerInfo) object);
 			if (object instanceof MarkerSet)

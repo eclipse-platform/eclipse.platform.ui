@@ -49,13 +49,15 @@ public final class StringPool {
 	public String add(String string) {
 		if (string == null)
 			return string;
-		Object result = map.get(string);
+		String result = map.putIfAbsent(string, string);
 		if (result != null) {
-			if (result != string)
+			if (result != string) {
+				// XXX that number is wrong since String implementation changed to LATIN1
+				// encoding, also interned String may have become externed:
 				savings += 44 + 2 * string.length();
-			return (String) result;
+			}
+			return result;
 		}
-		map.put(string, string);
 		return string;
 	}
 

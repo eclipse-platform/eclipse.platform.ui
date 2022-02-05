@@ -2115,6 +2115,29 @@ public class MarkerTest extends ResourceTest {
 			} catch (RuntimeException e) {
 				// expected
 			}
+			try {
+				Map<String, Object> map2 = marker.getAttributes();
+				map2.put("1", null); // allowed for clients using IMarker.getAttributes()
+				map2.put("2", 2);
+				marker.setAttributes(map2);
+				assertNull(marker.getAttribute("1"));
+				assertEquals(2, marker.getAttribute("2"));
+				map2.put(null, 1); // allowed for clients using IMarker.getAttributes()
+			} catch (CoreException e) {
+				fail("4.24." + resource.getFullPath(), e);
+			}
+			try {
+				Map<String, Object> map2 = marker.getAttributes();
+				map2.put(null, 1); // allowed for clients using IMarker.getAttributes()
+				try {
+					marker.setAttributes(map2); // not allowed for clients to put null key
+					fail("4.25");
+				} catch (Exception e) {
+					// expected
+				}
+			} catch (CoreException e) {
+				fail("4.24." + resource.getFullPath(), e);
+			}
 		}
 	}
 }

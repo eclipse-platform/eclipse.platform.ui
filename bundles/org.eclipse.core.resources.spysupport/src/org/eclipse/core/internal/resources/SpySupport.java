@@ -13,7 +13,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import java.util.Map;
+import java.util.*;
+import java.util.Map.Entry;
 import org.eclipse.core.internal.utils.Cache;
 import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.resources.IResource;
@@ -62,8 +63,13 @@ public class SpySupport {
 	public static IMarkerSetElement[] getElements(MarkerSet markerSet) {
 		return markerSet.elements;
 	}
-	public static Object[] getElements(MarkerAttributeMap<?> markerMap) {
-		return markerMap.elements;
+	public static Object[] getElements(MarkerAttributeMap markerMap) {
+		ArrayList<Object> legacyElements = new ArrayList<>();
+		for (Entry<String, ?> e : markerMap.entrySet()) {
+			legacyElements.add(e.getKey());
+			legacyElements.add(e.getValue());
+		}
+		return legacyElements.toArray();
 	}
 	public static boolean isContentDescriptionCached(File file) {
 		ResourceInfo info = file.getResourceInfo(false, false);

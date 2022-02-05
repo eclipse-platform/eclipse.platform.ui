@@ -80,14 +80,7 @@ public class MarkerManager implements IManager {
 	 * associated with the specified resource.IMarkerDeltas for Added markers are
 	 * generated.
 	 */
-	private void basicAdd(IResource resource, MarkerSet markers, MarkerInfo newMarker) throws CoreException {
-		// should always be a new marker.
-		if (newMarker.getId() != MarkerInfo.UNDEFINED_ID) {
-			String message = Messages.resources_changeInAdd;
-			throw new ResourceException(
-					new ResourceStatus(IResourceStatus.INTERNAL_ERROR, resource.getFullPath(), message));
-		}
-		newMarker.setId(workspace.nextMarkerId());
+	private void basicAdd(IResource resource, MarkerSet markers, MarkerInfo newMarker) {
 		markers.add(newMarker);
 		IMarkerSetElement[] changes = new IMarkerSetElement[1];
 		changes[0] = new MarkerDelta(IResourceDelta.ADDED, resource, newMarker);

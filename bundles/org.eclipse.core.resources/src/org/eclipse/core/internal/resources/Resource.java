@@ -700,12 +700,17 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			workspace.prepareOperation(rule, null);
 			checkAccessible(getFlags(getResourceInfo(false, false)));
 			workspace.beginOperation(true);
-			MarkerInfo info = new MarkerInfo();
-			info.setType(type);
-			info.setCreationTime(System.currentTimeMillis());
-
-			workspace.getMarkerManager().add(this, info);
-			return new Marker(this, info, attributes);
+			long id = workspace.nextMarkerId();
+			MarkerManager manager = workspace.getMarkerManager();
+			boolean validate = manager.isPersistentType(type);
+			MarkerInfo markerInfo = new MarkerInfo(attributes, validate, type, id);
+			manager.add(this, markerInfo);
+			if (attributes != null && !attributes.isEmpty()) {
+				if (manager.isPersistent(markerInfo)) {
+					this.getResourceInfo(false, true).set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
+				}
+			}
+			return new Marker(this, markerInfo.getId());
 		} finally {
 			workspace.endOperation(rule, false);
 		}

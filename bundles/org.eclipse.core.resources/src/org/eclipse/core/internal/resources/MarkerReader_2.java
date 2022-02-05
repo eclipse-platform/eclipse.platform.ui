@@ -103,17 +103,17 @@ public class MarkerReader_2 extends MarkerReader {
 		int attributesSize = input.readShort();
 		if (attributesSize == 0)
 			return null;
-		Map<String, Object> result = new MarkerAttributeMap<>(attributesSize);
+		Map<String, Object> result = new HashMap<>(attributesSize);
 		for (int j = 0; j < attributesSize; j++) {
 			String key = input.readUTF();
 			byte type = input.readByte();
 			Object value = null;
 			switch (type) {
 				case ATTRIBUTE_INTEGER :
-					value = input.readInt();
+					value = Integer.valueOf(input.readInt());
 					break;
 				case ATTRIBUTE_BOOLEAN :
-					value = input.readBoolean();
+					value = Boolean.valueOf(input.readBoolean());
 					break;
 				case ATTRIBUTE_STRING :
 					value = input.readUTF();
@@ -122,31 +122,32 @@ public class MarkerReader_2 extends MarkerReader {
 					// do nothing
 					break;
 			}
-			if (value != null)
+			if (value != null) {
 				result.put(key, value);
+			}
 		}
 		return result.isEmpty() ? null : result;
 	}
 
 	private MarkerInfo readMarkerInfo(DataInputStream input, List<String> readTypes) throws IOException, CoreException {
-		MarkerInfo info = new MarkerInfo();
-		info.setId(input.readLong());
+		long id = input.readLong();
 		byte constant = input.readByte();
+		String type = null;
 		switch (constant) {
 			case QNAME :
-				String type = input.readUTF();
-				info.setType(type);
+				type = input.readUTF();
 				readTypes.add(type);
 				break;
 			case INDEX :
-				info.setType(readTypes.get(input.readInt()));
+				type = readTypes.get(input.readInt());
 				break;
 			default :
 				//if we get here the marker file is corrupt
 				String msg = Messages.resources_readMarkers;
 				throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, msg, null);
 		}
-		info.internalSetAttributes(readAttributes(input));
-		return info;
+		Map<String, Object> map = readAttributes(input);
+		long creationTime = 0;
+		return new MarkerInfo(map, false, creationTime, type, id);
 	}
 }

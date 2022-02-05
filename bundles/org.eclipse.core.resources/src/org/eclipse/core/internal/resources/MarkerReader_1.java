@@ -102,17 +102,17 @@ public class MarkerReader_1 extends MarkerReader {
 		int attributesSize = input.readInt();
 		if (attributesSize == 0)
 			return null;
-		Map<String, Object> result = new MarkerAttributeMap<>(attributesSize);
+		Map<String, Object> result = new HashMap<>(attributesSize);
 		for (int j = 0; j < attributesSize; j++) {
 			String key = input.readUTF();
 			int type = input.readInt();
 			Object value = null;
 			switch (type) {
 				case ATTRIBUTE_INTEGER :
-					value = input.readInt();
+					value = Integer.valueOf(input.readInt());
 					break;
 				case ATTRIBUTE_BOOLEAN :
-					value = input.readBoolean();
+					value = Boolean.valueOf(input.readBoolean());
 					break;
 				case ATTRIBUTE_STRING :
 					value = input.readUTF();
@@ -128,24 +128,24 @@ public class MarkerReader_1 extends MarkerReader {
 	}
 
 	private MarkerInfo readMarkerInfo(DataInputStream input, List<String> readTypes) throws IOException, CoreException {
-		MarkerInfo info = new MarkerInfo();
-		info.setId(input.readLong());
+		long id = input.readLong();
 		int constant = input.readInt();
+		String type = null;
 		switch (constant) {
 			case QNAME :
-				String type = input.readUTF();
-				info.setType(type);
+				type = input.readUTF();
 				readTypes.add(type);
 				break;
 			case INDEX :
-				info.setType(readTypes.get(input.readInt()));
+				type = readTypes.get(input.readInt());
 				break;
 			default :
 				//if we get here the marker file is corrupt
 				String msg = Messages.resources_readMarkers;
 				throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, msg, null);
 		}
-		info.internalSetAttributes(readAttributes(input));
-		return info;
+		Map<String, Object> map = readAttributes(input);
+		long creationTime = 0;
+		return new MarkerInfo(map, false, creationTime, type, id);
 	}
 }

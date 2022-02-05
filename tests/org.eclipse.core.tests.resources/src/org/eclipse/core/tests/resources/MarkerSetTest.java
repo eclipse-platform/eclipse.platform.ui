@@ -15,6 +15,7 @@
 package org.eclipse.core.tests.resources;
 
 import java.util.Arrays;
+import java.util.Map;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.IMarker;
 
@@ -51,9 +52,7 @@ public class MarkerSetTest extends ResourceTest {
 		MarkerInfo info = null;
 		MarkerInfo[] infos = new MarkerInfo[max];
 		for (int i = 0; i < max; i++) {
-			info = new MarkerInfo();
-			info.setId(i);
-			info.setType(IMarker.PROBLEM);
+			info = new MarkerInfo(IMarker.PROBLEM, i);
 			info.setAttribute(IMarker.MESSAGE, getRandomString(), true);
 			infos[i] = info;
 		}
@@ -83,9 +82,7 @@ public class MarkerSetTest extends ResourceTest {
 		MarkerInfo info = null;
 		MarkerInfo[] infos = new MarkerInfo[max];
 		for (int i = 0; i < max; i++) {
-			info = new MarkerInfo();
-			info.setId(i);
-			info.setType(IMarker.PROBLEM);
+			info = new MarkerInfo(IMarker.PROBLEM, i);
 			info.setAttribute(IMarker.MESSAGE, getRandomString(), true);
 			infos[i] = info;
 		}
@@ -104,9 +101,7 @@ public class MarkerSetTest extends ResourceTest {
 		MarkerInfo info = null;
 		MarkerInfo[] infos = new MarkerInfo[max];
 		for (int i = 0; i < max; i++) {
-			info = new MarkerInfo();
-			info.setId(i);
-			info.setType(IMarker.PROBLEM);
+			info = new MarkerInfo(IMarker.PROBLEM, i);
 			info.setAttribute(IMarker.MESSAGE, getRandomString(), true);
 			infos[i] = info;
 		}
@@ -127,5 +122,33 @@ public class MarkerSetTest extends ResourceTest {
 
 		// all gone?
 		assertEquals("3.0", 0, set.size());
+	}
+
+	public void testMarkerAttributeMap() {
+		MarkerAttributeMap map = new MarkerAttributeMap();
+		String notInternalString = String.valueOf("notIntern".toCharArray());
+		assertNotSame(notInternalString.intern(), notInternalString);
+		map.put(notInternalString, notInternalString);
+		String key = map.entrySet().iterator().next().getKey();
+		assertSame(notInternalString.intern(), key);
+		try {
+			map.put(null, 1);
+			fail("NPE for nul key expected");
+		} catch (NullPointerException e) {
+			// expected
+		}
+		try {
+			map.put("0", null);
+			fail("NPE for null value expected");
+		} catch (NullPointerException e) {
+			// expected
+		}
+		map.put("1", 1);
+		map.put("2", "2");
+		Map<String, Object> map2 = map.toMap();
+		assertEquals("2", map2.get("2"));
+		assertEquals(1, map2.get("1"));
+		map2.put(null, 1); // allowed for clients using IMarker.getAttributes()
+		map2.put("0", null);// allowed for clients
 	}
 }

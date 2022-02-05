@@ -39,10 +39,10 @@ import org.eclipse.osgi.util.NLS;
 public class Marker extends PlatformObject implements IMarker {
 
 	/** Marker identifier. */
-	protected long id;
+	protected final long id;
 
 	/** Resource with which this marker is associated. */
-	protected IResource resource;
+	protected final IResource resource;
 
 	/**
 	 * Constructs a new marker object.
@@ -51,26 +51,6 @@ public class Marker extends PlatformObject implements IMarker {
 		Assert.isLegal(resource != null);
 		this.resource = resource;
 		this.id = id;
-	}
-
-	/**
-	 * Used internally by {@link Resource#createMarker(String, Map)} to create a
-	 * marker with given attributes
-	 *
-	 * @param resource   non null parent resource
-	 * @param markerInfo non null marker info just created for that marker
-	 * @param attributes may be null or empty
-	 */
-	Marker(Resource resource, MarkerInfo markerInfo, Map<String, ? extends Object> attributes) {
-		this(resource, markerInfo.getId());
-		if (attributes != null && !attributes.isEmpty()) {
-			MarkerManager manager = getWorkspace().getMarkerManager();
-			boolean validate = manager.isPersistentType(markerInfo.getType());
-			markerInfo.setAttributes(attributes, validate);
-			if (manager.isPersistent(markerInfo)) {
-				resource.getResourceInfo(false, true).set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
-			}
-		}
 	}
 
 	/**
@@ -304,6 +284,7 @@ public class Marker extends PlatformObject implements IMarker {
 	}
 
 	/**
+	 * adds all Entries
 	 * @see IMarker#setAttributes(String[], Object[])
 	 */
 	@Override
@@ -322,7 +303,7 @@ public class Marker extends PlatformObject implements IMarker {
 			boolean needDelta = !manager.hasDelta(resource.getFullPath(), id);
 			MarkerInfo oldInfo = needDelta ? (MarkerInfo) markerInfo.clone() : null;
 			boolean validate = manager.isPersistentType(markerInfo.getType());
-			markerInfo.setAttributes(attributeNames, values, validate);
+			markerInfo.addAttributes(attributeNames, values, validate);
 			if (manager.isPersistent(markerInfo))
 				((Resource) resource).getResourceInfo(false, true).set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
 			if (needDelta) {
@@ -335,6 +316,7 @@ public class Marker extends PlatformObject implements IMarker {
 	}
 
 	/**
+	 * clears current map and puts entries
 	 * @see IMarker#setAttributes(Map)
 	 */
 	@Override

@@ -169,9 +169,9 @@ public class MarkerWriter {
 	/*
 	 * Write out the given marker attributes to the given output stream.
 	 */
-	private void write(Map<String, Object> attributes, DataOutputStream output) throws IOException {
-		output.writeShort(attributes.size());
-		for (Map.Entry<String, Object> e : attributes.entrySet()) {
+	private void write(MarkerAttributeMap markerAttributeMap, DataOutputStream output) throws IOException {
+		output.writeShort(markerAttributeMap.size());
+		for (Map.Entry<String, Object> e : markerAttributeMap.entrySet()) {
 			String key = e.getKey();
 			output.writeUTF(key);
 			Object value = e.getValue();
@@ -213,10 +213,12 @@ public class MarkerWriter {
 
 		// write out the size of the attribute table and
 		// then each attribute.
-		if (info.getAttributes(false) == null) {
+		MarkerAttributeMap attributes = info.getAttributes(false);
+		if (attributes == null) {
 			output.writeShort(0);
-		} else
-			write(info.getAttributes(false), output);
+		} else {
+			write(attributes, output);
+		}
 
 		// write out the creation time
 		output.writeLong(info.getCreationTime());

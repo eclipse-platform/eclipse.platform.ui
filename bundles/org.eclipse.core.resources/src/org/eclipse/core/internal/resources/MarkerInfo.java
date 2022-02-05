@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,32 +17,28 @@
 package org.eclipse.core.internal.resources;
 
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.osgi.util.NLS;
 
 public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolParticipant {
-
-	// well known Integer values
-	protected static final Integer INTEGER_ONE = 1;
-	protected static final Integer INTEGER_TWO = 2;
-	protected static final Integer INTEGER_ZERO = 0;
-
-	//
-	protected static final long UNDEFINED_ID = -1;
-	/** The store of attributes for this marker. */
-	protected Map<String, Object> attributes = null;
+	// this class is used concurrently => all members have to be final or volatile
+	/**
+	 * The store of attributes for this marker. Can not be modified since that could
+	 * remove concurrently added entries while the last entry is removed.
+	 */
+	private final MarkerAttributeMap attributes;
 
 	/** The creation time for this marker. */
-	protected long creationTime = 0;
+	protected final long creationTime;
 
 	/** Marker identifier. */
-	protected long id = UNDEFINED_ID;
+	protected final long id;
 
 	/** The type of this marker. */
-	protected String type = null;
+	protected volatile String type;
 
 	/**
 	 * Returns whether the given object is a valid attribute value. Returns
@@ -66,26 +62,42 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 		}
 		if (value instanceof Boolean) {
 			//return canonical boolean
-			return ((Boolean) value).booleanValue() ? Boolean.TRUE : Boolean.FALSE;
+			return Boolean.valueOf(((Boolean) value));
 		}
 		if (value instanceof Integer) {
 			//replace common integers with canonical values
-			switch (((Integer) value).intValue()) {
-				case 0 :
-					return INTEGER_ZERO;
-				case 1 :
-					return INTEGER_ONE;
-				case 2 :
-					return INTEGER_TWO;
-			}
-			return value;
+			return Integer.valueOf(((Integer) value));
 		}
 		//if we got here, it's an invalid attribute value type
 		throw new IllegalArgumentException(NLS.bind(Messages.resources_wrongMarkerAttributeValueType, value.getClass().getName()));
 	}
 
-	public MarkerInfo() {
+	public MarkerInfo(String type, long id) {
+		this(null, false, type, id);
+	}
+
+	public MarkerInfo(MarkerAttributeMap map, long creationTime, String type, long id) {
 		super();
+		attributes = map;
+		this.id = id;
+		this.creationTime = creationTime;
+		this.type = type;
+	}
+
+	/** clone constructor **/
+	public MarkerInfo(MarkerInfo markerInfo) {
+		this(markerInfo.attributes, markerInfo.creationTime, markerInfo.type, markerInfo.id);
+	}
+
+	public MarkerInfo(Map<String, ? extends Object> attributes, boolean validate, long creationTime, String type,
+			long id) {
+		this(attributes == null ? new MarkerAttributeMap() : new MarkerAttributeMap(attributes, validate), creationTime,
+				type, id);
+
+	}
+
+	public MarkerInfo(Map<String, ? extends Object> attributes, boolean validate, String type, long id) {
+		this(attributes, validate, System.currentTimeMillis(), type, id);
 	}
 
 	/**
@@ -93,29 +105,23 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 	 */
 	@Override
 	public Object clone() {
-		try {
-			MarkerInfo copy = (MarkerInfo) super.clone();
-			//copy the attribute table contents
-			copy.attributes = getAttributes(true);
-			return copy;
-		} catch (CloneNotSupportedException e) {
-			//cannot happen because this class implements Cloneable
-			return null;
-		}
+		return new MarkerInfo(this);
 	}
 
 	public Object getAttribute(String attributeName) {
-		return attributes == null ? null : attributes.get(attributeName);
+		return attributes.get(attributeName);
 	}
 
 	public Map<String, Object> getAttributes() {
-		return getAttributes(true);
+		if (attributes.isEmpty())
+			return null;
+		return attributes.toMap();
 	}
 
-	public Map<String, Object> getAttributes(boolean makeCopy) {
-		if (attributes == null)
+	public MarkerAttributeMap getAttributes(boolean makeCopy) {
+		if (attributes.isEmpty())
 			return null;
-		return makeCopy ? new MarkerAttributeMap<>(attributes) : attributes;
+		return makeCopy ? new MarkerAttributeMap(attributes) : attributes;
 	}
 
 	public Object[] getAttributes(String[] attributeNames) {
@@ -138,61 +144,30 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 		return type;
 	}
 
-	public void internalSetAttributes(Map<String, Object> map) {
-		//the cast effectively acts as an assertion to make sure
-		//the right kind of map is being used
-		attributes = map;
-	}
-
 	public void setAttribute(String attributeName, Object value, boolean validate) {
-		if (validate)
+		if (validate) {
 			value = checkValidAttribute(value);
-		if (attributes == null) {
-			if (value == null)
-				return;
-			attributes = new MarkerAttributeMap<>();
-			attributes.put(attributeName, value);
+		}
+		if (value == null) {
+			attributes.remove(attributeName);
 		} else {
-			if (value == null) {
-				attributes.remove(attributeName);
-				if (attributes.isEmpty())
-					attributes = null;
-			} else {
-				attributes.put(attributeName, value);
-			}
+			attributes.put(attributeName, value);
 		}
 	}
 
+	/** deletes previous Attributes **/
 	public void setAttributes(Map<String, ? extends Object> map, boolean validate) {
-		if (map == null)
-			attributes = null;
-		else {
-			attributes = new MarkerAttributeMap<>(map.size());
-			for (Entry<String, ?> entry : map.entrySet()) {
-				Object key = entry.getKey();
-				Assert.isTrue(key instanceof String);
-				Object value = entry.getValue();
-				setAttribute((String) key, value, validate);
-			}
-		}
+		attributes.setAttributes(map, validate);
 	}
 
-	public void setAttributes(String[] attributeNames, Object[] values, boolean validate) {
+	/** keeps previous Attributes **/
+	public void addAttributes(String[] attributeNames, Object[] values, boolean validate) {
 		Assert.isTrue(attributeNames.length == values.length);
-		for (int i = 0; i < attributeNames.length; i++)
-			setAttribute(attributeNames[i], values[i], validate);
-	}
-
-	public void setCreationTime(long value) {
-		creationTime = value;
-	}
-
-	public void setId(long value) {
-		id = value;
-	}
-
-	public void setType(String value) {
-		type = value;
+		Map<String, Object> map = new HashMap<>();
+		for (int i = 0; i < attributeNames.length; i++) {
+			map.put(attributeNames[i], values[i]);
+		}
+		attributes.putAll(map, validate);
 	}
 
 	/* (non-Javadoc
@@ -201,8 +176,6 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 	@Override
 	public void shareStrings(StringPool set) {
 		type = set.add(type);
-		Map<String, Object> map = attributes;
-		if (map instanceof IStringPoolParticipant)
-			((IStringPoolParticipant) map).shareStrings(set);
+		attributes.shareStrings(set);
 	}
 }
