@@ -49,14 +49,21 @@ public class CodeMiningDemo {
 		ISourceViewer sourceViewer = new SourceViewer(shell, null, SWT.V_SCROLL | SWT.BORDER);
 		sourceViewer.setDocument(
 				new Document("// Type class & new keyword and see references CodeMining\n"
-						+ "// Name class with a number N to emulate Nms before resolving the references CodeMining \n\n"
+						+ "// Name class with a number N to emulate Nms before resolving the references CodeMining\n"
+						+ "// Empty lines show a header annotating they're empty.\n"
+						+ "// The word `echo` is echoed.\n"
+						+ "// Lines containing `end` get an annotation at their end\n\n"
 						+ "class A\n" + "new A\n" + "new A\n\n" + "class 5\n" + "new 5\n" + "new 5\n" + "new 5"),
 				new AnnotationModel());
 		// Add AnnotationPainter (required by CodeMining)
 		addAnnotationPainter(sourceViewer);
 		// Initialize codemining providers
 		((ISourceViewerExtension5) sourceViewer).setCodeMiningProviders(new ICodeMiningProvider[] {
-				new ClassReferenceCodeMiningProvider(), new ClassImplementationsCodeMiningProvider(), new ToEchoWithHeaderAndInlineCodeMiningProvider("class") });
+				new ClassReferenceCodeMiningProvider(), //
+				new ClassImplementationsCodeMiningProvider(), //
+				new ToEchoWithHeaderAndInlineCodeMiningProvider("echo"), //
+				new EmptyLineCodeMiningProvider(), //
+				new EchoAtEndOfLineCodeMiningProvider()});
 		// Execute codemining in a reconciler
 		MonoReconciler reconciler = new MonoReconciler(new IReconcilingStrategy() {
 

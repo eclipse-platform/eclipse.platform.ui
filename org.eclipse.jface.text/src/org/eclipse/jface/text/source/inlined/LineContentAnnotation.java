@@ -158,4 +158,9 @@ public class LineContentAnnotation extends AbstractInlinedAnnotation {
 				getTextWidget().getLineAtOffset(widgetOffset) == getTextWidget().getLineAtOffset(widgetOffset - 1);
 	}
 
+	boolean isEndOfLine(int widgetOffset) {
+		return getTextWidget().getCharCount() == 0 || getTextWidget().getCharCount() <= widgetOffset ||
+				"\n".equals(getTextWidget().getText(widgetOffset, widgetOffset)); //$NON-NLS-1$
+	}
+
 }
