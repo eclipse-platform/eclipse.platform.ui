@@ -71,9 +71,9 @@
       <repositoryList
           name="EMF+GEF">
         <repository
-            url="http://download.eclipse.org/modeling/emf/emf/builds/milestone/latest"/>
+            url="https://download.eclipse.org/modeling/emf/emf/builds/milestone/latest"/>
         <repository
-            url="http://download.eclipse.org/tools/gef/updates/milestones"/>
+            url="https://download.eclipse.org/tools/gef/updates/milestones"/>
       </repositoryList>
     </targlet>
   </setupTask>
@@ -88,7 +88,7 @@
             project="org.eclipse.ui"/>
         <operand
             xsi:type="workingsets:ExclusionPredicate"
-            excludedWorkingSet="//@setupTasks.3/@workingSets.2 //@setupTasks.3/@workingSets.1"/>
+            excludedWorkingSet="//@setupTasks.3/@workingSets[name='Platform%20UI%20Examples'] //@setupTasks.3/@workingSets[name='Platform%20UI%20Tests']"/>
       </predicate>
     </workingSet>
     <workingSet
@@ -124,7 +124,7 @@
     <requirement
         name="org.eclipse.emf.codegen.ecore.ui.feature.group"/>
     <repository
-        url="http://download.eclipse.org/modeling/emf/emf/builds/nightly/latest"/>
+        url="https://download.eclipse.org/modeling/emf/emf/builds/nightly/latest"/>
   </setupTask>
   <setupTask
       xsi:type="setup.p2:P2Task"
