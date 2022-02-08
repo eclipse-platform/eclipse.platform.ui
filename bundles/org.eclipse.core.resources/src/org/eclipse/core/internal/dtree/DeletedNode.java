@@ -110,15 +110,6 @@ public class DeletedNode extends AbstractDataTreeNode {
 	}
 
 	/**
-	 * Return a unicode representation of the node.  This method
-	 * is used for debugging purposes only (no NLS please)
-	 */
-	@Override
-	public String toString() {
-		return "a DeletedNode(" + this.getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-	}
-
-	/**
 	 * Returns a string describing the type of node.
 	 */
 	@Override

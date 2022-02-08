@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.dtree;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.utils.StringPool;
 import org.eclipse.core.runtime.IPath;
@@ -589,8 +591,37 @@ public abstract class AbstractDataTreeNode {
 	 * for debugging purposes only (no NLS support needed)
 	 */
 	@Override
-	public String toString() {
-		return "an AbstractDataTreeNode(" + this.getName() + ") with " + getChildren().length + " children."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	final public String toString() {
+		return toShortString(); // $NON-NLS-1$
+	}
+	// example output:
+	// "DataTreeNode with 3 children
+	//	   leftOfRoot DataTreeNode with 3 children
+	//	      new DataTreeNode
+	//	      three DataTreeNode
+	//	      two DataTreeNode
+	//	   newTopLevel DataTreeNode
+	//	   rightOfRoot DataTreeNode with 1 children
+	//	      rightOfRight DataTreeNode"
+	String toLongString() {
+		return toShortString() + "\n" + getChildrenString(1); //$NON-NLS-1$
+	}
+
+	// example output:
+	// "rightOfRoot DataTreeNode with 1 children"
+	String toShortString() {
+		return (getName() == null ? "" : getName() + " ") + this.getClass().getSimpleName() //$NON-NLS-1$ //$NON-NLS-2$
+				+ (getChildren().length == 0 ? "" //$NON-NLS-1$
+				: (" with " + getChildren().length + " children"));//$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	private String getChildrenString(int depth) {
+		int MAXDEPTH = 2; // draw only some levels
+		String indent = "   ".repeat(depth); //$NON-NLS-1$
+		return (depth > MAXDEPTH ? "" //$NON-NLS-1$
+				: (Arrays.stream(getChildren())
+						.map(n -> indent + n.toShortString() + "\n" + n.getChildrenString(depth + 1)) //$NON-NLS-1$
+						.collect(Collectors.joining())));
 	}
 
 	/**

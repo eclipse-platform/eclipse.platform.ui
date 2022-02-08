@@ -488,4 +488,10 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 		output.writeInt(getContentId());
 		output.writeLong(modStamp);
 	}
+
+	/** for debugging only **/
+	@Override
+	public String toString() {
+		return "" + fileStoreRoot + " modStamp=" + modStamp; //$NON-NLS-1$ //$NON-NLS-2$
+	}
 }

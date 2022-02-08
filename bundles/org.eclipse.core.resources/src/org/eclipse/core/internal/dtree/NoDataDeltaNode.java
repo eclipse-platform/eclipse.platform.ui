@@ -118,15 +118,6 @@ public class NoDataDeltaNode extends AbstractDataTreeNode {
 	}
 
 	/**
-	 * Returns a unicode representation of the node.  This method is used
-	 * for debugging purposes only (no NLS support needed)
-	 */
-	@Override
-	public String toString() {
-		return "a NoDataDeltaNode(" + this.getName() + ") with " + getChildren().length + " children."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	}
-
-	/**
 	 * Return a constant describing the type of node.
 	 */
 	@Override

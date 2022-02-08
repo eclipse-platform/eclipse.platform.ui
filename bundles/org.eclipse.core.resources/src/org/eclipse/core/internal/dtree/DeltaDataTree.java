@@ -977,4 +977,12 @@ public class DeltaDataTree extends AbstractDataTree {
 				root.storeStrings(set);
 		}
 	}
+
+	/** for debugging purposes only */
+	@Override
+	public String toString() {
+		return this.getClass().getSimpleName() + " " + Integer.toHexString(System.identityHashCode(this)) + " parent=" //$NON-NLS-1$ //$NON-NLS-2$
+				+ (parent == null ? null : Integer.toHexString(System.identityHashCode(parent))) + " rootNode=" //$NON-NLS-1$
+				+ rootNode.toShortString();
+	}
 }

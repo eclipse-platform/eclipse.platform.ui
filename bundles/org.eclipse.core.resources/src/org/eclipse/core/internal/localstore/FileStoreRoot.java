@@ -209,4 +209,10 @@ public class FileStoreRoot {
 		}
 		return canonicalRoot;
 	}
+
+	/** for debugging only **/
+	@Override
+	public String toString() {
+		return root.toString();
+	}
 }

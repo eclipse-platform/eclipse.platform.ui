@@ -350,18 +350,6 @@ public class DataTreeNode extends AbstractDataTreeNode {
 			((IStringPoolParticipant) o).shareStrings(set);
 	}
 
-	/**
-	 * Returns a unicode representation of the node.  This method is used
-	 * for debugging purposes only (no NLS support needed)
-	 */
-	@Override
-	public String toString() {
-		return "a DataTreeNode(" + this.getName() + ") with " + getChildren().length + " children."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	}
-
-	/**
-	 * Returns a constant describing the type of node.
-	 */
 	@Override
 	int type() {
 		return T_COMPLETE_NODE;

@@ -106,15 +106,6 @@ public class DataDeltaNode extends DataTreeNode {
 	}
 
 	/**
-	 * Returns a unicode representation of the node.  This method is used
-	 * for debugging purposes only (no NLS support needed)
-	 */
-	@Override
-	public String toString() {
-		return "a DataDeltaNode(" + this.getName() + ") with " + getChildren().length + " children."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	}
-
-	/**
 	 * Returns a constant describing the type of node.
 	 */
 	@Override
