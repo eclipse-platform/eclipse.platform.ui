@@ -18,6 +18,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.jobs.Job;
@@ -49,6 +51,10 @@ import org.eclipse.ui.views.IViewDescriptor;
 public class ProgressManagerUtil {
 
 	static class ProgressViewerComparator extends ViewerComparator {
+		private final HashMap<Object, Integer> lastIndexes = new HashMap<>();
+		private final Comparator<Object> byIndex = Comparator.comparing(lastIndexes::get,
+				Comparator.nullsLast(Integer::compare)); // makes visual sort order stable
+
 		@Override
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		public int compare(Viewer testViewer, Object e1, Object e2) {
@@ -60,18 +66,18 @@ public class ProgressManagerUtil {
 			/*
 			 * https://bugs.eclipse.org/371354
 			 *
-			 * This ordering is inherently unstable, since it relies on modifiable
-			 * properties of the elements: E.g. the default implementation in JobTreeElement
-			 * compares getDisplayString(), many of whose implementations use
-			 * getPercentDone().
-			 *
 			 * JavaSE 7+'s TimSort introduced a breaking change: It now throws a new
 			 * IllegalArgumentException for bad comparators. Workaround is to retry a few
 			 * times.
 			 */
 			for (int retries = 3; retries > 0; retries--) {
 				try {
-					Arrays.sort(elements, (a, b) -> ProgressViewerComparator.this.compare(viewer, a, b));
+					Arrays.sort(elements,
+							byIndex.thenComparing((a, b) -> ProgressViewerComparator.this.compare(viewer, a, b)));
+					lastIndexes.clear();
+					for (int i = 0; i < elements.length; i++) {
+						lastIndexes.put(elements[i], i);
+					}
 					return; // success
 				} catch (IllegalArgumentException e) {
 					// retry
