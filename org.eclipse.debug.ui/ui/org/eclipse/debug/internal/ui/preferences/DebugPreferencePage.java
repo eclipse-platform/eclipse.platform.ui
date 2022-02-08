@@ -50,6 +50,8 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 	@Override
 	protected void createFieldEditors() {
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_REUSE_EDITOR, DebugPreferencesMessages.DebugPreferencePage_2, SWT.NONE, getFieldEditorParent()));
+		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_SHOW_VARIABLES_INLINE,
+				DebugPreferencesMessages.DebugPreferencePage_showValuesInline, SWT.NONE, getFieldEditorParent()));
 
 		SWTFactory.createHorizontalSpacer(getFieldEditorParent(), 2);
 

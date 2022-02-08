@@ -1280,6 +1280,13 @@ public interface IDebugUIConstants {
 	String PREF_DETAIL_PANE_FONT= "org.eclipse.debug.ui.DetailPaneFont"; //$NON-NLS-1$
 
 	/**
+	 * Preference to enable variable view inline on text editors.
+	 *
+	 * @since 3.16
+	 */
+	String PREF_SHOW_VARIABLES_INLINE = "org.eclipse.debug.ui.ShowVariableInline"; //$NON-NLS-1$
+
+	/**
 	 * Instruction pointer image for editor ruler for the currently executing
 	 * instruction in the top stack frame.
 	 *
@@ -1347,4 +1354,5 @@ public interface IDebugUIConstants {
 	 * @since 3.8
 	 */
 	String COLUMN_ID_VARIABLE_VALUE_TYPE = COLUMN_PRESENTATION_ID_VARIABLE + ".COL_VALUE_TYPE"; //$NON-NLS-1$
+
 }

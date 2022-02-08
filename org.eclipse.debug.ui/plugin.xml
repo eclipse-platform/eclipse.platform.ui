@@ -3392,4 +3392,11 @@ M4 = Platform-specific fourth key
             icon="icons/full/obj16/launchConfiguration.png">
       </icon>
    </extension>
+   <extension
+         point="org.eclipse.ui.workbench.texteditor.codeMiningProviders">
+      <codeMiningProvider
+            class="org.eclipse.debug.internal.ui.codemining.DebugValueCodeMiningProvider"
+            id="org.eclipse.debug.ui.codeMiningProvider1">
+      </codeMiningProvider>
+   </extension>
 </plugin>
