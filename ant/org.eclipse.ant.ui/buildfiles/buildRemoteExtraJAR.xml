@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Copyright (c) 2005, 2016 IBM Corporation and others.
+    Copyright (c) 2005, 2021 IBM Corporation and others.
 
     This program and the accompanying materials
     are made available under the terms of the Eclipse Public License 2.0
@@ -30,7 +30,7 @@
 		<property name="destdir" value="${temp.folder}/lib/remoteAnt.jar.bin"/>
 		<delete dir="${destdir}"/>
 		<mkdir dir="${destdir}"/>
-		<javac target="1.6" source="1.6" destdir="${destdir}" failonerror="true" verbose="false" debug="on" includeAntRuntime="yes">
+		<javac source="11" target="11" destdir="${destdir}" failonerror="true" verbose="false" debug="on" includeAntRuntime="yes">
 			<src path="${basedir}/Remote Ant Support"/>
 			<compilerarg value="-Xlint"/>
 			<classpath>
