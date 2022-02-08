@@ -228,8 +228,11 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 		// get the new value of auto-build directly from the preferences
 		boolean wasAutoBuilding = isAutoBuilding;
 		isAutoBuilding = preferences.getBoolean(ResourcesPlugin.PREF_AUTO_BUILDING);
-		//force a build if autobuild has been turned on
-		if (!wasAutoBuilding && isAutoBuilding) {
+		if (wasAutoBuilding && !isAutoBuilding) {
+			// stop the current autobuild when autobuild has been turned off
+			interrupt();
+		} else if (!wasAutoBuilding && isAutoBuilding) {
+			// force a build when autobuild has been turned on
 			noBuildJob.cancel();
 			forceBuild = true;
 			build(false);
