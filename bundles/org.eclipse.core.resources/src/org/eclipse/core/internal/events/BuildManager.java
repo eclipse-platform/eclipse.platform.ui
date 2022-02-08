@@ -393,8 +393,12 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 					builtProjects.add(config.getProject());
 				}
 			}
-			//subsequent builds should always be incremental
-			trigger = IncrementalProjectBuilder.INCREMENTAL_BUILD;
+			// subsequent builds should always be incremental
+			// i.e. autobuild if not requested by user
+			// INCREMENTAL_BUILD would not be auto interrupted by user actions
+			if (trigger != IncrementalProjectBuilder.AUTO_BUILD) {
+				trigger = IncrementalProjectBuilder.INCREMENTAL_BUILD;
+			}
 		}
 	}
 
