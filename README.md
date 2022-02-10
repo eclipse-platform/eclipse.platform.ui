@@ -10,9 +10,9 @@ Platform UI provides the basic building blocks for user interfaces built with Ec
 
 Some of these form the Eclipse Rich Client Platform (RCP) and can be used for arbitrary rich client applications, while others are specific to the Eclipse IDE. The Platform UI codebase is built on top of the Eclipse Standard Widget Toolkit (SWT), which is developed as an independent project.
 
-Website: <http://www.eclipse.org/platform/ui/>
+Website: <https://www.eclipse.org/platform/ui/>
 
-- <https://projects.eclipse.org/projects/eclipse.platform.ui>
+- <https://projects.eclipse.org/projects/eclipse.platform>
 
 For more information, refer to the [Platform UI wiki page][1].
 
@@ -26,7 +26,7 @@ Test dependencies
 -----------------
 
 Several test plug-ins have a dependency to the Mockito and Hamcrest libraries.
-Please install them from the Orbit Download page][3]:
+Please install them from the [Orbit Download page][3]:
 
 Currently the following plug-ins are required:
 - net.bytebuddy.byte-buddy
@@ -55,7 +55,7 @@ Contributor License Agreement:
 
 Before your contribution can be accepted by the project, you need to create and electronically sign the Eclipse Foundation Contributor License Agreement (CLA).
 
-- <http://www.eclipse.org/legal/CLA.php>
+- <https://www.eclipse.org/legal/CLA.php>
 
 
 Search for bugs:
@@ -85,7 +85,7 @@ License
 
 [Eclipse Public License (EPL) 2.0][4]
 
-[1]: http://wiki.eclipse.org/Platform_UI
+[1]: https://wiki.eclipse.org/Platform_UI
 [2]: https://wiki.eclipse.org/Platform_UI/How_to_Contribute
-[3]: http://download.eclipse.org/tools/orbit/downloads/
+[3]: https://download.eclipse.org/tools/orbit/downloads/
 [4]: https://www.eclipse.org/legal/epl-2.0/

@@ -8,7 +8,7 @@ Setup
 
 This plug-in has a dependency to Mockito and Hamcrest from the Orbit repository.
 See [1] for a detailed description on how to setup a workspace from scratch. 
-If you want to install the necessary plug-ins manually, use one of the available update sites listed in [2]
+If you want to install the necessary plug-ins manually, use one of the available update sites listed in [Development tools][1]
 
 Running the tests
 -----------------
@@ -29,7 +29,7 @@ License
 [Eclipse Public License (EPL) v1.0][4]
 
 [1]: https://wiki.eclipse.org/Platform_UI/How_to_Contribute#2._Install_the_development_tools
-[2]: http://download.eclipse.org/tools/orbit/downloads/
+[2]: https://download.eclipse.org/tools/orbit/downloads/
 [3]: https://wiki.eclipse.org/Platform_UI/How_to_Contribute
-[4]: http://wiki.eclipse.org/EPL
+[4]: https://wiki.eclipse.org/EPL
 
