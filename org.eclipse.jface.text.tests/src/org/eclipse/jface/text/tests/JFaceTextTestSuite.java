@@ -77,7 +77,8 @@ import org.eclipse.jface.text.tests.templates.persistence.TemplatePersistenceDat
 		TabsToSpacesConverterTest.class,
 		DefaultTextDoubleClickStrategyTest.class,
 		MultiSelectionTest.class,
-		FindReplaceDocumentAdapterContentProposalProviderTest.class
+		FindReplaceDocumentAdapterContentProposalProviderTest.class,
+		ProjectionViewerTest.class
 })
 public class JFaceTextTestSuite {
 	// see @SuiteClasses

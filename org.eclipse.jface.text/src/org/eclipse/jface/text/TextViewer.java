@@ -2525,9 +2525,9 @@ public class TextViewer extends Viewer implements
 		int[] ranges= fTextWidget.getSelectionRanges();
 		IRegion[] selectedRanges= new IRegion[ranges.length / 2];
 		for (int i= 0; i < selectedRanges.length; i++) {
-			int start= widgetOffset2ModelOffset(ranges[2 * i]);
-			int end= widgetOffset2ModelOffset(ranges[2 * i] + ranges[2 * i + 1]);
-			selectedRanges[i]= new Region(start, end - start);
+			Point widgetSelection= new Point(ranges[2 * i], ranges[2 * i + 1]);
+			Point modelSelection= widgetSelection2ModelSelection(widgetSelection);
+			selectedRanges[i]= new Region(modelSelection.x, modelSelection.y);
 		}
 		return toSelection(selectedRanges);
 	}
