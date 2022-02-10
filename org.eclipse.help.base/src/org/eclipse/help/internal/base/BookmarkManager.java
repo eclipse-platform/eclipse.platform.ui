@@ -14,6 +14,7 @@
 package org.eclipse.help.internal.base;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Observable;
 import java.util.StringTokenizer;
 
@@ -51,9 +52,10 @@ public class BookmarkManager extends Observable {
 	private ArrayList<Bookmark> bookmarks;
 
 	public static class Bookmark implements IHelpResource {
-		private String label;
 
-		private String href;
+		private final String label;
+
+		private final String href;
 
 		public Bookmark(String label, String href) {
 			this.label = label;
@@ -71,16 +73,20 @@ public class BookmarkManager extends Observable {
 		}
 
 		@Override
-		public boolean equals(Object object) {
-			if (object == null)
-				return false;
-			if (object == this)
+		public boolean equals(Object obj) {
+			if (this == obj)
 				return true;
-			if (object instanceof Bookmark) {
-				Bookmark b = (Bookmark) object;
-				return b.href.equals(href) && b.label.equals(label);
-			}
-			return false;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Bookmark other = (Bookmark) obj;
+			return Objects.equals(href, other.href) && Objects.equals(label, other.label);
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(href, label);
 		}
 	}
 
