@@ -1086,7 +1086,13 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	protected void fillContextMenu(IMenuManager menu) {
 		menu.add(new Separator(IDebugUIConstants.EMPTY_VARIABLE_GROUP));
 		menu.add(new Separator(IDebugUIConstants.VARIABLE_GROUP));
-		menu.add(getAction(FIND_ACTION));
+		IAction findAction = getAction(FIND_ACTION);
+		if (findAction != null) {
+			menu.add(findAction);
+		} else {
+			DebugUIPlugin.log(new IllegalStateException("No action found for id: " + FIND_ACTION //$NON-NLS-1$
+					+ ", fGlobalActionMap: " + fGlobalActionMap)); //$NON-NLS-1$
+		}
 		ChangeVariableValueAction changeValueAction = (ChangeVariableValueAction)getAction("ChangeVariableValue"); //$NON-NLS-1$
 		if (changeValueAction.isApplicable()) {
 			menu.add(changeValueAction);
