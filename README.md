@@ -82,7 +82,7 @@ License
 
 [Eclipse Public License (EPL) 2.0][4]
 
-[1]: http://wiki.eclipse.org/Platform_UI
+[1]: https://wiki.eclipse.org/Platform_UI
 [2]: https://wiki.eclipse.org/Platform_UI/How_to_Contribute
-[3]: http://download.eclipse.org/tools/orbit/downloads/
+[3]: https://download.eclipse.org/tools/orbit/downloads/
 [4]: https://www.eclipse.org/legal/epl-2.0/
