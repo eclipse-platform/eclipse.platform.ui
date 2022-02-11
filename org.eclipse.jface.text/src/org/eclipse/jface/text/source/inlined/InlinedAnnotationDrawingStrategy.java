@@ -145,7 +145,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 			int line= textWidget.getLineAtOffset(widgetOffset);
 			int lineEndOffset= widgetOffset < textWidget.getCharCount() ? widgetOffset : textWidget.getCharCount() - 1;
 			Rectangle bounds= textWidget.getTextBounds(lineEndOffset, lineEndOffset);
-			int lineEndX= bounds.x + bounds.width + gc.stringExtent(" ").x; //$NON-NLS-1$
+			int lineEndX= bounds.x + bounds.width + gc.stringExtent("   ").x; //$NON-NLS-1$
 			annotation.setLocation(lineEndX, textWidget.getLinePixel(line) + textWidget.getLineVerticalIndent(line));
 			annotation.draw(gc, textWidget, widgetOffset, length, color, lineEndX, textWidget.getLinePixel(line) + textWidget.getLineVerticalIndent(line));
 		}
