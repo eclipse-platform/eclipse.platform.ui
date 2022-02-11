@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.runtime;
 
+import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.log.*;
 import org.osgi.framework.Bundle;
@@ -26,7 +26,7 @@ import org.osgi.service.log.LogEntry;
 public class Log implements ILog, SynchronousLogListener, LogFilter {
 	final Bundle bundle;
 	private final Logger logger;
-	private final Set<ILogListener> logListeners = ConcurrentHashMap.newKeySet();
+	private final Set<ILogListener> logListeners = new HashSet<>(5);
 
 	public Log(Bundle plugin, Logger logger) {
 		if (plugin == null)
@@ -43,7 +43,9 @@ public class Log implements ILog, SynchronousLogListener, LogFilter {
 	 */
 	@Override
 	public void addLogListener(ILogListener listener) {
-		logListeners.add(listener);
+		synchronized (logListeners) {
+			logListeners.add(listener);
+		}
 	}
 
 	/**
@@ -74,7 +76,9 @@ public class Log implements ILog, SynchronousLogListener, LogFilter {
 	 */
 	@Override
 	public void removeLogListener(ILogListener listener) {
-		logListeners.remove(listener);
+		synchronized (logListeners) {
+			logListeners.remove(listener);
+		}
 	}
 
 	@Override
@@ -83,8 +87,24 @@ public class Log implements ILog, SynchronousLogListener, LogFilter {
 	}
 
 	private void logToListeners(final IStatus status) {
-		for (final ILogListener listener : logListeners) {
-			SafeRunner.run(() -> listener.logging(status, bundle.getSymbolicName()));
+		// create array to avoid concurrent access
+		ILogListener[] listeners;
+		synchronized (logListeners) {
+			listeners = logListeners.toArray(new ILogListener[logListeners.size()]);
+		}
+		for (final ILogListener listener : listeners) {
+			ISafeRunnable code = new ISafeRunnable() {
+				@Override
+				public void run() throws Exception {
+					listener.logging(status, bundle.getSymbolicName());
+				}
+
+				@Override
+				public void handleException(Throwable e) {
+					//Ignore
+				}
+			};
+			SafeRunner.run(code);
 		}
 	}
 
