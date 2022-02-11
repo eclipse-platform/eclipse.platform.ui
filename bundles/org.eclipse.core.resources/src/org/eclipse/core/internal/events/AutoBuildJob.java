@@ -244,7 +244,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	public IStatus run(IProgressMonitor monitor) {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 1);
 		synchronized (this) {
-			if (subMonitor.isCanceled()) {
+			if (subMonitor.isCanceled() || isInterrupted()) {
 				return canceled();
 			}
 		}
