@@ -110,6 +110,9 @@
          </action>
       </actionSet>
    </extension>
-  
+
+   <extension point="org.eclipse.equinox.p2.engine.pgp">
+    <trustedKeys path="700E4F39BC05364B.asc"/>
+   </extension>
 
 </plugin>
