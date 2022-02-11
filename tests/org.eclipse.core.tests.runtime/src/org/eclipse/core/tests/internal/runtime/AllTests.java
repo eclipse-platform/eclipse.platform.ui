@@ -17,7 +17,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ LogSerializationTest.class, PlatformURLLocalTest.class, PlatformURLSessionTest.class,
-		FileLocatorTest.class })
+@Suite.SuiteClasses({ LogSerializationTest.class, PlatformURLLocalTest.class, PlatformURLSessionTest.class })
 public class AllTests {
 }
