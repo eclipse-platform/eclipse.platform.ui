@@ -14,10 +14,14 @@
 
 package org.eclipse.ui.tests.progress;
 
+import static org.junit.Assert.assertArrayEquals;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
@@ -155,9 +159,21 @@ public class ProgressViewTests extends ProgressTestCase {
 			ArrayList<DummyJob> shuffledJobs = new ArrayList<>(jobsToSchedule);
 			Collections.shuffle(shuffledJobs);
 			StringBuilder scheduleOrder = new StringBuilder("Jobs schedule order: ");
+			progressView.getViewer().refresh(); // order will only hold on the first time.
+			Thread.sleep(200); // wait till throttled update ran.
+			Job dummyJob = new Job("dummy throttled caller") {
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					return Status.OK_STATUS;
+				}
+			};
+			dummyJob.schedule(); // trigger throttled update to clear ProgressViewerComparator.lastIndexes
+			// now hope the loop is executed before next throttled update (could fail if VM
+			// is busy otherwise):
 			for (DummyJob job : shuffledJobs) {
 				job.shouldFinish = false;
-				job.schedule();
+				job.schedule(); // if the schedule updates the progress View (throttled) the sort order is
+								// affected
 				scheduleOrder.append(job.getName()).append(", ");
 			}
 			TestPlugin.getDefault().getLog()
@@ -172,9 +188,9 @@ public class ProgressViewTests extends ProgressTestCase {
 
 			ProgressInfoItem[] progressInfoItems = progressView.getViewer().getProgressInfoItems();
 			assertEquals("Not all jobs visible in progress view", allJobs.size(), progressInfoItems.length);
-			for (int i = 0; i < progressInfoItems.length; i++) {
-				assertEquals("Wrong job order", allJobs.get(i), progressInfoItems[i].getJobInfos()[0].getJob());
-			}
+			Object[] expected = allJobs.toArray();
+			Object[] actual = Arrays.stream(progressInfoItems).map(pi -> pi.getJobInfos()[0].getJob()).toArray();
+			assertArrayEquals("Wrong job order", expected, actual);
 		} finally {
 			for (DummyJob job : jobsToSchedule) {
 				job.shouldFinish = true;
