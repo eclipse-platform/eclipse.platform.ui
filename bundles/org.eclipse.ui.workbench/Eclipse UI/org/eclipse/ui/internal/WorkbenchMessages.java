@@ -47,6 +47,8 @@ public class WorkbenchMessages extends NLS {
 
 	public static String BundleSigningTray_Signing_Date;
 
+	public static String BundleSigningTray_SigningType;
+
 	public static String BundleSigningTray_Unget_Signing_Service;
 
 	public static String BundleSigningTray_Unknown;
@@ -54,6 +56,8 @@ public class WorkbenchMessages extends NLS {
 	public static String BundleSigningTray_Unsigned;
 
 	public static String BundleSigningTray_Working;
+
+	public static String BundleSigningTray_X509Certificate;
 
 	public static String NewWorkingSet;
 

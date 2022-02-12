@@ -48,6 +48,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.osgi.framework.Bundle;
 
 /**
  * @since 3.3
@@ -57,6 +58,7 @@ public class BundleSigningInfo {
 
 	private Composite composite;
 	private Text date;
+	private Label signingType;
 	private StyledText certificate;
 	private AboutBundleData data;
 
@@ -78,8 +80,11 @@ public class BundleSigningInfo {
 		{
 			Label label = new Label(composite, SWT.NONE);
 			label.setText(WorkbenchMessages.BundleSigningTray_Signing_Date);
-			GridData data = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
+			GridData data = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
+			label.setLayoutData(data);
+
 			date = new Text(composite, SWT.READ_ONLY);
+			data = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
 			GC gc = new GC(date);
 			gc.setFont(JFaceResources.getDialogFont());
 			Point size = gc.stringExtent(DateFormat.getDateTimeInstance().format(new Date()));
@@ -88,15 +93,24 @@ public class BundleSigningInfo {
 			date.setText(WorkbenchMessages.BundleSigningTray_Working);
 			date.setLayoutData(data);
 		}
+
 		// signer
-		Label label = new Label(composite, SWT.NONE);
-		label.setText(WorkbenchMessages.BundleSigningTray_Signing_Certificate);
-		GridData data = new GridData(SWT.BEGINNING, SWT.BEGINNING, true, false);
-		data.horizontalSpan = 2;
-		data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		data.horizontalSpan = 2;
+		{
+			Label label = new Label(composite, SWT.NONE);
+			label.setText(WorkbenchMessages.BundleSigningTray_SigningType);
+			GridData data = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
+			label.setLayoutData(data);
+
+			signingType = new Label(composite, SWT.NONE);
+			data = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
+			signingType.setData(data);
+			signingType.setText(WorkbenchMessages.BundleSigningTray_Working);
+		}
+
 		certificate = new StyledText(composite, SWT.READ_ONLY | SWT.MULTI | SWT.WRAP);
 		certificate.setText(WorkbenchMessages.BundleSigningTray_Working);
+		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
+		data.horizontalSpan = 2;
 		certificate.setLayoutData(data);
 		Dialog.applyDialogFont(composite);
 
@@ -128,13 +142,22 @@ public class BundleSigningInfo {
 					if (myData != data)
 						return Status.OK_STATUS;
 					SignerInfo[] signers = signedContent.getSignerInfos();
-					final String signerText, dateText;
+					final String signerText, dateText, signingTypeText;
 					if (!isOpen() && BundleSigningInfo.this.data == myData)
 						return Status.OK_STATUS;
 
 					if (signers.length == 0) {
-						signerText = WorkbenchMessages.BundleSigningTray_Unsigned;
-						dateText = WorkbenchMessages.BundleSigningTray_Unsigned;
+						AboutBundleData.ExtendedSigningInfo info = data.getInfo();
+						Bundle bundle = data.getBundle();
+						if (info != null && info.isSigned(bundle)) {
+							signerText = info.getSigningDetails(bundle);
+							dateText = DateFormat.getDateTimeInstance().format(info.getSigningTime(bundle));
+							signingTypeText = info.getSigningType(bundle);
+						} else {
+							signerText = WorkbenchMessages.BundleSigningTray_Unsigned;
+							dateText = WorkbenchMessages.BundleSigningTray_Unsigned;
+							signingTypeText = WorkbenchMessages.BundleSigningTray_Unsigned;
+						}
 					} else {
 						Properties[] certs = parseCerts(signers[0].getCertificateChain());
 						if (certs.length == 0)
@@ -157,6 +180,7 @@ public class BundleSigningInfo {
 							dateText = DateFormat.getDateTimeInstance().format(signDate);
 						else
 							dateText = WorkbenchMessages.BundleSigningTray_Unknown;
+						signingTypeText = WorkbenchMessages.BundleSigningTray_X509Certificate;
 					}
 
 					PlatformUI.getWorkbench().getDisplay().asyncExec(() -> {
@@ -167,6 +191,8 @@ public class BundleSigningInfo {
 							return;
 						certificate.setText(signerText);
 						date.setText(dateText);
+						signingType.setText(signingTypeText);
+						signingType.getParent().layout(true);
 					});
 					return Status.OK_STATUS;
 				});

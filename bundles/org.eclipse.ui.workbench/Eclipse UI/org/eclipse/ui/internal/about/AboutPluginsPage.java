@@ -330,11 +330,15 @@ public class AboutPluginsPage extends ProductInfoPage {
 		Job loadBundleDataJob = Job.create(WorkbenchMessages.AboutPluginsPage_Load_Bundle_Data, monitor -> {
 			// create a data object for each bundle, remove duplicates, and
 			// include only resolved bundles (bug 65548)
+
+			AboutBundleData.ExtendedSigningInfo info = Platform.getAdapterManager().getAdapter(this,
+					AboutBundleData.ExtendedSigningInfo.class);
+
 			SubMonitor subMonitor = SubMonitor.convert(monitor, bundles.length + 1);
 			Map<String, AboutBundleData> map = new HashMap<>();
 			for (Bundle bundle : bundles) {
 				subMonitor.split(1);
-				AboutBundleData data = new AboutBundleData(bundle);
+				AboutBundleData data = new AboutBundleData(bundle, info);
 				if (BundleUtility.isReady(data.getState()) && !map.containsKey(data.getVersionedId())) {
 					map.put(data.getVersionedId(), data);
 				}

@@ -32,7 +32,7 @@ Export-Package: org.eclipse.e4.ui.workbench.addons.perspectiveswitcher;x-interna
    org.eclipse.ui.ide.application,
    org.eclipse.ui.views,
    org.eclipse.ui.navigator.resources",
- org.eclipse.ui.internal.about;x-friends:="org.eclipse.ui",
+ org.eclipse.ui.internal.about;x-friends:="org.eclipse.ui,org.eclipse.equinox.p2.ui",
  org.eclipse.ui.internal.actions;x-friends:="org.eclipse.ui.ide",
  org.eclipse.ui.internal.activities;x-friends:="org.eclipse.ui",
  org.eclipse.ui.internal.activities.ws;x-internal:=true,

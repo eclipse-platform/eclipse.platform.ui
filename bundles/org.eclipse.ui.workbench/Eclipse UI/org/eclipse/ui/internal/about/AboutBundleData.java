@@ -15,6 +15,7 @@ package org.eclipse.ui.internal.about;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Date;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.ServiceCaller;
 import org.eclipse.osgi.signedcontent.SignedContent;
@@ -32,16 +33,29 @@ public class AboutBundleData extends AboutData {
 
 	private Bundle bundle;
 
+	private ExtendedSigningInfo info;
+
 	private boolean isSignedDetermined = false;
 
 	private boolean isSigned;
 
 	public AboutBundleData(Bundle bundle) {
+		this(bundle, null);
+	}
+
+	/**
+	 *
+	 * @param bundle the bundle.
+	 * @param info   the extended bundle signing information.
+	 *
+	 * @since 3.125
+	 */
+	public AboutBundleData(Bundle bundle, ExtendedSigningInfo info) {
 		super(getResourceString(bundle, Constants.BUNDLE_VENDOR), getResourceString(bundle, Constants.BUNDLE_NAME),
 				getResourceString(bundle, Constants.BUNDLE_VERSION), bundle.getSymbolicName());
 
 		this.bundle = bundle;
-
+		this.info = info;
 	}
 
 	public int getState() {
@@ -91,6 +105,9 @@ public class AboutBundleData extends AboutData {
 			return isSigned;
 		SignedContent signedContent = getSignedContent();
 		isSigned = signedContent != null && signedContent.isSigned();
+		if (!isSigned && info != null) {
+			isSigned = info.isSigned(bundle);
+		}
 		isSignedDetermined = true;
 		return isSigned;
 	}
@@ -100,6 +117,15 @@ public class AboutBundleData extends AboutData {
 	 */
 	public Bundle getBundle() {
 		return bundle;
+	}
+
+	/**
+	 * @return the extended key signing info or <code>null</code>
+	 *
+	 * @since 3.125
+	 */
+	public ExtendedSigningInfo getInfo() {
+		return info;
 	}
 
 	/**
@@ -121,5 +147,65 @@ public class AboutBundleData extends AboutData {
 			}
 		});
 		return result[0];
+	}
+
+	/**
+	 * Traditionally, the only form of signing support has been jar signing, as made
+	 * available via {@link SignedContent}. This interface allows the
+	 * {@link AboutPluginsPage AboutPluginsPage} to be adapted to support
+	 * additional/alternative forms of signing.
+	 *
+	 * <p>
+	 * The AboutPluginsPage uses the following idiom to acquire an instance of
+	 * ExtendedSigningInfo and passes it to the
+	 * {@link AboutBundleData#AboutBundleData(Bundle, ExtendedSigningInfo) new
+	 * AboutBundleData constructor} and is available via
+	 * {@link AboutBundleData#getInfo()}.
+	 * </p>
+	 *
+	 * <pre>
+	 * Platform.getAdapterManager().getAdapter(this, AboutBundleData.ExtendedSigningInfo.class);
+	 * </pre>
+	 *
+	 * @see AboutBundleData#AboutBundleData(Bundle, ExtendedSigningInfo)
+	 *
+	 * @since 3.125
+	 */
+	public interface ExtendedSigningInfo {
+
+		/**
+		 * Whether this bundle is signed in an extended way.
+		 *
+		 * @param bundle the bundle in question.
+		 * @return whether this bundle is signed.
+		 */
+		boolean isSigned(Bundle bundle);
+
+		/**
+		 * A user presentable description of the type of extended signing.
+		 *
+		 * @param bundle the bundle in question.
+		 * @return a label for the type of signing, or <code>null</code> if the bundle
+		 *         isn't signed in an extended way.
+		 */
+		String getSigningType(Bundle bundle);
+
+		/**
+		 * The date the bundle was signed.
+		 *
+		 * @param bundle the bundle in question.
+		 * @return the date the bundle was signed, or <code>null</code> if the bundle
+		 *         isn't signed.
+		 */
+		Date getSigningTime(Bundle bundle);
+
+		/**
+		 * A user presentable multi-line text description of the how the bundle is
+		 * signed.
+		 *
+		 * @param bundle
+		 * @return a description of the how the bundle is signed.
+		 */
+		String getSigningDetails(Bundle bundle);
 	}
 }
