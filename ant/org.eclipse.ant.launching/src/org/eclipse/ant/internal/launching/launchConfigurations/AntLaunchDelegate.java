@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -120,12 +120,13 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 	@Override
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		String path = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, new String("")); //$NON-NLS-1$
+		String vmver = null;
 		if (!path.isEmpty()) {
 			IPath jrePath = Path.fromPortableString(path);
 			IVMInstall vm = JavaRuntime.getVMInstall(jrePath);
 			if (vm instanceof AbstractVMInstall) {
 				AbstractVMInstall install = (AbstractVMInstall) vm;
-				String vmver = install.getJavaVersion();
+				vmver = install.getJavaVersion();
 				// versionToJdkLevel only handles 3 char versions = 1.5, 1.6, 1.9, etc
 				if (vmver.length() > 3) {
 					vmver = vmver.substring(0, 3);
@@ -243,7 +244,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 			}
 		}
 
-		StringBuffer commandLine = generateCommandLine(location, arguments, userProperties, propertyFiles, targets, antHome, basedir, isSeparateJRE, captureOutput, setInputHandler);
+		StringBuffer commandLine = generateCommandLine(location, arguments, userProperties, propertyFiles, targets, antHome, basedir, isSeparateJRE, captureOutput, setInputHandler, vmver);
 
 		if (isSeparateJRE) {
 			monitor.beginTask(MessageFormat.format(AntLaunchConfigurationMessages.AntLaunchDelegate_Launching__0__1, new Object[] {
@@ -376,7 +377,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 		}
 	}
 
-	private StringBuffer generateCommandLine(IPath location, String[] arguments, Map<String, String> userProperties, String[] propertyFiles, String[] targets, String antHome, String basedir, boolean separateVM, boolean captureOutput, boolean setInputHandler) {
+	private StringBuffer generateCommandLine(IPath location, String[] arguments, Map<String, String> userProperties, String[] propertyFiles, String[] targets, String antHome, String basedir, boolean separateVM, boolean captureOutput, boolean setInputHandler, String vmver) {
 		StringBuffer commandLine = new StringBuffer();
 
 		if (!separateVM) {
@@ -448,6 +449,9 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 			commandLine.append(" \"-Dant.home="); //$NON-NLS-1$
 			commandLine.append(antHome);
 			commandLine.append('\"');
+		}
+		if (vmver != null && JavaCore.compareJavaVersions(vmver, JavaCore.VERSION_17) >= 0) {
+			commandLine.append(" \"-Dava.security.manager=allow\""); //$NON-NLS-1$
 		}
 
 		if (separateVM) {
