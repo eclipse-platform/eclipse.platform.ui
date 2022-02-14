@@ -433,12 +433,13 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		ISchedulingRule currentRule = null;
 		boolean buildParallel = noEnclosingRule && getDescription().getMaxConcurrentBuilds() > 1 && getDescription().getBuildOrder() == null;
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
+		SubMonitor newChild = subMonitor.newChild(1);
 		try {
 			try {
 
 				// Must run the PRE_BUILD with the WRule held before acquiring WS lock
 				// Can remove this if we run notifications without the WS lock held: bug 249951
-				prepareOperation(notificationRule, subMonitor.newChild(1));
+				prepareOperation(notificationRule, newChild);
 				currentRule = notificationRule;
 				beginOperation(true);
 				aboutToBuild(this, trigger);
@@ -609,18 +610,19 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		//nothing to do if the workspace failed to open
 		if (!isOpen())
 			return;
+		String msg = Messages.resources_closing_0;
+		SubMonitor subMonitor = SubMonitor.convert(monitor, msg, 20);
+		subMonitor.subTask(msg);
+		// this operation will never end because the world is going away
+		SubMonitor newChild = subMonitor.newChild(1);
 		try {
-			String msg = Messages.resources_closing_0;
-			SubMonitor subMonitor = SubMonitor.convert(monitor, msg, 20);
-			subMonitor.subTask(msg);
-			//this operation will never end because the world is going away
 			try {
 				stringPoolJob.cancel();
 				//shutdown save manager now so a last snapshot can be taken before we close
 				//note: you can't call #save() from within a nested operation
 				saveManager.shutdown(null);
 				saveManager.reportSnapshotRequestor();
-				prepareOperation(getRoot(), subMonitor.newChild(1));
+				prepareOperation(getRoot(), newChild);
 				//shutdown notification first to avoid calling third parties during shutdown
 				notificationManager.shutdown(null);
 				beginOperation(true);

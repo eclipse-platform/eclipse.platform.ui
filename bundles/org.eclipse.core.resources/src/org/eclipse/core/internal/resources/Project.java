@@ -178,8 +178,9 @@ public class Project extends Container implements IProject {
 		String msg = NLS.bind(Messages.resources_closing_1, getName());
 		SubMonitor subMonitor = SubMonitor.convert(monitor, msg, 100);
 		final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(this);
+		SubMonitor newChild = subMonitor.newChild(1);
 		try {
-			workspace.prepareOperation(rule, subMonitor.newChild(1));
+			workspace.prepareOperation(rule, newChild);
 			ResourceInfo info = getResourceInfo(false, false);
 			int flags = getFlags(info);
 			checkExists(flags, true);

@@ -45,8 +45,9 @@ public class File extends Resource implements IFile {
 			if (workspace.shouldValidate)
 				workspace.validateSave(this);
 			final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(this);
+			SubMonitor newChild = subMonitor.newChild(1);
 			try {
-				workspace.prepareOperation(rule, subMonitor.newChild(1));
+				workspace.prepareOperation(rule, newChild);
 				ResourceInfo info = getResourceInfo(false, false);
 				checkAccessible(getFlags(info));
 				workspace.beginOperation(true);
@@ -102,8 +103,9 @@ public class File extends Resource implements IFile {
 		try {
 			checkValidPath(path, FILE, true);
 			final ISchedulingRule rule = workspace.getRuleFactory().createRule(this);
+			SubMonitor newChild = subMonitor.newChild(1);
 			try {
-				workspace.prepareOperation(rule, subMonitor.newChild(1));
+				workspace.prepareOperation(rule, newChild);
 				checkDoesNotExist();
 				Container parent = (Container) getParent();
 				ResourceInfo info = parent.getResourceInfo(false, false);
@@ -327,8 +329,9 @@ public class File extends Resource implements IFile {
 			if (workspace.shouldValidate)
 				workspace.validateSave(this);
 			final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(this);
+			SubMonitor newChild = subMonitor.newChild(1);
 			try {
-				workspace.prepareOperation(rule, subMonitor.newChild(1));
+				workspace.prepareOperation(rule, newChild);
 				ResourceInfo info = getResourceInfo(false, false);
 				checkAccessible(getFlags(info));
 				workspace.beginOperation(true);
@@ -401,8 +404,9 @@ public class File extends Resource implements IFile {
 		// need to get the project as a scheduling rule because we might be creating a new folder/file to
 		// hold the project settings
 		final ISchedulingRule rule = workspace.getRuleFactory().charsetRule(this);
+		SubMonitor newChild = subMonitor.newChild(1);
 		try {
-			workspace.prepareOperation(rule, subMonitor.newChild(1));
+			workspace.prepareOperation(rule, newChild);
 			ResourceInfo info = getResourceInfo(false, false);
 			checkAccessible(getFlags(info));
 			workspace.beginOperation(true);

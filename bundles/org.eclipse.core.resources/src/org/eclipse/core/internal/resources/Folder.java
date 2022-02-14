@@ -86,8 +86,9 @@ public class Folder extends Container implements IFolder {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, message, 100);
 		checkValidPath(path, FOLDER, true);
 		final ISchedulingRule rule = workspace.getRuleFactory().createRule(this);
+		SubMonitor newChild = subMonitor.newChild(1);
 		try {
-			workspace.prepareOperation(rule, subMonitor.newChild(1));
+			workspace.prepareOperation(rule, newChild);
 			IFileStore store = getStore();
 			IFileInfo localInfo = store.fetchInfo();
 			assertCreateRequirements(store, localInfo, updateFlags);
