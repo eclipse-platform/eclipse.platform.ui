@@ -451,7 +451,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 			commandLine.append('\"');
 		}
 		if (vmver != null && JavaCore.compareJavaVersions(vmver, JavaCore.VERSION_17) >= 0) {
-			commandLine.append(" \"-Dava.security.manager=allow\""); //$NON-NLS-1$
+			commandLine.append(" \"-Djava.security.manager=allow\""); //$NON-NLS-1$
 		}
 
 		if (separateVM) {
