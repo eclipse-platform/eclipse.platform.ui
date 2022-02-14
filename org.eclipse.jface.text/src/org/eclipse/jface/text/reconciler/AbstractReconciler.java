@@ -139,6 +139,9 @@ abstract public class AbstractReconciler implements IReconciler {
 					fIsDirty= true;
 					fReset= true;
 				}
+				synchronized (fDirtyRegionQueue) {
+					fDirtyRegionQueue.notifyAll(); // wake up wait(fDelay);
+				}
 
 			} else {
 
@@ -180,8 +183,10 @@ abstract public class AbstractReconciler implements IReconciler {
 				if (fCanceled)
 					break;
 
-				if (!isDirty())
+				if (!isDirty()) {
+					waitFinish= false; //signalWaitForFinish() was called but nothing todo
 					continue;
+				}
 
 				synchronized (this) {
 					if (fReset) {
