@@ -53,7 +53,15 @@ public class CodeMiningDemo {
 						+ "// Empty lines show a header annotating they're empty.\n"
 						+ "// The word `echo` is echoed.\n"
 						+ "// Lines containing `end` get an annotation at their end\n\n"
-						+ "class A\n" + "new A\n" + "new A\n\n" + "class 5\n" + "new 5\n" + "new 5\n" + "new 5"),
+						+ "class A\n" //
+						+ "new A\n" //
+						+ "new A\n\n" //
+						+ "code mining at end here\n"
+						+ "code mining at end here with CRLF\r\n"
+						+ "class 5\n" //
+						+ "new 5\n" //
+						+ "new 5\n" //
+						+ "new 5\n"),
 				new AnnotationModel());
 		// Add AnnotationPainter (required by CodeMining)
 		addAnnotationPainter(sourceViewer);

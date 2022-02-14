@@ -27,10 +27,10 @@ public abstract class LineEndCodeMining extends LineContentCodeMining {
 
 	private static Position getLineEndPosition(IDocument document, int line) throws BadLocationException {
 		int lastCharOffset= document.getLineOffset(line) + document.getLineLength(line);
-		if (lastCharOffset < document.getLength()) {
-			lastCharOffset--; // place on the newline \n char, not on 1st char of next line
-		}
-		return new Position(lastCharOffset);
+		String delimiter= document.getLineDelimiter(line);
+		return delimiter == null ? // last line of document
+				new Position(document.getLength(), 0) : //
+				new Position(lastCharOffset - delimiter.length(), delimiter.length());
 	}
 
 }
