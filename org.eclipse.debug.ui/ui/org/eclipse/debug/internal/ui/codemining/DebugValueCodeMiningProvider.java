@@ -34,8 +34,8 @@ import org.eclipse.jface.text.source.ISourceViewerExtension5;
 
 public class DebugValueCodeMiningProvider extends AbstractCodeMiningProvider {
 
-	private boolean alreadyListening;
-	private IDebugEventSetListener listener;
+	private volatile boolean alreadyListening;
+	private volatile IDebugEventSetListener listener;
 
 	@Override
 	public CompletableFuture<List<? extends ICodeMining>> provideCodeMinings(ITextViewer viewer,
@@ -84,6 +84,8 @@ public class DebugValueCodeMiningProvider extends AbstractCodeMiningProvider {
 
 	@Override
 	public void dispose() {
-		DebugPlugin.getDefault().removeDebugEventListener(listener);
+		if (listener != null) {
+			DebugPlugin.getDefault().removeDebugEventListener(listener);
+		}
 	}
 }
