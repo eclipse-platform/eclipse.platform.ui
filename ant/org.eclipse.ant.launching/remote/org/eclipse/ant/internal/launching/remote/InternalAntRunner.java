@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  * Portions Copyright  2000-2005 The Apache Software Foundation
  *
  * This program and the accompanying materials are made
@@ -446,9 +446,12 @@ public class InternalAntRunner {
 			if (extraArguments != null) {
 				printArguments(getCurrentProject());
 			}
-
-			System.setSecurityManager(new AntSecurityManager(originalSM, Thread.currentThread()));
-
+			try {
+				System.setSecurityManager(new AntSecurityManager(originalSM, Thread.currentThread()));
+			}
+			catch (UnsupportedOperationException ex) {
+				System.out.println("Setting Security Manager is not supported"); //$NON-NLS-1$
+			}
 			if (targets == null) {
 				targets = new Vector<String>(1);
 			}

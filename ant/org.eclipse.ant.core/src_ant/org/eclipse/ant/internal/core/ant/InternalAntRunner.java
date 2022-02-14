@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2019 IBM Corporation and others.
+ *  Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -697,8 +697,12 @@ public class InternalAntRunner {
 			if (extraArguments != null) {
 				printArguments(getCurrentProject());
 			}
-			System.setSecurityManager(new AntSecurityManager(originalSM, Thread.currentThread()));
-
+			try {
+				System.setSecurityManager(new AntSecurityManager(originalSM, Thread.currentThread()));
+			}
+			catch (UnsupportedOperationException ex) {
+				AntCorePlugin.getPlugin().getLog().log(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, 0, InternalAntMessages.InternalAntRunner_SecurityManagerError, null));
+			}
 			if (targets == null) {
 				targets = new Vector<>(1);
 			}

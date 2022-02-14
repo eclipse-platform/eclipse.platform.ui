@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -68,8 +68,10 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
@@ -373,6 +375,9 @@ public class AntModel implements IAntModel {
 				}
 				catch (AntSecurityException e) {
 					// do nothing
+				}
+				catch (UnsupportedOperationException ex) {
+					AntUIPlugin.log(new Status(IStatus.ERROR, AntUIPlugin.getUniqueIdentifier(), 0, AntModelMessages.AntModel_SecurityManagerError, null));
 				}
 				finally {
 					Thread.currentThread().setContextClassLoader(originalClassLoader);
