@@ -530,8 +530,9 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		checkValidPath(destination, getType(), false);
 		Resource destResource = workspace.newResource(destination, getType());
 		final ISchedulingRule rule = workspace.getRuleFactory().copyRule(this, destResource);
+		SubMonitor split = progress.split(1);
 		try {
-			workspace.prepareOperation(rule, progress.split(1));
+			workspace.prepareOperation(rule, split);
 			// The following assert method throws CoreExceptions as stated in the IResource.copy API
 			// and assert for programming errors. See checkCopyRequirements for more information.
 			assertCopyRequirements(destination, getType(), updateFlags);
@@ -561,8 +562,9 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		Assert.isNotNull(destDesc);
 		String message = NLS.bind(Messages.resources_copying, getFullPath());
 		SubMonitor progress = SubMonitor.convert(monitor, message, 100).checkCanceled();
+		SubMonitor split = progress.split(1);
 		try {
-			workspace.prepareOperation(workspace.getRoot(), progress.split(1));
+			workspace.prepareOperation(workspace.getRoot(), split);
 			// The following assert method throws CoreExceptions as stated in the IResource.copy API
 			// and assert for programming errors. See checkCopyRequirements for more information.
 			IPath destPath = new Path(destDesc.getName()).makeAbsolute();
@@ -631,8 +633,9 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		SubMonitor progress = SubMonitor.convert(monitor, message, 100).checkCanceled();
 		checkValidPath(path, FOLDER, true);
 		final ISchedulingRule rule = workspace.getRuleFactory().createRule(this);
+		SubMonitor split = progress.split(1);
 		try {
-			workspace.prepareOperation(rule, progress.split(1));
+			workspace.prepareOperation(rule, split);
 			IFileInfo fileInfo = assertLinkRequirements(localLocation, updateFlags);
 			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_CREATE, this));
 			workspace.beginOperation(true);
@@ -738,8 +741,9 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		SubMonitor progress = SubMonitor.convert(monitor, 100).checkCanceled();
 		progress.subTask(message);
 		final ISchedulingRule rule = workspace.getRuleFactory().deleteRule(this);
+		SubMonitor split = progress.split(1);
 		try {
-			workspace.prepareOperation(rule, progress.split(1));
+			workspace.prepareOperation(rule, split);
 			// If there is no resource then there is nothing to delete so just return.
 			if (!exists())
 				return;
@@ -1484,8 +1488,9 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		checkValidPath(destination, getType(), false);
 		Resource destResource = workspace.newResource(destination, getType());
 		final ISchedulingRule rule = workspace.getRuleFactory().moveRule(this, destResource);
+		SubMonitor split = progress.split(1);
 		try {
-			workspace.prepareOperation(rule, progress.split(1));
+			workspace.prepareOperation(rule, split);
 			// The following assert method throws CoreExceptions as stated in the IResource.move API
 			// and assert for programming errors. See checkMoveRequirements for more information.
 			assertMoveRequirements(destination, getType(), updateFlags);
@@ -1550,8 +1555,9 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		progress.subTask(message);
 		boolean build = false;
 		final ISchedulingRule rule = workspace.getRuleFactory().refreshRule(this);
+		SubMonitor split = progress.split(1);
 		try {
-			workspace.prepareOperation(rule, progress.split(1));
+			workspace.prepareOperation(rule, split);
 			if (!isRoot && !getProject().isAccessible())
 				return;
 			if (!exists() && isFiltered())
@@ -1613,8 +1619,9 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		String message = NLS.bind(Messages.resources_settingDerivedFlag, getFullPath());
 		SubMonitor progress = SubMonitor.convert(monitor, message, 100).checkCanceled();
 		final ISchedulingRule rule = workspace.getRuleFactory().derivedRule(this);
+		SubMonitor split = progress.split(1);
 		try {
-			workspace.prepareOperation(rule, progress.split(1));
+			workspace.prepareOperation(rule, split);
 			ResourceInfo info = getResourceInfo(false, false);
 			checkAccessible(getFlags(info));
 			// Ignore attempts to set derived flag on anything except files and folders.
@@ -1657,8 +1664,9 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	public void setLocal(boolean flag, int depth, IProgressMonitor monitor) throws CoreException {
 		String message = Messages.resources_setLocal;
 		SubMonitor progress = SubMonitor.convert(monitor, message, 100).checkCanceled();
+		SubMonitor split = progress.split(1);
 		try {
-			workspace.prepareOperation(null, progress.split(1));
+			workspace.prepareOperation(null, split);
 			workspace.beginOperation(true);
 			internalSetLocal(flag, depth);
 			progress.split(98);
@@ -1749,8 +1757,9 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		String message = NLS.bind(Messages.resources_touch, getFullPath());
 		SubMonitor progress = SubMonitor.convert(monitor, message, 100).checkCanceled();
 		final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(this);
+		SubMonitor split = progress.split(1);
 		try {
-			workspace.prepareOperation(rule, progress.split(1));
+			workspace.prepareOperation(rule, split);
 			ResourceInfo info = checkAccessibleAndLocal(DEPTH_ZERO);
 
 			workspace.beginOperation(true);
@@ -2004,8 +2013,9 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		String message = NLS.bind(Messages.links_setLocation, getFullPath());
 		SubMonitor progress = SubMonitor.convert(monitor, message, 100).checkCanceled();
 		final ISchedulingRule rule = workspace.getRuleFactory().createRule(this);
+		SubMonitor split = progress.split(1);
 		try {
-			workspace.prepareOperation(rule, progress.split(1));
+			workspace.prepareOperation(rule, split);
 			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_CHANGE, this));
 			workspace.beginOperation(true);
 

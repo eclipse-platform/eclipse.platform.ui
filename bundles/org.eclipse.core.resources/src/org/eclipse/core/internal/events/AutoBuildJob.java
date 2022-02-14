@@ -149,8 +149,9 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	private void doBuild(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, Policy.opWork + 1);
 		final ISchedulingRule rule = workspace.getRuleFactory().buildRule();
+		SubMonitor split = subMonitor.split(1); // will throw OperationCanceledException if autobuild canceled
 		try {
-			workspace.prepareOperation(rule, subMonitor.split(1));
+			workspace.prepareOperation(rule, split);
 			workspace.beginOperation(true);
 			final int trigger = IncrementalProjectBuilder.AUTO_BUILD;
 			workspace.broadcastBuildEvent(workspace, IResourceChangeEvent.PRE_BUILD, trigger);
