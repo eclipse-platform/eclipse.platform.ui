@@ -141,6 +141,14 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 				}
 			}
 		}
+		if (vmver == null) {
+			IVMInstall vm = JavaRuntime.getDefaultVMInstall();
+			if (vm instanceof AbstractVMInstall) {
+				AbstractVMInstall install = (AbstractVMInstall) vm;
+				vmver = install.getJavaVersion();
+			}
+
+		}
 		if (monitor.isCanceled()) {
 			return;
 		}
@@ -450,7 +458,8 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 			commandLine.append(antHome);
 			commandLine.append('\"');
 		}
-		if (vmver != null && JavaCore.compareJavaVersions(vmver, JavaCore.VERSION_17) >= 0) {
+		if (vmver != null && JavaCore.compareJavaVersions(vmver, JavaCore.VERSION_17) >= 0
+				&& commandLine.indexOf("-Djava.security.manager=allow") == -1) { //$NON-NLS-1$
 			commandLine.append(" \"-Djava.security.manager=allow\""); //$NON-NLS-1$
 		}
 
