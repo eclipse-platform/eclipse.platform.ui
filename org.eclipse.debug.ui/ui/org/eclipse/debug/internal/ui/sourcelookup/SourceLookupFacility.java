@@ -69,6 +69,7 @@ import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.progress.UIJob;
@@ -467,7 +468,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 					// open a new editor
 					editor = openEditor(page, input, id);
 					editorForPage = editor;
-				} else if (editorForPage instanceof IReusableEditor && editorForPage.getSite().getId().equals(id)) {
+				} else if (canReuseEditor(input, id, editorForPage)) {
 					// re-use editor
 					page.reuseEditor((IReusableEditor)editorForPage, input);
 					editor = editorForPage;
@@ -477,8 +478,10 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 				} else {
 					// close editor, open a new one
 					editor = openEditor(page, input, id);
-					page.closeEditor(editorForPage, false);
-					editorForPage = editor;
+					if (editor != editorForPage) {
+						page.closeEditor(editorForPage, false);
+						editorForPage = editor;
+					}
 				}
 				setEditor(page, editorForPage);
 			}
@@ -487,6 +490,22 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 			editor = openEditor(page, input, id);
 		}
 		return editor;
+	}
+
+	private static boolean canReuseEditor(IEditorInput input, String id, IEditorPart editorForPage) {
+		if (!(editorForPage instanceof IReusableEditor)) {
+			return false;
+		}
+		IWorkbenchPartSite site = editorForPage.getSite();
+		if (site == null) {
+			// editor is disposed
+			return false;
+		}
+		if (site.getId().equals(id)) {
+			return true;
+		}
+		IEditorInput editorInput = editorForPage.getEditorInput();
+		return editorInput != null && input.equals(editorInput);
 	}
 
 	/**
@@ -510,10 +529,14 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 	}
 
 	/**
-	 * Returns the line information for the given line in the given editor
+	 * Returns the line information for the given line in the given editor, or
+	 * {@code null} if no information could be retrieved or error happens
 	 */
 	private IRegion getLineInformation(ITextEditor editor, int lineNumber) {
 		IDocumentProvider provider= editor.getDocumentProvider();
+		if (provider == null) {
+			return null;
+		}
 		IEditorInput input= editor.getEditorInput();
 		try {
 			provider.connect(input);

@@ -92,8 +92,10 @@ public class InstructionPointerManager{
 	 * specified stack frame.
 	 */
 	public void addAnnotation(ITextEditor textEditor, IStackFrame frame, Annotation annotation) {
-
 		IDocumentProvider docProvider = textEditor.getDocumentProvider();
+		if (docProvider == null) {
+			return;
+		}
 		IEditorInput editorInput = textEditor.getEditorInput();
 		// If there is no annotation model, there's nothing more to do
 		IAnnotationModel annModel = docProvider.getAnnotationModel(editorInput);
