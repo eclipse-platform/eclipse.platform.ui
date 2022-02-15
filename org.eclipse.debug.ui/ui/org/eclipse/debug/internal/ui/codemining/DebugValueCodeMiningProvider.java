@@ -14,12 +14,16 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -34,7 +38,6 @@ import org.eclipse.jface.text.source.ISourceViewerExtension5;
 
 public class DebugValueCodeMiningProvider extends AbstractCodeMiningProvider {
 
-	private volatile boolean alreadyListening;
 	private volatile IDebugEventSetListener listener;
 
 	@Override
@@ -44,10 +47,17 @@ public class DebugValueCodeMiningProvider extends AbstractCodeMiningProvider {
 			return CompletableFuture.completedFuture(List.of());
 		}
 		final IDocument document = viewer.getDocument();
-		if (viewer instanceof ISourceViewerExtension5 && !alreadyListening) {
-			alreadyListening = true;
-			listener = e -> ((ISourceViewerExtension5) viewer).updateCodeMinings();
-			DebugPlugin.getDefault().addDebugEventListener(listener);
+		if (viewer instanceof ISourceViewerExtension5 && listener == null) {
+			synchronized (this) {
+				if (listener == null) {
+					IDebugEventSetListener debugListener = e -> ((ISourceViewerExtension5) viewer).updateCodeMinings();
+					DebugPlugin.getDefault().addDebugEventListener(debugListener);
+					listener = debugListener;
+				}
+			}
+		}
+		if (!hasDebugRunning()) {
+			return CompletableFuture.completedFuture(List.of());
 		}
 		return CompletableFuture.supplyAsync(() -> {
 			List<DebugValueCodeMining> res = new ArrayList<>();
@@ -78,14 +88,22 @@ public class DebugValueCodeMiningProvider extends AbstractCodeMiningProvider {
 		});
 	}
 
+	private boolean hasDebugRunning() {
+		return Stream.of(DebugPlugin.getDefault().getLaunchManager().getLaunches()) //
+				.filter(Predicate.not(ILaunch::isTerminated)) //
+				.anyMatch(launch -> ILaunchManager.DEBUG_MODE.equals(launch.getLaunchMode()));
+	}
+
 	private boolean isEnabled() {
 		return DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SHOW_VARIABLES_INLINE);
 	}
 
 	@Override
 	public void dispose() {
-		if (listener != null) {
-			DebugPlugin.getDefault().removeDebugEventListener(listener);
+		IDebugEventSetListener debugListener = listener;
+		if (debugListener != null) {
+			DebugPlugin.getDefault().removeDebugEventListener(debugListener);
+			listener = null;
 		}
 	}
 }
