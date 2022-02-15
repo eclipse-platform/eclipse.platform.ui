@@ -84,7 +84,6 @@ import org.eclipse.ui.internal.WorkbenchWindow;
  *
  * @since 3.3
  */
-@SuppressWarnings("restriction")
 public class LaunchingResourceManager implements IPropertyChangeListener, IWindowListener, ISelectionListener, ILaunchHistoryChangedListener, ILaunchesListener2 {
 
 	/**
