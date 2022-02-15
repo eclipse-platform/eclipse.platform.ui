@@ -27,6 +27,8 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinPool;
 import java.util.zip.*;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -1732,8 +1734,27 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		if (root.getType() == IResource.PROJECT)
 			return;
 		IProject[] projects = ((IWorkspaceRoot) root).getProjects(IContainer.INCLUDE_HIDDEN);
-		for (IProject project : projects)
-			visitAndSave(project);
+		// never use a shared ForkJoinPool.commonPool() as it may be busy with other tasks, which might deadlock:
+		ForkJoinPool forkJoinPool =  new ForkJoinPool(ForkJoinPool.getCommonPoolParallelism());
+		IStatus[] stats;
+		try {
+			stats = forkJoinPool.submit(() -> Arrays.stream(projects).parallel().map(project -> {
+				try {
+					visitAndSave(project);
+				} catch (CoreException e) {
+					return e.getStatus();
+				}
+				return null;
+			}).filter(Objects::nonNull).toArray(IStatus[]::new)).get();
+		} catch (InterruptedException | ExecutionException e) {
+			throw new CoreException(Status.error(Messages.resources_saveProblem, e));
+		} finally {
+			forkJoinPool.shutdown();
+		}
+		if (stats.length > 0) {
+			throw new CoreException(new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, stats,
+					Messages.resources_saveProblem, null));
+		}
 	}
 
 	/**
