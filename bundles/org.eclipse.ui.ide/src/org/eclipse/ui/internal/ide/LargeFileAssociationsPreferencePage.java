@@ -660,7 +660,8 @@ public class LargeFileAssociationsPreferencePage extends PreferencePage implemen
 	}
 
 	private void updateExtensionPreferences() {
-		String[] previousExtensions = getConfiguredExtensionTypes();
+		String[] previousConfiguredExtensions = getConfiguredExtensionTypes();
+		String[] previousDisabledExtensions = getDisabledExtensionTypes();
 		List<String> configuredExtensions = new ArrayList<>();
 		List<String> disabledExtensions = new ArrayList<>();
 		List<String> newExtensions = new ArrayList<>();
@@ -696,7 +697,9 @@ public class LargeFileAssociationsPreferencePage extends PreferencePage implemen
 		setConfiguredExtensionTypes(configuredExtensions.toArray(String[]::new));
 		setDisabledExtensionTypes(disabledExtensions.toArray(String[]::new));
 
-		Set<String> removedExtensions = new HashSet<>(Arrays.asList(previousExtensions));
+		Set<String> removedExtensions = new HashSet<>();
+		removedExtensions.addAll(Arrays.asList(previousConfiguredExtensions));
+		removedExtensions.addAll(Arrays.asList(previousDisabledExtensions));
 		removedExtensions.removeAll(newExtensions);
 		for (String removedExtension : removedExtensions) {
 			removeFileLimitsForExtension(removedExtension);
