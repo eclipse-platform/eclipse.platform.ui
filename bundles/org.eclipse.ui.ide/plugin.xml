@@ -1323,23 +1323,6 @@
           </description>
        </transfer>
         <transfer
-              icon="$nl$/icons/full/eview16/bkmrk_nav.png"
-              id="org.eclipse.ui.ide.bookmarksFilters"
-              name="%PreferenceTransfer.BookmarksConfigurations">
-          <mapping
-                scope="instance">
-             <entry
-                   node="org.eclipse.ui.ide">
-                <key
-                      name="org.eclipse.ui.internal.views.markers.CachedMarkerBuilderorg.eclipse.ui.views.BookmarkView">
-                </key>
-             </entry>
-          </mapping>
-          <description>
-             %PreferenceTransfer.BookmarksConfigurations.Description
-          </description>
-       </transfer>
-        <transfer
               icon="$nl$/icons/full/eview16/problems_view.png"
               id="org.eclipse.ui.ide.allMarkersFilters"
               name="%PreferenceTransfer.AllMarkersConfigurations">

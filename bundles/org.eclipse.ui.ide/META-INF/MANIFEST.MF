@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui.ide; singleton:=true
-Bundle-Version: 3.18.500.qualifier
+Bundle-Version: 3.19.0.qualifier
 Bundle-ClassPath: .
 Bundle-Activator: org.eclipse.ui.internal.ide.IDEWorkbenchPlugin
 Bundle-ActivationPolicy: lazy
@@ -38,7 +38,6 @@ Export-Package: org.eclipse.ui,
  org.eclipse.ui.internal.wizards.newresource;x-internal:=true,
  org.eclipse.ui.model,
  org.eclipse.ui.part,
- org.eclipse.ui.views.bookmarkexplorer,
  org.eclipse.ui.views.framelist,
  org.eclipse.ui.views.markers,
  org.eclipse.ui.views.markers.internal;x-internal:=true,

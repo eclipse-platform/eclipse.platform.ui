@@ -1,5 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.ui.ide" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="Bug 578786 - Remove BookmarkNavigator and related API" id="926941240">
+            <message_arguments>
+                <message_argument value="3.19.0"/>
+                <message_argument value="3.18.500"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.ui.views.bookmarkexplorer.BookmarkNavigator">
+        <filter comment="Bug 578786 - Remove BookmarkNavigator and related API" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.bookmarkexplorer.BookmarkNavigator"/>
+                <message_argument value="org.eclipse.ui.ide_3.19.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.ui.views.bookmarkexplorer.BookmarkPropertiesDialog">
+        <filter comment="Bug 578786 - Remove BookmarkNavigator and related API" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.bookmarkexplorer.BookmarkPropertiesDialog"/>
+                <message_argument value="org.eclipse.ui.ide_3.19.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/ui/views/navigator/ResourceNavigator.java" type="org.eclipse.ui.views.navigator.ResourceNavigator">
         <filter id="576725006">
             <message_arguments>

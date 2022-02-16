@@ -33,7 +33,6 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.views.bookmarkexplorer.BookmarkMessages;
-import org.eclipse.ui.views.bookmarkexplorer.BookmarkPropertiesDialog;
 
 /**
  * Standard action for adding a bookmark to the currently selected file
@@ -56,11 +55,6 @@ public class AddBookmarkAction extends SelectionListenerAction {
 	private IShellProvider shellProvider;
 
 	/**
-	 * Whether to prompt the user for the bookmark name.
-	 */
-	private boolean promptForName = true;
-
-	/**
 	 * Creates a new bookmark action. By default, prompts the user for the
 	 * bookmark name.
 	 *
@@ -76,10 +70,8 @@ public class AddBookmarkAction extends SelectionListenerAction {
 	/**
 	 * Creates a new bookmark action.
 	 *
-	 * @param shell
-	 *            the shell for any dialogs
-	 * @param promptForName
-	 *            whether to ask the user for the bookmark name
+	 * @param shell         the shell for any dialogs
+	 * @param promptForName whether to ask the user for the bookmark name (IGNORED)
 	 * @deprecated see {@link #AddBookmarkAction(IShellProvider, boolean)}
 	 */
 	@Deprecated
@@ -88,31 +80,25 @@ public class AddBookmarkAction extends SelectionListenerAction {
 		Assert.isNotNull(shell);
 		shellProvider = () -> shell;
 
-		initAction(promptForName);
+		initAction();
 	}
 
 	/**
 	 * Creates a new bookmark action.
 	 *
-	 * @param provider
-	 *            the shell provider for any dialogs. Must not be
-	 *            <code>null</code>
-	 * @param promptForName
-	 *            whether to ask the user for the bookmark name
+	 * @param provider      the shell provider for any dialogs. Must not be
+	 *                      <code>null</code>
+	 * @param promptForName whether to ask the user for the bookmark name (IGNORED)
 	 * @since 3.4
 	 */
 	public AddBookmarkAction(IShellProvider provider, boolean promptForName) {
 		super(IDEWorkbenchMessages.AddBookmarkLabel);
 		Assert.isNotNull(provider);
 		shellProvider = provider;
-		initAction(promptForName);
+		initAction();
 	}
 
-	/**
-	 * @param promptForName
-	 */
-	private void initAction(boolean promptForName) {
-		this.promptForName = promptForName;
+	private void initAction() {
 		setToolTipText(IDEWorkbenchMessages.AddBookmarkToolTip);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.ADD_BOOKMARK_ACTION);
@@ -126,19 +112,15 @@ public class AddBookmarkAction extends SelectionListenerAction {
 
 		IResource resource= getSelectedResources().get(0);
 		if (resource != null) {
-			if (promptForName) {
-				BookmarkPropertiesDialog dialog= new BookmarkPropertiesDialog(shellProvider.getShell());
-				dialog.setResource(resource);
-				dialog.open();
-			} else {
-				Map<String, String> attrs = new HashMap<>();
-				attrs.put(IMarker.MESSAGE, resource.getName());
-				CreateMarkersOperation op= new CreateMarkersOperation(IMarker.BOOKMARK, attrs, resource, BookmarkMessages.CreateBookmark_undoText);
-				try {
-					PlatformUI.getWorkbench().getOperationSupport().getOperationHistory().execute(op, null, WorkspaceUndoUtil.getUIInfoAdapter(shellProvider.getShell()));
-				} catch (ExecutionException e) {
-					IDEWorkbenchPlugin.log(null, e); // We don't care
-				}
+			Map<String, String> attrs = new HashMap<>();
+			attrs.put(IMarker.MESSAGE, resource.getName());
+			CreateMarkersOperation op = new CreateMarkersOperation(IMarker.BOOKMARK, attrs, resource,
+					BookmarkMessages.CreateBookmark_undoText);
+			try {
+				PlatformUI.getWorkbench().getOperationSupport().getOperationHistory().execute(op, null,
+						WorkspaceUndoUtil.getUIInfoAdapter(shellProvider.getShell()));
+			} catch (ExecutionException e) {
+				IDEWorkbenchPlugin.log(null, e); // We don't care
 			}
 		}
 
