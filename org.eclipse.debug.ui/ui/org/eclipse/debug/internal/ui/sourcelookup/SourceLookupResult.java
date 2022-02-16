@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.sourcelookup;
 
+import java.util.Objects;
+
 import org.eclipse.debug.ui.sourcelookup.ISourceLookupResult;
 import org.eclipse.ui.IEditorInput;
 
@@ -27,22 +29,22 @@ public class SourceLookupResult implements ISourceLookupResult {
 	/**
 	 * Element that source was resolved for.
 	 */
-	private Object fArtifact;
+	private final Object fArtifact;
 	/**
 	 * Corresponding source element, or <code>null</code>
 	 * if unknown.
 	 */
-	private Object fSourceElement;
+	private final Object fSourceElement;
 	/**
 	 * Associated editor id, used to display the source element,
 	 * or <code>null</code> if unknown.
 	 */
-	private String fEditorId;
+	private final String fEditorId;
 	/**
 	 * Associated editor input, used to display the source element,
 	 * or <code>null</code> if unknown.
 	 */
-	private IEditorInput fEditorInput;
+	private final IEditorInput fEditorInput;
 
 	/**
 	 * Creates a source lookup result on the given artifact, source element,
@@ -50,9 +52,9 @@ public class SourceLookupResult implements ISourceLookupResult {
 	 */
 	public SourceLookupResult(Object artifact, Object sourceElement, String editorId, IEditorInput editorInput) {
 		fArtifact = artifact;
-		setSourceElement(sourceElement);
-		setEditorId(editorId);
-		setEditorInput(editorInput);
+		fSourceElement = sourceElement;
+		fEditorId = editorId;
+		fEditorInput = editorInput;
 	}
 
 	@Override
@@ -65,31 +67,9 @@ public class SourceLookupResult implements ISourceLookupResult {
 		return fSourceElement;
 	}
 
-	/**
-	 * Sets the source element resolved for the artifact that source
-	 * lookup was performed for, or <code>null</code> if a source element
-	 * was not resolved.
-	 *
-	 * @param element resolved source element or <code>null</code> if unknown
-	 */
-	protected void setSourceElement(Object element) {
-		fSourceElement = element;
-	}
-
 	@Override
 	public String getEditorId() {
 		return fEditorId;
-	}
-
-	/**
-	 * Sets the identifier of the editor used to display this source
-	 * lookup result's source element, or <code>null</code> if unknown.
-	 *
-	 * @param id the identifier of the editor used to display this source
-	 * lookup result's source element, or <code>null</code> if unknown
-	 */
-	protected void setEditorId(String id) {
-		fEditorId = id;
 	}
 
 	@Override
@@ -97,28 +77,53 @@ public class SourceLookupResult implements ISourceLookupResult {
 		return fEditorInput;
 	}
 
-	/**
-	 * Sets the editor input used to display this source lookup
-	 * result's source element, or <code>null</code> if unknown.
-	 *
-	 * @param input the editor input used to display this source lookup
-	 * result's source element, or <code>null</code> if unknown
-	 */
-	protected void setEditorInput(IEditorInput input) {
-		fEditorInput = input;
+	@Override
+	public int hashCode() {
+		return Objects.hash(fArtifact, fEditorId, fEditorInput, fSourceElement);
 	}
 
-	/**
-	 * Updates the artifact to refer to the given artifact
-	 * if equal. For example, when a source lookup result is reused
-	 * for the same stack frame, we still need to update in case
-	 * the stack frame is not identical.
-	 *
-	 * @param artifact new artifact state
-	 */
-	public void updateArtifact(Object artifact) {
-		if (fArtifact.equals(artifact)) {
-			fArtifact = artifact;
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
 		}
+
+		if (!(obj instanceof SourceLookupResult)) {
+			return false;
+		}
+
+		SourceLookupResult other = (SourceLookupResult) obj;
+		return Objects.equals(fEditorId, other.fEditorId)
+				&& Objects.equals(fArtifact, other.fArtifact)
+				&& Objects.equals(fEditorInput, other.fEditorInput)
+				&& Objects.equals(fSourceElement, other.fSourceElement);
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("SourceLookupResult ["); //$NON-NLS-1$
+		if (fEditorId != null) {
+			builder.append("editorId="); //$NON-NLS-1$
+			builder.append(fEditorId);
+			builder.append(", "); //$NON-NLS-1$
+		}
+		if (fEditorInput != null) {
+			builder.append("editorInput="); //$NON-NLS-1$
+			builder.append(fEditorInput);
+			builder.append(", "); //$NON-NLS-1$
+		}
+		if (fArtifact != null) {
+			builder.append("artifact="); //$NON-NLS-1$
+			builder.append(fArtifact);
+			builder.append(", "); //$NON-NLS-1$
+		}
+		if (fSourceElement != null) {
+			builder.append("sourceElement="); //$NON-NLS-1$
+			builder.append(fSourceElement);
+		}
+		builder.append("]"); //$NON-NLS-1$
+		return builder.toString();
+	}
+
 }

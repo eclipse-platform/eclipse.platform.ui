@@ -21,8 +21,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupFacility;
@@ -317,7 +318,7 @@ public class SourceLookupFacilityTests extends AbstractDebugTest {
 			// Get the original map
 			Field field = SourceLookupFacility.class.getDeclaredField("fLookupResults"); //$NON-NLS-1$
 			field.setAccessible(true);
-			HashMap<?, ?> map = (HashMap<?, ?>) field.get(null);
+			Map<?, ?> map = (Map<?, ?>) field.get(SourceLookupFacility.getDefault());
 			LinkedHashMap<String, ISourceLookupResult> cached = new LinkedHashMap<>();
 
 			// fill the LRU with one element overflow
@@ -343,7 +344,7 @@ public class SourceLookupFacilityTests extends AbstractDebugTest {
 			String artifact = "" + 0; //$NON-NLS-1$
 			SourceLookupResult result = SourceLookupFacility.getDefault().lookup(artifact, fTestLocator, false);
 			assertNotNull("There should be a result", result); //$NON-NLS-1$
-			assertFalse(cached.containsValue(result));
+			assertFalse(new IdentityHashMap<>(cached).containsValue(result));
 
 			// Check: the LRU map size should not grow
 			assertEquals(MAX_LRU_SIZE, map.size());

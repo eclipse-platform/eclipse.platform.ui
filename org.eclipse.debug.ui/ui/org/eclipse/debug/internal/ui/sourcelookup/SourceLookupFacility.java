@@ -15,9 +15,13 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.sourcelookup;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Objects;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -88,10 +92,9 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 	 *
 	 * @since 3.10
 	 */
-	static class LRU extends HashMap<Object, SourceLookupResult> {
+	static class LRU extends LinkedHashMap<Object, SourceLookupResult> {
 		private static final long serialVersionUID = 1L;
 
-		ArrayList<Object> fEntryStack = null;
 		int fSize;
 
 		/**
@@ -100,44 +103,14 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 		 * @param size The desired size
 		 */
 		LRU(int size) {
+			// true == use this map like LRU cache
+			super(size, 0.75f, true);
 			fSize = size;
-			fEntryStack = new ArrayList<>();
 		}
 
 		@Override
-		public SourceLookupResult put(Object key, SourceLookupResult value) {
-			shuffle(key);
-			return super.put(key, value);
-		}
-
-		@Override
-		public SourceLookupResult remove(Object key) {
-			SourceLookupResult oldResult = super.remove(key);
-			fEntryStack.remove(key);
-			return oldResult;
-		}
-
-		/**
-		 * Shuffles the entry stack and removes mapped results as needed
-		 *
-		 * @param key
-		 */
-		void shuffle(Object key) {
-			int index = fEntryStack.indexOf(key);
-			if (index < 0) {
-				if (fEntryStack.size() >= fSize) {
-					remove(fEntryStack.get(fEntryStack.size() - 1));
-				}
-			} else {
-				fEntryStack.remove(index);
-			}
-			fEntryStack.add(0, key);
-		}
-
-		@Override
-		public void clear() {
-			fEntryStack.clear();
-			super.clear();
+		protected boolean removeEldestEntry(Map.Entry<Object, SourceLookupResult> eldest) {
+			return size() > fSize;
 		}
 	}
 
@@ -158,7 +131,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 	 *
 	 * @since 3.10
 	 */
-	private static LRU fLookupResults = new LRU(10);
+	private final Map<Object, SourceLookupResult> fLookupResults = Collections.synchronizedMap(new LRU(10));
 
 	/**
 	 * Used to generate annotations for stack frames
@@ -169,6 +142,9 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 	 * Whether to re-use editors when displaying source.
 	 */
 	private boolean fReuseEditor = DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_REUSE_EDITOR);
+
+	/** Singleton job to process source lookup requests */
+	private final SourceLookupJob sourceLookupJob;
 
 	/**
 	 * Constructs singleton source display adapter for stack frames.
@@ -199,6 +175,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 	 */
 	private SourceLookupFacility() {
 		fEditorsByPage = new HashMap<>();
+		sourceLookupJob = new SourceLookupJob();
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 		DebugPlugin.getDefault().addDebugEventListener(this);
 	}
@@ -237,7 +214,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 		}
 	}
 
-	private class ArtifactWithLocator {
+	private static class ArtifactWithLocator {
 		public final Object artifact;
 		public final ISourceLocator locator;
 		public ArtifactWithLocator(Object artifact, ISourceLocator locator) {
@@ -247,12 +224,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + getOuterType().hashCode();
-			result = prime * result + ((artifact == null) ? 0 : artifact.hashCode());
-			result = prime * result + ((locator == null) ? 0 : locator.hashCode());
-			return result;
+			return 31 + Objects.hash(artifact, locator);
 		}
 
 		@Override
@@ -260,36 +232,30 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 			if (this == obj) {
 				return true;
 			}
-			if (obj == null) {
-				return false;
-			}
-			if (getClass() != obj.getClass()) {
+			if (!(obj instanceof ArtifactWithLocator)) {
 				return false;
 			}
 			ArtifactWithLocator other = (ArtifactWithLocator) obj;
-			if (!getOuterType().equals(other.getOuterType())) {
-				return false;
-			}
-			if (artifact == null) {
-				if (other.artifact != null) {
-					return false;
-				}
-			} else if (!artifact.equals(other.artifact)) {
-				return false;
-			}
-			if (locator == null) {
-				if (other.locator != null) {
-					return false;
-				}
-			} else if (!locator.equals(other.locator)) {
-				return false;
-			}
-			return true;
+			return Objects.equals(artifact, other.artifact) && Objects.equals(locator, other.locator);
 		}
 
-		private SourceLookupFacility getOuterType() {
-			return SourceLookupFacility.this;
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("ArtifactWithLocator ["); //$NON-NLS-1$
+			if (artifact != null) {
+				builder.append("artifact="); //$NON-NLS-1$
+				builder.append(artifact);
+				builder.append(", "); //$NON-NLS-1$
+			}
+			if (locator != null) {
+				builder.append("locator="); //$NON-NLS-1$
+				builder.append(locator);
+			}
+			builder.append("]"); //$NON-NLS-1$
+			return builder.toString();
 		}
+
 	}
 
 	/**
@@ -305,74 +271,70 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 	 */
 	public SourceLookupResult lookup(Object artifact, ISourceLocator locator, boolean force) {
 		SourceLookupResult result = null;
-		synchronized (fLookupResults) {
-			ArtifactWithLocator key = new ArtifactWithLocator(artifact, locator);
-			if (!force) {
-				result = fLookupResults.get(key);
-				if (result != null) {
-					return result;
-				}
-			}
-			result = new SourceLookupResult(artifact, null, null, null);
-			IDebugElement debugElement = null;
-			if (artifact instanceof IDebugElement) {
-				debugElement = (IDebugElement) artifact;
-			}
-			ISourceLocator localLocator = locator;
-			if (localLocator == null) {
-				ILaunch launch = null;
-				if (debugElement != null) {
-					launch = debugElement.getLaunch();
-				}
-				if (launch != null) {
-					localLocator = launch.getSourceLocator();
-				}
-			}
-			if (localLocator != null) {
-				String editorId = null;
-				IEditorInput editorInput = null;
-				Object sourceElement = null;
-				if (localLocator instanceof ISourceLookupDirector) {
-					ISourceLookupDirector director = (ISourceLookupDirector) localLocator;
-					sourceElement = director.getSourceElement(artifact);
-				} else {
-					if (artifact instanceof IStackFrame) {
-						sourceElement = localLocator.getSourceElement((IStackFrame) artifact);
-					}
-				}
-				if (sourceElement == null) {
-					if (localLocator instanceof AbstractSourceLookupDirector) {
-						editorInput = new CommonSourceNotFoundEditorInput(artifact);
-						editorId = IDebugUIConstants.ID_COMMON_SOURCE_NOT_FOUND_EDITOR;
-					} else {
-						if (artifact instanceof IStackFrame) {
-							IStackFrame frame = (IStackFrame) artifact;
-							editorInput = new SourceNotFoundEditorInput(frame);
-							editorId = IInternalDebugUIConstants.ID_SOURCE_NOT_FOUND_EDITOR;
-						}
-					}
-				} else {
-					ISourcePresentation presentation = null;
-					if (localLocator instanceof ISourcePresentation) {
-						presentation = (ISourcePresentation) localLocator;
-					} else {
-						if (debugElement != null) {
-							presentation = getPresentation(debugElement.getModelIdentifier());
-						}
-					}
-					if (presentation != null) {
-						editorInput = presentation.getEditorInput(sourceElement);
-					}
-					if (editorInput != null && presentation != null) {
-						editorId = presentation.getEditorId(editorInput, sourceElement);
-					}
-				}
-				result.setEditorInput(editorInput);
-				result.setEditorId(editorId);
-				result.setSourceElement(sourceElement);
-				fLookupResults.put(key, result);
+		ArtifactWithLocator key = new ArtifactWithLocator(artifact, locator);
+		if (!force) {
+			result = fLookupResults.get(key);
+			if (result != null) {
+				return result;
 			}
 		}
+		IDebugElement debugElement = null;
+		if (artifact instanceof IDebugElement) {
+			debugElement = (IDebugElement) artifact;
+		}
+		ISourceLocator localLocator = locator;
+		if (localLocator == null) {
+			ILaunch launch = null;
+			if (debugElement != null) {
+				launch = debugElement.getLaunch();
+			}
+			if (launch != null) {
+				localLocator = launch.getSourceLocator();
+			}
+		}
+		if (localLocator == null) {
+			return new SourceLookupResult(artifact, null, null, null);
+		}
+		String editorId = null;
+		IEditorInput editorInput = null;
+		Object sourceElement = null;
+		if (localLocator instanceof ISourceLookupDirector) {
+			ISourceLookupDirector director = (ISourceLookupDirector) localLocator;
+			sourceElement = director.getSourceElement(artifact);
+		} else {
+			if (artifact instanceof IStackFrame) {
+				sourceElement = localLocator.getSourceElement((IStackFrame) artifact);
+			}
+		}
+		if (sourceElement == null) {
+			if (localLocator instanceof AbstractSourceLookupDirector) {
+				editorInput = new CommonSourceNotFoundEditorInput(artifact);
+				editorId = IDebugUIConstants.ID_COMMON_SOURCE_NOT_FOUND_EDITOR;
+			} else {
+				if (artifact instanceof IStackFrame) {
+					IStackFrame frame = (IStackFrame) artifact;
+					editorInput = new SourceNotFoundEditorInput(frame);
+					editorId = IInternalDebugUIConstants.ID_SOURCE_NOT_FOUND_EDITOR;
+				}
+			}
+		} else {
+			ISourcePresentation presentation = null;
+			if (localLocator instanceof ISourcePresentation) {
+				presentation = (ISourcePresentation) localLocator;
+			} else {
+				if (debugElement != null) {
+					presentation = getPresentation(debugElement.getModelIdentifier());
+				}
+			}
+			if (presentation != null) {
+				editorInput = presentation.getEditorInput(sourceElement);
+			}
+			if (editorInput != null && presentation != null) {
+				editorId = presentation.getEditorId(editorInput, sourceElement);
+			}
+		}
+		result = new SourceLookupResult(artifact, sourceElement, editorId, editorInput);
+		fLookupResults.put(key, result);
 		return result;
 	}
 
@@ -692,110 +654,283 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 		fEditorsByPage.clear();
 		fPresentation.dispose();
 		fLookupResults.clear();
+		sourceLookupJob.cancel();
 	}
 
 	/**
-	 * A job to perform source lookup on the currently selected stack frame.
+	 * A singleton job to perform source lookups via given {@link SourceLookupTask}
+	 * objects. The tasks are put in the queue to process in the background,
+	 * duplicated tasks are ignored. Job re-schedules itself if new task is added to
+	 * the queue.
 	 */
-	class SourceLookupJob extends Job {
+	final class SourceLookupJob extends Job {
 
-		private IStackFrame fTarget;
-		private ISourceLocator fLocator;
-		private IWorkbenchPage fPage;
-		private boolean fForce = false;
+		private final LinkedHashSet<SourceLookupTask> queue;
+		private final SourceDisplayJob sourceDisplayJob;
 
-		/**
-		 * Constructs a new source lookup job.
-		 */
-		public SourceLookupJob(IStackFrame frame, ISourceLocator locator, IWorkbenchPage page, boolean force) {
+		public SourceLookupJob() {
 			super("Debug Source Lookup"); //$NON-NLS-1$
-			setPriority(Job.INTERACTIVE);
+			this.sourceDisplayJob = new SourceDisplayJob();
+			this.queue = new LinkedHashSet<>();
 			setSystem(true);
-			fTarget = frame;
-			fLocator = locator;
-			fPage = page;
-			fForce = force;
+			setPriority(Job.INTERACTIVE);
 			// Note: Be careful when trying to use scheduling rules with this
 			// job, in order to avoid blocking nested jobs (bug 339542).
 		}
 
 		@Override
+		public boolean belongsTo(Object family) {
+			return family instanceof SourceLookupFacility;
+		}
+
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
-			if (!monitor.isCanceled()) {
-				if (!fTarget.isTerminated()) {
-					ISourceLookupResult result = lookup(fTarget, fLocator, fForce);
-					if (!monitor.isCanceled() && !fTarget.isTerminated() && fPage != null) {
-						new SourceDisplayJob(result, fPage).schedule();
-					}
+			SourceLookupTask next;
+			while ((next = poll()) != null && !monitor.isCanceled()) {
+				SourceDisplayRequest uiTask = next.run(monitor);
+				if (uiTask != null) {
+					sourceDisplayJob.schedule(uiTask);
+				}
+			}
+
+			synchronized (queue) {
+				if (monitor.isCanceled()) {
+					queue.clear();
+					return Status.CANCEL_STATUS;
+				} else if (!queue.isEmpty()) {
+					schedule(100);
 				}
 			}
 			return Status.OK_STATUS;
 		}
 
-		@Override
-		public boolean belongsTo(Object family) {
-			// source lookup jobs are a family per workbench page
-			if (family instanceof SourceLookupJob) {
-				SourceLookupJob slj = (SourceLookupJob) family;
-				return slj.fPage.equals(fPage);
+		private SourceLookupTask poll() {
+			SourceLookupTask next = null;
+			synchronized (queue) {
+				if (!queue.isEmpty()) {
+					Iterator<SourceLookupTask> iterator = queue.iterator();
+					next = iterator.next();
+					iterator.remove();
+				}
 			}
-			return false;
+			return next;
+		}
+
+		void schedule(SourceLookupTask task) {
+			synchronized (queue) {
+				boolean added = queue.add(task);
+				if (added) {
+					schedule(100);
+				}
+			}
+		}
+	}
+
+	/**
+	 * A task to perform source lookup on the currently selected stack frame.
+	 */
+	class SourceLookupTask {
+
+		final IStackFrame fTarget;
+		final ISourceLocator fLocator;
+		final IWorkbenchPage fPage;
+		final boolean fForce;
+
+		/**
+		 * Constructs a new source lookup task.
+		 */
+		public SourceLookupTask(IStackFrame frame, ISourceLocator locator, IWorkbenchPage page, boolean force) {
+			fTarget = frame;
+			fLocator = locator;
+			fPage = page;
+			fForce = force;
+		}
+
+		protected SourceDisplayRequest run(IProgressMonitor monitor) {
+			if (!monitor.isCanceled()) {
+				if (!fTarget.isTerminated()) {
+					SourceLookupResult result = lookup(fTarget, fLocator, fForce);
+					if (!monitor.isCanceled() && !fTarget.isTerminated() && fPage != null && result != null) {
+						return new SourceDisplayRequest(result, fPage);
+					}
+				}
+			}
+			return null;
+		}
+
+		@Override
+		public int hashCode() {
+			return 31 + Objects.hash(fForce, fLocator, fPage, fTarget);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof SourceLookupTask)) {
+				return false;
+			}
+			SourceLookupTask other = (SourceLookupTask) obj;
+			return fForce == other.fForce && Objects.equals(fPage, other.fPage)
+					&& Objects.equals(fLocator, other.fLocator) && Objects.equals(fTarget, other.fTarget);
+		}
+
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("SourceLookupTask ["); //$NON-NLS-1$
+			if (fTarget != null) {
+				builder.append("target="); //$NON-NLS-1$
+				builder.append(fTarget);
+				builder.append(", "); //$NON-NLS-1$
+			}
+			builder.append("force="); //$NON-NLS-1$
+			builder.append(fForce);
+			builder.append(", "); //$NON-NLS-1$
+			if (fLocator != null) {
+				builder.append("locator="); //$NON-NLS-1$
+				builder.append(fLocator);
+				builder.append(", "); //$NON-NLS-1$
+			}
+			if (fPage != null) {
+				builder.append("page="); //$NON-NLS-1$
+				builder.append(fPage);
+			}
+			builder.append("]"); //$NON-NLS-1$
+			return builder.toString();
 		}
 
 	}
 
-	class SourceDisplayJob extends UIJob {
+	/**
+	 * A request to show the result of the source lookup in the UI
+	 */
+	static class SourceDisplayRequest {
 
-		private ISourceLookupResult fResult;
-		private IWorkbenchPage fPage;
+		final SourceLookupResult fResult;
+		final IWorkbenchPage fPage;
 
-		public SourceDisplayJob(ISourceLookupResult result, IWorkbenchPage page) {
-			super("Debug Source Display"); //$NON-NLS-1$
-			setSystem(true);
-			setPriority(Job.INTERACTIVE);
+		public SourceDisplayRequest(SourceLookupResult result, IWorkbenchPage page) {
 			fResult = result;
 			fPage = page;
 		}
 
 		@Override
+		public int hashCode() {
+			return Objects.hash(fPage, fResult);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof SourceDisplayRequest)) {
+				return false;
+			}
+			SourceDisplayRequest other = (SourceDisplayRequest) obj;
+			return Objects.equals(fPage, other.fPage) && Objects.equals(fResult, other.fResult);
+		}
+
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("SourceDisplayRequest ["); //$NON-NLS-1$
+			if (fResult != null) {
+				builder.append("result="); //$NON-NLS-1$
+				builder.append(fResult);
+				builder.append(", "); //$NON-NLS-1$
+			}
+			if (fPage != null) {
+				builder.append("page="); //$NON-NLS-1$
+				builder.append(fPage);
+			}
+			builder.append("]"); //$NON-NLS-1$
+			return builder.toString();
+		}
+
+	}
+
+	/**
+	 * A singleton job to show the result of the source lookup in the UI for given
+	 * {@link SourceDisplayRequest} objects. The requests are put in the queue to
+	 * process in the background, duplicated requests are ignored. Job re-schedules
+	 * itself if new request is added to the queue.
+	 */
+	class SourceDisplayJob extends UIJob {
+
+		private final LinkedHashSet<SourceDisplayRequest> queue;
+
+		public SourceDisplayJob() {
+			super("Debug Source Display"); //$NON-NLS-1$
+			setSystem(true);
+			setPriority(Job.INTERACTIVE);
+			this.queue = new LinkedHashSet<>();
+		}
+
+
+		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
-			if (!monitor.isCanceled() && fResult != null) {
-				display(fResult, fPage);
-				// termination may have occurred while displaying source
-				if (monitor.isCanceled()) {
-					Object artifact = fResult.getArtifact();
+			SourceDisplayRequest next;
+			// Do not break on cancelled monitor, to allow remove debugger
+			// annotations from already opened editors
+			while ((next = poll()) != null) {
+				IWorkbenchPage page = next.fPage;
+				if (page.getWorkbenchWindow() == null) {
+					// don't try to update if page is closed
+					continue;
+				}
+				ISourceLookupResult result = next.fResult;
+				if (!monitor.isCanceled()) {
+					display(result, page);
+				} else {
+					// termination may have occurred while displaying source
+					Object artifact = result.getArtifact();
 					if (artifact instanceof IStackFrame) {
 						clearSourceSelection(((IStackFrame) artifact).getThread());
 					}
 				}
 			}
-
 			return Status.OK_STATUS;
+		}
+
+		private SourceDisplayRequest poll() {
+			SourceDisplayRequest next = null;
+			synchronized (queue) {
+				if (!queue.isEmpty()) {
+					Iterator<SourceDisplayRequest> iterator = queue.iterator();
+					next = iterator.next();
+					iterator.remove();
+				}
+			}
+			return next;
+		}
+
+		void schedule(SourceDisplayRequest task) {
+			synchronized (queue) {
+				boolean added = queue.add(task);
+				if (added) {
+					schedule(100);
+				}
+			}
 		}
 
 		@Override
 		public boolean belongsTo(Object family) {
-			// source display jobs are a family per workbench page
-			if (family instanceof SourceDisplayJob) {
-				SourceDisplayJob sdj = (SourceDisplayJob) family;
-				return sdj.fPage.equals(fPage);
-			}
-			return false;
+			return family instanceof SourceLookupFacility;
 		}
 
 	}
 
 	/*
-	 * @see
-	 * org.eclipse.debug.ui.contexts.ISourceDisplayAdapter#displaySource(java
-	 * .lang.Object, org.eclipse.ui.IWorkbenchPage, boolean)
+	 * See org.eclipse.debug.ui.sourcelookup.ISourceDisplay
 	 */
-	public synchronized void displaySource(Object context, IWorkbenchPage page, boolean force) {
+	public void displaySource(Object context, IWorkbenchPage page, boolean force) {
 		IStackFrame frame = (IStackFrame) context;
-		SourceLookupJob slj = new SourceLookupJob(frame, frame.getLaunch().getSourceLocator(), page, force);
-		// cancel any existing source lookup jobs for this page
-		Job.getJobManager().cancel(slj);
-		slj.schedule();
+		SourceLookupTask slj = new SourceLookupTask(frame, frame.getLaunch().getSourceLocator(), page, force);
+		// will drop any existing equal source lookup jobs
+		sourceLookupJob.schedule(slj);
 	}
 
 	/**
