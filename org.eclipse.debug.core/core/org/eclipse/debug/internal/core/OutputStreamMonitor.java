@@ -98,7 +98,8 @@ public class OutputStreamMonitor implements IBinaryStreamMonitor {
 	 *            unused if only the binary interface is used
 	 */
 	public OutputStreamMonitor(InputStream stream, Charset charset) {
-		fStream = new BufferedInputStream(stream, 8192);
+		// java.lang.ProcessImpl returns a buffered stream anyway
+		fStream = stream instanceof BufferedInputStream ? stream : new BufferedInputStream(stream);
 		fCharset = charset;
 		fDecoder = new StreamDecoder(charset == null ? Charset.defaultCharset() : charset);
 		fDone = new AtomicBoolean(false);
@@ -162,9 +163,7 @@ public class OutputStreamMonitor implements IBinaryStreamMonitor {
 	 */
 	private void fireStreamAppended(final byte[] data, int offset, int length) {
 		if (!fListeners.isEmpty()) {
-			StringBuilder sb = new StringBuilder();
-			fDecoder.decode(sb, data, offset, length);
-			final String text = sb.toString();
+			String text = fDecoder.decode(data, offset, length);
 			for (final IStreamListener listener : fListeners) {
 				SafeRunner.run(new ISafeRunnable() {
 					@Override
@@ -211,10 +210,8 @@ public class OutputStreamMonitor implements IBinaryStreamMonitor {
 		if (fCachedDecodedContents != null) {
 			return fCachedDecodedContents;
 		}
-		StringBuilder sb = new StringBuilder();
 		byte[] data = getData();
-		fBufferedDecoder.decode(sb, data, 0, data.length);
-		fCachedDecodedContents = sb.toString();
+		fCachedDecodedContents = fBufferedDecoder.decode(data, 0, data.length);
 		return fCachedDecodedContents;
 	}
 
@@ -276,11 +273,8 @@ public class OutputStreamMonitor implements IBinaryStreamMonitor {
 				currentTime = System.currentTimeMillis();
 				if (currentTime - lastSleep > 1000) {
 					lastSleep = currentTime;
-					try {
-						// just give up CPU to maintain UI responsiveness.
-						Thread.sleep(1);
-					} catch (InterruptedException e) {
-					}
+					Thread.yield();// just give up CPU to maintain UI
+									// responsiveness.
 				}
 			}
 		} finally {

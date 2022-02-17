@@ -28,10 +28,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Queue;
 import java.util.Random;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -78,12 +78,12 @@ public class IOConsoleTests extends AbstractDebugTest {
 	 * Number of received log messages with severity error while running a
 	 * single test method.
 	 */
-	private final AtomicInteger loggedErrors = new AtomicInteger();
+	private final Queue<IStatus> loggedErrors = new ConcurrentLinkedQueue<>();
 
 	/** Listener to count error messages while testing. */
 	private final ILogListener errorLogListener = (IStatus status, String plugin) -> {
 		if (status.matches(IStatus.ERROR)) {
-			loggedErrors.incrementAndGet();
+			loggedErrors.add(status);
 		}
 	};
 
@@ -107,7 +107,7 @@ public class IOConsoleTests extends AbstractDebugTest {
 		activePage.activate(consoleView);
 
 		// add error listener
-		loggedErrors.set(0);
+		loggedErrors.clear();
 		Platform.addLogListener(errorLogListener);
 	}
 
@@ -117,7 +117,16 @@ public class IOConsoleTests extends AbstractDebugTest {
 		Platform.removeLogListener(errorLogListener);
 		super.tearDown();
 
-		assertEquals("Test triggered errors in IOConsole.", 0, loggedErrors.get());
+		assertNoError();
+	}
+
+	private void assertNoError() {
+		loggedErrors.forEach(status -> {
+			if (status.getException() != null) {
+				throw new AssertionError("Test triggered errors in IOConsole", status.getException());
+			}
+		});
+		assertTrue("Test triggered errors in IOConsole: " + loggedErrors.stream().toString(), loggedErrors.isEmpty());
 	}
 
 	/**
@@ -309,7 +318,7 @@ public class IOConsoleTests extends AbstractDebugTest {
 			}
 			closeConsole(c);
 		}
-		assertEquals("Test triggered errors in IOConsole.", 0, loggedErrors.get());
+		assertNoError();
 	}
 
 	/**
@@ -436,7 +445,7 @@ public class IOConsoleTests extends AbstractDebugTest {
 		assertEquals("Wrong number of lines.", 4, c.getDocument().getNumberOfLines());
 
 		closeConsole(c);
-		assertEquals("Test triggered errors in IOConsole.", 0, loggedErrors.get());
+		assertNoError();
 	}
 
 	/**
@@ -518,7 +527,7 @@ public class IOConsoleTests extends AbstractDebugTest {
 			c.verifyContentByLine("1.", 0).verifyContentByLine("2.", 1).verifyPartitions();
 		}
 		closeConsole(c);
-		assertEquals("Test triggered errors in IOConsole.", 0, loggedErrors.get());
+		assertNoError();
 	}
 
 	/**
@@ -564,7 +573,7 @@ public class IOConsoleTests extends AbstractDebugTest {
 			assertTrue("Line breaks did not overwrite text.", !c.getDocument().get().contains("err"));
 		}
 		closeConsole(c);
-		assertEquals("Test triggered errors in IOConsole.", 0, loggedErrors.get());
+		assertNoError();
 	}
 
 	/**
@@ -722,7 +731,7 @@ public class IOConsoleTests extends AbstractDebugTest {
 		c.verifyContent("()").verifyPartitions();
 
 		closeConsole(c);
-		assertEquals("Test triggered errors in IOConsole.", 0, loggedErrors.get());
+		assertNoError();
 	}
 
 	/**
@@ -844,7 +853,7 @@ public class IOConsoleTests extends AbstractDebugTest {
 		}
 		c.verifyPartitions();
 		closeConsole(c, "#");
-		assertEquals("Test triggered errors in IOConsole.", 0, loggedErrors.get());
+		assertNoError();
 	}
 
 	/**

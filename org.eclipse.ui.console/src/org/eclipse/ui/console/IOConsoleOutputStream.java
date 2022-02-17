@@ -43,7 +43,7 @@ public class IOConsoleOutputStream extends OutputStream {
 	/**
 	 * Flag indicating whether this stream has been closed.
 	 */
-	private boolean closed = false;
+	private volatile boolean closed;
 
 	/**
 	 * The console's document partitioner.
@@ -53,26 +53,28 @@ public class IOConsoleOutputStream extends OutputStream {
 	/**
 	 * The console this stream is attached to.
 	 */
-	private IOConsole console;
+	private final IOConsole console;
 
 	/**
 	 * Flag indicating that the console should be activated when data
 	 * is written to this stream.
 	 */
-	private boolean activateOnWrite = false;
+	private volatile boolean activateOnWrite;
 
 	/**
 	 * The color used to decorate data written to this stream.
 	 */
-	private Color color;
+	private volatile Color color;
 
 	/**
 	 * The font style used to decorate data written to this stream.
 	 */
-	private int fontStyle;
+	private volatile int fontStyle;
 
+	/** synchronized access for atomic update **/
 	private StreamDecoder decoder;
 
+	/** synchronized access for atomic update **/
 	private boolean prependCR;
 
 	/**
@@ -159,7 +161,7 @@ public class IOConsoleOutputStream extends OutputStream {
 	 * Returns true if the stream has been closed
 	 * @return true is the stream has been closed, false otherwise.
 	 */
-	public synchronized boolean isClosed() {
+	public boolean isClosed() {
 		return closed;
 	}
 
@@ -169,14 +171,13 @@ public class IOConsoleOutputStream extends OutputStream {
 			// Closeable#close() has no effect if already closed
 			return;
 		}
-		StringBuilder builder = new StringBuilder();
 		if (prependCR) { // force writing of last /r
 			prependCR = false;
-			builder.append('\r');
+			notifyParitioner("\r"); //$NON-NLS-1$
 		}
-		this.decoder.finish(builder);
-		if (builder.length() > 0) {
-			notifyParitioner(builder.toString());
+		String s = this.decoder.finish();
+		if (s.length() > 0) {
+			notifyParitioner(s);
 		}
 		console.streamClosed(this);
 		closed = true;
@@ -196,9 +197,8 @@ public class IOConsoleOutputStream extends OutputStream {
 		if (closed) {
 			throw new IOException("Output Stream is closed"); //$NON-NLS-1$
 		}
-		StringBuilder builder = new StringBuilder();
-		this.decoder.decode(builder, b, off, len);
-		encodedWrite(builder.toString());
+		String s = this.decoder.decode(b, off, len);
+		encodedWrite(s);
 	}
 
 	@Override
@@ -271,7 +271,7 @@ public class IOConsoleOutputStream extends OutputStream {
 		}
 		if (newencoding.endsWith("\r")) { //$NON-NLS-1$
 			prependCR = true;
-			newencoding = new String(newencoding.substring(0, newencoding.length() - 1));
+			newencoding = newencoding.substring(0, newencoding.length() - 1);
 		}
 		notifyParitioner(newencoding);
 	}
@@ -323,10 +323,9 @@ public class IOConsoleOutputStream extends OutputStream {
 		if (closed) {
 			throw new IOException("Output Stream is closed"); //$NON-NLS-1$
 		}
-		StringBuilder builder = new StringBuilder();
-		this.decoder.finish(builder);
-		if (builder.length() > 0) {
-			this.encodedWrite(builder.toString());
+		String s = this.decoder.finish();
+		if (s.length() > 0) {
+			this.encodedWrite(s);
 		}
 		this.decoder = new StreamDecoder(charset);
 	}

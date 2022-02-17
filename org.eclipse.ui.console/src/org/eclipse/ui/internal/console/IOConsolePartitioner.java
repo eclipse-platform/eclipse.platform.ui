@@ -28,6 +28,9 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -113,10 +116,19 @@ public class IOConsolePartitioner
 	 * elements. (see also {@link #checkPartitions()})
 	 */
 	private final ArrayList<IOConsolePartition> partitions = new ArrayList<>();
-	/** Blocks of data that have not yet been appended to the document. */
-	private final ArrayList<PendingPartition> pendingPartitions = new ArrayList<>();
-	/** Total length of pending partitions content. */
-	private int pendingSize;
+	/**
+	 * max ~ 16MB when debugged application outputs faster then we can handle. Seems
+	 * to be a could compromise between memory and speed we can handle. Eclipse IDE
+	 * may use that memory size ~3 times during processing (buffer+document+parser)
+	 */
+	private static final int MAX_BUFFER_BYTES = 16_000_000;
+	/**
+	 * Queue of buffers that have not yet been appended to the document. Every
+	 * buffer will hold up to 8192 byte - but typically a single line output if
+	 * handled fast. The debugged application will block if the limit is exceeded.
+	 */
+	private final BlockingQueue<PendingPartition> pendingPartitions = new LinkedBlockingQueue<>(
+			MAX_BUFFER_BYTES / 8192);
 	/** Job that appends pending partitions to the document. */
 	private final QueueProcessingJob queueJob = new QueueProcessingJob();
 	/** Job that trims console content if it exceeds {@link #highWaterMark}. */
@@ -130,7 +142,6 @@ public class IOConsolePartitioner
 	 * </p>
 	 */
 	private DocUpdateType updateType = DocUpdateType.INPUT;
-	private IRegion changedRegion;
 	/**
 	 * A list of partitions containing input from the console, that have not been
 	 * appended to the input stream yet. No guarantees on element order.
@@ -214,11 +225,7 @@ public class IOConsolePartitioner
 
 	@Override
 	public void disconnect() {
-		synchronized (pendingPartitions) {
-			pendingPartitions.clear();
-			pendingSize = 0;
-			pendingPartitions.notifyAll();
-		}
+		pendingPartitions.clear();
 		synchronized (partitions) {
 			trimJob.cancel();
 			queueJob.cancel();
@@ -283,10 +290,7 @@ public class IOConsolePartitioner
 		if (streamsClosed) {
 			// do not expect new data since all streams are closed
 			// check if pending data is queued
-			final boolean morePending;
-			synchronized (pendingPartitions) {
-				morePending = !pendingPartitions.isEmpty();
-			}
+			final boolean morePending = !pendingPartitions.isEmpty();
 			if (morePending) {
 				queueJob.schedule();
 			} else {
@@ -430,10 +434,8 @@ public class IOConsolePartitioner
 		if (document != null && highWaterMark > 0) {
 			int length = document.getLength();
 			if (length > highWaterMark) {
-				if (trimJob.getState() == Job.NONE) { // if the job isn't already running
-					trimJob.setTrimLineOffset(length - lowWaterMark);
-					trimJob.schedule();
-				}
+				// do trim synchronous to prevent drawing trimmed text - we are already in UI and have the lock
+				trim(length - lowWaterMark, true);
 			}
 		}
 	}
@@ -442,10 +444,7 @@ public class IOConsolePartitioner
 	 * Clears the console content.
 	 */
 	public void clearBuffer() {
-		synchronized (pendingPartitions) {
-			pendingPartitions.clear();
-			pendingSize = 0;
-		}
+		pendingPartitions.clear();
 		synchronized (partitions) {
 			if (document != null) {
 				trimJob.setTrimOffset(document.getLength());
@@ -484,7 +483,7 @@ public class IOConsolePartitioner
 				// update and trim jobs are triggered by this partitioner and all partitioning
 				// changes are applied separately
 				case OUTPUT:
-					return changedRegion;
+					return null; // changedRegion was never assigned
 				case TRIM:
 					return null; // trim does not change partition types
 
@@ -692,37 +691,27 @@ public class IOConsolePartitioner
 		if (s == null) {
 			return;
 		}
-		synchronized (pendingPartitions) {
-			final PendingPartition lastPending = pendingPartitions.size() > 0
-					? pendingPartitions.get(pendingPartitions.size() - 1)
-					: null;
-			if (lastPending != null && lastPending.stream == stream) {
-				lastPending.append(s);
-			} else {
-				pendingPartitions.add(new PendingPartition(stream, s));
-			}
+		PendingPartition partition = new PendingPartition(stream, s);
+		while (!offer(partition)) {
+			helpProgress();
+		}
+		queueJob.schedule();
+	}
 
-			if (pendingSize > 1000) {
-				queueJob.schedule();
-			} else {
-				queueJob.schedule(50);
-			}
+	private void helpProgress() {
+		if (Display.getCurrent() != null) {
+			// make sure pendingPartitions can take
+			queueJob.processPendingPartitions();
+		} else {
+			Thread.yield(); // give UI thread chance to proceed
+		}
+	}
 
-			if (pendingSize > 160000) {
-				if (Display.getCurrent() == null) {
-					try {
-						// Block thread to give UI time to process pending output.
-						// Do not wait forever. Current thread and UI thread might share locks. An
-						// example is bug 421303 where current thread and UI thread both write to
-						// console and therefore both need the write lock for IOConsoleOutputStream.
-						pendingPartitions.wait(1000);
-					} catch (InterruptedException e) {
-					}
-				} else {
-					// If we are in UI thread we cannot lock it, so process queued output.
-					queueJob.processPendingPartitions();
-				}
-			}
+	private boolean offer(PendingPartition p) {
+		try {
+			return pendingPartitions.offer(p, 10, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+			return false;
 		}
 	}
 
@@ -730,17 +719,17 @@ public class IOConsolePartitioner
 	 * Holds data until updateJob can be run and the document can be updated.
 	 */
 	private class PendingPartition {
-		StringBuilder text = new StringBuilder(8192);
-		IOConsoleOutputStream stream;
+		private final CharSequence text;
+		private final IOConsoleOutputStream stream;
 
-		PendingPartition(IOConsoleOutputStream stream, String text) {
+		PendingPartition(IOConsoleOutputStream stream, CharSequence text) {
 			this.stream = stream;
-			append(text);
+			this.text = text;
 		}
 
-		void append(String moreText) {
-			text.append(moreText);
-			pendingSize += moreText.length();
+		@Override
+		public String toString() {
+			return text.toString();
 		}
 	}
 
@@ -755,8 +744,6 @@ public class IOConsolePartitioner
 		private int atOutputPartitionIndex = -1;
 		/** The pending number of characters to replace in document. */
 		private int replaceLength;
-		/** The pending content to be inserted in document. */
-		private StringBuilder content;
 		/** The offset in document where to apply the next replace. */
 		private int nextWriteOffset;
 
@@ -784,10 +771,7 @@ public class IOConsolePartitioner
 		 */
 		@Override
 		public boolean shouldRun() {
-			synchronized (pendingPartitions) {
-				final boolean shouldRun = pendingPartitions.size() > 0;
-				return shouldRun;
-			}
+			return !pendingPartitions.isEmpty();
 		}
 
 		/**
@@ -795,22 +779,29 @@ public class IOConsolePartitioner
 		 * update partitioning.
 		 */
 		private void processPendingPartitions() {
-			final List<PendingPartition> pendingCopy;
-			final int size;
-			synchronized (pendingPartitions) {
-				pendingCopy = new ArrayList<>(pendingPartitions);
-				size = pendingSize;
-				pendingPartitions.clear();
-				pendingSize = 0;
-				pendingPartitions.notifyAll();
+			final List<PendingPartition> pendingCopy = new ArrayList<>();
+			// draining the whole buffer here is important - this way we get as much data as
+			// available and may skip to draw text that exceeds the Console buffer size
+			// anyway (see checkBufferSize()).
+			pendingPartitions.drainTo(pendingCopy);
+			int sizeHint = 0;
+			if (pendingCopy.isEmpty()) {
+				return;
+			}
+			IOConsoleOutputStream stream = pendingCopy.get(0).stream;
+			for (PendingPartition p : pendingCopy) {
+				if (p.stream != stream) {
+					break;
+				}
+				sizeHint += p.text.length();
 			}
 			synchronized (partitions) {
 				if (document != null) {
-					applyStreamOutput(pendingCopy, size);
+					applyStreamOutput(pendingCopy, sizeHint);
 				}
+				checkFinished();
+				checkBufferSize(); // needs partitions synchronized
 			}
-			checkFinished();
-			checkBufferSize();
 		}
 
 		/**
@@ -835,17 +826,19 @@ public class IOConsolePartitioner
 			// resulting in multiple partitions but if all the content is appended to the
 			// document there is only one update required to add the actual content.
 			nextWriteOffset = outputOffset;
-			content = new StringBuilder(sizeHint);
+			StringBuilder content = new StringBuilder(sizeHint);
 			replaceLength = 0;
 			atOutputPartition = null;
 			atOutputPartitionIndex = -1;
 
 			for (PendingPartition pending : pendingCopy) {
 				// create matcher to find control characters in pending content (if enabled)
-				final Matcher controlCharacterMatcher = controlPattern != null ? controlPattern.matcher(pending.text)
+				CharSequence text = pending.text;
+				IOConsoleOutputStream stream = pending.stream;
+				final Matcher controlCharacterMatcher = controlPattern != null ? controlPattern.matcher(text)
 						: null;
 
-				for (int textOffset = 0; textOffset < pending.text.length();) {
+				for (int textOffset = 0; textOffset < text.length();) {
 					// Process pending content in chunks.
 					// Processing is primary split on control characters since there interpretation
 					// is easier if all content changes before are already applied.
@@ -866,11 +859,11 @@ public class IOConsolePartitioner
 						partEnd = controlCharacterMatcher.start();
 						foundControlCharacter = true;
 					} else {
-						partEnd = pending.text.length();
+						partEnd = text.length();
 						foundControlCharacter = false;
 					}
 
-					partititonContent(pending.stream, pending.text, textOffset, partEnd);
+					partititonContent(stream, text, textOffset, partEnd, content);
 					textOffset = partEnd;
 
 					// finished processing of regular content before control characters
@@ -891,7 +884,7 @@ public class IOConsolePartitioner
 							// move virtual output cursor one step back for each \b
 							// but stop at current line start and skip any input partitions
 							int backStepCount = controlCharacterMatch.length();
-							if (partitions.size() == 0) {
+							if (partitions.isEmpty()) {
 								outputOffset = 0;
 								break;
 							}
@@ -947,7 +940,7 @@ public class IOConsolePartitioner
 							}
 							outputOffset = document.getLength();
 							nextWriteOffset = outputOffset;
-							partititonContent(pending.stream, vtab, 0, vtab.length());
+							partititonContent(stream, vtab, 0, vtab.length(), content);
 							break;
 
 						case 0:
@@ -968,7 +961,6 @@ public class IOConsolePartitioner
 				}
 			}
 			applyOutputToDocument(content.toString(), nextWriteOffset, replaceLength);
-			content = null;
 		}
 
 		/**
@@ -988,7 +980,8 @@ public class IOConsolePartitioner
 		 * @param offset    the start offset (inclusive) within text to partition
 		 * @param endOffset the end offset (exclusive) within text to partition
 		 */
-		private void partititonContent(IOConsoleOutputStream stream, CharSequence text, int offset, int endOffset) {
+		private void partititonContent(IOConsoleOutputStream stream, CharSequence text, int offset, int endOffset,
+				StringBuilder content) {
 			int textOffset = offset;
 			while (textOffset < endOffset) {
 				// Process content part. This part never contains control characters.
@@ -1180,27 +1173,25 @@ public class IOConsolePartitioner
 		 * @param offset trims console content up to this offset
 		 */
 		public void setTrimOffset(int offset) {
+			// XXX an arbitrary offset would cause follow up errors if we trim a delim
+			// exactly between \r and \n
 			truncateOffset = offset;
 			truncateToOffsetLineStart = false;
-		}
-
-		/**
-		 * Sets the trim offset.
-		 *
-		 * @param offset trims output up to the line containing this offset
-		 */
-		public void setTrimLineOffset(int offset) {
-			truncateOffset = offset;
-			truncateToOffsetLineStart = true;
 		}
 
 		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			synchronized (partitions) {
-				if (document == null) {
-					return Status.OK_STATUS;
-				}
+				trim(truncateOffset, truncateToOffsetLineStart);
+			}
+			return Status.OK_STATUS;
+		}
 
+	}
+
+	private void trim(int truncateOffset, boolean truncateToOffsetLineStart) {
+		if (document != null) {
+			{
 				try {
 					int length = document.getLength();
 					int cutOffset = truncateOffset;
@@ -1242,7 +1233,6 @@ public class IOConsolePartitioner
 					log(e);
 				}
 			}
-			return Status.OK_STATUS;
 		}
 	}
 

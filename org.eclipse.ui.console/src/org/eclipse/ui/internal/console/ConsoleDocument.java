@@ -99,4 +99,10 @@ public class ConsoleDocument extends Document {
 	public synchronized Position[] getPositions(String category) throws BadPositionCategoryException {
 		return super.getPositions(category);
 	}
+
+	/** for debug only **/
+	@Override
+	public synchronized String toString() {
+		return get();
+	}
 }
