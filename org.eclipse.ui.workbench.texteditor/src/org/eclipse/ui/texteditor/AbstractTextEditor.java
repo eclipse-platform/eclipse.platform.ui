@@ -1234,8 +1234,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					int i = getLineEndPosition(document, line, lineLength, caretOffsetInDocument);
 					newCaretOffset = (caretOffset - lineOffset == i) ? lineEndOffset : lineOffset + i;
 				} else if (caretOffset < lineEndOffset) {
-						// to end of line
-						newCaretOffset = lineEndOffset;
+					// to end of line
+					newCaretOffset = lineEndOffset;
 				}
 
 				if (newCaretOffset == -1) {
@@ -1248,7 +1248,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 			}
 			st.setSelectionRanges(newSelection.stream().flatMapToInt(
-					p -> IntStream.of(Math.min(p.y, p.x), Math.abs(p.y - p.x)))
+					p -> IntStream.of(p.x, p.y - p.x))
 					.toArray());
 			if (newSelection.size() == 1) {
 				st.showSelection();

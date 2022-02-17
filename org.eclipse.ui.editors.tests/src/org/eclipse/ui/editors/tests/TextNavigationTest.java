@@ -52,15 +52,17 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
  */
 public class TextNavigationTest {
 
-	private static File file;
-	private static AbstractTextEditor editor;
-	private static StyledText widget;
+	private File file;
+	private AbstractTextEditor editor;
+	private StyledText widget;
+	private IDocument fDocument;
 
 	@Before
-	public void setUpBeforeClass() throws IOException, PartInitException, CoreException {
+	public void setUp() throws IOException, PartInitException, CoreException {
 		file = File.createTempFile(TextNavigationTest.class.getName(), ".txt");
 		Files.write(file.toPath(), "  abc".getBytes());
 		editor = (AbstractTextEditor)IDE.openEditorOnFileStore(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), EFS.getStore(file.toURI()));
+		fDocument = editor.getDocumentProvider().getDocument(editor.getEditorInput());
 		widget = (StyledText) editor.getAdapter(Control.class);
 	}
 
@@ -75,9 +77,8 @@ public class TextNavigationTest {
 		IPreferenceStore preferenceStore = EditorsPlugin.getDefault().getPreferenceStore();
 		boolean previousPrefValue = preferenceStore.getBoolean(AbstractTextEditor.PREFERENCE_NAVIGATION_SMART_HOME_END);
 		preferenceStore.setValue(AbstractTextEditor.PREFERENCE_NAVIGATION_SMART_HOME_END, false);
-		IDocument doc = editor.getDocumentProvider().getDocument(editor.getEditorInput());
-		doc.set("line1\nline2");
-		editor.selectAndReveal(doc.getLength(), 0);
+		fDocument.set("line1\nline2");
+		editor.selectAndReveal(fDocument.getLength(), 0);
 		editor.getAction(ITextEditorActionDefinitionIds.LINE_START).run();
 		try {
 			assertEquals(6, ((ITextSelection) editor.getSelectionProvider().getSelection()).getOffset());
@@ -116,6 +117,17 @@ public class TextNavigationTest {
 	}
 
 	@Test
+	public void testShiftEndMultipleLines() {
+		fDocument.set("LINE 1\nLINE 2\n");
+		editor.selectAndReveal(12, -7);
+		editor.getAction(ITextEditorActionDefinitionIds.SELECT_LINE_END).run();
+		ITextSelection selection = (ITextSelection) editor.getSelectionProvider().getSelection();
+		assertEquals(6, selection.getOffset());
+		assertEquals(6, selection.getLength());
+		assertEquals(6, widget.getCaretOffset());
+	}
+
+	@Test
 	public void testShiftEndHomeHome() {
 		editor.getSelectionProvider().setSelection(new TextSelection(0, 0));
 		assertEquals(0, widget.getCaretOffset());
@@ -142,8 +154,7 @@ public class TextNavigationTest {
 	@Test
 	public void testEndHomeRevealCaret() {
 		editor.getSelectionProvider().setSelection(new TextSelection(0, 0));
-		IDocument document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
-		document.set(IntStream.range(0, 2000).mapToObj(i -> "a").collect(Collectors.joining()));
+		fDocument.set(IntStream.range(0, 2000).mapToObj(i -> "a").collect(Collectors.joining()));
 		PlatformUI.getWorkbench().getIntroManager().closeIntro(PlatformUI.getWorkbench().getIntroManager().getIntro());
 		assertTrue(DisplayHelper.waitForCondition(widget.getDisplay(), 2000, () -> widget.isVisible()));
 		int firstCharX = widget.getTextBounds(0, 0).x;
@@ -151,8 +162,8 @@ public class TextNavigationTest {
 		assertEquals(0, widget.getClientArea().x);
 		editor.getAction(ITextEditorActionDefinitionIds.LINE_END).run();
 		ITextSelection selection = (ITextSelection) editor.getSelectionProvider().getSelection();
-		assertEquals(document.getLength(), selection.getOffset());
-		int lastCharX = widget.getTextBounds(document.getLength() - 1, document.getLength() - 1).x;
+		assertEquals(fDocument.getLength(), selection.getOffset());
+		int lastCharX = widget.getTextBounds(fDocument.getLength() - 1, fDocument.getLength() - 1).x;
 		assertTrue(lastCharX >= 0 && lastCharX <= widget.getClientArea().width);
 		editor.getAction(ITextEditorActionDefinitionIds.LINE_START).run();
 		firstCharX = widget.getTextBounds(0, 0).x;
