@@ -192,7 +192,9 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 		composite.setFont(parent.getFont());
 		// Add the buttons to the button bar.
 		if (arrowCursor == null) {
-			arrowCursor = new Cursor(parent.getDisplay(), SWT.CURSOR_ARROW);
+			Cursor cursor = new Cursor(parent.getDisplay(), SWT.CURSOR_ARROW);
+			arrowCursor = cursor;
+			composite.addDisposeListener(e -> cursor.dispose());
 		}
 		createButtonsForButtonBar(composite);
 		return composite;

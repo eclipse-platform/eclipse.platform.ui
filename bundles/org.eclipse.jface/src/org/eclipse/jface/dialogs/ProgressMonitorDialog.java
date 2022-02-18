@@ -395,7 +395,9 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 		cancel = createButton(parent, IDialogConstants.CANCEL_ID,
 				IDialogConstants.CANCEL_LABEL, true);
 		if (arrowCursor == null) {
-			arrowCursor = new Cursor(cancel.getDisplay(), SWT.CURSOR_ARROW);
+			Cursor cursor = new Cursor(cancel.getDisplay(), SWT.CURSOR_ARROW);
+			arrowCursor = cursor;
+			cancel.addDisposeListener(e -> cursor.dispose());
 		}
 		cancel.setCursor(arrowCursor);
 		setOperationCancelButtonEnabled(enableCancelButton);
