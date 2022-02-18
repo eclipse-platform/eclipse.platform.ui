@@ -621,7 +621,9 @@ public class BrowserIntroPartImplementation extends
 	 * Regenerate the dynamic content for the current page
 	 */
 	protected void updateContent() {
-		generateContentForPage(getModel().getCurrentPage());
+		if (!getBrowser().isDisposed()) {
+			generateContentForPage(getModel().getCurrentPage());
+		}
 	}
 
 	@Override
