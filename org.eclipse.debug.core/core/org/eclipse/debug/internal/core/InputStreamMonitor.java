@@ -127,13 +127,19 @@ public class InputStreamMonitor {
 		}
 	}
 
+	public void startMonitoring() {
+		startMonitoring("Input Stream Monitor"); //$NON-NLS-1$
+	}
+
 	/**
 	 * Starts a thread which writes the stream.
+	 *
+	 * @param threadName Thread name
 	 */
-	public void startMonitoring() {
+	public void startMonitoring(String threadName) {
 		synchronized (this) {
 			if (fThread == null) {
-				fThread = new Thread((Runnable) this::write, DebugCoreMessages.InputStreamMonitor_label);
+				fThread = new Thread((Runnable) this::write, threadName);
 				fThread.setDaemon(true);
 				fThread.start();
 			}

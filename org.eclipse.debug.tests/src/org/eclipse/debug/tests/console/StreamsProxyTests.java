@@ -66,7 +66,7 @@ public class StreamsProxyTests extends AbstractDebugTest {
 		final String s = prefix + String.join("", Collections.nCopies(numTwoByteCharacters, "\u00F8"));
 		final ByteArrayInputStream stdout = new ByteArrayInputStream(s.getBytes(StandardCharsets.UTF_8));
 		final Process mockProcess = new MockProcess(stdout, null, 0);
-		final StreamsProxy streamProxy = new StreamsProxy(mockProcess, StandardCharsets.UTF_8);
+		final StreamsProxy streamProxy = new StreamsProxy(mockProcess, StandardCharsets.UTF_8, "");
 		streamProxy.close();
 		final String readContent = streamProxy.getOutputStreamMonitor().getContents();
 		assertEquals("Process output got corrupted.", s, readContent);

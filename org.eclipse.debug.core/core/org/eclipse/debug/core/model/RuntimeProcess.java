@@ -107,6 +107,8 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	 */
 	private boolean fTerminateDescendants = true;
 
+	private final String fThreadNameSuffix;
+
 	/**
 	 * Constructs a RuntimeProcess on the given system process
 	 * with the given name, adding this process to the given
@@ -146,14 +148,26 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 		} catch (CoreException e) {
 			DebugPlugin.log(e);
 		}
+		fThreadNameSuffix = getPidInfo(process, launch);
 
 		fStreamsProxy = createStreamsProxy();
-		fMonitor = new ProcessMonitorThread();
+		fMonitor = new ProcessMonitorThread(fThreadNameSuffix);
 		fMonitor.start();
 		launch.addProcess(this);
 		fireCreationEvent();
 	}
 
+	private static String getPidInfo(Process process, ILaunch launch) {
+		String pid;
+		ILaunchConfiguration lc = launch == null ? null : launch.getLaunchConfiguration();
+		String name = lc == null ? "" : " " + lc.getName(); //$NON-NLS-1$ //$NON-NLS-2$
+		try {
+			pid = " for PID " + process.pid(); //$NON-NLS-1$
+		} catch (Exception e) {
+			pid = ""; //$NON-NLS-1$
+		}
+		return pid + name;
+	}
 	/**
 	 * Initialize the attributes of this process to those in the given map.
 	 *
@@ -355,7 +369,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 				DebugPlugin.log(e);
 			}
 		}
-		return new StreamsProxy(getSystemProcess(), charset);
+		return new StreamsProxy(getSystemProcess(), charset, fThreadNameSuffix);
 	}
 
 	/**
@@ -488,9 +502,11 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 		/**
 		 * Creates a new process monitor and starts monitoring the process for
 		 * termination.
+		 *
+		 * @param suffix Thread name suffix
 		 */
-		private ProcessMonitorThread() {
-			super(DebugCoreMessages.ProcessMonitorJob_0);
+		private ProcessMonitorThread(String suffix) {
+			super(DebugCoreMessages.ProcessMonitorJob_0 + suffix);
 			setDaemon(true);
 		}
 

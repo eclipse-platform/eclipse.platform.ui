@@ -89,7 +89,6 @@ public class DebugCoreMessages extends NLS {
 	public static String LogicalStructureProvider_1;
 	public static String LogicalStructureType_1;
 	public static String SystemPropertyResolver_0;
-	public static String InputStreamMonitor_label;
 	public static String Launch_terminate_failed;
 	public static String LaunchConfiguration_Failed_to_delete_launch_configuration__1;
 	public static String LaunchConfigurationDelegate_6;
@@ -115,7 +114,6 @@ public class DebugCoreMessages extends NLS {
 	public static String LaunchManager_invalid_config_name_char;
 	public static String LaunchManager_Source_locator_does_not_exist___0__13;
 	public static String LogicalStructureType_0;
-	public static String OutputStreamMonitor_label;
 	public static String ProcessMonitorJob_0;
 	public static String RuntimeProcess_terminate_failed;
 	public static String RuntimeProcess_Exit_value_not_available_until_process_terminates__1;

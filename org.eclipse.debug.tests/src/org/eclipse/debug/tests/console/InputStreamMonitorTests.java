@@ -25,7 +25,6 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.debug.internal.core.DebugCoreMessages;
 import org.eclipse.debug.internal.core.InputStreamMonitor;
 import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.debug.tests.TestUtil;
@@ -96,9 +95,10 @@ public class InputStreamMonitorTests extends AbstractDebugTest {
 	@Test
 	@SuppressWarnings("resource")
 	public void testClose() throws Exception {
+		String threadName = "MAGICtestClose";
 		Supplier<Long> getInputStreamMonitorThreads = () -> {
 			Set<Thread> allThreads = Thread.getAllStackTraces().keySet();
-			long numMonitorThreads = allThreads.stream().filter(t -> DebugCoreMessages.InputStreamMonitor_label.equals(t.getName())).count();
+			long numMonitorThreads = allThreads.stream().filter(t -> t.getName().contains(threadName)).count();
 			return numMonitorThreads;
 		};
 		long alreadyLeakedThreads = getInputStreamMonitorThreads.get();
@@ -117,7 +117,7 @@ public class InputStreamMonitorTests extends AbstractDebugTest {
 		{
 			ClosableTestOutputStream testStream = new ClosableTestOutputStream();
 			InputStreamMonitor monitor = new InputStreamMonitor(testStream);
-			monitor.startMonitoring();
+			monitor.startMonitoring(threadName);
 			assertEquals("Stream closed to early.", 0, testStream.numClosed);
 			monitor.close();
 			TestUtil.waitWhile(() -> testStream.numClosed == 0, 200);
@@ -126,7 +126,7 @@ public class InputStreamMonitorTests extends AbstractDebugTest {
 		{
 			ClosableTestOutputStream testStream = new ClosableTestOutputStream();
 			InputStreamMonitor monitor = new InputStreamMonitor(testStream);
-			monitor.startMonitoring();
+			monitor.startMonitoring(threadName);
 			assertEquals("Stream closed to early.", 0, testStream.numClosed);
 			monitor.closeInputStream();
 			monitor.close();

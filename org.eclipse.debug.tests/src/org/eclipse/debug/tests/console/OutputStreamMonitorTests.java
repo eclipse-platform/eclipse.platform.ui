@@ -195,9 +195,8 @@ public class OutputStreamMonitorTests extends AbstractDebugTest {
 			super(stream, charset);
 		}
 
-		@Override
 		public void startMonitoring() {
-			super.startMonitoring();
+			super.startMonitoring("");
 		}
 
 		@Override

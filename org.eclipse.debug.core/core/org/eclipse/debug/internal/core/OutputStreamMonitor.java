@@ -308,12 +308,14 @@ public class OutputStreamMonitor implements IBinaryStreamMonitor {
 
 	/**
 	 * Starts a thread which reads from the stream
+	 *
+	 * @param name Thread name
 	 */
-	protected void startMonitoring() {
+	protected void startMonitoring(String name) {
 		synchronized (this) {
 			if (fThread == null) {
 				fDone.set(false);
-				fThread = new Thread((Runnable) this::read, DebugCoreMessages.OutputStreamMonitor_label);
+				fThread = new Thread((Runnable) this::read, name);
 				fThread.setDaemon(true);
 				fThread.setPriority(Thread.MIN_PRIORITY);
 				fThread.start();

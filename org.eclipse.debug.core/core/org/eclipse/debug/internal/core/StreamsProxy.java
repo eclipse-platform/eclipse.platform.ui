@@ -55,18 +55,19 @@ public class StreamsProxy implements IBinaryStreamsProxy {
 	 *
 	 * @param process system process to create a streams proxy on
 	 * @param charset the process's charset or <code>null</code> if default
+	 * @param suffix Thread name suffix
 	 */
 	@SuppressWarnings("resource")
-	public StreamsProxy(Process process, Charset charset) {
+	public StreamsProxy(Process process, Charset charset, String suffix) {
 		if (process == null) {
 			return;
 		}
 		fOutputMonitor = new OutputStreamMonitor(process.getInputStream(), charset);
 		fErrorMonitor = new OutputStreamMonitor(process.getErrorStream(), charset);
 		fInputMonitor = new InputStreamMonitor(process.getOutputStream(), charset);
-		fOutputMonitor.startMonitoring();
-		fErrorMonitor.startMonitoring();
-		fInputMonitor.startMonitoring();
+		fOutputMonitor.startMonitoring("Output Stream Monitor" + suffix); //$NON-NLS-1$
+		fErrorMonitor.startMonitoring("Error Stream Monitor" + suffix); //$NON-NLS-1$
+		fInputMonitor.startMonitoring("Input Stream Monitor" + suffix); //$NON-NLS-1$
 	}
 
 	/**
@@ -83,7 +84,7 @@ public class StreamsProxy implements IBinaryStreamsProxy {
 		// but Bug 562653 brought up a client which use this internal class via
 		// reflection and breaks without this constructor. So we restored the
 		// old constructor for the time being.
-		this(process, Charset.forName(encoding));
+		this(process, Charset.forName(encoding), ""); //$NON-NLS-1$
 	}
 
 	/**
