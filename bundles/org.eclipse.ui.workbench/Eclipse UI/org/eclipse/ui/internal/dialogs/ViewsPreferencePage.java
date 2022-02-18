@@ -360,7 +360,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		if (engine != null) {
 			setColorsAndFontsTheme(currentColorsAndFontsTheme);
 
-			if (currentTheme != null) {
+			if (currentTheme != null && !currentTheme.equals(engine.getActiveTheme())) {
 				engine.setTheme(currentTheme, false);
 			}
 		}
