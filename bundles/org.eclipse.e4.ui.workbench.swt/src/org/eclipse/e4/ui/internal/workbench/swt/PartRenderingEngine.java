@@ -216,6 +216,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 					Control ctrl = (Control) changedElement.getWidget();
 					ctrl.setParent(realComp);
 					fixZOrder(changedElement);
+					ctrl.requestLayout();
 				}
 
 				if (parent instanceof MElementContainer<?>) {
