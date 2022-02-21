@@ -946,16 +946,12 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 		IJobChangeListener listener = null;
 		final Set<InternalJob> jobs;
 		int jobCount;
-		Job blocking = null;
 		synchronized (lock) {
 			//don't join a waiting or sleeping job when suspended (deadlock risk)
 			int states = suspended ? Job.RUNNING : Job.RUNNING | Job.WAITING | Job.SLEEPING;
 			jobs = Collections.synchronizedSet(new HashSet<>(select(family, states)));
 			jobCount = jobs.size();
 			if (jobCount > 0) {
-				//if there is only one blocking job, use it in the blockage callback below
-				if (jobCount == 1)
-					blocking = (Job) jobs.iterator().next();
 				listener = new JobChangeAdapter() {
 					@Override
 					public void done(IJobChangeEvent event) {
@@ -1009,10 +1005,18 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 		try {
 			monitor.beginTask(JobMessages.jobs_blocked0, jobCount);
 			monitor.subTask(getWaitMessage(jobCount));
-			reportBlocked(monitor, blocking);
 			int jobsLeft;
 			int reportedWorkDone = 0;
+			List<InternalJob> reportedBlockingJobs = List.of();
 			while ((jobsLeft = jobs.size()) > 0) {
+				List<InternalJob> blockingJobs;
+				synchronized (jobs) {
+					blockingJobs = new ArrayList<>(jobs);
+				}
+				if (!Objects.equals(reportedBlockingJobs, blockingJobs)) {
+					reportBlocked(monitor, blockingJobs);
+					reportedBlockingJobs = blockingJobs;
+				}
 				//don't let there be negative work done if new jobs have
 				//been added since the join began
 				int actualWorkDone = Math.max(0, jobCount - jobsLeft);
@@ -1212,16 +1216,19 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 	}
 
 	/**
-	 * Report to the progress monitor that this thread is blocked, supplying
-	 * an information message, and if possible the job that is causing the blockage.
-	 * Important: An invocation of this method MUST be followed eventually be
-	 * an invocation of reportUnblocked.
-	 * @param monitor The monitor to report blocking to
-	 * @param blockingJob The job that is blocking this thread, or <code>null</code>
+	 * Report to the progress monitor that this thread is blocked, supplying an
+	 * information message, and if possible jobs that are causing the blockage.
+	 * Important: An invocation of this method MUST be followed eventually be an
+	 * invocation of reportUnblocked.
+	 *
+	 * @param monitor      The monitor to report blocking to
+	 * @param blockingJobs The jobs that are blocking this thread
 	 * @see #reportUnblocked
 	 */
-	final void reportBlocked(IProgressMonitor monitor, InternalJob blockingJob) {
+	final void reportBlocked(IProgressMonitor monitor, List<InternalJob> blockingJobs) {
 		IStatus reason;
+		InternalJob blockingJob = blockingJobs.stream().sorted(Comparator.comparing(InternalJob::isSystem)).findFirst()
+				.orElse(null);
 		if (blockingJob == null || blockingJob instanceof ThreadJob || blockingJob.isSystem()) {
 			reason = new Status(IStatus.INFO, JobManager.PI_JOBS, 1, JobMessages.jobs_blocked0, null);
 		} else {

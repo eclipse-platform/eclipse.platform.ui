@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
+import java.util.List;
 import org.eclipse.core.internal.runtime.RuntimeLog;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
@@ -507,7 +508,7 @@ class ThreadJob extends Job {
 	 */
 	static private void waitStart(ThreadJob threadJob, IProgressMonitor monitor, InternalJob blockingJob) {
 		threadJob.isBlocked = true;
-		manager.reportBlocked(monitor, blockingJob);
+		manager.reportBlocked(monitor, blockingJob == null ? List.of() : List.of(blockingJob));
 	}
 
 	/**
