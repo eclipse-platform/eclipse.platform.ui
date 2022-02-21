@@ -59,7 +59,6 @@ public class ProgressMessages extends NLS {
 	public static String ProgressMonitorJobsDialog_HideTitle;
 	public static String AnimationManager_AnimationStart;
 	public static String ProgressFloatingWindow_EllipsisValue;
-	public static String BlockedJobsDialog_UserInterfaceTreeElement;
 	public static String BlockedJobsDialog_BlockedTitle;
 	public static String BlockedJobsDialog_CancelButtonText;
 	public static String WorkbenchSiteProgressService_CursorJob;

@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IconAndMessageDialog;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -48,67 +47,11 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	private DetailedProgressViewer viewer;
 
 	/**
-	 * The name of the task that is being blocked.
-	 */
-	private String blockedTaskName = ProgressMessages.SubTaskInfo_UndefinedTaskName;
-
-	/**
 	 * The Cancel button control.
 	 */
 	private Button cancelSelected;
 
 	private IProgressMonitor blockingMonitor;
-
-	private JobTreeElement blockedElement = new BlockedUIElement();
-
-	/**
-	 * The BlockedUIElement is the JobTreeElement that represents the blocked job in
-	 * the dialog.
-	 */
-	private class BlockedUIElement extends JobTreeElement {
-		@Override
-		Object[] getChildren() {
-			return ProgressManagerUtil.EMPTY_OBJECT_ARRAY;
-		}
-
-		@Override
-		String getDisplayString() {
-			if (blockedTaskName == null || blockedTaskName.isEmpty()) {
-				return ProgressMessages.BlockedJobsDialog_UserInterfaceTreeElement;
-			}
-			return blockedTaskName;
-		}
-
-		@Override
-		public Image getDisplayImage() {
-			return JFaceResources.getImage(ProgressManager.WAITING_JOB_KEY);
-		}
-
-		@Override
-		boolean hasChildren() {
-			return false;
-		}
-
-		@Override
-		boolean isActive() {
-			return true;
-		}
-
-		@Override
-		boolean isJobInfo() {
-			return false;
-		}
-
-		@Override
-		public void cancel() {
-			blockingMonitor.setCanceled(true);
-		}
-
-		@Override
-		public boolean isCancellable() {
-			return true;
-		}
-	}
 
 	/**
 	 * Creates a progress monitor dialog under the given shell. It also sets the
@@ -124,22 +67,15 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 *                       until there is no modal shell blocking it.
 	 * @param blockedMonitor The monitor that is currently blocked
 	 * @param reason         A status describing why the monitor is blocked
-	 * @param taskName       A name to give the blocking task in the dialog
 	 * @return BlockedJobsDialog
 	 */
 	public static BlockedJobsDialog createBlockedDialog(Shell parentShell, IProgressMonitor blockedMonitor,
-			IStatus reason, String taskName) {
+			IStatus reason) {
 		// Use an existing dialog if available.
 		if (singleton != null) {
 			return singleton;
 		}
 		singleton = new BlockedJobsDialog(parentShell, blockedMonitor, reason);
-
-		if (taskName == null || taskName.isEmpty()) {
-			singleton.setBlockedTaskName(ProgressMessages.BlockedJobsDialog_UserInterfaceTreeElement);
-		} else {
-			singleton.setBlockedTaskName(taskName);
-		}
 
 		/**
 		 * If there is no parent shell we have not been asked for a parent so we want to
@@ -240,16 +176,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 * @return ProgressTreeContentProvider
 	 */
 	private ProgressViewerContentProvider getContentProvider() {
-		return new ProgressViewerContentProvider(viewer, true, false) {
-			@Override
-			public Object[] getElements(Object inputElement) {
-				Object[] elements = super.getElements(inputElement);
-				Object[] result = new Object[elements.length + 1];
-				System.arraycopy(elements, 0, result, 1, elements.length);
-				result[0] = blockedElement;
-				return result;
-			}
-		};
+		return new ProgressViewerContentProvider(viewer, true, false);
 	}
 
 	/**
@@ -341,12 +268,5 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 		setReturnCode(CANCEL);
 		blockingMonitor.clearBlocked(); // clearBlocked() results in calling close()
 		blockingMonitor.setCanceled(true);
-	}
-
-	/**
-	 * @param taskName The blockedTaskName to set.
-	 */
-	void setBlockedTaskName(String taskName) {
-		this.blockedTaskName = taskName;
 	}
 }

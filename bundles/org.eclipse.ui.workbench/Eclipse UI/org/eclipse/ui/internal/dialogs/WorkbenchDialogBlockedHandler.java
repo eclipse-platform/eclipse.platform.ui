@@ -58,11 +58,7 @@ public class WorkbenchDialogBlockedHandler implements IDialogBlockedHandler {
 		nestingDepth++;
 		if (outerMonitor == null) {
 			outerMonitor = blockingMonitor;
-			// Try to get a name as best as possible
-			if (blockedName == null && parentShell != null) {
-				blockedName = parentShell.getText();
-			}
-			BlockedJobsDialog.createBlockedDialog(parentShell, blockingMonitor, blockingStatus, blockedName);
+			BlockedJobsDialog.createBlockedDialog(parentShell, blockingMonitor, blockingStatus);
 		}
 
 	}
