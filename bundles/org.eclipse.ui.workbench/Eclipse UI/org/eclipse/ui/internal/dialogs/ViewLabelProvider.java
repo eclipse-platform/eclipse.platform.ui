@@ -100,7 +100,7 @@ public class ViewLabelProvider extends ColumnLabelProvider {
 			if (image == null) {
 				ImageDescriptor desc = WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
 				image = desc.createImage();
-				imageMap.put(FOLDER_ICON, desc.createImage());
+				imageMap.put(FOLDER_ICON, image);
 			}
 			return image;
 		}
