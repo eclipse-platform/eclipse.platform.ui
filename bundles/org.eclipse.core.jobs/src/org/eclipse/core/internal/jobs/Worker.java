@@ -53,7 +53,7 @@ public class Worker extends Thread {
 
 	@Override
 	public void run() {
-		setPriority(Thread.NORM_PRIORITY);
+		setNormPriority();
 		try {
 			while ((currentJob = pool.startJob(this)) != null) {
 				IStatus result = Status.OK_STATUS;
@@ -84,7 +84,7 @@ public class Worker extends Thread {
 					currentJob = null;
 					setName(generalName);
 					// reset thread priority in case job changed it
-					setPriority(Thread.NORM_PRIORITY);
+					setNormPriority();
 				}
 			}
 		} catch (Throwable t) {
@@ -92,6 +92,13 @@ public class Worker extends Thread {
 		} finally {
 			currentJob = null;
 			pool.endWorker(this);
+		}
+	}
+
+	private void setNormPriority() {
+		if (getPriority() != Thread.NORM_PRIORITY) {
+			// Setting priority on some platforms may cause high overhead
+			setPriority(Thread.NORM_PRIORITY);
 		}
 	}
 
