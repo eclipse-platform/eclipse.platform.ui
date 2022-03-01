@@ -73,7 +73,7 @@ public class Snippet081AbstractNotificationPopup {
 			super(display);
 			this.fText = text;
 			setParentShell(shell);
-			setDelayClose(1000);
+			setDelayClose(10000);
 		}
 
 		@Override

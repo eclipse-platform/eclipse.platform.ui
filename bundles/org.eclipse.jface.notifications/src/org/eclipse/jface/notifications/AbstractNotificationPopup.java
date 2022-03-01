@@ -30,6 +30,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
@@ -102,8 +103,12 @@ public abstract class AbstractNotificationPopup extends Window {
 
 	private boolean fadingEnabled;
 
+	private MouseListener windowActivationHelper;
+
 	public AbstractNotificationPopup(Display display) {
-		this(display, SWT.NO_TRIM | SWT.ON_TOP | SWT.NO_FOCUS | SWT.TOOL);
+		// Bug 579019: NO_FOCUS leads to problems with main Window not being activated
+		// anymore if it is not visible but the notification shell is.
+		this(display, SWT.NO_TRIM | SWT.ON_TOP | SWT.TOOL);
 	}
 
 	public AbstractNotificationPopup(Display display, int style) {
@@ -112,8 +117,43 @@ public abstract class AbstractNotificationPopup extends Window {
 
 		this.display = display;
 		this.resources = new LocalResourceManager(JFaceResources.getResources());
-
 		this.closeJob.setSystem(true);
+	}
+
+	/**
+	 * Overrides default implementation to add window activation helper.
+	 * <p>
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void setParentShell(Shell newParentShell) {
+		super.setParentShell(newParentShell);
+		windowActivationHelper = createWindowActivationHelper(newParentShell);
+	}
+
+	/**
+	 * Creates listener that shows and activates the main Eclipse window by clicking
+	 * on the popup control if it was not in foreground.
+	 * <p>
+	 * Clients can override if the window activation shouldn't be added to the popup
+	 * or a different behavior is desired by clicking on the popup.
+	 *
+	 * @param parentShell
+	 * @return {@code null} if no window activation should be added to the popup
+	 * @since 0.5
+	 */
+	protected MouseListener createWindowActivationHelper(final Shell parentShell) {
+		return new MouseAdapter() {
+			@Override
+			public void mouseDown(MouseEvent e) {
+				// if not a top-level shell: show parent window notification on notification
+				// click
+				if (parentShell != null) {
+					parentShell.setActive();
+					parentShell.moveAbove(null);
+				}
+			}
+		};
 	}
 
 	public boolean isFadingEnabled() {
@@ -241,6 +281,7 @@ public abstract class AbstractNotificationPopup extends Window {
 		titleTextLabel.setCursor(parent.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
 
 		createCloseButton(parent);
+		addWindowActivationHelper(titleTextLabel);
 	}
 
 	void createCloseButton(Composite parent) {
@@ -281,6 +322,21 @@ public abstract class AbstractNotificationPopup extends Window {
 	protected void scheduleAutoClose() {
 		if (this.delayClose > 0) {
 			this.closeJob.schedule(this.delayClose);
+		}
+	}
+
+	/**
+	 * Allows to add activation listener to custom control. The listener shows and
+	 * activates the main Eclipse window by clicking on the control if the window
+	 * was not in foreground.
+	 * <p>
+	 * Clients can override to disable window activation on popup clicking
+	 *
+	 * @since 0.5
+	 */
+	protected void addWindowActivationHelper(Control control) {
+		if (windowActivationHelper != null) {
+			control.addMouseListener(windowActivationHelper);
 		}
 	}
 
@@ -351,7 +407,7 @@ public abstract class AbstractNotificationPopup extends Window {
 
 		/* Content Area */
 		createContentArea(innerContent);
-
+		addWindowActivationHelper(innerContent);
 		return outerCircle;
 	}
 
