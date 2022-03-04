@@ -305,6 +305,30 @@
 	        id="org.eclipse.ui.edit.text.select.windowEnd">
 	  </command>
 	  <command
+	        name="%command.selectAddAllMatchesToMultiSelection.name"
+	        description="%command.selectAddAllMatchesToMultiSelection.description"
+	        categoryId="org.eclipse.ui.category.textEditor"
+	        id="org.eclipse.ui.edit.text.select.addAllMatchesToMultiSelection">
+	  </command>
+	  <command
+	        name="%command.selectAddNextMatchToMultiSelection.name"
+	        description="%command.selectAddNextMatchToMultiSelection.description"
+	        categoryId="org.eclipse.ui.category.textEditor"
+	        id="org.eclipse.ui.edit.text.select.addNextMatchToMultiSelection">
+	  </command>
+	  <command
+	        name="%command.selectRemoveLastMatchFromMultiSelection.name"
+	        description="%command.selectAddNextMatchToMultiSelection.description"
+	        categoryId="org.eclipse.ui.category.textEditor"
+	        id="org.eclipse.ui.edit.text.select.removeLastMatchFromMultiSelection">
+	  </command>
+	  <command
+	        name="%command.stopMultiSelection.name"
+	        description="%command.stopMultiSelection.description"
+	        categoryId="org.eclipse.ui.category.textEditor"
+	        id="org.eclipse.ui.edit.text.select.stopMultiSelection">
+	  </command>
+	  <command
 	        name="%command.deletePrevious.name"
 	        description="%command.deletePrevious.description"
 	        categoryId="org.eclipse.ui.category.textEditor"
@@ -1356,6 +1380,54 @@
       <handler
             class="org.eclipse.ui.internal.texteditor.ToMultiSelectionHandler"
             commandId="org.eclipse.ui.edit.text.toMultiSelection">
+         <enabledWhen>
+            <with
+                 variable="activeEditor">
+              <instanceof
+                    value="org.eclipse.ui.texteditor.ITextEditor">
+              </instanceof>
+           </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.eclipse.ui.internal.texteditor.multiselection.AddAllMatchesToMultiSelectionHandler"
+            commandId="org.eclipse.ui.edit.text.select.addAllMatchesToMultiSelection">
+         <enabledWhen>
+            <with
+                 variable="activeEditor">
+              <instanceof
+                    value="org.eclipse.ui.texteditor.ITextEditor">
+              </instanceof>
+           </with>
+         </enabledWhen>
+      </handler>	
+      <handler
+            class="org.eclipse.ui.internal.texteditor.multiselection.AddNextMatchToMultiSelectionHandler"
+            commandId="org.eclipse.ui.edit.text.select.addNextMatchToMultiSelection">
+         <enabledWhen>
+            <with
+                 variable="activeEditor">
+              <instanceof
+                    value="org.eclipse.ui.texteditor.ITextEditor">
+              </instanceof>
+           </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.eclipse.ui.internal.texteditor.multiselection.RemoveLastMatchFromMultiSelectionHandler"
+            commandId="org.eclipse.ui.edit.text.select.removeLastMatchFromMultiSelection">
+         <enabledWhen>
+            <with
+                 variable="activeEditor">
+              <instanceof
+                    value="org.eclipse.ui.texteditor.ITextEditor">
+              </instanceof>
+           </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.eclipse.ui.internal.texteditor.multiselection.StopMultiSelectionHandler"
+            commandId="org.eclipse.ui.edit.text.select.stopMultiSelection">
          <enabledWhen>
             <with
                  variable="activeEditor">

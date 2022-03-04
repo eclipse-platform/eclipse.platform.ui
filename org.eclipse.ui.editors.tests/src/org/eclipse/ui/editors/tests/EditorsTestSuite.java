@@ -1,5 +1,5 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+/************************************************************************************************
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,7 +11,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Mickael Istria (Red Hat Inc.) - [484157] Add zoom test
- *******************************************************************************/
+ *     Dirk Steinkamp <dirk.steinkamp@gmx.de> - [576377] Add multi caret selection commands test
+ ************************************************************************************************/
 package org.eclipse.ui.editors.tests;
 
 import org.junit.runner.RunWith;
@@ -36,7 +37,9 @@ import org.junit.runners.Suite.SuiteClasses;
 		TextFileDocumentProviderTest.class,
 		StatusEditorTest.class,
 		TextNavigationTest.class,
-		LargeFileTest.class, CaseActionTest.class
+		LargeFileTest.class, CaseActionTest.class,
+		TextMultiCaretNavigationTest.class,
+		TextMultiCaretSelectionCommandsTest.class,
 })
 public class EditorsTestSuite {
 	// see @SuiteClasses
