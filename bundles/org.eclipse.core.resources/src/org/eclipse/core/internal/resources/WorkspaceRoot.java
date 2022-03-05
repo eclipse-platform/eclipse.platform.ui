@@ -15,7 +15,8 @@
 package org.eclipse.core.internal.resources;
 
 import java.net.URI;
-import java.util.*;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.internal.utils.Policy;
@@ -29,7 +30,7 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	 * that have been requested from this root.  This maps project
 	 * name strings to project handles.
 	 */
-	private final Map<String, Project> projectTable = Collections.synchronizedMap(new HashMap<>(16));
+	private final Map<String, Project> projectTable = new ConcurrentHashMap<>(16);
 
 	/**
 	 * Cache of the canonicalized platform location.
@@ -150,11 +151,7 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 			Assert.isLegal(projectPath.segmentCount() == ICoreConstants.PROJECT_SEGMENT_LENGTH, message);
 			//try to get the project using a canonical name
 			String canonicalName = projectPath.lastSegment();
-			result = projectTable.get(canonicalName);
-			if (result != null)
-				return result;
-			result = new Project(projectPath, workspace);
-			projectTable.put(canonicalName, result);
+			result = projectTable.computeIfAbsent(canonicalName, n -> new Project(projectPath, workspace));
 		}
 		return result;
 	}
