@@ -17,9 +17,6 @@ package org.eclipse.ui.tests.largefile;
 import static org.junit.Assert.assertArrayEquals;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,22 +28,24 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IPathEditorInput;
-import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.internal.LargeFileLimitsPreferenceHandler;
 import org.eclipse.ui.internal.LargeFileLimitsPreferenceHandler.FileLimit;
@@ -75,23 +74,41 @@ public class LargeFileLimitsPreferenceHandlerTest extends UITestCase {
 	private static final String TXT_EXTENSION = "txt";
 	private static final String XML_EXTENSION = "xml";
 
+	private final IProgressMonitor monitor;
+	private IProject testProject;
+	private IFile temporaryFile;
 	private TestPromptForEditor testPromptForEditor;
 	private LargeFileLimitsPreferenceHandler preferenceHandler;
-	private TestEditorInput testEditorInput;
+	private IEditorInput testEditorInput;
 	private TestLogListener logListener;
 
 	public LargeFileLimitsPreferenceHandlerTest() {
 		super(LargeFileLimitsPreferenceHandlerTest.class.getSimpleName());
+		monitor = new NullProgressMonitor();
 	}
 
 	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
+		createTestFile();
 		testPromptForEditor = new TestPromptForEditor();
 		preferenceHandler = new LargeFileLimitsPreferenceHandler(testPromptForEditor);
-		testEditorInput = new TestEditorInput();
+		testEditorInput = new FileEditorInput(temporaryFile);
 		logListener = new TestLogListener();
 		Platform.addLogListener(logListener);
+	}
+
+	private void createTestFile() throws CoreException {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceRoot workspaceRoot = workspace.getRoot();
+		testProject = workspaceRoot.getProject("SomeProject");
+		testProject.create(monitor);
+		testProject.open(monitor);
+		IPath path = new Path("/" + testProject.getName() + "/test_file" + "." + TXT_EXTENSION);
+		temporaryFile = workspaceRoot.getFile(path);
+		String content = String.join(System.lineSeparator(), "some line 1", "some line 2");
+		boolean force = true;
+		temporaryFile.create(new ByteArrayInputStream(content.getBytes()), force, monitor);
 	}
 
 	@Override
@@ -100,10 +117,18 @@ public class LargeFileLimitsPreferenceHandlerTest extends UITestCase {
 			Platform.removeLogListener(logListener);
 			setDefaultPreferences();
 			preferenceHandler.dispose();
-			testEditorInput.dispose();
+			deleteTestFile();
+			boolean save = false;
+			closeAllEditors(save);
 		} finally {
 			super.doTearDown();
 		}
+	}
+
+	private void deleteTestFile() throws CoreException {
+		boolean force = true;
+		temporaryFile.delete(force, monitor);
+		testProject.delete(force, monitor);
 	}
 
 	@Test
@@ -175,6 +200,24 @@ public class LargeFileLimitsPreferenceHandlerTest extends UITestCase {
 				editor.dispose();
 			}
 		}
+	}
+
+	@Test
+	public void testDisabledDefaultLimit() throws Exception {
+		String testEditorId = "org.eclipse.ui.tests.api.MockEditorPart1";
+		long fileSize = 1L;
+		LargeFileLimitsPreferenceHandler.setDefaultLimit(fileSize);
+		LargeFileLimitsPreferenceHandler.disableDefaultLimit();
+
+		IEditorRegistry editorRegistry = getWorkbench().getEditorRegistry();
+		IEditorDescriptor testEditor = editorRegistry.findEditor(testEditorId);
+		assertNotNull("Expected to find editor with ID: " + testEditorId, testEditor);
+
+		testPromptForEditor.selectedEditor = testEditor;
+		testPromptForEditor.rememberSelection = false;
+		// bug 579119: dialog to chose editor should not come up, we disabled the
+		// default limit preference
+		assertNoEditorIsChosen();
 	}
 
 	@Test
@@ -408,7 +451,10 @@ public class LargeFileLimitsPreferenceHandlerTest extends UITestCase {
 
 	private void assertNoEditorIsChosen() {
 		Optional<String> editorForInput = preferenceHandler.getEditorForInput(testEditorInput);
-		assertFalse("Expected no editor for large file of type: " + TXT_EXTENSION, editorForInput.isPresent());
+		assertNotNull("Expected non-null result for large file of type: " + TXT_EXTENSION, editorForInput);
+		if (editorForInput.isPresent()) {
+			fail("Expected no editor for large file of type: " + TXT_EXTENSION + ", but got: " + editorForInput.get());
+		}
 	}
 
 	private void assertEditorIsChosen(String testEditorId) {
@@ -436,6 +482,10 @@ public class LargeFileLimitsPreferenceHandlerTest extends UITestCase {
 
 	private static void assertEmptyArray(String failMessage, String[] configuredExtensionTypes) {
 		assertEquals(failMessage, Collections.EMPTY_LIST, Arrays.asList(configuredExtensionTypes));
+	}
+
+	private static void closeAllEditors(boolean save) {
+		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().closeAllEditors(save);
 	}
 
 	private static class TestLogListener implements ILogListener {
@@ -500,55 +550,5 @@ public class LargeFileLimitsPreferenceHandlerTest extends UITestCase {
 		public boolean shouldRememberSelectedEditor() {
 			return rememberSelection;
 		}
-	}
-
-	private static class TestEditorInput implements IPathEditorInput {
-
-		private final Path temporaryFile;
-
-		TestEditorInput() throws IOException {
-			temporaryFile = Files.createTempFile("test_file", "." + TXT_EXTENSION);
-			Files.write(temporaryFile, Arrays.asList("some line 1", "some line 2"));
-		}
-
-		void dispose() throws IOException {
-			Files.delete(temporaryFile);
-		}
-
-		@Override
-		public boolean exists() {
-			return true;
-		}
-
-		@Override
-		public ImageDescriptor getImageDescriptor() {
-			return null;
-		}
-
-		@Override
-		public String getName() {
-			return "test editor input";
-		}
-
-		@Override
-		public IPersistableElement getPersistable() {
-			return null;
-		}
-
-		@Override
-		public String getToolTipText() {
-			return getName();
-		}
-
-		@Override
-		public <T> T getAdapter(Class<T> adapter) {
-			return null;
-		}
-
-		@Override
-		public IPath getPath() {
-			return new org.eclipse.core.runtime.Path(temporaryFile.toString());
-		}
-
 	}
 }

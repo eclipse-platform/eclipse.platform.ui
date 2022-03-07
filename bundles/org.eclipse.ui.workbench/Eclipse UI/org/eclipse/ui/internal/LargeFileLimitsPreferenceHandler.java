@@ -420,7 +420,8 @@ public class LargeFileLimitsPreferenceHandler {
 			String largeFilePreference = PREFERENCE_STORE.getString(preferenceName);
 
 			// if no preference exists for the specific file type, check for the default
-			if (largeFilePreference == null || largeFilePreference.isEmpty()) {
+			boolean noPreferenceForExtension = largeFilePreference == null || largeFilePreference.isEmpty();
+			if (noPreferenceForExtension && isDefaultLimitEnabled()) {
 				long defaultLimit = getDefaultLimit();
 				preferenceValues.add(new FileLimit(PROMPT_EDITOR_PREFERENCE_VALUE, defaultLimit));
 			} else {
