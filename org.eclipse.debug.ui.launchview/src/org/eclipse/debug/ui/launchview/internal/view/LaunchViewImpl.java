@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2019 SSI Schaefer IT Solutions GmbH and others.
+ * Copyright (c) 2017, 2022 SSI Schaefer IT Solutions GmbH and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     SSI Schaefer IT Solutions GmbH
+ *     IBM Corporation - bug fixes
  *******************************************************************************/
 package org.eclipse.debug.ui.launchview.internal.view;
 
@@ -266,6 +267,9 @@ public class LaunchViewImpl implements Supplier<Set<ILaunchObject>> {
 	}
 
 	private synchronized void reset() {
+		if (tree == null || tree.isDisposed()) {
+			return;
+		}
 		tree.getDisplay().syncExec(() -> {
 			tree.getViewer().getTree().setRedraw(false);
 			try {
