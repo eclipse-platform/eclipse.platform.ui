@@ -20,6 +20,7 @@
 package org.eclipse.core.internal.events;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import org.eclipse.core.internal.dtree.DeltaDataTree;
@@ -132,17 +133,33 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 
 	/**
 	 * {@code true} if we can exit inner build loop cycle early after
-	 * rebuildRequested is set by one build config and before following build
-	 * configs are executed. Default is {@code true}.
+	 * {@link #requestRebuild()} is set by one build config and before following
+	 * build configs are executed. Default is {@code false}.
 	 */
-	private static final boolean EARLY_EXIT_FROM_INNER_BUILD_LOOP_ALLOWED = System
-			.getProperty("org.eclipse.core.resources.disallowEarlyInnerBuildLoopExit") == null; //$NON-NLS-1$
+	private boolean earlyExitFromBuildLoopAllowed;
 
-	//used for the build cycle looping mechanism
-	private boolean rebuildRequested = false;
+	/**
+	 * Used for the build cycle looping mechanism. If true, build loop over multiple
+	 * projects will be restarted again for all projects in the loop
+	 */
+	private boolean rebuildRequested;
+
+	/**
+	 * Set of projects for which builders requested rebuild. Has no effect if any
+	 * builder requested rebuild of everything via {@link #rebuildRequested}
+	 */
+	private final Set<IProject> projectsToRebuild;
+
+	/**
+	 * Map of projects for which builders requested rebuild for the current build
+	 * cycle. If the value is "true" - stop building project with other builders
+	 * immediately, "false" to continue build and start project build again after
+	 * all builders were done. If no value is set, no rebuild is requested.
+	 */
+	private final Map<IProject, Boolean> restartBuildImmediately;
 
 	// Shows if we are in the parallel build loop or not
-	private boolean parallelBuild;
+	boolean parallelBuild;
 
 	private final Bundle systemBundle = Platform.getBundle("org.eclipse.osgi"); //$NON-NLS-1$
 
@@ -158,8 +175,12 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		this.workspace = workspace;
 		this.currentBuilders = Collections.synchronizedSet(new HashSet<>());
 		this.autoBuildJob = new AutoBuildJob(workspace);
+		projectsToRebuild = ConcurrentHashMap.newKeySet();
+		restartBuildImmediately = new ConcurrentHashMap<>();
 		this.lock = workspaceLock;
 		InternalBuilder.buildManager = this;
+		setEarlyExitFromBuildLoopAllowed(
+				Boolean.getBoolean("org.eclipse.core.resources.allowEarlyBuildLoopExit")); //$NON-NLS-1$ );
 	}
 
 	private void basicBuild(int trigger, IncrementalProjectBuilder builder, Map<String, String> args, MultiStatus status, IProgressMonitor monitor) {
@@ -265,20 +286,41 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	}
 
 	protected void basicBuild(IBuildConfiguration buildConfiguration, int trigger, IBuildContext context, ICommand[] commands, MultiStatus status, IProgressMonitor monitor) {
+		int remainingIterations = Math.max(1, workspace.getDescription().getMaxBuildIterations());
+
 		try {
-			for (int i = 0; i < commands.length; i++) {
-				checkCanceled(trigger, monitor);
-				if (EARLY_EXIT_FROM_INNER_BUILD_LOOP_ALLOWED && rebuildRequested && !parallelBuild
-						&& workspace.isAutoBuilding()) {
-					// Don't build following configs if one of the predecessors
-					// requested rebuild anyway, just start from scratch
-					break;
+			boolean shouldRebuild = true;
+			while (shouldRebuild) {
+				shouldRebuild = false;
+				for (int i = 0; i < commands.length; i++) {
+					checkCanceled(trigger, monitor);
+					BuildCommand command = (BuildCommand) commands[i];
+					IProgressMonitor sub = Policy.subMonitorFor(monitor, 1);
+					IncrementalProjectBuilder builder = getBuilder(buildConfiguration, command, i, status, context);
+					if (builder != null) {
+						basicBuild(trigger, builder, command.getArguments(false), status, sub);
+
+						// Check if the builder requested rebuild
+						IProject project = builder.getProject();
+						Boolean restartImmediately = restartBuildImmediately.remove(project);
+						if (restartImmediately != null) {
+							remainingIterations--;
+							if (remainingIterations > 0) {
+								if (!restartImmediately) {
+									// process building all builders and restart after that
+									shouldRebuild = true;
+								} else {
+									// First builder doesn't need to restart anything
+									if (i > 0) {
+										// Start for loop again, input can be important for all builders before
+										shouldRebuild = true;
+										break;
+									}
+								}
+							}
+						}
+					}
 				}
-				BuildCommand command = (BuildCommand) commands[i];
-				IProgressMonitor sub = Policy.subMonitorFor(monitor, 1);
-				IncrementalProjectBuilder builder = getBuilder(buildConfiguration, command, i, status, context);
-				if (builder != null)
-					basicBuild(trigger, builder, command.getArguments(false), status, sub);
 			}
 		} catch (CoreException e) {
 			status.add(e.getStatus());
@@ -380,24 +422,85 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		// Scale allowed iterations count depending on affected projects -
 		// allow at least two build cycles per project
 		maxIterations = Math.max(configs.length * 2, maxIterations);
-		if (maxIterations <= 0)
+		if (maxIterations <= 0) {
 			maxIterations = 1;
+		}
+
 		rebuildRequested = true;
-		for (int iter = 0; rebuildRequested && iter < maxIterations; iter++) {
-			rebuildRequested = false;
-			builtProjects.clear();
-			for (IBuildConfiguration config : configs) {
-				if (config.getProject().isAccessible()) {
-					IBuildContext context = new BuildContext(config, requestedConfigs, configs);
-					basicBuild(config, trigger, context, status, Policy.subMonitorFor(monitor, projectWork));
-					builtProjects.add(config.getProject());
-				}
+		boolean rebuildSomething = true;
+		for (int iter = 0; rebuildSomething && iter < maxIterations; iter++) {
+			// Used for compatibility reason with requestRebuild()
+			boolean rebuildAll = rebuildRequested;
+			final boolean lastIteration = iter == maxIterations - 1;
+
+			if (rebuildAll) {
+				// default build loop
+				basicBuildLoop(configs, requestedConfigs, trigger, status, monitor, projectWork, lastIteration);
+			} else {
+				// rebuild only projects requested by builders during previous build cycle
+				List<IBuildConfiguration> allConfigs = Arrays.asList(workspace.getBuildOrder());
+				IBuildConfiguration[] configurations = allConfigs.stream()
+						.filter(c -> projectsToRebuild.contains(c.getProject())).toArray(IBuildConfiguration[]::new);
+				basicBuildLoop(configurations, requestedConfigs, trigger, status, monitor, projectWork, lastIteration);
 			}
+			if (rebuildRequested) {
+				rebuildSomething = true;
+				projectsToRebuild.clear();
+				restartBuildImmediately.clear();
+			} else if (!projectsToRebuild.isEmpty()) {
+				rebuildSomething = true;
+			} else {
+				rebuildSomething = false;
+			}
+
 			// subsequent builds should always be incremental
 			// i.e. autobuild if not requested by user
 			// INCREMENTAL_BUILD would not be auto interrupted by user actions
 			if (trigger != IncrementalProjectBuilder.AUTO_BUILD) {
 				trigger = IncrementalProjectBuilder.INCREMENTAL_BUILD;
+			}
+		}
+	}
+
+	private void basicBuildLoop(IBuildConfiguration[] configs, IBuildConfiguration[] requestedConfigs, int trigger,
+			MultiStatus status, IProgressMonitor monitor, int projectWork, final boolean lastIteration) {
+
+		// If we are rebuilding anything, we can clear already build projects.
+		// If we build only few dedicated projects, all others, already built
+		// projects should be added again to the "built" list, otherwise
+		// hasBeenBuilt() will return "false" for them and they would not considered
+		// for a rebuild if requested by one of the projects to be re-built now.
+		if (rebuildRequested) {
+			builtProjects.clear();
+		} else {
+			builtProjects.removeAll(projectsToRebuild);
+		}
+
+		// Clear all the rebuild related flags before entering new build cycle
+		rebuildRequested = false;
+		projectsToRebuild.clear();
+		restartBuildImmediately.clear();
+
+		// Basic loop over projects
+		for (IBuildConfiguration config : configs) {
+			if (config.getProject().isAccessible()) {
+				IBuildContext context = new BuildContext(config, requestedConfigs, configs);
+
+				// Inner loop over builders in one project
+				basicBuild(config, trigger, context, status, Policy.subMonitorFor(monitor, projectWork));
+				builtProjects.add(config.getProject());
+
+				// Check if we should continue with other projects
+				if ((rebuildRequested || !projectsToRebuild.isEmpty())
+						&& isEarlyExitFromBuildLoopAllowed()) {
+					if (lastIteration) {
+						// run build for all projects at least once
+						continue;
+					}
+					// Don't build following projects if one of the predecessors
+					// requested rebuild anyway, just start main loop from scratch
+					break;
+				}
 			}
 		}
 	}
@@ -490,6 +593,8 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	public IStatus build(IBuildConfiguration buildConfiguration, int trigger, String builderName, Map<String, String> args, IProgressMonitor monitor) {
 		monitor = Policy.monitorFor(monitor);
 		rebuildRequested = false;
+		projectsToRebuild.clear();
+		restartBuildImmediately.clear();
 		if (builderName == null) {
 			IBuildContext context = new BuildContext(buildConfiguration);
 			return basicBuild(buildConfiguration, trigger, context, monitor);
@@ -1192,6 +1297,58 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	}
 
 	/**
+	 * Hook for builders to request a rebuild for given project during the current
+	 * build call. The builders configured to run after the current one will be
+	 * still processed. To force an immediate rebuild of a project that wasn't fully
+	 * built yet, {@code processOtherBuilders} argument should be set to
+	 * {@code false}.
+	 * <p>
+	 * <b>Note</b> if {@code processOtherBuilders} is set to {@code false}, the
+	 * project that is built with current builder will be only rebuilt again, if
+	 * this builder is not the first one configured to run.
+	 *
+	 * @param processOtherBuilders to continue building project with other builders
+	 *                             and not start from scratch immediately
+	 */
+	void requestRebuild(IProject project, boolean processOtherBuilders) {
+		if (project == null) {
+			return;
+		}
+		restartBuildImmediately.put(project, !processOtherBuilders);
+	}
+
+	/**
+	 * Hook for builders to request a rebuild for given projects. This request will
+	 * cause the main build loop to cycle once again <b>at least</b> for given
+	 * projects but the build loop also may run over all projects in build cycle if
+	 * the {@link #requestRebuild()} flag was set.
+	 * <p>
+	 * <b>Note</b> the current project (that is currently built with current
+	 * builder) will be not rebuilt in the current builld cycle, but scheduled for
+	 * rebuild on next round. To perform immediate rebuild of the current project,
+	 * use {@link #requestRebuild(IProject, boolean)}.
+	 *
+	 * @param toBeRebuilt to be rebuilt on next build round
+	 * @param current     project currently built with current builder
+	 */
+	void requestRebuild(Collection<IProject> toBeRebuilt, IProject current) {
+		for (IProject project : toBeRebuilt) {
+			if (project != null && hasBeenBuilt(project) || project.equals(current)) {
+				requestRebuildOnNextRound(project);
+			}
+		}
+	}
+
+	/**
+	 * Hook for builders to request an <b>unconditional<b> rebuild for given
+	 * project, in the next build round, independently if the project was already
+	 * built or not.
+	 */
+	void requestRebuildOnNextRound(IProject project) {
+		projectsToRebuild.add(project);
+	}
+
+	/**
 	 * Sets the builder infos for the given build config.  The builder infos are
 	 * an ArrayList of BuilderPersistentInfo.
 	 * The list includes entries for all builders that are
@@ -1353,4 +1510,25 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			Policy.log(status);
 		return workspace.getRoot();
 	}
+
+	/**
+	 * @return {@code true} if the projects build loop can restart immediately after
+	 *         rebuild request, {@code false} if the loop will continue building all
+	 *         not yet built projects
+	 */
+	public boolean isEarlyExitFromBuildLoopAllowed() {
+		return earlyExitFromBuildLoopAllowed;
+	}
+
+	/**
+	 * @param earlyExitFromBuildLoopAllowed {@code true} if the projects build loop
+	 *                                      should restart immediately after rebuild
+	 *                                      request, {@code false} if the loop
+	 *                                      should continue building all not yet
+	 *                                      built projects
+	 */
+	public void setEarlyExitFromBuildLoopAllowed(boolean earlyExitFromBuildLoopAllowed) {
+		this.earlyExitFromBuildLoopAllowed = earlyExitFromBuildLoopAllowed;
+	}
+
 }

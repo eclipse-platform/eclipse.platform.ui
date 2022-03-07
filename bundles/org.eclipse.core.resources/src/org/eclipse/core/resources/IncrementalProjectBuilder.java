@@ -17,6 +17,7 @@
  *******************************************************************************/
 package org.eclipse.core.resources;
 
+import java.util.Collection;
 import java.util.Map;
 import org.eclipse.core.internal.events.InternalBuilder;
 import org.eclipse.core.runtime.*;
@@ -346,21 +347,91 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	}
 
 	/**
-	 * Indicates that this builder made changes that affect a build configuration that
-	 * precedes this build configuration in the currently executing build order, and thus a
-	 * rebuild will be necessary.
+	 * Indicates that this builder made changes that affect a build configuration
+	 * that precedes this build configuration in the currently executing build
+	 * order, and thus a rebuild will be necessary.
 	 * <p>
-	 * This is an advanced feature that builders should use with caution. This
-	 * can cause workspace builds to iterate until no more builders require
-	 * rebuilds.
+	 * <b>Note:</b> this method will schedule rebuild for all projects involved in
+	 * the current build cycle!
+	 * <ul>
+	 * <li>If concrete projects that require rebuild are known, it is better to use
+	 * {@link #requestProjectsRebuild(Collection)} instead to avoid overhead.</li>
+	 * <li>If only one project should be rebuilt, it is better to use
+	 * {@link #requestProjectRebuild(boolean)} where additionally one could avoid
+	 * extra work by skipping not yet executed builders.</li>
+	 * </ul>
+	 * </p>
+	 * <p>
+	 * This is an advanced feature that builders should use with caution. This can
+	 * cause workspace builds to iterate until no more builders require rebuilds.
 	 * </p>
 	 *
 	 * @see #hasBeenBuilt(IProject)
+	 * @see #requestProjectsRebuild(Collection)
+	 * @see #requestProjectRebuild(boolean)
 	 * @since 2.1
 	 */
 	@Override
 	public final void needRebuild() {
 		super.needRebuild();
+	}
+
+	/**
+	 * Indicates that this builder generated or detected new input for currently
+	 * running project build, and thus a project rebuild will be necessary in the
+	 * current build round.
+	 * <p>
+	 * The builders configured to run after the current one will be still processed
+	 * if {@code processOtherBuilders} is set to {@code true}. To force an immediate
+	 * rebuild of a project {@code processOtherBuilders} argument should be set to
+	 * {@code false}.
+	 * </p>
+	 *
+	 * <b>Note</b> if {@code processOtherBuilders} is set to {@code false}, the
+	 * project that is built with current builder will be only rebuilt again, if
+	 * this builder is not the first one configured to run.
+	 * </p>
+	 * <p>
+	 * This is an advanced feature that builders should use with caution. This can
+	 * cause workspace builds to iterate until no more builders require rebuilds.
+	 * </p>
+	 *
+	 * @param processOtherBuilders to continue building project with other builders
+	 *                             and not start project build from beginning
+	 *                             immediately
+	 *
+	 * @see #needRebuild()
+	 * @see #requestProjectsRebuild(Collection)
+	 * @since 3.17
+	 */
+	@Override
+	public final void requestProjectRebuild(boolean processOtherBuilders) {
+		super.requestProjectRebuild(processOtherBuilders);
+	}
+
+	/**
+	 * Indicates that this builder generated or detected new input for given
+	 * projects and thus a rebuild for given projects will be necessary in the next
+	 * build round.
+	 * <p>
+	 * <b>Note</b> if the given collection contains the current project (that is
+	 * currently built with current builder), the current project will be not
+	 * rebuilt immediately, but scheduled for rebuild on next round. To perform
+	 * immediate rebuild of the current project, use
+	 * {@link #requestProjectRebuild(boolean)}.
+	 * </p>
+	 * <p>
+	 * This is an advanced feature that builders should use with caution. This can
+	 * cause workspace builds to iterate until no more builders require rebuilds.
+	 * </p>
+	 *
+	 * @see #needRebuild()
+	 * @see #requestProjectRebuild(boolean)
+	 * @since 3.17
+	 */
+	@Override
+	public final void requestProjectsRebuild(Collection<IProject> projects) {
+		super.requestProjectsRebuild(projects);
 	}
 
 	/**

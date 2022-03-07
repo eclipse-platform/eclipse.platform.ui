@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.events;
 
+import java.util.Collection;
 import java.util.Map;
 import org.eclipse.core.internal.resources.ICoreConstants;
 import org.eclipse.core.internal.watson.ElementTree;
@@ -179,6 +180,20 @@ public abstract class InternalBuilder {
 	 */
 	protected void needRebuild() {
 		buildManager.requestRebuild();
+	}
+
+	/*
+	 * @see IncrementalProjectBuilder#requestProjectRebuild
+	 */
+	public void requestProjectRebuild(boolean processOtherBuilders) {
+		buildManager.requestRebuild(getProject(), processOtherBuilders);
+	}
+
+	/*
+	 * @see IncrementalProjectBuilder#requestProjectsRebuild
+	 */
+	public void requestProjectsRebuild(Collection<IProject> projects) {
+		buildManager.requestRebuild(projects, getProject());
 	}
 
 	final void setCallOnEmptyDelta(boolean value) {

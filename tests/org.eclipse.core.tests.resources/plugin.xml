@@ -19,6 +19,14 @@
       <run class="org.eclipse.core.tests.internal.builders.SortBuilder"/> 
     </builder>
   </extension>
+  <extension point="org.eclipse.core.resources.builders" id="rebuildingbuilder" name="Rebuilding Builder">
+    <builder
+          callOnEmptyDelta="true">
+      <run
+            class="org.eclipse.core.tests.internal.builders.RebuildingBuilder">
+      </run> 
+    </builder>
+  </extension>
   <extension point="org.eclipse.core.resources.builders" id="brokenbuilder" name="Broken Builder">
     <builder>
       <run class="org.eclipse.core.tests.internal.builders.BrokenBuilder"/> 

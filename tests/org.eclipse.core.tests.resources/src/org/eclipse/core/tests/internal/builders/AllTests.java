@@ -19,6 +19,7 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ BuilderCycleTest.class, BuilderEventTest.class, BuilderNatureTest.class, BuilderTest.class,
+		RebuildTest.class,
 		BuildDeltaVerificationTest.class, CustomBuildTriggerTest.class, EmptyDeltaTest.class,
 		MultiProjectBuildTest.class, RelaxedSchedRuleBuilderTest.class, BuildConfigurationsTest.class,
 		BuildContextTest.class, ParallelBuildChainTest.class, ComputeProjectOrderTest.class })
