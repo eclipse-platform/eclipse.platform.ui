@@ -542,6 +542,8 @@ public class LargeFileLimitsPreferenceHandler {
 
 		@Override
 		public void prompt(IPath inputPath, FileLimit fileLimit) {
+			selectedEditor = null;
+			rememberSelection = false;
 			Shell shell = ProgressManagerUtil.getDefaultParent();
 			LargeFileEditorSelectionDialog dialog =
 					new LargeFileEditorSelectionDialog(shell, inputPath.getFileExtension(), fileLimit.fileSize);
@@ -569,13 +571,13 @@ public class LargeFileLimitsPreferenceHandler {
 		private final long fileSize;
 
 		private Button rememberSelectionButton;
-		private boolean rememberSelection = DEFAULT_REMEMBER_EDITOR_SELECTION;
+		private boolean rememberSelection;
 
 		public LargeFileEditorSelectionDialog(Shell shell, String extension, long size) {
 			super(shell);
 			this.extension = extension;
 			this.fileSize = size;
-			rememberSelection = false;
+			rememberSelection = DEFAULT_REMEMBER_EDITOR_SELECTION;
 		}
 
 		@Override
