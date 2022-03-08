@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2021 IBM Corporation and others.
+ * Copyright (c) 2005, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -63,7 +63,7 @@ public class RemoveUnusedMessages extends Refactoring {
 		change = new CompositeChange("Accessor Class Changes");
 		RefactoringStatus result = new RefactoringStatus();
 		ICompilationUnit unit = JavaCore.createCompilationUnitFrom((IFile) accessorClass.getResource());
-		CompilationUnit root = new RefactoringASTParser(AST.JLS_Latest).parse(unit, true, null);
+		CompilationUnit root = new RefactoringASTParser(AST.getJLSLatest()).parse(unit, true, null);
 		ASTRewrite rewriter = ASTRewrite.create(root.getAST());
 
 		// Search for references
