@@ -269,11 +269,12 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	 */
 	private synchronized void setInterrupted(boolean value) {
 		interrupted = value;
+		// we do not "cancel" in case of interrupt but let the builder decide because
+		// for example JDT builder can not resume from canceled autobuild but requires full build
+		// cancel = explicit user request
+		// interrupt = automatic conflict solving
 		if (interrupted && Policy.DEBUG_BUILD_INTERRUPT)
 			Policy.debug(new RuntimeException("Autobuild was interrupted")); //$NON-NLS-1$
-		if (interrupted) {
-			cancel(); // interrupt alone does not stop for example the java builder.
-		}
 	}
 
 	/**
