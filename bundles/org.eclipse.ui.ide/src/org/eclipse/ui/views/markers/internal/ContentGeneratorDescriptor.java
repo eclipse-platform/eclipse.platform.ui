@@ -41,6 +41,7 @@ public class ContentGeneratorDescriptor {
 	private static final String ATTRIBUTE_VISIBLE = "visible"; //$NON-NLS-1$
 	private static final String ELEMENT_MARKER_FIELD_CONFIGURATION = "markerFieldConfiguration"; //$NON-NLS-1$;
 	private static final String MARKER_FIELD_REFERENCE = "markerFieldReference"; //$NON-NLS-1$
+	private static final String MARKER_SCOPE_AREA_CONFIGURATION = "markerScopeAreaConfiguration"; //$NON-NLS-1$
 
 	private IConfigurationElement configurationElement;
 	private MarkerField[] allFields;
@@ -142,6 +143,13 @@ public class ContentGeneratorDescriptor {
 	}
 
 	/**
+	 * @return the IConfigurationElement for scope area configuration.
+	 */
+	public IConfigurationElement getScopeAreaConfigurationElement() {
+		IConfigurationElement[] childElements = configurationElement.getChildren(MARKER_SCOPE_AREA_CONFIGURATION);
+		return childElements.length > 0 ? childElements[0] : null;
+	}
+	/**
 	 * Return the id of the receiver.
 	 *
 	 * @return String
@@ -185,6 +193,7 @@ public class ContentGeneratorDescriptor {
 	 * @return Collection of {@link MarkerType}
 	 */
 	public Collection<MarkerType> getMarkerTypes() {
+
 		if (markerTypes == null) {
 			markerTypes = new HashSet<>();
 			IConfigurationElement[] markerTypeElements = configurationElement.getChildren(MarkerSupportRegistry.MARKER_TYPE_REFERENCE);
@@ -199,6 +208,7 @@ public class ContentGeneratorDescriptor {
 				markerTypes.addAll(Arrays.asList(types));
 			}
 		}
+
 		return markerTypes;
 	}
 

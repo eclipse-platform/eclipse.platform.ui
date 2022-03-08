@@ -276,6 +276,18 @@ public class MarkerContentGenerator {
 	}
 
 	/**
+	 * Create the scope area for this generator.
+	 *
+	 * @return a new instance of {@link GroupFilterConfigurationArea}
+	 */
+	GroupFilterConfigurationArea createScopeArea() {
+		GroupFilterConfigurationArea scopeArea = MarkerSupportInternalUtilities
+				.generateScopeArea(generatorDescriptor.getScopeAreaConfigurationElement());
+
+		return scopeArea;
+	}
+
+	/**
 	 * Get the category name from the receiver.
 	 */
 	String getCategoryName() {
