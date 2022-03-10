@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -1342,7 +1342,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		List<IConfigurationElement> handledElements = new ArrayList<>();
 		handledElements.add(items.get(0)); // Hack!! startup seeding
 		MUIElement createdTrim = null;
-		while (items.size() > 0 && handledElements.size() > 0) {
+		while (!items.isEmpty() && !handledElements.isEmpty()) {
 			handledElements.clear();
 
 			for (IConfigurationElement item : items) {
@@ -2174,7 +2174,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 						// do nothing
 					}
 				}
-				if (dirtyParts != null && dirtyParts.size() > 0) {
+				if (!dirtyParts.isEmpty()) {
 					ISaveHandler saveHandler = context.get(ISaveHandler.class);
 					if (saveHandler != null) {
 						if (saveHandler instanceof WWinPartServiceSaveHandler) {
