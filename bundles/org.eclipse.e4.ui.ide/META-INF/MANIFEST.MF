@@ -2,10 +2,9 @@ Manifest-Version: 1.0
 Automatic-Module-Name: org.eclipse.e4.ui.ide
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.eclipse.e4.ui.ide
-Bundle-Version: 3.16.0.qualifier
+Bundle-Version: 3.16.100.qualifier
 Bundle-Name: %Bundle-Name
 Bundle-Vendor: %Bundle-Vendor
-Bundle-Copyright: %Bundle-Copyright
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.core.resources;bundle-version="[3.7.0,4.0.0)";resolution:=optional,
