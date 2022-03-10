@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2018 Ovidio Mallo and others.
+ * Copyright (c) 2010, 2022 Ovidio Mallo and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,6 +16,7 @@ package org.eclipse.core.tests.internal.databinding.observable.masterdetail;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -290,7 +291,7 @@ public class ListDetailValueObservableListTest extends
 		ListDiffEntry entry2 = diff.getDifferences()[1];
 
 		// One diff entry must be an addition, the other a removal.
-		assertTrue(entry1.isAddition() != entry2.isAddition());
+		assertNotEquals(entry1.isAddition(), entry2.isAddition());
 
 		// Check for the index on the diff entries.
 		assertEquals(index, entry1.getPosition());
