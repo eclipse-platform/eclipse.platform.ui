@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2018 Tom Schindl and others.
+ * Copyright (c) 2010, 2022 Tom Schindl and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -609,15 +609,13 @@ public class ThemeEngine implements IThemeEngine {
 			}
 		}
 
-		// For Mac & GTK, if the system has Dark appearance set and Eclipse is using the
-		// default settings, then start Eclipse in Dark theme.
-
-		// Check that there is a dark theme present
+		/*
+		 * Any Platform: if the system has Dark appearance set and Eclipse is using the
+		 * default settings, then start Eclipse in Dark theme. Check that there is a
+		 * dark theme present.
+		 */
 		boolean hasDarkTheme = getThemes().stream().anyMatch(t -> t.getId().startsWith(E4_DARK_THEME_ID));
-
-		String os = Platform.getOS();
-		String themeToRestore = (Platform.OS_LINUX.equals(os) || Platform.OS_MACOSX.equals(os))
-				&& Display.isSystemDarkTheme() && hasDarkTheme ? E4_DARK_THEME_ID : alternateTheme;
+		String themeToRestore = Display.isSystemDarkTheme() && hasDarkTheme ? E4_DARK_THEME_ID : alternateTheme;
 		if (themeToRestore != null && flag) {
 			setTheme(themeToRestore, false);
 		}
