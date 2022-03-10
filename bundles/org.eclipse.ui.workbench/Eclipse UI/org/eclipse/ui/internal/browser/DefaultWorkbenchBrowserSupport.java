@@ -13,7 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.browser;
 
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.browser.AbstractWorkbenchBrowserSupport;
 import org.eclipse.ui.browser.IWebBrowser;
@@ -29,14 +30,14 @@ import org.eclipse.ui.browser.IWebBrowser;
  * @since 3.1
  */
 public class DefaultWorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
-	private Hashtable browsers;
+	private Map<String, IWebBrowser> browsers;
 	private static final String DEFAULT_BROWSER_ID_BASE = "org.eclipse.ui.defaultBrowser"; //$NON-NLS-1$
 
 	/**
 	 * The default constructor.
 	 */
 	public DefaultWorkbenchBrowserSupport() {
-		browsers = new Hashtable();
+		browsers = new HashMap<>();
 	}
 
 	void registerBrowser(IWebBrowser browser) {
@@ -48,7 +49,7 @@ public class DefaultWorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupp
 	}
 
 	IWebBrowser findBrowser(String id) {
-		return (IWebBrowser) browsers.get(id);
+		return browsers.get(id);
 	}
 
 	protected IWebBrowser doCreateBrowser(int style, String browserId, String name, String tooltip)
