@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2017 BestSolution.at and others.
+ * Copyright (c) 2010, 2022 BestSolution.at and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -759,17 +759,13 @@ public class ControlFactory {
 	public static <M> void createCheckBox(Composite parent, String label, String tooltip, IObservableValue<M> master,
 			EMFDataBindingContext context, IWidgetValueProperty<Button, Boolean> selectionProp,
 			IValueProperty<? super M, Boolean> modelProp) {
-		final Label l = new Label(parent, SWT.NONE);
-		l.setText(label);
+		final Button checkBox = new Button(parent, SWT.CHECK);
+		checkBox.setText(label);
 		if (tooltip != null) {
-			l.setToolTipText(tooltip);
+			checkBox.setToolTipText(tooltip);
 		}
-		l.setLayoutData(new GridData());
-
-		final Button t = new Button(parent, SWT.CHECK);
-		t.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false, 2, 1));
-		context.bindValue(selectionProp.observe(t), modelProp.observeDetail(master));
-
+		checkBox.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false, 3, 1));
+		context.bindValue(selectionProp.observe(checkBox), modelProp.observeDetail(master));
 	}
 
 	public static String getLocalizedLabel(ProjectOSGiTranslationProvider translationProvider, MUILabel element) {
