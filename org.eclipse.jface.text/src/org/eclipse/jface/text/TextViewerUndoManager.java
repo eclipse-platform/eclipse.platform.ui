@@ -175,7 +175,7 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 				// Reveal the change if this manager's viewer has the focus.
 				if (fTextViewer != null) {
 					StyledText widget= fTextViewer.getTextWidget();
-					if (widget != null && !widget.isDisposed() && (widget.isFocusControl()))// || fTextViewer.getTextWidget() == control))
+					if (widget != null && !widget.isDisposed() && (widget.isFocusControl()) && (widget.getSelectionRanges().length <= 2))// || fTextViewer.getTextWidget() == control))
 						selectAndReveal(event.getOffset(), event.getText() == null ? 0 : event.getText().length());
 				}
 			}
