@@ -33,5 +33,6 @@ public class StopMultiSelectionHandler extends AbstractMultiSelectionHandler {
 		int caretOffset = getCaretOffset();
 		selectRegion(offsetAsCaretRegion(caretOffset));
 		setCaretOffset(caretOffset);
+		setAnchorRegion(null);
 	}
 }

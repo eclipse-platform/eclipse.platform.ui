@@ -52,9 +52,9 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
  * an editor from this bundle is quite tricky without the IDE and EFS utils.
  */
 public class TextMultiCaretSelectionCommandsTest {
-	private static final String ADD_NEXT_MATCH_TO_MULTI_SELECTION = "org.eclipse.ui.edit.text.select.addNextMatchToMultiSelection";
+	private static final String MULTI_SELECTION_DOWN = "org.eclipse.ui.edit.text.select.selectMultiSelectionDown";
 	private static final String ADD_ALL_MATCHES_TO_MULTI_SELECTION = "org.eclipse.ui.edit.text.select.addAllMatchesToMultiSelection";
-	private static final String REMOVE_LAST_MATCH_FROM_MULTI_SELECTION = "org.eclipse.ui.edit.text.select.removeLastMatchFromMultiSelection";
+	private static final String MULTI_SELECTION_UP = "org.eclipse.ui.edit.text.select.selectMultiSelectionUp";
 	private static final String STOP_MULTI_SELECTION = "org.eclipse.ui.edit.text.select.stopMultiSelection";
 
 	private static final String LINE_1 = "private static String a;\n";
@@ -88,16 +88,17 @@ public class TextMultiCaretSelectionCommandsTest {
 	}
 
 	@Test
-	public void testAddNextMatch_withFirstIdentifierSelected_addsIdenticalIdentifiersToSelection() throws Exception {
+	public void testMultiSelectionDown_withFirstIdentifierSelected_addsIdenticalIdentifiersToSelection()
+			throws Exception {
 		setSelection(new IRegion[] { new Region(0, 7) });
 		assertEquals(7, widget.getCaretOffset());
 
-		executeCommand(ADD_NEXT_MATCH_TO_MULTI_SELECTION);
+		executeCommand(MULTI_SELECTION_DOWN);
 
 		assertEquals(7, widget.getCaretOffset());
 		assertArrayEquals(new IRegion[] { new Region(0, 7), new Region(L1_LEN, 7) }, getSelection());
 
-		executeCommand(ADD_NEXT_MATCH_TO_MULTI_SELECTION);
+		executeCommand(MULTI_SELECTION_DOWN);
 
 		assertEquals(7, widget.getCaretOffset());
 		assertArrayEquals(new IRegion[] { new Region(0, 7), new Region(L1_LEN, 7), new Region(L1_LEN + L2_LEN, 7) },
@@ -109,24 +110,24 @@ public class TextMultiCaretSelectionCommandsTest {
 	}
 
 	@Test
-	public void testAddNextMatch_withSecondIdentifierSelectedIdentifier_addsNextOccurenceToSelection()
+	public void testMultiSelectionDown_withSecondIdentifierSelectedIdentifier_addsNextOccurenceToSelection()
 			throws Exception {
 		setSelection(new IRegion[] { new Region(8, 6) });
 		assertEquals(14, widget.getCaretOffset());
 
-		executeCommand(ADD_NEXT_MATCH_TO_MULTI_SELECTION);
+		executeCommand(MULTI_SELECTION_DOWN);
 
 		assertEquals(14, widget.getCaretOffset());
 		assertArrayEquals(new IRegion[] { new Region(8, 6), new Region(L1_LEN + 8, 6) }, getSelection());
 	}
 
 	@Test
-	public void testAddNextMatch_withSelectionInSecondRow_addsIdenticalIdentifierInThirdRowToSelection()
+	public void testMultiSelectionDown_withSelectionInSecondRow_addsIdenticalIdentifierInThirdRowToSelection()
 			throws Exception {
 		setSelection(new IRegion[] { new Region(L1_LEN + 8, 6) });
 		assertEquals(L1_LEN + 14, widget.getCaretOffset());
 
-		executeCommand(ADD_NEXT_MATCH_TO_MULTI_SELECTION);
+		executeCommand(MULTI_SELECTION_DOWN);
 
 		assertEquals(L1_LEN + 14, widget.getCaretOffset());
 		assertArrayEquals(new IRegion[] { new Region(L1_LEN + 8, 6), new Region(L1_LEN + L2_LEN + 8, 6) },
@@ -134,67 +135,99 @@ public class TextMultiCaretSelectionCommandsTest {
 	}
 
 	@Test
-	public void testAddNextMatch_withCaretInFirstIdentifier_selectsFullIdentifier() throws Exception {
+	public void testMultiSelectionDown_withTwoSelectionsAndAnchorBelow_reducesSelection() throws Exception {
+		setSelection(new IRegion[] { new Region(L1_LEN + 8, 6) });
+		// It is important here to build up the selection in steps, so the
+		// handler can determine an anchor region
+		executeCommand(MULTI_SELECTION_UP);
+		assertArrayEquals(new IRegion[] { new Region(8, 6), new Region(L1_LEN + 8, 6) }, getSelection());
+
+		executeCommand(MULTI_SELECTION_DOWN);
+
+		assertArrayEquals(new IRegion[] { new Region(L1_LEN + 8, 6) }, getSelection());
+	}
+
+	@Test
+	public void testMultiSelectionDown_withTwoSelectionsAndAnchorAbove_extendsSelection() throws Exception {
+		setSelection(new IRegion[] { new Region(L1_LEN + 8, 6) });
+		// It is important here to build up the selection in steps, so the
+		// handler can determine an anchor region
+		executeCommand(MULTI_SELECTION_DOWN);
+		assertArrayEquals(new IRegion[] { new Region(L1_LEN + 8, 6), new Region(L1_LEN + L2_LEN + 8, 6) },
+				getSelection());
+
+		executeCommand(MULTI_SELECTION_DOWN);
+
+		assertArrayEquals(new IRegion[] { new Region(L1_LEN + 8, 6), new Region(L1_LEN + L2_LEN + 8, 6),
+				new Region(L1_LEN + L2_LEN + L3_LEN + 8, 6) }, getSelection());
+	}
+
+	// Caret-related tests for ADD_NEXT_MATCH_TO_MULTI_SELECTION
+	// that check how the selection is expanded
+
+	@Test
+	public void testMultiSelectionDown_withCaretInFirstIdentifier_selectsFullIdentifier() throws Exception {
 		setSelection(new IRegion[] { new Region(1, 0) });
 		assertEquals(1, widget.getCaretOffset());
 
-		executeCommand(ADD_NEXT_MATCH_TO_MULTI_SELECTION);
+		executeCommand(MULTI_SELECTION_DOWN);
 
 		assertEquals(7, widget.getCaretOffset());
 		assertArrayEquals(new IRegion[] { new Region(0, 7) }, getSelection());
 	}
 
 	@Test
-	public void testAddNextMatch_withCaretInSecondIdentifier_selectsFullIdentifier() throws Exception {
+	public void testMultiSelectionDown_withCaretInSecondIdentifier_selectsFullIdentifier() throws Exception {
 		setSelection(new IRegion[] { new Region(11, 0) });
 		assertEquals(11, widget.getCaretOffset());
 
-		executeCommand(ADD_NEXT_MATCH_TO_MULTI_SELECTION);
+		executeCommand(MULTI_SELECTION_DOWN);
 
 		assertEquals(14, widget.getCaretOffset());
 		assertArrayEquals(new IRegion[] { new Region(8, 6) }, getSelection());
 	}
 
 	@Test
-	public void testAddNextMatch_withCaretBetweenIdentifierCharAndNonIdentifierChar_selectsFullIdentifier()
+	public void testMultiSelectionDown_withCaretBetweenIdentifierCharAndNonIdentifierChar_selectsFullIdentifier()
 			throws Exception {
 		setSelection(new IRegion[] { new Region(23, 0) });
 		assertEquals(23, widget.getCaretOffset());
 
-		executeCommand(ADD_NEXT_MATCH_TO_MULTI_SELECTION);
+		executeCommand(MULTI_SELECTION_DOWN);
 
 		assertEquals(23, widget.getCaretOffset());
 		assertArrayEquals(new IRegion[] { new Region(22, 1) }, getSelection());
 	}
 
 	@Test
-	public void testAddNextMatch_withCaretInSecondRow_selectsFullIdentifier() throws Exception {
+	public void testMultiSelectionDown_withCaretInSecondRow_selectsFullIdentifier() throws Exception {
 		setSelection(new IRegion[] { new Region(L1_LEN + 11, 0) });
 		assertEquals(L1_LEN + 11, widget.getCaretOffset());
 
-		executeCommand(ADD_NEXT_MATCH_TO_MULTI_SELECTION);
+		executeCommand(MULTI_SELECTION_DOWN);
 
 		assertEquals(L1_LEN + 14, widget.getCaretOffset());
 		assertArrayEquals(new IRegion[] { new Region(L1_LEN + 8, 6) }, getSelection());
 	}
 
 	@Test
-	public void testAddNextMatch_withCaretInIdentifierWithNoFollowingMatch_selectsFullIdentifier() throws Exception {
+	public void testMultiSelectionDown_withCaretInIdentifierWithNoFollowingMatch_selectsFullIdentifier()
+			throws Exception {
 		setSelection(new IRegion[] { new Region(L1_LEN + L2_LEN + L3_LEN + 11, 0) });
 		assertEquals(L1_LEN + L2_LEN + L3_LEN + 11, widget.getCaretOffset());
 
-		executeCommand(ADD_NEXT_MATCH_TO_MULTI_SELECTION);
+		executeCommand(MULTI_SELECTION_DOWN);
 
 		assertEquals(L1_LEN + L2_LEN + L3_LEN + 14, widget.getCaretOffset());
 		assertArrayEquals(new IRegion[] { new Region(L1_LEN + L2_LEN + L3_LEN + 8, 6) }, getSelection());
 	}
 
 	@Test
-	public void testAddNextMatch_withCaretAtEndOfDocument_selectsFullIdentifier() throws Exception {
+	public void testMultiSelectionDown_withCaretAtEndOfDocument_selectsFullIdentifier() throws Exception {
 		setSelection(new IRegion[] { new Region(L1_LEN + L2_LEN + L3_LEN + L4_LEN, 0) });
 		assertEquals(L1_LEN + L2_LEN + L3_LEN + L4_LEN, widget.getCaretOffset());
 
-		executeCommand(ADD_NEXT_MATCH_TO_MULTI_SELECTION);
+		executeCommand(MULTI_SELECTION_DOWN);
 
 		assertEquals(L1_LEN + L2_LEN + L3_LEN + L4_LEN, widget.getCaretOffset());
 		assertArrayEquals(new IRegion[] { new Region(L1_LEN + L2_LEN + L3_LEN + L4_LEN - 1, 1) }, getSelection());
@@ -248,47 +281,79 @@ public class TextMultiCaretSelectionCommandsTest {
 	}
 
 	@Test
-	public void testRemoveLastMatchFromMultiSelection_withCaretInIdentifier_doesNothing() throws Exception {
+	public void testMultiSelectionUp_withCaretInIdentifier_selectsFullIdentifier() throws Exception {
 		setSelection(new IRegion[] { new Region(L1_LEN + 11, 0) });
 		assertEquals(L1_LEN + 11, widget.getCaretOffset());
 
-		executeCommand(REMOVE_LAST_MATCH_FROM_MULTI_SELECTION);
+		executeCommand(MULTI_SELECTION_UP);
 
-		assertEquals(L1_LEN + 11, widget.getCaretOffset());
-		assertArrayEquals(new IRegion[] { new Region(L1_LEN + 11, 0) }, getSelection());
+		assertEquals(L1_LEN + 8 + 6, widget.getCaretOffset());
+		assertArrayEquals(new IRegion[] { new Region(L1_LEN + 8, 6) }, getSelection());
 	}
 
 	@Test
-	public void testRemoveLastMatchFromMultiSelection_withSingleSelection_doesNothing() throws Exception {
+	public void testMultiSelectionUp_withSingleSelectionAndNoPreviousMatch_doesNothing()
+			throws Exception {
 		setSelection(new IRegion[] { new Region(8, 6) });
 		assertEquals(14, widget.getCaretOffset());
 
-		executeCommand(REMOVE_LAST_MATCH_FROM_MULTI_SELECTION);
+		executeCommand(MULTI_SELECTION_UP);
 
 		assertEquals(14, widget.getCaretOffset());
 		assertArrayEquals(new IRegion[] { new Region(8, 6) }, getSelection());
 	}
 
 	@Test
-	public void testRemoveLastMatchFromMultiSelection_withTwoSelections_removesSecondSelection() throws Exception {
+	public void testMultiSelectionUp_withTwoSelections_removesSecondSelection() throws Exception {
 		setSelection(new IRegion[] { new Region(8, 6), new Region(L1_LEN + 8, 6) });
 		assertEquals(14, widget.getCaretOffset());
 
-		executeCommand(REMOVE_LAST_MATCH_FROM_MULTI_SELECTION);
+		executeCommand(MULTI_SELECTION_UP);
 
 		assertEquals(14, widget.getCaretOffset());
 		assertArrayEquals(new IRegion[] { new Region(8, 6) }, getSelection());
 	}
 
 	@Test
-	public void testRemoveLastMatchFromMultiSelection_withThreeSelections_removesThirdSelection() throws Exception {
+	public void testMultiSelectionUp_withThreeSelections_removesThirdSelection() throws Exception {
 		setSelection(new IRegion[] { new Region(8, 6), new Region(L1_LEN + 8, 6), new Region(L1_LEN + L2_LEN + 8, 6) });
 		assertEquals(14, widget.getCaretOffset());
 
-		executeCommand(REMOVE_LAST_MATCH_FROM_MULTI_SELECTION);
+		executeCommand(MULTI_SELECTION_UP);
 
 		assertEquals(14, widget.getCaretOffset());
 		assertArrayEquals(new IRegion[] { new Region(8, 6), new Region(L1_LEN + 8, 6) }, getSelection());
+	}
+
+	@Test
+	public void testMultiSelectionUp_withTwoSelectionsAndAnchorAbove_reducesSelection()
+			throws Exception {
+		setSelection(new IRegion[] { new Region(8, 6) });
+		// It is important here to build up the selection in steps, so the
+		// handler can determine an anchor region
+		executeCommand(MULTI_SELECTION_DOWN);
+		assertArrayEquals(new IRegion[] { new Region(8, 6), new Region(L1_LEN + 8, 6) }, getSelection());
+
+		executeCommand(MULTI_SELECTION_UP);
+
+		assertArrayEquals(new IRegion[] { new Region(8, 6) }, getSelection());
+	}
+
+	@Test
+	public void testMultiSelectionUp_withTwoSelectionsAndAnchorBelow_extendsSelection()
+			throws Exception {
+		setSelection(new IRegion[] { new Region(L1_LEN + L2_LEN + 8, 6) });
+		// It is important here to build up the selection in steps, so the
+		// handler can determine an anchor region
+		executeCommand(MULTI_SELECTION_UP);
+		assertArrayEquals(new IRegion[] { new Region(L1_LEN + 8, 6), new Region(L1_LEN + L2_LEN + 8, 6) },
+				getSelection());
+
+		executeCommand(MULTI_SELECTION_UP);
+
+		assertArrayEquals(
+				new IRegion[] { new Region(8, 6), new Region(L1_LEN + 8, 6), new Region(L1_LEN + L2_LEN + 8, 6) },
+				getSelection());
 	}
 
 	@Test
@@ -330,8 +395,8 @@ public class TextMultiCaretSelectionCommandsTest {
 		setSelection(new IRegion[] { new Region(0, 7), new Region(L1_LEN, 7), new Region(L1_LEN + L2_LEN, 7) });
 		assertEquals(7, widget.getCaretOffset());
 
-		executeCommand(ADD_NEXT_MATCH_TO_MULTI_SELECTION);
-		executeCommand(ADD_NEXT_MATCH_TO_MULTI_SELECTION);
+		executeCommand(MULTI_SELECTION_DOWN);
+		executeCommand(MULTI_SELECTION_DOWN);
 
 		// TODO How to place the caret at the end without dismissing the
 		// selection? Should rather be 57

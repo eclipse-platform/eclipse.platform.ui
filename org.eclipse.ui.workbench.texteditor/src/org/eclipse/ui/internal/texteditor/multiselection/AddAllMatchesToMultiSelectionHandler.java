@@ -11,11 +11,9 @@
  * Contributors:
  *     Dirk Steinkamp <dirk.steinkamp@gmx.de> - initial API and implementation
  *******************************************************************************/
- package org.eclipse.ui.internal.texteditor.multiselection;
+package org.eclipse.ui.internal.texteditor.multiselection;
 
 import org.eclipse.core.commands.ExecutionException;
-
-import org.eclipse.jface.text.IRegion;
 
 /**
  * Handler to extend the current selection to all found matches in the document.
@@ -34,8 +32,9 @@ public class AddAllMatchesToMultiSelectionHandler extends AbstractMultiSelection
 
 	private void extendSelectionToAllMatches() throws ExecutionException {
 		if (allRegionsHaveSameText()) {
-			IRegion[] regions = getSelectedRegions();
-			selectRegions(findAllMatches(regions[0]));
+			if (!isEmpty(getAnchorRegion())) {
+				selectRegions(findAllMatches(getAnchorRegion()));
+			}
 		}
 	}
 }

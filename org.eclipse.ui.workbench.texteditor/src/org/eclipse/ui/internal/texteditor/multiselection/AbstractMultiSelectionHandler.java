@@ -46,11 +46,16 @@ import org.eclipse.ui.texteditor.ITextEditorExtension5;
  * initialized.
  *
  * @see AddAllMatchesToMultiSelectionHandler
- * @see AddNextMatchToMultiSelectionHandler
- * @see RemoveLastMatchFromMultiSelectionHandler
+ * @see MultiSelectionDownHandler
+ * @see MultiSelectionUpHandler
  * @see StopMultiSelectionHandler
  */
 abstract class AbstractMultiSelectionHandler extends AbstractHandler {
+	/**
+	 * Each widget can have a different anchor selection, that is stored in the
+	 * widget's data with this key.
+	 */
+	private static final String ANCHOR_REGION_KEY = "org.eclipse.ui.internal.texteditor.multiselection.AbstractMultiSelectionHandler.anchorRegion"; //$NON-NLS-1$
 	private ExecutionEvent event;
 	private ITextEditor textEditor;
 	private IDocument document;
@@ -58,7 +63,7 @@ abstract class AbstractMultiSelectionHandler extends AbstractHandler {
 	/**
 	 * This method needs to be overwritten from subclasses to handle the event.
 	 *
-	 * @throws ExecutionException
+	 * @throws ExecutionException an Exception the event handler might throw
 	 */
 	public abstract void execute() throws ExecutionException;
 
@@ -81,7 +86,7 @@ abstract class AbstractMultiSelectionHandler extends AbstractHandler {
 
 	protected boolean nothingSelected() {
 		IRegion[] regions = getSelectedRegions();
-		return regions == null || regions.length == 0 || regions[0].getLength() == 0;
+		return regions == null || regions.length == 0 || (regions.length == 1 && regions[0].getLength() == 0);
 	}
 
 	protected IRegion[] getSelectedRegions() {
@@ -95,32 +100,72 @@ abstract class AbstractMultiSelectionHandler extends AbstractHandler {
 	}
 
 	protected IRegion offsetAsCaretRegion(int offset) {
-		return new Region(offset, 0);
+		return createRegionIfValid(offset, 0);
 	}
 
-	protected void selectRegion(IRegion region) throws ExecutionException {
+	protected void selectRegion(IRegion region) {
 		selectRegions(new IRegion[] { region });
 	}
 
-	protected void selectRegions(IRegion[] regions) throws ExecutionException {
+	protected void selectRegions(IRegion[] regions) {
 		setBlockSelectionMode(false);
 
 		ISelection newSelection = new MultiTextSelection(document, regions);
 		textEditor.getSelectionProvider().setSelection(newSelection);
 	}
 
-	protected void selectIdentifierUnderCaret() throws ExecutionException {
+	protected void selectIdentifierUnderCaret() {
 		int offset = getCaretOffset();
 
 		Region identifierRegion = getIdentifierUnderCaretRegion(offset);
-		if (identifierRegion != null)
+		if (identifierRegion != null) {
 			selectRegion(identifierRegion);
+			setAnchorRegion(identifierRegion);
+		}
+	}
+
+	protected void selectCaretPosition() {
+		IRegion caretRegion = offsetAsCaretRegion(getCaretOffset());
+		selectRegion(caretRegion);
+		setAnchorRegion(caretRegion);
 	}
 
 	protected boolean allRegionsHaveSameText() {
-		if (nothingSelected())
-			return false;
 		return allRegionsHaveSameText(getSelectedRegions());
+	}
+
+	protected boolean allRegionsEmpty() {
+		IRegion[] selectedRegions = getSelectedRegions();
+		if (selectedRegions == null)
+			return true;
+		return isEmpty(selectedRegions[0]) && allRegionsHaveSameText(selectedRegions);
+	}
+
+	protected boolean isEmpty(IRegion region) {
+		return region == null || region.getLength() == 0;
+	}
+
+	protected IRegion getAnchorRegion() {
+		return (IRegion) getWidget().getData(ANCHOR_REGION_KEY);
+	}
+
+	protected void setAnchorRegion(IRegion selection) {
+		if (selection == null) {
+			getWidget().setData(ANCHOR_REGION_KEY, null);
+		} else {
+			getWidget().setData(ANCHOR_REGION_KEY, selection);
+		}
+	}
+
+	private void initAnchorRegion() {
+		IRegion[] regions = getSelectedRegions();
+		if ((regions != null && regions.length == 1) || !contains(regions, getAnchorRegion())) {
+			setAnchorRegion(regions[0]);
+		}
+	}
+
+	private boolean contains(IRegion[] regions, IRegion region) {
+		return Arrays.asList(regions).contains(region);
 	}
 
 	private boolean allRegionsHaveSameText(IRegion[] regions) {
@@ -163,6 +208,16 @@ abstract class AbstractMultiSelectionHandler extends AbstractHandler {
 		return Arrays.copyOf(regions, regions.length - 1);
 	}
 
+	protected IRegion[] removeFirstRegionButOne(IRegion[] regions) {
+		if (regions == null || regions.length == 0)
+			return null;
+		if (regions.length == 1) {
+			return regions;
+		}
+
+		return Arrays.copyOfRange(regions, 1, regions.length);
+	}
+
 	protected int getCaretOffset() {
 		return getWidget().getCaretOffset();
 	}
@@ -172,24 +227,49 @@ abstract class AbstractMultiSelectionHandler extends AbstractHandler {
 	}
 
 	protected IRegion findNextMatch(IRegion region) throws ExecutionException {
-		String fullText = getFullText();
 		try {
-			String searchString = getTextOfRegion(region);
+			if (region.getLength() == 0) {
+				return offsetAsCaretRegion(offsetInNextLine(region.getOffset()));
+			} else {
+				String searchString = getTextOfRegion(region);
 
-			int matchPos = fullText.indexOf(searchString, offsetAfter(region));
-			if (matchPos < 0)
-				return null;
-
-			return new Region(matchPos, region.getLength());
+				String fullText = getFullText();
+				int matchPos = fullText.indexOf(searchString, offsetAfter(region));
+				return createRegionIfValid(matchPos, region.getLength());
+			}
 		} catch (BadLocationException e) {
 			throw new ExecutionException("Internal error in findNextMatch", e);
 		}
 	}
 
+	protected IRegion findPreviousMatch(IRegion region) throws ExecutionException {
+		try {
+			if (region.getLength() == 0) {
+				return offsetAsCaretRegion(offsetInPreviousLine(region.getOffset()));
+			} else {
+				String searchString = getTextOfRegion(region);
+
+				String fullText = getFullText();
+				int matchPos = fullText.lastIndexOf(searchString, region.getOffset() - 1);
+				return createRegionIfValid(matchPos, region.getLength());
+			}
+		} catch (BadLocationException e) {
+			throw new ExecutionException("Internal error in findPreviousMatch", e);
+		}
+	}
+
+	private IRegion createRegionIfValid(int offset, int length) {
+		if ((offset < 0) || (offset > document.getLength()))
+			return null;
+
+		return new Region(offset, Math.min(length, document.getLength() - offset));
+	}
+
 	protected IRegion[] findAllMatches(IRegion region) throws ExecutionException {
 		try {
-			String fullText = getFullText();
 			String searchString = getTextOfRegion(region);
+
+			String fullText = getFullText();
 			List<IRegion> regions = findAllMatches(fullText, searchString);
 			return toArray(regions);
 		} catch (BadLocationException e) {
@@ -208,18 +288,39 @@ abstract class AbstractMultiSelectionHandler extends AbstractHandler {
 		return regions;
 	}
 
+	private int offsetInNextLine(int offset) throws BadLocationException {
+		return moveOffsetByLines(offset, 1);
+	}
+
+	private int offsetInPreviousLine(int offset) throws BadLocationException {
+		return moveOffsetByLines(offset, -1);
+	}
+
+	private int moveOffsetByLines(int offset, int lineDelta) throws BadLocationException {
+		int lineNo = document.getLineOfOffset(offset);
+		int newLineNo = lineNo + lineDelta;
+		if ((newLineNo < 0) || (newLineNo >= document.getNumberOfLines()))
+			return -1;
+
+		int newLineOffset = document.getLineOffset(newLineNo);
+		int delta = offset - document.getLineOffset(lineNo);
+
+		return newLineOffset + delta;
+	}
+
 	private boolean initFrom(ExecutionEvent event) {
 		this.event = event;
-		textEditor = getTextEditor(event);
+		initTextEditor();
 		if (textEditor == null)
 			return false;
 		document = getDocument();
+		initAnchorRegion();
 		return true;
 	}
 
-	private ITextEditor getTextEditor(ExecutionEvent event) {
+	private void initTextEditor() {
 		IEditorPart editor = HandlerUtil.getActiveEditor(event);
-		return editor instanceof ITextEditor ? (ITextEditor) editor : null;
+		textEditor = editor instanceof ITextEditor ? (ITextEditor) editor : null;
 	}
 
 	private IDocument getDocument() {
@@ -290,5 +391,33 @@ abstract class AbstractMultiSelectionHandler extends AbstractHandler {
 		}
 		ITextEditorExtension5 ext = (ITextEditorExtension5) textEditor;
 		ext.setBlockSelectionMode(blockSelectionMode);
+	}
+
+	protected boolean selectionIsAboveAnchorRegion() {
+		IRegion[] selectedRegions = getSelectedRegions();
+		if (selectedRegions == null || selectedRegions.length == 1)
+			return false;
+		return isLastRegion(getAnchorRegion(), selectedRegions);
+	}
+
+	protected boolean selectionIsBelowAnchorRegion() {
+		IRegion[] selectedRegions = getSelectedRegions();
+		if (selectedRegions == null || selectedRegions.length == 1)
+			return false;
+		return isFirstRegion(getAnchorRegion(), selectedRegions);
+	}
+
+	private boolean isLastRegion(IRegion region, IRegion[] regions) {
+		if (region == null || regions == null || regions.length == 0)
+			return false;
+
+		return region.equals(regions[regions.length - 1]);
+	}
+
+	private boolean isFirstRegion(IRegion region, IRegion[] regions) {
+		if (region == null || regions == null || regions.length == 0)
+			return false;
+
+		return region.equals(regions[0]);
 	}
 }

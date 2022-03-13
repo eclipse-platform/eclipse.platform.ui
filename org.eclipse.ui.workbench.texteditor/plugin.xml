@@ -311,16 +311,16 @@
 	        id="org.eclipse.ui.edit.text.select.addAllMatchesToMultiSelection">
 	  </command>
 	  <command
-	        name="%command.selectAddNextMatchToMultiSelection.name"
-	        description="%command.selectAddNextMatchToMultiSelection.description"
+	        name="%command.selectMultiSelectionDown.name"
+	        description="%command.selectMultiSelectionDown.description"
 	        categoryId="org.eclipse.ui.category.textEditor"
-	        id="org.eclipse.ui.edit.text.select.addNextMatchToMultiSelection">
+	        id="org.eclipse.ui.edit.text.select.selectMultiSelectionDown">
 	  </command>
 	  <command
-	        name="%command.selectRemoveLastMatchFromMultiSelection.name"
-	        description="%command.selectAddNextMatchToMultiSelection.description"
+	        name="%command.selectMultiSelectionUp.name"
+	        description="%command.selectMultiSelectionUp.description"
 	        categoryId="org.eclipse.ui.category.textEditor"
-	        id="org.eclipse.ui.edit.text.select.removeLastMatchFromMultiSelection">
+	        id="org.eclipse.ui.edit.text.select.selectMultiSelectionUp">
 	  </command>
 	  <command
 	        name="%command.stopMultiSelection.name"
@@ -1402,8 +1402,8 @@
          </enabledWhen>
       </handler>	
       <handler
-            class="org.eclipse.ui.internal.texteditor.multiselection.AddNextMatchToMultiSelectionHandler"
-            commandId="org.eclipse.ui.edit.text.select.addNextMatchToMultiSelection">
+            class="org.eclipse.ui.internal.texteditor.multiselection.MultiSelectionDownHandler"
+            commandId="org.eclipse.ui.edit.text.select.selectMultiSelectionDown">
          <enabledWhen>
             <with
                  variable="activeEditor">
@@ -1414,8 +1414,8 @@
          </enabledWhen>
       </handler>
       <handler
-            class="org.eclipse.ui.internal.texteditor.multiselection.RemoveLastMatchFromMultiSelectionHandler"
-            commandId="org.eclipse.ui.edit.text.select.removeLastMatchFromMultiSelection">
+            class="org.eclipse.ui.internal.texteditor.multiselection.MultiSelectionUpHandler"
+            commandId="org.eclipse.ui.edit.text.select.selectMultiSelectionUp">
          <enabledWhen>
             <with
                  variable="activeEditor">

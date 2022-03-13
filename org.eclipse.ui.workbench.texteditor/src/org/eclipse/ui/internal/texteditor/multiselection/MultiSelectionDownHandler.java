@@ -18,16 +18,22 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.text.IRegion;
 
 /**
- * Handler to extend the current selection to the next found match below the
- * selection. If no word is selected, an implicit selection of the word under
- * the cursor is performed.
+ * Handler to change the current multi selection downwards. This might either
+ * mean to extend the selection by adding a match below, or shrink the selection
+ * by removing the first selection range. This depends on the selection the
+ * command was invoked with the first time -- that selection is remembered as an
+ * "anchor" to which successive calls are related as reference selection.<br>
+ * If no word is selected, an implicit selection of the word under the cursor is
+ * performed.
  */
-public class AddNextMatchToMultiSelectionHandler extends AbstractMultiSelectionHandler {
+public class MultiSelectionDownHandler extends AbstractMultiSelectionHandler {
 
 	@Override
 	public void execute() throws ExecutionException {
 		if (nothingSelected()) {
 			selectIdentifierUnderCaret();
+		} else if (selectionIsAboveAnchorRegion()) {
+			removeFirstRegionFromSelection();
 		} else {
 			extendSelectionToNextMatch();
 		}
@@ -38,6 +44,12 @@ public class AddNextMatchToMultiSelectionHandler extends AbstractMultiSelectionH
 			IRegion[] regions = getSelectedRegions();
 			IRegion nextMatch = findNextMatch(regions[regions.length - 1]);
 			selectRegions(addRegion(regions, nextMatch));
+		}
+	}
+
+	private void removeFirstRegionFromSelection() {
+		if (allRegionsHaveSameText()) {
+			selectRegions(removeFirstRegionButOne(getSelectedRegions()));
 		}
 	}
 }
