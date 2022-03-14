@@ -651,7 +651,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	private URL getClasspathEntryURL(Bundle bundle, String library) throws IOException {
 		File urlFile = null;
 		if (library.equals("/")) { //$NON-NLS-1$
-			urlFile = FileLocator.getBundleFile(bundle);
+			urlFile = FileLocator.getBundleFileLocation(bundle).orElseThrow();
 		} else {
 			try {
 				URL fileURL = FileLocator.toFileURL(bundle.getEntry(library));
