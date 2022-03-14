@@ -2708,6 +2708,11 @@
             name="%quickAccess.resources.name"
             requiresUIAccess="false">
       </computer>
+      <computer
+            class="org.eclipse.ui.internal.ide.dialogs.OpenFilesystemQuickAccessComputer"
+            name="%quickAccess.filesystemPath.name"
+            requiresUIAccess="false">
+      </computer>
    </extension>
 
 </plugin>

@@ -91,11 +91,11 @@ public class OpenResourceQuickAccessComputer implements IQuickAccessComputer, IQ
 		return false;
 	}
 
-	private static class ResourceElement extends QuickAccessElement {
+	static class ResourceElement extends QuickAccessElement {
 		private final WorkbenchLabelProvider fLabelProvider;
 		private final IFile fFile;
 
-		private ResourceElement(WorkbenchLabelProvider labelProvider, IFile resource) {
+		ResourceElement(WorkbenchLabelProvider labelProvider, IFile resource) {
 			fLabelProvider = labelProvider;
 			fFile = resource;
 		}
