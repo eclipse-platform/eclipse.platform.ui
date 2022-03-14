@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2020 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -363,10 +363,11 @@ public class LaunchConfigurationTabGroupViewer {
 		SWTFactory.createWrapCLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_6, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_DUPLICATE_CONFIG), 1, width);
 		SWTFactory.createWrapCLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_4, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_DELETE_CONFIG), 1, width);
 		SWTFactory.createWrapCLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_8, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_FILTER_CONFIGS), 1, width);
-		SWTFactory.createWrapCLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_3, DebugUITools.getImage(IInternalDebugUIConstants.IMG_OVR_TRANSPARENT), 1, width);
 		SWTFactory.createWrapCLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_10, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_LINK_PROTO), 1, width);
 		SWTFactory.createWrapCLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_11, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_UNLINK_PROTO), 1, width);
 		SWTFactory.createWrapCLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_12, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_RESET_PROTO), 1, width);
+		SWTFactory.createHorizontalSpacer(parent, 2);
+		SWTFactory.createLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_3, width);
 
 		SWTFactory.createHorizontalSpacer(parent, 2);
 		Link link = new Link(parent, SWT.LEFT | SWT.WRAP);
