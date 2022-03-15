@@ -14,6 +14,8 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 
+import org.eclipse.core.runtime.Adapters;
+
 import org.eclipse.jface.viewers.ISelection;
 
 import org.eclipse.jface.text.IBlockTextSelection;
@@ -33,10 +35,10 @@ public class ToMultiSelectionHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IEditorPart editor = HandlerUtil.getActiveEditor(event);
-		if (!(editor instanceof ITextEditor)) {
+		ITextEditor textEditor = Adapters.adapt(editor, ITextEditor.class);
+		if (textEditor == null) {
 			return null;
 		}
-		ITextEditor textEditor = (ITextEditor) editor;
 		ISelection selection = textEditor.getSelectionProvider().getSelection();
 		if (!(selection instanceof IBlockTextSelection)) {
 			return null;

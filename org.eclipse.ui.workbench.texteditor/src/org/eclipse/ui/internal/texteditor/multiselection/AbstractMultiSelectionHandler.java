@@ -24,6 +24,8 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 
+import org.eclipse.core.runtime.Adapters;
+
 import org.eclipse.jface.viewers.ISelection;
 
 import org.eclipse.jface.text.BadLocationException;
@@ -320,7 +322,7 @@ abstract class AbstractMultiSelectionHandler extends AbstractHandler {
 
 	private void initTextEditor() {
 		IEditorPart editor = HandlerUtil.getActiveEditor(event);
-		textEditor = editor instanceof ITextEditor ? (ITextEditor) editor : null;
+		textEditor = Adapters.adapt(editor, ITextEditor.class);
 	}
 
 	private IDocument getDocument() {
