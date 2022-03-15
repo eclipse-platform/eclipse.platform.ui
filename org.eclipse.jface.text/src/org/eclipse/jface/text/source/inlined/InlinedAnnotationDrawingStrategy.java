@@ -202,7 +202,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 					// END TO REMOVE
 
 					// Annotation takes place, add GlyphMetrics width to the style
-					StyleRange newStyle= annotation.updateStyle(style);
+					StyleRange newStyle= annotation.updateStyle(style, gc.getFontMetrics());
 					if (newStyle != null) {
 						textWidget.setStyleRange(newStyle);
 						return;
@@ -285,7 +285,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 				// END TO REMOVE
 
 				// Annotation takes place, add GlyphMetrics width to the style
-				StyleRange newStyle= annotation.updateStyle(style);
+				StyleRange newStyle= annotation.updateStyle(style, gc.getFontMetrics());
 				if (newStyle != null) {
 					textWidget.setStyleRange(newStyle);
 					return;

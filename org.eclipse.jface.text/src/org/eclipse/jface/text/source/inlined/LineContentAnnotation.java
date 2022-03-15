@@ -16,6 +16,7 @@ package org.eclipse.jface.text.source.inlined;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.GlyphMetrics;
 
@@ -110,10 +111,11 @@ public class LineContentAnnotation extends AbstractInlinedAnnotation {
 	 * model position before passing it to a {@link TextPresentation}.
 	 *
 	 * @param style the current style and null otherwise.
+	 * @param fontMetrics font metrics
 	 * @return the style to apply with GlyphMetrics width only if needed. It uses widget position,
 	 *         not model position.
 	 */
-	StyleRange updateStyle(StyleRange style) {
+	StyleRange updateStyle(StyleRange style, FontMetrics fontMetrics) {
 		Position widgetPosition= computeWidgetPosition();
 		if (widgetPosition == null) {
 			return null;
@@ -134,7 +136,7 @@ public class LineContentAnnotation extends AbstractInlinedAnnotation {
 		GlyphMetrics metrics= style.metrics;
 		if (!isMarkedDeleted()) {
 			if (metrics == null) {
-				metrics= new GlyphMetrics(0, 0, fullWidth);
+				metrics= new GlyphMetrics(fontMetrics.getAscent(), fontMetrics.getDescent(), fullWidth);
 			} else {
 				if (metrics.width == fullWidth) {
 					return null;
@@ -144,7 +146,7 @@ public class LineContentAnnotation extends AbstractInlinedAnnotation {
 				 * later in StyledText#setStyleRange will compare the same (modified) and won't
 				 * realize an update happened.
 				 */
-				metrics= new GlyphMetrics(0, 0, fullWidth);
+				metrics= new GlyphMetrics(fontMetrics.getAscent(), fontMetrics.getDescent(), fullWidth);
 			}
 		} else {
 			metrics= null;

@@ -35,6 +35,8 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.GlyphMetrics;
 import org.eclipse.swt.widgets.Display;
 
@@ -112,7 +114,7 @@ public class InlinedAnnotationSupport {
 					.forEachRemaining(annotation -> {
 						if (annotation instanceof LineContentAnnotation) {
 							LineContentAnnotation ann= (LineContentAnnotation) annotation;
-							StyleRange style= ann.updateStyle(null);
+							StyleRange style= ann.updateStyle(null, fFontMetrics);
 							if (style != null) {
 								if (fViewer instanceof ITextViewerExtension5) {
 									ITextViewerExtension5 projectionViewer= (ITextViewerExtension5) fViewer;
@@ -340,6 +342,8 @@ public class InlinedAnnotationSupport {
 	 */
 	private final MouseTracker fMouseTracker= new MouseTracker();
 
+	private FontMetrics fFontMetrics;
+
 	/**
 	 * Install the inlined annotation support for the given viewer.
 	 *
@@ -364,6 +368,10 @@ public class InlinedAnnotationSupport {
 		text.addMouseListener(fMouseTracker);
 		text.addMouseMoveListener(fMouseTracker);
 		setColor(text.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
+		GC gc= new GC(viewer.getTextWidget());
+		gc.setFont(viewer.getTextWidget().getFont());
+		fFontMetrics= gc.getFontMetrics();
+		gc.dispose();
 	}
 
 	/**
