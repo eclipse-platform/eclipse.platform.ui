@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 TwelveTone LLC and others.
+ * Copyright (c) 2014, 2022 TwelveTone LLC and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -477,7 +477,7 @@ public class ListTab implements IViewEObjects {
 		{
 			final E4ToolItemMenu tiCommands = new E4ToolItemMenu(toolBar, context);
 			tiCommands.getToolItem().setImage(imageCache.create("/icons/full/obj16/command.gif")); //$NON-NLS-1$
-
+			tiCommands.getToolItem().setText(Messages.ListTab_more + ELIPSIS);
 			final ArrayList<String> commandIds = new ArrayList<>();
 			commandIds.add("org.eclipse.e4.tools.emf.ui.command.mark_duplicate_attributes"); //$NON-NLS-1$
 			commandIds.add("org.eclipse.e4.tools.emf.ui.command.mark_duplicate_ids"); //$NON-NLS-1$
