@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2021 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -353,6 +353,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * <p>
 	 * <b>Note:</b> this method will schedule rebuild for all projects involved in
 	 * the current build cycle!
+	 * </p>
 	 * <ul>
 	 * <li>If concrete projects that require rebuild are known, it is better to use
 	 * {@link #requestProjectsRebuild(Collection)} instead to avoid overhead.</li>
@@ -360,7 +361,6 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * {@link #requestProjectRebuild(boolean)} where additionally one could avoid
 	 * extra work by skipping not yet executed builders.</li>
 	 * </ul>
-	 * </p>
 	 * <p>
 	 * This is an advanced feature that builders should use with caution. This can
 	 * cause workspace builds to iterate until no more builders require rebuilds.
@@ -386,7 +386,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * rebuild of a project {@code processOtherBuilders} argument should be set to
 	 * {@code false}.
 	 * </p>
-	 *
+	 * <p>
 	 * <b>Note</b> if {@code processOtherBuilders} is set to {@code false}, the
 	 * project that is built with current builder will be only rebuilt again, if
 	 * this builder is not the first one configured to run.
