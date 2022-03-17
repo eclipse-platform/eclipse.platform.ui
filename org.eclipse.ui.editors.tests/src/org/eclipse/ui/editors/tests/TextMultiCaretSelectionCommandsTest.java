@@ -381,12 +381,12 @@ public class TextMultiCaretSelectionCommandsTest {
 	@Test
 	public void testStopMultiSelection_withMultiSelectionAndCaretAtBeginning_revokesSelectionAndKeepsFirstCaretOffset()
 			throws Exception {
-		setSelection(new IRegion[] { new Region(0, 0), new Region(0, 7), new Region(L1_LEN, 7) });
-		assertEquals(0, widget.getCaretOffset());
+		setSelection(new IRegion[] { new Region(0, 7), new Region(L1_LEN, 7) });
+		assertEquals(7, widget.getCaretOffset());
 
 		executeCommand(STOP_MULTI_SELECTION);
-		assertEquals(0, widget.getCaretOffset());
-		assertArrayEquals(new IRegion[] { new Region(0, 0) }, getSelection());
+		assertEquals(7, widget.getCaretOffset());
+		assertArrayEquals(new IRegion[] { new Region(7, 0) }, getSelection());
 	}
 
 	@Test

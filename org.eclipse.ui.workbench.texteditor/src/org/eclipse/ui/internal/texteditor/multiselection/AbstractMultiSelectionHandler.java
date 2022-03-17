@@ -221,11 +221,15 @@ abstract class AbstractMultiSelectionHandler extends AbstractHandler {
 	}
 
 	protected int getCaretOffset() {
-		return getWidget().getCaretOffset();
+		IRegion[] regions = getSelectedRegions();
+		if (regions == null) {
+			return -1;
+		}
+		return regions[0].getOffset() + regions[0].getLength();
 	}
 
-	protected void setCaretOffset(int offset) {
-		getWidget().setCaretOffset(offset);
+	protected void setCaretOffset(int caretOffset) {
+		selectRegion(offsetAsCaretRegion(caretOffset));
 	}
 
 	protected IRegion findNextMatch(IRegion region) throws ExecutionException {
