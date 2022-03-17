@@ -2522,6 +2522,10 @@ public class TextViewer extends Viewer implements
 		if (!redraws() && fViewerState != null) {
 			return toSelection(Arrays.stream(fViewerState.getSelection()).map(point -> new Region(point.x, point.y)).toArray(IRegion[]::new));
 		}
+
+		if (fTextWidget == null)
+			return TextSelection.emptySelection();
+
 		int[] ranges= fTextWidget.getSelectionRanges();
 		IRegion[] selectedRanges= new IRegion[ranges.length / 2];
 		for (int i= 0; i < selectedRanges.length; i++) {
