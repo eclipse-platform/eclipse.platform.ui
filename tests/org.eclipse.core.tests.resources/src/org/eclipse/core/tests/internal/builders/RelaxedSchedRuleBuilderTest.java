@@ -16,11 +16,13 @@ package org.eclipse.core.tests.internal.builders;
 
 import java.io.ByteArrayInputStream;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.core.tests.harness.TestBarrier;
 import org.eclipse.core.tests.internal.builders.TestBuilder.BuilderRuleCallback;
+import org.eclipse.core.tests.resources.TestUtil;
 
 /**
  * This class tests extended functionality (since 3.6) which allows
@@ -288,13 +290,14 @@ public class RelaxedSchedRuleBuilderTest extends AbstractBuilderTest {
 				// assert that the delta contains the file foo
 				IResourceDelta delta = getDelta(project);
 				assertNotNull("1.1", delta);
-				assertTrue("1.2", delta.getAffectedChildren().length == 1);
-				assertTrue("1.3", delta.getAffectedChildren()[0].getResource().equals(foo));
+				assertEquals("1.2.", 1, delta.getAffectedChildren().length);
+				assertEquals("1.3.", foo, delta.getAffectedChildren()[0].getResource());
 				tb1.setStatus(TestBarrier.STATUS_DONE);
 				return super.build(kind, args, monitor);
 			}
 		});
 
+		AtomicReference<Throwable> error = new AtomicReference<>();
 		// Run the incremental build
 		Job j = new Job("IProject.build()") {
 			@Override
@@ -302,12 +305,24 @@ public class RelaxedSchedRuleBuilderTest extends AbstractBuilderTest {
 				try {
 					getWorkspace().build(new IBuildConfiguration[] {project.getActiveBuildConfig()}, IncrementalProjectBuilder.INCREMENTAL_BUILD, true, monitor);
 				} catch (CoreException e) {
+					IStatus status = e.getStatus();
+					IStatus[] children = status.getChildren();
+					if (children.length > 0) {
+						error.set(children[0].getException());
+					} else {
+						error.set(e);
+					}
 					fail();
 				}
 				return Status.OK_STATUS;
 			}
 		};
 		j.schedule();
+
+		TestUtil.waitForJobs(getName(), 100, 1000);
+		if (error.get() != null) {
+			fail("Error observed", error.get());
+		}
 
 		// Wait for the build to transition to getRule
 		tb1.waitForStatus(TestBarrier.STATUS_START);
@@ -321,6 +336,10 @@ public class RelaxedSchedRuleBuilderTest extends AbstractBuilderTest {
 			}
 		};
 		j.schedule();
+		TestUtil.waitForJobs(getName(), 1000, 5000);
+		if (error.get() != null) {
+			fail("Error observed", error.get());
+		}
 		tb1.waitForStatus(TestBarrier.STATUS_DONE);
 	}
 

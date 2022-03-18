@@ -299,6 +299,9 @@ public class Messages extends NLS {
 	public static String resources_writeMeta;
 	public static String resources_writeWorkspaceMeta;
 	public static String resources_errorResourceIsFiltered;
+	public static String resources_checkExplicitEncoding_jobName;
+	public static String resources_checkExplicitEncoding_taskName;
+	public static String resources_checkExplicitEncoding_problemText;
 
 	public static String synchronizer_partnerNotRegistered;
 

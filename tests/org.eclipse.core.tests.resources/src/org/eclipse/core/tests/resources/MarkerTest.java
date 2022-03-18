@@ -786,8 +786,7 @@ public class MarkerTest extends ResourceTest {
 
 		try {
 			IProject project = getWorkspace().getRoot().getProject("MyProject");
-			project.create(null);
-			project.open(null);
+			create(project, false);
 			IFile file = project.getFile("foo.txt");
 			file.create(getRandomContents(), true, null);
 			file.createMarker(IMarker.PROBLEM);
@@ -1344,6 +1343,7 @@ public class MarkerTest extends ResourceTest {
 		IFile file = project.getFile("file.txt");
 		IFile subFile = folder.getFile("subFile.txt");
 		ensureExistsInWorkspace(new IResource[] {project, folder, file, subFile}, true);
+		waitForProjectEncodingValidation();
 		IFolder destFolder = project.getFolder("myOtherFolder");
 		IFile destSubFile = destFolder.getFile(subFile.getName());
 		IMarker folderMarker = null;
@@ -1412,6 +1412,7 @@ public class MarkerTest extends ResourceTest {
 		IFile file = project.getFile("file.txt");
 		IFile subFile = folder.getFile("subFile.txt");
 		ensureExistsInWorkspace(new IResource[] {project, folder, file, subFile}, true);
+		waitForProjectEncodingValidation();
 		IFile destFile = folder.getFile(file.getName());
 		IFile destSubFile = project.getFile(subFile.getName());
 		IMarker fileMarker = null;

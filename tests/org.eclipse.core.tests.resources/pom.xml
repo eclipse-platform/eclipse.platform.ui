@@ -52,6 +52,7 @@
   			<configuration>
   				<useUIHarness>false</useUIHarness>
   			 	<useUIThread>false</useUIThread>
+  			 	<appArgLine>-consoleLog</appArgLine>
   			 	<dependencies>
   			 		<dependency>
   			 			<artifactId>org.eclipse.core.tests.filesystem.feature</artifactId>

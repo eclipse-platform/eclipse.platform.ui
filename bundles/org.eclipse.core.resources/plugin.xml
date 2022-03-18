@@ -274,4 +274,15 @@
             name="natureId">
       </attribute>
    </extension>
+   <extension
+         id="noExplicitEncoding"
+         name="%noExplicitEncodingMarkerName"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
 </plugin>

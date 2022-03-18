@@ -44,6 +44,8 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 		 */
 		IPath getRoot();
 
+		IProject getProject();
+
 		/**
 		 * Returns whether the corresponding resource is affected by this change.
 		 */
@@ -106,6 +108,12 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 				// for now, mark all resources in the project as potential encoding resource changes
 				return true;
 			}
+
+			@Override
+			public IProject getProject() {
+				return project;
+			}
+
 		};
 		addToQueue(filter);
 	}
@@ -129,6 +137,11 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 					return false;
 				return event.getContentType().isAssociatedWith(requestor.requestName());
 			}
+
+			@Override
+			public IProject getProject() {
+				return null;
+			}
 		};
 		addToQueue(filter);
 	}
@@ -150,8 +163,13 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 		};
 		try {
 			IPath root = filter.getRoot();
-			if (root != null)
+			if (root != null) {
 				new ElementTreeIterator(workspace.getElementTree(), root).iterate(visitor);
+			}
+			IProject project = filter.getProject();
+			if (project != null) {
+				ValidateProjectEncoding.updateMissingEncodingMarker(project);
+			}
 		} catch (WrappedRuntimeException e) {
 			throw (CoreException) e.getTargetException();
 		}

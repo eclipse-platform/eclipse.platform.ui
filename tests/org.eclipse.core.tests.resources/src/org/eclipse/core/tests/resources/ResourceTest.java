@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.resources.Resource;
+import org.eclipse.core.internal.resources.ValidateProjectEncoding;
 import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.resources.*;
@@ -582,14 +583,15 @@ public abstract class ResourceTest extends CoreTest {
 		if (resource == null) {
 			return;
 		}
-		IWorkspaceRunnable body = monitor -> {
-			if (resource.exists()) {
-				resource.setContents(contents, true, false, null);
-			} else {
-				ensureExistsInWorkspace(resource.getParent(), true);
+		IWorkspaceRunnable body;
+		if (resource.exists()) {
+			body = monitor -> resource.setContents(contents, true, false, null);
+		} else {
+			body = monitor -> {
+				create(resource.getParent(), true);
 				resource.create(contents, true, null);
-			}
-		};
+			};
+		}
 		try {
 			getWorkspace().run(body, null);
 		} catch (CoreException e) {
@@ -978,15 +980,20 @@ public abstract class ResourceTest extends CoreTest {
 	 */
 	@Override
 	protected void setUp() throws Exception {
+		super.setUp();
+		TestUtil.log(IStatus.INFO, getName(), "setUp");
+		FreezeMonitor.expectCompletionInAMinute();
 		assertNotNull("Workspace was not setup", getWorkspace());
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-		super.tearDown();
+		TestUtil.log(IStatus.INFO, getName(), "tearDown");
 		// Ensure everything is in a clean state for next one.
 		// Session tests should overwrite it.
 		cleanup();
+		super.tearDown();
+		FreezeMonitor.done();
 	}
 
 	/**
@@ -1036,5 +1043,9 @@ public abstract class ResourceTest extends CoreTest {
 			}
 		}
 		return devices;
+	}
+
+	protected void waitForProjectEncodingValidation() {
+		TestUtil.waitForJobs(getName(), 10, 5_000, ValidateProjectEncoding.class);
 	}
 }

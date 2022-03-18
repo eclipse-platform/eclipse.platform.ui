@@ -1010,6 +1010,7 @@ public class Project extends Container implements IProject {
 	@Override
 	public void open(int updateFlags, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
+		boolean encodingWritten = false;
 		try {
 			String msg = NLS.bind(Messages.resources_opening_1, getName());
 			monitor.beginTask(msg, Policy.totalWork);
@@ -1100,6 +1101,7 @@ public class Project extends Container implements IProject {
 				// Project is new and does not have any content already (not imported)
 				if (!used && !unknownChildren) {
 					writeEncodingAfterOpen(monitor);
+					encodingWritten = true;
 				}
 				//creation of this project may affect overlapping resources
 				workspace.getAliasManager().updateAliases(this, getStore(), IResource.DEPTH_INFINITE, monitor);
@@ -1111,6 +1113,9 @@ public class Project extends Container implements IProject {
 			}
 		} finally {
 			monitor.done();
+		}
+		if (!encodingWritten) {
+			ValidateProjectEncoding.scheduleProjectValidation(this);
 		}
 	}
 

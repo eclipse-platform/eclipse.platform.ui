@@ -101,6 +101,64 @@ public class TestUtil {
 		return false;
 	}
 
+	/**
+	 * Utility for waiting until the execution of jobs of given family has finished
+	 * or timeout is reached. If no jobs are running, the method waits given minimum
+	 * wait time.
+	 *
+	 * @param owner
+	 *            name of the caller which will be logged as prefix if the wait
+	 *            times out
+	 * @param minTimeMs
+	 *            minimum wait time in milliseconds
+	 * @param maxTimeMs
+	 *            maximum wait time in milliseconds
+	 * @param family
+	 *            job family to wait for
+	 *
+	 * @return true if the method timed out, false if all the jobs terminated before
+	 *         the timeout
+	 */
+	public static boolean waitForJobs(String owner, long minTimeMs, long maxTimeMs, Object family) {
+		if (maxTimeMs < minTimeMs) {
+			throw new IllegalArgumentException("Max time is smaller as min time!");
+		}
+		final long start = System.currentTimeMillis();
+		while (System.currentTimeMillis() - start < minTimeMs) {
+			try {
+				Thread.sleep(Math.min(10, minTimeMs));
+			} catch (InterruptedException e) {
+				// Uninterruptable
+			}
+		}
+		while (!Job.getJobManager().isIdle()) {
+			List<Job> jobs = getRunningOrWaitingJobs(family);
+			if (jobs.isEmpty()) {
+				// only uninteresting jobs running
+				break;
+			}
+
+			if (!Collections.disjoint(runningJobs, jobs)) {
+				// There is a job which runs already quite some time, don't wait for it to avoid
+				// test timeouts
+				dumpRunningOrWaitingJobs(owner, jobs);
+				return true;
+			}
+
+			if (System.currentTimeMillis() - start >= maxTimeMs) {
+				dumpRunningOrWaitingJobs(owner, jobs);
+				return true;
+			}
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				// Uninterruptable
+			}
+		}
+		runningJobs.clear();
+		return false;
+	}
+
 	static Set<Job> runningJobs = new LinkedHashSet<>();
 
 	private static void dumpRunningOrWaitingJobs(String owner, List<Job> jobs) {

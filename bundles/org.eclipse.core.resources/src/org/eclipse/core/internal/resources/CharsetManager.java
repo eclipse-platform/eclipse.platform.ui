@@ -445,6 +445,10 @@ public class CharsetManager implements IManager {
 				else
 					encodingSettings.put(getKeyFor(resourcePath), newCharset);
 				flushPreferences(encodingSettings, true);
+				if (resource instanceof IProject) {
+					IProject project = (IProject) resource;
+					ValidateProjectEncoding.scheduleProjectValidation(project);
+				}
 			} catch (BackingStoreException e) {
 				IProject project = workspace.getRoot().getProject(resourcePath.segment(0));
 				String message = Messages.resources_savingEncoding;
@@ -503,5 +507,6 @@ public class CharsetManager implements IManager {
 		workspace.addResourceChangeListener(resourceChangeListener, IResourceChangeEvent.POST_CHANGE);
 		charsetListener = new CharsetDeltaJob(workspace);
 		charsetListener.startup();
+		ValidateProjectEncoding.scheduleWorkspaceValidation();
 	}
 }
