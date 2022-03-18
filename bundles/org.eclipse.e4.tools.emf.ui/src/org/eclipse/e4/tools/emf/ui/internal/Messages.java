@@ -796,6 +796,8 @@ public class Messages {
 	public String ListTab_col_item;
 	public String ListTab_col_label;
 	public String ListTab_col_go;
+	public String ListTab_col_go2;
+	public String ListTab_elementId;
 
 	public String ListTab_addColumn;
 	public String ListTab_filterByAttribute;

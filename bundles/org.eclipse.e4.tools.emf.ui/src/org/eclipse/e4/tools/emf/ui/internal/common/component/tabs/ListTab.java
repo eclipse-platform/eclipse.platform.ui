@@ -520,7 +520,7 @@ public class ListTab implements IViewEObjects {
 		});
 
 		colGoXmi = new TableViewerColumn(tvResults, SWT.NONE);
-		colGoXmi.getColumn().setText(Messages.ListTab_col_go);
+		colGoXmi.getColumn().setText(Messages.ListTab_col_go2);
 		requiredColumns.put("GoXmi", colGoXmi.getColumn()); //$NON-NLS-1$
 		colGoXmi.setLabelProvider(new ColumnLabelProvider() {
 			@Override
@@ -582,7 +582,7 @@ public class ListTab implements IViewEObjects {
 		app.getContext().set("org.eclipse.e4.tools.active-object-viewer", this); //$NON-NLS-1$
 
 		final EAttributeTableViewerColumn colId = new EAttributeTableViewerColumn(tvResults,
-				"elementId", "elementId", context); //$NON-NLS-1$//$NON-NLS-2$
+				Messages.ListTab_elementId, "elementId", context); //$NON-NLS-1$
 		defaultColumns.put("elementId", colId); //$NON-NLS-1$
 
 		final EAttributeTableViewerColumn colLabel = new EAttributeTableViewerColumn_Markable(tvResults,
