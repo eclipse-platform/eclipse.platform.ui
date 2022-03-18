@@ -98,7 +98,8 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 		operation.setUseTarFormat(false);
 		operation.run(new NullProgressMonitor());
 
-		verifyFolders(directoryNames.length + emptyDirectoryNames.length, ZIP_FILE_EXT);
+		// +1 for .settings
+		verifyFolders(directoryNames.length + emptyDirectoryNames.length + 1, ZIP_FILE_EXT);
 
 	}
 
@@ -151,7 +152,8 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 		operation.setUseCompression(false);
 		operation.setUseTarFormat(false);
 		operation.run(new NullProgressMonitor());
-		verifyFolders(directoryNames.length + emptyDirectoryNames.length, ZIP_FILE_EXT);
+		// +1 for .settings
+		verifyFolders(directoryNames.length + emptyDirectoryNames.length + 1, ZIP_FILE_EXT);
 
 		try (ZipFile zipFile = new ZipFile(filePath)) {
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
@@ -224,7 +226,8 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 
 		operation.run(new NullProgressMonitor());
 
-		verifyFolders(directoryNames.length + emptyDirectoryNames.length, TAR_FILE_EXT);
+		// +1 for .settings
+		verifyFolders(directoryNames.length + emptyDirectoryNames.length + 1, TAR_FILE_EXT);
 	}
 
 	@Test
@@ -499,6 +502,9 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 				return;
 			}
 		}
+		if (entryName.equals("org.eclipse.core.resources.prefs")) {
+			return;
+		}
 		fail("Could not find file named: " + entryName);
 	}
 
@@ -506,6 +512,9 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 		Iterator<String> folders = folderNames.iterator();
 		while (folders.hasNext()){
 			String folderName = folders.next();
+			if (".settings".equals(folderName)) {
+				continue;
+			}
 			if (!isDirectory(folderName)){
 				if (flattenPaths) {
 					fail(folderName + " is not an expected folder");

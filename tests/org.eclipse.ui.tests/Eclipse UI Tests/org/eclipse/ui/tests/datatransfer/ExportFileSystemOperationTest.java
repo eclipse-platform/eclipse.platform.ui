@@ -129,7 +129,8 @@ public class ExportFileSystemOperationTest extends UITestCase implements
 					null, resources, localDirectory, this);
 		openTestWindow().run(true, true, operation);
 
-		verifyFolders(directoryNames.length);
+		// +1 for .settings
+		verifyFolders(directoryNames.length + 1);
 	}
 
 	/* Export a project, create all leadup folders. */
@@ -143,7 +144,8 @@ public class ExportFileSystemOperationTest extends UITestCase implements
 					null, resources, localDirectory, this);
 		openTestWindow().run(true, true, operation);
 
-		verifyFolders(directoryNames.length);
+		// +1 for .settings
+		verifyFolders(directoryNames.length + 1);
 	}
 
 	/* Export folders, do not create leadup folders. */
@@ -207,7 +209,8 @@ public class ExportFileSystemOperationTest extends UITestCase implements
 		operation.setCreateLeadupStructure(false);
 		openTestWindow().run(true, true, operation);
 
-		verifyFolders(directoryNames.length);
+		// +1 for .settings
+		verifyFolders(directoryNames.length + 1);
 	}
 
 	private boolean isFile(IResource resource){
