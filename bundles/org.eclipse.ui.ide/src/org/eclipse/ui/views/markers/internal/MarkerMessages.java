@@ -321,4 +321,7 @@ public class MarkerMessages extends NLS {
 	public static String NewViewHandler_dialogTitle;
 	public static String NewViewHandler_dialogMessage;
 
+	public static String ProjectEncodingMarkerResolution_label;
+	public static String ProjectEncodingMarkerResolution_description;
+
 }

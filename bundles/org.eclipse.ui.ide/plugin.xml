@@ -2714,5 +2714,12 @@
             requiresUIAccess="false">
       </computer>
    </extension>
+   <extension
+         point="org.eclipse.ui.ide.markerResolution">
+      <markerResolutionGenerator
+            class="org.eclipse.ui.views.markers.internal.ProjectEncodingMarkerResolutionGenerator"
+            markerType="org.eclipse.core.resources.noExplicitEncoding">
+      </markerResolutionGenerator>
+   </extension>
 
 </plugin>
