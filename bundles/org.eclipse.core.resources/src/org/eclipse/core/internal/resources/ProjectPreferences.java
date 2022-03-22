@@ -19,6 +19,7 @@ package org.eclipse.core.internal.resources;
 import java.io.*;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.Map.Entry;
 import org.eclipse.core.internal.preferences.*;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.resources.*;
@@ -40,6 +41,8 @@ import org.osgi.service.prefs.Preferences;
 public class ProjectPreferences extends EclipsePreferences {
 	static final String PREFS_REGULAR_QUALIFIER = ResourcesPlugin.PI_RESOURCES;
 	static final String PREFS_DERIVED_QUALIFIER = PREFS_REGULAR_QUALIFIER + ".derived"; //$NON-NLS-1$
+	static final String PLACEHOLDER = "<temporary_value_placeholder>"; //$NON-NLS-1$
+
 	/**
 	 * Cache which nodes have been loaded from disk
 	 */
@@ -198,14 +201,11 @@ public class ProjectPreferences extends EclipsePreferences {
 				Policy.debug("Unable to determine preference file or file does not exist for node: " + node.absolutePath()); //$NON-NLS-1$
 			return;
 		}
-		Properties fromDisk = loadProperties(file);
-		// no work to do
-		if (fromDisk.isEmpty())
-			return;
-		// create a new node to store the preferences in.
-		IExportedPreferences myNode = (IExportedPreferences) ExportedPreferences.newRoot().node(node.absolutePath());
-		convertFromProperties((EclipsePreferences) myNode, fromDisk, false);
-		//flag that we are currently reading, to avoid unnecessary writing
+
+		// Create special "overriding" preferences to be applied
+		ExportedPreferences myNode = overridingPreferences(node, file);
+
+		// flag that we are currently reading, to avoid unnecessary writing
 		boolean oldIsReading = node.isReading;
 		node.isReading = true;
 		try {
@@ -213,6 +213,66 @@ public class ProjectPreferences extends EclipsePreferences {
 		} finally {
 			node.isReading = oldIsReading;
 		}
+	}
+
+	/**
+	 * Creates new preferences node from given file that can be used to apply via
+	 * preferences service and override the current in-memory preferences state.
+	 *
+	 * @param current in-memory state
+	 * @param file    new state on the disk to be loaded
+	 * @return new node that contains everything required to apply new state
+	 * @throws BackingStoreException
+	 * @see PreferencesService#applyPreferences(IExportedPreferences)
+	 */
+	private static ExportedPreferences overridingPreferences(ProjectPreferences current, IFile file)
+			throws BackingStoreException {
+		Properties fromDisk = loadProperties(file);
+
+		Properties fromMemory = new Properties();
+		current.convertToProperties(fromMemory, ""); //$NON-NLS-1$
+
+		// Re-create all the child elements existing in memory but not in the file
+		// in the node to be applied to preferences, so we can delete previously
+		// existing node values
+		Set<Entry<Object, Object>> set = fromMemory.entrySet();
+		for (Entry<Object, Object> entry : set) {
+			String key = (String) entry.getKey();
+			// Only touch nodes that are not in the file
+			if (!fromDisk.containsKey(key)) {
+				// and only touch "children" nodes, like encoding/<project>
+				if (key.indexOf('/') > 0) {
+					fromDisk.put(key, PLACEHOLDER);
+				}
+			}
+		}
+
+		// create a new node to store the preferences in.
+		ExportedPreferences myNode = (ExportedPreferences) ExportedPreferences.newRoot().node(current.absolutePath());
+		convertFromProperties(myNode, fromDisk, false);
+
+		// Makes sure the properties are overridden, not merged by marking children
+		// via setExportRoot() - this will remove & recreate them in memory,
+		// so only new values from the file are kept, old ones are removed
+		// See PreferencesService#applyPreferences(IExportedPreferences)
+		myNode.accept(child -> {
+			String[] keys = child.keys();
+			boolean nodeShouldBeRemoved = false;
+			// Remove our placeholders, we don't need them, only nodes
+			for (String key : keys) {
+				if (PLACEHOLDER.equals(child.get(key, null))) {
+					child.remove(key);
+					nodeShouldBeRemoved = true;
+				}
+			}
+			// Only mark child nodes for deletion, if we do that for the root
+			// node, the preferences file will be re-created (which leads to errors)
+			if (child != myNode && nodeShouldBeRemoved) {
+				((ExportedPreferences) child).setExportRoot();
+			}
+			return true;
+		});
+		return myNode;
 	}
 
 	static void removeNode(Preferences node) throws CoreException {
