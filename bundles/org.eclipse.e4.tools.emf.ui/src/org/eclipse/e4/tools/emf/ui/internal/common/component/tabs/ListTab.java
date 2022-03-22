@@ -378,7 +378,7 @@ public class ListTab implements IViewEObjects {
 
 		tabItem.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Widgets_table_obj));
 
-		final ToolBar toolBar = new ToolBar(composite, SWT.FLAT | SWT.NO_FOCUS);
+		final ToolBar toolBar = new ToolBar(composite, SWT.FLAT);
 		toolBar.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 2, 1));
 
 		{
