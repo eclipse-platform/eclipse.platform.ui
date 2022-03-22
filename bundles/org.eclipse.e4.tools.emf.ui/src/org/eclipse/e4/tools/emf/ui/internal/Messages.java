@@ -112,6 +112,7 @@ public class Messages {
 	public static String ModelTooling_Common_FindEllipsis;
 	public String ModelTooling_Common_TabDefault;
 	public String ModelTooling_Common_TabSupplementary;
+	public static String ModelTooling_XMIID;
 	public String ModelEditor_AddChild;
 	public String ModelEditor_Move;
 	public String ModelEditor_Cut;

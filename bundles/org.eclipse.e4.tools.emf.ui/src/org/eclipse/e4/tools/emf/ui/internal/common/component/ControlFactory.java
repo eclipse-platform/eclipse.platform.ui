@@ -165,7 +165,7 @@ public class ControlFactory {
 
 	public static <M> void createXMIId(Composite parent, AbstractComponentEditor<M> editor) {
 		final Label l = new Label(parent, SWT.NONE);
-		l.setText("XMI:ID"); //$NON-NLS-1$
+		l.setText(Messages.ModelTooling_XMIID);
 		l.setLayoutData(new GridData());
 
 		final Text t = new Text(parent, SWT.BORDER);
