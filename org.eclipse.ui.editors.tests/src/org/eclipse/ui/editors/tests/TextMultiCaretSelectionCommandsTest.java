@@ -56,10 +56,12 @@ public class TextMultiCaretSelectionCommandsTest {
 	private static final String ADD_ALL_MATCHES_TO_MULTI_SELECTION = "org.eclipse.ui.edit.text.select.addAllMatchesToMultiSelection";
 	private static final String MULTI_SELECTION_UP = "org.eclipse.ui.edit.text.select.selectMultiSelectionUp";
 	private static final String STOP_MULTI_SELECTION = "org.eclipse.ui.edit.text.select.stopMultiSelection";
+	private static final String MULTI_CARET_DOWN = "org.eclipse.ui.edit.text.select.multiCaretDown";
+	private static final String MULTI_CARET_UP = "org.eclipse.ui.edit.text.select.multiCaretUp";
 
 	private static final String LINE_1 = "private static String a;\n";
-	private static final String LINE_2 = "private static String b;\n";
-	private static final String LINE_3 = "private static String c;\n";
+	private static final String LINE_2 = "private static String b; // this is a little longer\n";
+	private static final String LINE_3 = "\t\tprivate static String c;\n";
 	private static final String LINE_4 = "private static String d";
 
 	private static final int L1_LEN = LINE_1.length();
@@ -101,7 +103,7 @@ public class TextMultiCaretSelectionCommandsTest {
 		executeCommand(MULTI_SELECTION_DOWN);
 
 		assertEquals(7, widget.getCaretOffset());
-		assertArrayEquals(new IRegion[] { new Region(0, 7), new Region(L1_LEN, 7), new Region(L1_LEN + L2_LEN, 7) },
+		assertArrayEquals(new IRegion[] { new Region(0, 7), new Region(L1_LEN, 7), new Region(L1_LEN + L2_LEN + 2, 7) },
 				getSelection());
 
 		executeCommand(STOP_MULTI_SELECTION);
@@ -130,7 +132,7 @@ public class TextMultiCaretSelectionCommandsTest {
 		executeCommand(MULTI_SELECTION_DOWN);
 
 		assertEquals(L1_LEN + 14, widget.getCaretOffset());
-		assertArrayEquals(new IRegion[] { new Region(L1_LEN + 8, 6), new Region(L1_LEN + L2_LEN + 8, 6) },
+		assertArrayEquals(new IRegion[] { new Region(L1_LEN + 8, 6), new Region(L1_LEN + L2_LEN + 10, 6) },
 				getSelection());
 	}
 
@@ -153,12 +155,12 @@ public class TextMultiCaretSelectionCommandsTest {
 		// It is important here to build up the selection in steps, so the
 		// handler can determine an anchor region
 		executeCommand(MULTI_SELECTION_DOWN);
-		assertArrayEquals(new IRegion[] { new Region(L1_LEN + 8, 6), new Region(L1_LEN + L2_LEN + 8, 6) },
+		assertArrayEquals(new IRegion[] { new Region(L1_LEN + 8, 6), new Region(L1_LEN + L2_LEN + 10, 6) },
 				getSelection());
 
 		executeCommand(MULTI_SELECTION_DOWN);
 
-		assertArrayEquals(new IRegion[] { new Region(L1_LEN + 8, 6), new Region(L1_LEN + L2_LEN + 8, 6),
+		assertArrayEquals(new IRegion[] { new Region(L1_LEN + 8, 6), new Region(L1_LEN + L2_LEN + 10, 6),
 				new Region(L1_LEN + L2_LEN + L3_LEN + 8, 6) }, getSelection());
 	}
 
@@ -241,7 +243,7 @@ public class TextMultiCaretSelectionCommandsTest {
 		executeCommand(ADD_ALL_MATCHES_TO_MULTI_SELECTION);
 
 		assertEquals(7, widget.getCaretOffset());
-		assertArrayEquals(new IRegion[] { new Region(0, 7), new Region(L1_LEN, 7), new Region(L1_LEN + L2_LEN, 7),
+		assertArrayEquals(new IRegion[] { new Region(0, 7), new Region(L1_LEN, 7), new Region(L1_LEN + L2_LEN + 2, 7),
 				new Region(L1_LEN + L2_LEN + L3_LEN, 7) }, getSelection());
 	}
 
@@ -253,7 +255,7 @@ public class TextMultiCaretSelectionCommandsTest {
 		executeCommand(ADD_ALL_MATCHES_TO_MULTI_SELECTION);
 
 		assertEquals(7, widget.getCaretOffset());
-		assertArrayEquals(new IRegion[] { new Region(0, 7), new Region(L1_LEN, 7), new Region(L1_LEN + L2_LEN, 7),
+		assertArrayEquals(new IRegion[] { new Region(0, 7), new Region(L1_LEN, 7), new Region(L1_LEN + L2_LEN + 2, 7),
 				new Region(L1_LEN + L2_LEN + L3_LEN, 7) }, getSelection());
 	}
 
@@ -276,7 +278,7 @@ public class TextMultiCaretSelectionCommandsTest {
 		executeCommand(ADD_ALL_MATCHES_TO_MULTI_SELECTION);
 
 		assertEquals(7, widget.getCaretOffset());
-		assertArrayEquals(new IRegion[] { new Region(0, 7), new Region(L1_LEN, 7), new Region(L1_LEN + L2_LEN, 7),
+		assertArrayEquals(new IRegion[] { new Region(0, 7), new Region(L1_LEN, 7), new Region(L1_LEN + L2_LEN + 2, 7),
 				new Region(L1_LEN + L2_LEN + L3_LEN, 7) }, getSelection());
 	}
 
@@ -292,8 +294,7 @@ public class TextMultiCaretSelectionCommandsTest {
 	}
 
 	@Test
-	public void testMultiSelectionUp_withSingleSelectionAndNoPreviousMatch_doesNothing()
-			throws Exception {
+	public void testMultiSelectionUp_withSingleSelectionAndNoPreviousMatch_doesNothing() throws Exception {
 		setSelection(new IRegion[] { new Region(8, 6) });
 		assertEquals(14, widget.getCaretOffset());
 
@@ -316,7 +317,8 @@ public class TextMultiCaretSelectionCommandsTest {
 
 	@Test
 	public void testMultiSelectionUp_withThreeSelections_removesThirdSelection() throws Exception {
-		setSelection(new IRegion[] { new Region(8, 6), new Region(L1_LEN + 8, 6), new Region(L1_LEN + L2_LEN + 8, 6) });
+		setSelection(
+				new IRegion[] { new Region(8, 6), new Region(L1_LEN + 8, 6), new Region(L1_LEN + L2_LEN + 10, 6) });
 		assertEquals(14, widget.getCaretOffset());
 
 		executeCommand(MULTI_SELECTION_UP);
@@ -326,8 +328,7 @@ public class TextMultiCaretSelectionCommandsTest {
 	}
 
 	@Test
-	public void testMultiSelectionUp_withTwoSelectionsAndAnchorAbove_reducesSelection()
-			throws Exception {
+	public void testMultiSelectionUp_withTwoSelectionsAndAnchorAbove_reducesSelection() throws Exception {
 		setSelection(new IRegion[] { new Region(8, 6) });
 		// It is important here to build up the selection in steps, so the
 		// handler can determine an anchor region
@@ -340,19 +341,18 @@ public class TextMultiCaretSelectionCommandsTest {
 	}
 
 	@Test
-	public void testMultiSelectionUp_withTwoSelectionsAndAnchorBelow_extendsSelection()
-			throws Exception {
-		setSelection(new IRegion[] { new Region(L1_LEN + L2_LEN + 8, 6) });
+	public void testMultiSelectionUp_withTwoSelectionsAndAnchorBelow_extendsSelection() throws Exception {
+		setSelection(new IRegion[] { new Region(L1_LEN + L2_LEN + 10, 6) });
 		// It is important here to build up the selection in steps, so the
 		// handler can determine an anchor region
 		executeCommand(MULTI_SELECTION_UP);
-		assertArrayEquals(new IRegion[] { new Region(L1_LEN + 8, 6), new Region(L1_LEN + L2_LEN + 8, 6) },
+		assertArrayEquals(new IRegion[] { new Region(L1_LEN + 8, 6), new Region(L1_LEN + L2_LEN + 10, 6) },
 				getSelection());
 
 		executeCommand(MULTI_SELECTION_UP);
 
 		assertArrayEquals(
-				new IRegion[] { new Region(8, 6), new Region(L1_LEN + 8, 6), new Region(L1_LEN + L2_LEN + 8, 6) },
+				new IRegion[] { new Region(8, 6), new Region(L1_LEN + 8, 6), new Region(L1_LEN + L2_LEN + 10, 6) },
 				getSelection());
 	}
 
@@ -405,6 +405,265 @@ public class TextMultiCaretSelectionCommandsTest {
 		executeCommand(STOP_MULTI_SELECTION);
 		assertEquals(7, widget.getCaretOffset());
 		assertArrayEquals(new IRegion[] { new Region(7, 0) }, getSelection());
+	}
+
+	@Test
+	public void testMultiCaretDown_withCaret_addsCaretsInNextLines() throws Exception {
+		setSelection(new IRegion[] { new Region(0, 0) });
+		assertEquals(0, widget.getCaretOffset());
+
+		executeCommand(MULTI_CARET_DOWN);
+
+		assertEquals(0, widget.getCaretOffset());
+		assertArrayEquals(new IRegion[] { new Region(0, 0), new Region(L1_LEN, 0) }, getSelection());
+
+		widget.setSize(800, 500); // make sure the widget is not size (0,0)
+		executeCommand(MULTI_CARET_DOWN);
+
+		assertEquals(0, widget.getCaretOffset());
+		assertArrayEquals(new IRegion[] { new Region(0, 0), new Region(L1_LEN, 0), new Region(L1_LEN + L2_LEN, 0) },
+				getSelection());
+
+		executeCommand(STOP_MULTI_SELECTION);
+		assertEquals(0, widget.getCaretOffset());
+		assertArrayEquals(new IRegion[] { new Region(0, 0) }, getSelection());
+	}
+
+	@Test
+	public void testMultiCaretDown_withTwoCaretsAndAnchorRegionBelow_removesFirstCaret() throws Exception {
+		setSelection(new IRegion[] { new Region(L1_LEN, 0) });
+		assertEquals(L1_LEN, widget.getCaretOffset());
+
+		executeCommand(MULTI_CARET_UP);
+
+		assertEquals(0, widget.getCaretOffset());
+		assertArrayEquals(new IRegion[] { new Region(0, 0), new Region(L1_LEN, 0) }, getSelection());
+
+		widget.setSize(800, 500); // make sure the widget is not size (0,0)
+		executeCommand(MULTI_CARET_DOWN);
+
+		assertEquals(L1_LEN, widget.getCaretOffset());
+		assertArrayEquals(new IRegion[] { new Region(L1_LEN, 0) }, getSelection());
+
+		executeCommand(STOP_MULTI_SELECTION);
+		assertEquals(L1_LEN, widget.getCaretOffset());
+		assertArrayEquals(new IRegion[] { new Region(L1_LEN, 0) }, getSelection());
+	}
+
+	@Test
+	public void testMultiCaretDown_withSingleSelection_addsSelectionInNextLine() throws Exception {
+		setSelection(new IRegion[] { new Region(0, 3) });
+		assertEquals(3, widget.getCaretOffset());
+
+		executeCommand(MULTI_CARET_DOWN);
+
+		assertEquals(3, widget.getCaretOffset());
+		assertArrayEquals(new IRegion[] { new Region(0, 3), new Region(L1_LEN, 3) }, getSelection());
+
+		executeCommand(STOP_MULTI_SELECTION);
+		assertEquals(3, widget.getCaretOffset());
+		assertArrayEquals(new IRegion[] { new Region(3, 0) }, getSelection());
+	}
+
+	@Test
+	public void testMultiCaretDown_withSingleCaretAtEndOfLongerLine_addsCaretAtEndOfNextLine() throws Exception {
+		setSelection(new IRegion[] { new Region(L1_LEN + L2_LEN, 0) });
+		assertEquals(L1_LEN + L2_LEN, widget.getCaretOffset());
+
+		widget.setSize(800, 500); // make sure the widget is not size (0,0)
+		executeCommand(MULTI_CARET_DOWN);
+
+		assertEquals(L1_LEN + L2_LEN, widget.getCaretOffset());
+		assertArrayEquals(new IRegion[] { new Region(L1_LEN + L2_LEN, 0), new Region(L1_LEN + L2_LEN + L3_LEN, 0) },
+				getSelection());
+
+		executeCommand(STOP_MULTI_SELECTION);
+		assertEquals(L1_LEN + L2_LEN, widget.getCaretOffset());
+		assertArrayEquals(new IRegion[] { new Region(L1_LEN + L2_LEN, 0) }, getSelection());
+	}
+
+	@Test
+	public void testMultiCaretDown_withSingleCaretInLineAboveLineWithTabs_addsCaretInNextLineRespectingTabs()
+			throws Exception {
+		widget.setTabs(4); // Make default explicit
+		setSelection(new IRegion[] { new Region(L1_LEN + 8, 0) });
+		assertEquals(L1_LEN + 8, widget.getCaretOffset());
+
+		widget.setSize(800, 500); // make sure the widget is not size (0,0)
+		executeCommand(MULTI_CARET_DOWN);
+
+		assertEquals(L1_LEN + 8, widget.getCaretOffset());
+		assertArrayEquals(new IRegion[] { new Region(L1_LEN + 8, 0), new Region(L1_LEN + L2_LEN + 2, 0) },
+				getSelection());
+
+		executeCommand(STOP_MULTI_SELECTION);
+		assertEquals(L1_LEN + 8, widget.getCaretOffset());
+		assertArrayEquals(new IRegion[] { new Region(L1_LEN + 8, 0) }, getSelection());
+	}
+
+	@Test
+	public void testMultiCaretDown_withSingleCaretInLineWithTabs_addsCaretInNextLineRespectingTabs() throws Exception {
+		widget.setTabs(4); // Make default explicit
+		setSelection(new IRegion[] { new Region(L1_LEN + L2_LEN + 2, 0) });
+		assertEquals(L1_LEN + L2_LEN + 2, widget.getCaretOffset());
+
+		widget.setSize(800, 500); // make sure the widget is not size (0,0)
+		executeCommand(MULTI_CARET_DOWN);
+
+		assertEquals(L1_LEN + L2_LEN + 2, widget.getCaretOffset());
+		assertArrayEquals(
+				new IRegion[] { new Region(L1_LEN + L2_LEN + 2, 0), new Region(L1_LEN + L2_LEN + L3_LEN + 8, 0) },
+				getSelection());
+
+		executeCommand(STOP_MULTI_SELECTION);
+		assertEquals(L1_LEN + L2_LEN + 2, widget.getCaretOffset());
+		assertArrayEquals(new IRegion[] { new Region(L1_LEN + L2_LEN + 2, 0) }, getSelection());
+	}
+
+	@Test
+	public void testMultiCaretDown_withSingleCaretAtEndOfText_doesNotChangeCaret() throws Exception {
+		setSelection(new IRegion[] { new Region(L1_LEN + L2_LEN + L3_LEN + L4_LEN, 0) });
+		assertEquals(L1_LEN + L2_LEN + L3_LEN + L4_LEN, widget.getCaretOffset());
+
+		widget.setSize(800, 500); // make sure the widget is not size (0,0)
+		executeCommand(MULTI_CARET_DOWN);
+
+		assertEquals(L1_LEN + L2_LEN + L3_LEN + L4_LEN, widget.getCaretOffset());
+		assertArrayEquals(new IRegion[] { new Region(L1_LEN + L2_LEN + L3_LEN + L4_LEN, 0) }, getSelection());
+
+		executeCommand(STOP_MULTI_SELECTION);
+		assertEquals(L1_LEN + L2_LEN + L3_LEN + L4_LEN, widget.getCaretOffset());
+		assertArrayEquals(new IRegion[] { new Region(L1_LEN + L2_LEN + L3_LEN + L4_LEN, 0) }, getSelection());
+	}
+
+	/////////////////////////////////////////////////////
+	@Test
+	public void testMultiCaretUp_withCaret_addsCaretsInPreviousLines() throws Exception {
+		setSelection(new IRegion[] { new Region(L1_LEN + L2_LEN, 0) });
+		assertEquals(L1_LEN + L2_LEN, widget.getCaretOffset());
+
+		executeCommand(MULTI_CARET_UP);
+
+		assertEquals(L1_LEN, widget.getCaretOffset());
+		assertArrayEquals(new IRegion[] { new Region(L1_LEN, 0), new Region(L1_LEN + L2_LEN, 0) }, getSelection());
+
+		widget.setSize(800, 500); // make sure the widget is not size (0,0)
+		executeCommand(MULTI_CARET_UP);
+
+		assertEquals(0, widget.getCaretOffset());
+		assertArrayEquals(new IRegion[] { new Region(0, 0), new Region(L1_LEN, 0), new Region(L1_LEN + L2_LEN, 0) },
+				getSelection());
+
+		executeCommand(STOP_MULTI_SELECTION);
+		assertEquals(0, widget.getCaretOffset());
+		assertArrayEquals(new IRegion[] { new Region(0, 0) }, getSelection());
+	}
+
+	@Test
+	public void testMultiCaretUp_withTwoCaretsAndAnchorRegionAbove_removesLastCaret() throws Exception {
+		setSelection(new IRegion[] { new Region(0, 0) });
+		assertEquals(0, widget.getCaretOffset());
+
+		executeCommand(MULTI_CARET_DOWN);
+
+		assertEquals(0, widget.getCaretOffset());
+		assertArrayEquals(new IRegion[] { new Region(0, 0), new Region(L1_LEN, 0) }, getSelection());
+
+		widget.setSize(800, 500); // make sure the widget is not size (0,0)
+		executeCommand(MULTI_CARET_UP);
+
+		assertEquals(0, widget.getCaretOffset());
+		assertArrayEquals(new IRegion[] { new Region(0, 0) }, getSelection());
+
+		executeCommand(STOP_MULTI_SELECTION);
+		assertEquals(0, widget.getCaretOffset());
+		assertArrayEquals(new IRegion[] { new Region(0, 0) }, getSelection());
+	}
+
+	@Test
+	public void testMultiCaretUp_withSingleSelection_addsSelectionInPreviousLine() throws Exception {
+		setSelection(new IRegion[] { new Region(L1_LEN, 3) });
+		assertEquals(L1_LEN + 3, widget.getCaretOffset());
+
+		executeCommand(MULTI_CARET_UP);
+
+		assertEquals(3, widget.getCaretOffset());
+		assertArrayEquals(new IRegion[] { new Region(0, 3), new Region(L1_LEN, 3) }, getSelection());
+
+		executeCommand(STOP_MULTI_SELECTION);
+		assertEquals(3, widget.getCaretOffset());
+		assertArrayEquals(new IRegion[] { new Region(3, 0) }, getSelection());
+	}
+
+	@Test
+	public void testMultiCaretUp_withSingleCaretAtEndOfLongerLine_addsCaretAtEndOfPreviousLine() throws Exception {
+		setSelection(new IRegion[] { new Region(L1_LEN + L2_LEN, 0) });
+		assertEquals(L1_LEN + L2_LEN, widget.getCaretOffset());
+
+		widget.setSize(800, 500); // make sure the widget is not size (0,0)
+		executeCommand(MULTI_CARET_UP);
+
+		assertEquals(L1_LEN, widget.getCaretOffset());
+		assertArrayEquals(new IRegion[] { new Region(L1_LEN, 0), new Region(L1_LEN + L2_LEN, 0) }, getSelection());
+
+		executeCommand(STOP_MULTI_SELECTION);
+		assertEquals(L1_LEN, widget.getCaretOffset());
+		assertArrayEquals(new IRegion[] { new Region(L1_LEN, 0) }, getSelection());
+	}
+
+	@Test
+	public void testMultiCaretUp_withSingleCaretInLineBelowLineWithTabs_addsCaretInPreviousLineRespectingTabs()
+			throws Exception {
+		widget.setTabs(4); // Make default explicit
+		setSelection(new IRegion[] { new Region(L1_LEN + L2_LEN + L3_LEN + 8, 0) });
+		assertEquals(L1_LEN + L2_LEN + L3_LEN + 8, widget.getCaretOffset());
+
+		widget.setSize(800, 500); // make sure the widget is not size (0,0)
+		executeCommand(MULTI_CARET_UP);
+
+		assertEquals(L1_LEN + L2_LEN + 2, widget.getCaretOffset());
+		assertArrayEquals(
+				new IRegion[] { new Region(L1_LEN + L2_LEN + 2, 0), new Region(L1_LEN + L2_LEN + L3_LEN + 8, 0) },
+				getSelection());
+
+		executeCommand(STOP_MULTI_SELECTION);
+		assertEquals(L1_LEN + L2_LEN + 2, widget.getCaretOffset());
+		assertArrayEquals(new IRegion[] { new Region(L1_LEN + L2_LEN + 2, 0) }, getSelection());
+	}
+
+	@Test
+	public void testMultiCaretUp_withSingleCaretInLineWithTabs_addsCaretInPreviousLineRespectingTabs()
+			throws Exception {
+		widget.setTabs(4); // Make default explicit
+		setSelection(new IRegion[] { new Region(L1_LEN + L2_LEN + 2, 0) });
+		assertEquals(L1_LEN + L2_LEN + 2, widget.getCaretOffset());
+
+		widget.setSize(800, 500); // make sure the widget is not size (0,0)
+		executeCommand(MULTI_CARET_UP);
+
+		assertEquals(L1_LEN + 8, widget.getCaretOffset());
+		assertArrayEquals(new IRegion[] { new Region(L1_LEN + 8, 0), new Region(L1_LEN + L2_LEN + 2, 0) },
+				getSelection());
+
+		executeCommand(STOP_MULTI_SELECTION);
+		assertEquals(L1_LEN + 8, widget.getCaretOffset());
+		assertArrayEquals(new IRegion[] { new Region(L1_LEN + 8, 0) }, getSelection());
+	}
+
+	@Test
+	public void testMultiCaretUp_withSingleCaretAtBeginningOfText_doesNotChangeCaret() throws Exception {
+		setSelection(new IRegion[] { new Region(0, 0) });
+		assertEquals(0, widget.getCaretOffset());
+
+		widget.setSize(800, 500); // make sure the widget is not size (0,0)
+		executeCommand(MULTI_CARET_UP);
+
+		assertEquals(0, widget.getCaretOffset());
+		assertArrayEquals(new IRegion[] { new Region(0, 0) }, getSelection());
+
+		executeCommand(STOP_MULTI_SELECTION);
+		assertEquals(0, widget.getCaretOffset());
+		assertArrayEquals(new IRegion[] { new Region(0, 0) }, getSelection());
 	}
 
 	// Helper methods

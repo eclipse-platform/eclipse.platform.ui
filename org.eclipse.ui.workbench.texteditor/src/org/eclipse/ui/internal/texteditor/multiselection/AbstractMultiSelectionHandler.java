@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -32,6 +33,8 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IMultiTextSelection;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.MultiTextSelection;
 import org.eclipse.jface.text.Region;
 
@@ -61,6 +64,11 @@ abstract class AbstractMultiSelectionHandler extends AbstractHandler {
 	private ExecutionEvent event;
 	private ITextEditor textEditor;
 	private IDocument document;
+	/**
+	 * SourceViewer Might be <code>null</code>, if {@link #textEditor} doesn't
+	 * implement this interface.
+	 */
+	private ITextViewerExtension5 sourceViewer;
 
 	/**
 	 * This method needs to be overwritten from subclasses to handle the event.
@@ -264,7 +272,7 @@ abstract class AbstractMultiSelectionHandler extends AbstractHandler {
 		}
 	}
 
-	private IRegion createRegionIfValid(int offset, int length) {
+	protected IRegion createRegionIfValid(int offset, int length) {
 		if ((offset < 0) || (offset > document.getLength()))
 			return null;
 
@@ -294,24 +302,43 @@ abstract class AbstractMultiSelectionHandler extends AbstractHandler {
 		return regions;
 	}
 
-	private int offsetInNextLine(int offset) throws BadLocationException {
+	protected int offsetInNextLine(int offset) throws BadLocationException {
 		return moveOffsetByLines(offset, 1);
 	}
 
-	private int offsetInPreviousLine(int offset) throws BadLocationException {
+	protected int offsetInPreviousLine(int offset) throws BadLocationException {
 		return moveOffsetByLines(offset, -1);
 	}
 
 	private int moveOffsetByLines(int offset, int lineDelta) throws BadLocationException {
-		int lineNo = document.getLineOfOffset(offset);
-		int newLineNo = lineNo + lineDelta;
+		int newLineNo = document.getLineOfOffset(offset) + lineDelta;
 		if ((newLineNo < 0) || (newLineNo >= document.getNumberOfLines()))
 			return -1;
 
-		int newLineOffset = document.getLineOffset(newLineNo);
-		int delta = offset - document.getLineOffset(lineNo);
+		int newOffset;
+		if (sourceViewer == null) {
+			// we don't have a sourceViewer and thus as a fallback
+			// assume the widget offsets are identical to the document offsets
+			newOffset = moveWidgetOffsetByLines(offset, lineDelta);
+		} else {
+			int widgetOffset = sourceViewer.modelOffset2WidgetOffset(offset);
+			int newWidgetOffset = moveWidgetOffsetByLines(widgetOffset, lineDelta);
+			newOffset = sourceViewer.widgetOffset2ModelOffset(newWidgetOffset);
+		}
+		if (newOffset == -1) {
+			return endOfLineOffset(newLineNo);
+		}
+		return newOffset;
+	}
 
-		return newLineOffset + delta;
+	private int moveWidgetOffsetByLines(int widgetOffset, int lineDelta) throws BadLocationException {
+		Point location = getWidget().getLocationAtOffset(widgetOffset);
+		Point newLocation = new Point(location.x, location.y + lineDelta * getWidget().getLineHeight(widgetOffset));
+		return getWidget().getOffsetAtPoint(newLocation);
+	}
+
+	private int endOfLineOffset(int lineNo) throws BadLocationException {
+		return document.getLineOffset(lineNo) + document.getLineInformation(lineNo).getLength();
 	}
 
 	private boolean initFrom(ExecutionEvent event) {
@@ -319,7 +346,8 @@ abstract class AbstractMultiSelectionHandler extends AbstractHandler {
 		initTextEditor();
 		if (textEditor == null)
 			return false;
-		document = getDocument();
+		initDocument();
+		initSourceViewer();
 		initAnchorRegion();
 		return true;
 	}
@@ -329,8 +357,13 @@ abstract class AbstractMultiSelectionHandler extends AbstractHandler {
 		textEditor = Adapters.adapt(editor, ITextEditor.class);
 	}
 
-	private IDocument getDocument() {
-		return textEditor.getDocumentProvider().getDocument(textEditor.getEditorInput());
+	private void initDocument() {
+		document = textEditor.getDocumentProvider().getDocument(textEditor.getEditorInput());
+	}
+
+	private void initSourceViewer() {
+		ITextViewer textViewer = textEditor.getAdapter(ITextViewer.class);
+		sourceViewer = Adapters.adapt(textViewer, ITextViewerExtension5.class);
 	}
 
 	private IRegion[] toArray(List<IRegion> regions) {

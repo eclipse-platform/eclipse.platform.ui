@@ -20,9 +20,10 @@ import org.eclipse.jface.text.IRegion;
 /**
  * Handler to change the current multi selection downwards. This might either
  * mean to extend the selection by adding a match below, or shrink the selection
- * by removing the first selection range. This depends on the selection the
- * command was invoked with the first time -- that selection is remembered as an
- * "anchor" to which successive calls are related as reference selection.<br>
+ * by removing the first selection range. This depends on the selection a multi
+ * caret/selection command was invoked with the first time -- that selection is
+ * remembered as an "anchor" to which successive calls are related as reference
+ * selection.<br>
  * If no word is selected, an implicit selection of the word under the cursor is
  * performed.
  */
