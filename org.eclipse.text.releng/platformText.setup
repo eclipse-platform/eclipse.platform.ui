@@ -15,18 +15,18 @@
   <setupTask
       xsi:type="setup:EclipseIniTask"
       option="-Doomph.redirection.platform.text"
-      value="=https://git.eclipse.org/c/platform/eclipse.platform.text.git/plain/org.eclipse.text.releng/platformText.setup->${git.clone.platform.text.location|uri}/org.eclipse.text.releng/platformText.setup"
+      value="=https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.text/master/org.eclipse.text.releng/platformText.setup->${github.clone.platform.text.location|uri}/org.eclipse.text.releng/platformText.setup"
       vm="true"/>
   <setupTask
       xsi:type="git:GitCloneTask"
-      id="git.clone.platform.text"
-      remoteURI="platform/eclipse.platform.text"
+      id="github.clone.platform.text"
+      remoteURI="eclipse-platform/eclipse.platform.text"
       pushURI="">
     <annotation
         source="http://www.eclipse.org/oomph/setup/InducedChoices">
       <detail
           key="inherit">
-        <value>eclipse.git.gerrit.remoteURIs</value>
+        <value>github.remoteURIs</value>
       </detail>
       <detail
           key="label">
@@ -37,12 +37,6 @@
         <value>remoteURI</value>
       </detail>
     </annotation>
-    <configSections
-        name="gerrit">
-      <properties
-          key="createchangeid"
-          value="true"/>
-    </configSections>
     <description>Platform Text</description>
   </setupTask>
   <setupTask
@@ -53,7 +47,7 @@
       <requirement
           name="*"/>
       <sourceLocator
-          rootFolder="${git.clone.platform.text.location}"
+          rootFolder="${github.clone.platform.text.location}"
           locateNestedProjects="true">
         <predicate
             xsi:type="predicates:NotPredicate">
@@ -68,7 +62,8 @@
     </targlet>
   </setupTask>
   <setupTask
-      xsi:type="setup.workingsets:WorkingSetTask">
+      xsi:type="setup.workingsets:WorkingSetTask"
+      id="text.workingsets">
     <workingSet
         name="Platform Text">
       <predicate
@@ -78,7 +73,7 @@
             project="org.eclipse.text"/>
         <operand
             xsi:type="workingsets:ExclusionPredicate"
-            excludedWorkingSet="//@setupTasks.3/@workingSets.2 //@setupTasks.3/@workingSets.1"/>
+            excludedWorkingSet="//'text.workingsets'/@workingSets[name='Platform%20Text%20Examples'] //'text.workingsets'/@workingSets[name='Platform%20Text%20Tests']"/>
       </predicate>
     </workingSet>
     <workingSet
