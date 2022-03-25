@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2018 BestSolution.at and others.
+ * Copyright (c) 2010, 2022 BestSolution.at and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -289,6 +289,7 @@ public class ModelEditor implements IGotoObject {
 	public static final int TAB_FORM = 0;
 	public static final int TAB_XMI = 1;
 	public static final int TAB_LIST = 2;
+	final String key = "org.eclipse.e4.tools.active-object-viewer"; //$NON-NLS-1$
 
 
 
@@ -486,22 +487,18 @@ public class ModelEditor implements IGotoObject {
 			public void widgetSelected(SelectionEvent e) {
 				if (editorTabFolder.getSelectionIndex() == getTabIndex(tabItemXmi)) {
 					emfDocumentProvider.updateFromEMF();
+					gotoEObject(TAB_XMI, null);
 				}
-			}
-		});
-
-		editorTabFolder.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
 				// When the list tab is visible, register the IViewEObjects
 				// interface
 				// This allows external commands to interact with the view.
 				// Eventually, all 3 tabs, or even the ModelEditor itself, could
 				// implement the interface.
-				final String key = "org.eclipse.e4.tools.active-object-viewer"; //$NON-NLS-1$
-				if (listTab != null && editorTabFolder.getSelectionIndex() == getTabIndex(listTab.getTabItem())) {
+				else if (listTab != null && editorTabFolder.getSelectionIndex() == getTabIndex(listTab.getTabItem())) {
+					gotoEObject(TAB_LIST, null);
 					app.getContext().set(key, listTab);
 				} else {
+					gotoEObject(TAB_FORM, null);
 					app.getContext().set(key, null);
 				}
 			}
@@ -2091,9 +2088,43 @@ public class ModelEditor implements IGotoObject {
 
 	@Override
 	public void gotoEObject(int targetHint, EObject object) {
+		// Try to find current selection if any
 		if (object == null) {
-			// do nothing
-		} else {
+			switch (targetHint) {
+			case TAB_FORM:
+				if (app.getContext().get(key) == listTab) {
+					Iterator<EObject> it = listTab.getSelectedEObjects().iterator();
+					if (it.hasNext()) {
+						object = it.next();
+					}
+				}
+				break;
+			case TAB_XMI:
+				if (app.getContext().get(key) == listTab) {
+					Iterator<EObject> it = listTab.getSelectedEObjects().iterator();
+					if (it.hasNext()) {
+						object = it.next();
+					}
+				} else if (app.getContext().get(key) == null) {
+					final Object parent = ((IStructuredSelection) viewer.getSelection()).getFirstElement();
+					if (parent instanceof EObject) {
+						object = (EObject) parent;
+					}
+				}
+				break;
+			case TAB_LIST:
+				if (app.getContext().get(key) == null) {
+					final Object parent = ((IStructuredSelection) viewer.getSelection()).getFirstElement();
+					if (parent instanceof EObject) {
+						object = (EObject) parent;
+					}
+				}
+				break;
+			default:
+				break;
+			}
+		}
+		if (object != null) {
 			switch (targetHint) {
 			case TAB_FORM:
 				// make sure tree node has been instantiated
