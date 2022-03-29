@@ -33,7 +33,6 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.intro.IntroMessages;
-import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.intro.IIntroSite;
 import org.eclipse.ui.part.ViewPart;
@@ -116,7 +115,6 @@ public final class ViewIntroAdapterPart extends ViewPart {
 				control.setRedraw(true);
 			}
 
-			setBarVisibility(standby);
 		});
 	}
 
@@ -148,7 +146,6 @@ public final class ViewIntroAdapterPart extends ViewPart {
 	public void dispose() {
 		eventBroker.unsubscribe(zoomChangeListener);
 
-		setBarVisibility(true);
 		getSite().getWorkbenchWindow().getWorkbench().getIntroManager().closeIntro(introPart);
 		introPart.dispose();
 		super.dispose();
@@ -199,36 +196,5 @@ public final class ViewIntroAdapterPart extends ViewPart {
 	@Override
 	public void saveState(IMemento memento) {
 		introPart.saveState(memento);
-	}
-
-	/**
-	 * Sets whether the CoolBar/PerspectiveBar should be visible.
-	 *
-	 * @param visible whether the CoolBar/PerspectiveBar should be visible
-	 * @since 3.1
-	 */
-	private void setBarVisibility(final boolean visible) {
-		WorkbenchWindow window = (WorkbenchWindow) getSite().getWorkbenchWindow();
-
-		boolean layout = false; // don't layout unless things have actually changed
-		if (visible) {
-			// Restore the last 'saved' state
-			boolean coolbarVisible = PrefUtil.getInternalPreferenceStore()
-					.getBoolean(IPreferenceConstants.COOLBAR_VISIBLE);
-			boolean persBarVisible = PrefUtil.getInternalPreferenceStore()
-					.getBoolean(IPreferenceConstants.PERSPECTIVEBAR_VISIBLE);
-			layout = (coolbarVisible != window.getCoolBarVisible())
-					|| (persBarVisible != window.getPerspectiveBarVisible());
-			window.setCoolBarVisible(coolbarVisible);
-			window.setPerspectiveBarVisible(persBarVisible);
-		} else {
-			layout = !window.getCoolBarVisible() || !window.getPerspectiveBarVisible();
-			window.setCoolBarVisible(false);
-			window.setPerspectiveBarVisible(false);
-		}
-
-		if (layout) {
-			window.getShell().layout();
-		}
 	}
 }
