@@ -23,6 +23,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import org.eclipse.e4.ui.css.core.css2.CSS2ColorHelper;
 import org.eclipse.e4.ui.css.core.css2.CSS2RGBColorImpl;
@@ -349,41 +350,30 @@ public class CSSSWTColorHelper {
 		return null;
 	}
 
-	/** Simplify testing for color equality */
-	public static boolean equals(Color c1, Color c2) {
-		if (c1 == c2) {
-			return true;
-		}
-		if (c1 == null || c2 == null) {
-			return false;
-		}
-		return c1.equals(c2);
-	}
-
 	/** Helper function to avoid setting colors unnecessarily */
 	public static void setForeground(Control control, Color newColor) {
-		if (!equals(control.getForeground(), newColor)) {
+		if (!Objects.equals(control.getForeground(), newColor)) {
 			control.setForeground(newColor);
 		}
 	}
 
 	/** Helper function to avoid setting colors unnecessarily */
 	public static void setBackground(Control control, Color newColor) {
-		if (!equals(control.getBackground(), newColor)) {
+		if (!Objects.equals(control.getBackground(), newColor)) {
 			control.setBackground(newColor);
 		}
 	}
 
 	/** Helper function to avoid setting colors unnecessarily */
 	public static void setSelectionForeground(CTabFolder folder, Color newColor) {
-		if (!equals(folder.getSelectionForeground(), newColor)) {
+		if (!Objects.equals(folder.getSelectionForeground(), newColor)) {
 			folder.setSelectionForeground(newColor);
 		}
 	}
 
 	/** Helper function to avoid setting colors unnecessarily */
 	public static void setSelectionBackground(CTabFolder folder, Color newColor) {
-		if (!equals(folder.getSelectionBackground(), newColor)) {
+		if (!Objects.equals(folder.getSelectionBackground(), newColor)) {
 			folder.setSelectionBackground(newColor);
 		}
 	}
