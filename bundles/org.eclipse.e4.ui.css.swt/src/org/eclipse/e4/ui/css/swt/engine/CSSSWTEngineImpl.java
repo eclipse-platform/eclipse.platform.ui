@@ -56,14 +56,12 @@ public class CSSSWTEngineImpl extends AbstractCSSSWTEngineImpl {
 
 	@Override
 	protected void initializeCSSPropertyHandlers() {
-		propertyHandlerProviders.add(new RegistryCSSPropertyHandlerProvider(
-				RegistryFactory.getRegistry()));
+		propertyHandlerProviders.add(new RegistryCSSPropertyHandlerProvider(RegistryFactory.getRegistry()));
 	}
 
 	@Override
 	protected void initializeCSSElementProvider() {
-		setElementProvider(new RegistryCSSElementProvider(
-				RegistryFactory.getRegistry()));
+		setElementProvider(new RegistryCSSElementProvider(RegistryFactory.getRegistry()));
 	}
 
 	@Override

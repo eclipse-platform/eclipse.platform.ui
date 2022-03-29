@@ -33,8 +33,7 @@ import org.w3c.dom.NodeList;
  */
 public class WidgetElement extends ElementAdapter implements NodeList {
 
-	boolean dynamicEnabled = Boolean
-			.getBoolean("org.eclipse.e4.ui.css.dynamic");
+	boolean dynamicEnabled = Boolean.getBoolean("org.eclipse.e4.ui.css.dynamic");
 
 	/**
 	 * Convenience method for getting the CSS class of a widget.

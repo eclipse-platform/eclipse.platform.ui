@@ -29,64 +29,59 @@ import org.eclipse.e4.ui.css.swt.helpers.EclipsePreferencesHelper.PreferenceOver
 import org.junit.Test;
 
 public class PreferenceOverriddenByCssChangeListenerTest {
+
 	@Test
 	public void testPreferenceChangeEvent() {
 		// given
 		IEclipsePreferences preferences = new EclipsePreferences();
-		preferences.put(PROPS_OVERRIDDEN_BY_CSS_PROP, SEPARATOR + "name"
-				+ SEPARATOR);
+		preferences.put(PROPS_OVERRIDDEN_BY_CSS_PROP, SEPARATOR + "name" + SEPARATOR);
 
-		PreferenceChangeEvent event = new PreferenceChangeEvent(preferences,
-				"name", "oldValue", "newValue");
+		PreferenceChangeEvent event = new PreferenceChangeEvent(preferences, "name", "oldValue", "newValue");
 
-		PreferenceOverriddenByCssChangeListenerTestable preferenceChangeListener = spy(new PreferenceOverriddenByCssChangeListenerTestable());
+		PreferenceOverriddenByCssChangeListenerTestable preferenceChangeListener = spy(
+				new PreferenceOverriddenByCssChangeListenerTestable());
 
 		// when
 		preferenceChangeListener.preferenceChange(event);
 
 		// then
-		verify(preferenceChangeListener, times(1))
-		.removeOverriddenByCssProperty(event);
+		verify(preferenceChangeListener, times(1)).removeOverriddenByCssProperty(event);
 	}
 
 	@Test
 	public void testPreferenceChangeEventWhenAddPropertyEvent() {
 		// given
 		IEclipsePreferences preferences = new EclipsePreferences();
-		preferences.put(PROPS_OVERRIDDEN_BY_CSS_PROP, SEPARATOR + "name"
-				+ SEPARATOR);
+		preferences.put(PROPS_OVERRIDDEN_BY_CSS_PROP, SEPARATOR + "name" + SEPARATOR);
 
-		PreferenceChangeEvent event = new PreferenceChangeEvent(preferences,
-				"name", null, "newValue");
+		PreferenceChangeEvent event = new PreferenceChangeEvent(preferences, "name", null, "newValue");
 
-		PreferenceOverriddenByCssChangeListenerTestable preferenceChangeListener = spy(new PreferenceOverriddenByCssChangeListenerTestable());
+		PreferenceOverriddenByCssChangeListenerTestable preferenceChangeListener = spy(
+				new PreferenceOverriddenByCssChangeListenerTestable());
 
 		// when
 		preferenceChangeListener.preferenceChange(event);
 
 		// then
-		verify(preferenceChangeListener, never())
-		.removeOverriddenByCssProperty(event);
+		verify(preferenceChangeListener, never()).removeOverriddenByCssProperty(event);
 	}
 
 	@Test
 	public void testPreferenceChangeEventWhenRemovePropertyEvent() {
 		// given
 		IEclipsePreferences preferences = new EclipsePreferences();
-		preferences.put(PROPS_OVERRIDDEN_BY_CSS_PROP, SEPARATOR + "name"
-				+ SEPARATOR);
+		preferences.put(PROPS_OVERRIDDEN_BY_CSS_PROP, SEPARATOR + "name" + SEPARATOR);
 
-		PreferenceChangeEvent event = new PreferenceChangeEvent(preferences,
-				"name", "oldValue", null);
+		PreferenceChangeEvent event = new PreferenceChangeEvent(preferences, "name", "oldValue", null);
 
-		PreferenceOverriddenByCssChangeListenerTestable preferenceChangeListener = spy(new PreferenceOverriddenByCssChangeListenerTestable());
+		PreferenceOverriddenByCssChangeListenerTestable preferenceChangeListener = spy(
+				new PreferenceOverriddenByCssChangeListenerTestable());
 
 		// when
 		preferenceChangeListener.preferenceChange(event);
 
 		// then
-		verify(preferenceChangeListener, never())
-		.removeOverriddenByCssProperty(event);
+		verify(preferenceChangeListener, never()).removeOverriddenByCssProperty(event);
 	}
 
 	@Test
@@ -94,21 +89,20 @@ public class PreferenceOverriddenByCssChangeListenerTest {
 		// given
 		IEclipsePreferences preferences = new EclipsePreferences();
 
-		PreferenceChangeEvent event = new PreferenceChangeEvent(preferences,
-				"name", "oldValue", "newValue");
+		PreferenceChangeEvent event = new PreferenceChangeEvent(preferences, "name", "oldValue", "newValue");
 
-		PreferenceOverriddenByCssChangeListenerTestable preferenceChangeListener = spy(new PreferenceOverriddenByCssChangeListenerTestable());
+		PreferenceOverriddenByCssChangeListenerTestable preferenceChangeListener = spy(
+				new PreferenceOverriddenByCssChangeListenerTestable());
 
 		// when
 		preferenceChangeListener.preferenceChange(event);
 
 		// then
-		verify(preferenceChangeListener, never())
-		.removeOverriddenByCssProperty(event);
+		verify(preferenceChangeListener, never()).removeOverriddenByCssProperty(event);
 	}
 
-	public static class PreferenceOverriddenByCssChangeListenerTestable extends
-	PreferenceOverriddenByCssChangeListener {
+	public static class PreferenceOverriddenByCssChangeListenerTestable
+	extends PreferenceOverriddenByCssChangeListener {
 		@Override
 		public void removeOverriddenByCssProperty(PreferenceChangeEvent event) {
 		}

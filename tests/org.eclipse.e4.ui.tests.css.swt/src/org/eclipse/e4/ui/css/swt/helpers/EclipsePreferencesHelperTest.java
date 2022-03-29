@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.junit.Test;
 
 public class EclipsePreferencesHelperTest {
+
 	@Test
 	public void testAppendOverriddenPropertyName() {
 		// given
@@ -47,19 +48,14 @@ public class EclipsePreferencesHelperTest {
 		appendOverriddenPropertyName(preferences, "prop2");
 		appendOverriddenPropertyName(preferences, "prop3");
 
-		String overriddenPreferences = preferences.get(
-				PROPS_OVERRIDDEN_BY_CSS_PROP, "");
+		String overriddenPreferences = preferences.get(PROPS_OVERRIDDEN_BY_CSS_PROP, "");
 
 		// then
-		assertTrue(overriddenPreferences.contains(SEPARATOR + "prop1"
-				+ SEPARATOR));
-		assertTrue(overriddenPreferences.contains(SEPARATOR + "prop2"
-				+ SEPARATOR));
-		assertTrue(overriddenPreferences.contains(SEPARATOR + "prop3"
-				+ SEPARATOR));
+		assertTrue(overriddenPreferences.contains(SEPARATOR + "prop1" + SEPARATOR));
+		assertTrue(overriddenPreferences.contains(SEPARATOR + "prop2" + SEPARATOR));
+		assertTrue(overriddenPreferences.contains(SEPARATOR + "prop3" + SEPARATOR));
 
-		verify(preferences, times(1)).addPreferenceChangeListener(
-				getPreferenceChangeListener());
+		verify(preferences, times(1)).addPreferenceChangeListener(getPreferenceChangeListener());
 	}
 
 	@Test
@@ -92,8 +88,7 @@ public class EclipsePreferencesHelperTest {
 		// then
 		assertNull(preferences.get(PROPS_OVERRIDDEN_BY_CSS_PROP, null));
 
-		verify(preferences, times(1)).removePreferenceChangeListener(
-				getPreferenceChangeListener());
+		verify(preferences, times(1)).removePreferenceChangeListener(getPreferenceChangeListener());
 	}
 
 	@Test
@@ -108,15 +103,11 @@ public class EclipsePreferencesHelperTest {
 
 		removeOverriddenByCssProperty(preferences, "prop2");
 
-		String overriddenPreferences = preferences.get(
-				PROPS_OVERRIDDEN_BY_CSS_PROP, "");
+		String overriddenPreferences = preferences.get(PROPS_OVERRIDDEN_BY_CSS_PROP, "");
 
 		// then
-		assertTrue(overriddenPreferences.contains(SEPARATOR + "prop1"
-				+ SEPARATOR));
-		assertFalse(overriddenPreferences.contains(SEPARATOR + "prop2"
-				+ SEPARATOR));
-		assertTrue(overriddenPreferences.contains(SEPARATOR + "prop3"
-				+ SEPARATOR));
+		assertTrue(overriddenPreferences.contains(SEPARATOR + "prop1" + SEPARATOR));
+		assertFalse(overriddenPreferences.contains(SEPARATOR + "prop2" + SEPARATOR));
+		assertTrue(overriddenPreferences.contains(SEPARATOR + "prop3" + SEPARATOR));
 	}
 }

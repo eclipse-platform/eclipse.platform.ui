@@ -37,8 +37,7 @@ public class Bug419482Test extends CSSSWTTestCase {
 
 	@Test
 	public void testTwoLevelsWildcard() {
-		String cssString = "Shell > * > * { color: red; } \n"
-				+ "Label { color: blue; }";
+		String cssString = "Shell > * > * { color: red; } \n" + "Label { color: blue; }";
 
 		Label label = createTestLabel(cssString);
 
@@ -48,8 +47,7 @@ public class Bug419482Test extends CSSSWTTestCase {
 
 	@Test
 	public void testOneLevelWildcardOneSpecific() {
-		String cssString = "Shell > * > Label { color: red; } \n"
-				+ "Label { color: blue; }";
+		String cssString = "Shell > * > Label { color: red; } \n" + "Label { color: blue; }";
 
 		Label label = createTestLabel(cssString);
 
@@ -59,8 +57,7 @@ public class Bug419482Test extends CSSSWTTestCase {
 
 	@Test
 	public void testDescendentsWildcard() {
-		String cssString = "Shell * { color: red; } \n"
-				+ "Label { color: blue; }";
+		String cssString = "Shell * { color: red; } \n" + "Label { color: blue; }";
 
 		Label label = createTestLabel(cssString);
 
@@ -70,8 +67,7 @@ public class Bug419482Test extends CSSSWTTestCase {
 
 	@Test
 	public void testDescendentsSpecific() {
-		String cssString = "Shell Label { color: red; } \n"
-				+ "Label { color: blue; }";
+		String cssString = "Shell Label { color: red; } \n" + "Label { color: blue; }";
 
 		Label label = createTestLabel(cssString);
 
@@ -79,17 +75,10 @@ public class Bug419482Test extends CSSSWTTestCase {
 		assertEquals(RGB_RED, rgb);
 	}
 
-
-
-
 	@Test
 	public void testOriginalBugReport() {
-		String css = "Shell, Shell > *, Shell > * > * {\n" +
-				"    background-color: red;\n" +
-				"}\n" +
-				"ToolBar {\n" +
-				"    background-color: blue;\n" +
-				"}";
+		String css = "Shell, Shell > *, Shell > * > * {\n" + "    background-color: red;\n" + "}\n" + "ToolBar {\n"
+				+ "    background-color: blue;\n" + "}";
 
 		engine = createEngine(css, display);
 
@@ -105,8 +94,7 @@ public class Bug419482Test extends CSSSWTTestCase {
 
 	@Test
 	public void testOriginalBugReportDifferentOrder() {
-		String css = "ToolBar {\n" + "    background-color: blue;\n" + "}"
-				+ "Shell, Shell > *, Shell > * > * {\n"
+		String css = "ToolBar {\n" + "    background-color: blue;\n" + "}" + "Shell, Shell > *, Shell > * > * {\n"
 				+ "    background-color: red;\n" + "}\n";
 
 		engine = createEngine(css, display);

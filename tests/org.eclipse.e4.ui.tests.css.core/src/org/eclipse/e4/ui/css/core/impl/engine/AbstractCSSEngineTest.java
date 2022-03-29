@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.w3c.dom.Element;
 
 public class AbstractCSSEngineTest {
+
 	private AbstractCSSEngine objectUnderTest;
 
 	@BeforeEach

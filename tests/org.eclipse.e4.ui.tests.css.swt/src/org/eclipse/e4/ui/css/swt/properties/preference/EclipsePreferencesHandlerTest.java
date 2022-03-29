@@ -46,8 +46,7 @@ public class EclipsePreferencesHandlerTest {
 
 		IEclipsePreferences preferences = new EclipsePreferences();
 
-		EclipsePreferencesElement element = new EclipsePreferencesElement(
-				preferences, engine);
+		EclipsePreferencesElement element = new EclipsePreferencesElement(preferences, engine);
 
 		CSSValue value = mock(CSSValue.class);
 		doReturn(CSSValue.CSS_PRIMITIVE_VALUE).when(value).getCssValueType();
@@ -73,11 +72,9 @@ public class EclipsePreferencesHandlerTest {
 
 		IEclipsePreferences preferences = new EclipsePreferences();
 
-		EclipsePreferencesElement element = new EclipsePreferencesElement(
-				preferences, engine);
+		EclipsePreferencesElement element = new EclipsePreferencesElement(preferences, engine);
 
-		CSSValue[] values = new CSSValue[] { mock(CSSValue.class),
-				mock(CSSValue.class) };
+		CSSValue[] values = new CSSValue[] { mock(CSSValue.class), mock(CSSValue.class) };
 
 		CSSValueList listValue = mock(CSSValueList.class);
 		doReturn(CSSValue.CSS_VALUE_LIST).when(listValue).getCssValueType();
@@ -96,8 +93,7 @@ public class EclipsePreferencesHandlerTest {
 		}
 
 		// then
-		verify(handler, times(2)).overrideProperty(
-				any(IEclipsePreferences.class), any(CSSValue.class));
+		verify(handler, times(2)).overrideProperty(any(IEclipsePreferences.class), any(CSSValue.class));
 		verify(handler, times(1)).overrideProperty(preferences, values[0]);
 		verify(handler, times(1)).overrideProperty(preferences, values[1]);
 		engine.dispose();
@@ -121,10 +117,8 @@ public class EclipsePreferencesHandlerTest {
 		handler.overridePropertyUnMocked(preferences, value2);
 
 		// then
-		verify(handler, times(1)).overrideProperty(preferences, "name1",
-				"value1");
-		verify(handler, times(1)).overrideProperty(preferences, "name2",
-				"value2");
+		verify(handler, times(1)).overrideProperty(preferences, "name1", "value1");
+		verify(handler, times(1)).overrideProperty(preferences, "name2", "value2");
 	}
 
 	@Test
@@ -139,8 +133,7 @@ public class EclipsePreferencesHandlerTest {
 
 		// then
 		assertEquals("value", preferences.get("name", null));
-		assertTrue(preferences.get(PROPS_OVERRIDDEN_BY_CSS_PROP, "").contains(
-				"name"));
+		assertTrue(preferences.get(PROPS_OVERRIDDEN_BY_CSS_PROP, "").contains("name"));
 	}
 
 	@Test
@@ -172,36 +165,29 @@ public class EclipsePreferencesHandlerTest {
 		// when
 		handler.overridePropertyUnMocked(preferences, "name", "value");
 		assertEquals("value", preferences.get("name", null));
-		assertTrue(preferences.get(PROPS_OVERRIDDEN_BY_CSS_PROP, "").contains(
-				"name"));
+		assertTrue(preferences.get(PROPS_OVERRIDDEN_BY_CSS_PROP, "").contains("name"));
 
 		preferences.put("name", "customizedValue");
 
 		// then
 		assertEquals("customizedValue", preferences.get("name", null));
-		assertFalse(preferences.get(PROPS_OVERRIDDEN_BY_CSS_PROP, "").contains(
-				"name"));
+		assertFalse(preferences.get(PROPS_OVERRIDDEN_BY_CSS_PROP, "").contains("name"));
 	}
 
-	public static class EclipsePreferencesHandlerTestable extends
-	EclipsePreferencesHandler {
+	public static class EclipsePreferencesHandlerTestable extends EclipsePreferencesHandler {
 		@Override
-		public void overrideProperty(IEclipsePreferences preferences,
-				CSSValue value) {
+		public void overrideProperty(IEclipsePreferences preferences, CSSValue value) {
 		}
 
-		public void overridePropertyUnMocked(IEclipsePreferences preferences,
-				CSSValue value) {
+		public void overridePropertyUnMocked(IEclipsePreferences preferences, CSSValue value) {
 			super.overrideProperty(preferences, value);
 		}
 
 		@Override
-		public void overrideProperty(IEclipsePreferences preferences,
-				String name, String value) {
+		public void overrideProperty(IEclipsePreferences preferences, String name, String value) {
 		}
 
-		public void overridePropertyUnMocked(IEclipsePreferences preferences,
-				String name, String value) {
+		public void overridePropertyUnMocked(IEclipsePreferences preferences, String name, String value) {
 			super.overrideProperty(preferences, name, value);
 		}
 	}
