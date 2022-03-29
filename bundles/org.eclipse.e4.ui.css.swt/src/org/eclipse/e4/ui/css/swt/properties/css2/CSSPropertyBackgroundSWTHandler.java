@@ -16,7 +16,6 @@ package org.eclipse.e4.ui.css.swt.properties.css2;
 
 import org.eclipse.e4.ui.css.core.dom.properties.Gradient;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.AbstractCSSPropertyBackgroundHandler;
-import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyBackgroundHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.dom.CompositeElement;
 import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
@@ -33,9 +32,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Widget;
 import org.w3c.dom.css.CSSValue;
 
-public class CSSPropertyBackgroundSWTHandler extends
-AbstractCSSPropertyBackgroundHandler {
-	public static final ICSSPropertyBackgroundHandler INSTANCE = new CSSPropertyBackgroundSWTHandler();
+public class CSSPropertyBackgroundSWTHandler extends AbstractCSSPropertyBackgroundHandler {
 
 	@Override
 	public boolean applyCSSProperty(Object element, String property,
