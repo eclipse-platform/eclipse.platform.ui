@@ -51,10 +51,10 @@ AbstractCSSPropertyMarginHandler {
 
 		// If single value then assigned to all four margins
 		if(value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-			setMargin(element, TOP, value, pseudo);
-			setMargin(element, RIGHT, value, pseudo);
-			setMargin(element, BOTTOM, value, pseudo);
-			setMargin(element, LEFT, value, pseudo);
+			setMargin(element, TOP, value);
+			setMargin(element, RIGHT, value);
+			setMargin(element, BOTTOM, value);
+			setMargin(element, LEFT, value);
 			return;
 		}
 
@@ -69,23 +69,23 @@ AbstractCSSPropertyMarginHandler {
 			switch (length) {
 			case 4:
 				// If four values then assigned top/right/bottom/left
-				setMargin(element, TOP, valueList.item(0), pseudo);
-				setMargin(element, RIGHT, valueList.item(1), pseudo);
-				setMargin(element, BOTTOM, valueList.item(2), pseudo);
-				setMargin(element, LEFT, valueList.item(3), pseudo);
+				setMargin(element, TOP, valueList.item(0));
+				setMargin(element, RIGHT, valueList.item(1));
+				setMargin(element, BOTTOM, valueList.item(2));
+				setMargin(element, LEFT, valueList.item(3));
 				break;
 			case 3:
 				// If three values then assigned top=v1, left=v2, right=v2, bottom=v3
-				setMargin(element, TOP, valueList.item(0), pseudo);
-				setMargin(element, RIGHT, valueList.item(1), pseudo);
-				setMargin(element, BOTTOM, valueList.item(2), pseudo);
-				setMargin(element, LEFT, valueList.item(1), pseudo);
+				setMargin(element, TOP, valueList.item(0));
+				setMargin(element, RIGHT, valueList.item(1));
+				setMargin(element, BOTTOM, valueList.item(2));
+				setMargin(element, LEFT, valueList.item(1));
 			case 2:
 				// If two values then assigned top/bottom=v1, left/right=v2
-				setMargin(element, TOP, valueList.item(0), pseudo);
-				setMargin(element, RIGHT, valueList.item(1), pseudo);
-				setMargin(element, BOTTOM, valueList.item(0), pseudo);
-				setMargin(element, LEFT, valueList.item(1), pseudo);
+				setMargin(element, TOP, valueList.item(0));
+				setMargin(element, RIGHT, valueList.item(1));
+				setMargin(element, BOTTOM, valueList.item(0));
+				setMargin(element, LEFT, valueList.item(1));
 			}
 		} else {
 			throw new CSSException("Invalid margin property value");
@@ -95,25 +95,25 @@ AbstractCSSPropertyMarginHandler {
 	@Override
 	public void applyCSSPropertyMarginTop(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
-		setMargin(element, TOP, value, pseudo);
+		setMargin(element, TOP, value);
 	}
 
 	@Override
 	public void applyCSSPropertyMarginRight(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
-		setMargin(element, RIGHT, value, pseudo);
+		setMargin(element, RIGHT, value);
 	}
 
 	@Override
 	public void applyCSSPropertyMarginBottom(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
-		setMargin(element, BOTTOM, value, pseudo);
+		setMargin(element, BOTTOM, value);
 	}
 
 	@Override
 	public void applyCSSPropertyMarginLeft(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
-		setMargin(element, LEFT, value, pseudo);
+		setMargin(element, LEFT, value);
 	}
 
 	@Override
@@ -170,7 +170,7 @@ AbstractCSSPropertyMarginHandler {
 		return (GridLayout) layout;
 	}
 
-	private void setMargin(Object element, int side, CSSValue value, String pseudo) {
+	private void setMargin(Object element, int side, CSSValue value) {
 		if(value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE) {
 			return;
 		}

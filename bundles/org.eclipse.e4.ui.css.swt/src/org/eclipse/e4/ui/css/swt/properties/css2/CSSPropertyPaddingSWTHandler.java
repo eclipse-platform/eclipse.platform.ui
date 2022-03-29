@@ -53,7 +53,7 @@ AbstractCSSPropertyPaddingHandler {
 		// If single value then assigned to all four paddings
 		if(value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 			padding.top = padding.bottom = padding.left = padding.right = value;
-			setPadding(element, padding, pseudo);
+			setPadding(element, padding);
 			return;
 		}
 
@@ -88,7 +88,7 @@ AbstractCSSPropertyPaddingHandler {
 				padding.left = valueList.item(1);
 			}
 
-			setPadding(element, padding, pseudo);
+			setPadding(element, padding);
 		} else {
 			throw new CSSException("Invalid padding property value");
 		}
@@ -100,7 +100,7 @@ AbstractCSSPropertyPaddingHandler {
 		CSS2PaddingPropertiesImpl padding = new CSS2PaddingPropertiesImpl();
 		if(value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 			padding.top = value;
-			setPadding(element, padding, pseudo);
+			setPadding(element, padding);
 		}
 	}
 
@@ -110,7 +110,7 @@ AbstractCSSPropertyPaddingHandler {
 		CSS2PaddingPropertiesImpl padding = new CSS2PaddingPropertiesImpl();
 		if(value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 			padding.right = value;
-			setPadding(element, padding, pseudo);
+			setPadding(element, padding);
 		}
 	}
 
@@ -120,7 +120,7 @@ AbstractCSSPropertyPaddingHandler {
 		CSS2PaddingPropertiesImpl padding = new CSS2PaddingPropertiesImpl();
 		if(value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 			padding.bottom = value;
-			setPadding(element, padding, pseudo);
+			setPadding(element, padding);
 		}
 	}
 
@@ -130,7 +130,7 @@ AbstractCSSPropertyPaddingHandler {
 		CSS2PaddingPropertiesImpl padding = new CSS2PaddingPropertiesImpl();
 		if(value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 			padding.left = value;
-			setPadding(element, padding, pseudo);
+			setPadding(element, padding);
 		}
 	}
 
@@ -169,7 +169,7 @@ AbstractCSSPropertyPaddingHandler {
 		return null;
 	}
 
-	private void setPadding(Object element, CSSValue value, String pseudo) {
+	private void setPadding(Object element, CSSValue value) {
 		Widget widget = SWTElementHelpers.getWidget(element);
 
 		if (widget instanceof CTabFolder) {
