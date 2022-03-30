@@ -36,11 +36,6 @@ public class Bug459961Test extends CSSSWTTestCase {
 
 	@Test
 	public void testTransparentColorConstantReference() {
-		if (System.getProperty("org.eclipse.swt.internal.gtk.version", "").startsWith("3.")) { // $NON-NLS-1//NON-NLS-2//NON-NLS-3
-			System.out.println("testTransparentColorConstantReference disabled due to Bug 493640 and 494327");
-			return;
-		}
-
 		String cssString = "Label { background-color: COLOR-TRANSPARENT; }";
 
 		Label label = createTestLabel(cssString);
