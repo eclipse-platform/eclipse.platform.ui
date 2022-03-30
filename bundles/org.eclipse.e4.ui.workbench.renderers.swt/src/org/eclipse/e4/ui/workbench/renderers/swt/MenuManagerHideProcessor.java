@@ -92,9 +92,15 @@ public class MenuManagerHideProcessor implements IMenuListener2 {
 
 		if (!menu.isDisposed()) {
 			menu.getDisplay().asyncExec(() -> {
+				if (menu.isDisposed()) {
+					return; // may be meanwhile disposed
+				}
 				for (Entry<MDynamicMenuContribution, ArrayList<MMenuElement>> entry : toBeHidden.entrySet()) {
 					MDynamicMenuContribution currentMenuElement = entry.getKey();
 					Object contribution = currentMenuElement.getObject();
+					if (contribution != null) {
+						continue; // avoid NPE (Bug 578964)
+					}
 					IEclipseContext dynamicMenuContext = EclipseContextFactory.create();
 
 					ArrayList<MMenuElement> mel = entry.getValue();
@@ -103,7 +109,7 @@ public class MenuManagerHideProcessor implements IMenuListener2 {
 					dynamicMenuContext.set(MDynamicMenuContribution.class, currentMenuElement);
 					IEclipseContext parentContext = modelService.getContainingContext(currentMenuElement);
 					ContextInjectionFactory.invoke(contribution, AboutToHide.class, parentContext,
-							dynamicMenuContext, null);
+							dynamicMenuContext, null); // contribution==null => NPE (Bug 578964)
 					dynamicMenuContext.dispose();
 					// remove existing entries for this dynamic
 					// contribution item if there are any
