@@ -15,6 +15,6 @@
   </parent>
   <groupId>org.eclipse.e4</groupId>
   <artifactId>org.eclipse.e4.ui.tests.css.core</artifactId>
-  <version>1.301.100-SNAPSHOT</version>
+  <version>1.301.200-SNAPSHOT</version>
   <packaging>eclipse-test-plugin</packaging>
 </project>
