@@ -35,5 +35,6 @@
     <module>org.eclipse.ui.examples.navigator</module>
     <module>org.eclipse.ui.examples.uriSchemeHandler</module>
     <module>org.eclipse.ui.forms.examples</module>
+    <module>org.eclipse.ui.examples.markerHelp</module>
   </modules>
 </project>
