@@ -89,6 +89,7 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
@@ -4896,6 +4897,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		} catch (CoreException x) {
 			IStatus status= x.getStatus();
+			if (status != null && status.getSeverity() == IStatus.CANCEL) {
+				// bug 577511 - do not ignore cancel:
+				throw new OperationCanceledException();
+			}
 			if (status == null || status.getSeverity() != IStatus.CANCEL) {
 				Bundle bundle= Platform.getBundle(PlatformUI.PLUGIN_ID);
 				ILog log= Platform.getLog(bundle);
