@@ -1,4 +1,12 @@
 /*******************************************************************************
+ * Copyright (c) 2022 IBM Corporation and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  * Steven Spungin <steven@spungin.tv> - Bug 431735, Bug 437890, Bug 440469
@@ -114,9 +122,13 @@ public class ModelEditorPreferencePage extends PreferencePage implements IWorkbe
 			{
 				final Composite container = new Composite(group, SWT.NONE);
 				container.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false, 2, 1));
-				fShowSearch = new BooleanFieldEditor(ModelEditorPreferences.TAB_FORM_SEARCH_SHOW,
-					Messages.ModelEditorPreferencePage_SearchableTree
-						+ Messages.ModelEditorPreferencePage_ForcesReadOnlyXMITab + Messages.ModelEditorPreferencePage_RequiresReopeningModel, container);
+				StringBuilder buffer = new StringBuilder(Messages.ModelEditorPreferencePage_SearchableTree);
+				buffer.append(" "); //$NON-NLS-1$
+				buffer.append(Messages.ModelEditorPreferencePage_ForcesReadOnlyXMITab);
+				buffer.append(" "); //$NON-NLS-1$
+				buffer.append(Messages.ModelEditorPreferencePage_RequiresReopeningModel);
+				fShowSearch = new BooleanFieldEditor(ModelEditorPreferences.TAB_FORM_SEARCH_SHOW, buffer.toString(),
+						container);
 				fShowSearch.setPage(this);
 				fShowSearch.setPreferenceStore(getPreferenceStore());
 				fShowSearch.load();
