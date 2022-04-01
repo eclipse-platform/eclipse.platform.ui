@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 SAP SE and others.
+ * Copyright (c) 2019, 2022 SAP SE and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,11 +12,6 @@
  *     SAP SE - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.tests.multipageeditor;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.internal.ErrorEditorPart;
@@ -44,11 +39,11 @@ public class MultiPageEditorPartTest extends UITestCase {
 		IEditorPart editor = openTestWindow().getActivePage().openEditor(new NullEditorInput(),
 				"org.eclipse.ui.tests.multipageeditor.TestMultiPageEditorThrowingPartInitException"); //$NON-NLS-1$
 
-		assertThat(editor, instanceOf(ErrorEditorPart.class));
-		assertThat("The editor should have been diposed by CompatibilityPart",
-				TestMultiPageEditorThrowingPartInitException.disposeCalled, is(true));
-		assertThat("No exception should have been thrown while disposing",
-				TestMultiPageEditorThrowingPartInitException.exceptionWhileDisposing, is(nullValue()));
+		assertTrue(editor instanceof ErrorEditorPart);
+		assertTrue("The editor should have been diposed by CompatibilityPart",
+				TestMultiPageEditorThrowingPartInitException.disposeCalled);
+		assertNull("No exception should have been thrown while disposing",
+				TestMultiPageEditorThrowingPartInitException.exceptionWhileDisposing);
 	}
 
 }

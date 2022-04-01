@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2017 Tasktop Technologies and others.
+ * Copyright (c) 2015, 2022 Tasktop Technologies and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,9 +12,6 @@
  *     Tasktop Technologies - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.tests.internal;
-
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -87,7 +84,7 @@ public class WorkbenchPageTest extends UITestCase {
 			page.performedShowIn(id);
 		}
 		page.sortShowInPartIds(partIds);
-		assertThat(partIds, is(expected));
+		assertEquals(partIds, expected);
 	}
 
 	private WorkbenchPage getWorkbenchPage() {

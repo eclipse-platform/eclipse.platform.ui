@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 KGU-Consulting GmbH and others.
+ * Copyright (c) 2019, 2022 KGU-Consulting GmbH and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,8 +14,7 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -64,7 +63,7 @@ public class ModelServiceImplTest {
 				EModelService.IN_SHARED_ELEMENTS);
 
 		// assert
-		assertThat(findElements, contains(editor));
+		assertTrue(findElements.contains(editor));
 	}
 
 	private MApplication createAppWithEditorInSharedElements() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,7 +20,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -55,7 +54,6 @@ import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
 import org.eclipse.ui.tests.harness.util.CallHistory;
 import org.eclipse.ui.tests.harness.util.FileUtil;
-import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -150,8 +148,7 @@ public class IEditorRegistryTest {
 	@Test
 	public void testFindExternalEditor() {
 		IEditorDescriptor[] sortedEditorsFromOS = ((EditorRegistry) fReg).getSortedEditorsFromOS();
-		assertThat("The OS should have at least one external editor", sortedEditorsFromOS.length,
-				Matchers.greaterThan(1));
+		assertTrue("The OS should have at least one external editor", sortedEditorsFromOS.length > 1);
 
 		List<EditorDescriptor> list = Arrays.asList(sortedEditorsFromOS).stream().map(x -> (EditorDescriptor) x)
 				.collect(Collectors.toList());
