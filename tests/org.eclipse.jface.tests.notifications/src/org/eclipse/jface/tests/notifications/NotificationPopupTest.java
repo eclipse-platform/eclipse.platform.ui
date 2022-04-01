@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2021 SAP SE and others.
+ * Copyright (c) 2021, 2022 SAP SE and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -21,7 +21,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -90,14 +89,10 @@ public class NotificationPopupTest {
 	public void createsWithTextContent() {
 		Text[] text = new Text[1];
 		NotificationPopup notication =
-		this.builder.title("Hello World", false).content(new Function<Composite, Control>() {
-
-			@Override
-			public Control apply(Composite parent) {
-				text[0] = new Text(parent, SWT.NONE);
-				text[0].setText("My custom Text");
-				return text[0];
-			}
+		this.builder.title("Hello World", false).content(parent -> {
+			text[0] = new Text(parent, SWT.NONE);
+			text[0].setText("My custom Text");
+			return text[0];
 		}).delay(1).build();
 
 		notication.open();
@@ -110,14 +105,10 @@ public class NotificationPopupTest {
 	@Test
 	public void createsWithTitleContent() {
 		Text[] text = new Text[1];
-		NotificationPopup notication = this.builder.title(new Function<Composite, Control>() {
-
-			@Override
-			public Control apply(Composite parent) {
-				text[0] = new Text(parent, SWT.NONE);
-				text[0].setText("My custom Title");
-				return text[0];
-			}
+		NotificationPopup notication = this.builder.title(parent -> {
+			text[0] = new Text(parent, SWT.NONE);
+			text[0].setText("My custom Title");
+			return text[0];
 		}, false).delay(1).build();
 
 		notication.open();
