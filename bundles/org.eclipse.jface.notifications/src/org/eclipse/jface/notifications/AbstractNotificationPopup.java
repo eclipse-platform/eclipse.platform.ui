@@ -138,7 +138,7 @@ public abstract class AbstractNotificationPopup extends Window {
 	 * Clients can override if the window activation shouldn't be added to the popup
 	 * or a different behavior is desired by clicking on the popup.
 	 *
-	 * @param parentShell
+	 * @param parentShell parent shell for this popup
 	 * @return {@code null} if no window activation should be added to the popup
 	 * @since 0.5
 	 */
