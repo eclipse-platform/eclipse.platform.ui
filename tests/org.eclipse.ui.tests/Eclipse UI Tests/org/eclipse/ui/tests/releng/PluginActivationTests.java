@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.releng;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -274,7 +274,7 @@ public class PluginActivationTests {
 		if (buf.length() > 0) {
 			printPluginStatus(true);
 		}
-		assertTrue("Unexpected bundles in status active:\n" + buf, buf.length() == 0);
+		assertEquals("Unexpected bundles in status active:\n" + buf, 0, buf.length());
 	}
 
 	/**
@@ -315,6 +315,6 @@ public class PluginActivationTests {
 		if (buf.length() > 0) {
 			printPluginStatus(true);
 		}
-		assertTrue("Bundles not active which used to be active:\n" + buf, buf.length() == 0);
+		assertEquals("Bundles not active which used to be active:\n" + buf, 0, buf.length());
 	}
 }
