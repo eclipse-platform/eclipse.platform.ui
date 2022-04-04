@@ -756,7 +756,7 @@ public abstract class WorkbenchAdvisor {
 					error[0] = e;
 				} finally {
 					initDone = true;
-					yield();
+					Thread.yield();
 					try {
 						Thread.sleep(5);
 					} catch (InterruptedException e) {
