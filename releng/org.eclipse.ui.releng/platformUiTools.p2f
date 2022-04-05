@@ -262,6 +262,11 @@
             <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
         </repositories>
     </iu>
+    <iu id='org.apache.commons.fileupload' name='org.apache.commons.fileupload' version='0.0.0'>
+        <repositories size='1'>
+            <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
+        </repositories>
+    </iu>
     <iu id='org.eclipse.swt.tools.feature.feature.group' name='SWT Tools' version='0.0.0'>
         <repositories size='1'>
             <repository location='https://download.eclipse.org/eclipse/updates/4.24-I-builds'/>
