@@ -16,34 +16,28 @@
   <setupTask
       xsi:type="setup:EclipseIniTask"
       option="-Doomph.redirection.platform.ui"
-      value="=https://git.eclipse.org/c/platform/eclipse.platform.ui.git/plain/releng/org.eclipse.ui.releng/platformUi.setup->${git.clone.platform.ui.location|uri}/releng/org.eclipse.ui.releng/platformUi.setup"
+      value="=https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/releng/org.eclipse.ui.releng/platformUi.setup->${github.clone.platform.ui.location|uri}/releng/org.eclipse.ui.releng/platformUi.setup"
       vm="true"/>
   <setupTask
       xsi:type="git:GitCloneTask"
-      id="git.clone.platform.ui"
-      remoteURI="platform/eclipse.platform.ui"
+      id="github.clone.platform.ui"
+      remoteURI="eclipse-platform/eclipse.platform.ui"
       pushURI="">
     <annotation
         source="http://www.eclipse.org/oomph/setup/InducedChoices">
       <detail
           key="inherit">
-        <value>eclipse.gerrit.remoteURIs</value>
+        <value>github.remoteURIs</value>
       </detail>
       <detail
           key="label">
-        <value>Platform UI Gerrit Repository</value>
+        <value>Platform UI Github Repository</value>
       </detail>
       <detail
           key="target">
         <value>remoteURI</value>
       </detail>
     </annotation>
-    <configSections
-        name="gerrit">
-      <properties
-          key="createchangeid"
-          value="true"/>
-    </configSections>
     <description>Platform UI</description>
   </setupTask>
   <setupTask
@@ -54,7 +48,7 @@
       <requirement
           name="*"/>
       <sourceLocator
-          rootFolder="${git.clone.platform.ui.location}">
+          rootFolder="${github.clone.platform.ui.location}">
         <predicate
             xsi:type="predicates:OrPredicate">
           <operand
