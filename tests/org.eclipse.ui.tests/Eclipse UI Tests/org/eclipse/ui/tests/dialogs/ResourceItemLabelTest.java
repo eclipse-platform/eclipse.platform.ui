@@ -82,6 +82,19 @@ public class ResourceItemLabelTest extends UITestCase {
 	}
 
 	/**
+	 * Tests that the highlighting matches basic substrings when infix search is
+	 * automatically performed.
+	 */
+	@Test
+	public void testSubstringMatch_withAutoInfix() throws Exception {
+		Position[] atEnd = { new Position(2, 6) };
+		compareStyleRanges(atEnd, getStyleRanges("st.txt", "test.txt"), "test.txt", "");
+
+		Position[] atEndDifferentCase = { new Position(2, 6) };
+		compareStyleRanges(atEndDifferentCase, getStyleRanges("ST.txt", "test.txt"), "test.txt", "");
+	}
+
+	/**
 	 * Tests that the highlighting matches CamelCase searches
 	 *
 	 * @throws Exception
@@ -102,6 +115,17 @@ public class ResourceItemLabelTest extends UITestCase {
 
 		Position[] skippingDigit = { new Position(0, 2), new Position(5, 1) };
 		compareStyleRanges(skippingDigit, getStyleRanges("ThT", "This3Test.txt"), "This3Test.txt", "");
+
+	}
+
+	/**
+	 * Tests that the highlighting matches CamelCase searches when infix search is
+	 * automatically performed.
+	 */
+	@Test
+	public void testCamelCaseMatch_withAutoInfix() throws Exception {
+		Position[] atEnd = { new Position(4, 1), new Position(6, 1) };
+		compareStyleRanges(atEnd, getStyleRanges("IT", "ThisIsTest.txt"), "ThisIsTest.txt", "");
 	}
 
 	/**
@@ -122,6 +146,16 @@ public class ResourceItemLabelTest extends UITestCase {
 
 		Position[] withDigits = { new Position(0, 1), new Position(2, 2), new Position(7, 3) };
 		compareStyleRanges(withDigits, getStyleRanges("t?s3*x3t", "tes3t.tx3t"), "tes3t.tx3t", "");
+	}
+
+	/**
+	 * Tests that the highlighting matches searches using '*' and '?' when infix
+	 * search is automatically performed.
+	 */
+	@Test
+	public void testPatternMatch_withAutoInfix() throws Exception {
+		Position[] atEnd = { new Position(1, 1), new Position(3, 2) };
+		compareStyleRanges(atEnd, getStyleRanges("t?st", "atest.txt"), "atest.txt", "");
 	}
 
 	/**
@@ -153,6 +187,21 @@ public class ResourceItemLabelTest extends UITestCase {
 
 		Position[] both = { new Position(0, 3), new Position(6, 1) };
 		compareStyleRanges(both, getStyleRanges("CreS<", "CreateStuff.java"), "CreateStuff.java", "");
+	}
+
+	/**
+	 * Tests that the highlighting matches searches using '&lt;'.
+	 */
+	@Test
+	public void testDisableAutoInfixMatching() throws Exception {
+		Position[] substring = { new Position(0, 4) };
+		compareStyleRanges(substring, getStyleRanges(">make", "Makefile"), "Makefile", "");
+
+		Position[] pattern = { new Position(0, 1), new Position(4, 4) };
+		compareStyleRanges(pattern, getStyleRanges(">M*file", "Makefile"), "Makefile", "");
+
+		Position[] camelCase = { new Position(0, 3), new Position(6, 1) };
+		compareStyleRanges(camelCase, getStyleRanges(">CreS", "CreateStuff.java"), "CreateStuff.java", "");
 	}
 
 	/**
