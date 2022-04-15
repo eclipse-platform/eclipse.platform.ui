@@ -22,7 +22,8 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({ UIDialogsAuto.class, DeprecatedUIDialogsAuto.class, UIWizardsAuto.class,
 		DeprecatedUIWizardsAuto.class, UIPreferencesAuto.class, UIComparePreferencesAuto.class,
 		DeprecatedUIPreferencesAuto.class, UIMessageDialogsAuto.class, UINewWorkingSetWizardAuto.class,
-		UIEditWorkingSetWizardAuto.class, SearchPatternAuto.class, UIFilteredResourcesSelectionDialogAuto.class,
+		UIEditWorkingSetWizardAuto.class, SearchPatternAuto.class, InfixSearchPatternAuto.class,
+		UIFilteredResourcesSelectionDialogAuto.class,
 		TreeManagerTest.class, ContainerCheckedTreeViewerTest.class })
 public class UIAutomatedSuite {
 

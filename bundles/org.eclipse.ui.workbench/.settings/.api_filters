@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.ui.workbench" version="2">
+    <resource path="Eclipse UI/org/eclipse/ui/dialogs/SearchPattern.java" type="org.eclipse.ui.dialogs.SearchPattern">
+        <filter id="336658481">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.dialogs.SearchPattern"/>
+                <message_argument value="DEFAULT_MATCH_RULES"/>
+            </message_arguments>
+        </filter>
+        <filter id="336658481">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.dialogs.SearchPattern"/>
+                <message_argument value="RULE_SUBSTRING_MATCH"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

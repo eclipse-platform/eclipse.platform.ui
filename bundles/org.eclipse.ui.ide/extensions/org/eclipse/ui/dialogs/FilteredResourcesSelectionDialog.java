@@ -102,6 +102,19 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 	private static final String SHOW_DERIVED = "ShowDerived"; //$NON-NLS-1$
 	private static final String FILTER_BY_LOCATION = "FilterByLocation"; //$NON-NLS-1$
 
+	private static final char START_SYMBOL = '>';
+
+	private static final char END_SYMBOL = '<';
+
+	private static final char BLANK = ' ';
+
+	// this is hard-coded, as a UI option is most probably not necessary
+	private final boolean autoInfixSearch = true;
+
+	private int getDefaultMatchRules() {
+		return SearchPattern.DEFAULT_MATCH_RULES | (autoInfixSearch ? SearchPattern.RULE_SUBSTRING_MATCH : 0);
+	}
+
 	private ShowDerivedResourcesAction showDerivedResourcesAction;
 
 	private ResourceItemLabelProvider resourceItemLabelProvider;
@@ -443,6 +456,7 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 
 			if (pattern != null) {
 				int patternDot = pattern.lastIndexOf('.');
+				// Prioritize names matching the whole pattern
 				String patternNoExtension = patternDot == -1 ? pattern : pattern.substring(0, patternDot);
 				boolean m1 = patternNoExtension.equals(n1);
 				boolean m2 = patternNoExtension.equals(n2);
@@ -452,6 +466,21 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 					}
 					if (m2) {
 						return 1;
+					}
+				}
+				// Prioritize names starting with the pattern
+				char patternFirstChar = getFirstFileNameChar(pattern);
+				if (patternFirstChar != 0) {
+					patternFirstChar = Character.toLowerCase(patternFirstChar);
+					m1 = patternFirstChar == Character.toLowerCase(s1.charAt(0));
+					m2 = patternFirstChar == Character.toLowerCase(s2.charAt(0));
+					if (!m1 || !m2) {
+						if (m1) {
+							return -1;
+						}
+						if (m2) {
+							return 1;
+						}
 					}
 				}
 			}
@@ -493,6 +522,22 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 
 			return comparability;
 		};
+	}
+
+	/**
+	 * @param pattern
+	 * @return the first character from the given string which <em>could</em> be
+	 *         considered a part of a file name. Returns <code>0</code> if there is
+	 *         no such character found.
+	 */
+	private char getFirstFileNameChar(String pattern) {
+		for (int i = 0; i < pattern.length(); i++) {
+			char ch = pattern.charAt(i);
+			if (ch != '*') {
+				return ch;
+			}
+		}
+		return 0;
 	}
 
 	/**
@@ -722,6 +767,9 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 			}
 
 			// Pre-process the matching pattern
+			if (matching.charAt(0) == '>') {
+				matching = matching.substring(1);
+			}
 			char lastChar = matching.charAt(matching.length() - 1);
 			if (lastChar == ' ' || lastChar == '<') {
 				matching = matching.substring(0, matching.length() - 1);
@@ -756,8 +804,11 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 			if (regionsDontMatch) {
 				// We should get here only when CamelCase nor wildcard matching succeeded
 				// A simple comparison of the whole strings should succeed instead
-				if (string.toLowerCase().startsWith(matching.toLowerCase())) {
-					positions.add(new Position(0, matching.length()));
+				int matchingIndex = autoInfixSearch
+						? string.toLowerCase().indexOf(matching.toLowerCase())
+						: (string.toLowerCase().startsWith(matching.toLowerCase()) ? 0 : -1);
+				if (matchingIndex > -1) {
+					positions.add(new Position(matchingIndex, matching.length()));
 				}
 			}
 			return positions;
@@ -959,7 +1010,7 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 		 * @param typeMask    filter type mask. See {@link IResource#getType()} types.
 		 */
 		public ResourceFilter(IContainer container, boolean showDerived, int typeMask) {
-			super();
+			super(new SearchPattern(getDefaultMatchRules()));
 			this.filterContainer = container;
 			this.showDerived = showDerived;
 			this.filterTypeMask = typeMask;
@@ -977,21 +1028,22 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 		private ResourceFilter(IContainer container, IContainer searchContainer, boolean showDerived, int typeMask) {
 			this(container, showDerived, typeMask);
 
-			String stringPattern = getPattern();
-			int matchRule = getMatchRule();
+			final String stringPattern = patternMatcher.getInitialPattern();
 			String filenamePattern;
 
 			int sep = stringPattern.lastIndexOf(IPath.SEPARATOR);
 			if (sep != -1) {
+				// This means that we primarily check (via `patternMatcher`) just the resource
+				// _name_ part and when there is some actual _container_ part (`sep > 0`), we
+				// also do checks for that part (via `containerPattern` and optional
+				// `relativeContainerPattern`).
 				filenamePattern = stringPattern.substring(sep + 1, stringPattern.length());
-				if ("*".equals(filenamePattern)) //$NON-NLS-1$
-					filenamePattern = "**"; //$NON-NLS-1$
 
 				if (sep > 0) {
 					if (filenamePattern.isEmpty()) // relative patterns don't need a file name
 						filenamePattern = "**"; //$NON-NLS-1$
 
-					String containerPattern = stringPattern.substring(0, sep);
+					String containerPattern = stringPattern.substring(isMatchPrefix(stringPattern) ? 1 : 0, sep);
 
 					if (searchContainer != null) {
 						relativeContainerPattern = new SearchPattern(
@@ -1001,6 +1053,8 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 					}
 
 					if (!containerPattern.startsWith(Character.toString('*'))) {
+						// bug 552418 - make the search always "root less", so that users don't need to
+						// type the initial "*/"
 						if (!containerPattern.startsWith(Character.toString(IPath.SEPARATOR))) {
 							containerPattern = IPath.SEPARATOR + containerPattern;
 						}
@@ -1010,35 +1064,29 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 							| SearchPattern.RULE_PREFIX_MATCH | SearchPattern.RULE_PATTERN_MATCH);
 					this.containerPattern.setPattern(containerPattern);
 				}
-				boolean isPrefixPattern = matchRule == SearchPattern.RULE_PREFIX_MATCH
-						|| (matchRule == SearchPattern.RULE_PATTERN_MATCH && filenamePattern.endsWith("*")); //$NON-NLS-1$
-				if (!isPrefixPattern)
-					// Add '<' again as it was removed by SearchPattern
-					filenamePattern += '<';
-				else if (filenamePattern.endsWith("*") && !filenamePattern.equals("**")) //$NON-NLS-1$ //$NON-NLS-2$
-					// Remove added '*' as the filename pattern might be a camel case pattern
-					filenamePattern = filenamePattern.substring(0, filenamePattern.length() - 1);
+				if (isMatchPrefix(stringPattern)) {
+					filenamePattern = '>' + filenamePattern;
+				}
 				patternMatcher.setPattern(filenamePattern);
-				// Update filenamePattern and matchRule as they might have changed
-				filenamePattern = getPattern();
-				matchRule = getMatchRule();
 			} else {
 				filenamePattern = stringPattern;
 			}
 
 			int lastPatternDot = filenamePattern.lastIndexOf('.');
 			if (lastPatternDot != -1) {
-				if (matchRule != SearchPattern.RULE_EXACT_MATCH) {
-					namePattern = new SearchPattern();
-					namePattern.setPattern(filenamePattern.substring(0, lastPatternDot));
-					String extensionPatternStr = filenamePattern.substring(lastPatternDot + 1);
-					// Add a '<' except this is a camel case pattern or a prefix pattern
-					if (matchRule != SearchPattern.RULE_CAMELCASE_MATCH && matchRule != SearchPattern.RULE_PREFIX_MATCH
-							&& !extensionPatternStr.endsWith("*")) //$NON-NLS-1$
-						extensionPatternStr += '<';
-					extensionPattern = new SearchPattern();
-					extensionPattern.setPattern(extensionPatternStr);
+				// This means we primarily check resource name as _name_ and _extension_ part
+				// and only when we don't succeed, we try the default whole-name check (via
+				// `patternMatcher`).
+				namePattern = new SearchPattern(getDefaultMatchRules());
+				String namePatternStr = filenamePattern.substring(0, lastPatternDot);
+				if (isMatchSuffix(stringPattern) && !namePatternStr.endsWith("*")) { //$NON-NLS-1$
+					// This means extension part will end with '<' (or ' ')
+					// and we should apply the same for the name part.
+					namePatternStr += "<"; //$NON-NLS-1$
 				}
+				namePattern.setPattern(namePatternStr);
+				extensionPattern = new SearchPattern();
+				extensionPattern.setPattern(filenamePattern.substring(lastPatternDot + 1));
 			}
 
 		}
@@ -1216,6 +1264,31 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 			resourceFactory.saveState(element);
 		}
 
+	}
+
+	/**
+	 * Returns whether prefix matching is enforced in the given search pattern.
+	 */
+	private static boolean isMatchPrefix(String pattern) {
+		if (pattern.length() == 0) {
+			return false;
+		}
+
+		char first = pattern.charAt(0);
+		return pattern.length() > 1 && first == START_SYMBOL;
+	}
+
+	/**
+	 * Returns whether suffix matching is enforced in the given search pattern.
+	 */
+	private static boolean isMatchSuffix(String pattern) {
+		if (pattern.length() <= 1) {
+			return false;
+		}
+
+		char last = pattern.charAt(pattern.length() - 1);
+		boolean matchPrefix = isMatchPrefix(pattern);
+		return pattern.length() > (matchPrefix ? 2 : 1) && (last == END_SYMBOL || last == BLANK);
 	}
 
 }
