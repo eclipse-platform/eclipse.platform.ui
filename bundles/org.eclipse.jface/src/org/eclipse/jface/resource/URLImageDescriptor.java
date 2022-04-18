@@ -42,6 +42,9 @@ import org.eclipse.swt.graphics.ImageFileNameProvider;
  */
 class URLImageDescriptor extends ImageDescriptor {
 
+	private static final String THEME_REPLACEMENTS_DIR = "/theme"; //$NON-NLS-1$
+	private static final String PLUGIN_URL = "/plugin/"; //$NON-NLS-1$
+
 	private static class URLImageFileNameProvider implements ImageFileNameProvider {
 		private String url;
 
@@ -198,9 +201,17 @@ class URLImageDescriptor extends ImageDescriptor {
 	}
 
 	private static URL getxURL(URL url, int zoom) {
-		if (zoom == 100) {
-			return url;
-		}
+
+		URL resultingURL = url;
+		// First we check for an image with increased zoom, if desired
+
+		// TODO: Ideally, we shouldn't be commenting out this line. Figure out a way
+		// around removing it.
+
+		// if (zoom == 100) {
+		// return url;
+		// }
+
 		String path = url.getPath();
 		int dot = path.lastIndexOf('.');
 		if (dot != -1 && (zoom == 150 || zoom == 200)) {
@@ -215,12 +226,49 @@ class URLImageDescriptor extends ImageDescriptor {
 				if (url.getQuery() != null) {
 					file += '?' + url.getQuery();
 				}
-				return new URL(url.getProtocol(), url.getHost(), url.getPort(), file);
+				resultingURL = new URL(url.getProtocol(), url.getHost(), url.getPort(), file);
 			} catch (MalformedURLException e) {
 				Policy.getLog().log(new Status(IStatus.ERROR, Policy.JFACE, e.getLocalizedMessage(), e));
 			}
 		}
-		return null;
+
+		// Next we check if there's an alternate image that we should use
+		// TODO: I'm not exactly sure how we should be accessing the JFace preference
+		// Should a IPreferenceStore instance be retrieved?
+		// Or is that considered part of Eclipse RCP and not JFace?
+		if (
+		// !JFaceResources.getString(JFacePreferences.CUSTOM_RESOURCE_THEME).equals(JFacePreferences.CUSTOM_RESOURCE_THEME)
+		// &&
+		resultingURL.getFile().contains(PLUGIN_URL)) {
+			// The third path segment is the bundleID
+			String originalFilePath = resultingURL.getFile();
+			for (int i = 0; i < 2; i++) {
+				originalFilePath = originalFilePath.substring(originalFilePath.indexOf('/') + 1);
+			}
+			// TODO: The original bundleID should only be used in the case of plugin
+			// fragment image replacements.
+			// We need an additional (optional) preference that will hold the bundleID of
+			// the currently used theme plugin
+			String bundleID = originalFilePath.substring(0, originalFilePath.indexOf('/'));
+			originalFilePath = originalFilePath.substring(originalFilePath.indexOf('/'), originalFilePath.length());
+
+			// TODO: This is a workaround and should probably be removed
+			if (originalFilePath.contains("/$nl$/")) { //$NON-NLS-1$
+
+				originalFilePath = originalFilePath.replace("/$nl$/", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			try {
+				URL themedIconURL = new URL(resultingURL.getProtocol(), resultingURL.getHost(), resultingURL.getPort(),
+						PLUGIN_URL + bundleID + THEME_REPLACEMENTS_DIR + originalFilePath);
+				String found = getFilePath(themedIconURL, false);
+				if (found != null) {
+					resultingURL = themedIconURL;
+				}
+			} catch (MalformedURLException e) {
+				Policy.getLog().log(new Status(IStatus.ERROR, Policy.JFACE, e.getLocalizedMessage(), e));
+			}
+		}
+		return resultingURL;
 
 	}
 
