@@ -19,9 +19,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchWindow;
 
@@ -306,66 +303,6 @@ public interface IWorkbenchWindowConfigurer {
 	 * @see #addEditorAreaTransfer
 	 */
 	void configureEditorAreaDropListener(DropTargetListener dropTargetListener);
-
-	/**
-	 * No longer used by the platform
-	 *
-	 * @return the menu bar, suitable for setting in the shell extended by clients.
-	 * @noreference This method is not intended to be referenced by clients.
-	 *
-	 *              This method is planned to be deleted, see (
-	 *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=485835
-	 * @deprecated This method is no longer used. Applications now define workbench
-	 *             window contents in their application model.
-	 */
-	@Deprecated
-	Menu createMenuBar();
-
-	/**
-	 * No longer used by the platform
-	 *
-	 * @param parent the parent composite
-	 * @return the cool bar control, suitable for laying out in the parent
-	 * @noreference This method is not intended to be referenced by clients.
-	 *
-	 *              This method is planned to be deleted, see
-	 *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=485835
-	 * @deprecated This method is no longer used. Applications now define workbench
-	 *             window contents in their application model.
-	 */
-	@Deprecated
-	Control createCoolBarControl(Composite parent);
-
-	/**
-	 * No longer used by the platform
-	 *
-	 * @param parent the parent composite
-	 * @return the status line control, suitable for laying out in the parent
-	 * @noreference This method is not intended to be referenced by clients.
-	 *
-	 *              This method is planned to be deleted, see
-	 *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=485835
-	 * @deprecated This method is no longer used. Applications now define workbench
-	 *             window contents in their application model.
-	 */
-	@Deprecated
-	Control createStatusLineControl(Composite parent);
-
-	/**
-	 * No longer used by the platform
-	 *
-	 * @param parent the parent composite
-	 * @return the page composite, suitable for laying out in the parent
-	 *
-	 * @noreference This method is not intended to be referenced by clients.
-	 *
-	 *              This method is planned to be deleted, see
-	 *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=485835
-	 * @deprecated This method is no longer used. Applications now define workbench
-	 *             window contents in their application model.
-	 */
-	@Deprecated
-	Control createPageComposite(Composite parent);
 
 	/**
 	 * Saves the current state of the window using the specified memento.

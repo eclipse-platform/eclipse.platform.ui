@@ -34,9 +34,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -460,27 +457,6 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	 */
 	public void createDefaultContents(Shell shell) {
 
-	}
-
-	@Override
-	public Menu createMenuBar() {
-		return null;
-	}
-
-	@Override
-	public Control createCoolBarControl(Composite parent) {
-
-		return null;
-	}
-
-	@Override
-	public Control createStatusLineControl(Composite parent) {
-		return null;
-	}
-
-	@Override
-	public Control createPageComposite(Composite parent) {
-		return null;
 	}
 
 	@Override
