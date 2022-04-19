@@ -133,7 +133,6 @@ public class CTabFolderElement extends CompositeElement implements ChildVisibili
 			renderer.setTabOutline(null);
 			renderer.setInnerKeyline(null);
 			renderer.setOuterKeyline(null);
-			renderer.setShadowColor(null);
 		}
 		super.reset();
 	}
