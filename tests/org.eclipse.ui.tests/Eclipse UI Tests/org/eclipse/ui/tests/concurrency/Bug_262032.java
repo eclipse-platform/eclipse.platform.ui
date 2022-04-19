@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.tests.harness.TestBarrier;
+import org.eclipse.core.tests.harness.TestBarrier2;
 import org.eclipse.swt.widgets.Display;
 import org.junit.Test;
 
@@ -71,20 +71,20 @@ public class Bug_262032 {
 	@Test
 	public void testBug262032() {
 		final ILock lock = Job.getJobManager().newLock();
-		final TestBarrier tb1 = new TestBarrier(-1);
+		final TestBarrier2 tb1 = new TestBarrier2(-1);
 
 		// Job hols scheduling rule
 		Job j = new Job ("Deadlocking normal Job") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				tb1.setStatus(TestBarrier.STATUS_WAIT_FOR_START);
-				tb1.waitForStatus(TestBarrier.STATUS_RUNNING);
+				tb1.setStatus(TestBarrier2.STATUS_WAIT_FOR_START);
+				tb1.waitForStatus(TestBarrier2.STATUS_RUNNING);
 				lock.acquire();
 				//test that we haven't both acquired the lock...
 				assertTrue(!concurrentAccess);
 				lock.release();
 
-				tb1.setStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
+				tb1.setStatus(TestBarrier2.STATUS_WAIT_FOR_DONE);
 				return Status.OK_STATUS;
 			}
 		};
@@ -92,13 +92,13 @@ public class Bug_262032 {
 		j.schedule();
 
 		// Wait for the job with scheduling rule to start
-		tb1.waitForStatus(TestBarrier.STATUS_WAIT_FOR_START);
+		tb1.waitForStatus(TestBarrier2.STATUS_WAIT_FOR_START);
 
 		// asyncExec job that wants the lock
 		Display.getDefault().asyncExec(() -> {
 			lock.acquire();
 			concurrentAccess = true;
-			tb1.setStatus(TestBarrier.STATUS_RUNNING);
+			tb1.setStatus(TestBarrier2.STATUS_RUNNING);
 			// Sleep to test for concurrent access
 			try {
 				Thread.sleep(1000);
@@ -114,7 +114,7 @@ public class Bug_262032 {
 
 		try {
 			j.join();
-			tb1.waitForStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
+			tb1.waitForStatus(TestBarrier2.STATUS_WAIT_FOR_DONE);
 			assertEquals(Status.OK_STATUS, j.getResult());
 		} catch (InterruptedException e) {fail();}
 	}

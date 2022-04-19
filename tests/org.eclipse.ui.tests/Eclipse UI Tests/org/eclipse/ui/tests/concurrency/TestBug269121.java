@@ -16,13 +16,14 @@ package org.eclipse.ui.tests.concurrency;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.atomic.AtomicIntegerArray;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.tests.harness.TestBarrier;
+import org.eclipse.core.tests.harness.TestBarrier2;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -65,11 +66,11 @@ public class TestBug269121 {
 			}
 		};
 		job.setRule(ResourcesPlugin.getWorkspace().getRoot());
-		final int[] status = new int[] { -1 };
+		final AtomicIntegerArray status = new AtomicIntegerArray(new int[] { -1 });
 		WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
 			@Override
 			protected void execute(IProgressMonitor monitor) {
-				status[0] = TestBarrier.STATUS_DONE;
+				status.set(0, TestBarrier2.STATUS_DONE);
 			}
 		};
 		final ProgressMonitorDialog dialog = new ProgressMonitorDialog(
@@ -78,7 +79,7 @@ public class TestBug269121 {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					TestBarrier.waitForStatus(status, TestBarrier.STATUS_DONE);
+					TestBarrier2.waitForStatus(status, TestBarrier2.STATUS_DONE);
 					return Status.OK_STATUS;
 				} catch (AssertionFailedError e) {
 					// syncExecs are processed by
