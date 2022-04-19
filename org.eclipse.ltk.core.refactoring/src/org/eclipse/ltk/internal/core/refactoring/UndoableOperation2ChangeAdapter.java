@@ -29,7 +29,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulableOperation;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 
@@ -40,7 +43,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 
-public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdvancedUndoableOperation  {
+public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdvancedUndoableOperation, ISchedulableOperation  {
 
 	private String fLabel;
 	private String fDescription;
@@ -348,7 +351,7 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 				monitor.done();
 			}
 		};
-		ResourcesPlugin.getWorkspace().run(runnable, pm);
+		ResourcesPlugin.getWorkspace().run(runnable, getSchedulingRule(), IWorkspace.AVOID_UPDATE, pm);
 		return result;
 	}
 
@@ -389,5 +392,10 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 		}
 		fActiveChange.dispose();
 		fActiveChange= null;
+	}
+
+	@Override
+	public ISchedulingRule getSchedulingRule() {
+		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 }
