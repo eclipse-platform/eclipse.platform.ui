@@ -361,14 +361,6 @@
       <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
             composite="false"
-            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyShadowVisibleSWTHandler">
-         <property-name
-               name="swt-shadow-visible">
-         </property-name>
-      </handler>
-      <handler
-            adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
-            composite="false"
             handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyCustomTabContentBackgroundSWTHandler">
          <property-name
                name="swt-draw-custom-tab-content-background">
@@ -402,14 +394,6 @@
             handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyUnselectHotTabsColorBackgroundHandler">
          <property-name
                name="swt-unselected-hot-tab-color-background">
-         </property-name>
-      </handler>
-      <handler
-            adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
-            composite="false"
-            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyShadowColorHandler">
-         <property-name
-               name="swt-shadow-color">
          </property-name>
       </handler>
       <handler
