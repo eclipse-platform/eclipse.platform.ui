@@ -1063,10 +1063,10 @@ public class ModelEditor implements IGotoObject {
 		}
 		final TreeViewer viewer = tempViewer;
 
-		final FontDescriptor italicFontDescriptor = FontDescriptor.createFrom(viewer.getControl().getFont())
-				.setStyle(SWT.ITALIC);
+		final FontDescriptor fontDescriptor = FontDescriptor.createFrom(viewer.getControl().getFont())
+				.setStyle(SWT.NORMAL);
 		viewer.setLabelProvider(new DelegatingStyledCellLabelProvider(
-				new ComponentLabelProvider(this, messages, italicFontDescriptor)));
+				new ComponentLabelProvider(this, messages, fontDescriptor)));
 		final ObservableListTreeContentProvider<Object> contentProvider = new ObservableListTreeContentProvider<>(
 				new ObservableFactoryImpl(), new TreeStructureAdvisor<>() {
 				});
