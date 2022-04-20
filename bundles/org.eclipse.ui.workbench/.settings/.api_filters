@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.ui.workbench" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="planned_API_deletion" id="923795461">
+            <message_arguments>
+                <message_argument value="3.125.100"/>
+                <message_argument value="3.125.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
