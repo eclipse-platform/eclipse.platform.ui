@@ -28,3 +28,4 @@ jobs:
       if: always()
       with:
         files: ${{ github.workspace }}/org.eclipse.wb.tests/target/surefire-reports/*.xml
+        
