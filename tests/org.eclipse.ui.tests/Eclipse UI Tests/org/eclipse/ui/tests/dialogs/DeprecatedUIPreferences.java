@@ -74,8 +74,7 @@ public class DeprecatedUIPreferences {
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(),
 					IWorkbenchHelpContextIds.PREFERENCE_DIALOG);
 
-			for (Object element : manager.getElements(PreferenceManager.PRE_ORDER)) {
-				IPreferenceNode node = (IPreferenceNode) element;
+			for (IPreferenceNode node : manager.getElements(PreferenceManager.PRE_ORDER)) {
 				if (node.getId().equals(id)) {
 					dialog.showPage(node);
 					break;
@@ -119,8 +118,7 @@ public class DeprecatedUIPreferences {
 		dialog.create();
 		dialog.getShell().setText(title);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IWorkbenchHelpContextIds.PROPERTY_DIALOG);
-		for (Object element2 : manager.getElements(PreferenceManager.PRE_ORDER)) {
-			IPreferenceNode node = (IPreferenceNode) element2;
+		for (IPreferenceNode node : manager.getElements(PreferenceManager.PRE_ORDER)) {
 			if (node.getId().equals(id)) {
 				dialog.showPage(node);
 				break;

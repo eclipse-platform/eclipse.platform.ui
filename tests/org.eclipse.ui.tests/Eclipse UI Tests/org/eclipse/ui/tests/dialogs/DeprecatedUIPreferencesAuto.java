@@ -32,22 +32,19 @@ public class DeprecatedUIPreferencesAuto {
 
 	private PreferenceDialog getPreferenceDialog(String id) {
 		PreferenceDialogWrapper dialog = null;
-		PreferenceManager manager = WorkbenchPlugin.getDefault()
-				.getPreferenceManager();
+		PreferenceManager manager = WorkbenchPlugin.getDefault().getPreferenceManager();
 		if (manager != null) {
 			dialog = new PreferenceDialogWrapper(getShell(), manager);
 			dialog.create();
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(),
 					IWorkbenchHelpContextIds.PREFERENCE_DIALOG);
 
-			for (Object element : manager.getElements(
-					PreferenceManager.PRE_ORDER)) {
-			IPreferenceNode node = (IPreferenceNode) element;
-			if (node.getId().equals(id)) {
-			dialog.showPage(node);
-			break;
+			for (IPreferenceNode element : manager.getElements(PreferenceManager.PRE_ORDER)) {
+				if (element.getId().equals(id)) {
+					dialog.showPage(element);
+					break;
+				}
 			}
-		 }
 		}
 		return dialog;
 	}
@@ -88,7 +85,7 @@ public class DeprecatedUIPreferencesAuto {
 		DialogCheck.assertDialogTexts(dialog);
 	}
 
-	//Only really checking if this opens without an exception
+	// Only really checking if this opens without an exception
 	@Test
 	public void testFontEditorsPref() {
 		Dialog dialog = getPreferenceDialog("org.eclipse.ui.tests.dialogs.FontFieldEditorTestPreferencePage");
@@ -98,56 +95,48 @@ public class DeprecatedUIPreferencesAuto {
 	@Test
 	public void testInfoProp() {
 		/*
-		 * Commented out because it generates a failure
-		 * of expect and actual width values. Suspect this
-		 * is an SWT issue.
+		 * Commented out because it generates a failure of expect and actual width
+		 * values. Suspect this is an SWT issue.
 		 *
-		 Dialog dialog = getPropertyDialog("org.eclipse.ui.propertypages.info.file");
-		 DialogCheck.assertDialogTexts(dialog);
+		 * Dialog dialog = getPropertyDialog("org.eclipse.ui.propertypages.info.file");
+		 * DialogCheck.assertDialogTexts(dialog);
 		 */
 	}
 
 	@Test
 	public void testProjectReferencesProp() {
 		/*
-		 * Commented out because it generates a failure
-		 * of expect and actual width values. Suspect this
-		 * is an SWT issue.
+		 * Commented out because it generates a failure of expect and actual width
+		 * values. Suspect this is an SWT issue.
 		 *
-		 Dialog dialog = getPropertyDialog("org.eclipse.ui.propertypages.project.reference");
-		 DialogCheck.assertDialogTexts(dialog);
+		 * Dialog dialog =
+		 * getPropertyDialog("org.eclipse.ui.propertypages.project.reference");
+		 * DialogCheck.assertDialogTexts(dialog);
 		 */
 	}
 
 	/**
-	 * Test the editors preference page and toggle the
-	 * enable state twice to be sure there are no errors.
+	 * Test the editors preference page and toggle the enable state twice to be sure
+	 * there are no errors.
 	 */
 	@Test
 	public void testFieldEditorEnablePref() {
 
 		PreferenceDialogWrapper dialog = null;
-		PreferenceManager manager = WorkbenchPlugin.getDefault()
-				.getPreferenceManager();
+		PreferenceManager manager = WorkbenchPlugin.getDefault().getPreferenceManager();
 		if (manager != null) {
 			dialog = new PreferenceDialogWrapper(getShell(), manager);
 			dialog.create();
 
-			for (Object element : manager.getElements(
-					PreferenceManager.PRE_ORDER)) {
-			IPreferenceNode node = (IPreferenceNode) element;
-			if (node
-				.getId()
-				.equals(
-						"org.eclipse.ui.tests.dialogs.EnableTestPreferencePage")) {
-			dialog.showPage(node);
-			EnableTestPreferencePage page = (EnableTestPreferencePage) dialog
-					.getPage(node);
-			page.flipState();
-			page.flipState();
-			break;
+			for (IPreferenceNode node : manager.getElements(PreferenceManager.PRE_ORDER)) {
+				if (node.getId().equals("org.eclipse.ui.tests.dialogs.EnableTestPreferencePage")) {
+					dialog.showPage(node);
+					EnableTestPreferencePage page = (EnableTestPreferencePage) dialog.getPage(node);
+					page.flipState();
+					page.flipState();
+					break;
+				}
 			}
-		 }
 		}
 
 	}
