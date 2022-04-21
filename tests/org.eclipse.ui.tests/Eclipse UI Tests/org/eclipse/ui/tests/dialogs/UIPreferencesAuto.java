@@ -40,9 +40,7 @@ public class UIPreferencesAuto {
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(),
 					IWorkbenchHelpContextIds.PREFERENCE_DIALOG);
 
-			for (Object element : manager.getElements(
-					PreferenceManager.PRE_ORDER)) {
-				IPreferenceNode node = (IPreferenceNode) element;
+			for (IPreferenceNode node : manager.getElements(PreferenceManager.PRE_ORDER)) {
 				if (node.getId().equals(id)) {
 					dialog.showPage(node);
 					break;
@@ -134,16 +132,10 @@ public class UIPreferencesAuto {
 			dialog = new PreferenceDialogWrapper(getShell(), manager);
 			dialog.create();
 
-			for (Object element : manager.getElements(
-					PreferenceManager.PRE_ORDER)) {
-				IPreferenceNode node = (IPreferenceNode) element;
-				if (node
-					.getId()
-					.equals(
-							"org.eclipse.ui.tests.dialogs.EnableTestPreferencePage")) {
+			for (IPreferenceNode node : manager.getElements(PreferenceManager.PRE_ORDER)) {
+				if (node.getId().equals("org.eclipse.ui.tests.dialogs.EnableTestPreferencePage")) {
 					dialog.showPage(node);
-					EnableTestPreferencePage page = (EnableTestPreferencePage) dialog
-						.getPage(node);
+					EnableTestPreferencePage page = (EnableTestPreferencePage) dialog.getPage(node);
 					page.flipState();
 					page.flipState();
 					break;

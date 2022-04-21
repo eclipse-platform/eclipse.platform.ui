@@ -292,10 +292,8 @@ public final class PreferencesUtil {
 		// fill the manager with contributions from the matching contributors
 		PropertyPageContributorManager.getManager().contribute(pageManager, element);
 		// testing if there are pages in the manager
-		List pages = pageManager.getElements(PreferenceManager.PRE_ORDER);
-		IPreferenceNode[] nodes = new IPreferenceNode[pages.size()];
-		pages.toArray(nodes);
-		return nodes;
+		List<IPreferenceNode> pages = pageManager.getElements(PreferenceManager.PRE_ORDER);
+		return pages.toArray(IPreferenceNode[]::new);
 	}
 
 }

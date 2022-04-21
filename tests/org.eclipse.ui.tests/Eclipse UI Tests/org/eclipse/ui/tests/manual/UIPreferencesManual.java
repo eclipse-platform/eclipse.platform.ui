@@ -40,19 +40,13 @@ public class UIPreferencesManual extends UIPreferencesAuto {
 			dialog = new PreferenceDialogWrapper(getShell(), manager);
 			dialog.create();
 
-			for (Object element : manager.getElements(
-					PreferenceManager.PRE_ORDER)) {
-				IPreferenceNode node = (IPreferenceNode) element;
-				if (node
-					.getId()
-					.equals(
-							"org.eclipse.ui.tests.manual.BrokenUpdatePreferencePage")) {
-				dialog.showPage(node);
-				BrokenUpdatePreferencePage page = (BrokenUpdatePreferencePage) dialog
-						.getPage(node);
-				page.changeFont();
-				page.changePluginPreference();
-				break;
+			for (IPreferenceNode node : manager.getElements(PreferenceManager.PRE_ORDER)) {
+				if (node.getId().equals("org.eclipse.ui.tests.manual.BrokenUpdatePreferencePage")) {
+					dialog.showPage(node);
+					BrokenUpdatePreferencePage page = (BrokenUpdatePreferencePage) dialog.getPage(node);
+					page.changeFont();
+					page.changePluginPreference();
+					break;
 				}
 			}
 		}

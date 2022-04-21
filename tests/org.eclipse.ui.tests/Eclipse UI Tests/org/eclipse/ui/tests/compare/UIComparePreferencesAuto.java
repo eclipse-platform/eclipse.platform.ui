@@ -41,9 +41,7 @@ public class UIComparePreferencesAuto {
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(),
 					IWorkbenchHelpContextIds.PREFERENCE_DIALOG);
 
-			for (Object element : manager.getElements(
-					PreferenceManager.PRE_ORDER)) {
-				IPreferenceNode node = (IPreferenceNode) element;
+			for (IPreferenceNode node : manager.getElements(PreferenceManager.PRE_ORDER)) {
 				if (node.getId().equals(id)) {
 					dialog.showPage(node);
 					break;

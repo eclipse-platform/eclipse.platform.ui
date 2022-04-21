@@ -53,7 +53,7 @@ public class WorkbenchPreferenceManager extends PreferenceManager implements IEx
 		// add a listener for keyword deltas. If any occur clear all page caches
 		Platform.getExtensionRegistry().addRegistryChangeListener(event -> {
 			if (event.getExtensionDeltas(PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_KEYWORDS).length > 0) {
-				for (Object element : getElements(PreferenceManager.POST_ORDER)) {
+				for (IPreferenceNode element : getElements(PreferenceManager.POST_ORDER)) {
 					((WorkbenchPreferenceNode) element).clearKeywords();
 				}
 			}
