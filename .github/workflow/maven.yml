@@ -1,0 +1,30 @@
+name: Java CI with Maven
+
+on:
+  pull_request:
+    branches:
+      - master
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [ 11, 17 ]
+    name: Java ${{ matrix.java }} compile
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Java runtime
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'temurin' # See 'Supported distributions' for available options
+        java-version: ${{ matrix.java }}
+    - name: Install xvfb
+      run: sudo apt-get install xvfb
+    - name: Build with Maven
+      run: xvfb-run mvn clean verify --batch-mode --fail-at-end -Pbuild-individual-bundles -Pbree-libs -Papi-check -Dcompare-version-with-baselines.skip=false -Dproject.build.sourceEncoding=UTF-8
+    - name: Publish Unit Test Results
+      uses: EnricoMi/publish-unit-test-result-action/composite@v1
+      if: always()
+      with:
+        files: ${{ github.workspace }}/org.eclipse.wb.tests/target/surefire-reports/*.xml
