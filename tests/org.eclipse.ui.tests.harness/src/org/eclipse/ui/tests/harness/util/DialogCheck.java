@@ -20,7 +20,6 @@ import static org.junit.Assert.assertTrue;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -119,12 +118,6 @@ public class DialogCheck {
 		for (Control child : children) {
 			if (child instanceof TabFolder) {
 				TabFolder folder = (TabFolder) child;
-				int numPages = folder.getItemCount();
-				for (int j = 0; j < numPages; j++) {
-					folder.setSelection(j);
-				}
-			} else if (child instanceof CTabFolder) {
-				CTabFolder folder = (CTabFolder) child;
 				int numPages = folder.getItemCount();
 				for (int j = 0; j < numPages; j++) {
 					folder.setSelection(j);
