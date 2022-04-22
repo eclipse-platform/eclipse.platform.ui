@@ -20,7 +20,9 @@ pipeline {
 					mvn clean verify --batch-mode --fail-at-end -Dmaven.repo.local=$WORKSPACE/.m2/repository \
 						-Pbuild-individual-bundles -Pbree-libs -Papi-check \
 						-Dcompare-version-with-baselines.skip=false \
-						-Dproject.build.sourceEncoding=UTF-8 
+						-Dproject.build.sourceEncoding=UTF-8 \
+						-Dorg.slf4j.simpleLogger.showDateTime=true -Dorg.slf4j.simpleLogger.dateTimeFormat=HH:mm:ss.SSS \
+						-DtrimStackTrace=false 
 					"""
 				}
 			}
