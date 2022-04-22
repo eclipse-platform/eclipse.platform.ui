@@ -87,10 +87,13 @@ public class DialogCheck {
 		dialog.open();
 		Shell shell = dialog.getShell();
 		UITestCase.processEvents();
-		verifyCompositeText(shell);
-		dialog.close();
-		// close "verify results" dialog, it makes other tests unhappy
-		_verifyDialog.buttonPressed(IDialogConstants.YES_ID);
+		try {
+			verifyCompositeText(shell);
+		} finally {
+			dialog.close();
+			// close "verify results" dialog, it makes other tests unhappy
+			_verifyDialog.buttonPressed(IDialogConstants.YES_ID);
+		}
 	}
 
 	/**
