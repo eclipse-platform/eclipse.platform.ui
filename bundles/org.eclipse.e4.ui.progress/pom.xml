@@ -16,7 +16,7 @@
   </parent>
   <groupId>org.eclipse.e4</groupId>
   <artifactId>org.eclipse.e4.ui.progress</artifactId>
-  <version>0.3.200-SNAPSHOT</version>
+  <version>0.3.400-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
   
   <properties>
