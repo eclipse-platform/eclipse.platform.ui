@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2020 IBM Corporation and others.
+ * Copyright (c) 2003, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
  *     		- Fix for Bug 151204 [Progress] Blocked status of jobs are not applied/reported
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 422040
  *     Philipp Bumann <bumannp@gmail.com> - Bug 477602
+ *     Christoph Läubrich - Issue #8
  *******************************************************************************/
 package org.eclipse.e4.ui.progress.internal;
 
@@ -35,7 +36,6 @@ import javax.inject.Inject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
@@ -511,16 +511,21 @@ public class ProgressManager extends ProgressProvider {
 
 	@Override
 	public IProgressMonitor getDefaultMonitor() {
+		return monitorFor(null);
+	}
+
+	@Override
+	public IProgressMonitor monitorFor(IProgressMonitor monitor) {
 		// only need a default monitor for operations the UI thread
 		// and only if there is a display
 		Display display;
 		if (PlatformUI.isWorkbenchRunning() && !PlatformUI.isWorkbenchStarting()) {
 			display = getDisplay();
 			if (!display.isDisposed() && (display.getThread() == Thread.currentThread())) {
-				return new EventLoopProgressMonitor(new NullProgressMonitor());
+				return new EventLoopProgressMonitor(IProgressMonitor.nullSafe(monitor));
 			}
 		}
-		return super.getDefaultMonitor();
+		return IProgressMonitor.nullSafe(monitor);
 	}
 
 	/**

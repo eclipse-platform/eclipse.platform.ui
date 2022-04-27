@@ -27,6 +27,7 @@ import org.junit.runners.Suite;
 	NestedSyncExecDeadlockTest.class,
 	SyncExecWhileUIThreadWaitsForRuleTest.class,
 	SyncExecWhileUIThreadWaitsForLock.class,
+	NoFreezeWhileWaitingForRuleTest.class,
 	TestBug105491.class,
 	TestBug108162.class,
 	TestBug98621.class,
