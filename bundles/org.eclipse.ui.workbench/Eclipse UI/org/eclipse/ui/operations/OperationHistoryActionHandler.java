@@ -21,6 +21,7 @@ import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
+import org.eclipse.core.commands.operations.TriggeredOperations;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -300,19 +301,25 @@ public abstract class OperationHistoryActionHandler extends Action
 		};
 		try {
 			boolean runInBackground = false;
-			if (getOperation() instanceof IAdvancedUndoableOperation2) {
-				runInBackground = ((IAdvancedUndoableOperation2) getOperation()).runInBackground();
+			IUndoableOperation operation = getOperation();
+			if (operation instanceof IAdvancedUndoableOperation2) {
+				runInBackground = ((IAdvancedUndoableOperation2) operation).runInBackground();
 			}
 			if (runInBackground) {
 				progressDialog.run(runInBackground, true, runnable);
 			} else {
-				final IJobManager manager = Job.getJobManager();
-				final ISchedulingRule rule = (getOperation() instanceof ISchedulableOperation)
-						? ((ISchedulableOperation) getOperation()).getSchedulingRule()
+				Object schedulableOperation = operation;
+				while (!(schedulableOperation instanceof ISchedulableOperation)
+						&& schedulableOperation instanceof TriggeredOperations) {
+					schedulableOperation = ((TriggeredOperations) schedulableOperation).getTriggeringOperation();
+				}
+				final ISchedulingRule rule = (schedulableOperation instanceof ISchedulableOperation)
+						? ((ISchedulableOperation) schedulableOperation).getSchedulingRule()
 						: null;
 				if (rule == null) {
 					progressDialog.run(runInBackground, true, runnable);
 				} else {
+					final IJobManager manager = Job.getJobManager();
 					// prevent UI freeze during AutoBuild as in
 					// org.eclipse.jdt.internal.ui.refactoring.RefactoringExecutionHelper#perform
 					try {
