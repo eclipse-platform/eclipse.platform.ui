@@ -78,7 +78,7 @@ public class WelcomeParser extends DefaultHandler {
 
 	private String format;
 
-	private class WelcomeContentHandler implements ContentHandler {
+	private static class WelcomeContentHandler implements ContentHandler {
 		protected ContentHandler parent;
 
 		public void setParent(ContentHandler p) {
