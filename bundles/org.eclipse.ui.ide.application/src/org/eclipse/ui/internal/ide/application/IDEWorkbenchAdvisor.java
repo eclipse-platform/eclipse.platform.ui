@@ -569,10 +569,10 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 					IDEWorkbenchPlugin.IDE_WORKBENCH, 1,
 					IDEWorkbenchMessages.InternalError, e));
 		}
-		ErrorDialog.openError(null,
-				IDEWorkbenchMessages.ProblemsSavingWorkspace, null, status,
-				IStatus.ERROR | IStatus.WARNING);
 		if (!status.isOK()) {
+			ErrorDialog.openError(null,
+					IDEWorkbenchMessages.ProblemsSavingWorkspace, null, status,
+					IStatus.ERROR | IStatus.WARNING);
 			IDEWorkbenchPlugin.log(
 					IDEWorkbenchMessages.ProblemsSavingWorkspace, status);
 		}
