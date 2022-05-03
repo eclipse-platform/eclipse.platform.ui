@@ -45,6 +45,7 @@ public class ThemeTest extends CSSSWTTestCase {
 	@Override
 	@Before
 	public void setUp() {
+		super.setUp();
 		Bundle b = FrameworkUtil.getBundle(this.getClass());
 		assertNotNull("Not running in an OSGi environment", b);
 		context = b.getBundleContext();

@@ -92,6 +92,8 @@ public class KeyDispatcherTest {
 	private IEclipseContext workbenchContext;
 	private CallHandler handler;
 	private CallHandler twoStrokeHandler;
+	private KeyBindingDispatcher dispatcher;
+	private Listener listener;
 
 	private void defineCommands(IEclipseContext context) {
 		ECommandService cs = workbenchContext
@@ -136,6 +138,12 @@ public class KeyDispatcherTest {
 		defineContexts(workbenchContext);
 		defineBindingTables(workbenchContext);
 		defineCommands(workbenchContext);
+
+		dispatcher = new KeyBindingDispatcher();
+		listener = dispatcher.getKeyDownFilter();
+		ContextInjectionFactory.inject(dispatcher, workbenchContext);
+		display.addFilter(SWT.KeyDown, listener);
+		display.addFilter(SWT.Traverse, listener);
 	}
 
 	private void defineContexts(IEclipseContext context) {
@@ -162,17 +170,13 @@ public class KeyDispatcherTest {
 	public void tearDown() {
 		workbenchContext.dispose();
 		workbenchContext = null;
-		display.dispose();
-		display = null;
+		display.removeFilter(SWT.KeyDown, listener);
+		display.removeFilter(SWT.Traverse, listener);
 	}
 
 	@Test
 	public void testExecuteOneCommand() {
-		KeyBindingDispatcher dispatcher = new KeyBindingDispatcher();
 		ContextInjectionFactory.inject(dispatcher, workbenchContext);
-		final Listener listener = dispatcher.getKeyDownFilter();
-		display.addFilter(SWT.KeyDown, listener);
-		display.addFilter(SWT.Traverse, listener);
 
 		assertFalse(handler.q2);
 
@@ -194,12 +198,6 @@ public class KeyDispatcherTest {
 
 	@Test
 	public void testExecuteMultiStrokeBinding() {
-		KeyBindingDispatcher dispatcher = new KeyBindingDispatcher();
-		ContextInjectionFactory.inject(dispatcher, workbenchContext);
-		final Listener listener = dispatcher.getKeyDownFilter();
-		display.addFilter(SWT.KeyDown, listener);
-		display.addFilter(SWT.Traverse, listener);
-
 		assertFalse(twoStrokeHandler.q2);
 
 		Shell shell = new Shell(display, SWT.NONE);
@@ -237,12 +235,6 @@ public class KeyDispatcherTest {
 	@Test
 	@Ignore
 	public void TODOtestKeyDispatcherReset() throws Exception {
-		KeyBindingDispatcher dispatcher = new KeyBindingDispatcher();
-		ContextInjectionFactory.inject(dispatcher, workbenchContext);
-		final Listener listener = dispatcher.getKeyDownFilter();
-		display.addFilter(SWT.KeyDown, listener);
-		display.addFilter(SWT.Traverse, listener);
-
 		assertFalse(twoStrokeHandler.q2);
 
 		Shell shell = new Shell(display, SWT.NONE);
@@ -281,8 +273,11 @@ public class KeyDispatcherTest {
 
 	@Test
 	public void testSendKeyStroke() {
+		display.removeFilter(SWT.KeyDown, listener);
+		display.removeFilter(SWT.Traverse, listener);
+
 		KeyBindingDispatcher dispatcher = ContextInjectionFactory.make(KeyBindingDispatcher.class, workbenchContext);
-		final Listener listener = dispatcher.getKeyDownFilter();
+		listener = dispatcher.getKeyDownFilter();
 		display.addFilter(SWT.KeyDown, listener);
 		display.addFilter(SWT.Traverse, listener);
 		Shell shell = new Shell(display, SWT.NONE);

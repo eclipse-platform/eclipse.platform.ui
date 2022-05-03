@@ -44,8 +44,6 @@ public class BindingScenariosTestSuite {
 		junit.textui.TestRunner.run(suite());
 	}
 
-	private static Display display;
-
 	private static Shell shell;
 
 	public static junit.framework.Test suite() {
@@ -61,9 +59,6 @@ public class BindingScenariosTestSuite {
 			public void tearDown() throws Exception {
 				shell.close();
 				shell.dispose();
-				if (display != null) {
-					display.dispose();
-				}
 			}
 		};
 	}

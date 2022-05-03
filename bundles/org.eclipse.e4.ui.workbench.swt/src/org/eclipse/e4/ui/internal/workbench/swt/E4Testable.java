@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.testing.TestableObject;
 import org.osgi.service.component.annotations.Component;
@@ -38,6 +39,8 @@ public class E4Testable extends TestableObject {
 	private boolean oldAutomatedMode;
 
 	private boolean oldIgnoreErrors;
+
+	private volatile Exception displayCheck;
 
 	/**
 	 * Constructs a new workbench testable object.
@@ -112,7 +115,34 @@ public class E4Testable extends TestableObject {
 	@Override
 	public void runTest(Runnable testRunnable) {
 		Assert.isNotNull(workbench);
-		display.syncExec(testRunnable);
+		display.syncExec(
+				() -> {
+					display.addListener(SWT.Dispose,
+							e -> {
+								// lambda block to allow breakpoint for debugging
+								displayCheck = new Exception("Display is disposed");
+							});
+
+					// Run actual test
+					testRunnable.run();
+
+					while (display.readAndDispatch()) {
+						// process all pending tasks
+					}
+
+					// Display should be still there
+					checkDisplay();
+				});
+	}
+
+	/**
+	 * Throws an error with the stack of the thread that disposed the display if
+	 * display is already disposed
+	 */
+	private void checkDisplay() {
+		if (displayCheck != null) {
+			throw new IllegalStateException("Display shouldn't be disposed yet!", displayCheck);
+		}
 	}
 
 	/**
@@ -124,7 +154,7 @@ public class E4Testable extends TestableObject {
 	public void testingFinished() {
 		// force events to be processed, and ensure the close is done in the UI
 		// thread
-		display.syncExec(() -> Assert.isTrue(workbench.close()));
+		Display.getDefault().syncExec(() -> Assert.isTrue(workbench.close()));
 		ErrorDialog.AUTOMATED_MODE = oldAutomatedMode;
 		SafeRunnable.setIgnoreErrors(oldIgnoreErrors);
 	}
