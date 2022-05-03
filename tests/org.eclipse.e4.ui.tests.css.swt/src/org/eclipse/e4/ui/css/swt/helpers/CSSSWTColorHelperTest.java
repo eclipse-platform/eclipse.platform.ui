@@ -22,7 +22,6 @@ import static org.junit.Assert.assertNull;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.css.CSSValue;
@@ -32,13 +31,7 @@ public class CSSSWTColorHelperTest extends CSSSWTHelperTestCase {
 
 	@Before
 	public void setUp() {
-
 		display = Display.getDefault();
-	}
-
-	@After
-	public void tearDown() {
-		display.dispose();
 	}
 
 	@Test
