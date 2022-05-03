@@ -71,6 +71,7 @@ public class FilteringAsyncContentAssistTests {
 		shell = new Shell();
 		shell.setSize(300, 300);
 		shell.open();
+		DisplayHelper.driveEventQueue(shell.getDisplay());
 
 		viewer = new SourceViewer(shell, null, SWT.NONE);
 		Document document = new Document();

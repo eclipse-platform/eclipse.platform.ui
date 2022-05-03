@@ -16,9 +16,12 @@ package org.eclipse.jface.text.tests.codemining;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -92,6 +95,10 @@ public class CodeMiningProjectionViewerTest {
 
 	@Before
 	public void setUp() {
+		Shell[] shells= Display.getDefault().getShells();
+		for (Shell shell : shells) {
+			shell.dispose();
+		}
 		fParent= new Shell(SWT.ON_TOP);
 		fParent.setSize(500, 200);
 		fParent.setLayout(new FillLayout());
@@ -116,6 +123,30 @@ public class CodeMiningProjectionViewerTest {
 	@After
 	public void tearDown() {
 		fParent.dispose();
+	}
+
+	protected List<Shell> getCurrentShells() {
+		return Arrays.stream(fParent.getDisplay().getShells())
+				.filter(Shell::isVisible)
+				.collect(Collectors.toList());
+	}
+
+	protected List<Shell> findNewShells(Collection<Shell> beforeShells) {
+		return Arrays.stream(fParent.getDisplay().getShells())
+				.filter(Shell::isVisible)
+				.filter(shell -> !beforeShells.contains(shell))
+				.collect(Collectors.toList());
+	}
+
+	protected Shell findNewShell(Collection<Shell> beforeShells) {
+		DisplayHelper.sleep(fParent.getDisplay(), 100);
+		List<Shell> afterShells= findNewShells(beforeShells);
+		if (afterShells.isEmpty()) {
+			DisplayHelper.sleep(fParent.getDisplay(), 1000);
+		}
+		afterShells= findNewShells(beforeShells);
+		assertTrue("No new shell found, existing: " + beforeShells, afterShells.size() > beforeShells.size());
+		return afterShells.get(0);
 	}
 
 	@Test
@@ -163,6 +194,7 @@ public class CodeMiningProjectionViewerTest {
 				return contentAssistant;
 			}
 		});
+		final List<Shell> beforeShells= getCurrentShells();
 		fViewer.setCodeMiningProviders(new ICodeMiningProvider[] {
 				new DelayedEchoCodeMiningProvider()
 		});
@@ -170,6 +202,7 @@ public class CodeMiningProjectionViewerTest {
 		fParent.setSize(200, 4 * fViewer.getTextWidget().getLineHeight());
 		//fParent.pack(true);
 		fParent.open();
+		DisplayHelper.driveEventQueue(fParent.getDisplay());
 		// ensure ViewportGuard is initialized
 		fViewer.getControl().notifyListeners(SWT.KeyUp, new Event());
 		fViewer.setSelectedRange(1, 0);
@@ -178,10 +211,10 @@ public class CodeMiningProjectionViewerTest {
 		assertTrue(new DisplayHelper() {
 			@Override
 			protected boolean condition() {
-				return display.getShells().length > 1;
+				return display.getShells().length > beforeShells.size();
 			}
 		}.waitForCondition(display, 1000));
-		Shell completionShell= display.getShells()[1];
+		Shell completionShell= findNewShell(beforeShells);
 		// ↓ showing codeminings changing viewport while completion popup is open
 		fViewer.updateCodeMinings();
 		assertTrue(new DisplayHelper() {

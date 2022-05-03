@@ -49,9 +49,8 @@ public class ContextInformationTest extends AbstractContentAssistTest {
 
 	@Test
 	public void testContextInfo() throws Exception {
-		setupSourceViewer(createBarContentAssist(), BarContentAssistProcessor.PROPOSAL);
-
 		final List<Shell> beforeShells= getCurrentShells();
+		setupSourceViewer(createBarContentAssist(), BarContentAssistProcessor.PROPOSAL);
 
 		selectAndReveal(4, 0);
 		processEvents();
@@ -70,9 +69,8 @@ public class ContextInformationTest extends AbstractContentAssistTest {
 
 	@Test
 	public void testContextInfo_hide_Bug512251() throws Exception {
-		setupSourceViewer(createBarContentAssist(), BarContentAssistProcessor.PROPOSAL);
-
 		final List<Shell> beforeShells= getCurrentShells();
+		setupSourceViewer(createBarContentAssist(), BarContentAssistProcessor.PROPOSAL);
 
 		selectAndReveal(4, 0);
 		processEvents();
@@ -96,9 +94,8 @@ public class ContextInformationTest extends AbstractContentAssistTest {
 	public void testContextInfo_hide_focusOut() throws Exception {
 		assumeFalse("Test fails on Mac: Bug 558989", Platform.OS_MACOSX.equals(Platform.getOS()));
 
+		final List<Shell> beforeShells= getCurrentShells();
 		setupSourceViewer(createBarContentAssist(), BarContentAssistProcessor.PROPOSAL);
-
-		final List<Shell> beforeShells = getCurrentShells();
 
 		selectAndReveal(4, 0);
 		processEvents();
@@ -122,9 +119,8 @@ public class ContextInformationTest extends AbstractContentAssistTest {
 
 	@Test
 	public void testContextInfo_hide_keyEsc() throws Exception {
+		final List<Shell> beforeShells= getCurrentShells();
 		setupSourceViewer(createBarContentAssist(), BarContentAssistProcessor.PROPOSAL);
-
-		final List<Shell> beforeShells = getCurrentShells();
 
 		selectAndReveal(4, 0);
 		processEvents();
@@ -152,9 +148,8 @@ public class ContextInformationTest extends AbstractContentAssistTest {
 
 	@Test
 	public void testContextInfo_hide_validRange() throws Exception {
+		final List<Shell> beforeShells= getCurrentShells();
 		setupSourceViewer(createBarContentAssist(), BarContentAssistProcessor.PROPOSAL + '\n');
-
-		final List<Shell> beforeShells = getCurrentShells();
 
 		selectAndReveal(4, 0);
 		processEvents();

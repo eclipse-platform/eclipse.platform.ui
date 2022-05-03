@@ -14,7 +14,6 @@
 
 package org.eclipse.jface.text.tests.contentassist;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -24,6 +23,7 @@ import java.util.stream.Collectors;
 
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ST;
@@ -31,6 +31,7 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 
@@ -58,11 +59,23 @@ public class AbstractContentAssistTest {
 	public AbstractContentAssistTest() {
 	}
 
+	@Before
+	public void setUp() {
+		Shell[] shells= Display.getDefault().getShells();
+		for (Shell s : shells) {
+			s.dispose();
+		}
+		DisplayHelper.driveEventQueue(Display.getDefault());
+	}
 
 	@After
 	public void close() {
 		if (shell != null && !shell.isDisposed()) {
 			shell.close();
+		}
+		Shell[] shells= Display.getDefault().getShells();
+		for (Shell s : shells) {
+			s.dispose();
 		}
 	}
 
@@ -87,12 +100,13 @@ public class AbstractContentAssistTest {
 		button.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		shell.open();
+		processEvents();
 		Assert.assertTrue(new DisplayHelper() {
 			@Override
 			protected boolean condition() {
 				return viewer.getTextWidget().isVisible();
 			}
-		}.waitForCondition(shell.getDisplay(), 3000));
+		}.waitForCondition(getDisplay(), 3000));
 	}
 
 	protected SourceViewerConfiguration createSourceViewerConfiguration() {
@@ -192,31 +206,35 @@ public class AbstractContentAssistTest {
 
 
 	protected void processEvents() {
-		DisplayHelper.driveEventQueue(shell.getDisplay());
+		DisplayHelper.driveEventQueue(getDisplay());
+	}
+
+	private Display getDisplay() {
+		return Display.getDefault();
 	}
 
 	protected List<Shell> getCurrentShells() {
-		return Arrays.stream(shell.getDisplay().getShells())
+		return Arrays.stream(getDisplay().getShells())
 				.filter(Shell::isVisible)
 				.collect(Collectors.toList());
 	}
 
 	protected List<Shell> findNewShells(Collection<Shell> beforeShells) {
-		return Arrays.stream(shell.getDisplay().getShells())
+		return Arrays.stream(getDisplay().getShells())
 				.filter(Shell::isVisible)
-				.filter(shell -> !beforeShells.contains(shell))
+				.filter(s -> !beforeShells.contains(s))
 				.collect(Collectors.toList());
 	}
 
 	protected Shell findNewShell(Collection<Shell> beforeShells) {
-		DisplayHelper.sleep(shell.getDisplay(), 100);
+		DisplayHelper.sleep(getDisplay(), 100);
 		List<Shell> afterShells= findNewShells(beforeShells);
 		if (afterShells.isEmpty()) {
-			DisplayHelper.sleep(shell.getDisplay(), 1000);
+			DisplayHelper.sleep(getDisplay(), 1000);
 		}
 		afterShells= findNewShells(beforeShells);
-		assertEquals("No new shell found", 1, afterShells.size());
-		return afterShells.get(0);
+		assertTrue("No new shell found, existing: " + beforeShells, afterShells.size() > beforeShells.size());
+		return afterShells.get(afterShells.size() - 1);
 	}
 
 }

@@ -52,8 +52,11 @@ public class AsyncContentAssistTest {
 	private ILogListener listener;
 	private IStatus errorStatus;
 
+	private Shell shell;
+
 	@Before
 	public void setUp() {
+		shell= new Shell();
 		listener= (status, plugin) -> {
 			if(status.getSeverity() == IStatus.ERROR && "org.eclipse.jface.text".equals(status.getPlugin())) {
 				errorStatus = status;
@@ -64,12 +67,12 @@ public class AsyncContentAssistTest {
 
 	@After
 	public void tearDown() {
+		shell.dispose();
 		Platform.removeLogListener(listener);
 	}
 
 	@Test
 	public void testAsyncFailureStackOverflow() {
-		Shell shell = new Shell();
 		SourceViewer viewer = new SourceViewer(shell, null, SWT.NONE);
 		Document document = new Document("a");
 		viewer.setDocument(document);
@@ -85,7 +88,6 @@ public class AsyncContentAssistTest {
 
 	@Test
 	public void testSyncFailureNPE() {
-		Shell shell = new Shell();
 		SourceViewer viewer = new SourceViewer(shell, null, SWT.NONE);
 		Document document = new Document("a");
 		viewer.setDocument(document);
@@ -101,7 +103,6 @@ public class AsyncContentAssistTest {
 
 	@Test
 	public void testCompletePrefix() {
-		Shell shell = new Shell();
 		shell.setLayout(new FillLayout());
 		shell.setSize(500, 300);
 		SourceViewer viewer = new SourceViewer(shell, null, SWT.NONE);
@@ -113,6 +114,7 @@ public class AsyncContentAssistTest {
 		contentAssistant.enablePrefixCompletion(true);
 		contentAssistant.install(viewer);
 		shell.open();
+		DisplayHelper.driveEventQueue(shell.getDisplay());
 		Display display = shell.getDisplay();
 		final Set<Shell> beforeShells = Arrays.stream(display.getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
 		contentAssistant.showPossibleCompletions();
@@ -132,7 +134,6 @@ public class AsyncContentAssistTest {
 
 	@Test
 	public void testCompleteActivationChar() {
-		Shell shell= new Shell();
 		shell.setLayout(new FillLayout());
 		shell.setSize(500, 300);
 		SourceViewer viewer= new SourceViewer(shell, null, SWT.NONE);

@@ -89,7 +89,11 @@ public class TextPresentationTest {
 	@After
 	public void tearDown() {
 		fColors.clear();
-		fDisplay.dispose();
+		if (!fDisplay.isDisposed()) {
+			for (Shell shell : fDisplay.getShells()) {
+				shell.dispose();
+			}
+		}
 	}
 
 	private StyleRange createStyleRange(int start, int end, int style) {
