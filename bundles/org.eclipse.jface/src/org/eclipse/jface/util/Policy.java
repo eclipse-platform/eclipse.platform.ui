@@ -147,7 +147,7 @@ public class Policy {
 
 			@Override
 			public void show(final IStatus status, String title) {
-				Runnable runnable = () -> {
+				Display.executor().execute(() -> {
 					if (dialog == null || dialog.getShell().isDisposed()) {
 						dialog = new SafeRunnableDialog(status);
 						dialog.create();
@@ -158,12 +158,7 @@ public class Policy {
 						dialog.addStatus(status);
 						dialog.refresh();
 					}
-				};
-				if (Display.getCurrent() != null) {
-					runnable.run();
-				} else {
-					Display.getDefault().asyncExec(runnable);
-				}
+				});
 			}
 		};
 	}
