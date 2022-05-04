@@ -21,6 +21,7 @@ import java.text.Collator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -68,6 +69,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	private static final String LOCATION_STRING = "LOCATION_STRING"; //$NON-NLS-1$
 	private MarkerCategory category;
 	private Map<String, Object> cache;
+	private static Map<String, CollationKey> collationCache = new ConcurrentHashMap<>();
 
 	/**
 	 * Set the MarkerEntry to be stale, if discovered at any point of time
@@ -219,7 +221,8 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 		if (attributeValue.isEmpty()) {
 			return MarkerSupportInternalUtilities.EMPTY_COLLATION_KEY;
 		}
-		CollationKey key = Collator.getInstance().getCollationKey(attributeValue);
+		CollationKey key = collationCache.computeIfAbsent(attributeValue,
+				k -> Collator.getInstance().getCollationKey(attributeValue));
 		getCache().put(attribute, key);
 		return key;
 	}
@@ -385,6 +388,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	@Override
 	void clearCache() {
 		cache = null;
+		collationCache = new ConcurrentHashMap<>();
 	}
 
 	/**
