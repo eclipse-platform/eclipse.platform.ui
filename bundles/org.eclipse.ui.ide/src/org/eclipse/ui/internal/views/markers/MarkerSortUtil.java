@@ -50,11 +50,13 @@ public class MarkerSortUtil {
 	 */
 
 	/*
-	 * Increasing BATCH_SIZE increases memory consumption but increases speed,
-	 * and vice-versa.This indirectly controls the number of active caches in
-	 * MarkerEntry[] array passed for sorting.
+	 * Increasing BATCH_SIZE increases memory consumption but increases speed, and
+	 * vice-versa.This indirectly controls the number of active caches in
+	 * MarkerEntry[] array passed for sorting. Batching is disabled by default.
+	 * Batching can be enabled with system property
+	 * org.eclipse.ui.MarkerSortUtil.batchSize=10000
 	 */
-	private static int BATCH_SIZE = 10000;
+	private static int BATCH_SIZE = Integer.getInteger("org.eclipse.ui.MarkerSortUtil.batchSize", Integer.MAX_VALUE); //$NON-NLS-1$
 
 	/*
 	 * For n/k ratios less than this , we will use Arrays.Sort(). The heapsort
@@ -323,7 +325,7 @@ public class MarkerSortUtil {
 				|| last > to || to > entries.length - 1 || to < 0)
 			return;
 		int n=to-from+1;
-		if (n <= BATCH_SIZE && (((float) n / k) <= MERGE_OR_HEAP_SWITCH)
+		if (BATCH_SIZE == Integer.MAX_VALUE || (n <= BATCH_SIZE && (((float) n / k) <= MERGE_OR_HEAP_SWITCH))
 				/*|| ((float) n / k) <= MERGE_OR_HEAP_SWITCH*/) {
 			// use arrays sort
 			Arrays.sort(entries, from, to + 1, comparator);
