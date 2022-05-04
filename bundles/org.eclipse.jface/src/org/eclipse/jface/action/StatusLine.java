@@ -358,10 +358,12 @@ import org.eclipse.swt.widgets.ToolItem;
 		// make sure the progress bar is made visible while
 		// the task is running. Fixes bug 32198 for the non-animated case.
 		Runnable timer = () -> StatusLine.this.startTask(timestamp, animated);
-		inUIThread(() -> {
-			fProgressBar.getDisplay().timerExec(DELAY_PROGRESS, timer);
-			if (!animated) {
-				fProgressBar.beginTask(totalWork);
+		getDisplay().execute(() -> {
+			if (fProgressBar != null && !fProgressBar.isDisposed()) {
+				fProgressBar.getDisplay().timerExec(DELAY_PROGRESS, timer);
+				if (!animated) {
+					fProgressBar.beginTask(totalWork);
+				}
 			}
 			if (name == null) {
 				fTaskName = Util.ZERO_LENGTH_STRING;
@@ -370,18 +372,6 @@ import org.eclipse.swt.widgets.ToolItem;
 			}
 			setMessage(fTaskName);
 		});
-	}
-
-	private void inUIThread(Runnable r) {
-		if (Display.getCurrent() != null) {
-			r.run();
-		} else {
-			getDisplay().asyncExec(() -> {
-				if (!isDisposed()) {
-					r.run();
-				}
-			});
-		}
 	}
 
 	/**
@@ -393,8 +383,8 @@ import org.eclipse.swt.widgets.ToolItem;
 	public void done() {
 
 		fStartTime = 0;
-		inUIThread(() -> {
-			if (fProgressBar != null) {
+		getDisplay().execute(() -> {
+			if (fProgressBar != null && !fProgressBar.isDisposed()) {
 				fProgressBar.sendRemainingWork();
 				fProgressBar.done();
 			}
@@ -448,13 +438,13 @@ import org.eclipse.swt.widgets.ToolItem;
 	 */
 	@Override
 	public void internalWorked(double work) {
-		inUIThread(() -> {
+		getDisplay().execute(() -> {
 			if (!fProgressIsVisible) {
 				if (System.currentTimeMillis() - fStartTime > DELAY_PROGRESS) {
 					showProgress();
 				}
 			}
-			if (fProgressBar != null) {
+			if (fProgressBar != null && !fProgressBar.isDisposed()) {
 				fProgressBar.worked(work);
 			}
 		});
@@ -487,11 +477,11 @@ import org.eclipse.swt.widgets.ToolItem;
 	@Override
 	public void setCanceled(boolean b) {
 		fIsCanceled = b;
-		if (fCancelButton != null) {
-			inUIThread(() -> {
-				fCancelButton.setEnabled(!b);
-			});
-		}
+		getDisplay().execute(() -> {
+			if (fCancelButton != null && !fCancelButton.isDisposed()) {
+				fCancelButton.setEnabled(!fIsCanceled);
+			}
+		});
 	}
 
 	/**
@@ -572,7 +562,7 @@ import org.eclipse.swt.widgets.ToolItem;
 	public void setMessage(Image image, String message) {
 		fMessageText = trim(message);
 		fMessageImage = image;
-		inUIThread(this::updateMessageLabel);
+		getDisplay().execute(this::updateMessageLabel);
 	}
 
 	/**
@@ -622,7 +612,7 @@ import org.eclipse.swt.widgets.ToolItem;
 	 */
 	void startTask(final long timestamp, final boolean animated) {
 		if (!fProgressIsVisible && fStartTime == timestamp) {
-			inUIThread(() -> {
+			getDisplay().execute(() -> {
 				showProgress();
 				if (animated) {
 					if (fProgressBar != null && !fProgressBar.isDisposed()) {
