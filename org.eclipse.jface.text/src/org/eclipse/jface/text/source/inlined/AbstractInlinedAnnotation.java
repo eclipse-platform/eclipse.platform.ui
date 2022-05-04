@@ -120,15 +120,25 @@ public abstract class AbstractInlinedAnnotation extends Annotation {
 	 */
 	public void redraw() {
 		StyledText text= getTextWidget();
-		InlinedAnnotationSupport.runInUIThread(text, t -> {
-			Position pos= getPosition();
-			int offset= pos.getOffset();
-			ISourceViewer viewer= getViewer();
-			if (viewer instanceof ITextViewerExtension5) {
-				// adjust offset according folded content
-				offset= ((ITextViewerExtension5) viewer).modelOffset2WidgetOffset(offset);
+		if (text == null || text.isDisposed()) {
+			return;
+		}
+		text.getDisplay().execute(() -> {
+			if (text.isDisposed()) {
+				return;
 			}
-			InlinedAnnotationDrawingStrategy.draw(this, null, t, offset, pos.getLength(), null);
+			try {
+				Position pos= getPosition();
+				int offset= pos.getOffset();
+				ISourceViewer viewer= getViewer();
+				if (viewer instanceof ITextViewerExtension5) {
+					// adjust offset according folded content
+					offset= ((ITextViewerExtension5) viewer).modelOffset2WidgetOffset(offset);
+				}
+				InlinedAnnotationDrawingStrategy.draw(this, null, text, offset, pos.getLength(), null);
+			} catch (RuntimeException e) {
+				// Ignore UI error
+			}
 		});
 	}
 

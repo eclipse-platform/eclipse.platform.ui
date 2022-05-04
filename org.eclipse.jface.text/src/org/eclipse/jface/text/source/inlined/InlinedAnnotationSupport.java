@@ -556,37 +556,6 @@ public class InlinedAnnotationSupport {
 	}
 
 	/**
-	 * Execute UI {@link StyledText} function which requires UI Thread.
-	 *
-	 * @param text the styled text
-	 * @param fn   the function to execute.
-	 */
-	static void runInUIThread(StyledText text, Consumer<StyledText> fn) {
-		if (text == null || text.isDisposed()) {
-			return;
-		}
-		Display display= text.getDisplay();
-		if (display.getThread() == Thread.currentThread()) {
-			try {
-				fn.accept(text);
-			} catch (Exception e) {
-				// Ignore UI error
-			}
-		} else {
-			display.asyncExec(() -> {
-				if (text.isDisposed()) {
-					return;
-				}
-				try {
-					fn.accept(text);
-				} catch (Exception e) {
-					// Ignore UI error
-				}
-			});
-		}
-	}
-
-	/**
 	 * Return whether the given offset is in visible lines.
 	 *
 	 * @param offset the offset
