@@ -388,6 +388,9 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	@Override
 	void clearCache() {
 		cache = null;
+	}
+
+	static void clearCollationCache() {
 		collationCache = new ConcurrentHashMap<>();
 	}
 

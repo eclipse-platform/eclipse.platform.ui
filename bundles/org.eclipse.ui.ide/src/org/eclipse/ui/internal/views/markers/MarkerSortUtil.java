@@ -115,6 +115,7 @@ public class MarkerSortUtil {
 
 			++current;
 		}
+		MarkerEntry.clearCollationCache();
 	}
 
 	/**
@@ -333,6 +334,7 @@ public class MarkerSortUtil {
 			for (int i = from; i <= to; i++) {
 				entries[i].clearCache();
 			}
+			MarkerEntry.clearCollationCache();
 			return;
 		}
 
