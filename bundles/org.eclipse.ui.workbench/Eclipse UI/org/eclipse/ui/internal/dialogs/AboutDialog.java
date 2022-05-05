@@ -422,11 +422,9 @@ public class AboutDialog extends TrayDialog {
 		}
 
 		ImageDescriptor desc = info.getFeatureImage();
-		Image featureImage = null;
-
 		Button button = new Button(parent, SWT.FLAT | SWT.PUSH);
 		button.setData(info);
-		featureImage = desc.createImage();
+		Image featureImage = desc.createImage();;
 		images.add(featureImage);
 		button.setImage(featureImage);
 		button.setToolTipText(info.getProviderName());
