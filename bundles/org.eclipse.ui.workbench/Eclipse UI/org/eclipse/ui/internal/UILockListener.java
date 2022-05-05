@@ -121,7 +121,8 @@ public class UILockListener extends LockListener {
 
 	@Override
 	public void aboutToRelease() {
-		if (isUI()) {
+		Thread uiThread = ui;
+		if (uiThread != null && uiThread == Thread.currentThread()) {
 			ui = null;
 		}
 	}
@@ -185,7 +186,11 @@ public class UILockListener extends LockListener {
 	}
 
 	boolean isUI() {
-		return (!display.isDisposed()) && (display.getThread() == Thread.currentThread());
+		try {
+			return display.getThread() == Thread.currentThread();
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	boolean isUIWaiting() {
