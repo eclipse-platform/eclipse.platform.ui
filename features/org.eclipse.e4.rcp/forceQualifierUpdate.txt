@@ -12,3 +12,4 @@ Bug 567461 - Please update felix gogo shell to 1.1.4 due to bug in 1.1.0
 4.20 I-Build: I20210413-2350 - BUILD FAILED
 Bug 572858 - CVE-2021-29425
 Bug 572541 - Eclipse 4.20 prerequisites: Orbit
+https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/pull/255
