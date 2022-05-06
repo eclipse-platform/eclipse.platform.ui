@@ -68,6 +68,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
@@ -241,7 +242,6 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		enableMru = createCheckButton(composite, WorkbenchMessages.ViewsPreference_enableMRU, actualValue);
 	}
 
-
 	/** @return the currently selected theme or null if there are no themes */
 	private ITheme getSelectedTheme() {
 		return (ITheme) (themeIdCombo.getStructuredSelection().getFirstElement());
@@ -314,11 +314,10 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	 */
 	private void showRestartDialog() {
 		if (new MessageDialog(null, WorkbenchMessages.ThemeChangeWarningTitle, null,
-				WorkbenchMessages.ThemeChangeWarningText,
-				MessageDialog.QUESTION, 2, WorkbenchMessages.Workbench_RestartButton,
-				WorkbenchMessages.Workbench_DontRestartButton)
+				WorkbenchMessages.ThemeChangeWarningText, MessageDialog.QUESTION, 2,
+				WorkbenchMessages.Workbench_RestartButton, WorkbenchMessages.Workbench_DontRestartButton)
 						.open() == Window.OK) {
-			PlatformUI.getWorkbench().restart();
+			Display.getDefault().asyncExec(() -> PlatformUI.getWorkbench().restart());
 		}
 	}
 
