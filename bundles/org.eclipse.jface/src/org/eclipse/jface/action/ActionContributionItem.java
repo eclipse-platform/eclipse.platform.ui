@@ -818,11 +818,10 @@ public class ActionContributionItem extends ContributionItem {
 	}
 
 	private void updateMenuItemText(MenuItem mi) {
-		int accelerator = 0;
 		String acceleratorText = null;
 		IAction updatedAction = getAction();
 		String text = null;
-		accelerator = updatedAction.getAccelerator();
+		int accelerator = updatedAction.getAccelerator();
 		ExternalActionManager.ICallback callback = ExternalActionManager.getInstance().getCallback();
 
 		// Block accelerators that are already in use.
