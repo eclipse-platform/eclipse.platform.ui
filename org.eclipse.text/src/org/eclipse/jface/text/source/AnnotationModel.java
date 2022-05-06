@@ -421,10 +421,11 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * @throws BadLocationException if the position is not a valid document position
 	 */
 	protected void addAnnotation(Annotation annotation, Position position, boolean fireModelChanged) throws BadLocationException {
-		if (!fAnnotations.containsKey(annotation)) {
+		IAnnotationMap annotations= getAnnotationMap();
+		if (!annotations.containsKey(annotation)) {
 
 			addPosition(fDocument, position);
-			fAnnotations.put(annotation, position);
+			annotations.put(annotation, position);
 			fPositions.put(position, annotation);
 			synchronized (getLockObject()) {
 				getAnnotationModelEvent().annotationAdded(annotation);
@@ -640,9 +641,10 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 
 			ArrayList<Annotation> deleted= new ArrayList<>();
 			Iterator<Annotation> e= getAnnotationMap().keySetIterator();
+			IAnnotationMap annotations= getAnnotationMap();
 			while (e.hasNext()) {
 				Annotation a= e.next();
-				Position p= fAnnotations.get(a);
+				Position p= annotations.get(a);
 				if (p == null || p.isDeleted())
 					deleted.add(a);
 			}
@@ -763,7 +765,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 
 	@Override
 	public Position getPosition(Annotation annotation) {
-		Position position= fAnnotations.get(annotation);
+		Position position= getAnnotationMap().get(annotation);
 		if (position != null)
 			return position;
 
@@ -785,12 +787,12 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * @param fireModelChanged indicates whether to notify all model listeners
 	 */
 	protected void removeAllAnnotations(boolean fireModelChanged) {
-
+		IAnnotationMap annotations= getAnnotationMap();
 		if (fDocument != null) {
 			Iterator<Annotation> e= getAnnotationMap().keySetIterator();
 			while (e.hasNext()) {
 				Annotation a= e.next();
-				Position p= fAnnotations.get(a);
+				Position p= annotations.get(a);
 				removePosition(fDocument, p);
 //				p.delete();
 				synchronized (getLockObject()) {
@@ -799,7 +801,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			}
 		}
 
-		fAnnotations.clear();
+		annotations.clear();
 		fPositions.clear();
 
 		if (fireModelChanged)
@@ -819,16 +821,17 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * @param fireModelChanged indicates whether to notify all model listeners
 	 */
 	protected void removeAnnotation(Annotation annotation, boolean fireModelChanged) {
-		if (fAnnotations.containsKey(annotation)) {
+		IAnnotationMap annotations= getAnnotationMap();
+		if (annotations.containsKey(annotation)) {
 
 			Position p= null;
-			p= fAnnotations.get(annotation);
+			p= annotations.get(annotation);
 			if (fDocument != null) {
 				removePosition(fDocument, p);
 //				p.delete();
 			}
 
-			fAnnotations.remove(annotation);
+			annotations.remove(annotation);
 			fPositions.remove(p);
 			synchronized (getLockObject()) {
 				getAnnotationModelEvent().annotationRemoved(annotation, p);
@@ -864,7 +867,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		if (position == null) {
 			removeAnnotation(annotation, fireModelChanged);
 		} else {
-			Position p= fAnnotations.get(annotation);
+			Position p= getAnnotationMap().get(annotation);
 			if (p != null) {
 
 				if (position.getOffset() != p.getOffset() || position.getLength() != p.getLength()) {
@@ -905,7 +908,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * @since 3.0
 	 */
 	protected void modifyAnnotation(Annotation annotation, boolean fireModelChanged) {
-		if (fAnnotations.containsKey(annotation)) {
+		if (getAnnotationMap().containsKey(annotation)) {
 			synchronized (getLockObject()) {
 				getAnnotationModelEvent().annotationChanged(annotation);
 			}
