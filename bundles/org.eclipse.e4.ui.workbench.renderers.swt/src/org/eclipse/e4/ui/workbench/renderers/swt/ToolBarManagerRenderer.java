@@ -425,9 +425,8 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 			setCSSInfo(element, newTB);
 
 
-			boolean vertical = false;
 			MTrimBar bar = (MTrimBar) parentElement;
-			vertical = bar.getSide() == SideValue.LEFT || bar.getSide() == SideValue.RIGHT;
+			boolean vertical = bar.getSide() == SideValue.LEFT || bar.getSide() == SideValue.RIGHT;
 			IEclipseContext parentContext = getContextForParent(element);
 
 			CSSRenderingUtils cssUtils = parentContext.get(CSSRenderingUtils.class);

@@ -209,9 +209,7 @@ public class BindingProcessingAddon {
 			}
 		}
 		ParameterizedCommand cmd = commandService.createCommand(cmdModel.getElementId(), parameters);
-		TriggerSequence sequence = null;
-		sequence = bindingService.createSequence(keySequence);
-
+		TriggerSequence sequence = bindingService.createSequence(keySequence);
 		if (cmd == null) {
 			System.err.println("Failed to find command for binding: " + binding); //$NON-NLS-1$
 		} else if (sequence == null) {
