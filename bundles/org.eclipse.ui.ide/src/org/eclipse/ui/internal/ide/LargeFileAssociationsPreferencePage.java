@@ -973,7 +973,6 @@ public class LargeFileAssociationsPreferencePage extends PreferencePage implemen
 		if (sizeString.startsWith(SIZE_TEXT_PREFIX)) {
 			sizeString = sizeString.substring(SIZE_TEXT_PREFIX.length());
 		}
-		long sizeMultiplier = 1L;
 		// remove leading/trailing empty spaces if present
 		sizeString = sizeString.strip();
 		int unitIndex = 0;
@@ -987,7 +986,7 @@ public class LargeFileAssociationsPreferencePage extends PreferencePage implemen
 				break;
 			}
 		}
-		sizeMultiplier = SIZE_MULTIPLIERS[unitIndex];
+		long sizeMultiplier = SIZE_MULTIPLIERS[unitIndex];
 		// remove leading/trailing empty spaces if present
 		sizeString = sizeString.strip();
 		long size = Long.valueOf(sizeString);

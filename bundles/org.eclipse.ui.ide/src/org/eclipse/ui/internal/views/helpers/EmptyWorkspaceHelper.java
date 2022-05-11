@@ -187,11 +187,10 @@ public final class EmptyWorkspaceHelper {
 		GridLayoutFactory.swtDefaults().applyTo(infoArea);
 		Link messageLabel = new Link(infoArea, SWT.WRAP);
 
-		Composite optionsArea = null;
 		messageLabel.setText(ResourceNavigatorMessages.EmptyWorkspaceHelper_noProjectsAvailable);
 		GridDataFactory.swtDefaults().align(SWT.FILL, SWT.FILL).grab(true, false).applyTo(messageLabel);
 
-		optionsArea = new Composite(infoArea, SWT.NONE);
+		Composite optionsArea = new Composite(infoArea, SWT.NONE);
 		GridLayoutFactory.swtDefaults().numColumns(2).applyTo(optionsArea);
 		GridDataFactory.swtDefaults().indent(5, 0).grab(true, true).applyTo(optionsArea);
 
