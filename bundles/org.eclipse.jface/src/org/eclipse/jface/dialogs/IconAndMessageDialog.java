@@ -91,6 +91,7 @@ public abstract class IconAndMessageDialog extends Dialog {
 			imageLabel = new Label(composite, SWT.NULL);
 			image.setBackground(imageLabel.getBackground());
 			imageLabel.setImage(image);
+			imageLabel.setToolTipText(getAccessibleMessageFor(image));
 			addAccessibleListeners(imageLabel, image);
 			GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.BEGINNING)
 					.applyTo(imageLabel);
