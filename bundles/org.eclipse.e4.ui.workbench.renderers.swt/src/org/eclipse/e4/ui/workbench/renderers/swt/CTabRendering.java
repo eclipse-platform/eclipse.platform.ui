@@ -363,7 +363,6 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 			int circY = bounds.y + radius;
 
 			// Body
-			index = 0;
 			int[] ltt = drawCircle(circX, circY, radius, CirclePart.LEFT_TOP);
 			System.arraycopy(ltt, 0, points, index, ltt.length);
 			index += ltt.length;
