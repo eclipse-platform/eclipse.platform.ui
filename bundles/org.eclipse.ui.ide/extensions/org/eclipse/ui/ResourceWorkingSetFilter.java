@@ -127,12 +127,10 @@ public class ResourceWorkingSetFilter extends ViewerFilter {
 	 */
 	private boolean isEnclosedResource(IResource element, IPath elementPath,
 			IAdaptable workingSetElement) {
-		IResource workingSetResource = null;
-
 		if (workingSetElement.equals(element)) {
 			return true;
 		}
-		workingSetResource = Adapters.adapt(workingSetElement, IResource.class);
+		IResource workingSetResource = Adapters.adapt(workingSetElement, IResource.class);
 		if (workingSetResource != null) {
 			IPath resourcePath = workingSetResource.getFullPath();
 			if (resourcePath.isPrefixOf(elementPath)) {

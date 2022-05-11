@@ -133,11 +133,10 @@ public class WelcomeEditor extends EditorPart {
 	 * Finds the next text
 	 */
 	private StyledText nextText(StyledText text) {
-		int index = 0;
 		if (text == null) {
 			return texts.get(0);
 		}
-		index = texts.indexOf(text);
+		int index = texts.indexOf(text);
 
 		//If we are not at the end....
 		if (index < texts.size() - 1) {
@@ -150,11 +149,10 @@ public class WelcomeEditor extends EditorPart {
 	 * Finds the previous text
 	 */
 	private StyledText previousText(StyledText text) {
-		int index = 0;
 		if (text == null) {
 			return texts.get(0);
 		}
-		index = texts.indexOf(text);
+		int index = texts.indexOf(text);
 
 		//If we are at the beginning....
 		if (index == 0) {
@@ -287,8 +285,7 @@ public class WelcomeEditor extends EditorPart {
 			}
 			StyledText text2 = (StyledText) e.widget;
 			WelcomeItem item = (WelcomeItem) e.widget.getData();
-			int offset = -1;
-			offset = text2.getOffsetAtPoint(new Point(e.x, e.y));
+			int offset = text2.getOffsetAtPoint(new Point(e.x, e.y));
 			if (offset == -1) {
 				text2.setCursor(null);
 			} else if (item.isLinkAt(offset)) {
