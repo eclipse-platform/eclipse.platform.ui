@@ -159,14 +159,12 @@ public class ColorRegistry extends ResourceRegistry {
 			return (Color) result;
 		}
 
-		Color color = null;
-
 		result = stringToRGB.get(symbolicName);
 		if (result == null) {
 			return null;
 		}
 
-		color = createColor((RGB) result);
+		Color color = createColor((RGB) result);
 
 		stringToColor.put(symbolicName, color);
 
