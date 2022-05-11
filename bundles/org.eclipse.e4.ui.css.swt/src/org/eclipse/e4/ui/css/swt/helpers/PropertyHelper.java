@@ -38,8 +38,7 @@ public class PropertyHelper {
 		}
 
 		Method readMethod = null;
-		Object value = null;
-		value = bean;
+		Object value = bean;
 		for (String part : attr.split("\\.")) {
 			PropertyDescriptor desc = getPropertyDescriptor(value.getClass(),
 					part);
