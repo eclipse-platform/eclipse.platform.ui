@@ -1053,7 +1053,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			ProjectionAnnotation annotation = (ProjectionAnnotation) removedAnnotation;
 			if (annotation.isCollapsed()) {
 				Position expanded= event.getPositionOfRemovedAnnotation(annotation);
-				expand(expanded.getOffset(), expanded.getLength(), fireRedraw);
+				if (expanded != null) {
+					expand(expanded.getOffset(), expanded.getLength(), fireRedraw);
+				}
 			}
 		}
 	}
