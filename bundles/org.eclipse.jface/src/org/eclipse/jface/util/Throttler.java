@@ -16,6 +16,7 @@ package org.eclipse.jface.util;
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Display;
 /**
  * A utility class that throttles the execution of a runnable in the UI thread.
@@ -87,18 +88,22 @@ public class Throttler {
 			return;
 		}
 		if (scheduled.compareAndSet(false, true)) {
-			if (Thread.currentThread() == display.getThread()) {
-				timerExec.run();
-			} else {
-				boolean exception = true;
-				try {
-					display.asyncExec(timerExec); // may throw SwtException
-					exception = false;
-				} finally {
-					if (exception) {
-						// SwtException - display meanwhile disposed
-						scheduled.set(false);
-					}
+			boolean exception = true;
+			try {
+				if (Thread.currentThread() == display.getThread()) {
+					timerExec.run();
+				} else {
+					display.asyncExec(timerExec);
+				}
+				exception = false;
+			} catch (SWTException e) {
+				// Don't care if display is disposed, and report otherwise
+				if (!display.isDisposed()) {
+					throw e;
+				}
+			} finally {
+				if (exception) {
+					scheduled.set(false);
 				}
 			}
 		}
