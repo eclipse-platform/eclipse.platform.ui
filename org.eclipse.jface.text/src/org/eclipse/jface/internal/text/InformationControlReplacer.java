@@ -131,37 +131,43 @@ public class InformationControlReplacer extends AbstractInformationControlManage
 	public void showInformationControl(Rectangle subjectArea, Object information) {
 		IInformationControl informationControl= getInformationControl();
 
-		Rectangle controlBounds= fContentBounds;
-		if (informationControl instanceof IInformationControlExtension3) {
-			IInformationControlExtension3 iControl3= (IInformationControlExtension3) informationControl;
-			Rectangle trim= iControl3.computeTrim();
-			controlBounds= Geometry.add(controlBounds, trim);
-
-			/*
-			 * Ensure minimal size. Interacting with a tiny information control
-			 * (resizing, selecting text) would be a pain.
-			 */
-			controlBounds.width= Math.max(controlBounds.width, MIN_WIDTH);
-			controlBounds.height= Math.max(controlBounds.height, MIN_HEIGHT);
-
-			getInternalAccessor().cropToClosestMonitor(controlBounds);
-		}
-
-		Point location= Geometry.getLocation(controlBounds);
-		Point size= Geometry.getSize(controlBounds);
+		Rectangle controlBounds= computeBoundsFromContent(informationControl, fContentBounds);
 
 		// Caveat: some IInformationControls fail unless setSizeConstraints(..) is called with concrete values
-		informationControl.setSizeConstraints(size.x, size.y);
+		informationControl.setSizeConstraints(controlBounds.width, controlBounds.height);
 
 		if (informationControl instanceof IInformationControlExtension2)
 			((IInformationControlExtension2) informationControl).setInput(information);
 		else
 			informationControl.setInformation(information.toString());
 
-		informationControl.setLocation(location);
-		informationControl.setSize(size.x, size.y);
+		// need to recompute the bounds because trim might have changed based on input
+		controlBounds= computeBoundsFromContent(informationControl, fContentBounds);
+
+		informationControl.setLocation(new Point(controlBounds.x, controlBounds.y));
+		informationControl.setSize(controlBounds.width, controlBounds.height);
 
 		showInformationControl(subjectArea);
+	}
+
+	private Rectangle computeBoundsFromContent(IInformationControl informationControl, Rectangle controlBounds) {
+		Rectangle result= Geometry.copy(controlBounds);
+
+		if (informationControl instanceof IInformationControlExtension3) {
+			IInformationControlExtension3 iControl3= (IInformationControlExtension3) informationControl;
+			Rectangle trim= iControl3.computeTrim();
+			result= Geometry.add(result, trim);
+
+			/*
+			 * Ensure minimal size. Interacting with a tiny information control
+			 * (resizing, selecting text) would be a pain.
+			 */
+			result.width= Math.max(result.width, MIN_WIDTH);
+			result.height= Math.max(result.height, MIN_HEIGHT);
+
+			getInternalAccessor().cropToClosestMonitor(result);
+		}
+		return result;
 	}
 
 	@Override
