@@ -23,11 +23,11 @@ For information how to contribute to the Platform UI project see [Platform UI - 
 License
 -------
 
-[Eclipse Public License (EPL) v1.0][4]
+[Eclipse Public License (EPL) v2.0][4]
 
 
 
 [1]: http://wiki.eclipse.org/Platform_UI
 [2]: https://wiki.eclipse.org/Platform_UI/How_to_Contribute#Unit_Testing
 [3]: https://wiki.eclipse.org/Platform_UI/How_to_Contribute
-[4]: http://wiki.eclipse.org/EPL
+[4]: https://www.eclipse.org/legal/epl-2.0/
