@@ -11,12 +11,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
+ *     Craig Otis, Patrick Ziegler - bug 439299
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
@@ -293,6 +295,32 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
 	 */
 	public boolean isEmpty() {
 		return size() == 0 && wizards.size() == 0;
+	}
+
+	/**
+	 * A shallow equals based only on stored string properties. Child wizards or
+	 * children inherited from AdaptableList are not compared.
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (!(obj instanceof WizardCollectionElement)) {
+			return false;
+		}
+		WizardCollectionElement other = (WizardCollectionElement) obj;
+		return Objects.equals(this.getId(), other.getId()) && Objects.equals(this.name, other.name)
+				&& Objects.equals(this.getPluginId(), other.getPluginId());
+	}
+
+	/**
+	 * A shallow hashCode based only on stored string properties. Child wizards or
+	 * children inherited from AdaptableList are not included.
+	 */
+	@Override
+	public int hashCode() {
+		return Objects.hash(getId(), this.name, getPluginId());
 	}
 
 	/**
