@@ -139,7 +139,7 @@
     </iu>
     <iu id='org.eclipse.swtbot.forms.feature.group' name='SWTBot for Eclipse Forms Testing (incubation)' version='0.0.0'>
         <repositories size='1'>
-            <repository location='https://download.eclipse.org/releases/latest/'/>
+            <repository location='https://download.eclipse.org/technology/swtbot/snapshots/'/>
         </repositories>
     </iu>
     <iu id='org.eclipse.swtbot.eclipse.feature.group' name='SWTBot for Eclipse Testing (incubation)' version='0.0.0'>
