@@ -26,11 +26,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -73,7 +73,7 @@ import org.osgi.framework.FrameworkUtil;
  * @since 3.3
  *
  */
-public class FiltersConfigurationDialog extends Dialog {
+public class FiltersConfigurationDialog extends TrayDialog {
 
 	private static final String SELECTED_FILTER_GROUP = "SELECTED_FILTER_GROUP"; //$NON-NLS-1$
 	private static final String PREV_SELECTED_ELEMENTS = "PREV_SELECTED_ELEMENTS"; //$NON-NLS-1$
@@ -118,6 +118,7 @@ public class FiltersConfigurationDialog extends Dialog {
 		filterGroups = makeWorkingCopy(generator.getAllFilters());
 		this.generator = generator;
 		andFilters = false;
+		setHelpAvailable(false);
 	}
 
 	/**
