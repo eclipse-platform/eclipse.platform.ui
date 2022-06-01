@@ -615,6 +615,9 @@ public class StackRenderer extends LazyStackRenderer {
 			tabFolder.setUnselectedCloseVisible(false);
 		}
 
+		// tweak default renderer, may be overriden by themes
+		tabFolder.getRenderer().setHightlightBarEnabled(true);
+
 		bindWidget(element, tabFolder); // ?? Do we need this ?
 
 		// Add a composite to manage the view's TB and Menu
