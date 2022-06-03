@@ -14,7 +14,7 @@
   <parent>
     <artifactId>eclipse.platform.text</artifactId>
     <groupId>org.eclipse.platform</groupId>
-    <version>4.24.0-SNAPSHOT</version>
+    <version>4.25.0-SNAPSHOT</version>
   </parent>
   <artifactId>text-tests-pom</artifactId>
   <packaging>pom</packaging>
