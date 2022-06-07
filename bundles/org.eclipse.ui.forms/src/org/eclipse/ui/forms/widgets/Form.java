@@ -127,11 +127,9 @@ public class Form extends Composite {
 			initCaches(flushCache);
 
 			int width = 0;
-			int height = 0;
-
 			Point hsize = headCache.computeSize(wHint, SWT.DEFAULT);
 			width = Math.max(hsize.x, width);
-			height = hsize.y;
+			int height = hsize.y;
 
 			boolean ignoreBody=getData(FormUtil.IGNORE_BODY)!=null;
 

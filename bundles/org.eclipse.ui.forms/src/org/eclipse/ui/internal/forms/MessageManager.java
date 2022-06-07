@@ -588,8 +588,7 @@ public class MessageManager implements IMessageManager {
 	}
 
 	private boolean isCacheChanged() {
-		boolean result = false;
-		result = checkMessageCache() || checkDecoratorCache();
+		boolean result = checkMessageCache() || checkDecoratorCache();
 		oldMessages.clear();
 		oldMessages = null;
 		oldDecorators.clear();

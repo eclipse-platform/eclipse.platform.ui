@@ -72,12 +72,11 @@ public class TreeNode extends ToggleHyperlink {
 	}
 	private Rectangle getBoxBounds(GC gc) {
 		int x = 1;
-		int y = 0;
+		int y = 2;
 		gc.setFont(getFont());
 		//int height = gc.getFontMetrics().getHeight();
 		//y = height / 2 - 4;
 		//y = Math.max(y, 0);
-		y = 2;
 		return new Rectangle(x, y, 8, 8);
 	}
 }

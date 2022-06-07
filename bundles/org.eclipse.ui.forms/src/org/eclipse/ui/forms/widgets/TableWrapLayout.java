@@ -643,7 +643,6 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 				columnWidths = assignExtraSpace(tableWidth, maxWidth, minWidth);
 			}
 		}
-		int totalHeight = 0;
 		int innerHeight = 0;
 		// compute widths
 		for (int i = 0; i < grid.size(); i++) {
@@ -686,7 +685,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 		}
 		if (!rowspans.isEmpty())
 			innerHeight = compensateForRowSpans(innerHeight);
-		totalHeight = topMargin + innerHeight + bottomMargin;
+		int totalHeight = topMargin + innerHeight + bottomMargin;
 		return new Point(tableWidth, totalHeight);
 	}
 
