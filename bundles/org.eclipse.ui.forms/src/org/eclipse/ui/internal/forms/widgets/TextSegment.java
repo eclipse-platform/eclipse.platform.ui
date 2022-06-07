@@ -378,8 +378,6 @@ public class TextSegment extends ParagraphSegment {
 			Rectangle repaintRegion) {
 		Font oldFont = null;
 		Color oldColor = null;
-		Color oldBg = null;
-
 		// apply segment-specific font, color and background
 		if (fontId != null) {
 			oldFont = gc.getFont();
@@ -393,7 +391,7 @@ public class TextSegment extends ParagraphSegment {
 			if (newColor != null)
 				gc.setForeground(newColor);
 		}
-		oldBg = gc.getBackground();
+		Color oldBg = gc.getBackground();
 
 		FontMetrics fm = gc.getFontMetrics();
 		int lineHeight = fm.getHeight();
