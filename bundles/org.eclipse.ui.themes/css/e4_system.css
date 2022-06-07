@@ -22,14 +22,6 @@
 @import url("platform:/plugin/org.eclipse.ui.themes/css/system/e4-light_tabstyle.css");
 @import url("platform:/plugin/org.eclipse.ui.themes/css/system/e4-light-drag-styling.css");
 
-ColorDefinition#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_START {
-	color: '#COLOR-WIDGET-BACKGROUND';
-}
-
-ColorDefinition#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_END {
-	color: '#COLOR-WIDGET-BACKGROUND';
-}
-
 ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_OUTER_KEYLINE_COLOR {
 	color: '#COLOR-WIDGET-BACKGROUND';
 }
@@ -38,14 +30,6 @@ ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_INNER_KEYLINE_COLOR {
 }
 ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_OUTLINE_COLOR {
 	color: '#COLOR-LIST-SELECTION';
-}
-
-ColorDefinition#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_START {
-	color: '#COLOR-WIDGET-BACKGROUND';
-}
-
-ColorDefinition#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_END {
-	color: '#COLOR-WIDGET-BACKGROUND';
 }
 
 ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_OUTER_KEYLINE_COLOR {
@@ -58,22 +42,6 @@ ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_INNER_KEYLINE_COLOR {
 
 ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_OUTLINE_COLOR {
 	color: '#COLOR-WIDGET-NORMAL-SHADOW';
-}
-
-ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_BG_START {
-	color: '#COLOR-WIDGET-BACKGROUND';
-}
-
-ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_BG_END {
-	color: '#COLOR-WIDGET-BACKGROUND';
-}
-
-ColorDefinition#org-eclipse-ui-workbench-INACTIVE_NOFOCUS_TAB_BG_START {
-	color: '#COLOR-WIDGET-BACKGROUND';
-}
-
-ColorDefinition#org-eclipse-ui-workbench-INACTIVE_NOFOCUS_TAB_BG_END {
-	color: '#COLOR-WIDGET-BACKGROUND';
 }
 
 .MTrimmedWindow {
