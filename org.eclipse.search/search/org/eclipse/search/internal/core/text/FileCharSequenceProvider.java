@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -30,12 +30,28 @@ import org.eclipse.core.resources.IFile;
  */
 public class FileCharSequenceProvider {
 
-	private static int NUMBER_OF_BUFFERS= 3;
-	public static int BUFFER_SIZE= 2 << 18; // public for testing
+	/**
+	 * Just any number such that the most source files will fit in. And not too
+	 * big to avoid out of memory.
+	 **/
+	private static final int MAX_BUFFER_LENGTH = 999_999; // max 2MB.
+
+	private static int NUMBER_OF_BUFFERS = 3;
+	public static int BUFFER_SIZE = 2 << 18; // public for testing
 
 	private FileCharSequence fReused= null;
 
 	public CharSequence newCharSequence(IFile file) throws CoreException, IOException {
+		String string = toShortString(file);
+		if (string != null) {
+			return string;
+		}
+		FileCharSequence charSequence = getCharSequence(file);
+		// File too large for String
+		return charSequence;
+	}
+
+	private FileCharSequence getCharSequence(IFile file) throws CoreException, IOException {
 		if (fReused == null) {
 			return new FileCharSequence(file);
 		}
@@ -67,16 +83,6 @@ public class FileCharSequenceProvider {
 
 		/* package */ FileCharSequenceException(CoreException e) {
 			super(e);
-		}
-
-		public void throwWrappedException() throws CoreException, IOException {
-			Throwable wrapped= getCause();
-			if (wrapped instanceof CoreException) {
-				throw (CoreException) wrapped;
-			} else if (wrapped instanceof IOException) {
-				throw (IOException) wrapped;
-			}
-			// not possible
 		}
 	}
 
@@ -464,7 +470,7 @@ public class FileCharSequenceProvider {
 
 		@Override
 		public String toString() {
-			int len= fLength != null ? fLength.intValue() : 4000;
+			int len = fLength != null ? fLength.intValue() : 4000;
 			StringBuilder res= new StringBuilder(len);
 			try {
 				Buffer buffer= getBuffer(0);
@@ -481,4 +487,38 @@ public class FileCharSequenceProvider {
 		}
 	}
 
+	/*
+	 * Try to get a content as String. Avoids to scanning whole InputStream to
+	 * get length
+	 */
+	private static String toShortString(IFile file) {
+		try (InputStream contents = file.getContents()) {
+			byte[] content = contents.readNBytes(MAX_BUFFER_LENGTH);
+			int length = content.length;
+			if (length >= MAX_BUFFER_LENGTH) {
+				return null;
+			}
+			String charset = file.getCharset();
+			int offset = 0;
+			if (StandardCharsets.UTF_8.name().equals(charset)) {
+				if (startsWith(content, IContentDescription.BOM_UTF_8)) {
+					offset = IContentDescription.BOM_UTF_8.length;
+				}
+			}
+			return new String(content, offset, length - offset, charset);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	private static boolean startsWith(byte[] a, byte[] start) {
+		if (a.length < start.length) {
+			return false;
+		}
+		for (int i = 0; i < start.length; i++) {
+			if (a[i] != start[i])
+				return false;
+		}
+		return true;
+	}
 }
