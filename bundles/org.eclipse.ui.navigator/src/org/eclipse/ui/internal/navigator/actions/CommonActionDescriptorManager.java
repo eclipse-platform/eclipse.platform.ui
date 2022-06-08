@@ -313,13 +313,12 @@ public class CommonActionDescriptorManager {
 
 				if (actionProviders.length > 0) {
 
-					IConfigurationElement defaultEnablement = null;
 					IConfigurationElement[] inheritedEnablement = anElement.getChildren(TAG_ENABLEMENT);
 					if (inheritedEnablement.length == 0) {
 						inheritedEnablement = anElement.getChildren(TAG_POSSIBLE_CHILDREN);
 					}
 
-					defaultEnablement = inheritedEnablement.length == 1 ? inheritedEnablement[0] : null;
+					IConfigurationElement defaultEnablement = inheritedEnablement.length == 1 ? inheritedEnablement[0] : null;
 
 					Priority defaultPriority = Priority.get(anElement.getAttribute(ATT_PRIORITY));
 
