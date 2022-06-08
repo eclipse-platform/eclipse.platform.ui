@@ -18,8 +18,6 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
@@ -87,12 +85,6 @@ public class CSSSWTTestCase {
 
 	@Before
 	public void setUp() {
-		System.out.println("[" + DateTimeFormatter.ISO_DATE_TIME.format(LocalDateTime.now()) + "] "
-				+ getClass().getName() + "#" + testName.getMethodName());
-		System.out.format("  memory (free/max/total): %s/%s/%s MB%n",
-				Runtime.getRuntime().freeMemory() / 1000000,
-				Runtime.getRuntime().maxMemory() / 1000000,
-				Runtime.getRuntime().totalMemory() / 1000000);
 		display = Display.getDefault();
 	}
 
