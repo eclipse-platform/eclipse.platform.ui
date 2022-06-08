@@ -153,8 +153,7 @@ public class CSSSWTFontHelper {
 	 * @param oldFontData
 	 * @return
 	 */
-	public static FontData getFontData(CSS2FontProperties fontProperties,
-			FontData oldFontData) {
+	public static FontData getFontData(CSS2FontProperties fontProperties, FontData oldFontData) {
 		FontData newFontData = new FontData();
 
 		// Family
