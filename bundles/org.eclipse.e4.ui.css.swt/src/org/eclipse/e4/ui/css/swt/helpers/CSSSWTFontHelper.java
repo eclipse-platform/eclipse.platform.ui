@@ -48,29 +48,6 @@ public class CSSSWTFontHelper {
 	private static final String DEFAULT_FONT = "defaultFont";
 
 	/**
-	 * Get CSS2FontProperties from Control stored into Data of Control. If
-	 * CSS2FontProperties doesn't exist, create it from Font of Control and
-	 * store it into Data of Control.
-	 *
-	 * @param control
-	 * @return
-	 */
-	public static CSS2FontProperties getCSS2FontProperties(Widget widget,
-			Font font, CSSElementContext context) {
-		// Search into Data of Control if CSS2FontProperties exist.
-		CSS2FontProperties fontProperties = CSS2FontPropertiesHelpers
-				.getCSS2FontProperties(context);
-		if (fontProperties == null) {
-			// CSS2FontProperties doesn't exist, create it
-			fontProperties = getCSS2FontProperties(font);
-			// store into ClientProperty the CSS2FontProperties
-			CSS2FontPropertiesHelpers.setCSS2FontProperties(fontProperties,
-					context);
-		}
-		return fontProperties;
-	}
-
-	/**
 	 * Get CSS2FontProperties from the widget. If CSS2FontProperties doesn't
 	 * exist, create it from the widget's font, if it has one, and then store it
 	 * in the widget's data if applicable.
@@ -80,22 +57,18 @@ public class CSSSWTFontHelper {
 	 * @return the font properties of the specified widget, or <code>null</code>
 	 *         if none
 	 */
-	public static CSS2FontProperties getCSS2FontProperties(Widget widget,
-			CSSElementContext context) {
+	public static CSS2FontProperties getCSS2FontProperties(Widget widget, CSSElementContext context) {
 		return getCSS2FontProperties(getFont(widget), context);
 	}
 
-	public static CSS2FontProperties getCSS2FontProperties(Font font,
-			CSSElementContext context) {
+	public static CSS2FontProperties getCSS2FontProperties(Font font, CSSElementContext context) {
 		// Search into Data of Control if CSS2FontProperties exist.
-		CSS2FontProperties fontProperties = CSS2FontPropertiesHelpers
-				.getCSS2FontProperties(context);
+		CSS2FontProperties fontProperties = CSS2FontPropertiesHelpers.getCSS2FontProperties(context);
 		if (fontProperties == null && font != null) {
 			// CSS2FontProperties doesn't exist, create it
 			fontProperties = getCSS2FontProperties(font);
 			// store into ClientProperty the CSS2FontProperties
-			CSS2FontPropertiesHelpers.setCSS2FontProperties(fontProperties,
-					context);
+			CSS2FontPropertiesHelpers.setCSS2FontProperties(fontProperties, context);
 		}
 		return fontProperties;
 	}
@@ -134,14 +107,12 @@ public class CSSSWTFontHelper {
 	 * @param component
 	 * @return
 	 */
-	public static Font getFont(CSS2FontProperties fontProperties,
-			Control control) {
+	public static Font getFont(CSS2FontProperties fontProperties, Control control) {
 		FontData oldFontData = getFirstFontData(control.getFont());
 		return getFont(fontProperties, oldFontData, control.getDisplay());
 	}
 
-	public static Font getFont(CSS2FontProperties fontProperties,
-			FontData oldFontData, Display display) {
+	public static Font getFont(CSS2FontProperties fontProperties, FontData oldFontData, Display display) {
 		FontData newFontData = getFontData(fontProperties, oldFontData);
 		return new Font(display, newFontData);
 	}
