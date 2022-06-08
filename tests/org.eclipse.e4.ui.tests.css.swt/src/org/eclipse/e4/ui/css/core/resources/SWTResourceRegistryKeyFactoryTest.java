@@ -29,10 +29,7 @@ public class SWTResourceRegistryKeyFactoryTest extends CSSSWTHelperTestCase {
 
 	@Test
 	public void testCreateKeyWhenFontProperty() {
-		CSS2FontProperties fontProperties = null;
-		fontProperties = fontProperties("Arial", 12, CSS_ITALIC, CSS_BOLD);
-
-
+		CSS2FontProperties fontProperties = fontProperties("Arial", 12, CSS_ITALIC, CSS_BOLD);
 		Object result = factory.createKey(fontProperties);
 
 		assertEquals(String.class, result.getClass());

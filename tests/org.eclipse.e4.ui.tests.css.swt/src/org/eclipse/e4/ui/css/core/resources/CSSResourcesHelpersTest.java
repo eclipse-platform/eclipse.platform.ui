@@ -27,8 +27,7 @@ import org.w3c.dom.css.CSSPrimitiveValue;
 public class CSSResourcesHelpersTest extends CSSSWTHelperTestCase {
 	@Test
 	public void testGetCSSValueKeyWhenFont() {
-		CSS2FontProperties fontProperties = null;
-		fontProperties = fontProperties("Arial", 10, null, null);
+		CSS2FontProperties fontProperties = fontProperties("Arial", 10, null, null);
 		String result = getCSSValueKey(fontProperties);
 		assertNotNull(result);
 		assertEquals(getCSSFontPropertiesKey(fontProperties), result);
@@ -36,8 +35,7 @@ public class CSSResourcesHelpersTest extends CSSSWTHelperTestCase {
 
 	@Test
 	public void testGetCSSValueKeyWhenDefinitionAsFontFamily() {
-		CSS2FontProperties fontProperties = null;
-		fontProperties = fontProperties(addFontDefinitionMarker("symbolicName"), 10, null, null);
+		CSS2FontProperties fontProperties = fontProperties(addFontDefinitionMarker("symbolicName"), 10, null, null);
 		String result = getCSSValueKey(fontProperties);
 		assertNotNull(result);
 		assertEquals(getCSSFontPropertiesKey(fontProperties), result);
