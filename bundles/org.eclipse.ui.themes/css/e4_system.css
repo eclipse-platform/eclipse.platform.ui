@@ -16,7 +16,6 @@
  *******************************************************************************/
 
 @import url("platform:/plugin/org.eclipse.ui.themes/css/common/e4_globalstyle.css");
-@import url("platform:/plugin/org.eclipse.ui.themes/css/system/e4-light_globalstyle.css");
 @import url("platform:/plugin/org.eclipse.ui.themes/css/system/e4-light_ide_colorextensions.css");
 @import url("platform:/plugin/org.eclipse.ui.themes/css/system/e4-light_partstyle.css");
 @import url("platform:/plugin/org.eclipse.ui.themes/css/system/e4-light_tabstyle.css");
