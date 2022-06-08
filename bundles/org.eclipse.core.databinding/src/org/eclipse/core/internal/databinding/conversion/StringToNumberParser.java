@@ -63,9 +63,7 @@ public class StringToNumberParser {
 
 		synchronized (numberFormat) {
 			ParsePosition position = new ParsePosition(0);
-			Number parseResult = null;
-			parseResult = (Number) numberFormat.parseObject(source, position);
-
+			Number parseResult = (Number) numberFormat.parseObject(source, position);
 			if (position.getIndex() != source.length()
 					|| position.getErrorIndex() > -1) {
 
