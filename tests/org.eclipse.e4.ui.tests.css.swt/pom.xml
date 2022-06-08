@@ -19,7 +19,7 @@
   </parent>
   <groupId>org.eclipse.e4</groupId>
   <artifactId>org.eclipse.e4.ui.tests.css.swt</artifactId>
-  <version>0.11.400-SNAPSHOT</version>
+  <version>0.11.500-SNAPSHOT</version>
   <packaging>eclipse-test-plugin</packaging>
 
 </project>
