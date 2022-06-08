@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Widget;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -59,30 +58,6 @@ public class CSSSWTTestCase {
 		}
 		return engine;
 
-	}
-
-	/**
-	 * Parse and apply the style sheet, forgetting previous style sheets applied.
-	 * This is helpful for reusing the same engine but writing independent tests.
-	 * Styles are applied down the widget hierarchy.
-	 * @param engine the engine
-	 * @param widget the start of the widget hierarchy
-	 * @param styleSheet a string style sheet
-	 */
-	public void clearAndApply(CSSEngine engine, Widget widget, String styleSheet) {
-
-		//Forget all previous styles
-		engine.reset();
-		if (styleSheet != null) {
-
-			try {
-				engine.parseStyleSheet(new StringReader(styleSheet));
-			} catch (IOException e) {
-				fail(e.getMessage());
-			}
-		}
-
-		engine.applyStyles(widget, true, true);
 	}
 
 	@Before
