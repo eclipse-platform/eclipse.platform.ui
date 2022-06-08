@@ -108,17 +108,17 @@ public class CSS2ColorHelper {
 	 * @return rgbColor as rgb(r, g, b) string
 	 */
 	public static String getRGBColorStringValue(RGBColor rgbColor) {
-		String result = "rgb(";
+		StringBuilder result = new StringBuilder("rgb(");
 		int red = (int) rgbColor.getRed().getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
-		result += red;
-		result += ",";
+		result.append(red);
+		result.append(",");
 		int green = (int) rgbColor.getGreen().getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
-		result += green;
-		result += ",";
+		result.append(green);
+		result.append(",");
 		int blue = (int) rgbColor.getBlue().getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
-		result += blue;
-		result += ")";
-		return result;
+		result.append(blue);
+		result.append(")");
+		return result.toString();
 	}
 
 	/**
@@ -129,23 +129,23 @@ public class CSS2ColorHelper {
 	 * @return rgbColor as hexa string
 	 */
 	public static String getHexaColorStringValue(RGBColor rgbColor) {
-		String result = "#";
+		StringBuilder result = new StringBuilder("#");
 		int red = (int) rgbColor.getRed().getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
 		if (red < 16) {
-			result += "0";
+			result.append("0");
 		}
-		result += Integer.toHexString(red);
+		result.append(Integer.toHexString(red));
 		int green = (int) rgbColor.getGreen().getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
 		if (green < 16) {
-			result += "0";
+			result.append("0");
 		}
-		result += Integer.toHexString(green);
+		result.append(Integer.toHexString(green));
 		int blue = (int) rgbColor.getBlue().getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
 		if (blue < 16) {
-			result += "0";
+			result.append("0");
 		}
-		result += Integer.toHexString(blue);
-		return result;
+		result.append(Integer.toHexString(blue));
+		return result.toString();
 	}
 
 	/**

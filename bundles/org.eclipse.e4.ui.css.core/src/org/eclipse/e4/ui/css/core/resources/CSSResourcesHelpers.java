@@ -69,10 +69,10 @@ public class CSSResourcesHelpers {
 		if (rgbColor == null) {
 			return null;
 		}
-		String rgb = ((int) rgbColor.getGreen().getFloatValue(CSSPrimitiveValue.CSS_NUMBER)) + "_";
-		rgb += ((int) rgbColor.getRed().getFloatValue(CSSPrimitiveValue.CSS_NUMBER)) + "_";
-		rgb += ((int) rgbColor.getBlue().getFloatValue(CSSPrimitiveValue.CSS_NUMBER)) + "";
-		return rgb;
+		StringBuilder rgb = new StringBuilder().append((int) rgbColor.getGreen().getFloatValue(CSSPrimitiveValue.CSS_NUMBER)).append("_");
+		rgb.append((int) rgbColor.getRed().getFloatValue(CSSPrimitiveValue.CSS_NUMBER)).append("_");
+		rgb.append((int) rgbColor.getBlue().getFloatValue(CSSPrimitiveValue.CSS_NUMBER)).append("");
+		return rgb.toString();
 	}
 
 	public static String getCSSFontPropertiesKey(CSS2FontProperties fontProperties) {
