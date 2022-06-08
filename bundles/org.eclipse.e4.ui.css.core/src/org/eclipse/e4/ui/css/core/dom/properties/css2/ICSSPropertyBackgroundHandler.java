@@ -108,24 +108,38 @@ public interface ICSSPropertyBackgroundHandler extends ICSSPropertyHandler {
 	public void applyCSSPropertyBackgroundRepeat(Object element,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyBackgroundAttachment(Object element,
+	@Deprecated(forRemoval = true)
+	public default String retrieveCSSPropertyBackgroundAttachment(Object element,
 			String pseudo,
-			CSSEngine engine) throws Exception;
+			CSSEngine engine) throws Exception{
+		return null;
+	}
 
+	@Deprecated(forRemoval = true)
 	public String retrieveCSSPropertyBackgroundColor(Object element,
 			String pseudo,
 			CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyBackgroundImage(Object element,
+	@Deprecated(forRemoval = true)
+	public default String retrieveCSSPropertyBackgroundImage(Object element,
 			String pseudo,
-			CSSEngine engine) throws Exception;
+			CSSEngine engine) throws Exception  {
+		// TODO : manage path of Image.
+		return "none";
+	}
 
-	public String retrieveCSSPropertyBackgroundPosition(Object element,
+	@Deprecated(forRemoval = true)
+	public default String retrieveCSSPropertyBackgroundPosition(Object element,
 			String pseudo,
-			CSSEngine engine) throws Exception;
+			CSSEngine engine) throws Exception {
+		return null;
+	}
 
-	public String retrieveCSSPropertyBackgroundRepeat(Object element,
+	@Deprecated(forRemoval = true)
+	public default String retrieveCSSPropertyBackgroundRepeat(Object element,
 			String pseudo,
-			CSSEngine engine) throws Exception;
+			CSSEngine engine) throws Exception {
+		return null;
+	}
 
 }
