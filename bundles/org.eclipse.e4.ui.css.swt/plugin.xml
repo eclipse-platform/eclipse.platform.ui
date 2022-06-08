@@ -72,6 +72,18 @@
                name="background-image">
          </property-name>
       </handler>
+      
+        <handler
+            adapter="org.eclipse.e4.ui.css.swt.dom.ToolItemElement"
+            composite="true"
+            handler="org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyBackgroundSWTHandler">
+         <property-name
+               name="background">
+         </property-name>
+         <property-name
+               name="background-color">
+         </property-name>
+      </handler>
       <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
             composite="false"

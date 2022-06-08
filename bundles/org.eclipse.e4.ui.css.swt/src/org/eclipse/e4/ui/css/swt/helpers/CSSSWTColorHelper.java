@@ -38,6 +38,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.RGBA;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.ToolItem;
 import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
 import org.w3c.dom.css.CSSValueList;
@@ -361,6 +362,12 @@ public class CSSSWTColorHelper {
 	public static void setBackground(Control control, Color newColor) {
 		if (!Objects.equals(control.getBackground(), newColor)) {
 			control.setBackground(newColor);
+		}
+	}
+
+	public static void setBackground(ToolItem toolItem, Color newColor) {
+		if (!Objects.equals(toolItem.getBackground(), newColor)) {
+			toolItem.setBackground(newColor);
 		}
 	}
 
