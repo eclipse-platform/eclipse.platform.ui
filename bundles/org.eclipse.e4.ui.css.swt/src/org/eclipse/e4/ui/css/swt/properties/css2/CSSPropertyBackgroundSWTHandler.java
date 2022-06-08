@@ -29,6 +29,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 import org.w3c.dom.css.CSSValue;
 
@@ -58,6 +59,7 @@ public class CSSPropertyBackgroundSWTHandler extends AbstractCSSPropertyBackgrou
 	public void applyCSSPropertyBackgroundColor(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		Widget widget = (Widget) ((WidgetElement) element).getNativeWidget();
+		System.out.println(widget.getClass());
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 			Color newColor = (Color) engine.convert(value, Color.class, widget
 					.getDisplay());
@@ -73,6 +75,8 @@ public class CSSPropertyBackgroundSWTHandler extends AbstractCSSPropertyBackgrou
 				GradientBackgroundListener.remove((Control) widget);
 				CSSSWTColorHelper.setBackground((Control) widget, newColor);
 				CompositeElement.setBackgroundOverriddenByCSSMarker(widget);
+			} else if (widget instanceof ToolItem) {
+				CSSSWTColorHelper.setBackground((ToolItem) widget, newColor);
 			}
 		} else if (value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
 			Gradient grad = (Gradient) engine.convert(value, Gradient.class,
@@ -149,6 +153,7 @@ public class CSSPropertyBackgroundSWTHandler extends AbstractCSSPropertyBackgrou
 		// TODO : manage path of Image.
 		return "none";
 	}
+
 
 	@Override
 	public String retrieveCSSPropertyBackgroundPosition(Object widget,
