@@ -38,6 +38,7 @@ public class CSSSWTTestCase {
 	static final RGB RED = new RGB(255, 0, 0);
 	static final RGB GREEN = new RGB(0, 255, 0);
 	static final RGB BLUE = new RGB(0, 0, 255);
+	static final RGB WHITE = new RGB(255, 255, 255);
 
 	@Rule
 	public TestName testName = new TestName();
