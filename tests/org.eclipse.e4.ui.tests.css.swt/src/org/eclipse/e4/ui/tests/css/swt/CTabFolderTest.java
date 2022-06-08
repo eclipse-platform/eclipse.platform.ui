@@ -23,7 +23,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -33,11 +32,6 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.junit.Test;
 
 public class CTabFolderTest extends CSSSWTTestCase {
-
-	static final RGB RED = new RGB(255, 0, 0);
-	static final RGB GREEN = new RGB(0, 255, 0);
-	static final RGB BLUE = new RGB(0, 0, 255);
-	static final RGB WHITE = new RGB(255, 255, 255);
 
 	protected CTabFolder createTestCTabFolder(String styleSheet) {
 		engine = createEngine(styleSheet, display);
