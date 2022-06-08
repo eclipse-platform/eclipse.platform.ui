@@ -27,7 +27,6 @@
 	swt-tab-outline: '#org-eclipse-ui-workbench-INACTIVE_TAB_OUTLINE_COLOR';
 	swt-selected-tab-highlight: '#org-eclipse-ui-workbench-INACTIVE_TAB_OUTLINE_COLOR';
 	padding: 0px;
-	swt-shadow-visible: false;
 }
 
 .MPartStack.active {
