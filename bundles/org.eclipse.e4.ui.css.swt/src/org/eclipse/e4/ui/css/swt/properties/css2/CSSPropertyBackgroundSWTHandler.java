@@ -58,7 +58,9 @@ public class CSSPropertyBackgroundSWTHandler extends AbstractCSSPropertyBackgrou
 	public void applyCSSPropertyBackgroundColor(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		Widget widget = (Widget) ((WidgetElement) element).getNativeWidget();
-		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+
+		switch (value.getCssValueType()) {
+		case CSSValue.CSS_PRIMITIVE_VALUE:
 			Color newColor = (Color) engine.convert(value, Color.class, widget
 					.getDisplay());
 			if (widget instanceof CTabItem) {
@@ -74,7 +76,8 @@ public class CSSPropertyBackgroundSWTHandler extends AbstractCSSPropertyBackgrou
 				CSSSWTColorHelper.setBackground((Control) widget, newColor);
 				CompositeElement.setBackgroundOverriddenByCSSMarker(widget);
 			}
-		} else if (value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
+			break;
+		case CSSValue.CSS_VALUE_LIST:
 			Gradient grad = (Gradient) engine.convert(value, Gradient.class,
 					widget.getDisplay());
 			if (grad == null) {
@@ -96,6 +99,9 @@ public class CSSPropertyBackgroundSWTHandler extends AbstractCSSPropertyBackgrou
 				GradientBackgroundListener.handle((Control) widget, grad);
 				CompositeElement.setBackgroundOverriddenByCSSMarker(widget);
 			}
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -120,12 +126,6 @@ public class CSSPropertyBackgroundSWTHandler extends AbstractCSSPropertyBackgrou
 	}
 
 	@Override
-	public String retrieveCSSPropertyBackgroundAttachment(Object widget,
-			String pseudo, CSSEngine engine) throws Exception {
-		return null;
-	}
-
-	@Override
 	public String retrieveCSSPropertyBackgroundColor(Object element,
 			String pseudo, CSSEngine engine) throws Exception {
 		Widget widget = (Widget) element;
@@ -143,22 +143,6 @@ public class CSSPropertyBackgroundSWTHandler extends AbstractCSSPropertyBackgrou
 		return engine.convert(color, Color.class, null);
 	}
 
-	@Override
-	public String retrieveCSSPropertyBackgroundImage(Object widget,
-			String pseudo, CSSEngine engine) throws Exception {
-		// TODO : manage path of Image.
-		return "none";
-	}
 
-	@Override
-	public String retrieveCSSPropertyBackgroundPosition(Object widget,
-			String pseudo, CSSEngine engine) throws Exception {
-		return null;
-	}
 
-	@Override
-	public String retrieveCSSPropertyBackgroundRepeat(Object widget,
-			String pseudo, CSSEngine engine) throws Exception {
-		return null;
-	}
 }
