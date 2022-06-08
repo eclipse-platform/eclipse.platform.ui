@@ -75,7 +75,7 @@ public class EclipsePreferencesElement extends ElementAdapter {
 	@Override
 	public String getLocalName() {
 		if (localName == null) {
-			localName = ClassUtils.getSimpleName(IEclipsePreferences.class);
+			localName = IEclipsePreferences.class.getSimpleName();
 		}
 		return localName;
 	}

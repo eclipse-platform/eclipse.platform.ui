@@ -73,7 +73,7 @@ public class ThemeDefinitionElement<T extends IThemeElementDefinitionOverridable
 	@Override
 	public String getLocalName() {
 		if (localName == null) {
-			localName = ClassUtils.getSimpleName(getNativeWidget().getClass());
+			localName = getNativeWidget().getClass().getSimpleName();
 		}
 		return localName;
 	}

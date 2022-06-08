@@ -159,7 +159,7 @@ public class WidgetElement extends ElementAdapter implements NodeList {
 		// the selector is Outer-Inner {background-color:red;}
 		Widget widget = getWidget();
 		Class<?> clazz = widget.getClass();
-		return ClassUtils.getSimpleName(clazz);
+		return clazz.getSimpleName();
 	}
 
 	/**

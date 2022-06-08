@@ -14,13 +14,12 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.dom.definition;
 
-import org.eclipse.e4.ui.css.core.utils.ClassUtils;
-
-import org.eclipse.e4.ui.internal.css.swt.definition.IThemesExtension;
+import org.eclipse.e4.ui.css.core.dom.ElementAdapter;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.e4.ui.css.core.utils.ClassUtils;
+import org.eclipse.e4.ui.internal.css.swt.definition.IThemesExtension;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.eclipse.e4.ui.css.core.dom.ElementAdapter;
 
 public class ThemesExtensionElement extends ElementAdapter {
 	private String localName;
@@ -67,7 +66,7 @@ public class ThemesExtensionElement extends ElementAdapter {
 	@Override
 	public String getLocalName() {
 		if (localName == null) {
-			localName = ClassUtils.getSimpleName(getNativeWidget().getClass());
+			localName = getNativeWidget().getClass().getSimpleName();
 		}
 		return localName;
 	}
