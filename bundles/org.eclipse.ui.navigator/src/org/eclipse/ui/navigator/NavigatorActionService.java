@@ -262,8 +262,7 @@ public final class NavigatorActionService extends ActionGroup implements IMement
 					@Override
 					public void run() throws Exception {
 						if (!filterActionProvider(providerDesciptorLocal)) {
-							CommonActionProvider provider = null;
-							provider = getActionProviderInstance(providerDesciptorLocal);
+							CommonActionProvider provider = getActionProviderInstance(providerDesciptorLocal);
 							provider.setContext(actionContextLocal);
 							provider.fillActionBars(theActionBars);
 							provider.updateActionBars();
@@ -348,8 +347,7 @@ public final class NavigatorActionService extends ActionGroup implements IMement
 	 */
 	public CommonActionProvider getActionProviderInstance(
 			final CommonActionProviderDescriptor aProviderDescriptor) {
-		CommonActionProvider provider = null;
-		provider = (CommonActionProvider) actionProviderInstances.get(aProviderDescriptor);
+		CommonActionProvider provider = (CommonActionProvider) actionProviderInstances.get(aProviderDescriptor);
 		if (provider != null) {
 			return provider;
 		}

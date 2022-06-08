@@ -225,8 +225,7 @@ public class CommonActionProviderDescriptor implements
 		}
 
 		if(aStructuredSelection.isEmpty()) {
-			IEvaluationContext context = null;
-			context = NavigatorPlugin.getEmptyEvalContext();
+			IEvaluationContext context = NavigatorPlugin.getEmptyEvalContext();
 			if (NavigatorPlugin.safeEvaluate(enablement, context) != EvaluationResult.TRUE) {
 				return false;
 			}
