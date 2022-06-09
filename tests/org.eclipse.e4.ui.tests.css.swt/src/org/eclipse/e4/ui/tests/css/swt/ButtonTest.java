@@ -29,7 +29,7 @@ import org.junit.Test;
 
 public class ButtonTest extends CSSSWTTestCase {
 
-	protected Button createTestButton(String styleSheet) {
+	protected Button createTestButton(String styleSheet, int buttonStyle) {
 		engine = createEngine(styleSheet, display);
 
 		// Create widgets
@@ -40,28 +40,8 @@ public class ButtonTest extends CSSSWTTestCase {
 		Composite panel = new Composite(shell, SWT.NONE);
 		panel.setLayout(new FillLayout());
 
-		Button buttonToTest = new Button(panel, SWT.CHECK);
+		Button buttonToTest = new Button(panel, buttonStyle);
 		buttonToTest.setText("Some button text");
-
-		// Apply styles
-		engine.applyStyles(shell, true);
-
-		shell.pack();
-		return buttonToTest;
-	}
-
-	protected Button createTestArrowButton(String styleSheet) {
-		engine = createEngine(styleSheet, display);
-
-		// Create widgets
-		Shell shell = new Shell(display, SWT.SHELL_TRIM);
-		FillLayout layout = new FillLayout();
-		shell.setLayout(layout);
-
-		Composite panel = new Composite(shell, SWT.NONE);
-		panel.setLayout(new FillLayout());
-
-		Button buttonToTest = new Button(panel, SWT.ARROW);
 
 		// Apply styles
 		engine.applyStyles(shell, true);
@@ -72,14 +52,14 @@ public class ButtonTest extends CSSSWTTestCase {
 
 	@Test
 	public void testColor() {
-		Button buttonToTest = createTestButton("Button { background-color: #FF0000; color: #0000FF }");
+		Button buttonToTest = createTestButton("Button { background-color: #FF0000; color: #0000FF }", SWT.CHECK);
 		assertEquals(RED, buttonToTest.getBackground().getRGB());
 		assertEquals(BLUE, buttonToTest.getForeground().getRGB());
 	}
 
 	@Test
 	public void testFontRegular() {
-		Button buttonToTest = createTestButton("Button { font: Verdana 16px }");
+		Button buttonToTest = createTestButton("Button { font: Verdana 16px }", SWT.CHECK);
 		assertEquals(1, buttonToTest.getFont().getFontData().length);
 		FontData fontData = buttonToTest.getFont().getFontData()[0];
 		assertEquals("Verdana", fontData.getName());
@@ -89,7 +69,7 @@ public class ButtonTest extends CSSSWTTestCase {
 
 	@Test
 	public void testFontBold() {
-		Button buttonToTest = createTestButton("Button { font: Arial 12px; font-weight: bold }");
+		Button buttonToTest = createTestButton("Button { font: Arial 12px; font-weight: bold }", SWT.CHECK);
 		assertEquals(1, buttonToTest.getFont().getFontData().length);
 		FontData fontData = buttonToTest.getFont().getFontData()[0];
 		assertEquals("Arial", fontData.getName());
@@ -99,7 +79,7 @@ public class ButtonTest extends CSSSWTTestCase {
 
 	@Test
 	public void testFontItalic() {
-		Button buttonToTest = createTestButton("Button { font-style: italic }");
+		Button buttonToTest = createTestButton("Button { font-style: italic }", SWT.CHECK);
 		assertEquals(1, buttonToTest.getFont().getFontData().length);
 		FontData fontData = buttonToTest.getFont().getFontData()[0];
 		assertEquals(SWT.ITALIC, fontData.getStyle());
@@ -107,7 +87,8 @@ public class ButtonTest extends CSSSWTTestCase {
 
 	@Ignore
 	public void testSelectedPseudo() {
-		Button buttonToTest = createTestButton("Button { color: #FF0000; }\n" + "Button:selected { color: #0000FF; }");
+		Button buttonToTest = createTestButton("Button { color: #FF0000; }\n" + "Button:selected { color: #0000FF; }",
+				SWT.CHECK);
 		assertEquals(RED, buttonToTest.getForeground().getRGB());
 		buttonToTest.setSelection(true);
 		engine.applyStyles(buttonToTest.getShell(), true);
@@ -116,48 +97,49 @@ public class ButtonTest extends CSSSWTTestCase {
 
 	@Test
 	public void testAlignment() {
-		Button buttonToTest = createTestButton("Button { swt-alignment: right; }");
+		Button buttonToTest = createTestButton("Button { swt-alignment: right; }", SWT.CHECK);
 		assertEquals(SWT.RIGHT, buttonToTest.getAlignment());
 
-		buttonToTest = createTestButton("Button { swt-alignment: left; }");
+		buttonToTest = createTestButton("Button { swt-alignment: left; }", SWT.CHECK);
 		assertEquals(SWT.LEFT, buttonToTest.getAlignment());
 
-		buttonToTest = createTestButton("Button { swt-alignment: center; }");
+		buttonToTest = createTestButton("Button { swt-alignment: center; }", SWT.CHECK);
 		assertEquals(SWT.CENTER, buttonToTest.getAlignment());
 	}
 
 	@Test
 	public void testAlignment2() {
-		Button buttonToTest = createTestButton("Button { swt-alignment: trail; }");
+		Button buttonToTest = createTestButton("Button { swt-alignment: trail; }", SWT.CHECK);
 		assertEquals(SWT.TRAIL, buttonToTest.getAlignment());
 
-		buttonToTest = createTestButton("Button { swt-alignment: lead; }");
+		buttonToTest = createTestButton("Button { swt-alignment: lead; }", SWT.CHECK);
 		assertEquals(SWT.LEAD, buttonToTest.getAlignment());
 	}
 
 	@Test
 	public void testArrowAlignment() {
-		Button buttonToTest = createTestArrowButton("Button { swt-alignment: up; }");
+		Button buttonToTest = createTestButton("Button { swt-alignment: up; }", SWT.ARROW);
 		assertEquals(SWT.UP, buttonToTest.getAlignment());
 
-		buttonToTest = createTestArrowButton("Button { swt-alignment: down; }");
+		buttonToTest = createTestButton("Button { swt-alignment: down; }", SWT.ARROW);
 		assertEquals(SWT.DOWN, buttonToTest.getAlignment());
 
-		buttonToTest = createTestArrowButton("Button { swt-alignment: left; }");
+		buttonToTest = createTestButton("Button { swt-alignment: left; }", SWT.ARROW);
 		assertEquals(SWT.LEFT, buttonToTest.getAlignment());
 
-		buttonToTest = createTestArrowButton("Button { swt-alignment: right; }");
+		buttonToTest = createTestButton("Button { swt-alignment: right; }", SWT.ARROW);
 		assertEquals(SWT.RIGHT, buttonToTest.getAlignment());
 	}
 
 	@Test
 	public void ensurePseudoAttributeAllowsToSelectionPushButton() {
-		Button buttonToTest = createTestButton("Button[style~='SWT.CHECK'] { background-color: #FF0000; color: #0000FF }");
+		Button buttonToTest = createTestButton("Button[style~='SWT.CHECK'] { background-color: #FF0000; color: #0000FF }", SWT.CHECK);
 
 		assertEquals(RED, buttonToTest.getBackground().getRGB());
 		assertEquals(BLUE, buttonToTest.getForeground().getRGB());
 
-		Button unStyledButton = createTestButton("Button[style~='SWT.PUSH'] { background-color: #FF0000; color: #0000FF }");
+		Button unStyledButton = createTestButton(
+				"Button[style~='SWT.PUSH'] { background-color: #FF0000; color: #0000FF }", SWT.CHECK);
 
 		assertNotEquals(RED, unStyledButton.getBackground().getRGB());
 		assertNotEquals(BLUE, unStyledButton.getForeground().getRGB());
