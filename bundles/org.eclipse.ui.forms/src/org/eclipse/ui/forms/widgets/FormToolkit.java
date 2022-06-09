@@ -559,6 +559,7 @@ public class FormToolkit {
 				|| (sectionStyle & ExpandableComposite.SHORT_TITLE_BAR) != 0) {
 			colors.initializeSectionToolBarColors();
 			section.setTitleBarBackground(colors.getColor(IFormColors.TB_BG));
+			section.setTitleBarGradientBackground(section.getTitleBarBackground()); // disable gradient by default
 			section.setTitleBarBorderColor(colors
 					.getColor(IFormColors.TB_BORDER));
 		}
