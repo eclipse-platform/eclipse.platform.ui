@@ -20,7 +20,6 @@ import static org.junit.Assert.assertNotEquals;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -29,10 +28,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 public class ButtonTest extends CSSSWTTestCase {
-
-	static final RGB RED = new RGB(255, 0, 0);
-	static final RGB GREEN = new RGB(0, 255, 0);
-	static final RGB BLUE = new RGB(0, 0, 255);
 
 	protected Button createTestButton(String styleSheet) {
 		engine = createEngine(styleSheet, display);
