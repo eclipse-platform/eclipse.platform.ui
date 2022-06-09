@@ -7,11 +7,6 @@
 <!--Startup testing -->
    <extension
          point="org.eclipse.ui.startup">
-      <startup>
-      </startup>
-   </extension>
-   <extension
-         point="org.eclipse.ui.startup">
       <startup
             class="org.eclipse.ui.tests.api.StartupClass">
       </startup>
