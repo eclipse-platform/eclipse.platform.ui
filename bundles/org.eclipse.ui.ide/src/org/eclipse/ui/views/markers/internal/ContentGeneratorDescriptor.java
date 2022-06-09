@@ -191,8 +191,9 @@ public class ContentGeneratorDescriptor {
 			for (IConfigurationElement configElement : markerTypeElements) {
 				String elementName = configElement.getAttribute(MarkerSupportInternalUtilities.ATTRIBUTE_ID);
 
-				String application = configElement.getAttribute(MarkerSupportInternalUtilities.APPLICATION,
-						MarkerSupportInternalUtilities.TYPE_AND_SUBTYPE);
+				String application = configElement.getAttribute(MarkerSupportInternalUtilities.APPLICATION) == null
+						? MarkerSupportInternalUtilities.TYPE_AND_SUBTYPE
+						: configElement.getAttribute(MarkerSupportInternalUtilities.APPLICATION);
 
 				switch (application) {
 				case MarkerSupportInternalUtilities.TYPE_ONLY:
