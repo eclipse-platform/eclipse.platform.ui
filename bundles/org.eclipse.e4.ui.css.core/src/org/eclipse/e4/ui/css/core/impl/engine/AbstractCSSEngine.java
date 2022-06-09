@@ -436,13 +436,19 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 			/*
 			 * Style all children recursive.
 			 */
-			NodeList nodes = elt instanceof ChildVisibilityAwareElement
-					? ((ChildVisibilityAwareElement) elt).getVisibleChildNodes()
-							: elt.getChildNodes();
-					if (nodes != null) {
-						processNodeList(nodes, this::applyStyles, applyStylesToChildNodes);
-						onStylesAppliedToChildNodes(elt, nodes);
-					}
+
+			NodeList nodes;
+
+			if (elt instanceof ChildVisibilityAwareElement) {
+				nodes = ((ChildVisibilityAwareElement) elt).getVisibleChildNodes();
+			}
+			else {
+				nodes = elt.getChildNodes();
+			}
+			if (nodes != null) {
+				processNodeList(nodes, this::applyStyles, applyStylesToChildNodes);
+				onStylesAppliedToChildNodes(elt, nodes);
+			}
 		}
 	}
 

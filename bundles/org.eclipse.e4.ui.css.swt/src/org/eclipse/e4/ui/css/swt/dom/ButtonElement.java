@@ -44,6 +44,7 @@ public class ButtonElement extends ControlElement {
 	public ButtonElement(Button button, CSSEngine engine) {
 		super(button, engine);
 		this.isSelected = button.getSelection();
+
 	}
 
 	@Override

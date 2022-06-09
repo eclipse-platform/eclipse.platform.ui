@@ -35,8 +35,14 @@ CTabFolder Scale {
 }
 
 ToolItem {
+ 	background: green;
+}
+
+
+ToolItem:checked {
  	background: red;
 }
+
 
 
 /* #################### Bottom Status Bar ######################## */

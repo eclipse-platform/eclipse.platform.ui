@@ -17,6 +17,9 @@ import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTImageHelper;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -27,8 +30,29 @@ import org.w3c.dom.Node;
  *
  */
 public class ToolItemElement extends ItemElement {
+
+	private boolean isSelected = false;
+
+	boolean dynamicEnabled = Boolean.getBoolean("org.eclipse.e4.ui.css.dynamic");
+
+	private SelectionListener selectionListener = new SelectionAdapter() {
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			if (!e.widget.isDisposed()) {
+				ToolItemElement.this.isSelected = getToolItem().getSelection();
+				doApplyStyles();
+			}
+		}
+	};
+
 	public ToolItemElement(ToolItem toolItem, CSSEngine engine) {
 		super(toolItem, engine);
+
+		//		if (!dynamicEnabled) {
+		//			return;
+		//		}
+
+		toolItem.addSelectionListener(selectionListener);
 	}
 
 	public ToolItem getToolItem() {
@@ -63,6 +87,15 @@ public class ToolItemElement extends ItemElement {
 		return (item.getStyle() & SWT.SEPARATOR) == SWT.SEPARATOR
 				&& item.getControl() != null ? 1 : 0;
 	}
+	//
+	//	@Override
+	//	public boolean isPseudoInstanceOf(String s) {
+	//		if ("checked".equalsIgnoreCase(s)) {
+	//			return this.isSelected;
+	//		}
+	//		return super.isPseudoInstanceOf(s);
+	//	}
+
 
 	@Override
 	public void reset() {

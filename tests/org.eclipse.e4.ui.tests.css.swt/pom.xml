@@ -21,5 +21,18 @@
   <artifactId>org.eclipse.e4.ui.tests.css.swt</artifactId>
   <version>0.11.500-SNAPSHOT</version>
   <packaging>eclipse-test-plugin</packaging>
+  
+  
+    <build>
+	<plugins>
+		<plugin>
+		 	<groupId>org.eclipse.tycho</groupId>
+			<artifactId>tycho-compiler-plugin</artifactId>
+			<configuration>
+				<release>11</release>
+			</configuration>
+		</plugin>
+	</plugins>
+  </build>
 
 </project>
