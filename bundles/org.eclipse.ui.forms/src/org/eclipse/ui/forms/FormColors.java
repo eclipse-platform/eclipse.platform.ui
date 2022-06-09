@@ -535,7 +535,7 @@ public class FormColors {
 		// LIST_SELECTION foreground colour
 		// Examples: Win High Con Black, Win High Con #1, Win High Con #2
 		// (covered in the second part of the OR clause above)
-		createColor(IFormColors.TITLE, rgb);
+		createColor(IFormColors.TITLE, getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
 	}
 
 	private void createTwistieColors() {
@@ -547,7 +547,7 @@ public class FormColors {
 	}
 
 	private void createTitleBarGradientColors() {
-		RGB tbBg = getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
+		RGB tbBg = getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
 		RGB bg = getImpliedBackground().getRGB();
 
 		// Group 1
@@ -578,15 +578,15 @@ public class FormColors {
 			tbBg = blend(tbBg, bg, 10);
 		}
 
-		createColor(IFormColors.TB_BG, tbBg);
+		createColor(IFormColors.TB_BG, getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
 
 		// for backward compatibility
-		createColor(TB_GBG, tbBg);
+		createColor(TB_GBG, getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
 	}
 
 	private void createTitleBarOutlineColors() {
 		// title bar outline - border color
-		RGB tbBorder = getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
+		RGB tbBorder = getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
 		RGB bg = getImpliedBackground().getRGB();
 		// Group 1
 		// Rule: If at least 2 of the RGB values are equal to or between 180 and
@@ -643,7 +643,7 @@ public class FormColors {
 	}
 
 	private void createFormHeaderGradientColors() {
-		RGB titleBg = getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
+		RGB titleBg = getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
 		Color bgColor = getImpliedBackground();
 		RGB bg = bgColor.getRGB();
 		RGB bottom, top;
@@ -680,12 +680,12 @@ public class FormColors {
 			bottom = blend(titleBg, bg, 10);
 			top = bg;
 		}
-		createColor(IFormColors.H_GRADIENT_END, top);
-		createColor(IFormColors.H_GRADIENT_START, bottom);
+		createColor(IFormColors.H_GRADIENT_END, getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
+		createColor(IFormColors.H_GRADIENT_START, getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
 	}
 
 	private void createFormHeaderKeylineColors() {
-		RGB titleBg = getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
+		RGB titleBg = getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
 		Color bgColor = getImpliedBackground();
 		RGB bg = bgColor.getRGB();
 		RGB keyline2;
@@ -723,7 +723,7 @@ public class FormColors {
 	}
 
 	private void createFormHeaderDNDColors() {
-		RGB titleBg = getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT);
+		RGB titleBg = getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
 		Color bgColor = getImpliedBackground();
 		RGB bg = bgColor.getRGB();
 		RGB light, full;
