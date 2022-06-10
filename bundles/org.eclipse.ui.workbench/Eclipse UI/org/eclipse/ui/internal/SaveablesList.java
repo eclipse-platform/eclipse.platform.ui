@@ -687,7 +687,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 					String message = NLS.bind(WorkbenchMessages.EditorManager_saveChangesOptionallyQuestion,
 							model.getName());
 					MessageDialogWithToggle dialogWithToggle = new MessageDialogWithToggle(shellProvider.getShell(),
-							WorkbenchMessages.Save_Resource, null, message, MessageDialog.QUESTION, buttonLabelToIdMap,
+							WorkbenchMessages.Save_Resource, null, message, MessageDialog.NONE, buttonLabelToIdMap,
 							0, WorkbenchMessages.EditorManager_closeWithoutPromptingOption, false) {
 						@Override
 						protected int getShellStyle() {
@@ -708,7 +708,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 
 					String message = NLS.bind(WorkbenchMessages.EditorManager_saveChangesQuestion, model.getName());
 					dialog = new MessageDialog(shellProvider.getShell(), WorkbenchMessages.Save_Resource, null, message,
-							MessageDialog.QUESTION, 0, buttons) {
+							MessageDialog.NONE, 0, buttons) {
 						@Override
 						protected int getShellStyle() {
 							return (canCancel ? SWT.CLOSE : SWT.NONE) | SWT.TITLE | SWT.BORDER | SWT.APPLICATION_MODAL
