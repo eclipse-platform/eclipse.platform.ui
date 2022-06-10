@@ -178,15 +178,12 @@ public class RegistrationMacOsX implements IOperatingSystemRegistration {
 	/**
 	 * Only one application can handle a specific uri scheme on macOS. This
 	 * information is stored de-centrally in the Info.plist file and registered in a
-	 * central launch database (e.g. via "lsregister"). Registering an uri scheme
-	 * that is already handled by another application would also include changing
-	 * the other application's Info.plist file - which can have unknown side
-	 * effects.
+	 * central launch database (e.g. via "lsregister").
 	 *
-	 * @return always <code>false</code>
+	 * @return always <code>true</code>
 	 */
 	@Override
 	public boolean canOverwriteOtherApplicationsRegistration() {
-		return false;
+		return true;
 	}
 }
