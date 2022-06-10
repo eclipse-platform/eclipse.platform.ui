@@ -107,6 +107,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.PlainMessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -4697,9 +4698,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			title= EditorMessages.Editor_error_activated_outofsync_title;
 			msg= NLSUtility.format(EditorMessages.Editor_error_activated_outofsync_message, inputName);
 
-			if (MessageDialog.open(MessageDialog.QUESTION, shell, title, msg, SWT.NONE,
-					EditorMessages.Editor_error_replace_button_label,
-					EditorMessages.Editor_error_dontreplace_button_label) == 0) {
+			PlainMessageDialog replaceContentDialog = PlainMessageDialog.getBuilder(shell, title).message(msg)
+					.buttonLabels(List.of(EditorMessages.Editor_error_replace_button_label,
+							EditorMessages.Editor_error_dontreplace_button_label))
+					.build();
+
+			if (replaceContentDialog.open() == 0) {
 
 				try {
 					if (provider instanceof IDocumentProviderExtension) {
