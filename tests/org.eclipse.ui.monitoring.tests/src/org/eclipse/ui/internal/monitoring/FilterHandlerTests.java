@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014 Google Inc and others.
+ * Copyright (C) 2014, 2022 Google Inc and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,8 +22,6 @@ import static org.junit.Assert.assertTrue;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
-import java.lang.reflect.Field;
-import java.util.Arrays;
 
 import org.eclipse.ui.monitoring.StackSample;
 import org.junit.Test;
@@ -42,14 +40,6 @@ public class FilterHandlerTests {
 		ThreadMXBean jvmThreadManager = ManagementFactory.getThreadMXBean();
 		ThreadInfo threadInfo =
 				jvmThreadManager.getThreadInfo(Thread.currentThread().getId(), Integer.MAX_VALUE);
-		// Remove the top 4 frames of the stack trace so that createFilteredStackSamples or
-		// createUnfilteredStackSamples appears at the top of the stack. We have to use reflection
-		// since ThreadInfo.stackTrace field is private and cannot be changed through the public
-		// methods.
-		StackTraceElement[] stackTrace = threadInfo.getStackTrace();
-		Field field = ThreadInfo.class.getDeclaredField("stackTrace");
-		field.setAccessible(true);
-		field.set(threadInfo, Arrays.copyOfRange(stackTrace, 4, stackTrace.length));
 		return new StackSample[] { new StackSample(0, new ThreadInfo[] { threadInfo }) };
 	}
 
