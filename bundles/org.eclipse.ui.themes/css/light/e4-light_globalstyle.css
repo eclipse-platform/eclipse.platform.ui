@@ -14,33 +14,6 @@
  *******************************************************************************/
 
 
-Form, FormHeading {
-	background-color: #ffffff;
-	background: #ffffff;
-	color: #505050;
-}
-
-Form {
-	/* Bug 465148: Additional styling for the Form */
-	text-background-color: #ffffff;
-
-	tb-toggle-hover-color: #505050;
-	tb-toggle-color: #505050;
-	h-hover-full-color: #505050;
-	h-hover-light-color: #505050;
-	h-bottom-keyline-2-color: #eaeaea;
-	h-bottom-keyline-1-color: #eaeaea;
-}
-
-
-Section {
-	background-color: #ffffff;
-  	color: #505050;
-  	background-color-titlebar: #eaeaea;
-  	background-color-gradient-titlebar: #eaeaea;
-  	border-color-titlebar: #ffffff;
-}
-
 TabbedPropertyTitle > CLabel{
 	color: #505050;
 }
