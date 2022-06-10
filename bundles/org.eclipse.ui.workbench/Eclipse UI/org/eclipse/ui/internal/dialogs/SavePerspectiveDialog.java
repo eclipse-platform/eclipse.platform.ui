@@ -248,7 +248,7 @@ public class SavePerspectiveDialog extends org.eclipse.jface.dialogs.Dialog
 			String[] buttons = new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL,
 					IDialogConstants.CANCEL_LABEL };
 			MessageDialog d = new MessageDialog(this.getShell(), WorkbenchMessages.SavePerspective_overwriteTitle, null,
-					message, MessageDialog.QUESTION, 0, buttons) {
+					message, MessageDialog.NONE, 0, buttons) {
 				@Override
 				protected int getShellStyle() {
 					return super.getShellStyle() | SWT.SHEET;
