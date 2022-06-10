@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
+import java.lang.management.ManagementFactory;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.util.ArrayList;
@@ -37,7 +38,6 @@ public class WorkbenchEncoding {
 	private static class EncodingsRegistryReader extends RegistryReader {
 
 		private List<String> encodings;
-
 		/**
 		 * Create a new instance of the receiver.
 		 *
@@ -58,13 +58,32 @@ public class WorkbenchEncoding {
 		}
 	}
 
+	private static String defaultEncoding;
+
 	/**
 	 * Get the default encoding from the virtual machine.
 	 *
 	 * @return String
 	 */
 	public static String getWorkbenchDefaultEncoding() {
-		return System.getProperty("file.encoding", "UTF-8");//$NON-NLS-1$ //$NON-NLS-2$
+		if (defaultEncoding == null) {
+			String encoding = null;
+			// Check if -Dfile.encoding= startup argument was given to Eclipse's JVM
+			List<String> commandLineArgs = ManagementFactory.getRuntimeMXBean().getInputArguments();
+			for (String arg : commandLineArgs) {
+				if (arg.startsWith("-Dfile.encoding=")) { //$NON-NLS-1$
+					encoding = arg.substring("-Dfile.encoding=".length()); //$NON-NLS-1$
+					// continue, it can be specified multiple times, last one wins.
+				}
+			}
+			// Now we are sure user didn't specified encoding, so we can use
+			// default native encoding
+			if (encoding == null || encoding.isBlank()) {
+				encoding = Platform.getSystemCharset().name();
+			}
+			defaultEncoding = encoding;
+		}
+		return defaultEncoding;
 	}
 
 	/**
