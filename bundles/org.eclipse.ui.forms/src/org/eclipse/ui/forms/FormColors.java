@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 202 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -497,44 +497,6 @@ public class FormColors {
 	}
 
 	private void createTitleColor() {
-		/*
-		 * RGB rgb = getSystemColor(SWT.COLOR_LIST_SELECTION); // test too light
-		 * if (testTwoPrimaryColors(rgb, 120, 151)) rgb = blend(rgb, BLACK, 80);
-		 * else if (testTwoPrimaryColors(rgb, 150, 256)) rgb = blend(rgb, BLACK,
-		 * 50); createColor(TITLE, rgb);
-		 */
-		RGB bg = getImpliedBackground().getRGB();
-		RGB listSelection = getSystemColor(SWT.COLOR_LIST_SELECTION);
-		RGB listForeground = getSystemColor(SWT.COLOR_LIST_FOREGROUND);
-		RGB rgb = listSelection;
-
-		// Group 1
-		// Rule: If at least 2 of the LIST_SELECTION RGB values are equal to or
-		// between 0 and 120, then use 100% LIST_SELECTION as it is (no
-		// additions)
-		// Examples: XP Default, Win Classic Standard, Win High Con White, Win
-		// Classic Marine
-		if (testTwoPrimaryColors(listSelection, -1, 121))
-			rgb = listSelection;
-		// Group 2
-		// When LIST_BACKGROUND = white (255, 255, 255) or not black, text
-		// colour = LIST_SELECTION @ 100% Opacity + 50% LIST_FOREGROUND over
-		// LIST_BACKGROUND
-		// Rule: If at least 2 of the LIST_SELECTION RGB values are equal to or
-		// between 121 and 255, then add 50% LIST_FOREGROUND to LIST_SELECTION
-		// foreground colour
-		// Examples: Win Vista, XP Silver, XP Olive , Win Classic Plum, OSX
-		// Aqua, OSX Graphite, Linux GTK
-		else if (testTwoPrimaryColors(listSelection, 120, 256)
-				|| (bg.red == 0 && bg.green == 0 && bg.blue == 0))
-			rgb = blend(listSelection, listForeground, 50);
-		// Group 3
-		// When LIST_BACKGROUND = black (0, 0, 0), text colour = LIST_SELECTION
-		// @ 100% Opacity + 50% LIST_FOREGROUND over LIST_BACKGROUND
-		// Rule: If LIST_BACKGROUND = 0, 0, 0, then add 50% LIST_FOREGROUND to
-		// LIST_SELECTION foreground colour
-		// Examples: Win High Con Black, Win High Con #1, Win High Con #2
-		// (covered in the second part of the OR clause above)
 		createColor(IFormColors.TITLE, getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
 	}
 
@@ -547,37 +509,6 @@ public class FormColors {
 	}
 
 	private void createTitleBarGradientColors() {
-		RGB tbBg = getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
-		RGB bg = getImpliedBackground().getRGB();
-
-		// Group 1
-		// Rule: If at least 2 of the RGB values are equal to or between 180 and
-		// 255, then apply specified opacity for Group 1
-		// Examples: Vista, XP Silver, Wn High Con #2
-		// Gradient Bottom = TITLE_BACKGROUND @ 30% Opacity over LIST_BACKGROUND
-		// Gradient Top = TITLE BACKGROUND @ 0% Opacity over LIST_BACKGROUND
-		if (testTwoPrimaryColors(tbBg, 179, 256))
-			tbBg = blend(tbBg, bg, 30);
-
-		// Group 2
-		// Rule: If at least 2 of the RGB values are equal to or between 121 and
-		// 179, then apply specified opacity for Group 2
-		// Examples: XP Olive, OSX Graphite, Linux GTK, Wn High Con Black
-		// Gradient Bottom = TITLE_BACKGROUND @ 20% Opacity over LIST_BACKGROUND
-		// Gradient Top = TITLE BACKGROUND @ 0% Opacity over LIST_BACKGROUND
-		else if (testTwoPrimaryColors(tbBg, 120, 180))
-			tbBg = blend(tbBg, bg, 20);
-
-		// Group 3
-		// Rule: Everything else
-		// Examples: XP Default, Wn Classic Standard, Wn Marine, Wn Plum, OSX
-		// Aqua, Wn High Con White, Wn High Con #1
-		// Gradient Bottom = TITLE_BACKGROUND @ 10% Opacity over LIST_BACKGROUND
-		// Gradient Top = TITLE BACKGROUND @ 0% Opacity over LIST_BACKGROUND
-		else {
-			tbBg = blend(tbBg, bg, 10);
-		}
-
 		createColor(IFormColors.TB_BG, getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
 
 		// for backward compatibility
@@ -643,43 +574,6 @@ public class FormColors {
 	}
 
 	private void createFormHeaderGradientColors() {
-		RGB titleBg = getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
-		Color bgColor = getImpliedBackground();
-		RGB bg = bgColor.getRGB();
-		RGB bottom, top;
-		// Group 1
-		// Rule: If at least 2 of the RGB values are equal to or between 180 and
-		// 255, then apply specified opacity for Group 1
-		// Examples: Vista, XP Silver, Wn High Con #2
-		// Gradient Bottom = TITLE_BACKGROUND @ 30% Opacity over LIST_BACKGROUND
-		// Gradient Top = TITLE BACKGROUND @ 0% Opacity over LIST_BACKGROUND
-		if (testTwoPrimaryColors(titleBg, 179, 256)) {
-			bottom = blend(titleBg, bg, 30);
-			top = bg;
-		}
-
-		// Group 2
-		// Rule: If at least 2 of the RGB values are equal to or between 121 and
-		// 179, then apply specified opacity for Group 2
-		// Examples: XP Olive, OSX Graphite, Linux GTK, Wn High Con Black
-		// Gradient Bottom = TITLE_BACKGROUND @ 20% Opacity over LIST_BACKGROUND
-		// Gradient Top = TITLE BACKGROUND @ 0% Opacity over LIST_BACKGROUND
-		else if (testTwoPrimaryColors(titleBg, 120, 180)) {
-			bottom = blend(titleBg, bg, 20);
-			top = bg;
-		}
-
-		// Group 3
-		// Rule: If at least 2 of the RGB values are equal to or between 0 and
-		// 120, then apply specified opacity for Group 3
-		// Examples: XP Default, Wn Classic Standard, Wn Marine, Wn Plum, OSX
-		// Aqua, Wn High Con White, Wn High Con #1
-		// Gradient Bottom = TITLE_BACKGROUND @ 10% Opacity over LIST_BACKGROUND
-		// Gradient Top = TITLE BACKGROUND @ 0% Opacity over LIST_BACKGROUND
-		else {
-			bottom = blend(titleBg, bg, 10);
-			top = bg;
-		}
 		createColor(IFormColors.H_GRADIENT_END, getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
 		createColor(IFormColors.H_GRADIENT_START, getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
 	}
