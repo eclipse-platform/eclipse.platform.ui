@@ -90,7 +90,9 @@ public class PropertyDialogAction extends SelectionProviderAction {
 		Assert.isNotNull(shell);
 		this.shellProvider = shell;
 		setToolTipText(WorkbenchMessages.PropertyDialog_toolTip);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IWorkbenchHelpContextIds.PROPERTY_DIALOG_ACTION);
+		if (PlatformUI.isWorkbenchRunning()) {
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IWorkbenchHelpContextIds.PROPERTY_DIALOG_ACTION);
+		}
 	}
 
 	/**
