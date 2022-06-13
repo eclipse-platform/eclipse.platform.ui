@@ -24,6 +24,7 @@ import org.eclipse.e4.ui.progress.internal.ProgressMessages;
 import org.eclipse.e4.ui.progress.internal.Services;
 import org.eclipse.e4.ui.progress.internal.legacy.PlatformUI;
 import org.eclipse.e4.ui.progress.internal.legacy.StatusUtil;
+import org.eclipse.e4.ui.workbench.swt.DisplayUISynchronize;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -148,7 +149,10 @@ public abstract class UIJob extends Job {
 	 */
 	public Display getDisplay() {
 		if (cachedDisplay == null) {
-			cachedDisplay = Services.getInstance().getDisplay();
+			Services instance = Services.getInstance();
+			if (instance != null) {
+				cachedDisplay = instance.getDisplay();
+			}
 		}
 		if (cachedDisplay == null) {
 			cachedDisplay = Display.getCurrent();
@@ -200,7 +204,11 @@ public abstract class UIJob extends Job {
 	 * @return UI synchronizer
 	 */
 	protected UISynchronize getUiSynchronize() {
-		return Services.getInstance().getUISynchronize();
+		Services instance = Services.getInstance();
+		if (instance == null) {
+			return new DisplayUISynchronize(getDisplay());
+		}
+		return instance.getUISynchronize();
 	}
 
 }
