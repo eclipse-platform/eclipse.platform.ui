@@ -52,7 +52,7 @@ public class ToolItemElement extends ItemElement {
 		//			return;
 		//		}
 
-		toolItem.addSelectionListener(selectionListener);
+		//		toolItem.addSelectionListener(selectionListener);
 	}
 
 	public ToolItem getToolItem() {
@@ -100,6 +100,8 @@ public class ToolItemElement extends ItemElement {
 	@Override
 	public void reset() {
 		CSSSWTImageHelper.restoreDefaultImage(getToolItem());
+		getToolItem().setBackground(null);
+		getToolItem().setForeground(null);
 		super.reset();
 	}
 }

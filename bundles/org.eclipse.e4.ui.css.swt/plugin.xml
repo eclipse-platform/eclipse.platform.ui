@@ -34,6 +34,9 @@
          <widget
                class="org.eclipse.swt.widgets.ToolBar">
          </widget>
+         <widget
+               class="org.eclipse.swt.widgets.ToolItem">
+         </widget>
          
          <!-- these should be obviated by 4.2M6 --> 
       </provider>
