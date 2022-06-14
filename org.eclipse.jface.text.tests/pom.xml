@@ -22,7 +22,6 @@
   <version>3.12.500-SNAPSHOT</version>
   <packaging>eclipse-test-plugin</packaging>
   <properties>
-  	<testSuite>${project.artifactId}</testSuite>
   	<testClass>org.eclipse.jface.text.tests.JFaceTextTestSuite</testClass>
   </properties>
   <build>
@@ -34,14 +33,6 @@
         <configuration>
           <useUIHarness>true</useUIHarness>
           <useUIThread>true</useUIThread>
-          <dependencies>
-            <dependency>
-              <!-- workaround for missing dependency in org.eclipse.e4.ui.services: https://bugs.eclipse.org/462862 -->
-              <type>eclipse-plugin</type>
-              <artifactId>org.eclipse.equinox.event</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-          </dependencies>
         </configuration>
       </plugin>
     </plugins>
