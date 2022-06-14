@@ -323,7 +323,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 
 				// make sure they really want to do this
 				if (new MessageDialog(null, IDEWorkbenchMessages.SystemSettingsChange_title, null,
-						IDEWorkbenchMessages.SystemSettingsChange_message, MessageDialog.QUESTION, 1,
+						IDEWorkbenchMessages.SystemSettingsChange_message, MessageDialog.NONE, 1,
 						IDEWorkbenchMessages.SystemSettingsChange_yes, IDEWorkbenchMessages.SystemSettingsChange_no)
 								.open() == Window.OK) {
 					PlatformUI.getWorkbench().restart();
