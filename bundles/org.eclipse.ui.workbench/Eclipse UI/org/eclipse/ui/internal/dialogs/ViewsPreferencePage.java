@@ -314,7 +314,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	 */
 	private void showRestartDialog() {
 		if (new MessageDialog(null, WorkbenchMessages.ThemeChangeWarningTitle, null,
-				WorkbenchMessages.ThemeChangeWarningText, MessageDialog.QUESTION, 2,
+				WorkbenchMessages.ThemeChangeWarningText, MessageDialog.NONE, 2,
 				WorkbenchMessages.Workbench_RestartButton, WorkbenchMessages.Workbench_DontRestartButton)
 						.open() == Window.OK) {
 			Display.getDefault().asyncExec(() -> PlatformUI.getWorkbench().restart());
