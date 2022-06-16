@@ -26,8 +26,8 @@ import java.util.Map;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNatureDescriptor;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -300,7 +300,7 @@ public class ProjectNaturesPage extends PropertyPage {
 	 * Initializes a ProjectNaturesPage.
 	 */
 	private void initialize() {
-		project = (IProject) getElement().getAdapter(IResource.class);
+		project = Adapters.adapt(getElement(), IProject.class);
 		noDefaultAndApplyButton();
 	}
 
