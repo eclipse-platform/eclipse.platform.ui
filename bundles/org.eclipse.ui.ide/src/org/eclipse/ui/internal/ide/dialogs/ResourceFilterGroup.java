@@ -1181,11 +1181,10 @@ public class ResourceFilterGroup {
 	 * @return true if the filters changed
 	 */
 	public boolean performOk() {
-
+		if (resource == null || filters == null) {
+			return true;
+		}
 		if (filters.hasChanged()) {
-			if (resource == null)
-				return true;
-
 			try {
 				if (resource != nonExistantResource) {
 					IResourceFilterDescription[] oldFilters = resource.getFilters();
