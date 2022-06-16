@@ -150,6 +150,16 @@ public class CommandElement extends QuickAccessElement {
 	}
 
 	@Override
+	public String getMatchLabel() {
+		String defaultMatchLabel = super.getMatchLabel();
+		try {
+			return defaultMatchLabel + ' ' + command.getCommand().getCategory().getName();
+		} catch (NotDefinedException e) {
+			return defaultMatchLabel;
+		}
+	}
+
+	@Override
 	public int hashCode() {
 		return Objects.hashCode(command);
 	}
