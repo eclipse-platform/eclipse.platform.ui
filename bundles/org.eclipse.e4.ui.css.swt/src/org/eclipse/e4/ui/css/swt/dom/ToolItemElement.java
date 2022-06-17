@@ -52,7 +52,7 @@ public class ToolItemElement extends ItemElement {
 		//			return;
 		//		}
 
-		//		toolItem.addSelectionListener(selectionListener);
+		toolItem.addSelectionListener(selectionListener);
 	}
 
 	public ToolItem getToolItem() {

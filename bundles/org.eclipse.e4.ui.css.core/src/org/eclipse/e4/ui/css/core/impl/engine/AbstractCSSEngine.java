@@ -920,9 +920,6 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 		}
 	}
 
-	public Object getDocument() {
-		return null;
-	}
 
 	@Override
 	public CSSElementContext getCSSElementContext(Object element) {

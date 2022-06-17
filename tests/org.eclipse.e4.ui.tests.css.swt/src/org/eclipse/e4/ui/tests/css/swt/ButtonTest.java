@@ -24,6 +24,8 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -43,6 +45,10 @@ public class ButtonTest extends CSSSWTTestCase {
 		Button buttonToTest = new Button(panel, buttonStyle);
 		buttonToTest.setText("Some button text");
 
+		ToolBar toolBar = new ToolBar(panel, SWT.FLAT);
+		ToolItem toolItem = new ToolItem(toolBar, SWT.PUSH);
+		toolItem.setText("Some text");
+
 		// Apply styles
 		engine.applyStyles(shell, true);
 
@@ -52,7 +58,8 @@ public class ButtonTest extends CSSSWTTestCase {
 
 	@Test
 	public void testColor() {
-		Button buttonToTest = createTestButton("Button { background-color: #FF0000; color: #0000FF }", SWT.CHECK);
+		Button buttonToTest = createTestButton("Button { background-color: #FF0000; color: #0000FF }"
+				+ "ToolItem{ background-color: #FF0000; color: #0000FF }" + "" + "", SWT.CHECK);
 		assertEquals(RED, buttonToTest.getBackground().getRGB());
 		assertEquals(BLUE, buttonToTest.getForeground().getRGB());
 	}

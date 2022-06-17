@@ -142,6 +142,9 @@ public class CSSPropertyBackgroundSWTHandler extends AbstractCSSPropertyBackgrou
 		} else if (widget instanceof Control) {
 			color = ((Control) widget).getBackground();
 		}
+		else if (widget instanceof ToolItem) {
+			color = ((ToolItem) widget).getBackground();
+		}
 		return engine.convert(color, Color.class, null);
 	}
 
