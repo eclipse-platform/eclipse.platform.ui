@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.e4.ui.tests;singleton:=true
-Bundle-Version: 0.14.700.qualifier
+Bundle-Version: 0.14.800.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -23,7 +23,6 @@ Require-Bundle: org.eclipse.emf.ecore.xmi;bundle-version="2.4.0",
  org.junit;bundle-version="3.8.2",
  org.eclipse.e4.ui.workbench.swt;bundle-version="0.9.0",
  org.eclipse.e4.ui.model.workbench;bundle-version="1.2.0";visibility:=reexport,
- org.eclipse.osgi.services;bundle-version="3.2.0",
  org.eclipse.e4.core.commands;bundle-version="0.9.0",
  org.eclipse.e4.ui.bindings;bundle-version="0.9.0",
  org.eclipse.e4.ui.workbench.renderers.swt;bundle-version="0.9.1",
@@ -44,7 +43,8 @@ Export-Package: org.eclipse.e4.ui.tests.model.test,
  org.eclipse.e4.ui.tests.model.test.util
 Bundle-ActivationPolicy: lazy
 Import-Package: javax.annotation,
- javax.inject;version="1.0.0"
+ javax.inject;version="1.0.0",
+ org.osgi.service.event
 Eclipse-BundleShape: dir
 Automatic-Module-Name: org.eclipse.e4.ui.tests
 
