@@ -34,10 +34,8 @@ public class ButtonElement extends ControlElement {
 	private SelectionListener selectionListener = new SelectionAdapter() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			if (!e.widget.isDisposed()) {
-				ButtonElement.this.isSelected = getButton().getSelection();
-				doApplyStyles();
-			}
+			ButtonElement.this.isSelected = getButton().getSelection();
+			doApplyStyles();
 		}
 	};
 
