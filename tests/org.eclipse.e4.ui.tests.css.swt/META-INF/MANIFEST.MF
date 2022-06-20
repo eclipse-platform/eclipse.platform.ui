@@ -14,7 +14,11 @@ Require-Bundle: org.junit,
  net.bytebuddy.byte-buddy,
  org.eclipse.equinox.preferences;bundle-version="3.5.200",
  org.eclipse.ui.forms,
- org.eclipse.ui.views.properties.tabbed
+ org.eclipse.ui.views.properties.tabbed,
+ org.junit.jupiter.api;bundle-version="5.8.1",
+ org.junit.platform.suite.api;bundle-version="1.8.1",
+ org.junit.platform.suite.engine;bundle-version="1.8.1",
+ org.junit.jupiter.engine;bundle-version="5.8.1"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Import-Package: org.eclipse.core.runtime;version="3.5.0",

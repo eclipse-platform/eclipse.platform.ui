@@ -54,11 +54,10 @@ import org.eclipse.e4.ui.tests.css.swt.TextTextTransformTest;
 import org.eclipse.e4.ui.tests.css.swt.ThemeTest;
 import org.eclipse.e4.ui.tests.css.swt.ThemesExtensionTest;
 import org.eclipse.e4.ui.tests.css.swt.TreeTest;
-import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 // note to contributors: please ignore Eclipse default formatting and keep one class per line.
-@RunWith(Suite.class)
+@org.junit.platform.suite.api.Suite
 @Suite.SuiteClasses({
 	CSSSWTFontHelperTest.class,
 	CSSSWTColorHelperTest.class,
