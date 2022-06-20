@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 import org.w3c.dom.css.CSSValue;
 
@@ -71,6 +72,9 @@ public class CSSPropertyTextSWTHandler extends AbstractCSSPropertyTextHandler {
 			} else {
 				CSSSWTColorHelper.setForeground(folder, newColor);
 			}
+		} else if (widget instanceof ToolItem) {
+			// ToolItem prevents itself from repaints if the same color is set
+			((ToolItem) widget).setForeground(newColor);
 		} else if (widget instanceof Control) {
 			CSSSWTColorHelper.setForeground((Control) widget, newColor);
 		}

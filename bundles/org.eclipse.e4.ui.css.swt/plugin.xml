@@ -34,6 +34,9 @@
          <widget
                class="org.eclipse.swt.widgets.ToolBar">
          </widget>
+         <widget
+               class="org.eclipse.swt.widgets.ToolItem">
+         </widget>
          
          <!-- these should be obviated by 4.2M6 --> 
       </provider>
@@ -72,6 +75,18 @@
                name="background-image">
          </property-name>
       </handler>
+      
+        <handler
+            adapter="org.eclipse.e4.ui.css.swt.dom.ToolItemElement"
+            composite="false"
+            handler="org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyBackgroundSWTHandler">
+         <property-name
+               name="background">
+         </property-name>
+         <property-name
+               name="background-color">
+         </property-name>
+      </handler>
       <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
             composite="false"
@@ -108,6 +123,14 @@
          </property-name>
          <property-name
                name="text-transform">
+         </property-name>
+      </handler>
+            <handler
+            adapter="org.eclipse.e4.ui.css.swt.dom.ToolItemElement"
+            composite="true"
+            handler="org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyTextSWTHandler">
+         <property-name
+               name="color">
          </property-name>
       </handler>
       <handler

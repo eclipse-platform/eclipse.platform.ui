@@ -364,6 +364,7 @@ public class CSSSWTColorHelper {
 		}
 	}
 
+
 	/** Helper function to avoid setting colors unnecessarily */
 	public static void setSelectionForeground(CTabFolder folder, Color newColor) {
 		if (!Objects.equals(folder.getSelectionForeground(), newColor)) {
