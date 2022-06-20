@@ -29,6 +29,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 import org.w3c.dom.css.CSSValue;
 
@@ -58,7 +59,6 @@ public class CSSPropertyBackgroundSWTHandler extends AbstractCSSPropertyBackgrou
 	public void applyCSSPropertyBackgroundColor(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		Widget widget = (Widget) ((WidgetElement) element).getNativeWidget();
-
 		switch (value.getCssValueType()) {
 		case CSSValue.CSS_PRIMITIVE_VALUE:
 			Color newColor = (Color) engine.convert(value, Color.class, widget
@@ -71,6 +71,9 @@ public class CSSPropertyBackgroundSWTHandler extends AbstractCSSPropertyBackgrou
 				} else {
 					CSSSWTColorHelper.setBackground(folder, newColor);
 				}
+			} else if (widget instanceof ToolItem) {
+				// ToolItem prevents itself from repaints if the same color is set
+				((ToolItem) widget).setBackground(newColor);
 			} else if (widget instanceof Control) {
 				GradientBackgroundListener.remove((Control) widget);
 				CSSSWTColorHelper.setBackground((Control) widget, newColor);
@@ -137,12 +140,17 @@ public class CSSPropertyBackgroundSWTHandler extends AbstractCSSPropertyBackgrou
 			} else {
 				color = ((CTabItem) widget).getParent().getBackground();
 			}
-		} else if (widget instanceof Control) {
+
+		}
+		else if (widget instanceof ToolItem) {
+			color = ((ToolItem) widget).getBackground();
+		}
+
+		else if (widget instanceof Control) {
 			color = ((Control) widget).getBackground();
 		}
 		return engine.convert(color, Color.class, null);
 	}
-
 
 
 }

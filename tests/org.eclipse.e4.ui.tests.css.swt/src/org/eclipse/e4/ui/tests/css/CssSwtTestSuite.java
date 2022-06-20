@@ -53,6 +53,7 @@ import org.eclipse.e4.ui.tests.css.swt.TableTest;
 import org.eclipse.e4.ui.tests.css.swt.TextTextTransformTest;
 import org.eclipse.e4.ui.tests.css.swt.ThemeTest;
 import org.eclipse.e4.ui.tests.css.swt.ThemesExtensionTest;
+import org.eclipse.e4.ui.tests.css.swt.ToolItemTest;
 import org.eclipse.e4.ui.tests.css.swt.TreeTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -78,6 +79,7 @@ import org.junit.runners.Suite;
 	IdClassLabelColorTest.class,
 	ShellTest.class,
 	ButtonTest.class,
+	ToolItemTest.class,
 	GradientTest.class,
 	MarginTest.class,
 	InnerClassElementTest.class,
