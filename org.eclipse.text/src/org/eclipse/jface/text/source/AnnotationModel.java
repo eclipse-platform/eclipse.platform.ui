@@ -640,13 +640,13 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			fDocumentChanged= false;
 
 			ArrayList<Annotation> deleted= new ArrayList<>();
+			Iterator<Annotation> e= getAnnotationMap().keySetIterator();
 			IAnnotationMap annotations= getAnnotationMap();
-			Iterator<Entry<Annotation, Position>> iterator = annotations.entrySet().iterator();
-			while (iterator.hasNext()) {
-				Entry<Annotation, Position> entry= iterator.next();
-				Position p= entry.getValue();
+			while (e.hasNext()) {
+				Annotation a= e.next();
+				Position p= annotations.get(a);
 				if (p == null || p.isDeleted())
-					deleted.add(entry.getKey());
+					deleted.add(a);
 			}
 
 			if (fireModelChanged && forkNotification) {
@@ -789,11 +789,10 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	protected void removeAllAnnotations(boolean fireModelChanged) {
 		IAnnotationMap annotations= getAnnotationMap();
 		if (fDocument != null) {
-			Iterator<Entry<Annotation, Position>> e= getAnnotationMap().entrySet().iterator();
+			Iterator<Annotation> e= getAnnotationMap().keySetIterator();
 			while (e.hasNext()) {
-				Entry<Annotation, Position> entry= e.next();
-				Annotation a= entry.getKey();
-				Position p= entry.getValue();
+				Annotation a= e.next();
+				Position p= annotations.get(a);
 				removePosition(fDocument, p);
 //				p.delete();
 				synchronized (getLockObject()) {
