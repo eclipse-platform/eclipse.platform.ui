@@ -1079,6 +1079,15 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	private boolean fCompletionProposalTriggerCharsEnabled= true;
 
 	/**
+	 * Tells whether this completion list is shown on each valid character which is either a letter
+	 * or digit. This works conjunction with {@link #fAsynchronous}
+	 *
+	 * @since 3.20
+	 */
+	private boolean fAutoActivateCompletionOnType= false;
+
+
+	/**
 	 * Creates a new content assistant. The content assistant is not automatically activated,
 	 * overlays the completion proposals with context information list if necessary, and shows the
 	 * context information above the location at which it was activated. If auto activation will be
@@ -1103,6 +1112,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	public ContentAssistant(boolean asynchronous) {
 		fPartitioning= IDocumentExtension3.DEFAULT_PARTITIONING;
 		fAsynchronous= asynchronous;
+		enableAutoActivateCompletionOnType(Boolean.getBoolean("org.eclipse.jface.assist.activateCompletionOnType")); //$NON-NLS-1$
 	}
 
 	/**
@@ -1228,6 +1238,11 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		if (processors == null) {
 			return TriggerType.NONE;
 		}
+
+		if (fAutoActivateCompletionOnType && (Character.isLetter(c) || Character.isDigit(c))) {
+			return TriggerType.COMPLETION_PROPOSAL;
+		}
+
 		for (IContentAssistProcessor processor : processors) {
 			IContentAssistProcessorExtension extension= IContentAssistProcessorExtension.adapt(processor);
 			if (extension.isCompletionProposalAutoActivation(c, fViewer, offset)) {
@@ -2747,4 +2762,20 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		return fIsAutoActivated;
 	}
 
+	/**
+	 * Sets whether this completion list is shown on each valid character which is either a letter
+	 * or digit. This works conjunction with {@link #fAsynchronous}
+	 *
+	 * @param enable whether or not to enable this feature
+	 * @since 3.21
+	 */
+	public final void enableAutoActivateCompletionOnType(boolean enable) {
+		if (fAsynchronous) {
+			fAutoActivateCompletionOnType= enable;
+		}
+	}
+
+	boolean isAutoActivateCompletionOnType() {
+		return fAutoActivateCompletionOnType;
+	}
 }

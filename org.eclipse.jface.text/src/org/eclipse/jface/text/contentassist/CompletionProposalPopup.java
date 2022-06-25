@@ -1219,10 +1219,21 @@ class CompletionProposalPopup implements IContentAssistListener {
 	}
 
 	/**
-	 * Displays this popup and install the additional info controller, so that additional info
-	 * is displayed when a proposal is selected and additional info is available.
+	 * Displays this popup and install the additional info controller, so that additional info is
+	 * displayed when a proposal is selected and additional info is available.
 	 */
 	void displayProposals() {
+		displayProposals(true);
+	}
+
+	/**
+	 * Displays this popup and install the additional info controller, so that additional info is
+	 * displayed when a proposal is selected and additional info is available.
+	 *
+	 * @param showPopup if true show the popup or otherwise initialize the popup and listeners
+	 *            without showing the popup.
+	 */
+	void displayProposals(boolean showPopup) {
 
 		if (!isValid(fProposalShell) || !isValid(fProposalTable))
 			return;
@@ -1231,45 +1242,55 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 			ensureDocumentListenerInstalled();
 
-			if (fFocusHelper == null) {
-				fFocusHelper= new IEditingSupport() {
-
-					@Override
-					public boolean isOriginator(DocumentEvent event, IRegion focus) {
-						return false; // this helper just covers the focus change to the proposal shell, no remote editions
-					}
-
-					@Override
-					public boolean ownsFocusShell() {
-						return true;
-					}
-
-				};
+			if (showPopup) {
+				configureAndMakeVisible();
 			}
-			if (fViewer instanceof IEditingSupportRegistry) {
-				IEditingSupportRegistry registry= (IEditingSupportRegistry) fViewer;
-				registry.register(fFocusHelper);
-			}
-
-
-			/* https://bugs.eclipse.org/bugs/show_bug.cgi?id=52646
-			 * on GTK, setVisible and such may run the event loop
-			 * (see also https://bugs.eclipse.org/bugs/show_bug.cgi?id=47511)
-			 * Since the user may have already canceled the popup or selected
-			 * an entry (ESC or RETURN), we have to double check whether
-			 * the table is still okToUse. See comments below
-			 */
-			fProposalShell.setVisible(true); // may run event loop on GTK
-			// transfer focus since no verify key listener can be attached
-			if (!fContentAssistSubjectControlAdapter.supportsVerifyKeyListener() && isValid(fProposalShell))
-				fProposalShell.setFocus(); // may run event loop on GTK ??
-
-			if (fAdditionalInfoController != null && isValid(fProposalTable)) {
-				fAdditionalInfoController.install(fProposalTable);
-				fAdditionalInfoController.handleTableSelectionChanged();
-			}
+		} else if (!fProposalShell.isVisible() && showPopup) {
+			// if a previous call did initialize but did make the popup visible, this will make sure the popup will be visible.
+			configureAndMakeVisible();
 		} else
 			hide();
+	}
+
+	private void configureAndMakeVisible() {
+		if (fFocusHelper == null) {
+			fFocusHelper= new IEditingSupport() {
+
+				@Override
+				public boolean isOriginator(DocumentEvent event, IRegion focus) {
+					return false; // this helper just covers the focus change to the proposal shell, no remote editions
+				}
+
+				@Override
+				public boolean ownsFocusShell() {
+					return true;
+				}
+
+			};
+		}
+
+		if (fViewer instanceof IEditingSupportRegistry) {
+			IEditingSupportRegistry registry= (IEditingSupportRegistry) fViewer;
+			registry.register(fFocusHelper);
+		}
+
+
+		/* https://bugs.eclipse.org/bugs/show_bug.cgi?id=52646
+		 * on GTK, setVisible and such may run the event loop
+		 * (see also https://bugs.eclipse.org/bugs/show_bug.cgi?id=47511)
+		 * Since the user may have already canceled the popup or selected
+		 * an entry (ESC or RETURN), we have to double check whether
+		 * the table is still okToUse. See comments below
+		 */
+		fProposalShell.setVisible(true); // may run event loop on GTK
+		// transfer focus since no verify key listener can be attached
+		if (!fContentAssistSubjectControlAdapter.supportsVerifyKeyListener() && isValid(fProposalShell))
+			fProposalShell.setFocus(); // may run event loop on GTK ??
+
+		if (fAdditionalInfoController != null && isValid(fProposalTable)) {
+			fAdditionalInfoController.install(fProposalTable);
+			fAdditionalInfoController.handleTableSelectionChanged();
+		}
 	}
 
 	/**
@@ -1381,6 +1402,16 @@ class CompletionProposalPopup implements IContentAssistListener {
 				e.doit= false;
 				fProposalShell.setFocus();
 				return false;
+
+			case SWT.BS: {
+				try {
+					if (fFilterOffset > 0 && fContentAssistSubjectControlAdapter.getDocument().getChar(fFilterOffset - 1) == SWT.SPACE)
+						hide();
+				} catch (BadLocationException e1) {
+					// ignore error
+				}
+				break;
+			}
 
 			default:
 				if (fContentAssistant.isCompletionProposalTriggerCharsEnabled()) {
