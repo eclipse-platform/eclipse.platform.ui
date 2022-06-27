@@ -16,11 +16,13 @@ package org.eclipse.jface.tests.widgets;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.eclipse.jface.widgets.ShellFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
@@ -32,6 +34,15 @@ public class TestUnitShellFactory extends AbstractFactoryTest {
 	public void createsShell() {
 		Shell myShell = ShellFactory.newShell(SWT.BORDER).create(shell);
 		assertEquals(shell, myShell.getParent());
+	}
+
+	@Test
+	public void createsShellInDisplayWithText() {
+		Display display = Display.getDefault();
+		Shell myShell = ShellFactory.newShell(SWT.BORDER).text("Test").create(display);
+		assertEquals("Test", myShell.getText());
+		assertNull(myShell.getParent());
+		assertEquals(display, myShell.getDisplay());
 	}
 
 	@Test

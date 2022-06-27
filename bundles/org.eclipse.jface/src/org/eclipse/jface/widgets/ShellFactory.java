@@ -20,6 +20,7 @@ import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Decorations;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 
@@ -70,6 +71,20 @@ public final class ShellFactory extends AbstractCompositeFactory<ShellFactory, S
 	 */
 	private ShellFactory(int style) {
 		super(ShellFactory.class, (Composite parent) -> new Shell((Shell) parent, style));
+	}
+
+	/**
+	 * Creates the shell in the given display.
+	 *
+	 * @param display
+	 * @return the created shell
+	 *
+	 * @since 3.28
+	 */
+	public final Shell create(Display display) {
+		Shell shell = new Shell(display);
+		applyProperties(shell);
+		return shell;
 	}
 
 	/**

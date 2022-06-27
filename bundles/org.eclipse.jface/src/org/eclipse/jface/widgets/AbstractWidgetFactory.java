@@ -65,8 +65,12 @@ public abstract class AbstractWidgetFactory<F extends AbstractWidgetFactory<?, ?
 	 */
 	public final W create(P parent) {
 		W widget = widgetCreator.create(parent);
-		properties.forEach(p -> p.apply(widget));
+		applyProperties(widget);
 		return widget;
+	}
+
+	void applyProperties(W widget) {
+		properties.forEach(p -> p.apply(widget));
 	}
 
 	/**
