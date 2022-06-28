@@ -503,4 +503,20 @@ public class CompositeChange extends Change {
 		}
 		return buff.toString();
 	}
+
+	/**
+	 * @return Amount of changed files
+	 * @since 3.13
+	 */
+	public int getFilenumber() {
+		if(fChanges.size()>0) {
+			CompositeChange obj= (CompositeChange) fChanges.get(0);
+			return obj.getAmount();
+		} else return 0;
+	}
+
+	private int getAmount() {
+		return fChanges.size();
+	}
+
 }
