@@ -31,6 +31,11 @@ import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.Parameterization;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
+import org.eclipse.e4.ui.workbench.IResourceUtilities;
+import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtilities;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
@@ -38,6 +43,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -221,6 +227,13 @@ public class ShowViewMenu extends ContributionItem {
 			pluginId = ((ViewDescriptor) v).getPluginId();
 		}
 
+		public PluginCCIP(MPartDescriptor partDesc, IServiceLocator serviceLocator, String id, String commandId,
+				int style) {
+			super(serviceLocator, id, commandId, style);
+			localId = partDesc.getElementId();
+			pluginId = null;
+		}
+
 		@Override
 		public String getLocalId() {
 			return localId;
@@ -235,24 +248,47 @@ public class ShowViewMenu extends ContributionItem {
 
 	@SuppressWarnings("unchecked")
 	private CommandContributionItemParameter getItem(String viewId) {
+		MApplication application = window.getService(MApplication.class);
+		List<MPartDescriptor> descriptors = application.getDescriptors();
 		IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();
-		IViewDescriptor desc = reg.find(viewId);
-		if (desc == null) {
+
+		MPartDescriptor partDesc = descriptors.stream().filter(descriptor -> descriptor.getElementId().equals(viewId))
+				.findFirst().orElse(null);
+
+		if (partDesc == null) {
 			return null;
 		}
-		String label = desc.getLabel();
+		String label = partDesc.getLabel();
 
-		CommandContributionItemParameter parms = new PluginCCIP(desc, window, viewId,
-				IWorkbenchCommandConstants.VIEWS_SHOW_VIEW, CommandContributionItem.STYLE_PUSH);
+		CommandContributionItemParameter parms;
+
+		IViewDescriptor desc = reg.find(viewId);
+		if (desc != null) {
+			parms = new PluginCCIP(desc, window, viewId,
+					IWorkbenchCommandConstants.VIEWS_SHOW_VIEW, CommandContributionItem.STYLE_PUSH);
+		} else {
+			parms = new PluginCCIP(partDesc, window, viewId,
+					IWorkbenchCommandConstants.VIEWS_SHOW_VIEW, CommandContributionItem.STYLE_PUSH);
+		}
+
 		parms.label = label;
-		parms.icon = desc.getImageDescriptor();
+		parms.icon = getImage(partDesc);
 		parms.parameters = new HashMap<String, String>();
 
-		parms.parameters.put(VIEW_ID_PARM, viewId);
+		parms.parameters.put(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_ID, viewId);
 		if (makeFast) {
 			parms.parameters.put(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_FASTVIEW, "true"); //$NON-NLS-1$
 		}
 		return parms;
+	}
+
+	private ImageDescriptor getImage(MPartDescriptor element) {
+		String iconURI = element.getIconURI();
+		if (iconURI != null && !iconURI.isBlank()) {
+			ISWTResourceUtilities resUtils = (ISWTResourceUtilities) window.getService(IResourceUtilities.class);
+			return resUtils.imageDescriptorFromURI(URI.createURI(iconURI));
+		}
+		return null;
 	}
 
 	private List<String> addOpenedViews(IWorkbenchPage page, List<String> actions) {
