@@ -156,7 +156,7 @@ public class DirectoryProposalContentAssist {
 
 	}
 
-	private class DirectoryProposalAutoCompleteField {
+	private static class DirectoryProposalAutoCompleteField {
 
 		private FileNameSubstringMatchContentProposalProvider proposalProvider;
 		private OpenableContentProposalAdapter adapter;
