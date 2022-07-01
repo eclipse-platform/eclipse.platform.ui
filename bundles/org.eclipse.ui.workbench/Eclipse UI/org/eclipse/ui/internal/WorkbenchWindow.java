@@ -1021,7 +1021,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		getCoolBarManager2().update(true);
 		getCoolBarManager2().add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
 
-		final MTrimBar trimBar = getTopTrim();
+		final MTrimBar topTrimBar = getTopTrim();
 		// TODO why aren't these added as trim contributions
 		// that would remove everything from this method except the fill(*)
 		/*
@@ -1042,10 +1042,12 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 					"bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.LayoutModifierToolControl"); //$NON-NLS-1$
 			spacerControl.getTags().add(TrimBarLayout.SPACER);
 			spacerControl.getTags().add("SHOW_RESTORE_MENU"); //$NON-NLS-1$
-			trimBar.getChildren().add(spacerControl);
+			topTrimBar.getChildren().add(spacerControl);
 		} else if (!spacerControl.getTags().contains("SHOW_RESTORE_MENU")) { //$NON-NLS-1$
 			spacerControl.getTags().add("SHOW_RESTORE_MENU"); //$NON-NLS-1$
 		}
+
+		final MTrimBar leftTrimBar = getLeftTrim();
 
 		MToolControl switcherControl = (MToolControl) modelService.find("PerspectiveSwitcher", model); //$NON-NLS-1$
 		if (switcherControl == null && getWindowConfigurer().getShowPerspectiveBar()) {
@@ -1057,10 +1059,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			switcherControl.getTags().add("SHOW_RESTORE_MENU"); //$NON-NLS-1$
 			switcherControl.setContributionURI(
 					"bundleclass://org.eclipse.ui.workbench/org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.PerspectiveSwitcher"); //$NON-NLS-1$
-			trimBar.getChildren().add(switcherControl);
+			leftTrimBar.getChildren().add(switcherControl);
 		} else if (switcherControl != null) {
 			if (!getWindowConfigurer().getShowPerspectiveBar()) {
-				trimBar.getChildren().remove(switcherControl);
+				leftTrimBar.getChildren().remove(switcherControl);
 			} else {
 				List<String> tags = switcherControl.getTags();
 				if (!tags.contains("HIDEABLE")) { //$NON-NLS-1$
@@ -1430,6 +1432,16 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		List<MTrimBar> trimBars = model.getTrimBars();
 		for (MTrimBar bar : trimBars) {
 			if (IWorkbenchConstants.MAIN_TOOLBAR_ID.equals(bar.getElementId())) {
+				return bar;
+			}
+		}
+		return null;
+	}
+
+	public MTrimBar getLeftTrim() {
+		List<MTrimBar> trimBars = model.getTrimBars();
+		for (MTrimBar bar : trimBars) {
+			if (SideValue.LEFT.equals(bar.getSide())) {
 				return bar;
 			}
 		}
