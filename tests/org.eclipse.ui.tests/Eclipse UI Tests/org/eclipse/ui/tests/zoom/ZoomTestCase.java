@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.zoom;
 
+import static org.junit.Assert.assertNotNull;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;

@@ -13,9 +13,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.session;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -36,6 +33,9 @@ import org.eclipse.ui.tests.dnd.DragOperations;
 import org.eclipse.ui.tests.dnd.EditorDropTarget;
 import org.eclipse.ui.tests.dnd.ExistingWindowProvider;
 import org.eclipse.ui.tests.harness.util.FileUtil;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * Bug 95357 Need a test to ensure editor activation is not broken on startup.

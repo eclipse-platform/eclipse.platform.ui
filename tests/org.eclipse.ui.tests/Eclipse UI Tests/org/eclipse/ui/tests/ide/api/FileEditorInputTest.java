@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.ide.api;
 
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;

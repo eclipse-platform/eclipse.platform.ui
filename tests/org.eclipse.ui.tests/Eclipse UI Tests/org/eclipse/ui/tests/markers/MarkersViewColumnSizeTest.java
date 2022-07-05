@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.tests.markers;
 
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;

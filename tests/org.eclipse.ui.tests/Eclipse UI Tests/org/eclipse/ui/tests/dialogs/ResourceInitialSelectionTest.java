@@ -14,6 +14,9 @@
 package org.eclipse.ui.tests.dialogs;
 
 import static java.util.Arrays.asList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeFalse;
 
 import java.io.ByteArrayInputStream;

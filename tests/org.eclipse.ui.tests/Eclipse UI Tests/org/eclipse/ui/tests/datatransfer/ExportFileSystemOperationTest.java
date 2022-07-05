@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.datatransfer;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.ArrayList;

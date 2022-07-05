@@ -17,6 +17,9 @@
 package org.eclipse.ui.tests.datatransfer;
 
 import static org.eclipse.jface.dialogs.IMessageProvider.WARNING;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 

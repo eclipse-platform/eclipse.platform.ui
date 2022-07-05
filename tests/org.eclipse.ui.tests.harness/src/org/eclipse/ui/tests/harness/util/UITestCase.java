@@ -16,6 +16,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.harness.util;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -41,6 +43,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestWatcher;
@@ -48,15 +51,13 @@ import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
 
-import junit.framework.TestCase;
-
 /**
  * <code>UITestCase</code> is a useful super class for most
  * UI tests cases.  It contains methods to create new windows
  * and pages.  It will also automatically close the test
  * windows when the tearDown method is called.
  */
-public abstract class UITestCase extends TestCase {
+public abstract class UITestCase {
 
 	/**
 	 * Returns the workbench page input to use for newly created windows.
@@ -101,7 +102,6 @@ public abstract class UITestCase extends TestCase {
 	private String runningTest = null;
 
 	public UITestCase(String testName) {
-		super(testName);
 	}
 
 	/**
@@ -115,7 +115,11 @@ public abstract class UITestCase extends TestCase {
 			write(status, 0);
 		} else
 			e.printStackTrace();
-		fail(message + ": " + e);
+		Assert.fail(message + ": " + e);
+	}
+
+	public static void fail(String message) {
+		Assert.fail(message);
 	}
 
 	private static void indent(OutputStream output, int indent) {
@@ -175,9 +179,7 @@ public abstract class UITestCase extends TestCase {
 	 * </p>
 	 */
 	@Before
-	@Override
 	public final void setUp() throws Exception {
-		super.setUp();
 		closeTestWindows.before();
 		fWorkbench = PlatformUI.getWorkbench();
 		String name = runningTest != null ? runningTest : this.getClass().getSimpleName();
@@ -206,9 +208,8 @@ public abstract class UITestCase extends TestCase {
 	 * </p>
 	 */
 	@After
-	@Override
 	public final void tearDown() throws Exception {
-		String name = runningTest != null ? runningTest : this.getName();
+		String name = runningTest != null ? runningTest : this.getClass().getSimpleName();
 		trace(TestRunLogUtil.formatTestFinishedMessage(name));
 		prefMemento.resetPreferences();
 		doTearDown();

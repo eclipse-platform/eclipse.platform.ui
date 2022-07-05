@@ -14,6 +14,9 @@
 
 package org.eclipse.ui.tests.markers;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 import org.junit.Test;

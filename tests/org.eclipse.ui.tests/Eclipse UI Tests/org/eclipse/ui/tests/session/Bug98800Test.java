@@ -13,13 +13,13 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.session;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * If a view is not activated during a session, it's part is not instantiated.

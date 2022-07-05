@@ -14,6 +14,11 @@
 
 package org.eclipse.ui.tests.commands;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.commands.AbstractHandlerWithState;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;

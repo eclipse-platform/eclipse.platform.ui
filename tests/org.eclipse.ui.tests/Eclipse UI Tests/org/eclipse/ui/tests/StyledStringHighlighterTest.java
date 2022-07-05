@@ -15,6 +15,8 @@
 
 package org.eclipse.ui.tests;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.jface.text.contentassist.BoldStylerProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.SWT;

@@ -14,6 +14,9 @@
 
 package org.eclipse.ui.tests.propertyPages;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Collection;
 
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;

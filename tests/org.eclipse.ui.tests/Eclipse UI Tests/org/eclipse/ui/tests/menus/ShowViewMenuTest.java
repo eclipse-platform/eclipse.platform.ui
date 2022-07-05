@@ -13,6 +13,8 @@
  ******************************************************************************/
 package org.eclipse.ui.tests.menus;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.ShowViewMenu;

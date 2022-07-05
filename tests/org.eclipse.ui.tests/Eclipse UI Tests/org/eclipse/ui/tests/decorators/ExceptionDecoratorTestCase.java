@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.decorators;
 
+import static org.junit.Assert.assertFalse;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;

@@ -15,14 +15,14 @@ package org.eclipse.ui.tests.autotests;
 
 import java.net.URL;
 
-import junit.framework.TestResult;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.tests.TestPlugin;
+
+import junit.framework.TestResult;
+import junit.framework.TestSuite;
 
 /**
  * @since 3.1

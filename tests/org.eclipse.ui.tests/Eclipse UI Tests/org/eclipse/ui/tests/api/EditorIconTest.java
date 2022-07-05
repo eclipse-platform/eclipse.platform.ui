@@ -14,6 +14,9 @@
 
 package org.eclipse.ui.tests.api;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;

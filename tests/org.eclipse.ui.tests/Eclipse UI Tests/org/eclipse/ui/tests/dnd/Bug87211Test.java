@@ -14,15 +14,15 @@
 
 package org.eclipse.ui.tests.dnd;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class Bug87211Test extends TestCase {
 	public static TestSuite suite() {

@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.ide.api;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;

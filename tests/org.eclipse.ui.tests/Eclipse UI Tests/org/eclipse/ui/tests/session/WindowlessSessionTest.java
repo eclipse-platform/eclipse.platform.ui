@@ -14,10 +14,12 @@
  ******************************************************************************/
 package org.eclipse.ui.tests.session;
 
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+
+import junit.framework.TestSuite;
 
 
 /**

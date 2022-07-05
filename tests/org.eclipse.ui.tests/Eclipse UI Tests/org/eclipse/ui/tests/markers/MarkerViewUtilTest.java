@@ -13,6 +13,8 @@
  ******************************************************************************/
 package org.eclipse.ui.tests.markers;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;

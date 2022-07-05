@@ -13,10 +13,10 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.session;
 
+import org.eclipse.ui.PlatformUI;
+
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import org.eclipse.ui.PlatformUI;
 
 /**
  * Tests intro-related session properties.

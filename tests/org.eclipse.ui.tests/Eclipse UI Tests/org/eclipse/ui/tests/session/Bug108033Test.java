@@ -15,9 +15,6 @@ package org.eclipse.ui.tests.session;
 
 import java.util.List;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
@@ -31,6 +28,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ViewSite;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * Bug 108033 Need a test to ensure that view tab order is the same on start up

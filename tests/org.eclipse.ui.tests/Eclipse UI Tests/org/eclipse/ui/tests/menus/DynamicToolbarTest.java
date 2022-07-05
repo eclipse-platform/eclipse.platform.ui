@@ -13,6 +13,8 @@
  ******************************************************************************/
 package org.eclipse.ui.tests.menus;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;

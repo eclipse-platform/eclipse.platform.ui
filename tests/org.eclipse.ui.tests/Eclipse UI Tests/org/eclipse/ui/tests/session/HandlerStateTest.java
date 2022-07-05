@@ -13,15 +13,15 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.session;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.State;
 import org.eclipse.jface.commands.PersistentState;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * A test to verify the persistence of handler state between sessions.

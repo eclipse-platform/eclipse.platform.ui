@@ -15,6 +15,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.leaks;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.lang.ref.PhantomReference;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;

@@ -16,6 +16,7 @@ package org.eclipse.ui.tests.propertyPages;
 
 
 import org.eclipse.jface.layout.TreeColumnLayout;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;

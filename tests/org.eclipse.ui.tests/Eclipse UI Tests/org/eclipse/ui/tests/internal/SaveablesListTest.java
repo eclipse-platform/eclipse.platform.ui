@@ -16,6 +16,10 @@ package org.eclipse.ui.tests.internal;
 
 import static org.eclipse.ui.SaveablesLifecycleEvent.POST_CLOSE;
 import static org.eclipse.ui.SaveablesLifecycleEvent.POST_OPEN;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;

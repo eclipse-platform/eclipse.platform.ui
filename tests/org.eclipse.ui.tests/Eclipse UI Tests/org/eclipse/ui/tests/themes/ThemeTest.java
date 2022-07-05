@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.themes;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.util.Arrays;
 
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;

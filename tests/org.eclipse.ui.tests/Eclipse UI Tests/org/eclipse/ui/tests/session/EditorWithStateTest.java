@@ -13,9 +13,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.session;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -25,6 +22,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.api.MockEditorWithState;
 import org.eclipse.ui.tests.harness.util.FileUtil;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * A test to verify the persistence of handler state between sessions.

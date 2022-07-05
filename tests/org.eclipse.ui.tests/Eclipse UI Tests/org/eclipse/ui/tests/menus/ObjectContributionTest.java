@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.menus;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;

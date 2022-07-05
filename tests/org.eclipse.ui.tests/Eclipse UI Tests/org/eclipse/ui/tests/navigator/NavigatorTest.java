@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;

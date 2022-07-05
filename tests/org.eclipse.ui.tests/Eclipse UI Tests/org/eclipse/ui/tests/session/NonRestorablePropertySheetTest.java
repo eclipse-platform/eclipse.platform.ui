@@ -14,9 +14,6 @@
 
 package org.eclipse.ui.tests.session;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
@@ -25,6 +22,9 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.views.properties.PropertySheet;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * The secondary property sheets should be closed so there aren't restored in

@@ -14,6 +14,8 @@
 package org.eclipse.ui.tests.zoom;
 
 
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.ui.IViewPart;

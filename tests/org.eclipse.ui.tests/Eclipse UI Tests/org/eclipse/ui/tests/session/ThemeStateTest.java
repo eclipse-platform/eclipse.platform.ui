@@ -14,11 +14,11 @@
 
 package org.eclipse.ui.tests.session;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.themes.IThemeManager;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * Tests various persistent theme properties.

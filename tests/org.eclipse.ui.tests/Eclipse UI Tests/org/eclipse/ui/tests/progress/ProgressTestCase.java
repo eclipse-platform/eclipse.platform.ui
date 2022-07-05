@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.tests.progress;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 

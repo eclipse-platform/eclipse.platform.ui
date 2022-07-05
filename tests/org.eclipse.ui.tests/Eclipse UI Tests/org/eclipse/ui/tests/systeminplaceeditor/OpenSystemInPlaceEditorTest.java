@@ -13,6 +13,9 @@
  ******************************************************************************/
 package org.eclipse.ui.tests.systeminplaceeditor;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
@@ -29,6 +32,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -115,7 +119,7 @@ public class OpenSystemInPlaceEditorTest extends UITestCase {
 
 			return window.openPage(null);
 		} catch (WorkbenchException ex) {
-			fail();
+			Assert.fail();
 			return null;
 		}
 	}
