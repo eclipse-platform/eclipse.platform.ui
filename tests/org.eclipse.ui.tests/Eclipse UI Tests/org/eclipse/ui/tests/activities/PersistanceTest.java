@@ -14,11 +14,16 @@
 
 package org.eclipse.ui.tests.activities;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.ICategory;
 import org.eclipse.ui.activities.NotDefinedException;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -48,12 +53,12 @@ public class PersistanceTest extends UITestCase {
 
 			for (String string : manager.getDefinedCategoryIds()) {
 				if (manager.getCategory(string).getName().equals("org.eclipse.ui.PT.C3")) {
-					fail("Found category that should not be.");
+					Assert.fail("Found category that should not be.");
 				}
 			}
 		}
 		catch (NotDefinedException e) {
-			fail(e.getMessage());
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -91,12 +96,12 @@ public class PersistanceTest extends UITestCase {
 
 			for (String string : manager.getDefinedActivityIds()) {
 				if (manager.getActivity(string).getName().equals("org.eclipse.ui.PT.A3")) {
-					fail("Found activity that should not be.");
+					Assert.fail("Found activity that should not be.");
 				}
 			}
 		}
 		catch (NotDefinedException e) {
-			fail(e.getMessage());
+			Assert.fail(e.getMessage());
 		}
 	}
 }
