@@ -591,4 +591,9 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 	public Button getDefaultButton() {
 		return defaultButton;
 	}
+
+	@Override
+	protected boolean isResizable() {
+		return true;
+	}
 }
