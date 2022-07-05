@@ -25,7 +25,6 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
 
@@ -112,7 +111,7 @@ public class ViewContentProvider implements ITreeContentProvider {
 		List<MPartDescriptor> descriptors = application.getDescriptors();
 		Set<MPartDescriptor> categoryDescriptors = new HashSet<>();
 		for (MPartDescriptor descriptor : descriptors) {
-			if (isFilteredByActivity(descriptor.getElementId()) || isIntroView(descriptor.getElementId())) {
+			if (isFilteredByActivity(descriptor.getElementId())) {
 				continue;
 			}
 			String category = descriptor.getCategory();
@@ -167,20 +166,13 @@ public class ViewContentProvider implements ITreeContentProvider {
 	}
 
 	/**
-	 * Remove Eclipse introview from this list, as it opened via the Help -&gt; Welcome
-	 * menu
-	 */
-	private boolean isIntroView(String id) {
-		return (id.equals(IIntroConstants.INTRO_VIEW_ID));
-	}
-
-	/**
 	 * Evaluates if the view is filtered by an activity
 	 *
 	 * @param elementId
 	 * @return result of the check
 	 */
 	private boolean isFilteredByActivity(String elementId) {
+
 		IViewDescriptor[] views = viewRegistry.getViews();
 		for (IViewDescriptor descriptor : views) {
 			if (descriptor.getId().equals(elementId) && WorkbenchActivityHelper.filterItem(descriptor)) {
