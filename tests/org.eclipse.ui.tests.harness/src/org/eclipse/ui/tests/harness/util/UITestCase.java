@@ -180,7 +180,7 @@ public abstract class UITestCase extends TestCase {
 		super.setUp();
 		closeTestWindows.before();
 		fWorkbench = PlatformUI.getWorkbench();
-		String name = runningTest != null ? runningTest : this.getName();
+		String name = runningTest != null ? runningTest : this.getClass().getSimpleName();
 		trace(TestRunLogUtil.formatTestStartMessage(name));
 		doSetUp();
 
