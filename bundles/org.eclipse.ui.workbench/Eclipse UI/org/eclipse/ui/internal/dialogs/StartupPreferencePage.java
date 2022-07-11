@@ -21,6 +21,7 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -91,6 +92,7 @@ public class StartupPreferencePage extends PreferencePage implements IWorkbenchP
 						.get(Constants.BUNDLE_NAME);
 			}
 		});
+		viewer.setComparator(new ViewerComparator());
 		viewer.setContentProvider(ArrayContentProvider.getInstance());
 		viewer.setInput(workbench.getEarlyActivatedPlugins());
 		updateCheckState();
