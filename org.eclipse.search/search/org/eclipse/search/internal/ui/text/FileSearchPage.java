@@ -17,6 +17,8 @@
 package org.eclipse.search.internal.ui.text;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -29,6 +31,11 @@ import org.eclipse.core.runtime.IAdaptable;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -224,7 +231,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 
 	@Override
 	protected void showMatch(Match match, int offset, int length, boolean activate) throws PartInitException {
-		IFile file= (IFile) match.getElement();
+		IFile file = mostNestedEquivalent((IFile) match.getElement());
 		IWorkbenchPage page= getSite().getPage();
 		if (offset >= 0 && length != 0) {
 			openAndSelect(page, file, offset, length, activate);
@@ -240,7 +247,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 			if (firstElement instanceof IFile) {
 				if (getDisplayedMatchCount(firstElement) == 0) {
 					try {
-						open(getSite().getPage(), (IFile)firstElement, false);
+						open(getSite().getPage(), mostNestedEquivalent((IFile) firstElement), false);
 					} catch (PartInitException e) {
 						ErrorDialog.openError(getSite().getShell(), SearchMessages.FileSearchPage_open_file_dialog_title, SearchMessages.FileSearchPage_open_file_failed, e.getStatus());
 					}
@@ -261,6 +268,21 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 				autoExpand(treeViewer, firstElement);
 			}
 		}
+	}
+
+	private IFile mostNestedEquivalent(IFile resource) {
+		if (resource == null || resource.getLocationURI() == null) {
+			return resource;
+		}
+		ITextFileBufferManager textFileBufferManager = FileBuffers.getTextFileBufferManager();
+		ITextFileBuffer textFileBuffer = textFileBufferManager.getTextFileBuffer(resource.getFullPath(),
+				LocationKind.IFILE);
+		return Arrays.stream(resource.getWorkspace().getRoot().findFilesForLocationURI(resource.getLocationURI())) //
+				.sorted(Comparator.comparingInt(aFile -> aFile.getFullPath().segments().length)) //
+				.findFirst() //
+				.filter(aFile -> textFileBufferManager.getTextFileBuffer(aFile.getFullPath(),
+						LocationKind.IFILE) == textFileBuffer)
+				.orElse(resource);
 	}
 
 	@Override
