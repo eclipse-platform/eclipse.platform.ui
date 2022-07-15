@@ -22,7 +22,6 @@ import java.util.Map;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
-import org.eclipse.jface.dialogs.PlainMessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.window.Window;
@@ -37,6 +36,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IEditorDescriptor;
@@ -126,10 +126,10 @@ public class FileEditorsPreferencePage extends PreferencePage implements IWorkbe
 			int result = newFilename.compareToIgnoreCase(resourceType.getLabel());
 			if (result == 0) {
 				// Same resource type not allowed!
-				PlainMessageDialog.getBuilder(getShell(),
-						WorkbenchMessages.FileEditorPreference_existsTitle)
-						.image(SWT.ICON_INFORMATION)
-						.message(WorkbenchMessages.FileEditorPreference_existsMessage).build().open();
+				MessageBox msgBox = new MessageBox(getShell(), SWT.ICON_INFORMATION | SWT.OK);
+				msgBox.setMessage(WorkbenchMessages.FileEditorPreference_existsMessage);
+				msgBox.setText(WorkbenchMessages.FileEditorPreference_existsTitle);
+				msgBox.open();
 				return;
 			}
 
