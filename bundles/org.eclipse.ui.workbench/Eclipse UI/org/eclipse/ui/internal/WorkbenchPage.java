@@ -68,6 +68,7 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.internal.workbench.ModelServiceImpl;
 import org.eclipse.e4.ui.internal.workbench.PartServiceImpl;
+import org.eclipse.e4.ui.internal.workbench.UIExtensionTracker;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -176,7 +177,6 @@ import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
-import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.registry.ViewDescriptor;
 import org.eclipse.ui.internal.tweaklets.TabBehaviour;
 import org.eclipse.ui.internal.tweaklets.Tweaklets;
@@ -1803,7 +1803,10 @@ public class WorkbenchPage implements IWorkbenchPage {
 		selectionHandler = null;
 		selectionService = null;
 		sortedPerspectives.clear();
-		tracker = null;
+		if (tracker != null) {
+			tracker.close();
+			tracker = null;
+		}
 		widgetHandler = null;
 //		window = null;
 		workingSet = null;
@@ -4474,7 +4477,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	@Override
 	public IExtensionTracker getExtensionTracker() {
 		if (tracker == null) {
-			tracker = new UIExtensionTracker(getWorkbenchWindow().getWorkbench().getDisplay());
+			tracker = new UIExtensionTracker(getWorkbenchWindow().getWorkbench().getDisplay()::asyncExec,
+					WorkbenchPlugin.getDefault().getLog());
 		}
 		return tracker;
 	}
