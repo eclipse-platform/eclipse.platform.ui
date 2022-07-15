@@ -98,7 +98,7 @@ public class MenuManagerHideProcessor implements IMenuListener2 {
 				for (Entry<MDynamicMenuContribution, ArrayList<MMenuElement>> entry : toBeHidden.entrySet()) {
 					MDynamicMenuContribution currentMenuElement = entry.getKey();
 					Object contribution = currentMenuElement.getObject();
-					if (contribution != null) {
+					if (contribution == null) {
 						continue; // avoid NPE (Bug 578964)
 					}
 					IEclipseContext dynamicMenuContext = EclipseContextFactory.create();
