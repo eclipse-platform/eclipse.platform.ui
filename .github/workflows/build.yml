@@ -21,6 +21,7 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
+    - run: echo "::add-matcher::matcher.json"
     - name: Build with Maven
       uses: GabrielBB/xvfb-action@v1
       with:
@@ -38,6 +39,7 @@ jobs:
         -Dorg.slf4j.simpleLogger.dateTimeFormat=HH:mm:ss.SSS
         -DtrimStackTrace=false
         clean verify
+    - run: echo "::remove-matcher::owner=api-tools"
     - name: Upload Test Results
       uses: actions/upload-artifact@v3
       with:
