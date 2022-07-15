@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -31,6 +31,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.runtime.Assert;
+
+import org.eclipse.text.undo.DocumentUndoEvent;
+import org.eclipse.text.undo.DocumentUndoManagerRegistry;
+import org.eclipse.text.undo.IDocumentUndoListener;
 
 import org.eclipse.jface.internal.text.link.contentassist.ContentAssistant2;
 import org.eclipse.jface.internal.text.link.contentassist.IProposalListener;
@@ -292,7 +296,7 @@ public class LinkedModeUI {
 	/**
 	 * Listens for shell events and acts upon them.
 	 */
-	private class Closer implements ShellListener, ITextInputListener {
+	private class Closer implements ShellListener, ITextInputListener, IDocumentUndoListener {
 
 		@Override
 		public void shellActivated(ShellEvent e) {
@@ -369,6 +373,34 @@ public class LinkedModeUI {
 		public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
 		}
 
+		@Override
+		public void documentUndoNotification(DocumentUndoEvent event) {
+			int type= event.getEventType();
+			if ((type & DocumentUndoEvent.ABOUT_TO_UNDO) != 0 || (type & DocumentUndoEvent.ABOUT_TO_REDO) != 0) {
+				// default behavior: any document change outside a linked position
+				// causes us to exit
+				String textRemoved= event.getPreservedText();
+				int end= event.getOffset() + (textRemoved != null ? textRemoved.length() : 0);
+				for (int offset= event.getOffset(); offset <= end; offset++) {
+					if (!fModel.anyPositionContains(offset)) {
+						ITextViewer viewer= fCurrentTarget.getViewer();
+						if (fFramePosition != null && viewer instanceof IEditingSupportRegistry) {
+							IEditingSupport[] helpers= ((IEditingSupportRegistry) viewer).getRegisteredSupports();
+							for (IEditingSupport helper : helpers) {
+								if (helper.isOriginator(null, new Region(fFramePosition.getOffset(), fFramePosition.getLength())))
+									return;
+							}
+						}
+
+						leave(ILinkedModeListener.EXTERNAL_MODIFICATION);
+						return;
+					}
+				}
+
+				// Make sure that any document compound change is done committed
+				endCompoundChangeIfNeeded();
+			}
+		}
 	}
 
 	/**
@@ -955,6 +987,8 @@ public class LinkedModeUI {
 		viewer.addTextInputListener(fCloser);
 
 		viewer.getDocument().addDocumentListener(fDocumentListener);
+
+		DocumentUndoManagerRegistry.getDocumentUndoManager(viewer.getDocument()).addDocumentUndoListener(fCloser);
 	}
 
 	/**
@@ -1096,6 +1130,8 @@ public class LinkedModeUI {
 			fCurrentTarget.fKeyListener.setEnabled(false);
 
 		((IPostSelectionProvider) viewer).removePostSelectionChangedListener(fSelectionListener);
+
+		DocumentUndoManagerRegistry.getDocumentUndoManager(viewer.getDocument()).removeDocumentUndoListener(fCloser);
 
 		redraw();
 	}
