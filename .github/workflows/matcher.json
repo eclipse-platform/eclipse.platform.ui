@@ -4,11 +4,10 @@
       "owner": "api-tools",
       "pattern": [
         {
-          "regexp": "^\\* Marker \\[on:\\s+([^,]+).*charStart:\\s*(\\d+).*lineNumber:\\s*(\\d+).*message:\\s* ([^,]+).*severity:\\s2.*sourceId:\\sAPI Tools.*\\]$",
+          "regexp": "^.*\\/([^/]+\\.java),.*lineNumber:\\s*(\\d+).*message:\\s*(.*),\\s*messagearguments.*severity:\\s2.*sourceId:\\sAPI Tools.*\\]$",
           "file": 1,
-          "column": 2,
-          "line": 3,
-          "message": 4
+          "line": 2,
+          "message": 3
         }
       ]
     }
