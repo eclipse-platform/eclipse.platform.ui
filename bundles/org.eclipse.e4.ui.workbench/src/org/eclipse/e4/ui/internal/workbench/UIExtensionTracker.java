@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,63 +10,59 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Christoph Läubrich - refactor for E4
  *******************************************************************************/
-package org.eclipse.ui.internal.registry;
+package org.eclipse.e4.ui.internal.workbench;
 
+import java.text.MessageFormat;
+import java.util.concurrent.Executor;
 import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * @since 3.1
  */
 public class UIExtensionTracker extends ExtensionTracker {
-	private Display display;
-
-	// SOMETHING HAS NOT BEEN DONE IN THE REGISTTRY CHANGED CODE
-	// if (!PlatformUI.isWorkbenchRunning())
-	// return;
-	// int numDeltas = 0;
-	// Display display = PlatformUI.getWorkbench().getDisplay();
-	// if (display == null || display.isDisposed())
-	// return;
-	// It seems that the tracker should be closed.
+	private Executor executor;
+	private ILog log;
 
 	/**
-	 * @param display
+	 * @param executor
+	 * @param log
 	 */
-	public UIExtensionTracker(Display display) {
-		this.display = display;
+	public UIExtensionTracker(Executor executor, ILog log) {
+		this.executor = executor;
+		this.log = log;
 	}
 
 	@Override
 	protected void applyRemove(final IExtensionChangeHandler handler, final IExtension removedExtension,
 			final Object[] objects) {
-		if (display.isDisposed())
-			return;
-
-		display.asyncExec(() -> {
+		executor.execute(() -> {
 			try {
 				handler.removeExtension(removedExtension, objects);
 			} catch (Exception e) {
-				WorkbenchPlugin.log(getClass(), "doRemove", e); //$NON-NLS-1$
+				log(getClass(), "doRemove", e); //$NON-NLS-1$
 			}
 		});
 	}
 
 	@Override
 	protected void applyAdd(final IExtensionChangeHandler handler, final IExtension addedExtension) {
-		if (display.isDisposed())
-			return;
-
-		display.asyncExec(() -> {
+		executor.execute(() -> {
 			try {
 				handler.addExtension(UIExtensionTracker.this, addedExtension);
 			} catch (Exception e) {
-				WorkbenchPlugin.log(getClass(), "doAdd", e); //$NON-NLS-1$
+				log(getClass(), "doAdd", e); //$NON-NLS-1$
 			}
 		});
+	}
+
+	private void log(Class<?> clazz, String methodName, Throwable t) {
+		String msg = MessageFormat.format("Exception in {0}.{1}: {2}", //$NON-NLS-1$
+				clazz.getName(), methodName, t);
+		log.error(msg, t);
 	}
 }

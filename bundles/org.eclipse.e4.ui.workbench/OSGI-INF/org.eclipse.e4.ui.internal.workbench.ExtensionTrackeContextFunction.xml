@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.3.0" deactivate="shutdown" name="org.eclipse.e4.ui.internal.workbench.ExtensionTrackeContextFunction">
+   <property name="service.context.key" value="org.eclipse.core.runtime.dynamichelpers.IExtensionTracker"/>
+   <property name="event.topics" value="org/eclipse/e4/core/contexts/IEclipseContext/DISPOSE"/>
+   <service>
+      <provide interface="org.eclipse.e4.core.contexts.IContextFunction"/>
+   </service>
+   <reference cardinality="1..1" field="log" interface="org.eclipse.core.runtime.ILog" name="log"/>
+   <implementation class="org.eclipse.e4.ui.internal.workbench.ExtensionTrackeContextFunction"/>
+</scr:component>
