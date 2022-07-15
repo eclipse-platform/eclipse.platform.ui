@@ -62,4 +62,6 @@ public interface IActionFilter {
 	 *         otherwise
 	 */
 	boolean testAttribute(Object target, String name, String value);
+
+	void thisIsBreakingApi();
 }
