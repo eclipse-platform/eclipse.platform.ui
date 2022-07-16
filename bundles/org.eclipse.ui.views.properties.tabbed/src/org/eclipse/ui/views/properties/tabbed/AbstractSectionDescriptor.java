@@ -74,6 +74,6 @@ public abstract class AbstractSectionDescriptor implements ISectionDescriptor {
 
 	@Override
 	public List getInputTypes() {
-		return new ArrayList();
+		return new ArrayList<>();
 	}
 }

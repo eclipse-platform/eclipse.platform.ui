@@ -17,7 +17,9 @@ package org.eclipse.e4.ui.progress.internal;
 import java.util.Arrays;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -33,7 +35,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.osgi.service.log.LogService;
 
 /**
  * The ProgressUtil is a class that contains static utility methods used for the
@@ -113,9 +114,8 @@ public class ProgressManagerUtil {
 	 * @param exception
 	 */
 	static void logException(Throwable exception) {
-		Services.getInstance().getLogService().log(LogService.LOG_ERROR,
-				exception.getMessage() == null ? "" : exception.getMessage(), //$NON-NLS-1$
-				exception);
+		IStatus status = Status.error(exception.getMessage() == null ? "" : exception.getMessage(), exception); //$NON-NLS-1$
+		Platform.getLog(ProgressManagerUtil.class).log(status);
 	}
 
 	// /**

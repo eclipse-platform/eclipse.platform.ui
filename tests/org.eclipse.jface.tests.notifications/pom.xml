@@ -22,7 +22,6 @@
   <packaging>eclipse-test-plugin</packaging>
 
   <properties>
-    <code.ignoredWarnings>${tests.ignoredWarnings}</code.ignoredWarnings>
     <skipAPIAnalysis>true</skipAPIAnalysis>
   </properties>
   

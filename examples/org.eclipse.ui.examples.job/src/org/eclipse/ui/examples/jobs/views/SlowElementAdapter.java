@@ -40,7 +40,7 @@ public class SlowElementAdapter implements IDeferredWorkbenchAdapter {
 		if (object instanceof SlowElement) {
 			Object[] children = ((SlowElement) object).getChildren();
 			if (isBatchFetchedChildren()) {
-				sleep(4000);
+				sleep();
 				collector.add(children, monitor);
 			} else {
 				for (Object child : children) {
@@ -48,13 +48,13 @@ public class SlowElementAdapter implements IDeferredWorkbenchAdapter {
 						return;
 					}
 					collector.add(child, monitor);
-					sleep(4000);
+					sleep();
 				}
 			}
 		}
 	}
 
-	private void sleep(long mills) {
+	private void sleep() {
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {

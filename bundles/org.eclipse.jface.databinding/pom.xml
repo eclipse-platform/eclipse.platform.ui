@@ -23,7 +23,4 @@
   <version>1.13.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 
-  <properties>
-    <code.ignoredWarnings>-warn:-deprecation,raw,unchecked</code.ignoredWarnings>
-  </properties>
 </project>

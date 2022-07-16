@@ -20,7 +20,6 @@ import java.net.URL;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
@@ -62,7 +61,7 @@ public class InternalBrowserEditorTestCase {
 		IEditorReference[] editorRefs = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
 				.getEditorReferences();
 		IEditorReference editor = editorRefs[0];
-		IEditorPart editorPart = editor.getEditor(true);
+		editor.getEditor(true);
 
 		WebBrowserEditorInput editorInput = (WebBrowserEditorInput) editor.getEditorInput();
 		assertNotNull(editorInput.getBrowserId());

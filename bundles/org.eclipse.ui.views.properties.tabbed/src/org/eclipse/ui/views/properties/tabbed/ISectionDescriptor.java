@@ -63,6 +63,7 @@ public interface ISectionDescriptor {
 	 *
 	 * @return the valid input types for this section.
 	 */
+	@SuppressWarnings("rawtypes")
 	public List getInputTypes();
 
 	/**
