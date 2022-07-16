@@ -50,7 +50,7 @@ public class Snippet065TableViewerReplacingElements {
 		String[] rootElements = new String[] { "root 1", "root 2", "root 3" };
 		final IObservableList<String> input = new WritableList<>(DisplayRealm.getRealm(shell.getDisplay()));
 		input.addAll(Arrays.asList(rootElements));
-		IContentProvider contentProvider = new ObservableListContentProvider();
+		IContentProvider contentProvider = new ObservableListContentProvider<>();
 		v.setContentProvider(contentProvider);
 		v.setComparator(new ViewerComparator());
 		v.setInput(input);

@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.progress.ProgressManager;
 
 /**
  * BusyShowWhileDialog is a test of busyShowWhile in a modal dialog.
@@ -43,12 +42,13 @@ public class BusyShowWhileDialog extends IconAndMessageDialog {
 	}
 
 	@Override
+	@SuppressWarnings("restriction")
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
 		Button detailsButton = createButton(parent, 4, "Start busy show while", false); //$NON-NLS-1$
 		detailsButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
 			try {
-				ProgressManager.getInstance().busyCursorWhile(monitor -> {
+				org.eclipse.ui.internal.progress.ProgressManager.getInstance().busyCursorWhile(monitor -> {
 					long time = System.currentTimeMillis();
 					long delay = PlatformUI.getWorkbench().getProgressService().getLongOperationTime();
 					long end = time + delay + delay;

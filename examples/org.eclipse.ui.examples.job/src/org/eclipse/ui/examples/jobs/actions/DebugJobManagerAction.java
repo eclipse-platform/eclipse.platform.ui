@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.ui.examples.jobs.actions;
 
-import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -47,7 +46,9 @@ public class DebugJobManagerAction implements IWorkbenchWindowActionDelegate {
 		System.out.println("**** BEGIN DUMP JOB MANAGER INFORMATION ****"); //$NON-NLS-1$
 		Job[] jobs = Job.getJobManager().find(null);
 		for (Job job : jobs) {
-			System.out.println("" + job.getClass().getName() + " state: " + JobManager.printState(job.getState())); //$NON-NLS-1$ //$NON-NLS-2$
+			@SuppressWarnings("restriction")
+			String state = org.eclipse.core.internal.jobs.JobManager.printState(job.getState());
+			System.out.println("" + job.getClass().getName() + " state: " + state); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		System.out.println("**** END DUMP JOB MANAGER INFORMATION ****"); //$NON-NLS-1$
 	}

@@ -60,10 +60,10 @@ public abstract class AbstractTabDescriptor implements ITabDescriptor,
 
 	@Override
 	public TabContents createTab() {
-		List<ISection> sections = new ArrayList<>(getSectionDescriptors().size());
-		for (@SuppressWarnings("unchecked")
-		Iterator<ISectionDescriptor> iter = getSectionDescriptors().iterator(); iter.hasNext();) {
-			ISectionDescriptor descriptor = iter.next();
+		@SuppressWarnings("unchecked")
+		List<ISectionDescriptor> descriptors = getSectionDescriptors();
+		List<ISection> sections = new ArrayList<>(descriptors.size());
+		for (ISectionDescriptor descriptor : descriptors) {
 			ISection section = descriptor.getSectionClass();
 			sections.add(section);
 		}
@@ -89,15 +89,15 @@ public abstract class AbstractTabDescriptor implements ITabDescriptor,
 					this.getSectionDescriptors().size() == descriptor
 							.getSectionDescriptors().size()) {
 
-				Iterator i = this.getSectionDescriptors().iterator();
-				Iterator j = descriptor.getSectionDescriptors().iterator();
+				Iterator<ISectionDescriptor> i = this.getSectionDescriptors().iterator();
+				Iterator<ISectionDescriptor> j = descriptor.getSectionDescriptors().iterator();
 
 				// the order is important here - so as long as the sizes of the
 				// lists are the same and id of the section at the same
 				// positions are the same - the lists are the same
 				while (i.hasNext()) {
-					ISectionDescriptor source = (ISectionDescriptor) i.next();
-					ISectionDescriptor target = (ISectionDescriptor) j.next();
+					ISectionDescriptor source = i.next();
+					ISectionDescriptor target = j.next();
 					if (!source.getId().equals(target.getId())) {
 						return false;
 					}
@@ -141,9 +141,9 @@ public abstract class AbstractTabDescriptor implements ITabDescriptor,
 
 		int hashCode = getCategory().hashCode();
 		hashCode ^= getId().hashCode();
-		Iterator i = this.getSectionDescriptors().iterator();
-		while (i.hasNext()) {
-			ISectionDescriptor section = (ISectionDescriptor) i.next();
+		@SuppressWarnings("unchecked")
+		List<ISectionDescriptor> sections = this.getSectionDescriptors();
+		for (ISectionDescriptor section : sections) {
 			hashCode ^= section.getId().hashCode();
 		}
 		return hashCode;
@@ -165,7 +165,8 @@ public abstract class AbstractTabDescriptor implements ITabDescriptor,
 	 * @param sectionDescriptors
 	 *            the list of section descriptors for the tab.
 	 */
-	public void setSectionDescriptors(List sectionDescriptors) {
+	@SuppressWarnings("unchecked")
+	public void setSectionDescriptors(@SuppressWarnings("rawtypes") List sectionDescriptors) {
 		this.sectionDescriptors = sectionDescriptors;
 	}
 }

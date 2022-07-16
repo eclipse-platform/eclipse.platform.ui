@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.views.properties.tabbed.ITabDescriptor;
 
 /**
  * Viewer representing the property sheet page. On the left side it
@@ -35,7 +36,7 @@ import org.eclipse.ui.IWorkbenchPart;
 public class TabbedPropertyViewer extends StructuredViewer {
 
 	protected TabbedPropertyList list;
-	protected List<Object> elements;
+	protected List<ITabDescriptor> elements;
 	protected IWorkbenchPart part;
 
 	/**
@@ -92,7 +93,6 @@ public class TabbedPropertyViewer extends StructuredViewer {
 		/* not implemented */
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	protected List getSelectionFromWidget() {
 		int index = list.getSelectionIndex();
@@ -119,7 +119,7 @@ public class TabbedPropertyViewer extends StructuredViewer {
 	 * element will represent the selection.
 	 */
 	@Override
-	protected void setSelectionToWidget(@SuppressWarnings("rawtypes") List l, boolean reveal) {
+	protected void setSelectionToWidget(List l, boolean reveal) {
 		if (l == null || l.isEmpty()) { // clear selection
 			list.deselectAll();
 		} else {
@@ -146,7 +146,7 @@ public class TabbedPropertyViewer extends StructuredViewer {
 		Object[] children = getSortedChildren(getRoot());
 		list.removeAll();
 		for (Object child : children) {
-			elements.add(child);
+			elements.add((ITabDescriptor) child);
 			mapElement(child, list);
 		}
 		list.setElements(children);
@@ -180,8 +180,7 @@ public class TabbedPropertyViewer extends StructuredViewer {
 	 * @return the elements in this list viewer.
 	 * @since 3.5
 	 */
-	@SuppressWarnings("rawtypes")
-	public List getElements() {
+	public List<ITabDescriptor> getElements() {
 		return elements;
 	}
 }
