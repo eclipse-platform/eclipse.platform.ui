@@ -32,7 +32,7 @@
   </properties>
 
   <modules>
-    <module>features/org.eclipse.e4.rcp</module>
+    <module>features</module>
     <module>bundles</module>
     <module>tests</module>
     <module>examples</module>

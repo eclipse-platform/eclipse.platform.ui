@@ -26,6 +26,7 @@ import org.eclipse.ui.examples.adapterservice.snippets.SnippetSetup;
  * This snippet demonstrates user of the Adapter service.
  *
  */
+@SuppressWarnings("restriction")
 public class AdapterSnippet implements IApplication{
 	@Inject
 	Adapter adapter;

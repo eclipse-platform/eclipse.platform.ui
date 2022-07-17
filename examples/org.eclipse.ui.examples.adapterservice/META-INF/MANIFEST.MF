@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.eclipse.ui.examples.adapterservice;singleton:=true
 Bundle-Version: 0.9.200.qualifier
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: Eclipse.org
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Activator: org.eclipse.ui.examples.adapterservice.snippets.SnippetActivator
 Import-Package: javax.inject;version="1.0.0",
  org.osgi.framework;version="1.5.0"
