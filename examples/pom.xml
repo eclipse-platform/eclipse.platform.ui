@@ -24,6 +24,7 @@
     <module>org.eclipse.e4.ui.examples.job</module>
     <module>org.eclipse.jface.examples.databinding</module>
     <module>org.eclipse.jface.snippets</module>
+    <module>org.eclipse.ui.examples.adapterservice</module>
     <module>org.eclipse.ui.examples.contributions</module>
     <module>org.eclipse.ui.examples.fieldassist</module>
     <module>org.eclipse.ui.examples.job</module>
