@@ -1,26 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.jface.text" version="2">
-    <resource path="src/org/eclipse/jface/text/TextViewer.java" type="org.eclipse.jface.text.TextViewer">
-        <filter id="572522506">
+    <resource path="src/org/eclipse/jface/text/link/LinkedModeUI.java" type="org.eclipse.jface.text.link.LinkedModeUI$IExitPolicy">
+        <filter comment="A new default IExitPolicy.doExit(LinkedModeModel model, DocumentEvent event)  method is added. Despite the fact that the interface is implementable by Clients and https://wiki.eclipse.org/Evolving_Java-based_APIs_2#Evolving_API_Interfaces say that such a change may 'break compatibility',  we don't know any such client that may implement such a method at present, so we believe this change will NOT add any compatibility break." id="404000815">
             <message_arguments>
-                <message_argument value="ChildDocumentManager"/>
-                <message_argument value="TextViewer"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/jface/text/templates/persistence/TemplatePersistenceData.java" type="org.eclipse.jface.text.templates.persistence.TemplatePersistenceData">
-        <filter comment="Extended to prevent API breakage" id="571473929">
-            <message_arguments>
-                <message_argument value="TemplatePersistenceData"/>
-                <message_argument value="TemplatePersistenceData"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/jface/text/templates/persistence/TemplateReaderWriter.java" type="org.eclipse.jface.text.templates.persistence.TemplateReaderWriter">
-        <filter comment="Extended to prevent API breakage" id="571473929">
-            <message_arguments>
-                <message_argument value="TemplateReaderWriter"/>
-                <message_argument value="TemplateReaderWriter"/>
+                <message_argument value="org.eclipse.jface.text.link.LinkedModeUI.IExitPolicy"/>
+                <message_argument value="doExit(LinkedModeModel, DocumentEvent)"/>
             </message_arguments>
         </filter>
     </resource>
