@@ -41,5 +41,6 @@ public interface ITypeMapper {
 	 * @return the type of the input object, mapped to the domain type if
 	 *         required.
 	 */
+	@SuppressWarnings("rawtypes")
 	public Class mapType(Object object);
 }

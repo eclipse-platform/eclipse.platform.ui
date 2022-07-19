@@ -24,6 +24,7 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
@@ -299,9 +300,9 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 		}
 
 		private int sortUser(final Object a, final Object b) {
-			int typeA = ((BindingElement) a).getUserDelta().intValue();
-			int typeB = ((BindingElement) b).getUserDelta().intValue();
-			return typeA - typeB;
+			return Comparator.comparing(o -> getBindingUserText((BindingElement) o),
+					Comparator.nullsFirst(Comparator.naturalOrder())).reversed().compare(a,
+					b);
 		}
 
 	}
@@ -389,16 +390,7 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 			case CATEGORY_COLUMN: // category
 				return bindingElement.getCategory();
 			case USER_DELTA_COLUMN: // user
-				if (bindingElement.getUserDelta().intValue() == Binding.USER) {
-					if (bindingElement.getConflict().equals(Boolean.TRUE)) {
-						return "CU"; //$NON-NLS-1$
-					}
-					return " U"; //$NON-NLS-1$
-				}
-				if (bindingElement.getConflict().equals(Boolean.TRUE)) {
-					return "C "; //$NON-NLS-1$
-				}
-				return "  "; //$NON-NLS-1$
+				return getBindingUserText(bindingElement);
 			}
 			return null;
 		}
@@ -427,6 +419,19 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 
 			return null;
 		}
+	}
+
+	private static String getBindingUserText(BindingElement bindingElement) {
+		if (bindingElement.getUserDelta().intValue() == Binding.USER) {
+			if (bindingElement.getConflict().equals(Boolean.TRUE)) {
+				return "CU"; //$NON-NLS-1$
+			}
+			return " U"; //$NON-NLS-1$
+		}
+		if (bindingElement.getConflict().equals(Boolean.TRUE)) {
+			return "C "; //$NON-NLS-1$
+		}
+		return " "; //$NON-NLS-1$
 	}
 
 	static class ModelContentProvider implements ITreeContentProvider {

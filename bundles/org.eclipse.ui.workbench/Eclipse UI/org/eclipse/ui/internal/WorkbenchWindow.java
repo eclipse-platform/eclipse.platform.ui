@@ -63,6 +63,7 @@ import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.PartServiceSaveHandler;
+import org.eclipse.e4.ui.internal.workbench.UIExtensionTracker;
 import org.eclipse.e4.ui.internal.workbench.URIHelper;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.IUpdateService;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -186,7 +187,6 @@ import org.eclipse.ui.internal.progress.ProgressRegion;
 import org.eclipse.ui.internal.provisional.application.IActionBarConfigurer2;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
-import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.services.EvaluationReference;
 import org.eclipse.ui.internal.services.IServiceLocatorCreator;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
@@ -494,7 +494,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				@Override
 				public Object compute(IEclipseContext context, String contextKey) {
 					if (tracker == null) {
-						tracker = new UIExtensionTracker(getWorkbench().getDisplay());
+						tracker = new UIExtensionTracker(getWorkbench().getDisplay()::asyncExec,
+								WorkbenchPlugin.getDefault().getLog());
 					}
 					return tracker;
 				}

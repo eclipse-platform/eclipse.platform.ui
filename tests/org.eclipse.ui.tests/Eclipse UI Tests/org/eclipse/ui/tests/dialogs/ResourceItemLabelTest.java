@@ -192,6 +192,15 @@ public class ResourceItemLabelTest extends UITestCase {
 		compareStyleRanges(withDigits, getStyleRanges("AB5C", "Ab5cBz5zCz.txt"), "Ab5cBz5zCz.txt", "");
 	}
 
+	@Test
+	public void testBug528301_withConsecutiveWildcards() throws Exception {
+		Position[] questionMarkStar = { new Position(0, 1), new Position(5, 2) };
+		compareStyleRanges(questionMarkStar, getStyleRanges("a?*fg", "abcdefg.txt"), "abcdefg.txt", "");
+
+		Position[] starQuestionMark = { new Position(0, 1), new Position(5, 2) };
+		compareStyleRanges(starQuestionMark, getStyleRanges("a*?fg", "abcdefg.txt"), "abcdefg.txt", "");
+	}
+
 	/**
 	 * Tests for Bug 531610: Open Resource dialog doesn't show paths for duplicated
 	 * files

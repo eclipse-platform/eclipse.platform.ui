@@ -39,7 +39,7 @@ public class HandlerServiceHandler extends AbstractHandler {
 	private static final String HANDLER_MISSING_EXECUTE_ANNOTATION = " handler is missing @Execute"; //$NON-NLS-1$
 	private static final Object missingExecute = new Object();
 
-	protected String commandId;
+	protected final String commandId;
 
 	public HandlerServiceHandler(String commandId) {
 		this.commandId = commandId;
@@ -182,5 +182,10 @@ public class HandlerServiceHandler extends AbstractHandler {
 
 	public void overrideEnabled(boolean b) {
 		setBaseEnabled(b);
+	}
+
+	@Override
+	public String toString() {
+		return this.getClass().getSimpleName() + "(\"" + commandId + "\")"; //$NON-NLS-1$//$NON-NLS-2$
 	}
 }

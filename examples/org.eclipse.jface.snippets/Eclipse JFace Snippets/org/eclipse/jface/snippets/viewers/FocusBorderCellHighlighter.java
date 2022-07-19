@@ -27,8 +27,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 public class FocusBorderCellHighlighter extends FocusCellHighlighter {
-	private ViewerCell oldCell;
-
 	/**
 	 * @param viewer
 	 *            the viewer
@@ -91,16 +89,16 @@ public class FocusBorderCellHighlighter extends FocusCellHighlighter {
 	}
 
 	@Override
-	protected void focusCellChanged(ViewerCell cell) {
-		super.focusCellChanged(cell);
+	protected void focusCellChanged(ViewerCell newCell, ViewerCell oldCell) {
+		super.focusCellChanged(newCell, oldCell);
 
 		// Redraw new area
-		if (cell != null) {
-			Rectangle rect = cell.getBounds();
-			int x = cell.getColumnIndex() == 0 ? 0 : rect.x;
-			int width = cell.getColumnIndex() == 0 ? rect.x + rect.width
+		if (newCell != null) {
+			Rectangle rect = newCell.getBounds();
+			int x = newCell.getColumnIndex() == 0 ? 0 : rect.x;
+			int width = newCell.getColumnIndex() == 0 ? rect.x + rect.width
 					: rect.width;
-			cell.getControl().redraw(x, rect.y, width, rect.height, true);
+			newCell.getControl().redraw(x, rect.y, width, rect.height, true);
 		}
 
 		if (oldCell != null) {
@@ -110,7 +108,5 @@ public class FocusBorderCellHighlighter extends FocusCellHighlighter {
 					: rect.width;
 			oldCell.getControl().redraw(x, rect.y, width, rect.height, true);
 		}
-
-		this.oldCell = cell;
 	}
 }

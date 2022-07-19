@@ -616,7 +616,7 @@ public class TabbedPropertySheetPage
 	 * @param tabs tabs to dispose
 	 * @since 3.6
 	 */
-	protected void disposeTabs(Collection tabs) {
+	protected void disposeTabs(@SuppressWarnings("rawtypes") Collection tabs) {
 		for (Iterator<TabContents> iter = tabs.iterator(); iter.hasNext();) {
 			TabContents tab = iter.next();
 			Composite composite = tabToComposite.remove(tab);
@@ -979,7 +979,6 @@ public class TabbedPropertySheetPage
 	 * @since 3.5
 	 */
 	public ITabDescriptor[] getActiveTabs() {
-		@SuppressWarnings("unchecked")
 		List<ITabDescriptor> elements = tabbedPropertyViewer.getElements();
 		if (elements != null && elements.size() > 0) {
 			return elements.toArray(new ITabDescriptor[elements.size()]);
@@ -995,7 +994,6 @@ public class TabbedPropertySheetPage
 	 * @since 3.5
 	 */
 	public void setSelectedTab(String id) {
-		@SuppressWarnings("unchecked")
 		List<ITabDescriptor> elements = tabbedPropertyViewer.getElements();
 		if (elements != null && elements.size() > 0) {
 			for (ITabDescriptor tabDescriptor : elements) {
