@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.e4.ui.workbench" version="2">
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$Application">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.Application"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$ApplicationElement">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.ApplicationElement"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$BindingContext">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.BindingContext"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$BindingTable">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.BindingTable"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$BindingTableContainer">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.BindingTableContainer"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$Bindings">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.Bindings"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$Category">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.Category"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$Command">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.Command"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$CommandParameter">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.CommandParameter"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$Context">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.Context"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$Contribution">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.Contribution"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$CoreExpression">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.CoreExpression"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$Dirtyable">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.Dirtyable"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$ElementContainer">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.ElementContainer"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$EventTags">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.EventTags"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$EventTypes">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.EventTypes"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$GenericTile">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.GenericTile"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$GenericTrimContainer">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.GenericTrimContainer"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$HandledItem">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.HandledItem"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$Handler">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.Handler"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$HandlerContainer">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.HandlerContainer"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$ImperativeExpression">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.ImperativeExpression"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$Item">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.Item"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$KeyBinding">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.KeyBinding"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$KeySequence">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.KeySequence"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$Menu">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.Menu"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$MenuContribution">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.MenuContribution"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$MenuContributions">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.MenuContributions"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$MenuElement">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.MenuElement"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$OpaqueMenuItem">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.OpaqueMenuItem"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$OpaqueMenuSeparator">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.OpaqueMenuSeparator"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$OpaqueToolItem">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.OpaqueToolItem"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$Parameter">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.Parameter"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$Part">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.Part"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$PartDescriptor">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.PartDescriptor"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$PartDescriptorContainer">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.PartDescriptorContainer"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$Perspective">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.Perspective"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$Placeholder">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.Placeholder"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$RenderedMenu">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.RenderedMenu"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$RenderedMenuItem">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.RenderedMenuItem"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$RenderedToolBar">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.RenderedToolBar"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$SnippetContainer">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.SnippetContainer"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$StringToObjectMap">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.StringToObjectMap"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$StringToStringMap">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.StringToStringMap"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$ToolBarContribution">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.ToolBarContribution"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$ToolBarContributions">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.ToolBarContributions"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$ToolItem">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.ToolItem"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$TrimBar">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.TrimBar"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$TrimContribution">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.TrimContribution"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$TrimContributions">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.TrimContributions"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$TrimmedWindow">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.TrimmedWindow"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$UIElement">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.UIElement"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$UILabel">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.UILabel"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$UILifeCycle">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.UILifeCycle"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$Window">
+        <filter comment="Those interfaces are actually namespaces and not meant to be implemented." id="403853384">
+            <message_arguments>
+                <message_argument value="@noimplement"/>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.Window"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
