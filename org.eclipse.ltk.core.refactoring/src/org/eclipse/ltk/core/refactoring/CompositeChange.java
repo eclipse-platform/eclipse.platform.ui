@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -510,9 +510,13 @@ public class CompositeChange extends Change {
 	 */
 	public int getFilenumber() {
 		if(fChanges.size()>0) {
-			CompositeChange obj= (CompositeChange) fChanges.get(0);
-			return obj.getAmount();
-		} else return 0;
+			if (fChanges.get(0) instanceof CompositeChange) {
+				CompositeChange obj= (CompositeChange) fChanges.get(0);
+				return obj.getAmount();
+			}
+			return 1;
+		}
+		return 0;
 	}
 
 	private int getAmount() {
