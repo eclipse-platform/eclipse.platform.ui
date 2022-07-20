@@ -14,6 +14,7 @@
 package org.eclipse.ltk.internal.ui.refactoring;
 
 import java.text.Collator;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -292,8 +293,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	 * Creates a new preview wizard page.
 	 */
 	public PreviewWizardPage() {
-		super(PAGE_NAME);
-		setDescription(RefactoringUIMessages.PreviewWizardPage_description);
+		this(false);
 	}
 
 	/**
@@ -305,7 +305,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	 */
 	public PreviewWizardPage(boolean wizard) {
 		super(PAGE_NAME, wizard);
-		setDescription(RefactoringUIMessages.PreviewWizardPage_description);
+		setDescription(RefactoringUIMessages.PreviewWizardPage_description_s);
 	}
 
 	/**
@@ -561,6 +561,12 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		PreviewNode input= null;
 		if (fTreeViewerInputChange != null) {
 			input= AbstractChangeNode.createNode(null, fTreeViewerInputChange);
+			int filenumber= fTreeViewerInputChange.getFilenumber();
+			String fullDescription= RefactoringUIMessages.PreviewWizardPage_description_s;
+			if (filenumber > 1) {
+				fullDescription= MessageFormat.format(RefactoringUIMessages.PreviewWizardPage_description_m, String.valueOf(filenumber));
+			}
+			setDescription(fullDescription);
 		}
 		fTreeViewer.setInput(input);
 	}
