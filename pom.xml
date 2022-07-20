@@ -27,7 +27,7 @@
   <properties>
     <tycho.scmUrl>scm:git:https://github.com/eclipse-platform/eclipse.platform.ui.git</tycho.scmUrl>
     <code.ignoredWarnings>${tests.ignoredWarnings}</code.ignoredWarnings>
-    <tycho.surefire.useUIHarness>true</tycho.surefire.useUIHarness>
+    <tycho.surefire.useUIHarness>true</tycho.surefire.useUIHarness><!--Use UI harness for tests by default -->
     <tycho.surefire.useUIThread>true</tycho.surefire.useUIThread>
   </properties>
 
