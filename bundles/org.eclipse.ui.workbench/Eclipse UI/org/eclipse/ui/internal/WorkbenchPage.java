@@ -1188,7 +1188,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	private MPart findPart(String viewId, int searchFlags) {
 		List<MPart> parts = modelService.findElements(getWindowModel(), viewId, MPart.class, null, searchFlags);
-		if (parts.size() > 0)
+		if (!parts.isEmpty())
 			return parts.get(0);
 
 		return null;
@@ -1316,8 +1316,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 	public boolean closeAllSavedEditors() {
 		// get the Saved editors
-		IEditorReference editors[] = getEditorReferences();
-		IEditorReference savedEditors[] = new IEditorReference[editors.length];
+		IEditorReference[] editors = getEditorReferences();
+		IEditorReference[] savedEditors = new IEditorReference[editors.length];
 		int j = 0;
 		for (IEditorReference editor : editors) {
 			if (!editor.isDirty()) {
@@ -1410,7 +1410,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		boolean confirm = true;
 		SaveablesList modelManager = null;
 		Object postCloseInfo = null;
-		if (partsToClose.size() > 0) {
+		if (!partsToClose.isEmpty()) {
 			modelManager = (SaveablesList) getWorkbenchWindow().getService(ISaveablesLifecycleListener.class);
 			// this may prompt for saving and return null if the user canceled:
 			postCloseInfo = modelManager.preCloseParts(partsToClose, save, getWorkbenchWindow());
@@ -2153,7 +2153,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		if (parent == null || parent instanceof MPerspective || parent instanceof MWindow) {
 			return false;
 		} else if (parent instanceof MGenericStack) {
-			return parent.getSelectedElement() == element ? isValid(area, parent) : false;
+			return parent.getSelectedElement() == element && isValid(area, parent);
 		}
 
 		return isValid(area, parent);
@@ -2181,7 +2181,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 
 		if (parent instanceof MGenericStack) {
-			return parent.getSelectedElement() == element ? isValid(ancestor, parent) : false;
+			return parent.getSelectedElement() == element && isValid(ancestor, parent);
 		}
 
 		return isValid(ancestor, parent);
@@ -2975,7 +2975,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	@Override
 	public boolean isPartVisible(IWorkbenchPart part) {
 		MPart mpart = findPart(part);
-		return mpart == null ? false : partService.isPartVisible(mpart);
+		return mpart != null && partService.isPartVisible(mpart);
 	}
 
 	public MUIElement findSharedArea() {
@@ -2989,14 +2989,14 @@ public class WorkbenchPage implements IWorkbenchPage {
 	@Override
 	public boolean isEditorAreaVisible() {
 		MUIElement find = findSharedArea();
-		return find == null ? false : find.isVisible() && find.isToBeRendered();
+		return find != null && find.isVisible() && find.isToBeRendered();
 	}
 
 	@Override
 	public boolean isPageZoomed() {
 		List<Object> maxElements = modelService.findElements(window, null, null,
 				singletonList(IPresentationEngine.MAXIMIZED));
-		return maxElements.size() > 0;
+		return !maxElements.isEmpty();
 	}
 
 	// /**
@@ -3093,8 +3093,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 			throw new IllegalArgumentException();
 		}
 
-		final IEditorPart result[] = new IEditorPart[1];
-		final PartInitException ex[] = new PartInitException[1];
+		final IEditorPart[] result = new IEditorPart[1];
+		final PartInitException[] ex = new PartInitException[1];
 		BusyIndicator.showWhile(legacyWindow.getWorkbench().getDisplay(), () -> {
 			try {
 				result[0] = busyOpenEditor(input, editorID, activate, matchFlags, editorState, notify);
@@ -3353,7 +3353,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 		SaveablesList saveablesList = null;
 		Object postCloseInfo = null;
-		if (partsToSave.size() > 0) {
+		if (!partsToSave.isEmpty()) {
 			saveablesList = (SaveablesList) getWorkbenchWindow().getService(ISaveablesLifecycleListener.class);
 			postCloseInfo = saveablesList.preCloseParts(partsToSave, true, this.getWorkbenchWindow());
 			if (postCloseInfo == null) {
@@ -3412,7 +3412,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		modelService.hideLocalPlaceholders(window, dummyPerspective);
 
 		int dCount = dummyPerspective.getChildren().size();
-		while (dummyPerspective.getChildren().size() > 0) {
+		while (!dummyPerspective.getChildren().isEmpty()) {
 			MPartSashContainerElement dChild = dummyPerspective.getChildren().remove(0);
 			persp.getChildren().add(dChild);
 		}
@@ -3427,7 +3427,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		existingDetachedWindows.addAll(persp.getWindows());
 
 		// Move any detached windows from template to perspective
-		while (dummyPerspective.getWindows().size() > 0) {
+		while (!dummyPerspective.getWindows().isEmpty()) {
 			MWindow detachedWindow = dummyPerspective.getWindows().remove(0);
 			persp.getWindows().add(detachedWindow);
 		}
@@ -3589,12 +3589,12 @@ public class WorkbenchPage implements IWorkbenchPage {
 		SaveablesList saveablesList = (SaveablesList) PlatformUI.getWorkbench()
 				.getService(ISaveablesLifecycleListener.class);
 		if (confirm) {
-			return processSaveable2(dirtyParts) ? false
-					: saveablesList.preCloseParts(dirtyParts, true, true, workbenchWindow, workbenchWindow) != null;
+			return !processSaveable2(dirtyParts)
+					&& saveablesList.preCloseParts(dirtyParts, true, true, workbenchWindow, workbenchWindow) != null;
 		}
 		List<Saveable> modelsToSave = convertToSaveables(dirtyParts, closing, addNonPartSources);
-		return modelsToSave.isEmpty() ? true
-				: !saveablesList.saveModels(modelsToSave, workbenchWindow, runnableContext, closing);
+		return modelsToSave.isEmpty()
+				|| !saveablesList.saveModels(modelsToSave, workbenchWindow, runnableContext, closing);
 
 	}
 
@@ -4035,7 +4035,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 			}
 		}
 
-		if (nullRefList != null && nullRefList.size() > 0) {
+		if (nullRefList != null && !nullRefList.isEmpty()) {
 			for (MPlaceholder ph : nullRefList) {
 				if (ph.isToBeRendered()) {
 					replacePlaceholder(ph);
@@ -4111,7 +4111,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 			return _perspectiveStack;
 		}
 		List<MPerspectiveStack> theStack = modelService.findElements(window, null, MPerspectiveStack.class);
-		if (theStack.size() > 0) {
+		if (!theStack.isEmpty()) {
 			_perspectiveStack = theStack.get(0);
 			return _perspectiveStack;
 		}
@@ -4214,10 +4214,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	@Override
 	public IViewPart showView(final String viewID, final String secondaryID, final int mode) throws PartInitException {
 
-		if (secondaryID != null) {
-			if (secondaryID.isEmpty() || secondaryID.indexOf(':') != -1) {
-				throw new IllegalArgumentException(WorkbenchMessages.WorkbenchPage_IllegalSecondaryId);
-			}
+		if (secondaryID != null && (secondaryID.isEmpty() || secondaryID.indexOf(':') != -1)) {
+			throw new IllegalArgumentException(WorkbenchMessages.WorkbenchPage_IllegalSecondaryId);
 		}
 		if (!certifyMode(mode)) {
 			throw new IllegalArgumentException(WorkbenchMessages.WorkbenchPage_IllegalViewMode);
@@ -4846,7 +4844,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 					return true;
 				}
 				MPlaceholder placeholder = element.getCurSharedRef();
-				return placeholder == null ? false : isVisible(perspective, placeholder);
+				return placeholder != null && isVisible(perspective, placeholder);
 			} else {
 				return isVisible(perspective, parent);
 			}
@@ -5282,7 +5280,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	private IEditorReference openExternalEditor(final EditorDescriptor desc, IEditorInput input)
 			throws PartInitException {
-		final CoreException ex[] = new CoreException[1];
+		final CoreException[] ex = new CoreException[1];
 
 		final IPathEditorInput pathInput = getPathEditorInput(input);
 		if (pathInput != null && pathInput.getPath() != null) {
