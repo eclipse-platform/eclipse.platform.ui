@@ -17,12 +17,14 @@
 *     Christian Georgi (SAP SE)          -  bug 458811
 *     Mickael Istria (Red Hat Inc.) - Bug 486901
 *     Patrik Suzzi <psuzzi@gmail.com> - Bug 502050
+*     Ingo Mohr <tellastory73@gmail.com> - Issue #198
 *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.eclipse.core.internal.resources.ValidateProjectEncoding;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -109,6 +111,7 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 	private StringFieldEditor systemExplorer;
 
 	private ComboFieldEditor missingNatureSeverityCombo;
+	private ComboFieldEditor missingEncodingSeverityCombo;
 
 	private boolean showLocationIsSetOnCommandLine;
 
@@ -140,6 +143,7 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 		comboParent.setLayout(new GridLayout(2, false));
 		createOpenPrefControls(comboParent);
 		createMissingNaturePref(comboParent);
+		createMissingEncodingPref(comboParent);
 
 		createSpace(composite);
 		createSystemExplorerGroup(composite);
@@ -195,6 +199,23 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 				.setPreferenceStore(new ScopedPreferenceStore(InstanceScope.INSTANCE, ResourcesPlugin.PI_RESOURCES));
 		missingNatureSeverityCombo.setPage(this);
 		missingNatureSeverityCombo.load();
+	}
+
+	@SuppressWarnings("restriction")
+	private void createMissingEncodingPref(Composite parent) {
+		missingEncodingSeverityCombo = new ComboFieldEditorInGrid(ResourcesPlugin.PREF_MISSING_ENCODING_MARKER_SEVERITY,
+				IDEWorkbenchMessages.IDEWorkspacePreference_UnknownEncodingSeverity,
+				new String[][] {
+						{ IDEWorkbenchMessages.IDEWorkspacePreference_UnknownEncodingSeverity_Ignore,
+								Integer.toString(ValidateProjectEncoding.SEVERITY_IGNORE) },
+						{ MarkerMessages.propertiesDialog_infoLabel, Integer.toString(IMarker.SEVERITY_INFO) },
+						{ MarkerMessages.propertiesDialog_warningLabel, Integer.toString(IMarker.SEVERITY_WARNING) },
+						{ MarkerMessages.propertiesDialog_errorLabel, Integer.toString(IMarker.SEVERITY_ERROR) }, },
+				parent);
+		missingEncodingSeverityCombo
+				.setPreferenceStore(new ScopedPreferenceStore(InstanceScope.INSTANCE, ResourcesPlugin.PI_RESOURCES));
+		missingEncodingSeverityCombo.setPage(this);
+		missingEncodingSeverityCombo.load();
 	}
 
 	/**
@@ -544,6 +565,7 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 		lineSeparatorEditor.loadDefault();
 		openReferencesEditor.loadDefault();
 		missingNatureSeverityCombo.loadDefault();
+		missingEncodingSeverityCombo.loadDefault();
 
 		systemExplorer.loadDefault();
 
@@ -608,6 +630,7 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 		lineSeparatorEditor.store();
 		openReferencesEditor.store();
 		missingNatureSeverityCombo.store();
+		missingEncodingSeverityCombo.store();
 
 		return super.performOk();
 	}
