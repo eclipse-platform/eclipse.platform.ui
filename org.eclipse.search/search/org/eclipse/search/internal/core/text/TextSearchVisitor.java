@@ -205,13 +205,13 @@ public class TextSearchVisitor {
 				}
 
 				List<TextSearchMatchAccess> occurences;
-				CharSequence charsequence = null;
+				CharSequence charsequence;
 
 				IDocument document= getOpenDocument(file, getDocumentsInEditors());
 				if (document != null) {
-					DocumentCharSequence documentCharSequence = new DocumentCharSequence(document);
+					charsequence = new DocumentCharSequence(document);
 					// assume all documents are non-binary
-					occurences = locateMatches(file, documentCharSequence, matcher, monitor);
+					occurences = locateMatches(file, charsequence, matcher, monitor);
 				} else {
 					try {
 						charsequence = fileCharSequenceProvider.newCharSequence(file);
@@ -238,10 +238,9 @@ public class TextSearchVisitor {
 					}
 					fCollector.flushMatches(duplicateFiles);
 				}
-				if (charsequence != null) {
+				if (document == null) {
 					try {
 						fileCharSequenceProvider.releaseCharSequence(charsequence);
-						charsequence = null;
 					} catch (IOException e) {
 						SearchPlugin.log(e);
 					}
