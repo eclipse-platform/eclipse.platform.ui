@@ -274,6 +274,10 @@ public class TextSearchVisitor {
 					fNumberOfScannedFiles++;
 				}
 			}
+			if (monitor.isCanceled()) {
+				fFatalError = true;
+				return Status.CANCEL_STATUS;
+			}
 			return Status.OK_STATUS;
 		}
 
@@ -525,7 +529,7 @@ public class TextSearchVisitor {
 				}
 			}
 			// Periodically check for cancellation and quit working on the current file if the job has been cancelled.
-			if (++k % 20 == 0 && monitor.isCanceled()) {
+			if (k++ % 20 == 0 && monitor.isCanceled()) {
 				break;
 			}
 		}
