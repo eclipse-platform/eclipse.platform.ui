@@ -73,6 +73,9 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * @see Match#getElement()
 	 */
 	public Match[] getMatches(Object element) {
+		if (element == null) {
+			return EMPTY_ARRAY;
+		}
 		Set<Match> matches = fElementsToMatches.get(element);
 		if (matches != null) {
 			Match[] sortingCopy = matches.toArray(new Match[matches.size()]);
@@ -95,6 +98,9 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * @see AbstractTextSearchResult#getMatches(Object)
 	 */
 	public Enumeration<Match> getMatchSet(Object element) {
+		if (element == null) {
+			return Collections.emptyEnumeration();
+		}
 		Set<Match> matches = fElementsToMatches.get(element);
 		if (matches != null) {
 			return Collections.enumeration(matches);
@@ -311,6 +317,9 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * @return the number of matches reported against the element
 	 */
 	public int getMatchCount(Object element) {
+		if (element == null) {
+			return 0;
+		}
 		Set<Match> matches = fElementsToMatches.get(element);
 		if (matches != null)
 			return matches.size();
