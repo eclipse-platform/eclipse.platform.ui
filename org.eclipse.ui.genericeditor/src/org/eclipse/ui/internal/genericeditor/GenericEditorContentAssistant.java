@@ -74,6 +74,7 @@ public class GenericEditorContentAssistant extends ContentAssistant {
 		setAutoActivationDelay(0);
 		enableColoredLabels(true);
 		enableAutoActivation(true);
+		enableAutoActivateCompletionOnType(true);
 		setInformationControlCreator(new AbstractReusableInformationControlCreator() {
 			@Override
 			protected IInformationControl doCreateInformationControl(Shell parent) {
