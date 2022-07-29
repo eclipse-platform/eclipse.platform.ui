@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.ide.dialogs;
 
 import java.io.File;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Optional;
@@ -96,14 +97,28 @@ public class OpenFilesystemQuickAccessComputer implements IQuickAccessComputerEx
 
 	@Override
 	public QuickAccessElement[] computeElements(String query, IProgressMonitor monitor) {
-		File file = new File(query);
+		URI uri = null;
+		try {
+			uri = URI.create(query);
+		} catch (Exception ex) {
+			// ignore
+		}
+		File file = uri != null && "file".equals(uri.getScheme()) ? new File(uri) : new File(query); //$NON-NLS-1$
 		if (file.isFile() && file.canRead()) {
 			return Arrays.stream(ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(file.toURI())) //
 					.sorted(Comparator.comparingInt(resource -> resource.getFullPath().segmentCount())) //
 					.findFirst() //
-					.map(resource -> (QuickAccessElement) new ResourceElement(new WorkbenchLabelProvider(), resource)) //
-					.or(() -> Optional.of(new FileElement(file))) //
-					.map(element -> new QuickAccessElement[] { element }) //
+					.map(resource -> (QuickAccessElement) new ResourceElement(new WorkbenchLabelProvider(), resource) {
+						@Override
+						public String getMatchLabel() {
+							return query;
+						}
+					}).or(() -> Optional.of(new FileElement(file) {
+						@Override
+						public String getMatchLabel() {
+							return query;
+						}
+					})).map(element -> new QuickAccessElement[] { element }) //
 					.orElse(NOTHING);
 		}
 		return NOTHING;
