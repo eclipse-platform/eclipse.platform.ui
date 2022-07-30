@@ -287,6 +287,7 @@
             <keywordReference id="org.eclipse.ui.editors.lineNumber"/>
             <keywordReference id="org.eclipse.ui.editors.printMargin"/>
             <keywordReference id="org.eclipse.ui.editors.annotationCodeMining"/>
+            <keywordReference id="org.eclipse.ui.editors.wordWrap"/>
       </page>
       <page
             name="%PreferencePages.Annotations"
@@ -367,6 +368,9 @@
       <keyword
             label="%preferenceKeywords.hyperlinkDetectors"
             id="org.eclipse.ui.editors.hyperlinkDetectors"/>
+      <keyword
+            label="%preferenceKeywords.wordWrap"
+            id="org.eclipse.ui.editors.wordWrap"/>
    </extension>
    <extension
          point="org.eclipse.ui.editors.documentProviders">

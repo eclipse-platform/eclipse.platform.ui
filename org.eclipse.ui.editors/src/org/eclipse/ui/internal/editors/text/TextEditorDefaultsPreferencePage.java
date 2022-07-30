@@ -852,11 +852,9 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		IntegerDomain tabWidthDomain= new IntegerDomain(1, 16);
 		addTextField(appearanceComposite, tabWidth, tabWidthDomain, 15, 0);
 
-		if(isWordWrapPreferenceAllowed()){
-			label= TextEditorMessages.TextEditorPreferencePage_enableWordWrap;
-			Preference enableWordWrap= new Preference(AbstractTextEditor.PREFERENCE_WORD_WRAP_ENABLED, label, null);
-			addCheckBox(appearanceComposite, enableWordWrap, new BooleanDomain(), 0);
-		}
+		label= TextEditorMessages.TextEditorPreferencePage_enableWordWrap;
+		Preference enableWordWrap= new Preference(AbstractTextEditor.PREFERENCE_WORD_WRAP_ENABLED, label, null);
+		addCheckBox(appearanceComposite, enableWordWrap, new BooleanDomain(), 0);
 
 		label= TextEditorMessages.TextEditorPreferencePage_convertTabsToSpaces;
 		Preference spacesForTabs= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS, label, null);
@@ -1117,10 +1115,6 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		Table fAppearanceColorTable= fAppearanceColorTableViewer.getTable();
 		gd.heightHint= fAppearanceColorTable.getItemHeight() * 8;
 		fAppearanceColorTable.setLayoutData(gd);
-	}
-
-	private boolean isWordWrapPreferenceAllowed() {
-		return Boolean.getBoolean("eclipse.show.wrapByDefaultPreference"); //$NON-NLS-1$
 	}
 
 	@Override
