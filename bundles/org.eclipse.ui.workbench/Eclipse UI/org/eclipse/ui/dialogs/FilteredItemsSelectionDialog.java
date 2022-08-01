@@ -956,8 +956,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 * Schedules progress message refresh.
 	 */
 	public void scheduleProgressMessageRefresh() {
-		if (filterJob.getState() != Job.RUNNING && refreshProgressMessageJob.getState() != Job.RUNNING)
-			refreshProgressMessageJob.scheduleProgressRefresh(null);
+		refreshProgressMessageJob.scheduleProgressRefresh(null);
 	}
 
 	@Override
@@ -1320,7 +1319,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 */
 	private class RefreshProgressMessageJob extends UIJob {
 
-		private GranualProgressMonitor progressMonitor;
+		private volatile GranualProgressMonitor progressMonitor;
 
 		/**
 		 * Creates a new instance of the class.
