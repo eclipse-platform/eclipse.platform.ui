@@ -21,9 +21,11 @@ package org.eclipse.ui.dialogs;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.text.CollationKey;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -134,6 +136,22 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 	private int typeMask;
 
 	private boolean isDerived;
+
+	/**
+	 * Cache for Collator used by sorting. The allocated memory is reclaimed as soon
+	 * as the Dialog is closed.
+	 */
+	private final Map<String, CollationKey> collationKeyCache = new HashMap<>();
+	private final java.util.Comparator<String> collator = new Comparator<>() {
+		Collator c = Collator.getInstance();
+
+		@Override
+		public int compare(String s1, String s2) {
+			CollationKey ck1 = collationKeyCache.computeIfAbsent(s1, c::getCollationKey);
+			CollationKey ck2 = collationKeyCache.computeIfAbsent(s2, c::getCollationKey);
+			return ck1.compareTo(ck2);
+		}
+	};
 
 	/**
 	 * Creates a new instance of the class
@@ -378,6 +396,12 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 	}
 
 	@Override
+	public boolean close() {
+		collationKeyCache.clear();
+		return super.close();
+	}
+
+	@Override
 	public String getElementName(Object item) {
 		IResource resource = (IResource) item;
 		return resource.getName();
@@ -400,17 +424,14 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 	}
 
 	@Override
-	protected Comparator getItemsComparator() {
+	protected Comparator<IResource> getItemsComparator() {
 		final String pattern;
 		if (latestFilter != null) {
 			pattern = latestFilter.getPattern();
 		} else {
 			pattern = null;
 		}
-		return (o1, o2) -> {
-			Collator collator = Collator.getInstance();
-			IResource resource1 = (IResource) o1;
-			IResource resource2 = (IResource) o2;
+		return (resource1, resource2) -> {
 			String s1 = resource1.getName();
 			String s2 = resource2.getName();
 
