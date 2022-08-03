@@ -268,18 +268,20 @@ public final class PlatformUI {
 	 * interact with the plain E4 Application Model.</li>
 	 * </ol>
 	 *
-	 * The following example fails if run inside an E4 Application: <code>
-	 *  PlatformUI.getWorkbench().getExtensionTracker()
-	 *  </code> and could be rewritten as: <code>
-	 *  PlatformUI.getApplication().map(MApplication::getContext).map(ctx->ctx.get(IExtensionTracker)).orElseThrow(PlatformUI.NO_WORKBENCH);
-	 *  </code>
+	 * The following example fails if run inside an E4 Application:
+	 * <p>
+	 * {@code PlatformUI.getWorkbench().getExtensionTracker()}
+	 * </p>
+	 * and could be rewritten as:
+	 * <p>
+	 * {@code PlatformUI.getApplication().map(MApplication::getContext).map(ctx -> ctx.get(IExtensionTracker.class)).orElseThrow(PlatformUI.NO_WORKBENCH); }
+	 * </p>
 	 *
 	 * @return a reference to the {@link MApplication} running the Workbench or an
 	 *         empty optional if currently no Workbench is available.
 	 * @since 3.126
 	 */
 	public static Optional<MApplication> getApplication() {
-
 		Workbench instance = Workbench.getInstance();
 		if (instance != null && instance.isRunning()) {
 			return Optional.of((instance.getApplication()));
