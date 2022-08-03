@@ -180,11 +180,20 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 	 *
 	 * @return PropertyPageContributorManager
 	 */
-	public static PropertyPageContributorManager getManager() {
+	public static synchronized PropertyPageContributorManager getManager() {
 		if (sharedInstance == null) {
 			sharedInstance = new PropertyPageContributorManager();
 		}
 		return sharedInstance;
+	}
+
+	/**
+	 * Disposes instance if it was created
+	 */
+	public static synchronized void disposeManager() {
+		if (sharedInstance != null) {
+			sharedInstance.dispose();
+		}
 	}
 
 	/**
