@@ -2966,9 +2966,9 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 		if (WorkbenchPlugin.getDefault() != null) {
 			WorkbenchPlugin.getDefault().reset();
 		}
-		WorkbenchThemeManager.getInstance().dispose();
-		PropertyPageContributorManager.getManager().dispose();
-		ObjectActionContributorManager.getManager().dispose();
+		WorkbenchThemeManager.disposeManager();
+		PropertyPageContributorManager.disposeManager();
+		ObjectActionContributorManager.disposeManager();
 		statusManager.unregister();
 	}
 

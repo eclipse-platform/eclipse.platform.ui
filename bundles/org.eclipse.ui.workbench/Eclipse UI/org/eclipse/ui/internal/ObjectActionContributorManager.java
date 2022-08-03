@@ -113,11 +113,20 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
 	 *
 	 * @return the shared instance of this manager
 	 */
-	public static ObjectActionContributorManager getManager() {
+	public static synchronized ObjectActionContributorManager getManager() {
 		if (sharedInstance == null) {
 			sharedInstance = new ObjectActionContributorManager();
 		}
 		return sharedInstance;
+	}
+
+	/**
+	 * Disposes instance if it was created
+	 */
+	public static synchronized void disposeManager() {
+		if (sharedInstance != null) {
+			sharedInstance.dispose();
+		}
 	}
 
 	/**
