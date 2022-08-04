@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -44,7 +45,9 @@ public class TaskBarProgressManager {
 
 	private IJobProgressManagerListener listener;
 
-	private WorkbenchJob updateJob;
+	private WorkbenchJob animationUpdateJob;
+
+	private boolean isAnimated = false;
 
 	private List<Job> jobs = Collections.synchronizedList(new ArrayList<Job>());
 
@@ -64,8 +67,8 @@ public class TaskBarProgressManager {
 	public TaskBarProgressManager(TaskItem taskItem) {
 		Assert.isNotNull(taskItem);
 		this.taskItem = taskItem;
-		updateJob = getUpdateJob();
-		updateJob.setSystem(true);
+		animationUpdateJob = getAnimationUpdateJob();
+		animationUpdateJob.setSystem(true);
 		listener = getProgressListener();
 
 		// Register the IJobProgressManagerListener so we can display progress
@@ -80,17 +83,46 @@ public class TaskBarProgressManager {
 	 */
 	public void dispose() {
 		ProgressManager.getInstance().removeListener(listener);
+		setAnimated(false);
 		disposeOverlay();
 	}
 
-	private WorkbenchJob getUpdateJob() {
-		return new WorkbenchJob(ProgressMessages.ProgressToolItem_Update) {
+	private WorkbenchJob getAnimationUpdateJob() {
+		return new WorkbenchJob(ProgressMessages.AnimationManager_AnimationStart) {
 
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				setProgressState(SWT.DEFAULT);
-				updateImage(null);
+				if (isAnimated) {
+					if (!taskItem.isDisposed() && !jobs.isEmpty()) {
+						Job job = jobs.get(0);
+						JobInfo jobInfo = jobInfoMap.get(job);
+						if (job != null && jobInfo != null) {
+							int percentDone = getPercentDone(jobInfo);
+							Optional<TaskInfo> optionalInfo = jobInfo.getTaskInfo();
+							if (percentDone == IProgressMonitor.UNKNOWN
+									|| (optionalInfo.isPresent() && optionalInfo.get().totalWork == IProgressMonitor.UNKNOWN)) {
+								setProgressState(SWT.INDETERMINATE);
+							} else {
+								setProgressState(SWT.NORMAL);
+								if (!taskItem.isDisposed()) {
+									taskItem.setProgress(percentDone);
+								}
+							}
+						} else {
+							setProgressState(SWT.DEFAULT);
+						}
+						updateImage(job);
+					} else {
+						updateImage(null);
+					}
+				} else {
+					setProgressState(SWT.DEFAULT);
+					updateImage(null);
+				}
 
+				if (isAnimated && taskItem != null && !taskItem.isDisposed()) {
+					schedule(400);
+				}
 				return Status.OK_STATUS;
 			}
 
@@ -99,6 +131,24 @@ public class TaskBarProgressManager {
 					taskItem.setProgressState(SWT.DEFAULT);
 					taskItem.setProgressState(state);
 				}
+			}
+
+			private int getPercentDone(JobTreeElement info) {
+				if (info.isJobInfo()) {
+					return ((JobInfo) info).getPercentDone();
+				}
+
+				if (info.hasChildren()) {
+					Object[] roots = ((GroupInfo) info).getChildren();
+					if (roots.length == 1 && roots[0] instanceof JobTreeElement) {
+						Optional<TaskInfo> optionalInfo = ((JobInfo) roots[0]).getTaskInfo();
+						if (optionalInfo.isPresent()) {
+							return optionalInfo.get().getPercentDone();
+						}
+					}
+					return ((GroupInfo) info).getPercentDone();
+				}
+				return 0;
 			}
 		};
 	}
@@ -157,6 +207,9 @@ public class TaskBarProgressManager {
 				if (isNotTracked(info)) {
 					return;
 				}
+				if (jobs.isEmpty()) {
+					setAnimated(true);
+				}
 				if (!jobs.contains(info.getJob())) {
 					jobs.add(info.getJob());
 				}
@@ -178,6 +231,7 @@ public class TaskBarProgressManager {
 				ProgressManager manager = ProgressManager.getInstance();
 				jobs.clear();
 				jobInfoMap.clear();
+				setAnimated(false);
 				for (JobInfo currentInfo : manager.getJobInfos(showsDebug())) {
 					addJob(currentInfo);
 				}
@@ -187,6 +241,9 @@ public class TaskBarProgressManager {
 			public void removeJob(JobInfo info) {
 				jobs.remove(info.getJob());
 				jobInfoMap.remove(info.getJob());
+				if (jobs.isEmpty()) {
+					setAnimated(false);
+				}
 			}
 
 			@Override
@@ -232,4 +289,8 @@ public class TaskBarProgressManager {
 		};
 	}
 
+	private synchronized void setAnimated(boolean animated) {
+		isAnimated = animated;
+		animationUpdateJob.schedule();
+	}
 }
