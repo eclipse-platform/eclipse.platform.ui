@@ -319,8 +319,8 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 	 * Sets the shell style of the wizard dialog.
 	 * <p>
 	 * Examples:<br>
-	 * To use the default style without the SWT.APPLICATION_MODAL bit:<br>
-	 * <code>setShellStyle(getShellStyle() &amp; ~SWT.APPLICATION_MODAL)</code>
+	 * To use the default style without the SWT.PRIMARY_MODAL bit:<br>
+	 * <code>setShellStyle(getShellStyle() &amp; ~SWT.PRIMARY_MODAL)</code>
 	 * <p>
 	 * To use the default style without the SWT.RESIZE bit:<br>
 	 * <code>setShellStyle(getShellStyle() &amp; ~SWT.RESIZE)</code>
@@ -342,7 +342,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 	}
 
 	private static int getShellModality(boolean modal) {
-		return modal ? SWT.APPLICATION_MODAL : SWT.NONE;
+		return modal ? SWT.PRIMARY_MODAL : SWT.NONE;
 	}
 
 	/**
@@ -356,7 +356,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 	 * @since 3.16
 	 */
 	public WizardDialog setModal(boolean modal) {
-		setShellStyle(getShellStyle() & ~SWT.APPLICATION_MODAL | getShellModality(modal));
+		setShellStyle(getShellStyle() & ~SWT.PRIMARY_MODAL & ~SWT.APPLICATION_MODAL | getShellModality(modal));
 		return this;
 	}
 
@@ -368,7 +368,8 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 	 * @see #setShellStyle(int)
 	 */
 	public boolean isModal() {
-		return (getShellStyle() & SWT.APPLICATION_MODAL) == SWT.APPLICATION_MODAL;
+		return (getShellStyle() & SWT.PRIMARY_MODAL) == SWT.PRIMARY_MODAL
+				|| (getShellStyle() & SWT.PRIMARY_MODAL) == SWT.APPLICATION_MODAL;
 	}
 
 	/**
