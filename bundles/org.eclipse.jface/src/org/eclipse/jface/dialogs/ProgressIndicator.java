@@ -79,6 +79,10 @@ public class ProgressIndicator extends Composite {
 	 * Initialize the progress bar to be animated.
 	 */
 	public void beginAnimatedTask() {
+		if (animated && layout.topControl == indeterminateProgressBar) {
+			// do not restart animation if it was already started
+			return;
+		}
 		done();
 		layout.topControl = indeterminateProgressBar;
 		requestLayout();
