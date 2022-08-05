@@ -253,7 +253,7 @@ public class FileSearchQuery implements ISearchQuery {
 	public String getLabel() {
 		Pattern searchPattern = getSearchPattern();
 		return searchPattern.pattern().isEmpty() ? SearchMessages.FileSearchQuery_label
-				: Messages.format(SearchMessages.TextSearchVisitor_textsearch_task_label, searchPattern.pattern());
+				: Messages.format(SearchMessages.TextSearchVisitor_textsearch_task_label, getSearchString());
 	}
 
 	public String getSearchString() {
