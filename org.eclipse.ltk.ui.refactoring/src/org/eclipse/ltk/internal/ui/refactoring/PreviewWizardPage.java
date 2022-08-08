@@ -305,7 +305,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	 */
 	public PreviewWizardPage(boolean wizard) {
 		super(PAGE_NAME, wizard);
-		setDescription(RefactoringUIMessages.PreviewWizardPage_description_s);
+		setDescription(RefactoringUIMessages.PreviewWizardPage_description_z);
 	}
 
 	/**
@@ -562,8 +562,10 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		if (fTreeViewerInputChange != null) {
 			input= AbstractChangeNode.createNode(null, fTreeViewerInputChange);
 			int filenumber= fTreeViewerInputChange.getFilenumber();
-			String fullDescription= RefactoringUIMessages.PreviewWizardPage_description_s;
-			if (filenumber > 1) {
+			String fullDescription= RefactoringUIMessages.PreviewWizardPage_description_z;
+			if (filenumber == 1) {
+				fullDescription= RefactoringUIMessages.PreviewWizardPage_description_s;
+			} else if (filenumber > 1) {
 				fullDescription= MessageFormat.format(RefactoringUIMessages.PreviewWizardPage_description_m, String.valueOf(filenumber));
 			}
 			setDescription(fullDescription);
