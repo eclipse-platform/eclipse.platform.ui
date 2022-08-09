@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2019 Manumitting Technologies Inc and others.
+ * Copyright (c) 2014, 2021 Manumitting Technologies Inc and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -54,6 +54,9 @@ public class RegistryCSSElementProvider implements IElementProvider {
 		if (provider != null) {
 			return provider.getElement(o, engine);
 		}
+		if (providerCache.containsKey(o.getClass())) {
+			return null;
+		}
 		for (Class<?> type : computeElementTypeLookup(o.getClass())) {
 			String typeName = type.getName();
 			for (IConfigurationElement ce : registry.getConfigurationElementsFor(ELEMENT_PROVIDER_EXTPOINT)) {
@@ -72,6 +75,7 @@ public class RegistryCSSElementProvider implements IElementProvider {
 				}
 			}
 		}
+		providerCache.put(o.getClass(), null);
 		return null;
 	}
 
