@@ -166,7 +166,8 @@ public class MinMaxAddon {
 			}
 
 			MUIElement parentElement = element.getParent();
-			while (parentElement != null && !(parentElement instanceof MArea)) {
+			while (parentElement != null
+					&& (!(parentElement instanceof MArea) || parentElement.getCurSharedRef() == null)) {
 				parentElement = parentElement.getParent();
 			}
 
