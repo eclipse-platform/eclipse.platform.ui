@@ -14,6 +14,9 @@
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.graphics.Image;
@@ -38,6 +41,14 @@ import org.eclipse.swt.widgets.Shell;
  * </p>
  */
 public class MessageDialog extends IconAndMessageDialog {
+
+	/**
+	 * Flag to prevent opening of message dialogs for automated testing.
+	 *
+	 * @since 3.27
+	 */
+	public static boolean AUTOMATED_MODE = false;
+
 	/**
 	 * Constant for no image (value 0).
 	 *
@@ -590,5 +601,17 @@ public class MessageDialog extends IconAndMessageDialog {
 			throw new NullPointerException("The array of button labels cannot be null."); //$NON-NLS-1$
 		}
 		this.buttonLabels = buttonLabels;
+	}
+
+	@Override
+	public int open() {
+		if (!AUTOMATED_MODE) {
+			return super.open();
+		}
+		IllegalStateException e = new IllegalStateException("Message dialog is supposed to be shown now"); //$NON-NLS-1$
+		IStatus ms = Status.warning(title + " : " + message, e); //$NON-NLS-1$
+		Policy.getLog().log(ms);
+		setReturnCode(OK);
+		return OK;
 	}
 }
