@@ -391,6 +391,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 							document.addDocumentListener(listener);
 						if (! validateEditorInputState() || documentChanged[0])
 							e.doit= false;
+					} catch (OperationCanceledException userPressedCancel) {
+						e.doit= false;
 					} finally {
 						if (document != null)
 							document.removeDocumentListener(listener);
