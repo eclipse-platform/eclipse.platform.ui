@@ -20,6 +20,7 @@ import static org.junit.Assert.assertNotEquals;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -55,6 +56,15 @@ public class ButtonTest extends CSSSWTTestCase {
 		Button buttonToTest = createTestButton("Button { background-color: #FF0000; color: #0000FF }", SWT.CHECK);
 		assertEquals(RED, buttonToTest.getBackground().getRGB());
 		assertEquals(BLUE, buttonToTest.getForeground().getRGB());
+	}
+
+	@Test
+	public void testASpecificColor() {
+		// #054169 maps to RGB Decimal 5, 65, 105 see https://www.colorhexa.com/054169
+		var RGB_SPECIAL = new RGB(5, 65, 105);
+		Button buttonToTest = createTestButton("Button { background-color: #054169; color: #054169; }", SWT.PUSH);
+		assertEquals(RGB_SPECIAL, buttonToTest.getBackground().getRGB());
+		assertEquals(RGB_SPECIAL, buttonToTest.getForeground().getRGB());
 	}
 
 	@Test
