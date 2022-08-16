@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -43,9 +43,11 @@ import com.ibm.icu.text.NumberFormat;
  * @deprecated Use
  *             {@link org.eclipse.core.databinding.conversion.text.StringToNumberConverter}
  *             instead, which does not use {@code com.ibm.icu} as that package
- *             may be removed in the future from platform.
+ *             is planned to be removed in the future from platform.
+ * @noreference This class is not intended to be referenced by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public class StringToNumberConverter<T extends Number> extends AbstractStringToNumberConverter<T> {
 	/**
 	 * @param numberFormat used to parse the strings numbers.
