@@ -35,9 +35,9 @@ import com.ibm.icu.text.NumberFormat;
  * @deprecated Use
  *             {@link org.eclipse.core.databinding.conversion.text.NumberToStringConverter}
  *             instead, which does not use {@code com.ibm.icu} as that package
- *             is planned to be removed.
+ *             may be removed in the future from platform.
  */
-@Deprecated(forRemoval = true)
+@Deprecated
 public class NumberToStringConverter extends AbstractNumberToStringConverter {
 	private NumberToStringConverter(Format numberFormat, Class<?> fromType) {
 		super(numberFormat, fromType);
