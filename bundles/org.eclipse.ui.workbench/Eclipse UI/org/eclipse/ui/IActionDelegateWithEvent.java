@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Event;
  * <code>IActionDelegate</code> (or subinterface), if they need to examine the
  * triggering event. Otherwise, they should simply implement
  * <code>IActionDelegate</code> (or subinterface).
- * <p>
+ * </p>
  *
  * @since 2.0
  * @deprecated Use org.eclipse.ui.IActionDelegate2 instead.
@@ -40,7 +40,7 @@ public interface IActionDelegateWithEvent {
 	 * This method is called when the delegating action has been triggered.
 	 * Implement this method to do the actual work. If an action delegate implements
 	 * this interface, this method is called instead of <code>run(IAction)</code>.
-	 * <p>
+	 * </p>
 	 *
 	 * @param action the action proxy that handles the presentation portion of the
 	 *               action

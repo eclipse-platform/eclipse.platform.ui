@@ -53,7 +53,7 @@ public interface IDeferredWorkbenchAdapter extends IWorkbenchAdapter {
 	 * If <code>false</code> is returned, then the content provider may assume that
 	 * this adapter has no children. If <code>true</code> is returned, then the job
 	 * manager may assume that this adapter may have children.
-	 * <p>
+	 * </p>
 	 *
 	 * @return <code>true</code>if the adapter may have childen, and
 	 *         <code>false</code> otherwise.

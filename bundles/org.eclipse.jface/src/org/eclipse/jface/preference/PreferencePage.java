@@ -552,7 +552,6 @@ public abstract class PreferencePage extends DialogPage implements
 	 * The enable state of the container buttons and the
 	 * apply button is updated when a page's valid state
 	 * changes.
-	 * <p>
 	 *
 	 * @param b the new valid state
 	 */

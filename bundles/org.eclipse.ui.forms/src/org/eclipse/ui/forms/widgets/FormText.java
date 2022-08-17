@@ -1004,7 +1004,6 @@ public class FormText extends Canvas {
 
 	/**
 	 * Removes the specified selection listener.
-	 * <p>
 	 *
 	 * @param listener
 	 *            the listener
@@ -1031,7 +1030,6 @@ public class FormText extends Canvas {
 
 	/**
 	 * Returns the selected text.
-	 * <p>
 	 *
 	 * @return selected text, or an empty String if there is no selection.
 	 * @exception SWTException

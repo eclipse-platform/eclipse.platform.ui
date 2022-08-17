@@ -123,7 +123,7 @@ public interface IWorkbenchHelpSystem {
 	 * Calls the help support system to display the given help id.
 	 * <p>
 	 * May only be called from a UI thread.
-	 * <p>
+	 * </p>
 	 *
 	 * @param helpContextId the id of the context to display
 	 */
@@ -133,7 +133,7 @@ public interface IWorkbenchHelpSystem {
 	 * Displays context-sensitive help for the given context.
 	 * <p>
 	 * May only be called from a UI thread.
-	 * <p>
+	 * </p>
 	 *
 	 * @param context the context to display
 	 */

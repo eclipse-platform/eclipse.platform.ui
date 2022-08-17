@@ -43,7 +43,8 @@ import org.eclipse.ui.internal.ide.undo.UndoMessages;
  * <p>
  * This class is intended to be instantiated and used by clients. It is not
  * intended to be subclassed by clients.
- * <p>
+ * </p>
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @since 3.3
  *
