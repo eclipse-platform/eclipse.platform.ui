@@ -325,20 +325,15 @@ public final class IDE {
 	/**
 	 * Opens an editor on the given object.
 	 * <p>
-	 * If the page already has an editor open on the target object then that
-	 * editor is brought to front; otherwise, a new editor is opened.
-	 * <p>
+	 * If the page already has an editor open on the target object then that editor
+	 * is brought to front; otherwise, a new editor is opened.
+	 * </p>
 	 *
-	 * @param page
-	 *            the page in which the editor will be opened
-	 * @param input
-	 *            the editor input
-	 * @param editorId
-	 *            the id of the editor extension to use
-	 * @return an open editor or <code>null</code> if an external editor was
-	 *         opened
-	 * @exception PartInitException
-	 *                if the editor could not be initialized
+	 * @param page     the page in which the editor will be opened
+	 * @param input    the editor input
+	 * @param editorId the id of the editor extension to use
+	 * @return an open editor or <code>null</code> if an external editor was opened
+	 * @exception PartInitException if the editor could not be initialized
 	 * @see org.eclipse.ui.IWorkbenchPage#openEditor(IEditorInput, String)
 	 */
 	public static IEditorPart openEditor(IWorkbenchPage page,
@@ -464,25 +459,18 @@ public final class IDE {
 	/**
 	 * Opens an editor on the given object.
 	 * <p>
-	 * If the page already has an editor open on the target object then that
-	 * editor is brought to front; otherwise, a new editor is opened. If
+	 * If the page already has an editor open on the target object then that editor
+	 * is brought to front; otherwise, a new editor is opened. If
 	 * <code>activate == true</code> the editor will be activated.
-	 * <p>
+	 * </p>
 	 *
-	 * @param page
-	 *            the page in which the editor will be opened
-	 * @param input
-	 *            the editor input
-	 * @param editorId
-	 *            the id of the editor extension to use
-	 * @param activate
-	 *            if <code>true</code> the editor will be activated
-	 * @return an open editor or <code>null</code> if an external editor was
-	 *         opened
-	 * @exception PartInitException
-	 *                if the editor could not be initialized
-	 * @see org.eclipse.ui.IWorkbenchPage#openEditor(IEditorInput, String,
-	 *      boolean)
+	 * @param page     the page in which the editor will be opened
+	 * @param input    the editor input
+	 * @param editorId the id of the editor extension to use
+	 * @param activate if <code>true</code> the editor will be activated
+	 * @return an open editor or <code>null</code> if an external editor was opened
+	 * @exception PartInitException if the editor could not be initialized
+	 * @see org.eclipse.ui.IWorkbenchPage#openEditor(IEditorInput, String, boolean)
 	 */
 	public static IEditorPart openEditor(IWorkbenchPage page,
 			IEditorInput input, String editorId, boolean activate)
@@ -501,21 +489,17 @@ public final class IDE {
 	 * resolve the editor based on content-type bindings as well as traditional
 	 * name/extension bindings.
 	 * <p>
-	 * If the page already has an editor open on the target object then that
-	 * editor is brought to front; otherwise, a new editor is opened. If
+	 * If the page already has an editor open on the target object then that editor
+	 * is brought to front; otherwise, a new editor is opened. If
 	 * <code>activate == true</code> the editor will be activated.
-	 * <p>
+	 * </p>
 	 *
-	 * @param page
-	 *            the page in which the editor will be opened
-	 * @param input
-	 *            the editor input
-	 * @param activate
-	 *            if <code>true</code> the editor will be activated
-	 * @return an open editor or <code>null</code> if an external editor was
-	 *         opened or if opening was canceled
-	 * @exception PartInitException
-	 *                if the editor could not be initialized
+	 * @param page     the page in which the editor will be opened
+	 * @param input    the editor input
+	 * @param activate if <code>true</code> the editor will be activated
+	 * @return an open editor or <code>null</code> if an external editor was opened
+	 *         or if opening was canceled
+	 * @exception PartInitException if the editor could not be initialized
 	 * @see org.eclipse.ui.IWorkbenchPage#openEditor(org.eclipse.ui.IEditorInput,
 	 *      String, boolean)
 	 */
@@ -530,23 +514,18 @@ public final class IDE {
 	 * name/extension bindings if <code>determineContentType</code> is
 	 * <code>true</code>.
 	 * <p>
-	 * If the page already has an editor open on the target object then that
-	 * editor is brought to front; otherwise, a new editor is opened. If
+	 * If the page already has an editor open on the target object then that editor
+	 * is brought to front; otherwise, a new editor is opened. If
 	 * <code>activate == true</code> the editor will be activated.
-	 * <p>
+	 * </p>
 	 *
-	 * @param page
-	 *            the page in which the editor will be opened
-	 * @param input
-	 *            the editor input
-	 * @param activate
-	 *            if <code>true</code> the editor will be activated
-	 * @param determineContentType
-	 *            attempt to resolve the content type for this file
-	 * @return an open editor or <code>null</code> if an external editor was
-	 *         opened or if opening was canceled
-	 * @exception PartInitException
-	 *                if the editor could not be initialized
+	 * @param page                 the page in which the editor will be opened
+	 * @param input                the editor input
+	 * @param activate             if <code>true</code> the editor will be activated
+	 * @param determineContentType attempt to resolve the content type for this file
+	 * @return an open editor or <code>null</code> if an external editor was opened
+	 *         or if opening was canceled
+	 * @exception PartInitException if the editor could not be initialized
 	 * @see org.eclipse.ui.IWorkbenchPage#openEditor(org.eclipse.ui.IEditorInput,
 	 *      String, boolean)
 	 * @since 3.1
@@ -575,18 +554,15 @@ public final class IDE {
 	 * resolve the editor based on content-type bindings as well as traditional
 	 * name/extension bindings.
 	 * <p>
-	 * If the page already has an editor open on the target object then that
-	 * editor is brought to front; otherwise, a new editor is opened.
-	 * <p>
+	 * If the page already has an editor open on the target object then that editor
+	 * is brought to front; otherwise, a new editor is opened.
+	 * </p>
 	 *
-	 * @param page
-	 *            the page in which the editor will be opened
-	 * @param input
-	 *            the editor input
-	 * @return an open editor or <code>null</code> if an external editor was
-	 *         opened or if opening was canceled
-	 * @exception PartInitException
-	 *                if the editor could not be initialized
+	 * @param page  the page in which the editor will be opened
+	 * @param input the editor input
+	 * @return an open editor or <code>null</code> if an external editor was opened
+	 *         or if opening was canceled
+	 * @exception PartInitException if the editor could not be initialized
 	 * @see org.eclipse.ui.IWorkbenchPage#openEditor(IEditorInput, String)
 	 */
 	public static IEditorPart openEditor(IWorkbenchPage page, IFile input)
@@ -639,25 +615,18 @@ public final class IDE {
 	/**
 	 * Opens an editor on the given file resource.
 	 * <p>
-	 * If the page already has an editor open on the target object then that
-	 * editor is brought to front; otherwise, a new editor is opened. If
+	 * If the page already has an editor open on the target object then that editor
+	 * is brought to front; otherwise, a new editor is opened. If
 	 * <code>activate == true</code> the editor will be activated.
-	 * <p>
+	 * </p>
 	 *
-	 * @param page
-	 *            the page in which the editor will be opened
-	 * @param input
-	 *            the editor input
-	 * @param editorId
-	 *            the id of the editor extension to use
-	 * @param activate
-	 *            if <code>true</code> the editor will be activated
-	 * @return an open editor or <code>null</code> if an external editor was
-	 *         opened
-	 * @exception PartInitException
-	 *                if the editor could not be initialized
-	 * @see org.eclipse.ui.IWorkbenchPage#openEditor(IEditorInput, String,
-	 *      boolean)
+	 * @param page     the page in which the editor will be opened
+	 * @param input    the editor input
+	 * @param editorId the id of the editor extension to use
+	 * @param activate if <code>true</code> the editor will be activated
+	 * @return an open editor or <code>null</code> if an external editor was opened
+	 * @exception PartInitException if the editor could not be initialized
+	 * @see org.eclipse.ui.IWorkbenchPage#openEditor(IEditorInput, String, boolean)
 	 */
 	public static IEditorPart openEditor(IWorkbenchPage page, IFile input,
 			String editorId, boolean activate) throws PartInitException {

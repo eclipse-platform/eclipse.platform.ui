@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Control;
  * <b>NOTE:</b> This interface it not expected to be implemented by clients; it
  * is provided only to allow access to the service's methods.
  * </p>
- * <p>
  *
  * @since 3.3
  *
@@ -56,7 +55,6 @@ public interface IDragAndDropService {
 	 * to register different drop targets for internal controls (i.e. to support
 	 * internal DnD).
 	 * </p>
-	 * <p>
 	 *
 	 * @param control   The control to add the drop behaviour to
 	 * @param ops       The Drop operations used by this target

@@ -114,7 +114,6 @@ public class ObservablesManager {
 	/**
 	 * Executes the specified runnable and adds to this manager all observables
 	 * created while executing the runnable.
-	 * <p>
 	 *
 	 * @deprecated This method is very error prone. If any class creates internal
 	 *             observables without hiding them with

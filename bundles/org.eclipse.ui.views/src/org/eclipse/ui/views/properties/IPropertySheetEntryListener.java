@@ -14,13 +14,13 @@
 package org.eclipse.ui.views.properties;
 
 /**
- * Listener for changes in objects of type
- * <code>IPropertySheetEntry</code>.
+ * Listener for changes in objects of type <code>IPropertySheetEntry</code>.
  * <p>
- * This interface is public since it appears in the api
- * of <code>IPropertySheetEntry</code>.  It is not intended
- * to be implemented outside of this package.
- * <p>
+ * This interface is public since it appears in the api of
+ * <code>IPropertySheetEntry</code>. It is not intended to be implemented
+ * outside of this package.
+ * </p>
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IPropertySheetEntryListener {

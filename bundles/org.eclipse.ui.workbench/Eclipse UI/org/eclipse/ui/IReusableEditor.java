@@ -26,7 +26,7 @@ public interface IReusableEditor extends IEditorPart {
 	 * <p>
 	 * <b>Note:</b> Clients must fire the {@link IEditorPart#PROP_INPUT } property
 	 * change within their implementation of <code>setInput()</code>.
-	 * <p>
+	 * </p>
 	 *
 	 * @param input the editor input
 	 */
