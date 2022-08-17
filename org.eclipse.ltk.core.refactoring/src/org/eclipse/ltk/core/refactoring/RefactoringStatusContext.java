@@ -35,7 +35,7 @@ public abstract class RefactoringStatusContext {
 	 * <p>
 	 * For example, the corresponding element of a context for a problem
 	 * detected in an <code>IResource</code> would be the resource itself.
-	 * <p>
+	 * </p>
 	 *
 	 * @return the corresponding element
 	 */
