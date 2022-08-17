@@ -45,9 +45,10 @@ public interface IDocumentPartitioningListener {
 	 * <p>
 	 * In version 2.0 this method has been replaces by
 	 * {@link IDocumentPartitioningListenerExtension#documentPartitioningChanged(IDocument, IRegion)}.
+	 * </p>
 	 * <p>
 	 * In version 3.0 this method has been replaces by
-	 * {@link IDocumentPartitioningListenerExtension2#documentPartitioningChanged(DocumentPartitioningChangedEvent)}<p>
+	 * {@link IDocumentPartitioningListenerExtension2#documentPartitioningChanged(DocumentPartitioningChangedEvent)}</p>
 	 *
 	 * @param document the document whose partitioning changed
 	 *

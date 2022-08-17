@@ -35,7 +35,7 @@ import org.eclipse.jface.text.Position;
  * The returned collections of the methods <code>values</code>,
  * <code>entrySet</code>, and <code>keySet</code> are not synchronized on
  * the annotation map's lock object.
- * <p>
+ * </p>
  *
  * @see org.eclipse.jface.text.source.IAnnotationModel
  * @since 3.0

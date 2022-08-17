@@ -244,7 +244,6 @@ public interface IContentAssistSubjectControl {
 
 	/**
 	 * Removes the specified selection listener.
-	 * <p>
 	 *
 	 * @param selectionListener the listener
 	 * @exception org.eclipse.swt.SWTException
@@ -261,7 +260,6 @@ public interface IContentAssistSubjectControl {
 	/**
 	 * If supported, adds a selection listener. A Selection event is sent by the widget when the
 	 * selection has changed.
-	 * <p>
 	 *
 	 * @param selectionListener the listener
 	 * @return <code>true</code> if adding a selection listener is supported

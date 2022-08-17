@@ -21,7 +21,6 @@ import java.util.Map;
  * Formatting strategy for context based content formatting. Retrieves the preferences
  * set on the formatting context's {@link FormattingContextProperties#CONTEXT_PREFERENCES}
  * property and makes them available to subclasses.
- * <p>
  *
  * @since 3.0
  */

@@ -93,12 +93,12 @@ public interface IContentAssistProcessor {
 	String getErrorMessage();
 
 	/**
-	 * Returns a validator used to determine when displayed context information
-	 * should be dismissed. May only return <code>null</code> if the processor is
-	 * incapable of computing context information. <p>
+	 * Returns a validator used to determine when displayed context information should be dismissed.
+	 * May only return <code>null</code> if the processor is incapable of computing context
+	 * information.
 	 *
-	 * @return a context information validator, or <code>null</code> if the processor
-	 * 			is incapable of computing context information
+	 * @return a context information validator, or <code>null</code> if the processor is incapable
+	 *         of computing context information
 	 */
 	IContextInformationValidator getContextInformationValidator();
 }
