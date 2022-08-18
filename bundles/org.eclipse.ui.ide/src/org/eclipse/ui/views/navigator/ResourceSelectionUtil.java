@@ -26,9 +26,10 @@ import org.eclipse.jface.viewers.StructuredSelection;
  * <p>
  * This class provides static methods only; it is not intended to be
  * instantiated or subclassed.
+ * </p>
  *
  * @since 2.0
- *        </p>
+ *
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
  * @noreference This class is not intended to be referenced by clients.
