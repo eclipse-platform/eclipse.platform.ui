@@ -126,6 +126,7 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 	protected void setLabelProvider(final TableViewerColumn tableViewerColumn) {
 
 		tableViewerColumn.setLabelProvider(new StyledCellLabelProvider() {
+			private BoldStylerProvider boldStylerProvider;
 
 			/* called once for each element in the table */
 			@Override
@@ -143,9 +144,7 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 					} else {
 						String pattern = matcher.getPattern();
 						StyledStringHighlighter ssh = new StyledStringHighlighter();
-						StyledString ss = ssh.highlight(text, pattern,
-								new BoldStylerProvider(WorkbookEditorsHandler.this.getFont(false, true))
-										.getBoldStyler());
+						StyledString ss = ssh.highlight(text, pattern, getBoldStylerProvider().getBoldStyler());
 						cell.setStyleRanges(ss.getStyleRanges());
 					}
 
@@ -162,6 +161,22 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 				return super.getToolTipText(element);
 			}
 
+			private BoldStylerProvider getBoldStylerProvider() {
+				if (boldStylerProvider == null) {
+					boldStylerProvider = new BoldStylerProvider(WorkbookEditorsHandler.this.getFont(false, true));
+				}
+				return boldStylerProvider;
+			}
+
+			@Override
+			public void dispose() {
+				super.dispose();
+
+				if (boldStylerProvider != null) {
+					boldStylerProvider.dispose();
+					boldStylerProvider = null;
+				}
+			}
 		});
 
 		ColumnViewerToolTipSupport.enableFor(tableViewerColumn.getViewer());
