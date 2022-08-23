@@ -61,6 +61,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Throttler;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -586,7 +587,14 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		Display display;
 		if (PlatformUI.isWorkbenchRunning() && !PlatformUI.getWorkbench().isStarting()) {
 			display = PlatformUI.getWorkbench().getDisplay();
-			if (!display.isDisposed() && (display.getThread() == Thread.currentThread())) {
+			boolean isDisplayThread;
+			try {
+				isDisplayThread = !display.isDisposed() && (display.getThread() == Thread.currentThread());
+			} catch (SWTException deviceDisposed) {
+				// Maybe disposed after .isDisposed() check.
+				isDisplayThread = false;
+			}
+			if (isDisplayThread) {
 				return new EventLoopProgressMonitor(IProgressMonitor.nullSafe(monitor));
 			}
 		}

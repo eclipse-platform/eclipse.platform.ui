@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -81,7 +82,7 @@ public abstract class UIJob extends Job {
 		if (asyncDisplay == null || asyncDisplay.isDisposed()) {
 			return Status.CANCEL_STATUS;
 		}
-		asyncDisplay.asyncExec(() -> {
+		Runnable runnable = () -> {
 			IStatus result = null;
 			Throwable throwable = null;
 			try {
@@ -105,7 +106,13 @@ public abstract class UIJob extends Job {
 				}
 				done(result);
 			}
-		});
+		};
+		try {
+			asyncDisplay.asyncExec(runnable);
+		} catch (SWTException deviceDisposed) {
+			// Maybe disposed after .isDisposed() check.
+			return Status.CANCEL_STATUS;
+		}
 		return Job.ASYNC_FINISH;
 	}
 
