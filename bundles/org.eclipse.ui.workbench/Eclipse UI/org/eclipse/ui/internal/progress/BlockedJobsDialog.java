@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2018 IBM Corporation and others.
+ * Copyright (c) 2004, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -82,23 +82,8 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 		 * avoid blocking. If there is a parent then it is OK to open.
 		 */
 		if (parentShell == null) {
-			// Create the job that will open the dialog after a delay.
-			WorkbenchJob dialogJob = new WorkbenchJob(WorkbenchMessages.EventLoopProgressMonitor_OpenDialogJobName) {
-				@Override
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					if (singleton == null) {
-						return Status.CANCEL_STATUS;
-					}
-					if (ProgressManagerUtil.rescheduleIfModalShellOpen(this)) {
-						return Status.CANCEL_STATUS;
-					}
-					singleton.open();
-					return Status.OK_STATUS;
-				}
-			};
 			// Wait for long operation time to prevent a proliferation of
 			// dialogs.
-			dialogJob.setSystem(true);
 			dialogJob.schedule(PlatformUI.getWorkbench().getProgressService().getLongOperationTime());
 		} else {
 			singleton.open();
@@ -106,6 +91,25 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 
 		return singleton;
 	}
+
+	// Create the job that will open the dialog after a delay.
+	private static final WorkbenchJob dialogJob = new WorkbenchJob(
+			WorkbenchMessages.EventLoopProgressMonitor_OpenDialogJobName) {
+		{
+			setSystem(true);
+		}
+		@Override
+		public IStatus runInUIThread(IProgressMonitor monitor) {
+			if (singleton == null) {
+				return Status.CANCEL_STATUS;
+			}
+			if (ProgressManagerUtil.rescheduleIfModalShellOpen(this)) {
+				return Status.CANCEL_STATUS;
+			}
+			singleton.open();
+			return Status.OK_STATUS;
+		}
+	};
 
 	/**
 	 * The monitor is done. Clear the receiver.
