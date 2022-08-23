@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2018 IBM Corporation and others.
+ * Copyright (c) 2004, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -113,7 +113,19 @@ public class EnablementDialog extends Dialog {
 			text.setText(MessageFormat.format(RESOURCE_BUNDLE.getString("requiresSingle"), //$NON-NLS-1$
 					activityText));
 
-			text = new Label(composite, SWT.NONE);
+			/*
+			 * Label doesn't grab tab focus, hence is not read by Accessible tools like
+			 * JAWS. Hence nesting it inside a composite and setting an explicit TabList
+			 * works. For more details :
+			 * https://github.com/eclipse-platform/eclipse.platform.ui/issues/272
+			 */
+			Composite tabStopComposite = (Composite) super.createDialogArea(composite);
+			tabStopComposite.setFont(dialogFont);
+			GridLayout gridLayout = (GridLayout) tabStopComposite.getLayout();
+			gridLayout.marginWidth = 0;
+			gridLayout.marginHeight = 0;
+			text = new Label(tabStopComposite, SWT.NONE);
+			tabStopComposite.setTabList(new Control[] { text });
 			text.setText(strings.getProperty(WorkbenchTriggerPointAdvisor.PROCEED_SINGLE,
 					RESOURCE_BUNDLE.getString(WorkbenchTriggerPointAdvisor.PROCEED_SINGLE)));
 			text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -145,7 +157,19 @@ public class EnablementDialog extends Dialog {
 			viewer.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			viewer.getControl().setFont(dialogFont);
 
-			text = new Label(composite, SWT.NONE);
+			/*
+			 * Label doesn't grab tab focus, hence is not read by Accessible tools like
+			 * JAWS. Hence nesting it inside a composite and setting an explicit TabList
+			 * works. For more details :
+			 * https://github.com/eclipse-platform/eclipse.platform.ui/issues/272
+			 */
+			Composite tabStopComposite = (Composite) super.createDialogArea(composite);
+			tabStopComposite.setFont(dialogFont);
+			GridLayout gridLayout = (GridLayout) tabStopComposite.getLayout();
+			gridLayout.marginWidth = 0;
+			gridLayout.marginHeight = 0;
+			text = new Label(tabStopComposite, SWT.NONE);
+			tabStopComposite.setTabList(new Control[] { text });
 			text.setText(strings.getProperty(WorkbenchTriggerPointAdvisor.PROCEED_MULTI,
 					RESOURCE_BUNDLE.getString(WorkbenchTriggerPointAdvisor.PROCEED_MULTI)));
 			text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
