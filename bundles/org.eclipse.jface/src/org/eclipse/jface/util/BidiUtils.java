@@ -470,11 +470,12 @@ public final class BidiUtils {
 	}
 
 	/**
-	 * Applies a Base Text Direction to the given control (and its descendants,
-	 * if it's a {@link Composite}).
+	 * Applies a Base Text Direction to the given control (and its descendants, if
+	 * it's a {@link Composite}).
 	 *
 	 * <p>
 	 * Possible values for <code>textDirection</code> are:
+	 * </p>
 	 * <ul>
 	 * <li>{@link BidiUtils#LEFT_TO_RIGHT}</li>
 	 * <li>{@link BidiUtils#RIGHT_TO_LEFT}</li>
@@ -485,25 +486,25 @@ public final class BidiUtils {
 	 * The 3 values {@link #LEFT_TO_RIGHT}, {@link #RIGHT_TO_LEFT}, and
 	 * {@link BidiUtils#AUTO} are usable whether {@link #getBidiSupport() bidi
 	 * support} is enabled or disabled.
+	 * </p>
 	 * <p>
-	 * The remaining value {@link BidiUtils#BTD_DEFAULT} only has an effect if
-	 * bidi support is enabled.
+	 * The remaining value {@link BidiUtils#BTD_DEFAULT} only has an effect if bidi
+	 * support is enabled.
+	 * </p>
 	 *
 	 * <p>
 	 * <strong>Note:</strong> If this method is called on a control, then no
-	 * <code>applyBidiProcessing</code> method must be called on the same
-	 * control.
+	 * <code>applyBidiProcessing</code> method must be called on the same control.
+	 * </p>
 	 * <p>
 	 * <strong>Note:</strong>
-	 * {@link org.eclipse.swt.widgets.Control#setTextDirection(int)} is
-	 * currently only implemented on Windows, so the direction won't be
-	 * inherited by descendants on GTK and Cocoa.
-	 * <p>
+	 * {@link org.eclipse.swt.widgets.Control#setTextDirection(int)} is currently
+	 * only implemented on Windows, so the direction won't be inherited by
+	 * descendants on GTK and Cocoa.
+	 * </p>
 	 *
-	 * @param control
-	 *            the control
-	 * @param textDirection
-	 *            the text direction
+	 * @param control       the control
+	 * @param textDirection the text direction
 	 */
 	public static void applyTextDirection(Control control, String textDirection) {
 		int textDir = 0;

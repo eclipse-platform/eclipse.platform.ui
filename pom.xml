@@ -24,15 +24,25 @@
   <artifactId>eclipse.platform.ui</artifactId>
   <packaging>pom</packaging>
 
-   <properties>
-     <tycho.scmUrl>scm:git:https://github.com/eclipse-platform/eclipse.platform.ui.git</tycho.scmUrl>
+  <properties>
+    <tycho.scmUrl>scm:git:https://github.com/eclipse-platform/eclipse.platform.ui.git</tycho.scmUrl>
+    <code.ignoredWarnings>${tests.ignoredWarnings}</code.ignoredWarnings>
+    <tycho.surefire.useUIHarness>true</tycho.surefire.useUIHarness><!--Use UI harness for tests by default -->
+    <tycho.surefire.useUIThread>true</tycho.surefire.useUIThread>
   </properties>
+
+  <modules>
+    <module>features</module>
+    <module>bundles</module>
+    <module>tests</module>
+    <module>examples</module>
+  </modules>
 
   <!-- 
     To build individual bundles, we specify a repository where to find parent pom, 
     in case it is not in local maven cache already
     and that parent pom also has fuller individual-bundle profile 
-    defined that is combined with this one. --> 
+    defined that is combined with this one. -->
   <profiles>
     <profile>
       <id>build-individual-bundles</id>
@@ -49,14 +59,80 @@
         </repository>
       </repositories>
     </profile>
+    <profile>
+      <id>build-feature-source</id>
+      <activation>
+        <!-- Only activated for feature projects-->
+        <file>
+          <exists>feature.xml</exists>
+        </file>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.eclipse.tycho</groupId>
+            <artifactId>tycho-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <id>feature-source</id>
+                <goals>
+                  <goal>feature-source</goal>
+                </goals>
+                <configuration>
+                  <excludes>
+                    <plugin id="javax.xml" />
+                    <plugin id="org.eclipse.swt" />
+                    <plugin id="org.eclipse.equinox.launcher.cocoa.macosx.x86_64" />
+                    <plugin id="org.eclipse.equinox.launcher.cocoa.macosx.aarch64" />
+                    <plugin id="org.eclipse.equinox.launcher.gtk.linux.ppc64le" />
+                    <plugin id="org.eclipse.equinox.launcher.gtk.linux.aarch64" />
+                    <plugin id="org.eclipse.equinox.launcher.gtk.linux.x86_64" />
+                    <plugin id="org.eclipse.equinox.launcher.win32.win32.x86_64" />
+                  </excludes>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.eclipse.tycho</groupId>
+            <artifactId>tycho-p2-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-p2-metadata</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>p2-metadata</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 
-  <modules>
-    <module>features/org.eclipse.e4.rcp</module>
-    <module>bundles</module>
-    <module>tests</module>
-    <module>examples</module>
-
-  </modules>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.eclipse.tycho</groupId>
+          <artifactId>tycho-surefire-plugin</artifactId>
+          <version>${tycho.version}</version>
+          <configuration>
+            <useUIHarness>${tycho.surefire.useUIHarness}</useUIHarness>
+            <useUIThread>${tycho.surefire.useUIThread}</useUIThread>
+            <dependencies>
+              <dependency>
+                <type>eclipse-plugin</type>
+                <artifactId>org.eclipse.osgi.compatibility.state</artifactId>
+                <version>0.0.0</version>
+              </dependency>
+            </dependencies>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 
 </project>

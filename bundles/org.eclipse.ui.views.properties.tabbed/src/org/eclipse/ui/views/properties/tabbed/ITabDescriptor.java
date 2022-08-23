@@ -76,5 +76,6 @@ public interface ITabDescriptor extends ITabItem {
 	 *
 	 * @return the list of section descriptors for the tab.
 	 */
+	@SuppressWarnings("rawtypes")
 	public List getSectionDescriptors();
 }

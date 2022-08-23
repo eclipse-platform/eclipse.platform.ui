@@ -84,6 +84,15 @@ public class WorkbenchThemeManager extends EventManager implements IThemeManager
 		return instance;
 	}
 
+	/**
+	 * Disposes instance if it was created
+	 */
+	public static synchronized void disposeManager() {
+		if (instance != null) {
+			instance.dispose();
+		}
+	}
+
 	private ITheme currentTheme;
 
 	private IPropertyChangeListener currentThemeListener = event -> {

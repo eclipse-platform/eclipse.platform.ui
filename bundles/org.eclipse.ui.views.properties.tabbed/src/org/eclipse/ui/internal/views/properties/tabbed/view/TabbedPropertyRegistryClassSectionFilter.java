@@ -16,7 +16,6 @@ package org.eclipse.ui.internal.views.properties.tabbed.view;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -126,9 +125,8 @@ public class TabbedPropertyRegistryClassSectionFilter {
 
 		ArrayList<String> classTypes = getClassTypes(inputClass);
 
-		List sectionInputTypes = descriptor.getInputTypes();
-		for (Iterator j = sectionInputTypes.iterator(); j.hasNext();) {
-			String type = (String) j.next();
+		List<String> sectionInputTypes = descriptor.getInputTypes();
+		for (String type : sectionInputTypes) {
 			if (classTypes.contains(type)) {
 				// found a match
 				return true;

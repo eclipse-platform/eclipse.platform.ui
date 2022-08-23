@@ -24,10 +24,11 @@ import org.eclipse.jface.viewers.StructuredSelection;
 /**
  * Provides utilities for checking the validity of selections.
  * <p>
- * This class provides static methods only; it is not intended to be instantiated
- * or subclassed.
- * @since 3.6
+ * This class provides static methods only; it is not intended to be
+ * instantiated or subclassed.
  * </p>
+ *
+ * @since 3.6
  */
 public class ResourceSelectionUtil {
 	/*

@@ -139,7 +139,6 @@ public interface IWorkbenchBrowserSupport {
 	 * creates the instance using default values for style, name and tooltip
 	 * parameters. The method can be used to quickly open the URL by calling
 	 * <code>createBrowser(id).openURL(url)</code>.
-	 * <p>
 	 *
 	 * @param browserId if an instance of a browser with the same id is already
 	 *                  opened, it will be returned instead of creating a new one.

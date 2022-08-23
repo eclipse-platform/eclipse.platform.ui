@@ -1708,10 +1708,8 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	/**
 	 * Sets this viewer's sorter and triggers refiltering and resorting of this
 	 * viewer's element. Passing <code>null</code> turns sorting off.
-	 * <p>
 	 *
 	 * @deprecated use <code>setComparator()</code> instead.
-	 *             </p>
 	 *
 	 * @param sorter
 	 *            a viewer sorter, or <code>null</code> if none

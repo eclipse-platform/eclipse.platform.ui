@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2016 IBM Corporation and others.
+ * Copyright (c) 2004, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.ProgressIndicator;
 import org.eclipse.jface.util.Throttler;
 import org.eclipse.jface.util.Util;
 import org.eclipse.osgi.util.NLS;
@@ -43,7 +44,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -60,7 +60,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
  */
 public class ProgressAnimationItem extends AnimationItem implements FinishedJobs.KeptJobsListener {
 
-	ProgressBar bar;
+	ProgressIndicator bar;
 
 	MouseListener mouseListener;
 
@@ -206,6 +206,29 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 		if (toolbar == null || toolbar.isDisposed()) {
 			return;
 		}
+		if (bar != null && !bar.isDisposed()) {
+			JobInfo[] jobInfos = ProgressManager.getInstance().getJobInfos(false);
+			int percentSum = 0;
+			int percentCount = 0;
+			for (JobInfo jobInfo : jobInfos) {
+				if (jobInfo != null && !(jobInfo.isBlocked() || jobInfo.getJob().getState() == Job.WAITING)) {
+					int percentDone = jobInfo.getPercentDone();
+					if (percentDone >= 0) {
+						percentSum += percentDone;
+						percentCount++;
+					}
+				}
+			}
+			if (percentCount > 0) {
+				bar.beginTask(100);
+				bar.worked(percentSum / percentCount); // average
+				AnimationManager.getInstance().setAnimated(true); // reschedule
+			} else {
+				if (jobInfos.length > 0) {
+					bar.beginAnimatedTask();
+				}
+			}
+		}
 
 		JobTreeElement[] jobTreeElements = FinishedJobs.getInstance().getKeptElements();
 		// search from end (youngest)
@@ -296,7 +319,7 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 		}
 		top.setLayout(gl);
 
-		bar = new ProgressBar(top, flags | SWT.INDETERMINATE);
+		bar = new ProgressIndicator(top, flags);		
 		bar.setVisible(false);
 		bar.addMouseListener(mouseListener);
 

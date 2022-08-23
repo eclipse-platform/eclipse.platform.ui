@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.core.databinding" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="923795461">
+            <message_arguments>
+                <message_argument value="1.11.100"/>
+                <message_argument value="1.11.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/core/databinding/conversion/Converter.java" type="org.eclipse.core.databinding.conversion.Converter">
         <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576725006">
             <message_arguments>
@@ -8,11 +16,223 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/core/databinding/conversion/StringToNumberConverter.java" type="org.eclipse.core.databinding.conversion.StringToNumberConverter">
-        <filter comment="Bug 560293 - Innocuous extension of non-API type" id="576720909">
+    <resource path="src/org/eclipse/core/databinding/conversion/NumberToStringConverter.java" type="org.eclipse.core.databinding.conversion.NumberToStringConverter">
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="336744520">
             <message_arguments>
-                <message_argument value="AbstractStringToNumberConverter&lt;T&gt;"/>
-                <message_argument value="StringToNumberConverter&lt;T&gt;"/>
+                <message_argument value="@noextend"/>
+                <message_argument value="org.eclipse.core.databinding.conversion.NumberToStringConverter"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.NumberToStringConverter"/>
+                <message_argument value="convert(Object)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.NumberToStringConverter"/>
+                <message_argument value="fromBigDecimal()"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.NumberToStringConverter"/>
+                <message_argument value="fromBigDecimal(NumberFormat)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.NumberToStringConverter"/>
+                <message_argument value="fromBigInteger()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.NumberToStringConverter"/>
+                <message_argument value="fromBigInteger(NumberFormat)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.NumberToStringConverter"/>
+                <message_argument value="fromByte(NumberFormat, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.NumberToStringConverter"/>
+                <message_argument value="fromByte(boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.NumberToStringConverter"/>
+                <message_argument value="fromDouble(NumberFormat, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.NumberToStringConverter"/>
+                <message_argument value="fromDouble(boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.NumberToStringConverter"/>
+                <message_argument value="fromFloat(NumberFormat, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.NumberToStringConverter"/>
+                <message_argument value="fromFloat(boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.NumberToStringConverter"/>
+                <message_argument value="fromInteger(NumberFormat, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.NumberToStringConverter"/>
+                <message_argument value="fromInteger(boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.NumberToStringConverter"/>
+                <message_argument value="fromLong(NumberFormat, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.NumberToStringConverter"/>
+                <message_argument value="fromLong(boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.NumberToStringConverter"/>
+                <message_argument value="fromShort(NumberFormat, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.NumberToStringConverter"/>
+                <message_argument value="fromShort(boolean)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/core/databinding/conversion/StringToNumberConverter.java" type="org.eclipse.core.databinding.conversion.StringToNumberConverter">
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="336744520">
+            <message_arguments>
+                <message_argument value="@noextend"/>
+                <message_argument value="org.eclipse.core.databinding.conversion.StringToNumberConverter"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.StringToNumberConverter"/>
+                <message_argument value="convert(Object)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.StringToNumberConverter"/>
+                <message_argument value="toBigDecimal()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.StringToNumberConverter"/>
+                <message_argument value="toBigDecimal(NumberFormat)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.StringToNumberConverter"/>
+                <message_argument value="toBigInteger()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.StringToNumberConverter"/>
+                <message_argument value="toBigInteger(NumberFormat)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.StringToNumberConverter"/>
+                <message_argument value="toByte(NumberFormat, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.StringToNumberConverter"/>
+                <message_argument value="toByte(boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.StringToNumberConverter"/>
+                <message_argument value="toDouble(NumberFormat, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.StringToNumberConverter"/>
+                <message_argument value="toDouble(boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.StringToNumberConverter"/>
+                <message_argument value="toFloat(NumberFormat, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.StringToNumberConverter"/>
+                <message_argument value="toFloat(boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.StringToNumberConverter"/>
+                <message_argument value="toInteger(NumberFormat, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.StringToNumberConverter"/>
+                <message_argument value="toInteger(boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.StringToNumberConverter"/>
+                <message_argument value="toLong(NumberFormat, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.StringToNumberConverter"/>
+                <message_argument value="toLong(boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.StringToNumberConverter"/>
+                <message_argument value="toShort(NumberFormat, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/262" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.conversion.StringToNumberConverter"/>
+                <message_argument value="toShort(boolean)"/>
             </message_arguments>
         </filter>
     </resource>

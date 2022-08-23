@@ -414,7 +414,7 @@ public interface IWorkbenchPreferenceConstants {
 	 * <p>
 	 * The default value for this preference is
 	 * <code>"org.eclipse.ui.defaultAcceleratorConfiguration"</code>.
-	 * <p>
+	 * </p>
 	 *
 	 * @since 3.1
 	 */

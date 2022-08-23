@@ -10,5 +10,5 @@ Snap.*
 /.settings/
 /.project
 .DS_Store
-.polyglot.META-INF
-
+.polyglot.*
+pom.tycho

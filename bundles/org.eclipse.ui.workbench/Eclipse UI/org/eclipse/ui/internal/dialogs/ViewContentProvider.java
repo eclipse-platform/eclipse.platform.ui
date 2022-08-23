@@ -23,9 +23,8 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.views.IViewDescriptor;
+import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.views.IViewRegistry;
 
 /**
@@ -111,7 +110,7 @@ public class ViewContentProvider implements ITreeContentProvider {
 		List<MPartDescriptor> descriptors = application.getDescriptors();
 		Set<MPartDescriptor> categoryDescriptors = new HashSet<>();
 		for (MPartDescriptor descriptor : descriptors) {
-			if (isFilteredByActivity(descriptor.getElementId())) {
+			if (isFilteredByActivity(descriptor)) {
 				continue;
 			}
 			String category = descriptor.getCategory();
@@ -132,7 +131,7 @@ public class ViewContentProvider implements ITreeContentProvider {
 		for (MPartDescriptor descriptor : descriptors) {
 			// only process views and hide views which are filtered by
 			// activities
-			if (!isView(descriptor) || isFilteredByActivity(descriptor.getElementId())) {
+			if (!isView(descriptor) || isFilteredByActivity(descriptor)) {
 				continue;
 			}
 
@@ -166,19 +165,20 @@ public class ViewContentProvider implements ITreeContentProvider {
 	}
 
 	/**
-	 * Evaluates if the view is filtered by an activity
+	 * Evaluates if the view is filtered by an activity. Note that this is only
+	 * possible for E3 views, as activities don't exist in the Eclipse 4.
 	 *
-	 * @param elementId
+	 * @param descriptor
 	 * @return result of the check
 	 */
-	private boolean isFilteredByActivity(String elementId) {
+	private boolean isFilteredByActivity(MPartDescriptor descriptor) {
+		// viewRegistry.find(...) already applies a filtering for disabled views
+		boolean isFiltered = viewRegistry.find(descriptor.getElementId()) == null;
 
-		IViewDescriptor[] views = viewRegistry.getViews();
-		for (IViewDescriptor descriptor : views) {
-			if (descriptor.getId().equals(elementId) && WorkbenchActivityHelper.filterItem(descriptor)) {
-				return true;
-			}
-		}
-		return false;
+		// E3 views can be detected by checking whether they use the compatibility layer
+		boolean isE3View = CompatibilityPart.COMPATIBILITY_VIEW_URI.equals(descriptor.getContributionURI());
+
+		// filtering can only be applied to E3 views, as activities don't exist in the Eclipse 4.
+		return isE3View && isFiltered;
 	}
 }

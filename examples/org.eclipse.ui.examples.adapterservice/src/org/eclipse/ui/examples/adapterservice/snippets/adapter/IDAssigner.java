@@ -26,23 +26,23 @@ public class IDAssigner implements IAdapterFactory {
 	public IDAssigner() {
 		currentId = 1000;
 	}
+
 	@Override
-	@SuppressWarnings("rawtypes")
-	public Object getAdapter(final Object adaptableObject, Class adapterType) {
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(final Object adaptableObject, Class<T> adapterType) {
 		if (adapterType.equals(ThingWithId.class)) {
 			if (!assignedIds.containsKey(adaptableObject)) {
 				String id = Integer.toString(currentId);
 				currentId++;
 				assignedIds.put(adaptableObject, id);
 			}
-			return (ThingWithId) () -> assignedIds.get(adaptableObject);
+			return (T) (ThingWithId) () -> assignedIds.get(adaptableObject);
 		}
 		return null;
 	}
 
 	@Override
-	@SuppressWarnings("rawtypes")
-	public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
 		return new Class[] { ThingWithId.class };
 	}
 

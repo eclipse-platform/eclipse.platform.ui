@@ -21,20 +21,20 @@ import java.text.Collator; // can't use ICU - Collator used in public API
  * provided by its content provider.
  * <p>
  * The default <code>compare</code> method compares elements using two steps.
- * The first step uses the values returned from <code>category</code>.
- * By default, all elements are in the same category.
- * The second level is based on a case insensitive compare of the strings obtained
- * from the content viewer's label provider via <code>ILabelProvider.getText</code>.
+ * The first step uses the values returned from <code>category</code>. By
+ * default, all elements are in the same category. The second level is based on
+ * a case insensitive compare of the strings obtained from the content viewer's
+ * label provider via <code>ILabelProvider.getText</code>.
  * </p>
  * <p>
- * Subclasses may implement the <code>isSorterProperty</code> method;
- * they may reimplement the <code>category</code> method to provide
- * categorization; and they may override the <code>compare</code> methods
- * to provide a totally different way of sorting elements.
+ * Subclasses may implement the <code>isSorterProperty</code> method; they may
+ * reimplement the <code>category</code> method to provide categorization; and
+ * they may override the <code>compare</code> methods to provide a totally
+ * different way of sorting elements.
  * </p>
- * <p>
+ *
  * @deprecated use <code>ViewerComparator</code> instead.
- * </p>
+ *
  * @see IStructuredContentProvider
  * @see StructuredViewer
  */

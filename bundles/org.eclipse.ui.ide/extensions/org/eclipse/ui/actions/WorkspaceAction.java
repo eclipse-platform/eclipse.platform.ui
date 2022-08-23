@@ -223,26 +223,22 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 	}
 
 	/**
-	 * Performs this action's operation on each of the selected resources,
-	 * reporting progress to, and fielding cancel requests from, the given
-	 * progress monitor.
+	 * Performs this action's operation on each of the selected resources, reporting
+	 * progress to, and fielding cancel requests from, the given progress monitor.
 	 * <p>
 	 * Note that this method is invoked in a non-UI thread.
 	 * </p>
 	 * <p>
 	 * Subclasses must implement this method.
-	 * <p>
-	 * @deprecated Since 3.3, subclasses should instead implement the method
-	 * {@link #createOperation(IStatus[])} and provide an empty implementation
-	 * for this method.
 	 * </p>
 	 *
-	 * @param resource
-	 *            one of the selected resources
-	 * @param monitor
-	 *            a progress monitor
-	 * @exception CoreException
-	 *                if the operation fails
+	 * @deprecated Since 3.3, subclasses should instead implement the method
+	 *             {@link #createOperation(IStatus[])} and provide an empty
+	 *             implementation for this method.
+	 *
+	 * @param resource one of the selected resources
+	 * @param monitor  a progress monitor
+	 * @exception CoreException if the operation fails
 	 *
 	 * @since 3.1
 	 */

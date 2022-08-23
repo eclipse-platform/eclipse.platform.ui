@@ -220,7 +220,6 @@ import org.eclipse.ui.internal.model.ContributionService;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.progress.ProgressManagerUtil;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
-import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.registry.ViewDescriptor;
 import org.eclipse.ui.internal.services.EvaluationService;
 import org.eclipse.ui.internal.services.IServiceLocatorCreator;
@@ -2051,16 +2050,6 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	}
 
 	private void initializeLazyServices() {
-		e4Context.set(IExtensionTracker.class.getName(), new ContextFunction() {
-
-			@Override
-			public Object compute(IEclipseContext context, String contextKey) {
-				if (tracker == null) {
-					tracker = new UIExtensionTracker(getDisplay());
-				}
-				return tracker;
-			}
-		});
 		e4Context.set(IWorkbenchActivitySupport.class.getName(), new ContextFunction() {
 
 			@Override
@@ -2977,12 +2966,9 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 		if (WorkbenchPlugin.getDefault() != null) {
 			WorkbenchPlugin.getDefault().reset();
 		}
-		WorkbenchThemeManager.getInstance().dispose();
-		PropertyPageContributorManager.getManager().dispose();
-		ObjectActionContributorManager.getManager().dispose();
-		if (tracker != null) {
-			tracker.close();
-		}
+		WorkbenchThemeManager.disposeManager();
+		PropertyPageContributorManager.disposeManager();
+		ObjectActionContributorManager.disposeManager();
 		statusManager.unregister();
 	}
 
@@ -3204,8 +3190,6 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	 * <code>null</code> if none.
 	 */
 	private IntroDescriptor introDescriptor;
-
-	private IExtensionTracker tracker;
 
 	private IRegistryChangeListener startupRegistryListener = event -> {
 		final IExtensionDelta[] deltas = event.getExtensionDeltas(PlatformUI.PLUGIN_ID,

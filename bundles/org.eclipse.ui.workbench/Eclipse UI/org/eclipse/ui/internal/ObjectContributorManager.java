@@ -34,6 +34,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.PlatformUI;
 
@@ -112,8 +113,9 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
 		if (extensionPointId != null) {
 			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID,
 					extensionPointId);
-			IExtensionTracker tracker = PlatformUI.getWorkbench().getExtensionTracker();
-			tracker.registerHandler(this, ExtensionTracker.createExtensionPointFilter(extensionPoint));
+			PlatformUI.getApplication().map(MApplication::getContext).map(ctx -> ctx.get(IExtensionTracker.class))
+					.orElseThrow(PlatformUI.NO_WORKBENCH)
+					.registerHandler(this, ExtensionTracker.createExtensionPointFilter(extensionPoint));
 		}
 	}
 
@@ -325,7 +327,9 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
 		if (element != null) {
 			ContributorRecord contributorRecord = new ContributorRecord(contributor, targetType);
 			contributorRecordSet.add(contributorRecord);
-			PlatformUI.getWorkbench().getExtensionTracker().registerObject(element.getDeclaringExtension(),
+			PlatformUI.getApplication().map(MApplication::getContext).map(ctx -> ctx.get(IExtensionTracker.class))
+					.orElseThrow(PlatformUI.NO_WORKBENCH)
+					.registerObject(element.getDeclaringExtension(),
 					contributorRecord, IExtensionTracker.REF_WEAK);
 		}
 	}

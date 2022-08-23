@@ -154,7 +154,6 @@ public interface INavigatorViewerDescriptor {
 	 * in the <b>org.eclipse.ui.navigator.viewer</b> extension point. Each
 	 * insertion point represents either a {@link Separator} or
 	 * {@link GroupMarker} in the context menu of the viewer.
-	 * <p>
 	 *
 	 * @return The set of custom insertion points, if any. A null list indicates
 	 *         the default set (as defined by {@link NavigatorActionService})

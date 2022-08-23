@@ -25,7 +25,7 @@ public class DeferredContentProvider extends BaseWorkbenchContentProvider {
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		if (viewer instanceof AbstractTreeViewer) {
-			manager = new DeferredTreeContentManager(this, (AbstractTreeViewer) viewer);
+			manager = new DeferredTreeContentManager((AbstractTreeViewer) viewer);
 		}
 		super.inputChanged(viewer, oldInput, newInput);
 	}

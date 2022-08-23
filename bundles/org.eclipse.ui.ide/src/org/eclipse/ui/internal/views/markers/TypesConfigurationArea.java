@@ -168,7 +168,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 
 	}
 
-	private abstract class TypesEntry {
+	private abstract static class TypesEntry {
 
 		/**
 		 * Add any elements that contain a type in selectedTypes tp entries.

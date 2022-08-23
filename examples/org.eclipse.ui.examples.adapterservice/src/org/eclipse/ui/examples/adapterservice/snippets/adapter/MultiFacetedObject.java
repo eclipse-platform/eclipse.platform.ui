@@ -24,10 +24,10 @@ class MultiFacetedObject implements IAdaptable, Greeter {
 	}
 
 	@Override
-	@SuppressWarnings("rawtypes")
-	public Object getAdapter(Class adapter) {
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter.equals(Greeter.class)) {
-			return this;
+			return (T) this;
 		}
 		return null;
 	}

@@ -101,7 +101,7 @@ public class ModelAssembler {
 		Set<String> containedElementIds = new LinkedHashSet<>();
 	}
 
-	private class FragmentWrapperElementMapping {
+	private static class FragmentWrapperElementMapping {
 		ModelFragmentWrapper wrapper;
 		List<MApplicationElement> elements;
 	}
