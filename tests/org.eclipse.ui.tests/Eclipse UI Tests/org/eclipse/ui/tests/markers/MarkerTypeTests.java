@@ -22,7 +22,7 @@ import org.eclipse.ui.views.markers.internal.MarkerTypesModel;
 import org.junit.Test;
 
 /*******************************************************************************
- * Copyright (c) 2005, 2022 IBM Corporation and others.
+ * Copyright (c) 2022 Enda O'Brien and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which accompanies this distribution,
