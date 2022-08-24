@@ -21,11 +21,17 @@ import org.eclipse.ui.views.markers.internal.MarkerType;
 import org.eclipse.ui.views.markers.internal.MarkerTypesModel;
 import org.junit.Test;
 
-/**
+/*******************************************************************************
+ * Copyright (c) 2005, 2022 IBM Corporation and others.
  *
- * @since 3.5
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which accompanies this distribution,
+ * and is available at https://www.eclipse.org/legal/epl-2.0/
  *
- */
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors: IBM Corporation - initial API and implementation
+ *******************************************************************************/
 public class MarkerTypeTests {
 
 	static final String PROBLEM_MARKER = "org.eclipse.core.resources.problemmarker";
