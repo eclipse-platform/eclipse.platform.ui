@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,6 +20,8 @@ import java.util.Iterator;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Link;
@@ -53,7 +55,17 @@ public class PreferenceLinkArea extends Object {
 	public PreferenceLinkArea(Composite parent, int style, final String pageId, String message,
 			final IWorkbenchPreferenceContainer pageContainer, final Object pageData) {
 		pageLink = new Link(parent, style);
-
+		/*
+		 * Accessible tool like JAWS by default only reads the hypertext link text and
+		 * not the non-link text. To make JAWS read the full text we need to tweak the
+		 * default behavior and explicitly return the full link text as below.
+		 */
+		pageLink.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
+			public void getName(AccessibleEvent e) {
+				e.result = pageLink.getText();
+			}
+		});
 		IPreferenceNode node = getPreferenceNode(pageId);
 		String result;
 		if (node == null) {
