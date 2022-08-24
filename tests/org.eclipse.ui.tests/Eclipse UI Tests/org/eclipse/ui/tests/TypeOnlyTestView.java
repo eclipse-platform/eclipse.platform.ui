@@ -1,7 +1,3 @@
-package org.eclipse.ui.tests;
-
-import org.eclipse.ui.views.markers.MarkerSupportView;
-
 /*******************************************************************************
  * Copyright (c) 2022 Enda O'Brien and others.
  *
@@ -13,6 +9,9 @@ import org.eclipse.ui.views.markers.MarkerSupportView;
  *
  * Contributors: IBM Corporation - initial API and implementation
  *******************************************************************************/
+package org.eclipse.ui.tests;
+
+import org.eclipse.ui.views.markers.MarkerSupportView;
 
 public class TypeOnlyTestView extends MarkerSupportView {
 
