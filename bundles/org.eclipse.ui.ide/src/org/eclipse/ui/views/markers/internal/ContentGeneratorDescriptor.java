@@ -218,9 +218,9 @@ public class ContentGeneratorDescriptor {
 					break;
 				case MarkerSupportInternalUtilities.TYPE_AND_SUBTYPE:
 				default:
-					markerTypes.add(MarkerTypesModel.getInstance().getType(elementName));
 					markerTypes.addAll(
 							Arrays.asList(MarkerTypesModel.getInstance().getType(elementName).getAllSubTypes()));
+					markerTypes.add(MarkerTypesModel.getInstance().getType(elementName));
 				}
 			}
 			if (markerTypes.isEmpty()) {
