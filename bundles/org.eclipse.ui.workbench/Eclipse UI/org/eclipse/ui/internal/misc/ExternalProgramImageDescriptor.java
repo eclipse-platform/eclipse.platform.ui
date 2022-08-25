@@ -62,29 +62,15 @@ public class ExternalProgramImageDescriptor extends ImageDescriptor {
 		return createImage();
 	}
 
-	/**
-	 * Returns an SWT Image that is described by the information in this descriptor.
-	 * Each call returns a new Image.
-	 */
 	@Override
-	public ImageData getImageData() {
-		ImageData data = null;
-		ImageData defaultImage = WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FILE).getImageData();
-		if (defaultImage == null) {
-			return null;
+	public ImageData getImageData(int zoom) {
+		if (program != null) {
+			ImageData imageData = program.getImageData(zoom);
+			if (imageData != null) {
+				return imageData;
+			}
 		}
-
-		if (program == null || ((data = program.getImageData()) == null)) {
-			return defaultImage;
-		}
-
-		// The images in GNOME are too big. Scaling them does not give nice result so
-		// return defaultImage;
-		if (data.height > defaultImage.height || data.width > defaultImage.width) {
-			return defaultImage;
-		}
-
-		return data;
+		return WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FILE).getImageData(zoom);
 	}
 
 	/**
