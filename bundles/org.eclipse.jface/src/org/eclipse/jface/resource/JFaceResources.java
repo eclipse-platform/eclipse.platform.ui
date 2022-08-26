@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,6 +19,7 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.MissingResourceException;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.function.Supplier;
 
@@ -209,6 +210,7 @@ public class JFaceResources {
 	 * @return the global resource manager for the given display
 	 */
 	public static ResourceManager getResources(final Display toQuery) {
+		Objects.requireNonNull(toQuery, "toQuery"); //$NON-NLS-1$
 		ResourceManager reg = registries.get(toQuery);
 
 		if (reg == null) {
@@ -238,7 +240,9 @@ public class JFaceResources {
 	 * @return the global ResourceManager for the current display
 	 */
 	public static ResourceManager getResources() {
-		return getResources(Display.getCurrent());
+		Display display = Display.getCurrent();
+		Objects.requireNonNull(display, "This is not an UI thread (or Device already disposed)"); //$NON-NLS-1$
+		return getResources(display);
 	}
 
 	/**
