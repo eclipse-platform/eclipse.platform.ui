@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,8 +15,8 @@ package org.eclipse.ui.tests.activities;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -118,8 +118,7 @@ public class UtilTest {
 	 */
 	@Test
 	public void testGetEnabledCategories1_A() {
-		HashSet<String> set = new HashSet<>();
-		set.add(ID1);
+		Set<String> set = Set.of(ID1);
 		PlatformUI.getWorkbench().getActivitySupport().setEnabledActivityIds(set);
 		assertEquals(0, WorkbenchActivityHelper.getEnabledCategories(getActivityManager(), ID1).size());
 	}
@@ -130,8 +129,7 @@ public class UtilTest {
 	 */
 	@Test
 	public void testGetEnabledCategories2_A() {
-		HashSet<String> set = new HashSet<>();
-		set.add(ID2);
+		Set<String> set = Set.of(ID2);
 		PlatformUI.getWorkbench().getActivitySupport().setEnabledActivityIds(set);
 		assertEquals(0, WorkbenchActivityHelper.getEnabledCategories(getActivityManager(), ID2).size());
 	}
@@ -142,8 +140,7 @@ public class UtilTest {
 	 */
 	@Test
 	public void testGetEnabledCategories3_A() {
-		HashSet<String> set = new HashSet<>();
-		set.add(ID1);
+		Set<String> set = Set.of(ID1);
 		PlatformUI.getWorkbench().getActivitySupport().setEnabledActivityIds(set);
 		assertEquals(0, WorkbenchActivityHelper.getEnabledCategories(getActivityManager(), ID3).size());
 	}
@@ -154,8 +151,7 @@ public class UtilTest {
 	 */
 	@Test
 	public void testGetEnabledCategories4_A() {
-		HashSet<String> set = new HashSet<>();
-		set.add(ID4);
+		Set<String> set = Set.of(ID4);
 		PlatformUI.getWorkbench().getActivitySupport().setEnabledActivityIds(set);
 		assertEquals(0, WorkbenchActivityHelper.getEnabledCategories(getActivityManager(), ID4).size());
 	}
@@ -166,8 +162,7 @@ public class UtilTest {
 	 */
 	@Test
 	public void testGetEnabledCategories5_Aa() {
-		HashSet<String> set = new HashSet<>();
-		set.add(ID4);
+		Set<String> set = Set.of(ID4);
 		PlatformUI.getWorkbench().getActivitySupport().setEnabledActivityIds(set);
 		assertEquals(0, WorkbenchActivityHelper.getEnabledCategories(getActivityManager(), ID5).size());
 	}
@@ -178,8 +173,7 @@ public class UtilTest {
 	 */
 	@Test
 	public void testGetEnabledCategories5_Ab() {
-		HashSet<String> set = new HashSet<>();
-		set.add(ID5);
+		Set<String> set = Set.of(ID5);
 		PlatformUI.getWorkbench().getActivitySupport().setEnabledActivityIds(set);
 		Set<String> ids = WorkbenchActivityHelper.getEnabledCategories(getActivityManager(), ID5);
 		assertEquals(1, ids.size());
@@ -289,11 +283,13 @@ public class UtilTest {
 	}
 
 	/**
-	 * Test the activity property tester.  Test the isActivityEnabled property
+	 * Test the activity property tester. Test the isActivityEnabled property
+	 *
+	 * @throws CoreException
 	 *
 	 */
 	@Test
-	public void testPropertyTester1() {
+	public void testPropertyTester1() throws CoreException {
 		enableAll();
 		EvaluationContext context = new EvaluationContext(null, PlatformUI.getWorkbench());
 
@@ -312,9 +308,10 @@ public class UtilTest {
 	/**
 	 * @param context
 	 * @param activityManager
+	 * @throws CoreException
 	 */
 	private void testPropertyTester1(EvaluationContext context,
-			IActivityManager activityManager) {
+			IActivityManager activityManager) throws CoreException {
 		boolean result = activityManager
 				.getActivity(ID1).isEnabled();
 
@@ -322,19 +319,17 @@ public class UtilTest {
 				"isActivityEnabled", new Object[] { ID1 },
 				null);
 
-		try {
-			assertEquals(result ? EvaluationResult.TRUE: EvaluationResult.FALSE, test.evaluate(context));
-		} catch (CoreException e) {
-			fail(e.getMessage());
-		}
+		assertEquals(result ? EvaluationResult.TRUE : EvaluationResult.FALSE, test.evaluate(context));
 	}
 
 	/**
-	 * Test the activity property tester.  Test the isCategoryEnabled property
+	 * Test the activity property tester. Test the isCategoryEnabled property
+	 *
+	 * @throws CoreException
 	 *
 	 */
 	@Test
-	public void testPropertyTester2() {
+	public void testPropertyTester2() throws CoreException {
 		enableAll();
 		EvaluationContext context = new EvaluationContext(null, PlatformUI.getWorkbench());
 
@@ -534,9 +529,10 @@ public class UtilTest {
 	/**
 	 * @param context
 	 * @param activityManager
+	 * @throws CoreException
 	 */
 	private void testPropertyTester2(EvaluationContext context,
-			IActivityManager activityManager) {
+			IActivityManager activityManager) throws CoreException {
 		boolean result = WorkbenchActivityHelper.isEnabled(activityManager, ID1);
 
 
@@ -544,24 +540,15 @@ public class UtilTest {
 				"isCategoryEnabled", new Object[] { ID1 },
 				null);
 
-		try {
-			assertEquals(result ? EvaluationResult.TRUE: EvaluationResult.FALSE, test.evaluate(context));
-		} catch (CoreException e) {
-			fail(e.getMessage());
-		}
+		assertEquals(result ? EvaluationResult.TRUE : EvaluationResult.FALSE, test.evaluate(context));
 	}
 
 	/**
 	 * Enable all test activities.
 	 */
 	private void enableAll() {
-		HashSet<String> set = new HashSet<>();
-		set.add(ID1);
-		set.add(ID2);
-		set.add(ID4);
-		set.add(ID5);
-		PlatformUI.getWorkbench().getActivitySupport().setEnabledActivityIds(
-				set);
+		Set<String> set = Set.of(ID1, ID2, ID4, ID5);
+		PlatformUI.getWorkbench().getActivitySupport().setEnabledActivityIds(set);
 	}
 
 	/**
@@ -570,8 +557,7 @@ public class UtilTest {
 	 * @return the system activity manager
 	 */
 	private IActivityManager getActivityManager() {
-		return  PlatformUI.getWorkbench()
-		.getActivitySupport().getActivityManager();
+		return PlatformUI.getWorkbench().getActivitySupport().getActivityManager();
 	}
 
 	/**
@@ -585,24 +571,22 @@ public class UtilTest {
 		IActivityManager manager = getActivityManager();
 		IActivity activity = manager.getActivity(ACTIVITY_NON_REG_EXP);
 		Set<IActivityPatternBinding> bindings = activity.getActivityPatternBindings();
-		assertTrue(bindings.size() == 1);
-		IActivityPatternBinding binding =
-			bindings.iterator().next();
+		assertEquals(1, bindings.size());
+		IActivityPatternBinding binding = bindings.iterator().next();
 		assertTrue(binding.isEqualityPattern());
 
 		// Check Binding -> Activity connection.
 		final String IDENTIFIER = "org.eclipse.ui.tests.activity{No{Reg(Exp[^d]";
 		IIdentifier identifier = manager.getIdentifier(IDENTIFIER);
 		Set<String> boundActivities = identifier.getActivityIds();
-		assertTrue(boundActivities.size() == 1);
+		assertEquals(1, boundActivities.size());
 		String id = boundActivities.iterator().next();
-		assertTrue(id.equals(ACTIVITY_NON_REG_EXP));
+		assertEquals(ACTIVITY_NON_REG_EXP, id);
 
 		// Check conversion from normal string to regular expression string
 		// for <code>Pattern()</code> constructing.
 		Pattern pattern = binding.getPattern();
-		assertTrue(pattern.pattern().equals(
-				Pattern.compile("\\Q" + IDENTIFIER + "\\E").pattern()));
+		assertEquals(Pattern.compile("\\Q" + IDENTIFIER + "\\E").pattern(), pattern.pattern());
 	}
 
 	/**
@@ -612,39 +596,31 @@ public class UtilTest {
 	 */
 	@Test
 	public void testSetEnabledExpressionActivity() {
-		try {
-			TestSourceProvider testSourceProvider = new TestSourceProvider();
-			IEvaluationService evalService = PlatformUI
-					.getWorkbench().getService(IEvaluationService.class);
-			evalService.addSourceProvider(testSourceProvider);
-			testSourceProvider.fireSourceChanged();
+		TestSourceProvider testSourceProvider = new TestSourceProvider();
+		IEvaluationService evalService = PlatformUI.getWorkbench().getService(IEvaluationService.class);
+		evalService.addSourceProvider(testSourceProvider);
+		testSourceProvider.fireSourceChanged();
 
+		IWorkbenchActivitySupport support = PlatformUI.getWorkbench().getActivitySupport();
+		support.setEnabledActivityIds(new HashSet<>());
+		Set<String> set = new HashSet<>(support.getActivityManager().getEnabledActivityIds());
+		Set<String> previousSet = new HashSet<>(support.getActivityManager().getEnabledActivityIds());
+		set.add(EXPRESSION_ACTIVITY_ID_2);
+		support.setEnabledActivityIds(set);
+		assertEquals(previousSet, support.getActivityManager().getEnabledActivityIds());
 
-			IWorkbenchActivitySupport support = PlatformUI.getWorkbench()
-				.getActivitySupport();
-			support.setEnabledActivityIds(new HashSet<>());
-			Set<String> set = new HashSet<>(support.getActivityManager().getEnabledActivityIds());
-			Set<String> previousSet = new HashSet<>(support.getActivityManager().getEnabledActivityIds());
-			set.add(EXPRESSION_ACTIVITY_ID_2);
-			support.setEnabledActivityIds(set);
-			assertEquals(previousSet, support.getActivityManager().getEnabledActivityIds());
+		testSourceProvider.setVariable();
+		testSourceProvider.fireSourceChanged();
 
-			testSourceProvider.setVariable();
-			testSourceProvider.fireSourceChanged();
+		set = new HashSet<>(support.getActivityManager().getEnabledActivityIds());
+		assertNotEquals(previousSet, set);
 
-			set = new HashSet<>(support.getActivityManager().getEnabledActivityIds());
-			assertFalse(set.equals(previousSet));
+		set.remove(EXPRESSION_ACTIVITY_ID_2);
+		support.setEnabledActivityIds(set);
 
-			set.remove(EXPRESSION_ACTIVITY_ID_2);
-			support.setEnabledActivityIds(set);
+		assertNotEquals(previousSet, support.getActivityManager().getEnabledActivityIds());
 
-			assertFalse(support.getActivityManager().getEnabledActivityIds().equals(previousSet));
-
-			evalService.removeSourceProvider(testSourceProvider);
-		}
-		finally {
-
-		}
+		evalService.removeSourceProvider(testSourceProvider);
 	}
 
 	@Before
