@@ -617,9 +617,10 @@ public class ThemeEngine implements IThemeEngine {
 		 * dark theme present. Can be disabled using a system property.
 		 */
 		boolean hasDarkTheme = getThemes().stream().anyMatch(t -> t.getId().startsWith(E4_DARK_THEME_ID));
-		String themeToRestore = Display.isSystemDarkTheme() && hasDarkTheme ? E4_DARK_THEME_ID : alternateTheme;
 		boolean disableOSDarkThemeInherit = "true".equalsIgnoreCase(System.getProperty(DISABLE_OS_DARK_THEME_INHERIT));
-		if (themeToRestore != null && flag && !disableOSDarkThemeInherit) {
+		boolean overrideWithDarkTheme = Display.isSystemDarkTheme() && hasDarkTheme && !disableOSDarkThemeInherit;
+		String themeToRestore = overrideWithDarkTheme ? E4_DARK_THEME_ID : alternateTheme;
+		if (themeToRestore != null && flag) {
 			setTheme(themeToRestore, false);
 		}
 	}
