@@ -16,6 +16,7 @@
 package org.eclipse.ui.internal.ide;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -40,11 +41,14 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.BorderData;
+import org.eclipse.swt.layout.BorderLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowData;
@@ -71,6 +75,9 @@ import org.osgi.framework.FrameworkUtil;
  * A dialog that prompts for a directory to use as a workspace.
  */
 public class ChooseWorkspaceDialog extends TitleAreaDialog {
+
+	private static final String OPEN_FOLDER_EMOJI = new String(
+			new byte[] { (byte) 0xF0, (byte) 0x9F, (byte) 0x93, (byte) 0x82 }, StandardCharsets.UTF_8);
 
 	private static final String DIALOG_SETTINGS_SECTION = "ChooseWorkspaceDialogSettings"; //$NON-NLS-1$
 
@@ -423,18 +430,13 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 	private void createWorkspaceBrowseRow(Composite parent) {
 		Composite panel = new Composite(parent, SWT.NONE);
 
-		GridLayout layout = new GridLayout(3, false);
+		BorderLayout layout = new BorderLayout();
 		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
 		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		layout.spacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
 		panel.setLayout(layout);
 		panel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		panel.setFont(parent.getFont());
-
-		CLabel label = new CLabel(panel, SWT.NONE);
-		label.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_workspaceEntryLabel);
-		label.setMargins(0, 0, 2, 0);
 
 		text = new Combo(panel, SWT.BORDER | SWT.LEAD | SWT.DROP_DOWN);
 		new DirectoryProposalContentAssist().apply(text);
@@ -459,10 +461,9 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 
 		Button browseButton = new Button(panel, SWT.PUSH);
 		browseButton.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_browseLabel);
+		browseButton.setToolTipText(IDEWorkbenchMessages.ChooseWorkspaceDialog_browseTooltip);
 		setButtonLayoutData(browseButton);
-		GridData data = (GridData) browseButton.getLayoutData();
-		data.horizontalAlignment = GridData.HORIZONTAL_ALIGN_END;
-		browseButton.setLayoutData(data);
+		browseButton.setLayoutData(new BorderData(SWT.RIGHT));
 		browseButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -474,6 +475,25 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 				if (dir != null) {
 					text.setText(TextProcessor.process(dir));
 				}
+			}
+		});
+		int smallButtonLimit = browseButton.getFont().getFontData()[0].getHeight() * 40;
+		parent.addControlListener(new ControlListener() {
+
+			@Override
+			public void controlResized(ControlEvent e) {
+				// browseButton
+				Point size = parent.getSize();
+				if (size.x < smallButtonLimit) {
+					browseButton.setText(OPEN_FOLDER_EMOJI);
+				} else {
+					browseButton.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_browseLabel);
+				}
+			}
+
+			@Override
+			public void controlMoved(ControlEvent e) {
+
 			}
 		});
 	}
