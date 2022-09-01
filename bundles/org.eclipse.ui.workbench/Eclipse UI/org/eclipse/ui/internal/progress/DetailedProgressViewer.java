@@ -165,16 +165,23 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 
 	@Override
 	public void add(JobTreeElement... elements) {
-		ViewerComparator sorter = getComparator();
-
-		// Use a Set in case we are getting something added that exists
-		Set<JobTreeElement> newItems = new LinkedHashSet<>(jobItemControls.keySet());
+		Set<JobTreeElement> items = getItems();
 		for (JobTreeElement element : elements) {
 			if (element != null) {
-				newItems.add(element);
+				items.add(element);
 			}
 		}
+		updateItems(items);
+	}
 
+	private Set<JobTreeElement> getItems() {
+		// Use a Set in case we are getting something added that exists
+		Set<JobTreeElement> newItems = new LinkedHashSet<>(jobItemControls.keySet());
+		return newItems;
+	}
+
+	private void updateItems(Set<JobTreeElement> newItems) {
+		ViewerComparator sorter = getComparator();
 		JobTreeElement[] infos = newItems.toArray(new JobTreeElement[0]);
 		if (sorter != null) {
 			sorter.sort(this, infos);
@@ -369,6 +376,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	@Override
 	public void remove(JobTreeElement... elements) {
 
+		Set<JobTreeElement> items = getItems();
 		for (Object element : elements) {
 			JobTreeElement treeElement = (JobTreeElement) element;
 			// Make sure we are not keeping this one
@@ -387,19 +395,13 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 						remove(parent);
 				}
 				if (item != null) {
-					jobItemControls.remove(element);
+					items.remove(element);
 					unmapElement(element);
-					item.dispose();
 				}
 			}
 		}
-
-		Control[] existingChildren = control.getChildren();
-		for (int i = 0; i < existingChildren.length; i++) {
-			ProgressInfoItem item = (ProgressInfoItem) existingChildren[i];
-			item.setColor(i);
-		}
-		updateForShowingProgress();
+		 // also sort again, otherwise removed job may appear at top again:
+		updateItems(items); 
 	}
 
 	@Override
