@@ -127,8 +127,8 @@ public final class FileTextSearchScope extends TextSearchScope {
 	private final String fDescription;
 	private final IResource[] fRootElements;
 	private final String[] fFileNamePatterns;
-	private final Matcher fPositiveFileNameMatcher;
-	private final Matcher fNegativeFileNameMatcher;
+	private final ThreadLocal<Matcher> fPositiveFileNameMatcher;
+	private final ThreadLocal<Matcher> fNegativeFileNameMatcher;
 
 	private boolean fVisitDerived;
 	private IWorkingSet[] fWorkingSets;
@@ -139,8 +139,8 @@ public final class FileTextSearchScope extends TextSearchScope {
 		fFileNamePatterns= fileNamePatterns;
 		fVisitDerived= visitDerived;
 		fWorkingSets= workingSets;
-		fPositiveFileNameMatcher= createMatcher(fileNamePatterns, false);
-		fNegativeFileNameMatcher= createMatcher(fileNamePatterns, true);
+		fPositiveFileNameMatcher = ThreadLocal.withInitial(() -> createMatcher(fileNamePatterns, false));
+		fNegativeFileNameMatcher = ThreadLocal.withInitial(() -> createMatcher(fileNamePatterns, true));
 	}
 
 	/**
@@ -223,10 +223,12 @@ public final class FileTextSearchScope extends TextSearchScope {
 	}
 
 	private boolean matchesFileName(String fileName) {
-		if (fPositiveFileNameMatcher != null && !fPositiveFileNameMatcher.reset(fileName).matches()) {
+		Matcher positiveFileNameMatcher = fPositiveFileNameMatcher.get();
+		if (positiveFileNameMatcher != null && !positiveFileNameMatcher.reset(fileName).matches()) {
 			return false;
 		}
-		if (fNegativeFileNameMatcher != null && fNegativeFileNameMatcher.reset(fileName).matches()) {
+		Matcher negativeFileNameMatcher = fNegativeFileNameMatcher.get();
+		if (negativeFileNameMatcher != null && negativeFileNameMatcher.reset(fileName).matches()) {
 			return false;
 		}
 		return true;
