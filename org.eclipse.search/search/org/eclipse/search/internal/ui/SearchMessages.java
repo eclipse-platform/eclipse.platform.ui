@@ -134,7 +134,6 @@ public final class SearchMessages extends NLS {
 	public static String TextSearchPage_searchBinary_label;
 	public static String TextSearchVisitor_filesearch_task_label;
 	public static String TextSearchVisitor_patterntoocomplex0;
-	public static String TextSearchVisitor_progress_updating_job;
 	public static String TextSearchVisitor_scanning;
 	public static String TextSearchVisitor_error;
 	public static String TextSearchVisitor_canceled;

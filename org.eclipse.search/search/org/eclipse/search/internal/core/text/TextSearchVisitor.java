@@ -181,7 +181,7 @@ public class TextSearchVisitor {
 			SubMonitor subMonitor = SubMonitor.convert(inner, fileBatches.size() / jobCount); // approximate
 			this.fileCharSequenceProvider= new FileCharSequenceProvider();
 			List<IFile> sameFiles;
-			while (((sameFiles = fileBatches.poll()) != null) && !fFatalError) {
+			while (((sameFiles = fileBatches.poll()) != null) && !fFatalError && !fProgressMonitor.isCanceled()) {
 				IStatus status = processFile(sameFiles, subMonitor.split(1));
 				// Only accumulate interesting status
 				if (!status.isOK())
@@ -190,6 +190,9 @@ public class TextSearchVisitor {
 				// Stop processing and return the status for the completed jobs.
 			}
 			fileCharSequenceProvider= null;
+			synchronized (fLock) {
+				fLock.notify();
+			}
 			return multiStatus;
 		}
 
@@ -291,17 +294,16 @@ public class TextSearchVisitor {
 	private final TextSearchRequestor fCollector;
 	private final Pattern fSearchPattern;
 
-	private IProgressMonitor fProgressMonitor;
+	private volatile IProgressMonitor fProgressMonitor;
 
-	private int fNumberOfFilesToScan;
 	private int fNumberOfScannedFiles;  // Protected by fLock
 	private IFile fCurrentFile;  // Protected by fLock
-	private Object fLock= new Object();
+	private final Object fLock = new Object();
 
 	private final MultiStatus fStatus;
 	private volatile boolean fFatalError; // If true, terminates the search.
 
-	private boolean fIsLightweightAutoRefresh;
+	private volatile boolean fIsLightweightAutoRefresh;
 
 	public TextSearchVisitor(TextSearchRequestor collector, Pattern searchPattern) {
 		fCollector= collector;
@@ -317,102 +319,101 @@ public class TextSearchVisitor {
 		if (files.length == 0) {
 			return fStatus;
 		}
-		fProgressMonitor= monitor == null ? new NullProgressMonitor() : monitor;
-		fNumberOfScannedFiles= 0;
-		fNumberOfFilesToScan= files.length;
-		fCurrentFile= null;
-
+		fProgressMonitor = monitor == null ? new NullProgressMonitor() : monitor;
+		synchronized (fLock) {
+			fNumberOfScannedFiles = 0;
+			fCurrentFile = null;
+		}
 		int threadsNeeded = Math.min(files.length, NUMBER_OF_LOGICAL_THREADS);
 		// All but 1 threads should search. 1 thread does the UI updates:
 		int jobCount = fCollector.canRunInParallel() && threadsNeeded > 1 ? threadsNeeded - 1 : 1;
-
-		// Seed count over 1 can cause endless waits, see bug 543629 comment 2
-		// TODO use seed = jobCount after the bug 543660 in JobGroup is fixed
-		final int seed = 1;
-		final JobGroup jobGroup = new TextSearchJobGroup("Text Search", jobCount, seed); //$NON-NLS-1$
 		long startTime= TRACING ? System.currentTimeMillis() : 0;
-
-		Job monitorUpdateJob= new Job(SearchMessages.TextSearchVisitor_progress_updating_job) {
-			private int fLastNumberOfScannedFiles= 0;
-
-			@Override
-			public IStatus run(IProgressMonitor inner) {
-				while (!inner.isCanceled()) {
-					// Propagate user cancellation to the JobGroup.
-					if (fProgressMonitor.isCanceled()) {
-						jobGroup.cancel();
-						break;
-					}
-
-					IFile file;
-					int numberOfScannedFiles;
-					synchronized (fLock) {
-						file= fCurrentFile;
-						numberOfScannedFiles= fNumberOfScannedFiles;
-					}
-					if (file != null) {
-						String fileName= file.getName();
-						Object[] args= { fileName, Integer.valueOf(numberOfScannedFiles), Integer.valueOf(fNumberOfFilesToScan)};
-						fProgressMonitor.subTask(Messages.format(SearchMessages.TextSearchVisitor_scanning, args));
-						int steps= numberOfScannedFiles - fLastNumberOfScannedFiles;
-						fProgressMonitor.worked(steps);
-						fLastNumberOfScannedFiles += steps;
-					}
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-						return Status.OK_STATUS;
-					}
-				}
-				return Status.OK_STATUS;
-			}
-		};
 
 		try {
 			String taskName= fSearchPattern.pattern().isEmpty()
 					? SearchMessages.TextSearchVisitor_filesearch_task_label
 					: ""; //$NON-NLS-1$
-			fProgressMonitor.beginTask(taskName, fNumberOfFilesToScan);
-			monitorUpdateJob.setSystem(true);
-			monitorUpdateJob.schedule();
 			try {
 				fCollector.beginReporting();
+				if (fProgressMonitor.isCanceled()) {
+					throw new OperationCanceledException(SearchMessages.TextSearchVisitor_canceled);
+				}
+
 				Map<IFile, IDocument> documentsInEditors= PlatformUI.isWorkbenchRunning() ? evalNonFileBufferDocuments() : Collections.emptyMap();
 
 				// group files with same content together:
-
 				Map<String, List<IFile>> localFilesByLocation = new LinkedHashMap<>();
-				Map<String, List<IFile>> remotFilesByLocation = new LinkedHashMap<>();
+				Map<String, List<IFile>> remoteFilesByLocation = new LinkedHashMap<>();
 
 				for (IFile file : files) {
 					IPath path = file.getLocation();
 					String key = path == null ? file.getLocationURI().toString() : path.toString();
 					Map<String, List<IFile>> filesByLocation = (path != null) ? localFilesByLocation
-							: remotFilesByLocation;
+							: remoteFilesByLocation;
 					filesByLocation.computeIfAbsent(key, k -> new ArrayList<>()).add(file);
 
 				}
 				localFilesByLocation.values().forEach(fileBatches::offer);
-				remotFilesByLocation.values().forEach(fileBatches::offer);
+				remoteFilesByLocation.values().forEach(fileBatches::offer);
+				int numberOfFilesToScan = fileBatches.size();
+				fProgressMonitor.beginTask(taskName, numberOfFilesToScan);
 
+				// Seed count over 1 can cause endless waits, see bug 543629
+				// comment 2
+				// TODO use seed = jobCount after the bug 543660 in JobGroup is
+				// fixed
+
+				final int seed = 1;
+				final JobGroup jobGroup = new TextSearchJobGroup("Text Search", jobCount, seed); //$NON-NLS-1$
 				for (int i = 0; i < jobCount; i++) {
 					Job job = new TextSearchJob(documentsInEditors, jobCount);
 					job.setJobGroup(jobGroup);
 					job.schedule();
 				}
-
-				// The monitorUpdateJob is managing progress and cancellation,
-				// so it is ok to pass a null monitor into the job group.
+				// update progress until finished or canceled:
+				int numberOfScannedFiles = 0;
+				int lastNumberOfScannedFiles = 0;
+				while (!fProgressMonitor.isCanceled() && !jobGroup.getActiveJobs().isEmpty()
+						&& numberOfScannedFiles != numberOfFilesToScan) {
+					IFile file;
+					synchronized (fLock) {
+						try {
+							// time only relevant on how often progress is
+							// updated, but cancel is notified immediately:
+							fLock.wait(100);
+						} catch (InterruptedException e) {
+							fProgressMonitor.setCanceled(true);
+							break;
+						}
+						file = fCurrentFile;
+						numberOfScannedFiles = fNumberOfScannedFiles;
+					}
+					if (file != null) {
+						String fileName = file.getName();
+						Object[] args = { fileName, Integer.valueOf(numberOfScannedFiles),
+								Integer.valueOf(numberOfFilesToScan) };
+						fProgressMonitor.subTask(Messages.format(SearchMessages.TextSearchVisitor_scanning, args));
+						int steps = numberOfScannedFiles - lastNumberOfScannedFiles;
+						fProgressMonitor.worked(steps);
+						lastNumberOfScannedFiles += steps;
+					}
+				}
+				if (fProgressMonitor.isCanceled()) {
+					jobGroup.cancel();
+				}
+				// no need to pass progressMonitor (which would show wrong
+				// progress) but null because jobGroup was already finished /
+				// canceled anyway:
 				jobGroup.join(0, null);
-				if (fProgressMonitor.isCanceled())
+				if (fProgressMonitor.isCanceled()) {
 					throw new OperationCanceledException(SearchMessages.TextSearchVisitor_canceled);
+				}
 
 				fStatus.addAll(jobGroup.getResult());
 				return fStatus;
 			} catch (InterruptedException e) {
 				throw new OperationCanceledException(SearchMessages.TextSearchVisitor_canceled);
 			} finally {
-				monitorUpdateJob.cancel();
 				fileBatches.clear();
 			}
 		} finally {
@@ -501,6 +502,7 @@ public class TextSearchVisitor {
 				}
 			}
 		} catch (IndexOutOfBoundsException e) {
+			// ignored
 		} catch (FileCharSequenceException ex) {
 			if (ex.getCause() instanceof CharConversionException)
 				return true;
