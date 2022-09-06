@@ -17,6 +17,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests;
 
+import org.eclipse.ui.internal.ide.ChooseWorkspaceDialogTests;
 import org.eclipse.ui.internal.ide.DirectoryProposalContentAssistTestSuite;
 import org.eclipse.ui.tests.activities.ActivitiesTestSuite;
 import org.eclipse.ui.tests.adaptable.AdaptableTestSuite;
@@ -104,6 +105,7 @@ import org.junit.runners.Suite;
 	MultiEditorTestSuite.class,
 	OpenSystemInPlaceEditorTest.class,
 	WorkbenchDatabindingTest.class,
+	ChooseWorkspaceDialogTests.class,
 })
 public class UiTestSuite {
 }
