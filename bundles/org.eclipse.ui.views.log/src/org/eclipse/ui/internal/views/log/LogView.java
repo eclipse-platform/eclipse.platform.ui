@@ -830,7 +830,7 @@ public class LogView extends ViewPart implements LogListener {
 	}
 
 	public AbstractEntry[] getElements() {
-		return elements.toArray(new AbstractEntry[elements.size()]);
+		return elements.toArray(new AbstractEntry[0]);
 	}
 
 	public void handleClear() {
