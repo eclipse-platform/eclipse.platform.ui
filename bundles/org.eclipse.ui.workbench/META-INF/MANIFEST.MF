@@ -18,7 +18,6 @@ Export-Package: org.eclipse.e4.ui.workbench.addons.perspectiveswitcher;x-interna
  org.eclipse.ui.browser;ui.workbench=split;mandatory:="ui.workbench",
  org.eclipse.ui.commands,
  org.eclipse.ui.contexts,
- org.eclipse.ui.databinding,
  org.eclipse.ui.databinding.typed,
  org.eclipse.ui.dialogs;ui.workbench=split;mandatory:="ui.workbench",
  org.eclipse.ui.dnd,
