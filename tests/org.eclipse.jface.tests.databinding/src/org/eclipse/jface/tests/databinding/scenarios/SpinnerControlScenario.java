@@ -17,8 +17,8 @@ package org.eclipse.jface.tests.databinding.scenarios;
 
 import static org.junit.Assert.assertEquals;
 
-import org.eclipse.core.databinding.beans.BeansObservables;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.SampleData;
 import org.eclipse.swt.SWT;
@@ -59,8 +59,9 @@ public class SpinnerControlScenario extends ScenariosTestCase {
 		// Change the UI and verify the model changes
 		// Change the model and verify the UI changes
 		Spinner spinner = new Spinner(getComposite(), SWT.BORDER);
-		getDbc().bindValue(SWTObservables.observeSelection(spinner),
-				BeansObservables.observeValue(adventure, "maxNumberOfPeople"));
+
+		getDbc().bindValue(WidgetProperties.spinnerSelection().observe(spinner),
+				BeanProperties.value("maxNumberOfPeople").observe(adventure));
 
 		assertEquals(adventure.getMaxNumberOfPeople(), spinner.getSelection());
 		// Verify the model is updated when the GUI is changed

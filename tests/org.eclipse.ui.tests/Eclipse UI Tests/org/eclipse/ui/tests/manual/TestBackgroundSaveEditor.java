@@ -18,7 +18,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.runtime.Assert;
@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -196,10 +196,9 @@ public class TestBackgroundSaveEditor extends EditorPart implements ISaveablesSo
 		final DataBindingContext dbc = new DataBindingContext(realm);
 		parent.addDisposeListener(e -> dbc.dispose());
 
-		final IObservableValue<?> inputObservable = BeansObservables.observeValue(
-				realm, data, "input");
-		final IObservableValue<?> outputObservable = BeansObservables
-				.observeValue(realm, data, "output");
+		final IObservableValue<?> inputObservable = BeanProperties.value("input").observe(data);
+		final IObservableValue<?> outputObservable = BeanProperties.value("output").observe(data);
+
 
 		createInputGroup(parent, dbc, inputObservable);
 		createOptionsGroup(parent, realm, dbc);
@@ -217,7 +216,8 @@ public class TestBackgroundSaveEditor extends EditorPart implements ISaveablesSo
 		Text outputText = new Text(outputGroup, SWT.BORDER | SWT.READ_ONLY
 				| SWT.MULTI);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(outputText);
-		dbc.bindValue(SWTObservables.observeText(outputText, SWT.NONE),
+
+		dbc.bindValue(WidgetProperties.text().observe(outputText),
 				outputObservable, null, null);
 		GridLayoutFactory.swtDefaults().generateLayout(outputGroup);
 	}
@@ -229,9 +229,10 @@ public class TestBackgroundSaveEditor extends EditorPart implements ISaveablesSo
 
 		Button dirtyButton = new Button(optionsGroup, SWT.CHECK);
 		new Label(optionsGroup, SWT.NONE).setText("Editor is dirty");
-		IObservableValue<?> dirtyObservable = BeansObservables.observeValue(realm,
-				mySaveable, "dirty");
-		dbc.bindValue(SWTObservables.observeSelection(dirtyButton),
+
+		IObservableValue<?> dirtyObservable = BeanProperties.value("dirty").observe(mySaveable);
+
+		dbc.bindValue(WidgetProperties.buttonSelection().observe(dirtyButton),
 				dirtyObservable, null, null);
 		// IObservableValue inputAndOutputDiffer = new ComputedValue(realm) {
 		// protected Object calculate() {
@@ -244,35 +245,35 @@ public class TestBackgroundSaveEditor extends EditorPart implements ISaveablesSo
 		Button saveInBackgroundButton = new Button(optionsGroup, SWT.CHECK);
 		new Label(optionsGroup, SWT.NONE)
 				.setText("Do part of the save in the background");
-		dbc.bindValue(SWTObservables.observeSelection(saveInBackgroundButton),
-				BeansObservables.observeValue(realm, data, "saveInBackground"),
+
+		dbc.bindValue(WidgetProperties.buttonSelection().observe(saveInBackgroundButton),
+				BeanProperties.value("saveInBackground").observe(data),
 				null, null);
 
 		Button foregroundExceptionButton = new Button(optionsGroup, SWT.CHECK);
 		new Label(optionsGroup, SWT.NONE)
 				.setText("Throw exception while saving in the foreground");
-		dbc.bindValue(SWTObservables
-				.observeSelection(foregroundExceptionButton), BeansObservables
-				.observeValue(realm, data, "throwExceptionInForeground"), null, null);
+		dbc.bindValue(WidgetProperties.buttonSelection().observe(foregroundExceptionButton),
+
+				BeanProperties.value("throwExceptionInForeground").observe(data), null, null);
 
 		Button backgroundExceptionButton = new Button(optionsGroup, SWT.CHECK);
 		new Label(optionsGroup, SWT.NONE)
 				.setText("Throw exception while saving in the background");
-		dbc.bindValue(SWTObservables
-				.observeSelection(backgroundExceptionButton), BeansObservables
-				.observeValue(realm, data, "throwExceptionInBackground"), null, null);
+		dbc.bindValue(
+				WidgetProperties.buttonSelection().observe(backgroundExceptionButton),
+				BeanProperties.value("throwExceptionInBackground").observe(data), null, null);
+		;
 
 		new Label(optionsGroup, SWT.NONE).setText("Foreground save time:");
 		Text optionsForegroundTime = new Text(optionsGroup, SWT.BORDER);
-		dbc.bindValue(SWTObservables.observeText(optionsForegroundTime,
-				SWT.Modify), BeansObservables.observeValue(realm, data,
-				"foregroundSaveTime"), null, null);
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(optionsForegroundTime),
+				BeanProperties.value("foregroundSaveTime").observe(data), null, null);
 
 		new Label(optionsGroup, SWT.NONE).setText("Background save time:");
 		Text optionsBackgroundTime = new Text(optionsGroup, SWT.BORDER);
-		dbc.bindValue(SWTObservables.observeText(optionsBackgroundTime,
-				SWT.Modify), BeansObservables.observeValue(realm, data,
-				"backgroundSaveTime"), null, null);
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(optionsBackgroundTime),
+				BeanProperties.value("backgroundSaveTime").observe(data), null, null);
 
 		GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(
 				optionsGroup);
@@ -284,7 +285,7 @@ public class TestBackgroundSaveEditor extends EditorPart implements ISaveablesSo
 		inputGroup.setText("Input");
 
 		inputText = new Text(inputGroup, SWT.BORDER | SWT.MULTI);
-		dbc.bindValue(SWTObservables.observeText(inputText, SWT.Modify),
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(inputText),
 				inputObservable, null, null);
 
 		GridLayoutFactory.swtDefaults().generateLayout(inputGroup);

@@ -17,8 +17,8 @@ package org.eclipse.jface.tests.databinding.scenarios;
 
 import static org.junit.Assert.assertEquals;
 
-import org.eclipse.core.databinding.beans.BeansObservables;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.SampleData;
 import org.eclipse.swt.SWT;
@@ -60,8 +60,9 @@ public class ButtonControlScenario extends ScenariosTestCase {
 	@Test
 	public void testScenario01() {
 		// Bind the button's selection to the adventure "isPetsAllowed"
-		getDbc().bindValue(SWTObservables.observeSelection(button),
-				BeansObservables.observeValue(adventure, "petsAllowed"));
+
+		getDbc().bindValue(WidgetProperties.buttonSelection().observe(button),
+				BeanProperties.value("petsAllowed").observe(adventure));
 
 		// Check the model and GUI are in the same state
 		assertEquals(button.getSelection(), adventure.isPetsAllowed());
@@ -90,8 +91,8 @@ public class ButtonControlScenario extends ScenariosTestCase {
 		button.dispose();
 		button = new Button(getComposite(), SWT.TOGGLE);
 		// Bind the button's selection to the adventure "isPetsAllowed"
-		getDbc().bindValue(SWTObservables.observeSelection(button),
-				BeansObservables.observeValue(adventure, "petsAllowed"));
+		getDbc().bindValue(WidgetProperties.buttonSelection().observe(button),
+				BeanProperties.value("petsAllowed").observe(adventure));
 
 		// Check the model and GUI are in the same state
 		assertEquals(button.getSelection(), adventure.isPetsAllowed());
@@ -115,9 +116,8 @@ public class ButtonControlScenario extends ScenariosTestCase {
 		button = new Button(getComposite(), SWT.RADIO);
 
 		// Bind the button's selection to the adventure "isPetsAllowed"
-		getDbc().bindValue(SWTObservables.observeSelection(button),
-				BeansObservables.observeValue(adventure, "petsAllowed"));
-
+		getDbc().bindValue(WidgetProperties.buttonSelection().observe(button),
+				BeanProperties.value("petsAllowed").observe(adventure));
 		// Check the model and GUI are in the same state
 		assertEquals(button.getSelection(), adventure.isPetsAllowed());
 		// Change the model and check the GUI is updated

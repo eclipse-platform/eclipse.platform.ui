@@ -17,9 +17,9 @@ package org.eclipse.jface.tests.databinding.scenarios;
 
 import static org.junit.Assert.assertEquals;
 
-import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.AggregateObservableValue;
 import org.eclipse.jface.examples.databinding.model.SampleData;
@@ -61,12 +61,12 @@ public class CustomScenarios extends ScenariosTestCase {
 		Adventure adventure = SampleData.WINTER_HOLIDAY;
 		Text text = new Text(getComposite(), SWT.BORDER);
 
-		IObservableValue descriptionObservable = BeansObservables.observeValue(adventure, "description");
-		IObservableValue nameObservable = BeansObservables.observeValue(adventure, "name");
+		IObservableValue descriptionObservable = BeanProperties.value("description").observe(adventure);
+
+		IObservableValue nameObservable = BeanProperties.value("name").observe(adventure);
 		AggregateObservableValue customObservable_comma = new AggregateObservableValue(new IObservableValue[] {
 				descriptionObservable, nameObservable }, ",");
-
-		getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify), customObservable_comma);
+		getDbc().bindValue(WidgetProperties.text(SWT.Modify).observe(text), customObservable_comma);
 		// spinEventLoop(1);
 		// Make sure that the description on the model match the widget
 		assertEquals(adventure.getDescription() + "," + adventure.getName(), text.getText());

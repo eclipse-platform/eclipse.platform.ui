@@ -18,8 +18,8 @@ package org.eclipse.jface.tests.databinding.scenarios;
 import static org.junit.Assert.assertEquals;
 
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.beans.BeansObservables;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.PriceModelObject;
 import org.eclipse.jface.examples.databinding.model.SampleData;
@@ -68,15 +68,15 @@ public class CustomConverterScenarios extends ScenariosTestCase {
 		// an intermediate object is used
 		PriceModelObject priceModel = new PriceModelObject();
 
-		dbc.bindValue(BeansObservables.observeValue(priceModel, "price"), BeansObservables.observeValue(skiTrip,
-				"price"));
 
-		dbc.bindValue(SWTObservables.observeSelection(spinner_dollars),
-				BeansObservables.observeValue(priceModel, "dollars"));
+		dbc.bindValue(BeanProperties.value("price").observe(priceModel),
+				BeanProperties.value("price").observe(skiTrip));
 
-		dbc.bindValue(SWTObservables.observeSelection(spinner_cents),
-				BeansObservables.observeValue(priceModel, "cents"));
+		dbc.bindValue(WidgetProperties.spinnerSelection().observe(spinner_dollars),
+				BeanProperties.value("dollars").observe(priceModel));
 
+		dbc.bindValue(WidgetProperties.spinnerSelection().observe(spinner_cents),
+				BeanProperties.value("cents").observe(priceModel));
 		// spinEventLoop(1);
 		// Make sure that the selection on the spinner_dollars matches the
 		// dollars of the price

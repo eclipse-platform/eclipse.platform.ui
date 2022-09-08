@@ -18,9 +18,11 @@ package org.eclipse.jface.tests.databinding.scenarios;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.text.NumberFormat;
+
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.beans.BeansObservables;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.examples.databinding.model.Account;
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.SampleData;
@@ -32,8 +34,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import java.text.NumberFormat;
 
 /**
  * To run the tests in this class, right-click and select "Run As JUnit Plug-in
@@ -76,8 +76,9 @@ public class TextControlScenario extends ScenariosTestCase {
 		// Bind the adventure "name" property to a text field
 		// Change the UI and verify the model changes
 		// Change the model and verify the UI changes
-		getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
-				BeansObservables.observeValue(adventure, "name"));
+		getDbc().bindValue(WidgetProperties.text(SWT.Modify).observe(text),
+				BeanProperties.value("name").observe(adventure));
+
 
 		assertEquals(adventure.getName(), text.getText());
 		text.setText("England");
@@ -98,8 +99,8 @@ public class TextControlScenario extends ScenariosTestCase {
 		// occurs
 		// Change the UI and verify the model changes
 		// Change the model and verify the UI changes
-		getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
-				BeansObservables.observeValue(transportation, "price"));
+		getDbc().bindValue(WidgetProperties.text(SWT.Modify).observe(text),
+				BeanProperties.value("price").observe(transportation));
 
 		NumberFormat numberFormat = NumberFormat.getInstance();
 
@@ -119,7 +120,7 @@ public class TextControlScenario extends ScenariosTestCase {
 //        // the updatePolicy for this test is TIME_LATE so it occurs when focus
 //        // is lost from the Text control
 //        getDbc().bindValue(SWTObservables.observeText(text, SWT.FocusOut),
-//                BeansObservables.observeValue(adventure, "name"),
+//                BeanProperties.value("name").observe(adventure),
 //                null, null);
 //
 //        String currentText = text.getText();
@@ -156,8 +157,8 @@ public class TextControlScenario extends ScenariosTestCase {
 //        // the value will revert
 //        // the updatePolicy for this test is TIME_EARLY so it occurs when each
 //        // keystroke occurs
-//        getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
-//                BeansObservables.observeValue(adventure, "name"),
+//        getDbc().bindValue(		WidgetProperties.text(SWT.Modify).observe(text),
+//                BeanProperties.value("name").observe(adventure),
 //                null, null);
 //
 //        String originalName = adventure.getName();
@@ -277,8 +278,8 @@ public class TextControlScenario extends ScenariosTestCase {
 
 		DataBindingContext dbc = getDbc();
 
-		dbc.bindValue(SWTObservables.observeText(text, SWT.Modify),
-				BeansObservables.observeValue(adventure, "maxNumberOfPeople"),
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(text),
+				BeanProperties.value("maxNumberOfPeople").observe(adventure),
 				new CustomBeanUpdateValueStrategy(), null);
 
 		// make sure we can set a value inside the validator's range
@@ -295,7 +296,8 @@ public class TextControlScenario extends ScenariosTestCase {
 		// Verify direct binding between a Text and Label following bugzilla
 		// 118696
 		Label label = new Label(getComposite(), SWT.NONE);
-		getDbc().bindValue(SWTObservables.observeText(text, SWT.FocusOut), SWTObservables.observeText(label));
+		getDbc().bindValue(WidgetProperties.text(SWT.FocusOut).observe(text),
+				WidgetProperties.text().observe(label));
 
 		// Change the text
 		text.setText("Frog");
@@ -312,7 +314,7 @@ public class TextControlScenario extends ScenariosTestCase {
 		// Verify direct binding between a Text and Label following bugzilla
 		// 118696 with TIME_EARLY
 		Label label = new Label(getComposite(), SWT.NONE);
-		getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify), SWTObservables.observeText(label));
+		getDbc().bindValue(WidgetProperties.text(SWT.Modify).observe(text), WidgetProperties.text().observe(label));
 
 		// Change the text
 		String newTextValue = "Frog";
