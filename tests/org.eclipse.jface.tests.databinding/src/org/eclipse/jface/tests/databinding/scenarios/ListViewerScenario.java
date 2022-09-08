@@ -18,12 +18,10 @@ package org.eclipse.jface.tests.databinding.scenarios;
 import static org.junit.Assert.assertEquals;
 
 import org.eclipse.core.databinding.beans.typed.BeanProperties;
-import org.eclipse.core.databinding.beans.BeansObservables;
-import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
-import org.eclipse.jface.databinding.viewers.ViewersObservables;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.Catalog;
 import org.eclipse.jface.examples.databinding.model.Lodging;
@@ -72,8 +70,8 @@ public class ListViewerScenario extends ScenariosTestCase {
 	@Test
 	public void testScenario01() {
 		// Bind the catalog's lodgings to the combo
-		IObservableList lodgings = BeansObservables.observeList(Realm
-				.getDefault(), catalog, "lodgings");
+
+		IObservableList lodgings = BeanProperties.list("lodgings").observe(catalog);
 		ViewerSupport.bind(listViewer, lodgings, BeanProperties.value(
 				Lodging.class, "name"));
 
@@ -96,10 +94,8 @@ public class ListViewerScenario extends ScenariosTestCase {
 		// of an adventure
 		final Adventure adventure = SampleData.WINTER_HOLIDAY;
 
-		IObservableValue selection = ViewersObservables
-				.observeSingleSelection(listViewer);
-		getDbc().bindValue(selection,
-				BeansObservables.observeValue(adventure, "defaultLodging"));
+		IObservableValue selection = ViewerProperties.singleSelection().observe(listViewer);
+		getDbc().bindValue(selection, BeanProperties.value("defaultLodging").observe(adventure));
 
 		// Verify that the list selection is the default lodging
 		assertEquals(listViewer.getStructuredSelection().getFirstElement(), adventure.getDefaultLodging());

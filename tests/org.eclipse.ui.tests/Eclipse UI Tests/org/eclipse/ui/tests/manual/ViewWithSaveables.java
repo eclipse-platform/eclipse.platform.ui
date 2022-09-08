@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
-import org.eclipse.jface.databinding.viewers.ViewersObservables;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.internal.databinding.provisional.swt.ControlUpdater;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -104,7 +104,9 @@ public class ViewWithSaveables extends ViewPart implements ISaveablesSource,
 				}
 			});
 		}
-		selection = ViewersObservables.observeSingleSelection(viewer);
+
+
+		selection = ViewerProperties.singleSelection().observe(viewer);
 		{
 			final Button button = new Button(parent, SWT.PUSH);
 			button.setText("Remove");

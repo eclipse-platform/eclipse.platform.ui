@@ -21,8 +21,8 @@ import static org.junit.Assert.assertNull;
 
 import java.beans.PropertyChangeListener;
 
-import org.eclipse.core.databinding.beans.BeansObservables;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Text;
 import org.junit.Before;
@@ -57,8 +57,10 @@ public class NPETestScenario extends ScenariosTestCase {
 
 		System.out
 				.println("Expecting message about not being able to attach a listener");
-		getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
-				BeansObservables.observeValue(person, "name"));
+
+
+		getDbc().bindValue(WidgetProperties.text(SWT.Modify).observe(text),
+				BeanProperties.value("name").observe(person));
 
 		text.setText("Brad");
 		text.notifyListeners(SWT.FocusOut, null);

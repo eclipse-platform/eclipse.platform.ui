@@ -17,8 +17,8 @@ package org.eclipse.jface.tests.databinding.scenarios;
 
 import static org.junit.Assert.assertEquals;
 
-import org.eclipse.core.databinding.beans.BeansObservables;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.SampleData;
 import org.eclipse.swt.SWT;
@@ -63,7 +63,10 @@ public class LabelControlScenario extends ScenariosTestCase {
 		// Bind the adventure "name" property to a label control
 		// Change the UI and verify the model and UI are the same value
 		// Change the model and verify the UI changes
-		getDbc().bindValue(SWTObservables.observeText(label), BeansObservables.observeValue(adventure, "name"));
+
+		getDbc().bindValue(WidgetProperties.text().observe(label),
+				BeanProperties.value("name").observe(adventure));
+
 
 		assertEquals(adventure.getName(), label.getText());
 		adventure.setName("France");

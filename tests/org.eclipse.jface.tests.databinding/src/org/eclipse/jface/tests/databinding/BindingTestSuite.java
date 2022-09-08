@@ -41,7 +41,6 @@ import org.eclipse.core.tests.databinding.beans.AnonymousBeanValuePropertyTest;
 import org.eclipse.core.tests.databinding.beans.AnonymousPojoValuePropertyTest;
 import org.eclipse.core.tests.databinding.beans.BeanPropertiesTest;
 import org.eclipse.core.tests.databinding.beans.BeansObservablesTest;
-import org.eclipse.core.tests.databinding.beans.PojoObservablesTest;
 import org.eclipse.core.tests.databinding.beans.PojoPropertiesTest;
 import org.eclipse.core.tests.databinding.beans.SetOnlyJavaBeanTest;
 import org.eclipse.core.tests.databinding.conversion.NumberToStringConverterTest;
@@ -86,20 +85,10 @@ import org.eclipse.core.tests.internal.databinding.DifferentRealmsBindingTest;
 import org.eclipse.core.tests.internal.databinding.IdentityMapTest;
 import org.eclipse.core.tests.internal.databinding.IdentitySetTest;
 import org.eclipse.core.tests.internal.databinding.QueueTest;
-import org.eclipse.core.tests.internal.databinding.beans.BeanObservableListDecoratorTest;
-import org.eclipse.core.tests.internal.databinding.beans.BeanObservableSetDecoratorTest;
-import org.eclipse.core.tests.internal.databinding.beans.BeanObservableValueDecoratorTest;
 import org.eclipse.core.tests.internal.databinding.beans.BeanPropertyHelperTest;
 import org.eclipse.core.tests.internal.databinding.beans.BeanPropertyListenerSupportTest;
 import org.eclipse.core.tests.internal.databinding.beans.BeanPropertyListenerTest;
 import org.eclipse.core.tests.internal.databinding.beans.BeanValuePropertyTest;
-import org.eclipse.core.tests.internal.databinding.beans.JavaBeanObservableArrayBasedListTest;
-import org.eclipse.core.tests.internal.databinding.beans.JavaBeanObservableArrayBasedSetTest;
-import org.eclipse.core.tests.internal.databinding.beans.JavaBeanObservableListTest;
-import org.eclipse.core.tests.internal.databinding.beans.JavaBeanObservableMapTest;
-import org.eclipse.core.tests.internal.databinding.beans.JavaBeanObservableSetTest;
-import org.eclipse.core.tests.internal.databinding.beans.JavaBeanObservableValueTest;
-import org.eclipse.core.tests.internal.databinding.beans.JavaBeanPropertyObservableMapTest;
 import org.eclipse.core.tests.internal.databinding.conversion.DateConversionSupportTest;
 import org.eclipse.core.tests.internal.databinding.conversion.IdentityConverterTest;
 import org.eclipse.core.tests.internal.databinding.conversion.IntegerToStringConverterTest;
@@ -135,9 +124,6 @@ import org.eclipse.core.tests.internal.databinding.observable.masterdetail.Detai
 import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableMapTest;
 import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableSetTest;
 import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableValueTest;
-import org.eclipse.core.tests.internal.databinding.observable.masterdetail.ListDetailValueObservableListTest;
-import org.eclipse.core.tests.internal.databinding.observable.masterdetail.MapDetailValueObservableMapTest;
-import org.eclipse.core.tests.internal.databinding.observable.masterdetail.SetDetailValueObservableMapTest;
 import org.eclipse.core.tests.internal.databinding.property.value.ListSimpleValueObservableListTest;
 import org.eclipse.core.tests.internal.databinding.property.value.MapSimpleValueObservableMapTest;
 import org.eclipse.core.tests.internal.databinding.property.value.SetSimpleValueObservableMapTest;
@@ -158,7 +144,6 @@ import org.eclipse.core.tests.internal.databinding.validation.StringToLongValida
 import org.eclipse.core.tests.internal.databinding.validation.StringToShortValidatorTest;
 import org.eclipse.jface.tests.databinding.preference.PreferencePageSupportTest;
 import org.eclipse.jface.tests.databinding.scenarios.BindingScenariosTestSuite;
-import org.eclipse.jface.tests.databinding.swt.SWTObservablesTest;
 import org.eclipse.jface.tests.databinding.swt.WidgetObservableThreadTest;
 import org.eclipse.jface.tests.databinding.swt.WidgetPropertiesTest;
 import org.eclipse.jface.tests.databinding.viewers.ObservableListContentProviderTest;
@@ -174,14 +159,10 @@ import org.eclipse.jface.tests.examples.databinding.mask.internal.EditMaskLexerA
 import org.eclipse.jface.tests.examples.databinding.mask.internal.EditMaskParserTest;
 import org.eclipse.jface.tests.internal.databinding.swt.ButtonObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.CComboObservableValueSelectionTest;
-import org.eclipse.jface.tests.internal.databinding.swt.CComboObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.CComboObservableValueTextTest;
-import org.eclipse.jface.tests.internal.databinding.swt.CComboSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.CLabelObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.ComboObservableValueSelectionTest;
-import org.eclipse.jface.tests.internal.databinding.swt.ComboObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.ComboObservableValueTextTest;
-import org.eclipse.jface.tests.internal.databinding.swt.ComboSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.ControlObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.DateTimeCalendarObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.DateTimeDateObservableValueTest;
@@ -189,20 +170,14 @@ import org.eclipse.jface.tests.internal.databinding.swt.DateTimeSelectionPropert
 import org.eclipse.jface.tests.internal.databinding.swt.DateTimeTimeObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.GroupObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.LabelObservableValueTest;
-import org.eclipse.jface.tests.internal.databinding.swt.ListSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.LocalDateSelectionPropertyTest;
-import org.eclipse.jface.tests.internal.databinding.swt.SWTDelayedObservableValueDecoratorTest;
 import org.eclipse.jface.tests.internal.databinding.swt.ScaleObservableValueMaxTest;
 import org.eclipse.jface.tests.internal.databinding.swt.ScaleObservableValueMinTest;
 import org.eclipse.jface.tests.internal.databinding.swt.ScaleObservableValueSelectionTest;
-import org.eclipse.jface.tests.internal.databinding.swt.ShellObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.SpinnerObservableValueMaxTest;
 import org.eclipse.jface.tests.internal.databinding.swt.SpinnerObservableValueMinTest;
 import org.eclipse.jface.tests.internal.databinding.swt.SpinnerObservableValueSelectionTest;
-import org.eclipse.jface.tests.internal.databinding.swt.SpinnerObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.StyledTextObservableValueFocusOutTest;
-import org.eclipse.jface.tests.internal.databinding.swt.StyledTextObservableValueTest;
-import org.eclipse.jface.tests.internal.databinding.swt.TableObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.TableSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.TextEditableObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.TextObservableValueFocusOutTest;
@@ -210,12 +185,9 @@ import org.eclipse.jface.tests.internal.databinding.swt.TextObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.viewers.CheckableCheckedElementsObservableSetTest;
 import org.eclipse.jface.tests.internal.databinding.viewers.ObservableCollectionContentProviderTest;
 import org.eclipse.jface.tests.internal.databinding.viewers.ObservableCollectionTreeContentProviderTest;
-import org.eclipse.jface.tests.internal.databinding.viewers.SelectionProviderMultiSelectionObservableListTest;
-import org.eclipse.jface.tests.internal.databinding.viewers.SelectionProviderSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.viewers.ViewerElementMapTest;
 import org.eclipse.jface.tests.internal.databinding.viewers.ViewerElementSetTest;
 import org.eclipse.jface.tests.internal.databinding.viewers.ViewerElementWrapperTest;
-import org.eclipse.jface.tests.internal.databinding.viewers.ViewerInputObservableValueTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -224,17 +196,16 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({ AbstractObservableListTest.class, AbstractObservableMapTest.class, AbstractObservableTest.class,
 		AbstractObservableValueTest.class, AbstractStringToNumberValidatorTest.class, AbstractVetoableValueTest.class,
 		AggregateValidationStatusTest.class, AnonymousBeanValuePropertyTest.class, AnonymousPojoValuePropertyTest.class,
-		BeanObservableListDecoratorTest.class, BeanObservableListDecoratorTest.class,
-		BeanObservableSetDecoratorTest.class, BeanObservableValueDecoratorTest.class, BeanPropertiesTest.class,
+		BeanPropertiesTest.class,
 		BeanPropertyHelperTest.class, BeanPropertyListenerSupportTest.class, BeanPropertyListenerTest.class,
 		BeansObservablesTest.class, BeanValuePropertyTest.class, BidiObservableMapTest.class, BindingMessagesTest.class,
 		BindingScenariosTestSuite.class, BindingStatusTest.class, BindingTest.class, ConformanceTestSuite.class,
-		ButtonObservableValueTest.class, CComboObservableValueSelectionTest.class, CComboObservableValueTest.class,
-		CComboObservableValueTextTest.class, CComboSingleSelectionObservableValueTest.class,
-		CComboSingleSelectionObservableValueTest.class, ChangeSupportTest.class,
+		ButtonObservableValueTest.class, CComboObservableValueSelectionTest.class,
+		CComboObservableValueTextTest.class,
+		ChangeSupportTest.class,
 		CheckableCheckedElementsObservableSetTest.class, CLabelObservableValueTest.class,
-		ComboObservableValueSelectionTest.class, ComboObservableValueTest.class, ComboObservableValueTextTest.class,
-		ComboSingleSelectionObservableValueTest.class, CompositeMapTest.class, ComputedListTest.class,
+		ComboObservableValueSelectionTest.class, ComboObservableValueTextTest.class,
+		CompositeMapTest.class, ComputedListTest.class,
 		ComputedObservableMapTest.class, ComputedSetTest.class, ComputedValueTest.class,
 		ConstantObservableValueTest.class, ControlObservableValueTest.class, ConverterValuePropertyTest.class,
 		DatabindingContextTest.class, DateAndTimeObservableValueTest.class, DateConversionSupportTest.class,
@@ -245,12 +216,9 @@ import org.junit.runners.Suite.SuiteClasses;
 		DetailObservableSetTest.class, DetailObservableValueTest.class, DifferentRealmsBindingTest.class,
 		Diffs_ListDiffTests.class, DiffsTest.class, DuplexingObservableValueTest.class, EditMaskLexerAndTokenTest.class,
 		EditMaskParserTest.class, GroupObservableValueTest.class, IdentityConverterTest.class, IdentityMapTest.class,
-		IdentitySetTest.class, IntegerToStringConverterTest.class, JavaBeanObservableArrayBasedListTest.class,
-		JavaBeanObservableArrayBasedSetTest.class, JavaBeanObservableListTest.class, JavaBeanObservableMapTest.class,
-		JavaBeanObservableSetTest.class, JavaBeanObservableValueTest.class, JavaBeanPropertyObservableMapTest.class,
-		LabelObservableValueTest.class, ListBindingTest.class, ListDetailValueObservableListTest.class,
+		IdentitySetTest.class, IntegerToStringConverterTest.class, LabelObservableValueTest.class,
+		ListBindingTest.class,
 		ListDiffTest.class, ListDiffVisitorTest.class, ListSimpleValueObservableListTest.class,
-		ListSingleSelectionObservableValueTest.class, MapDetailValueObservableMapTest.class,
 		MapEntryObservableValueTest.class, MapSimpleValueObservableMapTest.class, MultiListTest.class,
 		MultiValidatorTest.class, NumberToBigDecimalTest.class, NumberToBigIntegerConverterTest.class,
 		NumberToByteConverterTest.class, NumberToByteValidatorTest.class, NumberToDoubleConverterTest.class,
@@ -263,14 +231,12 @@ import org.junit.runners.Suite.SuiteClasses;
 		ObservableListTest.class, ObservableListTreeContentProviderTest.class, ObservableMapLabelProviderTest.class,
 		ObservableMapTest.class, ObservableSetContentProviderTest.class, ObservableSetTreeContentProviderTest.class,
 		ObservablesManagerTest.class, ObservablesTest.class, ObservableTrackerTest.class,
-		ObservableValueEditingSupportTest.class, PojoObservablesTest.class, PojoPropertiesTest.class, PolicyTest.class,
+		ObservableValueEditingSupportTest.class, PojoPropertiesTest.class, PolicyTest.class,
 		PreferencePageSupportTest.class, QueueTest.class, RealmTest.class, ScaleObservableValueMaxTest.class,
 		ScaleObservableValueMinTest.class, ScaleObservableValueSelectionTest.class,
-		SelectionProviderMultiSelectionObservableListTest.class,
-		SelectionProviderSingleSelectionObservableValueTest.class, SetDetailValueObservableMapTest.class,
-		SetOnlyJavaBeanTest.class, SetSimpleValueObservableMapTest.class, ShellObservableValueTest.class,
+		SetOnlyJavaBeanTest.class, SetSimpleValueObservableMapTest.class,
 		SideEffectTest.class, SpinnerObservableValueMaxTest.class, SpinnerObservableValueMinTest.class,
-		SpinnerObservableValueSelectionTest.class, SpinnerObservableValueTest.class, StatusToStringConverterTest.class,
+		SpinnerObservableValueSelectionTest.class, StatusToStringConverterTest.class,
 		StringToBooleanConverterTest.class, StringToByteConverterTest.class, StringToByteValidatorTest.class,
 		StringToCharacterConverterTest.class, StringToCharacterValidatorTest.class, StringToDoubleValidatorTest.class,
 		StringToFloatValidatorTest.class, StringToIntegerValidatorTest.class, StringToLongValidatorTest.class,
@@ -278,14 +244,13 @@ import org.junit.runners.Suite.SuiteClasses;
 		StringToNumberParserFloatTest.class, StringToNumberParserIntegerTest.class, StringToNumberParserLongTest.class,
 		StringToNumberParserShortTest.class, StringToNumberParserTest.class, StringToShortConverterTest.class,
 		StringToShortValidatorTest.class, StyledTextObservableValueFocusOutTest.class,
-		StyledTextObservableValueTest.class, SWTDelayedObservableValueDecoratorTest.class, SWTObservablesTest.class,
-		TableObservableValueTest.class, TableSingleSelectionObservableValueTest.class,
+		TableSingleSelectionObservableValueTest.class,
 		TextEditableObservableValueTest.class, TextObservableValueFocusOutTest.class, TextObservableValueTest.class,
 		UnmodifiableObservableListTest.class, UnmodifiableObservableSetTest.class,
 		UnmodifiableObservableValueTest.class, UpdateListStrategyTest.class, UpdateSetStrategyTest.class,
 		UpdateStrategyTest.class, UpdateValueStrategyTest.class, ValidatedObservableValueTest.class,
 		ValidationStatusTest.class, ValueBindingTest.class, ViewerElementMapTest.class, ViewerElementSetTest.class,
-		ViewerElementWrapperTest.class, ViewerInputObservableValueTest.class, ViewersObservablesTest.class,
+		ViewerElementWrapperTest.class, ViewersObservablesTest.class,
 		ViewerSupportTest.class, WidgetObservableThreadTest.class, WidgetPropertiesTest.class,
 		WizardPageSupportTest.class, WritableListTest.class, WritableMapTest.class, WritableSetTest.class,
 		WritableValueTest.class })
