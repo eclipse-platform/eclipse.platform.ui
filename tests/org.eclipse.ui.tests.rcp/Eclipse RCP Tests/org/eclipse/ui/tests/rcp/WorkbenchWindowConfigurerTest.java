@@ -154,12 +154,6 @@ public class WorkbenchWindowConfigurerTest {
 						getWindowConfigurer().setShowPerspectiveBar(showPerspectiveBar);
 					}
 
-					@Override
-					@SuppressWarnings("deprecation")
-					public void createWindowContents(Shell shell) {
-						IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
-						configurer.createPageComposite(shell);
-					}
 				};
 			}
 
