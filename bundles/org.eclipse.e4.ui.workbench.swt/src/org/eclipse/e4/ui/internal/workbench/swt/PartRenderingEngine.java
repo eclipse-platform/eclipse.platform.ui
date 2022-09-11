@@ -263,7 +263,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 				}
 			}
 		} else if (UIEvents.isREMOVE(event)) {
-			for (Object o : UIEvents.asIterable(event, UIEvents.EventTags.NEW_VALUE)) {
+			for (Object o : UIEvents.asIterable(event, UIEvents.EventTags.OLD_VALUE)) {
 				MUIElement removed = (MUIElement) o;
 				if (removed.getRenderer() != null) {
 					removeGui(removed);
