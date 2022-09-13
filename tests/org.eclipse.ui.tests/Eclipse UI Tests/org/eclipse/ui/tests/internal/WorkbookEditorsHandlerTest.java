@@ -1,3 +1,17 @@
+/*******************************************************************************
+ * Copyright (c) 2022 vogella GmbH.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     Fabian Pfaff (vogella GmbH) - initial API and implementation
+ ******************************************************************************/
+
 package org.eclipse.ui.tests.internal;
 
 import static java.util.stream.Collectors.toList;
@@ -25,10 +39,6 @@ import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
 
-/**
- * @since 3.5
- *
- */
 public class WorkbookEditorsHandlerTest extends UITestCase {
 
 
