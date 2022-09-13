@@ -118,15 +118,15 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 	 * Generates a mapping of EditorReferences to display label texts. If display
 	 * names collide parent directories will be added until the EditorReference can
 	 * be differentiated from all references that share the same file name. If the
-	 * collisions share multiple paths segments only the first differing path
-	 * segment will be prepended.<br>
+	 * collisions share multiple paths segments the shared path segments are
+	 * omitted.<br>
 	 * <br>
 	 * Example where all collisions share the same segments:
 	 *
 	 * <pre>
-	 * /project/test1/foo/bar/file -> test1/file
-	 * /project/test2/foo/bar/file -> test2/file
-	 * /project/test3/foo/bar/file -> test3/file
+	 * /project/test1/foo/bar/file -> test1/.../file
+	 * /project/test2/foo/bar/file -> test2/.../file
+	 * /project/test3/foo/bar/file -> test3/.../file
 	 * </pre>
 	 *
 	 * Example with differing segments:
@@ -199,8 +199,8 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 					Integer maxMatchingSegment = maxMatchingSegmentsList.get(i);
 					IPath path = groupedEditorReferences.get(i).getValue();
 
-					String labelText = generateLabelText(editorReference, path, differingMaxSegmentsCounter,
-							maxMatchingSegment);
+					String labelText = generateLabelText(editorReference, path, maxMatchingSegment,
+							differingMaxSegmentsCounter.size() == 1);
 					editorReferenceLabelTexts.put(editorReference, labelText);
 				}
 			}
@@ -209,20 +209,29 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 	}
 
 	/**
-	 * Generates the display text for the editor reference.
+	 * Generates the display text for the editor reference. Also see
+	 * {@link #generateColumnLabelTexts(List)}.
 	 *
-	 * @param matchingSegmentCounter contains all unique max segment numbers
-	 * @param maxMatchingSegment     the maximal amount of sections this reference
-	 *                               shares with a conflicting reference
-	 * @param path                   path of the editorReference
+	 * @param editorReference         the EditorReference to generate the label text
+	 *                                for
+	 * @param path                    path of the EditorReference
+	 * @param maxMatchingSegment      the maximal amount of sections this reference
+	 *                                shares with a conflicting reference, including
+	 *                                the file itself
+	 * @param omitMaxMatchingSegments if the match matching segments should be
+	 *                                omitted from the label
 	 * @return the final label text for the editor reference
 	 */
 	private String generateLabelText(EditorReference editorReference, IPath path,
-			Set<Integer> differingMaxSegmentsCounter, Integer maxMatchingSegment) {
+			Integer maxMatchingSegment, boolean omitMaxMatchingSegments) {
 		String labelText;
-		if (differingMaxSegmentsCounter.size() == 1) {
+		if (omitMaxMatchingSegments) {
 			String lastSegment = path.lastSegment();
-			labelText = Path.fromPortableString(path.segment(path.segmentCount() - 1 - maxMatchingSegment))
+			IPath pathSegment = Path.fromPortableString(path.segment(path.segmentCount() - 1 - maxMatchingSegment));
+			if (maxMatchingSegment > 1) {
+				pathSegment = pathSegment.append("/.../"); //$NON-NLS-1$
+			}
+			labelText = pathSegment
 					.append(lastSegment).toOSString();
 		} else {
 			labelText = path.removeFirstSegments(path.segmentCount() - 1 - maxMatchingSegment).toOSString();
