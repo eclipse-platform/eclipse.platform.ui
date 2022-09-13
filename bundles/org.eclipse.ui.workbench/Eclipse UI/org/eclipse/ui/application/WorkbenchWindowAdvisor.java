@@ -269,10 +269,6 @@ public class WorkbenchWindowAdvisor {
 	 * </p>
 	 *
 	 * @param shell the window's shell
-	 * @see IWorkbenchWindowConfigurer#createMenuBar
-	 * @see IWorkbenchWindowConfigurer#createCoolBarControl
-	 * @see IWorkbenchWindowConfigurer#createStatusLineControl
-	 * @see IWorkbenchWindowConfigurer#createPageComposite
 	 * @deprecated This method is no longer used. Applications now define workbench
 	 *             window contents in their application model.
 	 */

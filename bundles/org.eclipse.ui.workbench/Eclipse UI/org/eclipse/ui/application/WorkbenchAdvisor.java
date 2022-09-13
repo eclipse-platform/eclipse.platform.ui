@@ -686,10 +686,6 @@ public abstract class WorkbenchAdvisor {
 	 *
 	 * @param configurer the window configurer
 	 * @param shell      the window's shell
-	 * @see IWorkbenchWindowConfigurer#createMenuBar
-	 * @see IWorkbenchWindowConfigurer#createCoolBarControl
-	 * @see IWorkbenchWindowConfigurer#createStatusLineControl
-	 * @see IWorkbenchWindowConfigurer#createPageComposite
 	 *
 	 * @deprecated since 3.1, override
 	 *             {@link WorkbenchWindowAdvisor#createWindowContents(Shell)}

@@ -30,7 +30,9 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ISelection;
@@ -60,7 +62,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.preferences.ViewSettingsDialog;
 import org.eclipse.ui.views.markers.FilterConfigurationArea;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.osgi.framework.FrameworkUtil;
@@ -72,10 +73,11 @@ import org.osgi.framework.FrameworkUtil;
  * @since 3.3
  *
  */
-public class FiltersConfigurationDialog extends ViewSettingsDialog {
+public class FiltersConfigurationDialog extends TrayDialog {
 
 	private static final String SELECTED_FILTER_GROUP = "SELECTED_FILTER_GROUP"; //$NON-NLS-1$
 	private static final String PREV_SELECTED_ELEMENTS = "PREV_SELECTED_ELEMENTS"; //$NON-NLS-1$
+	private static int DEFAULTS_BUTTON_ID = 25;
 
 	private Collection<MarkerFieldFilterGroup> filterGroups;
 
@@ -116,6 +118,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 		filterGroups = makeWorkingCopy(generator.getAllFilters());
 		this.generator = generator;
 		andFilters = false;
+		setHelpAvailable(false);
 	}
 
 	/**
@@ -165,7 +168,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 
 		createConfigDesc(configComposite);
 
-		createMarkerLimits(composite);
+		createAllConfigArea(composite);
 
 		Label separator = new Label(parent, SWT.HORIZONTAL | SWT.SEPARATOR);
 		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -243,9 +246,11 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 	}
 
 	/**
+	 * Create the area of the dialog that apply's to all configurations.
+	 *
 	 * @param parent
 	 */
-	private void createMarkerLimits(Composite parent) {
+	private void createAllConfigArea(Composite parent) {
 		compositeLimits = new Composite(parent, SWT.NONE);
 		GridLayout glCompositeLimits = new GridLayout(3, false);
 		compositeLimits.setLayout(glCompositeLimits);
@@ -265,7 +270,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 		limitButton.setLayoutData(limitData);
 
 		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout(2, false);
+		GridLayout layout = new GridLayout(3, false);
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		composite.setLayout(layout);
@@ -302,6 +307,14 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 				limitText.setText(Integer.toString(generator.getMarkerLimits()));
 			}
 		});
+
+		Composite defaultButtonComposite = new Composite(composite, SWT.NONE);
+		GridLayout defaultButtonLayout = new GridLayout(1, false);
+		defaultButtonComposite.setLayout(defaultButtonLayout);
+		GridData defaultButtonCompositeData = new GridData(SWT.END, SWT.END, true, false);
+		defaultButtonComposite.setLayoutData(defaultButtonCompositeData);
+
+		createButton(defaultButtonComposite, DEFAULTS_BUTTON_ID, JFaceResources.getString("defaults"), false); //$NON-NLS-1$
 	}
 
 	/**
@@ -678,6 +691,13 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 	}
 
 	@Override
+	protected void buttonPressed(int buttonId) {
+		if (buttonId == DEFAULTS_BUTTON_ID) {
+			performDefaults();
+		}
+		super.buttonPressed(buttonId);
+	}
+
 	protected void performDefaults() {
 		andFilters = false;
 
