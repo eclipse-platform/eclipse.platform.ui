@@ -87,6 +87,8 @@ public class ThemeEngine implements IThemeEngine {
 
 	public static final String E4_DARK_THEME_ID = "org.eclipse.e4.ui.css.theme.e4_dark";
 
+	public static final String DISABLE_OS_DARK_THEME_INHERIT = "org.eclipse.e4.ui.css.theme.disableOSDarkThemeInherit";
+
 	public ThemeEngine(Display display) {
 		this.display = display;
 
@@ -612,10 +614,12 @@ public class ThemeEngine implements IThemeEngine {
 		/*
 		 * Any Platform: if the system has Dark appearance set and Eclipse is using the
 		 * default settings, then start Eclipse in Dark theme. Check that there is a
-		 * dark theme present.
+		 * dark theme present. Can be disabled using a system property.
 		 */
 		boolean hasDarkTheme = getThemes().stream().anyMatch(t -> t.getId().startsWith(E4_DARK_THEME_ID));
-		String themeToRestore = Display.isSystemDarkTheme() && hasDarkTheme ? E4_DARK_THEME_ID : alternateTheme;
+		boolean disableOSDarkThemeInherit = "true".equalsIgnoreCase(System.getProperty(DISABLE_OS_DARK_THEME_INHERIT));
+		boolean overrideWithDarkTheme = Display.isSystemDarkTheme() && hasDarkTheme && !disableOSDarkThemeInherit;
+		String themeToRestore = overrideWithDarkTheme ? E4_DARK_THEME_ID : alternateTheme;
 		if (themeToRestore != null && flag) {
 			setTheme(themeToRestore, false);
 		}

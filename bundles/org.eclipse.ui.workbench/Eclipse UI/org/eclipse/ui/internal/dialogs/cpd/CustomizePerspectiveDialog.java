@@ -32,6 +32,7 @@ import org.eclipse.e4.ui.internal.workbench.OpaqueElementUtil;
 import org.eclipse.e4.ui.internal.workbench.RenderedElementUtil;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
+import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
@@ -129,6 +130,8 @@ import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.actions.NewWizardShortcutAction;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 import org.eclipse.ui.internal.dialogs.cpd.TreeManager.TreeItem;
+import org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor;
+import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.internal.e4.compatibility.ModeledPageLayout;
 import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.registry.ActionSetDescriptor;
@@ -140,7 +143,6 @@ import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.model.WorkbenchViewerComparator;
 import org.eclipse.ui.part.PageBook;
-import org.eclipse.ui.views.IViewCategory;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
 import org.eclipse.ui.wizards.IWizardCategory;
@@ -361,7 +363,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			this.descriptor = descriptor;
 		}
 
-		public ShortcutItem(String label, IViewDescriptor descriptor) {
+		public ShortcutItem(String label, MPartDescriptor descriptor) {
 			super(label, CustomizePerspectiveDialog.getIContributionItem(window));
 			this.descriptor = descriptor;
 		}
@@ -1478,39 +1480,69 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 		shortcuts.addChild(rootForViews);
 
-		IViewRegistry viewReg = WorkbenchPlugin.getDefault().getViewRegistry();
-		IViewCategory[] categories = viewReg.getCategories();
+		List<MPartDescriptor> descriptors = context.get(MApplication.class).getDescriptors();
 
 		List<String> activeIds = Arrays.asList(perspective.getShowViewShortcuts());
 
-		for (IViewCategory category : categories) {
-			if (WorkbenchActivityHelper.filterItem(category)) {
+		Map<String, Category> categories = new HashMap<>();
+
+		for (MPartDescriptor descriptor : descriptors) {
+
+			String category = descriptor.getCategory();
+
+			if (descriptor.getElementId().equals(IIntroConstants.INTRO_VIEW_ID)
+					|| descriptor.getElementId().equals(CompatibilityEditor.MODEL_ELEMENT_ID)) {
+				continue;
+			}
+			if (isFilteredByActivity(descriptor)) {
 				continue;
 			}
 
-			Category viewCategory = new Category(category.getLabel());
-			rootForViews.addChild(viewCategory);
+			ShortcutItem child = new ShortcutItem(descriptor.getLabel(), descriptor);
 
-			IViewDescriptor[] views = category.getViews();
+			child.setImageDescriptor(getImage(descriptor));
+			child.setDescription(descriptor.getTooltip());
+			child.setCheckState(activeIds.contains(descriptor.getElementId()));
+			menu.addChild(child);
 
-			if (views != null) {
-				for (IViewDescriptor view : views) {
-					if (view.getId().equals(IIntroConstants.INTRO_VIEW_ID)) {
-						continue;
-					}
-					if (WorkbenchActivityHelper.filterItem(view)) {
-						continue;
-					}
-
-					ShortcutItem child = new ShortcutItem(view.getLabel(), view);
-					child.setImageDescriptor(view.getImageDescriptor());
-					child.setDescription(view.getDescription());
-					child.setCheckState(activeIds.contains(view.getId()));
-					menu.addChild(child);
-					viewCategory.addShortcutItem(child);
-				}
+			if (category != null && !categories.containsKey(category)) {
+				Category viewCategory = new Category(category);
+				rootForViews.addChild(viewCategory);
+				categories.put(category, viewCategory);
+				categories.get(category).addShortcutItem(child);
+			} else if (category != null) {
+				categories.get(category).addShortcutItem(child);
 			}
 		}
+	}
+
+	private ImageDescriptor getImage(MPartDescriptor element) {
+		String iconURI = element.getIconURI();
+		if (iconURI != null && !iconURI.isBlank()) {
+			ISWTResourceUtilities resUtils = (ISWTResourceUtilities) window.getService(IResourceUtilities.class);
+			return resUtils.imageDescriptorFromURI(URI.createURI(iconURI));
+		}
+		return null;
+	}
+
+	/**
+	 * Evaluates if the view is filtered by an activity
+	 *
+	 * @param elementId
+	 * @return result of the check
+	 */
+	private boolean isFilteredByActivity(MPartDescriptor descriptor) {
+		IViewRegistry viewRegistry = WorkbenchPlugin.getDefault().getViewRegistry();
+
+		// viewRegistry.find(...) already applies a filtering for disabled views
+		boolean isFiltered = viewRegistry.find(descriptor.getElementId()) == null;
+
+		// E3 views can be detected by checking whether they use the compatibility layer
+		boolean isE3View = CompatibilityPart.COMPATIBILITY_VIEW_URI.equals(descriptor.getContributionURI());
+
+		// filtering can only be applied to E3 views, as activities don't exist in the
+		// Eclipse 4.
+		return isE3View && isFiltered;
 	}
 
 	/**
@@ -1636,8 +1668,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		if (object instanceof IPerspectiveDescriptor) {
 			return ((IPerspectiveDescriptor) object).getId();
 		}
-		if (object instanceof IViewDescriptor) {
-			return ((IViewDescriptor) object).getId();
+		if (object instanceof MPartDescriptor) {
+			return ((MPartDescriptor) object).getElementId();
 		}
 		if (object instanceof WorkbenchWizardElement) {
 			return ((WorkbenchWizardElement) object).getLocalId();
@@ -1669,8 +1701,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			}
 
 			if (isShowView(shortcutItem)) {
-				IViewDescriptor descriptor = (IViewDescriptor) shortcutItem.getDescriptor();
-				return descriptor.getId();
+				MPartDescriptor descriptor = (MPartDescriptor) shortcutItem.getDescriptor();
+				return descriptor.getElementId();
 			}
 		}
 
@@ -1695,7 +1727,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		if (!(item instanceof ShortcutItem)) {
 			return false;
 		}
-		return ((ShortcutItem) item).getDescriptor() instanceof IViewDescriptor;
+		return ((ShortcutItem) item).getDescriptor() instanceof MPartDescriptor;
 	}
 
 	private static String getActionSetID(IContributionItem item) {

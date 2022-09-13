@@ -60,6 +60,19 @@ public class JobInfo extends JobTreeElement {
 		this.taskInfo = Optional.empty();
 	}
 
+	@Override
+	public int hashCode() {
+		return job.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof JobInfo) {
+			return job.equals(((JobInfo) obj).job);
+		}
+		return false;
+	}
+
 	/**
 	 * Adds the subtask to the receiver.
 	 *

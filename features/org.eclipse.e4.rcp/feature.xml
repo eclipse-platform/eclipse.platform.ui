@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.e4.rcp"
       label="%featureName"
-      version="4.25.0.qualifier"
+      version="4.26.0.qualifier"
       provider-name="%providerName"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
@@ -576,6 +576,13 @@
 
    <plugin
          id="org.eclipse.equinox.bidi"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.e4.ui.dialogs"
          download-size="0"
          install-size="0"
          version="0.0.0"

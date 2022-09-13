@@ -1333,8 +1333,11 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 
-			if (!progressLabel.isDisposed())
+			if (!progressLabel.isDisposed()) {
 				progressLabel.setText(progressMonitor != null ? progressMonitor.getMessage() : EMPTY_STRING);
+			} else {
+				return Status.CANCEL_STATUS;
+			}
 
 			if (progressMonitor == null || progressMonitor.isDone()) {
 				return new Status(IStatus.CANCEL, PlatformUI.PLUGIN_ID, IStatus.CANCEL, EMPTY_STRING, null);
