@@ -77,6 +77,11 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 	 */
 	private static final String TAG_ACTIVE = "active"; //$NON-NLS-1$
 
+	/**
+	 * Prefix used to mark Editors that are dirty (unsaved changes).
+	 */
+	private static final String DIRTY_PREFIX = "*"; //$NON-NLS-1$
+
 	private SearchPattern searchPattern;
 
 	private Map<EditorReference, String> editorReferenceColumnLabelTexts;
@@ -248,7 +253,7 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 	 */
 	private String prependDirtyIndicationIfDirty(EditorReference editorReference, String labelText) {
 		if (editorReference.isDirty()) {
-			return "*" + labelText; //$NON-NLS-1$
+			return DIRTY_PREFIX + labelText;
 		}
 		return labelText;
 	}
@@ -398,18 +403,27 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 				if (matcher == null || !(viewer instanceof TableViewer)) {
 					return true;
 				}
-				String matchName = null;
+				String editorTitle = null;
+				String editorLabel = null;
 				if (element instanceof EditorReference) {
-					matchName = ((EditorReference) element).getTitle();
-					// skips dirty editor prefix
-					if (matchName.startsWith("*")) { //$NON-NLS-1$
-						matchName = matchName.substring(1);
-					}
+					editorTitle = removeDirtyPrefix(((EditorReference) element).getTitle());
+					editorLabel = removeDirtyPrefix(editorReferenceColumnLabelTexts.get(element));
 				}
+				return (editorTitle != null && matcher.matches(editorTitle))
+						|| (editorLabel != null && matcher.matches(editorLabel));
+			}
+
+			/**
+			 * Removes the dirty prefix if the input is not null and starts with the dirty
+			 * prefix. Otherwise returns the input unchanged.
+			 */
+			private String removeDirtyPrefix(String matchName) {
 				if (matchName == null) {
-					return false;
+					return null;
+				} else if (matchName.startsWith(DIRTY_PREFIX)) {
+					return matchName.substring(1);
 				}
-				return matcher.matches(matchName);
+				return matchName;
 			}
 		};
 	}
