@@ -366,58 +366,6 @@ public class PopupDialog extends Window {
 	 * Constructs a new instance of <code>PopupDialog</code>.
 	 *
 	 * @param parent
-	 *                               The parent shell.
-	 * @param shellStyle
-	 *                               The shell style.
-	 * @param takeFocusOnOpen
-	 *                               A boolean indicating whether focus should be
-	 *                               taken by this popup when it opens.
-	 * @param persistBounds
-	 *                               A boolean indicating whether the bounds (size
-	 *                               and location) of the dialog should be persisted
-	 *                               upon close of the dialog. The bounds can only
-	 *                               be persisted if the dialog settings for
-	 *                               persisting the bounds are also specified. If a
-	 *                               menu action will be provided that allows the
-	 *                               user to control this feature, then the last
-	 *                               known value of the user's setting will be used
-	 *                               instead of this flag.
-	 * @param showDialogMenu
-	 *                               A boolean indicating whether a menu for moving
-	 *                               and resizing the popup should be provided.
-	 * @param showPersistActions
-	 *                               A boolean indicating whether actions allowing
-	 *                               the user to control the persisting of the
-	 *                               dialog size and location should be shown in the
-	 *                               dialog menu. This parameter has no effect if
-	 *                               <code>showDialogMenu</code> is
-	 *                               <code>false</code>.
-	 * @param titleText
-	 *                               Text to be shown in an upper title area, or
-	 *                               <code>null</code> if there is no title.
-	 * @param infoText
-	 *                               Text to be shown in a lower info area, or
-	 *                               <code>null</code> if there is no info area.
-	 *
-	 * @see PopupDialog#getDialogSettings()
-	 * @deprecated As of 3.4, replaced by
-	 *             {@link #PopupDialog(Shell, int, boolean, boolean, boolean, boolean, boolean, String, String)}
-	 *
-	 * @noreference Planned for deletion see
-	 *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=531913
-	 */
-	@Deprecated
-	public PopupDialog(Shell parent, int shellStyle, boolean takeFocusOnOpen,
-			boolean persistBounds, boolean showDialogMenu,
-			boolean showPersistActions, String titleText, String infoText) {
-		this(parent, shellStyle, takeFocusOnOpen, persistBounds, persistBounds,
-				showDialogMenu, showPersistActions, titleText, infoText, false);
-	}
-
-	/**
-	 * Constructs a new instance of <code>PopupDialog</code>.
-	 *
-	 * @param parent
 	 *            The parent shell.
 	 * @param shellStyle
 	 *            The shell style.
@@ -1039,27 +987,6 @@ public class PopupDialog extends Window {
 		if (titleLabel != null) {
 			titleLabel.setText(text);
 		}
-	}
-
-	/**
-	 * Return a boolean indicating whether this dialog will persist its bounds. This
-	 * value is initially set in the dialog's constructor, but can be modified if
-	 * the persist bounds action is shown on the menu and the user has changed its
-	 * value. Subclasses may override this method.
-	 *
-	 * @return <code>true</code> if the dialog's bounds will be persisted,
-	 *         <code>false</code> if it will not.
-	 *
-	 * @deprecated As of 3.4, please use {@link #getPersistLocation()} or
-	 *             {@link #getPersistSize()} to determine separately whether size or
-	 *             location should be persisted.
-	 *
-	 * @noreference Planned for deletion see
-	 *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=531913
-	 */
-	@Deprecated
-	protected boolean getPersistBounds() {
-		return persistLocation && persistSize;
 	}
 
 	/**
