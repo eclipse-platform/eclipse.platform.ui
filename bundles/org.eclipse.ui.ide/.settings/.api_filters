@@ -1,5 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.ui.ide" version="2">
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.ui.dialogs.FileSelectionDialog">
+        <filter comment="Planned API removal" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.dialogs.FileSelectionDialog"/>
+                <message_argument value="org.eclipse.ui.ide_3.20.100"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.ui.dialogs.WizardExportPage">
+        <filter comment="Planned API removal" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.dialogs.WizardExportPage"/>
+                <message_argument value="org.eclipse.ui.ide_3.20.100"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.ui.dialogs.WizardImportPage">
+        <filter comment="Planned API removal" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.dialogs.WizardImportPage"/>
+                <message_argument value="org.eclipse.ui.ide_3.20.100"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/ui/views/navigator/ResourceNavigator.java" type="org.eclipse.ui.views.navigator.ResourceNavigator">
         <filter id="576725006">
             <message_arguments>
