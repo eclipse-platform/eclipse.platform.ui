@@ -179,12 +179,12 @@ public class WorkbookEditorsHandlerTest extends UITestCase {
 
 		handler.execute(event);
 
-		assertEquals("Text should have first differing folder prepended", "test2/" + fileName,
-				handler.tableItemTexts.get(0));
-		assertEquals("Text should have first differing folder prepended", "test1/" + fileName,
-				handler.tableItemTexts.get(1));
+		assertEquals("Text should have first differing folder and the mark for collapsed matching folders prepended",
+				"test2/.../" + fileName, handler.tableItemTexts.get(0));
+		assertEquals("Text should have first differing folder and the mark for collapsed matching folders prepended",
+				"test1/.../" + fileName, handler.tableItemTexts.get(1));
 		assertEquals("Selection should be the editor that was active before the currently active editor",
-				"test1/" + fileName, handler.tableItemTexts.get(1));
+				"test1/.../" + fileName, handler.tableItemTexts.get(1));
 	}
 
 	@Test
