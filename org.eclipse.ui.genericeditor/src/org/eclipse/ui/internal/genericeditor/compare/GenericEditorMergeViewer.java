@@ -19,14 +19,17 @@ import java.util.Set;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.contentmergeviewer.TextMergeViewer;
 import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.internal.genericeditor.ExtensionBasedTextViewerConfiguration;
 import org.eclipse.ui.internal.genericeditor.GenericEditorPlugin;
+import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 
 public class GenericEditorMergeViewer extends TextMergeViewer {
 
@@ -59,7 +62,8 @@ public class GenericEditorMergeViewer extends TextMergeViewer {
 	protected void configureTextViewer(TextViewer textViewer) {
 		if (textViewer.getDocument() != null && textViewer instanceof ISourceViewer) {
 			ExtensionBasedTextViewerConfiguration configuration = new ExtensionBasedTextViewerConfiguration(null,
-					GenericEditorPlugin.getDefault().getPreferenceStore());
+					new ChainedPreferenceStore(new IPreferenceStore[] { EditorsUI.getPreferenceStore(),
+							GenericEditorPlugin.getDefault().getPreferenceStore() }));
 			configuration.setFallbackContentTypes(fallbackContentTypes);
 			((ISourceViewer) textViewer).configure(configuration);
 		}
