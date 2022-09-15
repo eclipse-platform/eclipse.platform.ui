@@ -63,5 +63,6 @@ import org.junit.runners.Suite;
 	Bug540297WorkbenchPageFindViewTest.class,
 	Bug549139Test.class,
 	LargeFileLimitsPreferenceHandlerTest.class,
+	WorkbookEditorsHandlerTest.class,
 })
 public class InternalTestSuite {}
