@@ -1,6 +1,7 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.objectdata;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InaccessibleObjectException;
 import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.List;
@@ -61,10 +62,7 @@ public class JavaAttribute {
 			}
 			return new JavaObject(field.get(object.getInstance())).getAttributes();
 
-		} catch (final IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (final IllegalAccessException e) {
+		} catch (final IllegalArgumentException | IllegalAccessException | InaccessibleObjectException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
