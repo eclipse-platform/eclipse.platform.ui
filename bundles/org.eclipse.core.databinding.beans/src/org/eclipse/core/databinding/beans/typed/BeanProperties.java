@@ -46,11 +46,6 @@ import org.eclipse.core.internal.databinding.beans.BeanValuePropertyDecorator;
  * A factory for creating properties for Java objects that conform to the
  * <a href="http://java.sun.com/products/javabeans/docs/spec.html">JavaBean
  * specification</a> for bound properties.
- * <p>
- * This class is a new version of the deprecated class with the same name in the
- * parent package. The difference is that this class returns typed property
- * objects. This class is located in its own package to be able to coexist with
- * the old version while having the same name.
  *
  * @since 1.5
  */
