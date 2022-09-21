@@ -904,7 +904,6 @@ public class StackRenderer extends LazyStackRenderer {
 
 		// find the 'stale' tab for this element and dispose it
 		if (tabItem != null && !tabItem.isDisposed()) {
-			tabItem.setControl(null);
 			tabItem.dispose();
 		}
 	}
