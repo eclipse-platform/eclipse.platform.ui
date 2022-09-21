@@ -139,22 +139,22 @@
     </iu>
     <iu id='org.eclipse.swtbot.eclipse.feature.group' name='SWTBot for Eclipse Testing (incubation)' version='0.0.0'>
         <repositories size='1'>
-            <repository location='https://download.eclipse.org/releases/latest/'/>
+            <repository location='https://download.eclipse.org/technology/swtbot/snapshots/'/>
         </repositories>
     </iu>
     <iu id='org.eclipse.swtbot.feature.group' name='SWTBot for SWT Testing (incubation)' version='0.0.0'>
         <repositories size='1'>
-            <repository location='https://download.eclipse.org/releases/latest/'/>
+            <repository location='https://download.eclipse.org/technology/swtbot/snapshots/'/>
         </repositories>
     </iu>
     <iu id='org.eclipse.swtbot.ide.feature.group' name='SWTBot IDE Features (incubation)' version='0.0.0'>
         <repositories size='1'>
-            <repository location='https://download.eclipse.org/releases/latest/'/>
+            <repository location='https://download.eclipse.org/technology/swtbot/snapshots/'/>
         </repositories>
     </iu>
     <iu id='org.eclipse.swtbot.eclipse.test.junit.feature.group' name='SWTBot JUnit Headless launchers for Eclipse (incubation)' version='0.0.0'>
         <repositories size='1'>
-            <repository location='https://download.eclipse.org/releases/latest/'/>
+            <repository location='https://download.eclipse.org/technology/swtbot/snapshots/'/>
         </repositories>
     </iu>
     <iu id='org.eclipse.eclemma.feature.feature.group' name='EclEmma Java Code Coverage' version='0.0.0'>
