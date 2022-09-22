@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2019 IBM Corporation and others.
+ * Copyright (c) 2003, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -51,41 +51,29 @@ import org.eclipse.ui.views.IViewDescriptor;
 public class ProgressManagerUtil {
 
 	static class ProgressViewerComparator extends ViewerComparator {
-		private final HashMap<Object, Integer> lastIndexes = new HashMap<>();
-		private final Comparator<Object> byIndex = Comparator.comparing(lastIndexes::get,
+		private final HashMap<JobSnapshot, Integer> lastIndexes = new HashMap<>();
+		private final Comparator<JobSnapshot> byIndex = Comparator.comparing(lastIndexes::get,
 				Comparator.nullsLast(Integer::compare)); // makes visual sort order stable
 
 		@Override
-		@SuppressWarnings({ "rawtypes", "unchecked" })
-		public int compare(Viewer testViewer, Object e1, Object e2) {
-			return ((Comparable) e1).compareTo(e2);
-		}
-
-		@Override
 		public void sort(final Viewer viewer, Object[] elements) {
-			/*
-			 * https://bugs.eclipse.org/371354
-			 *
-			 * JavaSE 7+'s TimSort introduced a breaking change: It now throws a new
-			 * IllegalArgumentException for bad comparators. Workaround is to retry a few
-			 * times.
-			 */
-			for (int retries = 3; retries > 0; retries--) {
-				try {
-					Arrays.sort(elements,
-							byIndex.thenComparing((a, b) -> ProgressViewerComparator.this.compare(viewer, a, b)));
-					lastIndexes.clear();
-					for (int i = 0; i < elements.length; i++) {
-						lastIndexes.put(elements[i], i);
-					}
-					return; // success
-				} catch (IllegalArgumentException e) {
-					// retry
-				}
+			Object[] src = elements.clone();
+			// convert to snapshots
+			JobSnapshot[] snapshots = new JobSnapshot[elements.length];
+			for (int i = 0; i < elements.length; i++) {
+				JobTreeElement jobTreeElement = (JobTreeElement) elements[i];
+				snapshots[i] = new JobSnapshot(jobTreeElement, i);
 			}
-
-			// One last try that will log and throw TimSort's IAE if it happens:
-			super.sort(viewer, elements);
+			// sort
+			Arrays.sort(snapshots, byIndex.thenComparing(JobSnapshot::compareTo));
+			lastIndexes.clear();
+			for (int i = 0; i < snapshots.length; i++) {
+				lastIndexes.put(snapshots[i], i);
+			}
+			// convert back
+			for (int i = 0; i < elements.length; i++) {
+				elements[i] = src[snapshots[i].getIndex()];
+			}
 		}
 	}
 
