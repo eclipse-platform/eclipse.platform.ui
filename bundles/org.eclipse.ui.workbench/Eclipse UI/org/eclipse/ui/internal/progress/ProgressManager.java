@@ -638,6 +638,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 * @param info the updated job info
 	 */
 	public void refreshJobInfo(JobInfo info) {
+		checkForStaleness(info.getJob());
 		synchronized (pendingUpdatesMutex) {
 			Predicate<IJobProgressManagerListener> predicate = listener -> !isNeverDisplaying(info.getJob(), listener.showsDebug());
 			rememberListenersForJob(info, pendingJobUpdates, predicate);
