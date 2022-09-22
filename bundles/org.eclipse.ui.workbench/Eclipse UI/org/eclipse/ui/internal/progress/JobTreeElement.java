@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,7 +19,7 @@ import org.eclipse.swt.graphics.Image;
 /**
  * The JobTreeElement is the abstract superclass of items displayed in the tree.
  */
-public abstract class JobTreeElement implements Comparable<JobTreeElement> {
+public abstract class JobTreeElement {
 	/**
 	 * Returns the parent of this object.
 	 *
@@ -84,11 +84,6 @@ public abstract class JobTreeElement implements Comparable<JobTreeElement> {
 	 * @return boolean
 	 */
 	abstract boolean isJobInfo();
-
-	@Override
-	public int compareTo(JobTreeElement other) {
-		return getDisplayString().compareTo(other.getDisplayString());
-	}
 
 	/**
 	 * Returns whether or not this is currently active.
