@@ -82,7 +82,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 * access to these fields must be via methods, they must be in sync and their
 	 * values should reflect correctly the state of the other
 	 */
-	private IMarker marker;
+	private final IMarker marker;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -355,19 +355,6 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 */
 	void setCategory(MarkerCategory markerCategory) {
 		category = markerCategory;
-	}
-
-	/**
-	 * Set the marker for the receiver.
-	 *
-	 * @param marker
-	 *            The marker to set.
-	 */
-	void setMarker(IMarker marker) {
-		this.marker = marker;
-		// reset stale
-		stale = false;
-		clearCache();
 	}
 
 	/**

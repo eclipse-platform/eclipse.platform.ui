@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -117,10 +116,6 @@ class MarkerFieldFilterGroup {
 	private String name;
 	private String id;
 
-	/**
-	 * The entry for testing filters. Cached to prevent garbage.
-	 */
-	private MarkerEntry testEntry = new MarkerEntry(null);
 	private IWorkingSet workingSet;
 	private IResource[] wSetResources;
 
@@ -572,17 +567,6 @@ class MarkerFieldFilterGroup {
 					MarkerSupportInternalUtilities.getId(filter.getField()));
 			filter.saveSettings(child);
 		}
-	}
-
-	/**
-	 * Return whether or not this IMarker is being shown.
-	 *
-	 * @param marker
-	 * @return <code>true</code> if it is being shown
-	 */
-	public boolean select(IMarker marker) {
-		testEntry.setMarker(marker);
-		return select(testEntry);
 	}
 
 	/**
