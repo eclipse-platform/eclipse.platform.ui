@@ -92,10 +92,10 @@ public class JobInfoTest {
 	@Test
 	public void testCompareToContractCompliance() {
 		for(int xi = 0; xi<this.jobinfos.size(); xi++) {
-			JobSnapshot x = new JobSnapshot(jobinfos.get(xi), 0);
+			JobSnapshot x = new JobSnapshot(jobinfos.get(xi));
 
 			for(int yi = 0; yi<this.jobinfos.size(); yi++) {
-				JobSnapshot y = new JobSnapshot(jobinfos.get(yi), 0);
+				JobSnapshot y = new JobSnapshot(jobinfos.get(yi));
 				int xyResult = x.compareTo(y);
 				int yxResult = y.compareTo(x);
 				// sgn(compare(x, y)) == -sgn(compare(y, x)) for all x and y.
@@ -103,7 +103,7 @@ public class JobInfoTest {
 						Math.round(Math.signum(xyResult)) , Math.round(-Math.signum(yxResult)));
 
 				for(int zi = 0; zi<this.jobinfos.size(); zi++) {
-					JobSnapshot z = new JobSnapshot(jobinfos.get(zi), 0);
+					JobSnapshot z = new JobSnapshot(jobinfos.get(zi));
 					int xzResult = x.compareTo(z);
 					int yzResult = y.compareTo(z);
 					// ((compare(x, y)>0) && (compare(y, z)>0)) implies compare(x, z)>0.

@@ -33,6 +33,9 @@ public class JobSnapshot implements Comparable<JobSnapshot> {
 	private final int state;
 	private final String displayString;
 
+	public JobSnapshot(JobTreeElement reference) {
+		this(reference, 0);
+	}
 	public JobSnapshot(JobTreeElement reference, int index) {
 		this.reference = reference;
 		this.index = index;

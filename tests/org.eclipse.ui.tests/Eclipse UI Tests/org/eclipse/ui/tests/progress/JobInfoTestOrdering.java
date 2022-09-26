@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.internal.progress.JobInfo;
+import org.eclipse.ui.internal.progress.JobSnapshot;
 import org.eclipse.ui.tests.harness.util.TestRunLogUtil;
 import org.junit.Rule;
 import org.junit.Test;
@@ -39,7 +40,7 @@ public class JobInfoTestOrdering {
 	 */
 	@Test
 	public void testJobStateOrdering() {
-		List<JobInfo> jobinfos = new ArrayList<>();
+		List<JobSnapshot> jobinfos = new ArrayList<>();
 		int counter = 0;
 		TestJob job;
 		JobInfo ji;
@@ -50,7 +51,7 @@ public class JobInfoTestOrdering {
 		job.setPriority(Job.INTERACTIVE);
 		job.setInternalJobState(Job.NONE);  // JOB STATE
 		ji = new ExtendedJobInfo(job);
-		jobinfos.add(ji);
+		jobinfos.add(new JobSnapshot(ji));
 
 		job = new TestJob("Job" + (counter++));
 		job.setUser(true);
@@ -58,7 +59,7 @@ public class JobInfoTestOrdering {
 		job.setPriority(Job.INTERACTIVE);
 		job.setInternalJobState(Job.SLEEPING);  // JOB STATE
 		ji = new ExtendedJobInfo(job);
-		jobinfos.add(ji);
+		jobinfos.add(new JobSnapshot(ji));
 
 		job = new TestJob("Job" + (counter++));
 		job.setUser(true);
@@ -66,7 +67,7 @@ public class JobInfoTestOrdering {
 		job.setPriority(Job.INTERACTIVE);
 		job.setInternalJobState(Job.WAITING);  // JOB STATE
 		ji = new ExtendedJobInfo(job);
-		jobinfos.add(ji);
+		jobinfos.add(new JobSnapshot(ji));
 
 		job = new TestJob("Job" + (counter++));
 		job.setUser(true);
@@ -74,13 +75,13 @@ public class JobInfoTestOrdering {
 		job.setPriority(Job.INTERACTIVE);
 		job.setInternalJobState(Job.RUNNING);  // JOB STATE
 		ji = new ExtendedJobInfo(job);
-		jobinfos.add(ji);
+		jobinfos.add(new JobSnapshot(ji));
 
 		jobinfos.sort(null);
-		assertEquals(Job.RUNNING,  jobinfos.get(0).getJob().getState());
-		assertEquals(Job.WAITING,  jobinfos.get(1).getJob().getState());
-		assertEquals(Job.SLEEPING, jobinfos.get(2).getJob().getState());
-		assertEquals(Job.NONE,     jobinfos.get(3).getJob().getState());
+		assertEquals(Job.RUNNING, jobinfos.get(0).getState());
+		assertEquals(Job.WAITING, jobinfos.get(1).getState());
+		assertEquals(Job.SLEEPING, jobinfos.get(2).getState());
+		assertEquals(Job.NONE, jobinfos.get(3).getState());
 	}
 
 	/**
@@ -89,35 +90,35 @@ public class JobInfoTestOrdering {
 	 */
 	@Test
 	public void testJobPriorityOrdering() {
-		List<JobInfo> jobInfos = new ArrayList<>();
+		List<JobSnapshot> jobInfos = new ArrayList<>();
 		Job job;
 
 		job = new TestJob("TestJob");
 		job.setPriority(Job.DECORATE);
-		jobInfos.add(new ExtendedJobInfo(job));
+		jobInfos.add(new JobSnapshot(new ExtendedJobInfo(job)));
 
 		job = new TestJob("TestJob");
 		job.setPriority(Job.BUILD);
-		jobInfos.add(new ExtendedJobInfo(job));
+		jobInfos.add(new JobSnapshot(new ExtendedJobInfo(job)));
 
 		job = new TestJob("TestJob");
 		job.setPriority(Job.LONG);
-		jobInfos.add(new ExtendedJobInfo(job));
+		jobInfos.add(new JobSnapshot(new ExtendedJobInfo(job)));
 
 		job = new TestJob("TestJob");
 		job.setPriority(Job.SHORT);
-		jobInfos.add(new ExtendedJobInfo(job));
+		jobInfos.add(new JobSnapshot(new ExtendedJobInfo(job)));
 
 		job = new TestJob("TestJob");
 		job.setPriority(Job.INTERACTIVE);
-		jobInfos.add(new ExtendedJobInfo(job));
+		jobInfos.add(new JobSnapshot(new ExtendedJobInfo(job)));
 
 		Collections.shuffle(jobInfos);
 		jobInfos.sort(null);
-		assertEquals(Job.INTERACTIVE, jobInfos.get(0).getJob().getPriority());
-		assertEquals(Job.SHORT,       jobInfos.get(1).getJob().getPriority());
-		assertEquals(Job.LONG,        jobInfos.get(2).getJob().getPriority());
-		assertEquals(Job.BUILD,       jobInfos.get(3).getJob().getPriority());
-		assertEquals(Job.DECORATE,    jobInfos.get(4).getJob().getPriority());
+		assertEquals(Job.INTERACTIVE, jobInfos.get(0).getPriority());
+		assertEquals(Job.SHORT, jobInfos.get(1).getPriority());
+		assertEquals(Job.LONG, jobInfos.get(2).getPriority());
+		assertEquals(Job.BUILD, jobInfos.get(3).getPriority());
+		assertEquals(Job.DECORATE, jobInfos.get(4).getPriority());
 	}
 }
