@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,10 +14,7 @@
 
 package org.eclipse.ui.internal.views.markers;
 
-import java.text.CollationKey;
-
 import org.eclipse.core.resources.IMarkerDelta;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.views.markers.MarkerViewUtil;
 import org.eclipse.ui.views.markers.internal.MarkerTypesModel;
 
@@ -29,7 +26,7 @@ import org.eclipse.ui.views.markers.internal.MarkerTypesModel;
  */
 class DeltaMarkerEntry extends MarkerEntry {
 
-	private IMarkerDelta markerDelta;
+	private final IMarkerDelta markerDelta;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -43,22 +40,10 @@ class DeltaMarkerEntry extends MarkerEntry {
 
 	@Override
 	Object getAttributeValue(String attribute) {
-		Object value = getCache().get(attribute);
-		if(value == null) {
-			value = markerDelta.getAttribute(attribute);
-			if(value != null) {
-				getCache().put(attribute, value);
-			}
-		}
-		if (value instanceof CollationKey)
-			return ((CollationKey) value).getSourceString();
+		Object value = getCachedValueOrCompute(attribute, () -> {
+			return markerDelta.getAttribute(attribute);
+		});
 		return value;
-	}
-
-	@Override
-	long getCreationTime() {
-			//return markerDelta.getCreationTime();
-			return super.getCreationTime();
 	}
 
 	@Override
@@ -74,20 +59,9 @@ class DeltaMarkerEntry extends MarkerEntry {
 
 	@Override
 	public String getPath() {
-		String folder = getAttributeValue(MarkerViewUtil.PATH_ATTRIBUTE, null);
-		if (folder != null) {
-			return folder;
-		}
-		IPath path = markerDelta.getResource().getFullPath();
-		int n = path.segmentCount() - 1; // n is the number of segments
-		// in container, not path
-		if (n <= 0) {
-			return super.getPath();
-		}
-		folder = path.removeLastSegments(1).removeTrailingSeparator()
-				.toString();
-		getCache().put(MarkerViewUtil.PATH_ATTRIBUTE, folder);
-		return folder;
+		Object value = getCachedValueOrCompute(MarkerViewUtil.PATH_ATTRIBUTE,
+				() -> super.getPath(markerDelta.getResource()));
+		return (String) value;
 	}
 
 }

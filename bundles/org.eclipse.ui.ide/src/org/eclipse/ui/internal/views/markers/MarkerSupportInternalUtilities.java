@@ -256,7 +256,7 @@ public class MarkerSupportInternalUtilities {
 		}
 		IMarker marker = markerItem.getMarker();
 		Assert.isNotNull(marker);
-		return marker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
+		return markerItem.getAttributeValue(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
 	}
 
 	/**
