@@ -23,8 +23,10 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
+import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
 
 /**
@@ -172,8 +174,10 @@ public class ViewContentProvider implements ITreeContentProvider {
 	 * @return result of the check
 	 */
 	private boolean isFilteredByActivity(MPartDescriptor descriptor) {
-		// viewRegistry.find(...) already applies a filtering for disabled views
-		boolean isFiltered = viewRegistry.find(descriptor.getElementId()) == null;
+		IViewDescriptor view = viewRegistry.find(descriptor.getElementId());
+
+		// viewRegistry.find(...) already applies a filtering for views disabled via core expressions
+		boolean isFiltered = (view == null) || WorkbenchActivityHelper.filterItem(view);
 
 		// E3 views can be detected by checking whether they use the compatibility layer
 		boolean isE3View = CompatibilityPart.COMPATIBILITY_VIEW_URI.equals(descriptor.getContributionURI());
