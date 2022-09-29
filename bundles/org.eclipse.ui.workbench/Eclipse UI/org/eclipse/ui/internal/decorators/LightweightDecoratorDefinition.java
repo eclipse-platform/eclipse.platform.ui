@@ -122,7 +122,10 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements IObj
 						try {
 							decorator = (ILightweightLabelDecorator) WorkbenchPlugin.createExtension(definingElement,
 									DecoratorDefinition.ATT_CLASS);
-							decorator.addListener(WorkbenchPlugin.getDefault().getDecoratorManager());
+							DecoratorManager decoratorManager = WorkbenchPlugin.getDefault().getDecoratorManager();
+							if (decoratorManager != null) {
+								decorator.addListener(decoratorManager);
+							}
 						} catch (CoreException exception) {
 							exceptions[0] = exception;
 						}
