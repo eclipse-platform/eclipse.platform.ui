@@ -28,7 +28,7 @@ public class DelayedErrorContentAssistProcessor implements IContentAssistProcess
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 		}
-		throw new RuntimeException();
+		throw new RuntimeException("Expected Exception for junit test");
 	}
 
 	@Override
