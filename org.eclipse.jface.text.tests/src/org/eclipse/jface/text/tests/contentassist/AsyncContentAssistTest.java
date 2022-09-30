@@ -156,6 +156,10 @@ public class AsyncContentAssistTest {
 		display.timerExec(200, new Runnable() {
 			@Override
 			public void run() {
+				if (control.isDisposed()) {
+					// https://github.com/eclipse-platform/eclipse.platform.text/issues/75#issuecomment-1263429480
+					return; // do not fail other unit tests
+				}
 				control.forceFocus();
 				keyEvent.widget= control;
 				keyEvent.type= SWT.KeyDown;
