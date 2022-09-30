@@ -394,14 +394,12 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 					if (parent != null && parent != element)
 						remove(parent);
 				}
-				if (item != null) {
-					items.remove(element);
-					unmapElement(element);
-				}
+				items.remove(element);
+				unmapElement(element);
 			}
 		}
 		 // also sort again, otherwise removed job may appear at top again:
-		updateItems(items); 
+		updateItems(items);
 	}
 
 	@Override
