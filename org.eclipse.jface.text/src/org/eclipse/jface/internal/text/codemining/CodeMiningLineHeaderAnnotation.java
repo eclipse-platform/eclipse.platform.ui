@@ -88,6 +88,10 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 	 *         label and <code>false</code> otherwise.
 	 */
 	private boolean hasAtLeastOneResolvedMiningNotEmpty() {
+		if (fMinings.stream().anyMatch(m -> m.getLabel() != null)) {
+			return true; // will have a resolved mining.
+		}
+
 		if (fResolvedMinings == null || fResolvedMinings.length == 0) {
 			return false;
 		}
