@@ -84,6 +84,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.model.ResourceFactory;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.FrameworkUtil;
 
@@ -664,7 +665,7 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 		// Need to keep our own list of listeners
 		private ListenerList<ILabelProviderListener> listeners = new ListenerList<>();
 
-		WorkbenchLabelProvider provider = new WorkbenchLabelProvider();
+		ILabelProvider provider = WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider();
 
 		/**
 		 * Creates a new instance of the class
