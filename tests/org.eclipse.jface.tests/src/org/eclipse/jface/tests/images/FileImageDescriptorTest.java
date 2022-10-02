@@ -13,7 +13,7 @@
  *     Karsten Stoeckmann <ngc2997@gmx.net> - Test case for Bug 220766
  *     		[JFace] ImageRegistry.get does not work as expected (crashes with NullPointerException)
  *     Christoph Läubrich - Bug 567898 - [JFace][HiDPI] ImageDescriptor support alternative naming scheme for high dpi
- *     Daniel Kruegler - #375 - High-DPI: FileImageDescriptor's autoscaling strategy unnecessarily restricted to quadratic images
+ *     Daniel Kruegler - #375, #378
  ******************************************************************************/
 
 package org.eclipse.jface.tests.images;
@@ -160,6 +160,18 @@ public class FileImageDescriptorTest extends TestCase {
 		ImageData imageDataZoomed = descriptor.getImageData(200);
 		assertNotNull(imageDataZoomed);
 		assertEquals(imageData.width * 2, imageDataZoomed.width);
+		assertEquals(imageData.height * 2, imageDataZoomed.height);
+	}
+
+	public void testGetxPath150() {
+		ImageDescriptor descriptor = ImageDescriptor.createFromFile(FileImageDescriptorTest.class,
+				"/icons/imagetests/rectangular-57x16.png");
+		ImageData imageData = descriptor.getImageData(100);
+		assertNotNull(imageData);
+		ImageData imageDataZoomed = descriptor.getImageData(150);
+		assertNotNull(imageDataZoomed);
+		assertEquals(Math.round(imageData.width * 1.5), imageDataZoomed.width);
+		assertEquals(Math.round(imageData.height * 1.5), imageDataZoomed.height);
 	}
 
 }
