@@ -11,7 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Christoph Läubrich - Bug 567898 - [JFace][HiDPI] ImageDescriptor support alternative naming scheme for high dpi
- *     Daniel Krügler - #375 - jface High-DPI: FileImageDescriptor's autoscaling strategy unnecessarily restricted to quadratic images
+ *     Daniel Krügler - #375, #378
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
@@ -174,9 +174,9 @@ class FileImageDescriptor extends ImageDescriptor {
 		if (matcher.find()) {
 			try {
 				int currentWidth = Integer.parseInt(matcher.group(1));
-				int desiredWidth = (int) ((zoom / 100d) * currentWidth);
+				int desiredWidth = Math.round((zoom / 100f) * currentWidth);
 				int currentHeight = Integer.parseInt(matcher.group(2));
-				int desiredHeight = (int) ((zoom / 100d) * currentHeight);
+				int desiredHeight = Math.round((zoom / 100f) * currentHeight);
 				String lead = name.substring(0, matcher.start(1));
 				String tail = name.substring(matcher.end(2));
 				return lead + desiredWidth + "x" + desiredHeight + tail; //$NON-NLS-1$
