@@ -13,7 +13,7 @@
  *     Karsten Stoeckmann <ngc2997@gmx.net> - Test case for Bug 220766
  *     		[JFace] ImageRegistry.get does not work as expected (crashes with NullPointerException)
  *     Christoph LÃ¤ubrich - Bug 567898 - [JFace][HiDPI] ImageDescriptor support alternative naming scheme for high dpi
- *     Daniel Kruegler - #375 - High-DPI: FileImageDescriptor's autoscaling strategy unnecessarily restricted to quadratic images
+ *     Daniel Krügler - #375 - High-DPI: FileImageDescriptor's autoscaling strategy unnecessarily restricted to quadratic images
  ******************************************************************************/
 
 package org.eclipse.jface.tests.images;
