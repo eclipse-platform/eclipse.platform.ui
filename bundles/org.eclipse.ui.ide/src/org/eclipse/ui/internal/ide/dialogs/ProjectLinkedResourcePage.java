@@ -19,6 +19,8 @@ import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -27,8 +29,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbenchPropertyPage;
@@ -89,11 +89,11 @@ public class ProjectLinkedResourcePage extends PropertyPage implements
 
 		// createSpace(pageComponent);
 
-		TabFolder tabFolder = new TabFolder(pageComponent, SWT.TOP);
+		CTabFolder tabFolder = new CTabFolder(pageComponent, SWT.TOP);
 		tabFolder.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				TabFolder source = (TabFolder) e.getSource();
+				CTabFolder source = (CTabFolder) e.getSource();
 				if (source.getSelectionIndex() == 1)
 					switchToLinkedResources();
 				else
@@ -110,7 +110,8 @@ public class ProjectLinkedResourcePage extends PropertyPage implements
 		tabFolder.setLayoutData(data);
 		tabFolder.setFont(font);
 
-		TabItem variableItem = new TabItem(tabFolder, SWT.BORDER);
+		CTabItem variableItem = new CTabItem(tabFolder, SWT.BORDER);
+		tabFolder.setSelection(0);
 
 		Composite variableComposite = new Composite(tabFolder, 0);
 		variableComposite.setLayout(new GridLayout());
@@ -129,7 +130,7 @@ public class ProjectLinkedResourcePage extends PropertyPage implements
 		variableItem.setControl(variableComposite);
 		variableItem.setText(IDEWorkbenchMessages.ProjectLinkedResourcePage_pathVariableTabTitle);
 
-		TabItem linkedResourceItem = new TabItem(tabFolder, SWT.BORDER);
+		CTabItem linkedResourceItem = new CTabItem(tabFolder, SWT.BORDER);
 
 		Composite linkedResourceComposite = new Composite(tabFolder, 0);
 		linkedResourceComposite.setLayout(new GridLayout());
