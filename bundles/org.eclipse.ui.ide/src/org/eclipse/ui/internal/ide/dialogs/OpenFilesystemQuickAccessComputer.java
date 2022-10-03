@@ -18,14 +18,11 @@ import java.util.Optional;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ICoreRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.dialogs.OpenResourceQuickAccessComputer.ResourceElement;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.progress.UIJob;
@@ -62,18 +59,11 @@ public class OpenFilesystemQuickAccessComputer implements IQuickAccessComputerEx
 
 		@Override
 		public void execute() {
-			new UIJob(getLabel()) {
-				@Override
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					try {
-						IDE.openEditorOnFileStore(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(),
-								EFS.getStore(file.toURI()));
-					} catch (CoreException e) {
-						return new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, e.getMessage(), e);
-					}
-					return Status.OK_STATUS;
-				}
-			}.schedule();
+			UIJob.create(getLabel(),
+					(ICoreRunnable) m -> IDE.openEditorOnFileStore(
+							PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(),
+							EFS.getStore(file.toURI())))
+					.schedule();
 		}
 
 	}

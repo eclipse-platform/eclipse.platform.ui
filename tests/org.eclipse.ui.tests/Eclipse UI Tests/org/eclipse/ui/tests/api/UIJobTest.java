@@ -75,15 +75,10 @@ public class UIJobTest extends UITestCase {
 		backgroundThreadInterrupted = false;
 		uiJobFinishedBeforeBackgroundThread = false;
 
-		final UIJob testJob = new UIJob("blah blah blah") {
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				backgroundThreadFinishedBeforeUIJob = backgroundThreadFinished;
-				uiJobFinished = true;
-
-				return Status.OK_STATUS;
-			}
-		};
+		final UIJob testJob = UIJob.create("blah blah blah", m -> {
+			backgroundThreadFinishedBeforeUIJob = backgroundThreadFinished;
+			uiJobFinished = true;
+		});
 
 		testJob.setPriority(Job.INTERACTIVE);
 

@@ -25,9 +25,6 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -171,14 +168,11 @@ public class PropertiesContentProvider implements ITreeContentProvider,
 			final IFile file = (IFile) source;
 			if (PROPERTIES_EXT.equals(file.getFileExtension())) {
 				updateModel(file);
-				new UIJob("Update Properties Model in CommonViewer") {  //$NON-NLS-1$
-					@Override
-					public IStatus runInUIThread(IProgressMonitor monitor) {
-						if (viewer != null && !viewer.getControl().isDisposed())
-							viewer.refresh(file);
-						return Status.OK_STATUS;
+				UIJob.create("Update Properties Model in CommonViewer", m -> { //$NON-NLS-1$
+					if (viewer != null && !viewer.getControl().isDisposed()) {
+						viewer.refresh(file);
 					}
-				}.schedule();
+				}).schedule();
 			}
 			return false;
 		}

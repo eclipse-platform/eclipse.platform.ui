@@ -162,26 +162,21 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 		 */
 		if (parentShell == null) {
 			// create the job that will open the dialog after a delay.
-			Job dialogJob = new UIJob(
-					ProgressMessages.EventLoopProgressMonitor_OpenDialogJobName) {
-				@Override
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					if (singleton == null) {
-						return Status.CANCEL_STATUS;
-					}
-					if (ProgressManagerUtil.rescheduleIfModalShellOpen(this,
-							Services.getInstance().getProgressService())) {
-						return Status.CANCEL_STATUS;
-					}
-					singleton.open();
-					return Status.OK_STATUS;
+			Job dialogJob = UIJob.create(ProgressMessages.EventLoopProgressMonitor_OpenDialogJobName, monitor -> {
+				if (singleton == null) {
+					return Status.CANCEL_STATUS;
 				}
-			};
+				Job job = Job.getJobManager().currentJob();
+				if (ProgressManagerUtil.rescheduleIfModalShellOpen(job, Services.getInstance().getProgressService())) {
+					return Status.CANCEL_STATUS;
+				}
+				singleton.open();
+				return Status.OK_STATUS;
+			});
 			// Wait for long operation time to prevent a proliferation
 			// of dialogs
 			dialogJob.setSystem(true);
-			dialogJob.schedule(Services.getInstance().getProgressService()
-					.getLongOperationTime());
+			dialogJob.schedule(Services.getInstance().getProgressService().getLongOperationTime());
 		} else {
 			singleton.open();
 		}

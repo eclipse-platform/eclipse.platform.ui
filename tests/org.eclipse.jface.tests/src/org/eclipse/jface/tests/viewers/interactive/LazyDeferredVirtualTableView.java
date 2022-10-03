@@ -14,9 +14,8 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers.interactive;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.ICoreRunnable;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILazyContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -42,22 +41,16 @@ public class LazyDeferredVirtualTableView extends VirtualTableView {
 
 			int rangeEnd = -1;
 
-			UIJob updateJob = new UIJob("Update") {
-				@Override
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					if (viewer.getControl().isDisposed()) {
-						return Status.CANCEL_STATUS;
-					}
-					int rangeLength = rangeEnd - rangeStart;
-					for (int i = 0; i <= rangeLength; i++) {
-						int index = i + rangeStart;
-						viewer.replace("Element " + index,
-								index);
-					}
-
-					return Status.OK_STATUS;
+			UIJob updateJob = UIJob.create("Update", (ICoreRunnable) m -> {
+				if (viewer.getControl().isDisposed()) {
+					throw new OperationCanceledException();
 				}
-			};
+				int rangeLength = rangeEnd - rangeStart;
+				for (int i = 0; i <= rangeLength; i++) {
+					int index = i + rangeStart;
+					viewer.replace("Element " + index, index);
+				}
+			});
 
 			@Override
 			public void updateElement(int index) {
@@ -115,8 +108,7 @@ public class LazyDeferredVirtualTableView extends VirtualTableView {
 			}
 
 			@Override
-			public void inputChanged(Viewer viewer, Object oldInput,
-					Object newInput) {
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 				// Do nothing.
 			}
 		};

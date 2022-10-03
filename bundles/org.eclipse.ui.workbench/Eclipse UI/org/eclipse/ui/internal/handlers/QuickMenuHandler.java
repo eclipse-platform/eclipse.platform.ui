@@ -18,9 +18,6 @@ package org.eclipse.ui.internal.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IMenuListener2;
 import org.eclipse.jface.action.IMenuManager;
@@ -75,16 +72,10 @@ public class QuickMenuHandler extends AbstractHandler implements IMenuListener2 
 
 	@Override
 	public void menuAboutToHide(final IMenuManager managerM) {
-		new UIJob("quickMenuCleanup") { //$NON-NLS-1$
-
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
+		UIJob.create("quickMenuCleanup", m -> { //$NON-NLS-1$
 				IMenuService service = PlatformUI.getWorkbench().getService(IMenuService.class);
 				service.releaseContributions((ContributionManager) managerM);
-				return Status.OK_STATUS;
-			}
-
-		}.schedule();
+		}).schedule();
 	}
 
 	@Override

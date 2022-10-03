@@ -29,8 +29,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ICoreRunnable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobFunction;
@@ -832,13 +831,8 @@ public final class MutableActivityManager extends AbstractActivityManager
 					}
 				}
 				if (!identifierEventsByIdentifierId.isEmpty()) {
-					UIJob notifyJob = new UIJob("Activity Identifier Update UI") { //$NON-NLS-1$
-						@Override
-						public IStatus runInUIThread(IProgressMonitor monitor) {
-							notifyIdentifiers(identifierEventsByIdentifierId);
-							return Status.OK_STATUS;
-						}
-					};
+					UIJob notifyJob = UIJob.create("Activity Identifier Update UI", //$NON-NLS-1$
+							(ICoreRunnable) m -> notifyIdentifiers(identifierEventsByIdentifierId));
 					notifyJob.setSystem(true);
 					notifyJob.schedule();
 				}

@@ -277,17 +277,12 @@ public class ProgressServiceImpl implements IProgressService {
 	private void scheduleProgressMonitorJob(
 			final ProgressMonitorJobsDialog dialog) {
 
-		final Job updateJob = new UIJob(
-				ProgressMessages.ProgressManager_openJobName) {
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				setUserInterfaceActive(true);
-				if (ProgressManagerUtil.safeToOpen(dialog, null)) {
-					dialog.open();
-				}
-				return Status.OK_STATUS;
+		Job updateJob = UIJob.create(ProgressMessages.ProgressManager_openJobName, monitor -> {
+			setUserInterfaceActive(true);
+			if (ProgressManagerUtil.safeToOpen(dialog, null)) {
+				dialog.open();
 			}
-		};
+		});
 		updateJob.setSystem(true);
 		updateJob.schedule(getLongOperationTime());
 
