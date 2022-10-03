@@ -11,7 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Christoph Läubrich - Bug 567898 - [JFace][HiDPI] ImageDescriptor support alternative naming scheme for high dpi
- *     Daniel Krügler - #375, #378
+ *     Daniel Krügler - #375, #378, #376
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
@@ -51,6 +51,10 @@ class FileImageDescriptor extends ImageDescriptor {
 			String xName = getxName(name, zoom);
 			if (xName != null) {
 				return getFilePath(xName, zoom == 100);
+			}
+			String xPath = getxPath(name, zoom);
+			if (xPath != null) {
+				return getFilePath(xPath, zoom == 100);
 			}
 			return getFilePath(name, zoom == 100);
 		}

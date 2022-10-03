@@ -12,6 +12,8 @@
  *     IBM Corporation - initial API and implementation
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 483465
  *     Christoph Läubrich - Bug 567898 - [JFace][HiDPI] ImageDescriptor support alternative naming scheme for high dpi
+ *     Daniel Krügler - #376 - jface High-DPI: URL/FileImageDescriptor: ImageFileNameProvider implementation
+ *                             should also test for XPATH_PATTERN
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
@@ -56,6 +58,13 @@ class URLImageDescriptor extends ImageDescriptor {
 				URL xUrl = getxURL(tempURL, zoom);
 				if (xUrl != null) {
 					return getFilePath(xUrl, zoom == 100);
+				}
+				String xpath = FileImageDescriptor.getxPath(url, zoom);
+				if (xpath != null) {
+					URL xPathUrl = getURL(xpath);
+					if (xPathUrl != null) {
+						return getFilePath(xPathUrl, zoom == 100);
+					}
 				}
 			}
 			return null;
