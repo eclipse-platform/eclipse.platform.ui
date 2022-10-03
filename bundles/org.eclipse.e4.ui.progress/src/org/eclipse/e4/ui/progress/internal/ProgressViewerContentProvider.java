@@ -96,23 +96,16 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 			}
 
 			@Override
-			public void removed(JobTreeElement jte) {
-				final JobTreeElement element = jte;
-				Job updateJob = new UIJob("Remove finished") {//$NON-NLS-1$
-					@Override
-					public IStatus runInUIThread(IProgressMonitor monitor) {
-						if (element == null) {
-							refresh();
-						} else {
-							ProgressViewerContentProvider.this
-									.remove(new Object[] { element });
-						}
-						return Status.OK_STATUS;
+			public void removed(JobTreeElement element) {
+				Job updateJob = UIJob.create("Remove finished", monitor -> {
+					if (element == null) {
+						refresh();
+					} else {
+						ProgressViewerContentProvider.this.remove(new Object[] { element });
 					}
-				};
+				});
 				updateJob.setSystem(true);
 				updateJob.schedule();
-
 			}
 
 		};

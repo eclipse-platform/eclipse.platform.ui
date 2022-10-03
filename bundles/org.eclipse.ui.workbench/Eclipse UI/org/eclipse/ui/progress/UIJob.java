@@ -10,13 +10,18 @@
  *
  * Contributors:
  *     IBM - Initial API and implementation
+ *     Hannes Wellmann - Add static factories and handle cancel by OperationCanceledException
  *******************************************************************************/
 package org.eclipse.ui.progress;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ICoreRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobFunction;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Display;
@@ -31,6 +36,53 @@ import org.eclipse.ui.internal.progress.ProgressMessages;
  * @since 3.0
  */
 public abstract class UIJob extends Job {
+
+	/**
+	 * Creates a new UIJob that will execute the provided function in the UI thread
+	 * when it runs.
+	 *
+	 * Prefer using {@link UIJob#create(String, ICoreRunnable)}.
+	 *
+	 * @param name     The name of the job
+	 * @param function The function to execute
+	 * @return A UIJob that encapsulates the provided function
+	 * @see IJobFunction
+	 * @since 3.127
+	 */
+	public static UIJob create(String name, IJobFunction function) {
+		return new UIJob(name) {
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				return function.run(monitor);
+			}
+		};
+	}
+
+	/**
+	 * Creates a new UIJob that will execute the provided runnable in the UI thread
+	 * when it runs.
+	 *
+	 * @param name     the name of the job
+	 * @param runnable the runnable to execute
+	 * @return a UIJob that encapsulates the provided runnable
+	 * @see ICoreRunnable
+	 * @since 3.127
+	 */
+	public static UIJob create(String name, ICoreRunnable runnable) {
+		return new UIJob(name) {
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				try {
+					runnable.run(monitor);
+				} catch (CoreException e) {
+					IStatus st = e.getStatus();
+					return new Status(st.getSeverity(), st.getPlugin(), st.getCode(), st.getMessage(), e);
+				}
+				return Status.OK_STATUS;
+			}
+		};
+	}
+
 	private Display cachedDisplay;
 
 	/**
@@ -95,14 +147,14 @@ public abstract class UIJob extends Job {
 					UIStats.start(UIStats.UI_JOB, getName());
 					result = runInUIThread(monitor);
 				}
-
+			} catch (OperationCanceledException e) {
+				result = Status.CANCEL_STATUS;
 			} catch (Throwable t) {
 				throwable = t;
 			} finally {
 				UIStats.end(UIStats.UI_JOB, UIJob.this, getName());
 				if (result == null) {
-					result = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR,
-							ProgressMessages.InternalError, throwable);
+					result = Status.error(ProgressMessages.InternalError, throwable);
 				}
 				done(result);
 			}

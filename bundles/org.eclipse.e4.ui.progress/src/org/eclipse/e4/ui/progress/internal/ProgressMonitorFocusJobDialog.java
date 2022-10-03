@@ -134,18 +134,14 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 				if (getShell() == null) {
 					return;
 				}
-				Job closeJob = new UIJob(
-						ProgressMessages.ProgressMonitorFocusJobDialog_CLoseDialogJob) {
-					@Override
-					public IStatus runInUIThread(IProgressMonitor monitor) {
-						Shell currentShell = getShell();
-						if (currentShell == null || currentShell.isDisposed()) {
-							return Status.CANCEL_STATUS;
-						}
-						finishedRun();
-						return Status.OK_STATUS;
+				Job closeJob = UIJob.create(ProgressMessages.ProgressMonitorFocusJobDialog_CLoseDialogJob, monitor -> {
+					Shell currentShell = getShell();
+					if (currentShell == null || currentShell.isDisposed()) {
+						return Status.CANCEL_STATUS;
 					}
-				};
+					finishedRun();
+					return Status.OK_STATUS;
+				});
 				closeJob.setSystem(true);
 				closeJob.schedule();
 			}
@@ -316,34 +312,28 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 				});
 		job.removeJobChangeListener(jobListener);
 
-		Job openJob = new UIJob(
-				ProgressMessages.ProgressMonitorFocusJobDialog_UserDialogJob) {
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-
-				// if the job is done at this point, we don't need the dialog
-				if (job.getState() == Job.NONE) {
-					finishedRun();
-					cleanUpFinishedJob();
-					return Status.CANCEL_STATUS;
-				}
-
-				// now open the progress dialog if nothing else is
-				if (!ProgressManagerUtil.safeToOpen(
-						ProgressMonitorFocusJobDialog.this, originatingShell)) {
-					return Status.CANCEL_STATUS;
-				}
-
-				// Do not bother if the parent is disposed
-				if (getParentShell() != null && getParentShell().isDisposed()) {
-					return Status.CANCEL_STATUS;
-				}
-
-				open();
-
-				return Status.OK_STATUS;
+		Job openJob = UIJob.create(ProgressMessages.ProgressMonitorFocusJobDialog_UserDialogJob, m -> {
+			// if the job is done at this point, we don't need the dialog
+			if (job.getState() == Job.NONE) {
+				finishedRun();
+				cleanUpFinishedJob();
+				return Status.CANCEL_STATUS;
 			}
-		};
+
+			// now open the progress dialog if nothing else is
+			if (!ProgressManagerUtil.safeToOpen(ProgressMonitorFocusJobDialog.this, originatingShell)) {
+				return Status.CANCEL_STATUS;
+			}
+
+			// Do not bother if the parent is disposed
+			if (getParentShell() != null && getParentShell().isDisposed()) {
+				return Status.CANCEL_STATUS;
+			}
+
+			open();
+
+			return Status.OK_STATUS;
+		});
 		openJob.setSystem(true);
 		openJob.schedule();
 

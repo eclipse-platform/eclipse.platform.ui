@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2017 IBM Corporation and others.
+ * Copyright (c) 2003, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,14 +10,18 @@
  *
  * Contributors:
  *     IBM - Initial API and implementation
+ *     Hannes Wellmann - Add static factories and handle cancel by OperationCanceledException
  *******************************************************************************/
 package org.eclipse.e4.ui.progress;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ICoreRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobFunction;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.progress.internal.ProgressMessages;
@@ -33,6 +37,53 @@ import org.eclipse.swt.widgets.Display;
  * @since 3.0
  */
 public abstract class UIJob extends Job {
+
+	/**
+	 * Creates a new UIJob that will execute the provided function in the UI thread
+	 * when it runs.
+	 *
+	 * Prefer using {@link UIJob#create(String, ICoreRunnable)}.
+	 *
+	 * @param name     The name of the job
+	 * @param function The function to execute
+	 * @return A UIJob that encapsulates the provided function
+	 * @see IJobFunction
+	 * @since 0.3.600
+	 */
+	public static UIJob create(String name, IJobFunction function) {
+		return new UIJob(name) {
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				return function.run(monitor);
+			}
+		};
+	}
+
+	/**
+	 * Creates a new UIJob that will execute the provided runnable in the UI thread
+	 * when it runs.
+	 *
+	 * @param name     the name of the job
+	 * @param runnable the runnable to execute
+	 * @return a UIJob that encapsulates the provided runnable
+	 * @see ICoreRunnable
+	 * @since 0.3.600
+	 */
+	public static UIJob create(String name, ICoreRunnable runnable) {
+		return new UIJob(name) {
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				try {
+					runnable.run(monitor);
+				} catch (CoreException e) {
+					IStatus st = e.getStatus();
+					return new Status(st.getSeverity(), st.getPlugin(), st.getCode(), st.getMessage(), e);
+				}
+				return Status.OK_STATUS;
+			}
+		};
+	}
+
 	private Display cachedDisplay;
 
 	/**
@@ -100,15 +151,15 @@ public abstract class UIJob extends Job {
 					// UIStats.start(UIStats.UI_JOB, getName());
 					result = runInUIThread(monitor);
 				}
-
+			} catch (OperationCanceledException e) {
+				result = Status.CANCEL_STATUS;
 			} catch (Throwable t) {
 				throwable = t;
 			} finally {
 				// TODO E4 - missing e4 replacement
 				// UIStats.end(UIStats.UI_JOB, UIJob.this, getName());
 				if (result == null) {
-					result = new Status(IStatus.ERROR, IProgressConstants.PLUGIN_ID, IStatus.ERROR,
-							ProgressMessages.InternalError, throwable);
+					result = Status.error(ProgressMessages.InternalError, throwable);
 				}
 				done(result);
 			}
@@ -194,8 +245,7 @@ public abstract class UIJob extends Job {
 			errorCode = ce.getStatus().getCode();
 		}
 
-		return new Status(IStatus.ERROR, pluginId, errorCode, message,
-				StatusUtil.getCause(t));
+		return new Status(IStatus.ERROR, pluginId, errorCode, message, StatusUtil.getCause(t));
 	}
 
 	/**

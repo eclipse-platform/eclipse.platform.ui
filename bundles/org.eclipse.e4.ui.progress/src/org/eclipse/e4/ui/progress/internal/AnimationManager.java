@@ -23,9 +23,6 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.ui.progress.UIJob;
@@ -68,19 +65,13 @@ public class AnimationManager {
 
 		animationProcessor = new ProgressAnimationProcessor(this);
 
-		animationUpdateJob = new UIJob(ProgressMessages.AnimationManager_AnimationStart) {
-
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-
-				if (animated) {
-					animationProcessor.animationStarted();
-				} else {
-					animationProcessor.animationFinished();
-				}
-				return Status.OK_STATUS;
+		animationUpdateJob = UIJob.create(ProgressMessages.AnimationManager_AnimationStart, monitor -> {
+			if (animated) {
+				animationProcessor.animationStarted();
+			} else {
+				animationProcessor.animationFinished();
 			}
-		};
+		});
 		animationUpdateJob.setSystem(true);
 
 		listener = getProgressListener();

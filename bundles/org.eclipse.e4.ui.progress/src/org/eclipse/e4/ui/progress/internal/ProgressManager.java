@@ -33,11 +33,11 @@ import java.util.Map.Entry;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.eclipse.core.runtime.ICoreRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
@@ -436,18 +436,10 @@ public class ProgressManager extends ProgressProvider {
 					boolean noDialog = shouldRunInBackground();
 					if (!noDialog) {
 						final IJobChangeEvent finalEvent = event;
-						Job showJob = new UIJob(
-								ProgressMessages.ProgressManager_showInDialogName) {
-							@Override
-							public IStatus runInUIThread(
-									IProgressMonitor monitor) {
-								progressService.showInDialog(null, finalEvent.getJob());
-								return Status.OK_STATUS;
-							}
-						};
+						Job showJob = UIJob.create(ProgressMessages.ProgressManager_showInDialogName,
+								(ICoreRunnable) m -> progressService.showInDialog(null, finalEvent.getJob()));
 						showJob.setSystem(true);
 						showJob.schedule();
-						return;
 					}
 				}
 			}

@@ -31,11 +31,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -187,16 +184,13 @@ public class TestContentProvider implements ITreeContentProvider,
 			return true;
 		case IResource.FILE:
 			final IFile file = (IFile) source;
-				if ("model.properties".equals(file.getName())) {
+			if ("model.properties".equals(file.getName())) {
 				updateModel(file);
-				new UIJob("Update Test Model in CommonViewer") {
-					@Override
-					public IStatus runInUIThread(IProgressMonitor monitor) {
-						if (viewer != null && !viewer.getControl().isDisposed())
-							viewer.refresh(file.getParent());
-						return Status.OK_STATUS;
+				UIJob.create("Update Test Model in CommonViewer", m -> {
+					if (viewer != null && !viewer.getControl().isDisposed()) {
+						viewer.refresh(file.getParent());
 					}
-				}.schedule();
+				}).schedule();
 			}
 			return false;
 		}
