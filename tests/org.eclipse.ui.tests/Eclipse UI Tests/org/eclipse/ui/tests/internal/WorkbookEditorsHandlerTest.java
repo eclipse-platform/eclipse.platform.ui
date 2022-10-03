@@ -180,11 +180,11 @@ public class WorkbookEditorsHandlerTest extends UITestCase {
 		handler.execute(event);
 
 		assertEquals("Text should have first differing folder and the mark for collapsed matching folders prepended",
-				"test2/.../" + fileName, handler.tableItemTexts.get(0));
+				"test2" + File.separator + "..." + File.separator + fileName, handler.tableItemTexts.get(0));
 		assertEquals("Text should have first differing folder and the mark for collapsed matching folders prepended",
-				"test1/.../" + fileName, handler.tableItemTexts.get(1));
+				"test1" + File.separator + "..." + File.separator + fileName, handler.tableItemTexts.get(1));
 		assertEquals("Selection should be the editor that was active before the currently active editor",
-				"test1/.../" + fileName, handler.tableItemTexts.get(1));
+				"test1" + File.separator + "..." + File.separator + fileName, handler.tableItemTexts.get(1));
 	}
 
 	@Test
@@ -209,15 +209,18 @@ public class WorkbookEditorsHandlerTest extends UITestCase {
 
 		handler.execute(event);
 
-		assertEquals("Text should have parent folder prepended", "bar/" + fileName,
+		assertEquals("Text should have parent folder prepended", "bar" + File.separator + fileName,
 				handler.tableItemTexts.get(0));
-		assertEquals("Text should have full folder chain until differing folder prepended", path2 + fileName,
+		assertEquals("Text should have full folder chain until differing folder prepended",
+				String.join(File.separator, "test2", "foo", "bar", "baz", fileName),
 				handler.tableItemTexts.get(1));
-		assertEquals("Text should have full folder chain until differing folder prepended", path1 + fileName,
+		assertEquals("Text should have full folder chain until differing folder prepended",
+				String.join(File.separator, "test1", "foo", "bar", "baz", fileName),
 				handler.tableItemTexts.get(2));
 		assertEquals("There should only ever be one selected editor", 1, handler.selectionTexts.size());
 		assertEquals("Selection should be the editor that was active before the currently active editor",
-				path2 + fileName, handler.tableItemTexts.get(1));
+				String.join(File.separator, "test2", "foo", "bar", "baz", fileName),
+				handler.tableItemTexts.get(1));
 	}
 
 	class WorkbookEditorsHandlerTestable extends WorkbookEditorsHandler {
