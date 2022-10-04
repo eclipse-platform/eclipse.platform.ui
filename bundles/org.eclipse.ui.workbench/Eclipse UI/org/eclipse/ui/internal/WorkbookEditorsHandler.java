@@ -16,6 +16,8 @@
 
 package org.eclipse.ui.internal;
 
+import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,7 +30,7 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -81,6 +83,12 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 	 * Prefix used to mark Editors that are dirty (unsaved changes).
 	 */
 	private static final String DIRTY_PREFIX = "*"; //$NON-NLS-1$
+
+	/**
+	 * Used to signify that matching path segments have been omitted from modified
+	 * file paths.
+	 */
+	private static final String OMMITED_PATH_SEGMENTS_SIGNIFIER = "..."; //$NON-NLS-1$
 
 	private SearchPattern searchPattern;
 
@@ -205,7 +213,7 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 					IPath path = groupedEditorReferences.get(i).getValue();
 
 					String labelText = generateLabelText(editorReference, path, maxMatchingSegment,
-							differingMaxSegmentsCounter.size() == 1);
+							differingMaxSegmentsCounter.size() == 1 && maxMatchingSegment != 0);
 					editorReferenceLabelTexts.put(editorReference, labelText);
 				}
 			}
@@ -230,18 +238,44 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 	private String generateLabelText(EditorReference editorReference, IPath path,
 			Integer maxMatchingSegment, boolean omitMaxMatchingSegments) {
 		String labelText;
+		java.nio.file.Path npath = path.toFile().toPath();
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			npath = removeWindowsDriveLetter(npath);
+		}
 		if (omitMaxMatchingSegments) {
-			String lastSegment = path.lastSegment();
-			IPath pathSegment = Path.fromPortableString(path.segment(path.segmentCount() - 1 - maxMatchingSegment));
+			String lastSegment = npath.getFileName().toString();
+			StringBuilder pathSegment = new StringBuilder(getPathSegment(maxMatchingSegment, npath).toString());
 			if (maxMatchingSegment > 1) {
-				pathSegment = pathSegment.append("/.../"); //$NON-NLS-1$
+				pathSegment = pathSegment.append(File.separator).append(OMMITED_PATH_SEGMENTS_SIGNIFIER);
 			}
-			labelText = pathSegment
-					.append(lastSegment).toOSString();
+			labelText = pathSegment.append(File.separator).append(lastSegment).toString();
 		} else {
-			labelText = path.removeFirstSegments(path.segmentCount() - 1 - maxMatchingSegment).toOSString();
+			labelText = npath.subpath(npath.getNameCount() - 1 - maxMatchingSegment, npath.getNameCount()).toString();
 		}
 		return prependDirtyIndicationIfDirty(editorReference, labelText);
+	}
+
+	/**
+	 * @param segmentIndex Index of the segment to retrieve
+	 * @param path         Path to retrieve the segment from
+	 * @return Path segment at the given segmentIndex
+	 */
+	private Path getPathSegment(Integer segmentIndex, java.nio.file.Path path) {
+		return path.subpath(path.getNameCount() - 1 - segmentIndex, path.getNameCount() - segmentIndex);
+	}
+
+	/**
+	 * Removed the Windows Drive letter from the Path.
+	 * <br/>
+	 * <br/>
+	 * Example:<br/>
+	 * {@code C:\git\project\file => git\project\file}
+	 * 
+	 * @param path Path to remove the Windows drive letter from
+	 * @return path Path without the Windows drive letter segment
+	 */
+	private java.nio.file.Path removeWindowsDriveLetter(java.nio.file.Path path) {
+		return path.getRoot().relativize(path);
 	}
 
 	/**

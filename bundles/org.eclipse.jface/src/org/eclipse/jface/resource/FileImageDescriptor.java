@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Christoph Läubrich - Bug 567898 - [JFace][HiDPI] ImageDescriptor support alternative naming scheme for high dpi
+ *     Daniel Krügler - #375, #378
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
@@ -172,11 +173,13 @@ class FileImageDescriptor extends ImageDescriptor {
 		Matcher matcher = XPATH_PATTERN.matcher(name);
 		if (matcher.find()) {
 			try {
-				int current = Integer.parseInt(matcher.group(1));
-				int desired = (int) ((zoom / 100d) * current);
+				int currentWidth = Integer.parseInt(matcher.group(1));
+				int desiredWidth = Math.round((zoom / 100f) * currentWidth);
+				int currentHeight = Integer.parseInt(matcher.group(2));
+				int desiredHeight = Math.round((zoom / 100f) * currentHeight);
 				String lead = name.substring(0, matcher.start(1));
 				String tail = name.substring(matcher.end(2));
-				return lead + desired + "x" + desired + tail; //$NON-NLS-1$
+				return lead + desiredWidth + "x" + desiredHeight + tail; //$NON-NLS-1$
 			} catch (RuntimeException e) {
 				// should never happen but if then we can't use the alternative name...
 			}

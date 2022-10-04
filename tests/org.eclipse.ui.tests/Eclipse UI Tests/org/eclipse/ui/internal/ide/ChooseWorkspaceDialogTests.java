@@ -15,6 +15,7 @@ package org.eclipse.ui.internal.ide;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,8 +44,18 @@ public class ChooseWorkspaceDialogTests {
 				"//some//location1//",
 		};
 		String[] expectedFilteredPaths = { "some/location1/", "/some/location1/", "/some/location2/", };
+		adoptToWindows(testPaths);
+		adoptToWindows(expectedFilteredPaths);
 		List<String> actualFilteredPaths = ChooseWorkspaceDialog.filterDuplicatedPaths(testPaths);
 		assertEquals("Non-unique paths were not filtered as expected", Arrays.asList(expectedFilteredPaths),
 				actualFilteredPaths);
+	}
+
+	static void adoptToWindows(String[] paths) {
+		if (File.separatorChar == '\\') {
+			for (int i = 0; i < paths.length; i++) {
+				paths[i] = paths[i].replace('/', '\\');
+			}
+		}
 	}
 }
