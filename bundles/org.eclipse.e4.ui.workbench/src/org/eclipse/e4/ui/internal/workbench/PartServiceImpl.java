@@ -627,6 +627,7 @@ public class PartServiceImpl implements EPartService {
 
 				modelService.bringToTop(target);
 				activate(target, true, false);
+				UIEvents.publishEvent(UIEvents.UILifeCycle.PERSPECTIVE_SWITCHED, perspective);
 				return;
 			}
 
@@ -637,6 +638,7 @@ public class PartServiceImpl implements EPartService {
 				if (candidate != null) {
 					modelService.bringToTop(candidate);
 					activate(candidate, true, false);
+					UIEvents.publishEvent(UIEvents.UILifeCycle.PERSPECTIVE_SWITCHED, perspective);
 					return;
 				}
 			}
@@ -653,6 +655,7 @@ public class PartServiceImpl implements EPartService {
 					}
 				}
 				activate(newActivePart, true, false);
+				UIEvents.publishEvent(UIEvents.UILifeCycle.PERSPECTIVE_SWITCHED, perspective);
 			}
 		}
 	}
