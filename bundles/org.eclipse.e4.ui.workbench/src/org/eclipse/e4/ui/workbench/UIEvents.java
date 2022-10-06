@@ -317,6 +317,13 @@ public class UIEvents {
 		String PERSPECTIVE_RESET = TOPIC + TOPIC_SEP + "perspReset"; //$NON-NLS-1$
 
 		/**
+		 * Sent when a perspective is switched
+		 *
+		 * @since 1.14
+		 */
+		String PERSPECTIVE_SWITCHED = TOPIC + TOPIC_SEP + "perspSwitched"; //$NON-NLS-1$
+
+		/**
 		 * Sent when application startup is complete
 		 */
 		String APP_STARTUP_COMPLETE = TOPIC + TOPIC_SEP + "appStartupComplete"; //$NON-NLS-1$
