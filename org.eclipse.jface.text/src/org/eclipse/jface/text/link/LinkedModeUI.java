@@ -35,6 +35,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.text.undo.DocumentUndoEvent;
 import org.eclipse.text.undo.DocumentUndoManagerRegistry;
 import org.eclipse.text.undo.IDocumentUndoListener;
+import org.eclipse.text.undo.IDocumentUndoManager;
 
 import org.eclipse.jface.internal.text.link.contentassist.ContentAssistant2;
 import org.eclipse.jface.internal.text.link.contentassist.IProposalListener;
@@ -1010,7 +1011,10 @@ public class LinkedModeUI {
 
 		viewer.getDocument().addDocumentListener(fDocumentListener);
 
-		DocumentUndoManagerRegistry.getDocumentUndoManager(viewer.getDocument()).addDocumentUndoListener(fCloser);
+		IDocumentUndoManager undoManager= DocumentUndoManagerRegistry.getDocumentUndoManager(viewer.getDocument());
+		if (undoManager != null) {
+			undoManager.addDocumentUndoListener(fCloser);
+		}
 	}
 
 	/**
@@ -1153,7 +1157,10 @@ public class LinkedModeUI {
 
 		((IPostSelectionProvider) viewer).removePostSelectionChangedListener(fSelectionListener);
 
-		DocumentUndoManagerRegistry.getDocumentUndoManager(viewer.getDocument()).removeDocumentUndoListener(fCloser);
+		IDocumentUndoManager undoManager= DocumentUndoManagerRegistry.getDocumentUndoManager(viewer.getDocument());
+		if (undoManager != null) {
+			undoManager.removeDocumentUndoListener(fCloser);
+		}
 
 		redraw();
 	}
