@@ -51,16 +51,36 @@ public class UrlImageDescriptorTest extends TestCase {
 		assertTrue("URLImageDescriptor does not implement IAdaptable", descriptor instanceof IAdaptable);
 		IAdaptable adaptable = (IAdaptable) descriptor;
 		ImageFileNameProvider fileNameProvider = adaptable.getAdapter(ImageFileNameProvider.class);
-		assertNotNull(fileNameProvider);
+		assertNotNull("URLImageDescriptor does not adapt to ImageFileNameProvider", fileNameProvider);
 		String imagePath100 = fileNameProvider.getImagePath(100);
-		assertNotNull(imagePath100);
+		assertNotNull("URLImageDescriptor ImageFileNameProvider does not return the 100% path", imagePath100);
 		assertEquals(Path.fromOSString(imagePath100).lastSegment(), "rectangular-57x16.png");
 		String imagePath200 = fileNameProvider.getImagePath(200);
-		assertNotNull(imagePath200);
+		assertNotNull("URLImageDescriptor ImageFileNameProvider does not return the 200% path", imagePath200);
 		assertEquals(Path.fromOSString(imagePath200).lastSegment(), "rectangular-114x32.png");
 		String imagePath150 = fileNameProvider.getImagePath(150);
-		assertNotNull(imagePath150);
+		assertNotNull("URLImageDescriptor ImageFileNameProvider does not return the 150% path", imagePath150);
 		assertEquals(Path.fromOSString(imagePath150).lastSegment(), "rectangular-86x24.png");
+		String imagePath250 = fileNameProvider.getImagePath(250);
+		assertNull("URLImageDescriptor's ImageFileNameProvider does return a 250% path", imagePath250);
+	}
+
+	public void testImageFileNameProviderGetxName() {
+		ImageDescriptor descriptor = ImageDescriptor
+				.createFromURL(FileImageDescriptorTest.class.getResource("/icons/imagetests/zoomIn.png"));
+
+		assertTrue("URLImageDescriptor does not implement IAdaptable", descriptor instanceof IAdaptable);
+		IAdaptable adaptable = (IAdaptable) descriptor;
+		ImageFileNameProvider fileNameProvider = adaptable.getAdapter(ImageFileNameProvider.class);
+		assertNotNull("URLImageDescriptor does not adapt to ImageFileNameProvider", fileNameProvider);
+		String imagePath100 = fileNameProvider.getImagePath(100);
+		assertNotNull("URLImageDescriptor ImageFileNameProvider does not return the 100% path", imagePath100);
+		assertEquals(Path.fromOSString(imagePath100).lastSegment(), "zoomIn.png");
+		String imagePath200 = fileNameProvider.getImagePath(200);
+		assertNotNull("URLImageDescriptor ImageFileNameProvider does not return the 200% path", imagePath200);
+		assertEquals(Path.fromOSString(imagePath200).lastSegment(), "zoomIn@2x.png");
+		String imagePath150 = fileNameProvider.getImagePath(150);
+		assertNull("URLImageDescriptor's ImageFileNameProvider does return a 150% path", imagePath150);
 	}
 
 }

@@ -55,15 +55,22 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 		public String getImagePath(int zoom) {
 			URL tempURL = getURL(url);
 			if (tempURL != null) {
+				final boolean logIOException = zoom == 100;
+				if (zoom == 100) {
+					return getFilePath(tempURL, logIOException);
+				}
 				URL xUrl = getxURL(tempURL, zoom);
 				if (xUrl != null) {
-					return getFilePath(xUrl, zoom == 100);
+					String xResult = getFilePath(xUrl, logIOException);
+					if (xResult != null) {
+						return xResult;
+					}
 				}
 				String xpath = FileImageDescriptor.getxPath(url, zoom);
 				if (xpath != null) {
 					URL xPathUrl = getURL(xpath);
 					if (xPathUrl != null) {
-						return getFilePath(xPathUrl, zoom == 100);
+						return getFilePath(xPathUrl, logIOException);
 					}
 				}
 			}

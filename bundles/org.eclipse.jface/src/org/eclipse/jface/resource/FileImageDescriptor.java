@@ -49,15 +49,25 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable {
 	private class ImageProvider implements ImageFileNameProvider {
 		@Override
 		public String getImagePath(int zoom) {
+			final boolean logIOException = zoom == 100;
+			if (zoom == 100) {
+				return getFilePath(name, logIOException);
+			}
 			String xName = getxName(name, zoom);
 			if (xName != null) {
-				return getFilePath(xName, zoom == 100);
+				String xResult = getFilePath(xName, logIOException);
+				if (xResult != null) {
+					return xResult;
+				}
 			}
 			String xPath = getxPath(name, zoom);
 			if (xPath != null) {
-				return getFilePath(xPath, zoom == 100);
+				String xResult = getFilePath(xPath, logIOException);
+				if (xResult != null) {
+					return xResult;
+				}
 			}
-			return getFilePath(name, zoom == 100);
+			return null;
 		}
 	}
 
