@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2020 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,7 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Christoph Läubrich - Bug 567898 - [JFace][HiDPI] ImageDescriptor support alternative naming scheme for high dpi
- *     Daniel Krügler - #375, #378, #376
+ *     Daniel Krügler - #375, #376, #378, #396
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
@@ -26,6 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
@@ -41,7 +42,7 @@ import org.eclipse.swt.graphics.ImageFileNameProvider;
 /**
  * An image descriptor that loads its image information from a file.
  */
-class FileImageDescriptor extends ImageDescriptor {
+class FileImageDescriptor extends ImageDescriptor implements IAdaptable {
 
 	private static final Pattern XPATH_PATTERN = Pattern.compile("(\\d+)x(\\d+)"); //$NON-NLS-1$
 
@@ -294,5 +295,14 @@ class FileImageDescriptor extends ImageDescriptor {
 			}
 			return null;
 		}
+	}
+
+	@Override
+	public <T> T getAdapter(Class<T> adapter) {
+		if (adapter == ImageFileNameProvider.class) {
+			// Support testing ImageFileNameProvider characteristics, see #396
+			return adapter.cast(new ImageProvider());
+		}
+		return null;
 	}
 }

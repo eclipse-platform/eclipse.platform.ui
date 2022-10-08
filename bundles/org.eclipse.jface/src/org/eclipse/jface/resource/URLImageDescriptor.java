@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2020 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,8 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 483465
  *     Christoph Läubrich - Bug 567898 - [JFace][HiDPI] ImageDescriptor support alternative naming scheme for high dpi
- *     Daniel Krügler - #376 - jface High-DPI: URL/FileImageDescriptor: ImageFileNameProvider implementation
- *                             should also test for XPATH_PATTERN
+ *     Daniel Krügler - #376, #396
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
@@ -24,6 +23,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
@@ -42,7 +42,7 @@ import org.eclipse.swt.graphics.ImageFileNameProvider;
  * public API. Use ImageDescriptor#createFromURL to create a descriptor that
  * uses a URL.
  */
-class URLImageDescriptor extends ImageDescriptor {
+class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 
 	private static class URLImageFileNameProvider implements ImageFileNameProvider {
 		private String url;
@@ -342,6 +342,15 @@ class URLImageDescriptor extends ImageDescriptor {
 			Policy.getLog().log(new Status(IStatus.ERROR, Policy.JFACE, e.getLocalizedMessage(), e));
 		}
 		return result;
+	}
+
+	@Override
+	public <T> T getAdapter(Class<T> adapter) {
+		if (adapter == ImageFileNameProvider.class) {
+			// Support testing ImageFileNameProvider characteristics, see #396
+			return adapter.cast(new URLImageFileNameProvider(url));
+		}
+		return null;
 	}
 
 }
