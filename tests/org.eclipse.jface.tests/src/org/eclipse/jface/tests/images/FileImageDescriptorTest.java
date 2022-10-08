@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2020 IBM Corporation and others.
+ * Copyright (c) 2008, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,7 +13,7 @@
  *     Karsten Stoeckmann <ngc2997@gmx.net> - Test case for Bug 220766
  *     		[JFace] ImageRegistry.get does not work as expected (crashes with NullPointerException)
  *     Christoph Läubrich - Bug 567898 - [JFace][HiDPI] ImageDescriptor support alternative naming scheme for high dpi
- *     Daniel Kruegler - #375, #378
+ *     Daniel Kruegler - #375, #378, #396
  ******************************************************************************/
 
 package org.eclipse.jface.tests.images;
@@ -25,10 +25,12 @@ import java.util.Enumeration;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageFileNameProvider;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
@@ -172,6 +174,24 @@ public class FileImageDescriptorTest extends TestCase {
 		assertNotNull(imageDataZoomed);
 		assertEquals(Math.round(imageData.width * 1.5), imageDataZoomed.width);
 		assertEquals(Math.round(imageData.height * 1.5), imageDataZoomed.height);
+	}
+
+	public void testImageFileNameProviderGetxPath() {
+		ImageDescriptor descriptor = ImageDescriptor.createFromFile(FileImageDescriptorTest.class,
+				"/icons/imagetests/rectangular-57x16.png");
+		assertTrue("FileImageDescriptor does not implement IAdaptable", descriptor instanceof IAdaptable);
+		IAdaptable adaptable = (IAdaptable) descriptor;
+		ImageFileNameProvider fileNameProvider = adaptable.getAdapter(ImageFileNameProvider.class);
+		assertNotNull(fileNameProvider);
+		String imagePath100 = fileNameProvider.getImagePath(100);
+		assertNotNull(imagePath100);
+		assertEquals(Path.fromOSString(imagePath100).lastSegment(), "rectangular-57x16.png");
+		String imagePath200 = fileNameProvider.getImagePath(200);
+		assertNotNull(imagePath200);
+		assertEquals(Path.fromOSString(imagePath200).lastSegment(), "rectangular-114x32.png");
+		String imagePath150 = fileNameProvider.getImagePath(150);
+		assertNotNull(imagePath150);
+		assertEquals(Path.fromOSString(imagePath150).lastSegment(), "rectangular-86x24.png");
 	}
 
 }

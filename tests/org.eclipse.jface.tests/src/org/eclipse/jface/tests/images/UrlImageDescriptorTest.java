@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020 Christoph Läubrich and others.
+ * Copyright (c) 2020, 2022 Christoph Läubrich and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,11 +10,15 @@
  *
  * Contributors:
  *     Christoph Läubrich - initial API and implementation
+ *     Daniel Kruegler - #396 - [jface] Certain ImageDescriptor classes should be adaptable for some internal properties
  ******************************************************************************/
 package org.eclipse.jface.tests.images;
 
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageFileNameProvider;
 
 import junit.framework.TestCase;
 
@@ -39,4 +43,24 @@ public class UrlImageDescriptorTest extends TestCase {
 		assertNotNull(imageDataZoomed);
 		assertEquals(imageData.width * 2, imageDataZoomed.width);
 	}
+
+	public void testImageFileNameProviderGetxPath() {
+		ImageDescriptor descriptor = ImageDescriptor
+				.createFromURL(FileImageDescriptorTest.class.getResource("/icons/imagetests/rectangular-57x16.png"));
+
+		assertTrue("URLImageDescriptor does not implement IAdaptable", descriptor instanceof IAdaptable);
+		IAdaptable adaptable = (IAdaptable) descriptor;
+		ImageFileNameProvider fileNameProvider = adaptable.getAdapter(ImageFileNameProvider.class);
+		assertNotNull(fileNameProvider);
+		String imagePath100 = fileNameProvider.getImagePath(100);
+		assertNotNull(imagePath100);
+		assertEquals(Path.fromOSString(imagePath100).lastSegment(), "rectangular-57x16.png");
+		String imagePath200 = fileNameProvider.getImagePath(200);
+		assertNotNull(imagePath200);
+		assertEquals(Path.fromOSString(imagePath200).lastSegment(), "rectangular-114x32.png");
+		String imagePath150 = fileNameProvider.getImagePath(150);
+		assertNotNull(imagePath150);
+		assertEquals(Path.fromOSString(imagePath150).lastSegment(), "rectangular-86x24.png");
+	}
+
 }
