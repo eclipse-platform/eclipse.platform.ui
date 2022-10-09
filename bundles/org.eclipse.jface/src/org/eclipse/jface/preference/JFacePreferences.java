@@ -111,6 +111,13 @@ public final class JFacePreferences {
 	 */
 	public static final String REVISION_OLDEST_COLOR = "org.eclipse.jface.REVISION_OLDEST_COLOR"; //$NON-NLS-1$
 
+	/**
+	 * TODO: Add javadoc
+	 *
+	 * @since 3.26
+	 */
+	public static final String CUSTOM_RESOURCE_THEME = "org.eclipse.jface.CUSTOM_RESOURCE_THEME"; //$NON-NLS-1$
+
 	private static IPreferenceStore preferenceStore;
 
 	/**
