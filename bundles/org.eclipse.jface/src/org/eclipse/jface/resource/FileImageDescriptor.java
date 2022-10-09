@@ -11,7 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Christoph Läubrich - Bug 567898 - [JFace][HiDPI] ImageDescriptor support alternative naming scheme for high dpi
- *     Daniel Krügler - #375, #376, #378, #396
+ *     Daniel Krügler - #375, #376, #378, #396, #398
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
@@ -75,12 +75,18 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable {
 	 * The class whose resource directory contain the file, or <code>null</code>
 	 * if none.
 	 */
-	private Class<?> location;
+	private final Class<?> location;
 
 	/**
 	 * The name of the file.
 	 */
-	private String name;
+	private final String name;
+
+	/**
+	 * ImageFileNameProvider to provide file names at various Zoom levels, created
+	 * lazily when required.
+	 */
+	private ImageFileNameProvider fileNameProvider;
 
 	/**
 	 * Creates a new file image descriptor. The file has the given file name and
@@ -239,7 +245,7 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable {
 	public Image createImage(boolean returnMissingImageOnError, Device device) {
 		if (InternalPolicy.DEBUG_LOAD_URL_IMAGE_DESCRIPTOR_2x) {
 			try {
-				return new Image(device, new ImageProvider());
+				return new Image(device, getImageFileNameProvider());
 			} catch (SWTException | IllegalArgumentException exception) {
 				// If we fail, fall back to the old 1x implementation.
 			}
@@ -307,11 +313,18 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable {
 		}
 	}
 
+	private ImageFileNameProvider getImageFileNameProvider() {
+		if (fileNameProvider == null) {
+			fileNameProvider = new ImageProvider();
+		}
+		return fileNameProvider;
+	}
+
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter == ImageFileNameProvider.class) {
 			// Support testing ImageFileNameProvider characteristics, see #396
-			return adapter.cast(new ImageProvider());
+			return adapter.cast(getImageFileNameProvider());
 		}
 		return null;
 	}

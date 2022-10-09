@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Christoph Läubrich - initial API and implementation
- *     Daniel Kruegler - #396 - [jface] Certain ImageDescriptor classes should be adaptable for some internal properties
+ *     Daniel Kruegler - #396, #398
  ******************************************************************************/
 package org.eclipse.jface.tests.images;
 
@@ -52,6 +52,9 @@ public class UrlImageDescriptorTest extends TestCase {
 		IAdaptable adaptable = (IAdaptable) descriptor;
 		ImageFileNameProvider fileNameProvider = adaptable.getAdapter(ImageFileNameProvider.class);
 		assertNotNull("URLImageDescriptor does not adapt to ImageFileNameProvider", fileNameProvider);
+		ImageFileNameProvider fileNameProvider2nd = adaptable.getAdapter(ImageFileNameProvider.class);
+		assertSame("URLImageDescriptor does not return unique ImageFileNameProvider", fileNameProvider,
+				fileNameProvider2nd);
 		String imagePath100 = fileNameProvider.getImagePath(100);
 		assertNotNull("URLImageDescriptor ImageFileNameProvider does not return the 100% path", imagePath100);
 		assertEquals(Path.fromOSString(imagePath100).lastSegment(), "rectangular-57x16.png");
@@ -77,10 +80,10 @@ public class UrlImageDescriptorTest extends TestCase {
 		assertNotNull("URLImageDescriptor ImageFileNameProvider does not return the 100% path", imagePath100);
 		assertEquals(Path.fromOSString(imagePath100).lastSegment(), "zoomIn.png");
 		String imagePath200 = fileNameProvider.getImagePath(200);
-		assertNotNull("URLImageDescriptor ImageFileNameProvider does not return the 200% path", imagePath200);
+		assertNotNull("URLImageDescriptor ImageFileNameProvider does not return the @2x path", imagePath200);
 		assertEquals(Path.fromOSString(imagePath200).lastSegment(), "zoomIn@2x.png");
 		String imagePath150 = fileNameProvider.getImagePath(150);
-		assertNull("URLImageDescriptor's ImageFileNameProvider does return a 150% path", imagePath150);
+		assertNull("URLImageDescriptor's ImageFileNameProvider does return a @1.5x path", imagePath150);
 	}
 
 }

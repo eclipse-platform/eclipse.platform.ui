@@ -12,7 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 483465
  *     Christoph Läubrich - Bug 567898 - [JFace][HiDPI] ImageDescriptor support alternative naming scheme for high dpi
- *     Daniel Krügler - #376, #396
+ *     Daniel Krügler - #376, #396, #398
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
@@ -114,13 +114,19 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 	 * Constant for the file protocol for optimized loading
 	 */
 	private static final String FILE_PROTOCOL = "file";  //$NON-NLS-1$
-	private String url;
+
+	private final String url;
+
+	/**
+	 * ImageFileNameProvider to provide file names at various Zoom levels, created
+	 * lazily when required.
+	 */
+	private ImageFileNameProvider fileNameProvider;
 
 	/**
 	 * Creates a new URLImageDescriptor.
 	 *
-	 * @param url
-	 *            The URL to load the image from. Must be non-null.
+	 * @param url The URL to load the image from. Must be non-null.
 	 */
 	URLImageDescriptor(URL url) {
 		super(true);
@@ -288,7 +294,7 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 			if (InternalPolicy.DEBUG_LOAD_URL_IMAGE_DESCRIPTOR_2x) {
 				if (!InternalPolicy.DEBUG_LOAD_URL_IMAGE_DESCRIPTOR_DIRECTLY) {
 					try {
-						return new Image(device, new URLImageFileNameProvider(url));
+						return new Image(device, getImageFileNameProvider());
 					} catch (SWTException | IllegalArgumentException exception) {
 						// If we fail fall back to the slower input stream method.
 					}
@@ -351,11 +357,18 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 		return result;
 	}
 
+	private ImageFileNameProvider getImageFileNameProvider() {
+		if (fileNameProvider == null) {
+			fileNameProvider = new URLImageFileNameProvider(url);
+		}
+		return fileNameProvider;
+	}
+
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter == ImageFileNameProvider.class) {
 			// Support testing ImageFileNameProvider characteristics, see #396
-			return adapter.cast(new URLImageFileNameProvider(url));
+			return adapter.cast(getImageFileNameProvider());
 		}
 		return null;
 	}

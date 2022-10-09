@@ -13,7 +13,7 @@
  *     Karsten Stoeckmann <ngc2997@gmx.net> - Test case for Bug 220766
  *     		[JFace] ImageRegistry.get does not work as expected (crashes with NullPointerException)
  *     Christoph Läubrich - Bug 567898 - [JFace][HiDPI] ImageDescriptor support alternative naming scheme for high dpi
- *     Daniel Kruegler - #375, #378, #396
+ *     Daniel Kruegler - #375, #378, #396, #398
  ******************************************************************************/
 
 package org.eclipse.jface.tests.images;
@@ -183,6 +183,9 @@ public class FileImageDescriptorTest extends TestCase {
 		IAdaptable adaptable = (IAdaptable) descriptor;
 		ImageFileNameProvider fileNameProvider = adaptable.getAdapter(ImageFileNameProvider.class);
 		assertNotNull("FileImageDescriptor does not adapt to ImageFileNameProvider", fileNameProvider);
+		ImageFileNameProvider fileNameProvider2nd = adaptable.getAdapter(ImageFileNameProvider.class);
+		assertSame("FileImageDescriptor does not return unique ImageFileNameProvider", fileNameProvider,
+				fileNameProvider2nd);
 		String imagePath100 = fileNameProvider.getImagePath(100);
 		assertNotNull("FileImageDescriptor's ImageFileNameProvider does not return the 100% path", imagePath100);
 		assertEquals(Path.fromOSString(imagePath100).lastSegment(), "rectangular-57x16.png");
