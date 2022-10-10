@@ -12,7 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 483465
  *     Christoph Läubrich - Bug 567898 - [JFace][HiDPI] ImageDescriptor support alternative naming scheme for high dpi
- *     Daniel Krügler - #376, #396, #398
+ *     Daniel Krügler - #376, #396, #398, #399
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
@@ -42,37 +42,7 @@ import org.eclipse.swt.graphics.ImageFileNameProvider;
  * public API. Use ImageDescriptor#createFromURL to create a descriptor that
  * uses a URL.
  */
-class URLImageDescriptor extends ImageDescriptor implements IAdaptable, ImageFileNameProvider {
-
-	private static class URLImageDataProvider implements ImageDataProvider {
-		private String url;
-
-		public URLImageDataProvider(String url) {
-			this.url = url;
-		}
-
-		@Override
-		public ImageData getImageData(int zoom) {
-			URL tempURL = getURL(url);
-			if (tempURL != null) {
-				URL xUrl = getxURL(tempURL, zoom);
-				if (xUrl != null) {
-					ImageData xdata = URLImageDescriptor.getImageData(xUrl);
-					if (xdata != null) {
-						return xdata;
-					}
-				}
-				String xpath = FileImageDescriptor.getxPath(url, zoom);
-				if (xpath != null) {
-					URL xPathUrl = getURL(xpath);
-					if (xPathUrl != null) {
-						return URLImageDescriptor.getImageData(xPathUrl);
-					}
-				}
-			}
-			return null;
-		}
-	}
+class URLImageDescriptor extends ImageDescriptor implements IAdaptable, ImageFileNameProvider, ImageDataProvider {
 
 	private static long cumulativeTime;
 
@@ -109,7 +79,27 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable, ImageFil
 
 	@Override
 	public ImageData getImageData(int zoom) {
-		return new URLImageDataProvider(url).getImageData(zoom);
+		URL tempURL = getURL(url);
+		if (tempURL != null) {
+			if (zoom == 100) {
+				return getImageData(tempURL);
+			}
+			URL xUrl = getxURL(tempURL, zoom);
+			if (xUrl != null) {
+				ImageData xdata = getImageData(xUrl);
+				if (xdata != null) {
+					return xdata;
+				}
+			}
+			String xpath = FileImageDescriptor.getxPath(url, zoom);
+			if (xpath != null) {
+				URL xPathUrl = getURL(xpath);
+				if (xPathUrl != null) {
+					return getImageData(xPathUrl);
+				}
+			}
+		}
+		return null;
 	}
 
 	private static ImageData getImageData(URL url) {
@@ -180,9 +170,6 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable, ImageFil
 	}
 
 	private static URL getxURL(URL url, int zoom) {
-		if (zoom == 100) {
-			return url;
-		}
 		String path = url.getPath();
 		int dot = path.lastIndexOf('.');
 		if (dot != -1 && (zoom == 150 || zoom == 200)) {
@@ -227,7 +214,6 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable, ImageFil
 			if (FILE_PROTOCOL.equalsIgnoreCase(locatedURL.getProtocol()))
 				return new Path(locatedURL.getPath()).toOSString();
 			return null;
-
 		} catch (IOException e) {
 			if (logIOException) {
 				Policy.logException(e);
@@ -249,11 +235,10 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable, ImageFil
 			start = System.nanoTime();
 		}
 		try {
-
 			if (InternalPolicy.DEBUG_LOAD_URL_IMAGE_DESCRIPTOR_2x) {
 				if (!InternalPolicy.DEBUG_LOAD_URL_IMAGE_DESCRIPTOR_DIRECTLY) {
 					try {
-						return new Image(device, this);
+						return new Image(device, (ImageFileNameProvider) this);
 					} catch (SWTException | IllegalArgumentException exception) {
 						// If we fail fall back to the slower input stream method.
 					}
@@ -261,7 +246,7 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable, ImageFil
 
 				Image image = null;
 				try {
-					image = new Image(device, new URLImageDataProvider(url));
+					image = new Image(device, (ImageDataProvider) this);
 				} catch (SWTException e) {
 					if (e.code != SWT.ERROR_INVALID_IMAGE) {
 						throw e;
@@ -277,7 +262,6 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable, ImageFil
 					}
 				}
 				return image;
-
 			}
 			if (InternalPolicy.DEBUG_LOAD_URL_IMAGE_DESCRIPTOR_DIRECTLY) {
 				return super.createImage(returnMissingImageOnError, device);
