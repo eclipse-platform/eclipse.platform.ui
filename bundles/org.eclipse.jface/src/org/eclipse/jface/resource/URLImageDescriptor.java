@@ -42,41 +42,7 @@ import org.eclipse.swt.graphics.ImageFileNameProvider;
  * public API. Use ImageDescriptor#createFromURL to create a descriptor that
  * uses a URL.
  */
-class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
-
-	private static class URLImageFileNameProvider implements ImageFileNameProvider {
-		private String url;
-
-		public URLImageFileNameProvider(String url) {
-			this.url = url;
-		}
-
-		@Override
-		public String getImagePath(int zoom) {
-			URL tempURL = getURL(url);
-			if (tempURL != null) {
-				final boolean logIOException = zoom == 100;
-				if (zoom == 100) {
-					return getFilePath(tempURL, logIOException);
-				}
-				URL xUrl = getxURL(tempURL, zoom);
-				if (xUrl != null) {
-					String xResult = getFilePath(xUrl, logIOException);
-					if (xResult != null) {
-						return xResult;
-					}
-				}
-				String xpath = FileImageDescriptor.getxPath(url, zoom);
-				if (xpath != null) {
-					URL xPathUrl = getURL(xpath);
-					if (xPathUrl != null) {
-						return getFilePath(xPathUrl, logIOException);
-					}
-				}
-			}
-			return null;
-		}
-	}
+class URLImageDescriptor extends ImageDescriptor implements IAdaptable, ImageFileNameProvider {
 
 	private static class URLImageDataProvider implements ImageDataProvider {
 		private String url;
@@ -116,12 +82,6 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 	private static final String FILE_PROTOCOL = "file";  //$NON-NLS-1$
 
 	private final String url;
-
-	/**
-	 * ImageFileNameProvider to provide file names at various Zoom levels, created
-	 * lazily when required.
-	 */
-	private ImageFileNameProvider fileNameProvider;
 
 	/**
 	 * Creates a new URLImageDescriptor.
@@ -284,7 +244,6 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 
 	@Override
 	public Image createImage(boolean returnMissingImageOnError, Device device) {
-
 		long start = 0;
 		if (InternalPolicy.DEBUG_TRACE_URL_IMAGE_DESCRIPTOR) {
 			start = System.nanoTime();
@@ -294,7 +253,7 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 			if (InternalPolicy.DEBUG_LOAD_URL_IMAGE_DESCRIPTOR_2x) {
 				if (!InternalPolicy.DEBUG_LOAD_URL_IMAGE_DESCRIPTOR_DIRECTLY) {
 					try {
-						return new Image(device, getImageFileNameProvider());
+						return new Image(device, this);
 					} catch (SWTException | IllegalArgumentException exception) {
 						// If we fail fall back to the slower input stream method.
 					}
@@ -357,18 +316,37 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 		return result;
 	}
 
-	private ImageFileNameProvider getImageFileNameProvider() {
-		if (fileNameProvider == null) {
-			fileNameProvider = new URLImageFileNameProvider(url);
+	@Override
+	public String getImagePath(int zoom) {
+		URL tempURL = getURL(url);
+		if (tempURL != null) {
+			final boolean logIOException = zoom == 100;
+			if (zoom == 100) {
+				return getFilePath(tempURL, logIOException);
+			}
+			URL xUrl = getxURL(tempURL, zoom);
+			if (xUrl != null) {
+				String xResult = getFilePath(xUrl, logIOException);
+				if (xResult != null) {
+					return xResult;
+				}
+			}
+			String xpath = FileImageDescriptor.getxPath(url, zoom);
+			if (xpath != null) {
+				URL xPathUrl = getURL(xpath);
+				if (xPathUrl != null) {
+					return getFilePath(xPathUrl, logIOException);
+				}
+			}
 		}
-		return fileNameProvider;
+		return null;
 	}
 
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter == ImageFileNameProvider.class) {
 			// Support testing ImageFileNameProvider characteristics, see #396
-			return adapter.cast(getImageFileNameProvider());
+			return adapter.cast(this);
 		}
 		return null;
 	}

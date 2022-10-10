@@ -42,34 +42,9 @@ import org.eclipse.swt.graphics.ImageFileNameProvider;
 /**
  * An image descriptor that loads its image information from a file.
  */
-class FileImageDescriptor extends ImageDescriptor implements IAdaptable {
+class FileImageDescriptor extends ImageDescriptor implements IAdaptable, ImageFileNameProvider {
 
 	private static final Pattern XPATH_PATTERN = Pattern.compile("(\\d+)x(\\d+)"); //$NON-NLS-1$
-
-	private class ImageProvider implements ImageFileNameProvider {
-		@Override
-		public String getImagePath(int zoom) {
-			final boolean logIOException = zoom == 100;
-			if (zoom == 100) {
-				return getFilePath(name, logIOException);
-			}
-			String xName = getxName(name, zoom);
-			if (xName != null) {
-				String xResult = getFilePath(xName, logIOException);
-				if (xResult != null) {
-					return xResult;
-				}
-			}
-			String xPath = getxPath(name, zoom);
-			if (xPath != null) {
-				String xResult = getFilePath(xPath, logIOException);
-				if (xResult != null) {
-					return xResult;
-				}
-			}
-			return null;
-		}
-	}
 
 	/**
 	 * The class whose resource directory contain the file, or <code>null</code>
@@ -81,12 +56,6 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable {
 	 * The name of the file.
 	 */
 	private final String name;
-
-	/**
-	 * ImageFileNameProvider to provide file names at various Zoom levels, created
-	 * lazily when required.
-	 */
-	private ImageFileNameProvider fileNameProvider;
 
 	/**
 	 * Creates a new file image descriptor. The file has the given file name and
@@ -245,7 +214,7 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable {
 	public Image createImage(boolean returnMissingImageOnError, Device device) {
 		if (InternalPolicy.DEBUG_LOAD_URL_IMAGE_DESCRIPTOR_2x) {
 			try {
-				return new Image(device, getImageFileNameProvider());
+				return new Image(device, this);
 			} catch (SWTException | IllegalArgumentException exception) {
 				// If we fail, fall back to the old 1x implementation.
 			}
@@ -286,7 +255,6 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable {
 	 * @return {@link String} or <code>null</code> if the file cannot be found
 	 */
 	String getFilePath(String name, boolean logIOException) {
-
 		if (location == null)
 			return new Path(name).toOSString();
 
@@ -313,18 +281,34 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable {
 		}
 	}
 
-	private ImageFileNameProvider getImageFileNameProvider() {
-		if (fileNameProvider == null) {
-			fileNameProvider = new ImageProvider();
+	@Override
+	public String getImagePath(int zoom) {
+		final boolean logIOException = zoom == 100;
+		if (zoom == 100) {
+			return getFilePath(name, logIOException);
 		}
-		return fileNameProvider;
+		String xName = getxName(name, zoom);
+		if (xName != null) {
+			String xResult = getFilePath(xName, logIOException);
+			if (xResult != null) {
+				return xResult;
+			}
+		}
+		String xPath = getxPath(name, zoom);
+		if (xPath != null) {
+			String xResult = getFilePath(xPath, logIOException);
+			if (xResult != null) {
+				return xResult;
+			}
+		}
+		return null;
 	}
 
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter == ImageFileNameProvider.class) {
 			// Support testing ImageFileNameProvider characteristics, see #396
-			return adapter.cast(getImageFileNameProvider());
+			return adapter.cast(this);
 		}
 		return null;
 	}
