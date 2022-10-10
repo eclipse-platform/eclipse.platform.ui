@@ -24,8 +24,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
@@ -179,11 +179,9 @@ public class FileImageDescriptorTest extends TestCase {
 	public void testImageFileNameProviderGetxPath() {
 		ImageDescriptor descriptor = ImageDescriptor.createFromFile(FileImageDescriptorTest.class,
 				"/icons/imagetests/rectangular-57x16.png");
-		assertTrue("FileImageDescriptor does not implement IAdaptable", descriptor instanceof IAdaptable);
-		IAdaptable adaptable = (IAdaptable) descriptor;
-		ImageFileNameProvider fileNameProvider = adaptable.getAdapter(ImageFileNameProvider.class);
+		ImageFileNameProvider fileNameProvider = Adapters.adapt(descriptor, ImageFileNameProvider.class);
 		assertNotNull("FileImageDescriptor does not adapt to ImageFileNameProvider", fileNameProvider);
-		ImageFileNameProvider fileNameProvider2nd = adaptable.getAdapter(ImageFileNameProvider.class);
+		ImageFileNameProvider fileNameProvider2nd = Adapters.adapt(descriptor, ImageFileNameProvider.class);
 		assertSame("FileImageDescriptor does not return unique ImageFileNameProvider", fileNameProvider,
 				fileNameProvider2nd);
 		String imagePath100 = fileNameProvider.getImagePath(100);
@@ -202,9 +200,7 @@ public class FileImageDescriptorTest extends TestCase {
 	public void testImageFileNameProviderGetxName() {
 		ImageDescriptor descriptor = ImageDescriptor.createFromFile(FileImageDescriptorTest.class,
 				"/icons/imagetests/zoomIn.png");
-		assertTrue("FileImageDescriptor does not implement IAdaptable", descriptor instanceof IAdaptable);
-		IAdaptable adaptable = (IAdaptable) descriptor;
-		ImageFileNameProvider fileNameProvider = adaptable.getAdapter(ImageFileNameProvider.class);
+		ImageFileNameProvider fileNameProvider = Adapters.adapt(descriptor, ImageFileNameProvider.class);
 		assertNotNull("FileImageDescriptor does not adapt to ImageFileNameProvider", fileNameProvider);
 		String imagePath100 = fileNameProvider.getImagePath(100);
 		assertNotNull("FileImageDescriptor's ImageFileNameProvider does not return the 100% path", imagePath100);

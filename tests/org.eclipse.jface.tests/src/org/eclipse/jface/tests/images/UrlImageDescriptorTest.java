@@ -14,7 +14,7 @@
  ******************************************************************************/
 package org.eclipse.jface.tests.images;
 
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.ImageData;
@@ -48,11 +48,9 @@ public class UrlImageDescriptorTest extends TestCase {
 		ImageDescriptor descriptor = ImageDescriptor
 				.createFromURL(FileImageDescriptorTest.class.getResource("/icons/imagetests/rectangular-57x16.png"));
 
-		assertTrue("URLImageDescriptor does not implement IAdaptable", descriptor instanceof IAdaptable);
-		IAdaptable adaptable = (IAdaptable) descriptor;
-		ImageFileNameProvider fileNameProvider = adaptable.getAdapter(ImageFileNameProvider.class);
+		ImageFileNameProvider fileNameProvider = Adapters.adapt(descriptor, ImageFileNameProvider.class);
 		assertNotNull("URLImageDescriptor does not adapt to ImageFileNameProvider", fileNameProvider);
-		ImageFileNameProvider fileNameProvider2nd = adaptable.getAdapter(ImageFileNameProvider.class);
+		ImageFileNameProvider fileNameProvider2nd = Adapters.adapt(descriptor, ImageFileNameProvider.class);
 		assertSame("URLImageDescriptor does not return unique ImageFileNameProvider", fileNameProvider,
 				fileNameProvider2nd);
 		String imagePath100 = fileNameProvider.getImagePath(100);
@@ -72,9 +70,7 @@ public class UrlImageDescriptorTest extends TestCase {
 		ImageDescriptor descriptor = ImageDescriptor
 				.createFromURL(FileImageDescriptorTest.class.getResource("/icons/imagetests/zoomIn.png"));
 
-		assertTrue("URLImageDescriptor does not implement IAdaptable", descriptor instanceof IAdaptable);
-		IAdaptable adaptable = (IAdaptable) descriptor;
-		ImageFileNameProvider fileNameProvider = adaptable.getAdapter(ImageFileNameProvider.class);
+		ImageFileNameProvider fileNameProvider = Adapters.adapt(descriptor, ImageFileNameProvider.class);
 		assertNotNull("URLImageDescriptor does not adapt to ImageFileNameProvider", fileNameProvider);
 		String imagePath100 = fileNameProvider.getImagePath(100);
 		assertNotNull("URLImageDescriptor ImageFileNameProvider does not return the 100% path", imagePath100);
