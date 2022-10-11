@@ -38,15 +38,18 @@ import org.eclipse.swt.graphics.ImageData;
  * @since 3.21
  */
 final class DeferredImageDescriptor extends ImageDescriptor implements IAdaptable {
+
 	/**
-	 * The supplier of the class. Note that there is a non-code reference to this
-	 * field in
-	 * <code>org.eclipse.ui.internal.menus.MenuHelper.getUrlSupplier()</code> so if
-	 * this field is renamed or changed then the code above needs to be repaired as
-	 * well.
+	 * The supplier of the class.
 	 */
 	private final Supplier<URL> supplier;
+
 	private final boolean useMissingImage;
+
+	/**
+	 * URL referring to the actual image, computed lazily when required.
+	 */
+	private URL url;
 
 	/**
 	 * Create a new DeferredImageDescriptor with the given URL supplier.
@@ -66,7 +69,7 @@ final class DeferredImageDescriptor extends ImageDescriptor implements IAdaptabl
 
 	@Override
 	public ImageData getImageData(int zoom) {
-		URL url = supplier.get();
+		URL url = getURL();
 		if (url == null) {
 			return useMissingImage ? ImageDescriptor.getMissingImageDescriptor().getImageData(zoom) : null;
 		}
@@ -75,17 +78,24 @@ final class DeferredImageDescriptor extends ImageDescriptor implements IAdaptabl
 
 	@Override
 	public Image createImage(boolean returnMissingImageOnError, Device device) {
-		URL url = supplier.get();
+		URL url = getURL();
 		if (url == null) {
 			return returnMissingImageOnError ? ImageDescriptor.getMissingImageDescriptor().createImage() : null;
 		}
 		return ImageDescriptor.createFromURL(url).createImage(returnMissingImageOnError, device);
 	}
 
+	private final URL getURL() {
+		if (url == null) {
+			url = supplier.get();
+		}
+		return url;
+	}
+
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter == URL.class) {
-			return adapter.cast(supplier.get());
+			return adapter.cast(getURL());
 		}
 		return null;
 	}
