@@ -11,7 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Christoph Läubrich - Bug 567898 - [JFace][HiDPI] ImageDescriptor support alternative naming scheme for high dpi
- *     Daniel Krügler - #375, #376, #378, #396, #398
+ *     Daniel Kruegler - #375, #376, #378, #396, #398, #401
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
@@ -264,7 +264,6 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable, ImageFi
 			return null;
 		try {
 			if (!InternalPolicy.OSGI_AVAILABLE) {// Stand-alone case
-
 				return new Path(resource.getFile()).toOSString();
 			}
 			return new Path(FileLocator.toFileURL(resource).getPath()).toOSString();
@@ -304,12 +303,24 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable, ImageFi
 		return null;
 	}
 
+	private URL toURL() {
+		if (location == null) {
+			return null;
+		}
+
+		if (name == null) {
+			return null;
+		}
+
+		return location.getResource(name);
+	}
+
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-		if (adapter == ImageFileNameProvider.class) {
-			// Support testing ImageFileNameProvider characteristics, see #396
-			return adapter.cast(this);
+		if (adapter == URL.class) {
+			return adapter.cast(toURL());
 		}
 		return null;
 	}
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020, Alex Blewitt and others.
+ * Copyright (c) 2020, 2022, Alex Blewitt and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     Alex Blewitt - initial API and implementation
+ *     Daniel Kruegler - #396, #401
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
@@ -17,6 +18,7 @@ import java.net.URL;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -35,7 +37,7 @@ import org.eclipse.swt.graphics.ImageData;
  *
  * @since 3.21
  */
-final class DeferredImageDescriptor extends ImageDescriptor {
+final class DeferredImageDescriptor extends ImageDescriptor implements IAdaptable {
 	/**
 	 * The supplier of the class. Note that there is a non-code reference to this
 	 * field in
@@ -78,6 +80,14 @@ final class DeferredImageDescriptor extends ImageDescriptor {
 			return returnMissingImageOnError ? ImageDescriptor.getMissingImageDescriptor().createImage() : null;
 		}
 		return ImageDescriptor.createFromURL(url).createImage(returnMissingImageOnError, device);
+	}
+
+	@Override
+	public <T> T getAdapter(Class<T> adapter) {
+		if (adapter == URL.class) {
+			return adapter.cast(supplier.get());
+		}
+		return null;
 	}
 
 }
