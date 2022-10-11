@@ -303,22 +303,12 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable, ImageFi
 		return null;
 	}
 
-	private URL toURL() {
-		if (location == null) {
-			return null;
-		}
-
-		if (name == null) {
-			return null;
-		}
-
-		return location.getResource(name);
-	}
-
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter == URL.class) {
-			return adapter.cast(toURL());
+			if (location != null && name != null) {
+				return adapter.cast(location.getResource(name));
+			}
 		}
 		return null;
 	}
