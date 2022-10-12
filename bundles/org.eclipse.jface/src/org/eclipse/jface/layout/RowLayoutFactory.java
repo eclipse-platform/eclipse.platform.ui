@@ -336,12 +336,11 @@ public final class RowLayoutFactory {
 		result.marginWidth = layout.marginWidth;
 
 		result.fill = layout.fill;
+		result.center = layout.center;
 		result.justify = layout.justify;
 		result.pack = layout.pack;
 		result.spacing = layout.spacing;
 		result.wrap = layout.wrap;
-
-		result.type = layout.type;
 
 		return result;
 	}
