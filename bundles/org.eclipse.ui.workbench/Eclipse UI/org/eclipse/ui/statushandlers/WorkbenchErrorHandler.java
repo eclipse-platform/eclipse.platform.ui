@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.statushandlers;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -48,16 +50,38 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 
 			final boolean block = ((style & StatusManager.BLOCK) == StatusManager.BLOCK);
 
-			if (Display.getCurrent() != null) {
+			Runnable uiRunnable = () -> {
+				if (!PlatformUI.isWorkbenchRunning()) {
+					// we are shutting down, so just log (if logging is not already requested)
+					if ((style & StatusManager.LOG) == 0) {
+						log(statusAdapter);
+					}
+					return;
+				}
 				showStatusAdapter(statusAdapter, block);
+			};
+
+			if (Display.getCurrent() != null) {
+				uiRunnable.run();
 			} else {
-				Display.getDefault().asyncExec(() -> showStatusAdapter(statusAdapter, block));
+				try {
+					// Checking isDisposed() here isn't enough due to race conditions
+					// since we are in a worker thread.
+					PlatformUI.getWorkbench().getDisplay().asyncExec(uiRunnable);
+				} catch (SWTException e) {
+					if (e.code == SWT.ERROR_DEVICE_DISPOSED) {
+						// platform is being shut down, just log
+						log(statusAdapter);
+						return;
+					}
+					throw e;
+				}
 			}
 		}
 
 		if ((style & StatusManager.LOG) == StatusManager.LOG) {
 			StatusManager.getManager().addLoggedStatus(statusAdapter.getStatus());
-			WorkbenchPlugin.getDefault().getLog().log(statusAdapter.getStatus());
+			log(statusAdapter);
 		}
 	}
 
@@ -70,22 +94,20 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 	 *                      <code>false</code> otherwise.
 	 */
 	private void showStatusAdapter(StatusAdapter statusAdapter, boolean block) {
-		if (!PlatformUI.isWorkbenchRunning()) {
-			// we are shutting down, so just log
-			WorkbenchPlugin.log(statusAdapter.getStatus());
-			return;
-		}
-
 		getStatusDialogManager().addStatusAdapter(statusAdapter, block);
 
 		if (block) {
 			Shell shell;
 			while ((shell = getStatusDialogShell()) != null && !shell.isDisposed()) {
 				if (!shell.getDisplay().readAndDispatch()) {
-					Display.getDefault().sleep();
+					shell.getDisplay().sleep();
 				}
 			}
 		}
+	}
+
+	private static void log(StatusAdapter statusAdapter) {
+		WorkbenchPlugin.log(statusAdapter.getStatus());
 	}
 
 	private Shell getStatusDialogShell() {
