@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.services.adapter.Adapter;
 import org.eclipse.e4.ui.internal.workbench.swt.Policy;
 import org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -373,19 +374,37 @@ public class MenuHelper {
 		return null;
 	}
 
-	public static String getIconURI(ImageDescriptor descriptor, @SuppressWarnings("unused") IEclipseContext context) {
+	public static String getIconURI(ImageDescriptor descriptor, IEclipseContext context) {
 		if (descriptor == null) {
 			return null;
 		}
+
 		// Attempt to retrieve URIs from the descriptor and convert into a more
 		// durable form in case it's to be persisted
-		Object o = Adapters.adapt(descriptor, URL.class);
-		if (o != null) {
-			return rewriteDurableURL(o.toString());
+		boolean adapterUsed = false;
+		if (context != null) {
+			Adapter adapter = context.get(Adapter.class);
+			adapterUsed = adapter != null;
+			if (adapterUsed) {
+				Object o = adapter.adapt(descriptor, URL.class);
+				if (o != null) {
+					return rewriteDurableURL(o.toString());
+				}
+				o = adapter.adapt(descriptor, URI.class);
+				if (o != null) {
+					return rewriteDurableURL(o.toString());
+				}
+			}
 		}
-		o = Adapters.adapt(descriptor, URI.class);
-		if (o != null) {
-			return rewriteDurableURL(o.toString());
+		if (!adapterUsed) {
+			Object o = Adapters.adapt(descriptor, URL.class);
+			if (o != null) {
+				return rewriteDurableURL(o.toString());
+			}
+			o = Adapters.adapt(descriptor, URI.class);
+			if (o != null) {
+				return rewriteDurableURL(o.toString());
+			}
 		}
 		return null;
 	}
