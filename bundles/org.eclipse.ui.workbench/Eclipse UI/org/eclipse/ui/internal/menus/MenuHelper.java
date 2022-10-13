@@ -381,22 +381,18 @@ public class MenuHelper {
 
 		// Attempt to retrieve URIs from the descriptor and convert into a more
 		// durable form in case it's to be persisted
-		boolean adapterUsed = false;
-		if (context != null) {
-			Adapter adapter = context.get(Adapter.class);
-			adapterUsed = adapter != null;
-			if (adapterUsed) {
-				Object o = adapter.adapt(descriptor, URL.class);
-				if (o != null) {
-					return rewriteDurableURL(o.toString());
-				}
-				o = adapter.adapt(descriptor, URI.class);
-				if (o != null) {
-					return rewriteDurableURL(o.toString());
-				}
+		Adapter adapter = context != null ? context.get(Adapter.class) : null;
+		if (adapter != null) {
+			Object o = adapter.adapt(descriptor, URL.class);
+			if (o != null) {
+				return rewriteDurableURL(o.toString());
+			}
+			o = adapter.adapt(descriptor, URI.class);
+			if (o != null) {
+				return rewriteDurableURL(o.toString());
 			}
 		}
-		if (!adapterUsed) {
+		else {
 			Object o = Adapters.adapt(descriptor, URL.class);
 			if (o != null) {
 				return rewriteDurableURL(o.toString());
