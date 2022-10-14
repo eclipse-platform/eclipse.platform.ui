@@ -33,7 +33,7 @@ import org.w3c.dom.css.RGBColor;
 public class StyleRuleTest {
 
 	@Test
-	public void testSimpleStyleRule() throws Exception {
+	void testSimpleStyleRule() throws Exception {
 		String css = "Label { color: #FF0000 }";
 		CSSStyleSheet styleSheet = ParserTestUtil.parseCss(css);
 		assertNotNull(styleSheet);
@@ -44,7 +44,7 @@ public class StyleRuleTest {
 	}
 
 	@Test
-	public void testHexColor() throws Exception {
+	void testHexColor() throws Exception {
 		String css = "Label { color: #FF0220 }";
 		CSSStyleSheet styleSheet = ParserTestUtil.parseCss(css);
 		CSSRuleList rules = styleSheet.getCssRules();
@@ -63,7 +63,7 @@ public class StyleRuleTest {
 	}
 
 	@Test
-	public void testNamedColor() throws Exception {
+	void testNamedColor() throws Exception {
 		String css = "Label { color: green }";
 		CSSStyleSheet styleSheet = ParserTestUtil.parseCss(css);
 		CSSRuleList rules = styleSheet.getCssRules();
@@ -77,7 +77,7 @@ public class StyleRuleTest {
 	}
 
 	@Test
-	public void testFont() throws Exception {
+	void testFont() throws Exception {
 		String css = "Label { font: Verdana }";
 		CSSStyleSheet styleSheet = ParserTestUtil.parseCss(css);
 		CSSRuleList rules = styleSheet.getCssRules();
@@ -91,7 +91,7 @@ public class StyleRuleTest {
 	}
 
 	@Test
-	public void testTestFontItalic() throws Exception {
+	void testTestFontItalic() throws Exception {
 		String css = "Label { font: Arial 12px; font-style: italic }";
 		CSSStyleSheet styleSheet = ParserTestUtil.parseCss(css);
 		CSSRuleList rules = styleSheet.getCssRules();
@@ -105,7 +105,7 @@ public class StyleRuleTest {
 	}
 
 	@Test
-	public void testTestFontBold() throws Exception{
+	void testTestFontBold() throws Exception {
 		String css = "Label { font: Arial 12px; font-style: bold }";
 		CSSStyleSheet styleSheet = ParserTestUtil.parseCss(css);
 		CSSRuleList rules = styleSheet.getCssRules();
@@ -119,7 +119,7 @@ public class StyleRuleTest {
 	}
 
 	@Test
-	public void testBackgroundNameColor() throws Exception{
+	void testBackgroundNameColor() throws Exception {
 		String css = "Label { background-color: green }";
 		CSSStyleSheet styleSheet = ParserTestUtil.parseCss(css);
 		CSSRuleList rules = styleSheet.getCssRules();
@@ -133,7 +133,7 @@ public class StyleRuleTest {
 	}
 
 	@Test
-	public void testBackgroundHexColor() throws Exception {
+	void testBackgroundHexColor() throws Exception {
 		String css = "Label { background-color: #FF0220 }";
 		CSSStyleSheet styleSheet = ParserTestUtil.parseCss(css);
 		CSSRuleList rules = styleSheet.getCssRules();
@@ -152,7 +152,7 @@ public class StyleRuleTest {
 	}
 
 	@Test
-	public void testGetCSSText() throws Exception {
+	void testGetCSSText() throws Exception {
 		String css = "Label, * > Label { background-color: rgb(255, 2, 32); }";
 		CSSStyleSheet styleSheet = ParserTestUtil.parseCss(css);
 		CSSRuleList rules = styleSheet.getCssRules();

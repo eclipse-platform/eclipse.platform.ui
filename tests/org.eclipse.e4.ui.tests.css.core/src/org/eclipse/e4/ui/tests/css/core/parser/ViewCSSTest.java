@@ -53,7 +53,7 @@ public class ViewCSSTest {
 	}
 
 	@Test
-	public void testGetComputedStyle() throws Exception {
+	void testGetComputedStyle() throws Exception {
 		// Two rules with the same specificity, the second rule should take
 		// precedence because of its position in the stylesheet
 		String css = "Label { color: black; }" + "Button { color: blue; font-weight: bold; }\n"
@@ -76,7 +76,7 @@ public class ViewCSSTest {
 	}
 
 	@Test
-	public void testBug419482_order1() throws Exception {
+	void testBug419482_order1() throws Exception {
 		String css = "Shell > * > * { color: red; }\n" + "Button { color: blue; }\n";
 		ViewCSS viewCSS = createViewCss(css);
 
@@ -91,7 +91,7 @@ public class ViewCSSTest {
 	}
 
 	@Test
-	public void testBug419482_order2() throws Exception {
+	void testBug419482_order2() throws Exception {
 		String css = "Button { color: blue; }\n" + "Shell > * > * { color: red; }\n";
 		ViewCSS viewCSS = createViewCss(css);
 
@@ -106,7 +106,7 @@ public class ViewCSSTest {
 	}
 
 	@Test
-	public void testBug419482_higherSpecificity() throws Exception {
+	void testBug419482_higherSpecificity() throws Exception {
 		String css = "Shell > * > Button { color: blue; }\n" + "Shell > * > * { color: red; }\n";
 		ViewCSS viewCSS = createViewCss(css);
 
@@ -122,7 +122,7 @@ public class ViewCSSTest {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testRuleCaching() throws Exception {
+	void testRuleCaching() throws Exception {
 		String css = "Shell > * > * { color: red; }\n" + "Button { color: blue; }\n";
 		CSSStyleSheet styleSheet = ParserTestUtil.parseCss(css);
 		DocumentCSSImpl docCss = new DocumentCSSImpl();

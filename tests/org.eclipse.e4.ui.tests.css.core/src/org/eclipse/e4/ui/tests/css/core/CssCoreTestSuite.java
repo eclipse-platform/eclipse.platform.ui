@@ -27,11 +27,9 @@ import org.eclipse.e4.ui.tests.css.core.parser.SelectorTest;
 import org.eclipse.e4.ui.tests.css.core.parser.StyleRuleTest;
 import org.eclipse.e4.ui.tests.css.core.parser.ValueTest;
 import org.eclipse.e4.ui.tests.css.core.parser.ViewCSSTest;
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
-@RunWith(JUnitPlatform.class)
 @SelectClasses({
 	CascadeTest.class,
 	FontFaceRulesTest.class,
@@ -47,5 +45,6 @@ import org.junit.runner.RunWith;
 	AbstractCSSEngineTest.class,
 	CSSPropertyHandlerProviderTest.class
 })
+@Suite
 public class CssCoreTestSuite {
 }

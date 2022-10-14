@@ -26,7 +26,7 @@ public class CSSPropertyHandlerProviderTest {
 	}
 
 	@Test
-	public void test_getHandlerClassName() {
+	void test_getHandlerClassName() {
 		TestCSSPropertyHandlerLazyProviderImpl provider = new TestCSSPropertyHandlerLazyProviderImpl();
 		assertEquals("CSSPropertyBackgroundHandler", provider._getHandlerClassName("background"));
 		assertEquals("CSSPropertyBackgroundColorHandler", provider._getHandlerClassName("background-color"));

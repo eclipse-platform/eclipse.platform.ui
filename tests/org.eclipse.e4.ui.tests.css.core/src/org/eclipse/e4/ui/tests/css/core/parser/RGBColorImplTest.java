@@ -27,7 +27,7 @@ import org.w3c.dom.css.RGBColor;
 public class RGBColorImplTest {
 
 	@Test
-	public void testGetCssText() throws Exception {
+	void testGetCssText() throws Exception {
 		CSSEngine engine = ParserTestUtil.createEngine();
 		CSSValue value = engine.parsePropertyValue("#FF8000");
 		assertTrue( value instanceof RGBColor );

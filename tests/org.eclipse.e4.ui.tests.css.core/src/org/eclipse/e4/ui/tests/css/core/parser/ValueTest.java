@@ -37,74 +37,73 @@ public class ValueTest {
 	}
 
 	@Test
-	public void testFloat() throws Exception {
+	void testFloat() throws Exception {
 		CSSValue value = engine.parsePropertyValue("2.0");
 		assertTrue(value instanceof Measure);
 		assertEquals( "2.0", value.getCssText() );
 	}
 
 	@Test
-	public void testInt() throws Exception {
+	void testInt() throws Exception {
 		CSSValue value = engine.parsePropertyValue("34");
 		assertTrue(value instanceof Measure);
-		assertEquals(((Measure) value).getPrimitiveType(), CSSPrimitiveValue.CSS_NUMBER);
+		assertEquals(CSSPrimitiveValue.CSS_NUMBER, ((Measure) value).getPrimitiveType());
 		assertEquals( "34", value.getCssText() );
 	}
 
 	@Test
-	public void testIdentifier() throws Exception {
+	void testIdentifier() throws Exception {
 		CSSValue value = engine.parsePropertyValue("SomeWord");
 		assertTrue(value instanceof Measure);
-		assertEquals(((Measure) value).getPrimitiveType(), CSSPrimitiveValue.CSS_IDENT);
+		assertEquals(CSSPrimitiveValue.CSS_IDENT, ((Measure) value).getPrimitiveType());
 		assertEquals( "SomeWord", value.getCssText() );
 	}
 
 	@Test
-	public void testPercent() throws Exception {
+	void testPercent() throws Exception {
 		CSSValue value = engine.parsePropertyValue("30%");
 		assertTrue(value instanceof Measure);
-		assertEquals(((Measure) value).getPrimitiveType(), CSSPrimitiveValue.CSS_PERCENTAGE);
+		assertEquals(CSSPrimitiveValue.CSS_PERCENTAGE, ((Measure) value).getPrimitiveType());
 		assertEquals( "30.0%", value.getCssText() );
 	}
 
 	@Test
-	public void testPixel() throws Exception {
+	void testPixel() throws Exception {
 		CSSValue value = engine.parsePropertyValue("26px");
 		assertTrue(value instanceof Measure);
-		assertEquals(((Measure) value).getPrimitiveType(), CSSPrimitiveValue.CSS_PX);
+		assertEquals(CSSPrimitiveValue.CSS_PX, ((Measure) value).getPrimitiveType());
 		assertEquals( "26.0px", value.getCssText() );
 	}
 
 	@Test
-	public void testInch() throws Exception {
+	void testInch() throws Exception {
 		CSSValue value = engine.parsePropertyValue("88in");
 		assertTrue(value instanceof Measure);
-		assertEquals(((Measure) value).getPrimitiveType(), CSSPrimitiveValue.CSS_IN);
+		assertEquals(CSSPrimitiveValue.CSS_IN, ((Measure) value).getPrimitiveType());
 		assertEquals( "88.0in", value.getCssText() );
 	}
 
 	@Test
-	public void testEm() throws Exception {
+	void testEm() throws Exception {
 		CSSValue value = engine.parsePropertyValue("75em");
 		assertTrue(value instanceof Measure);
-		assertEquals(((Measure) value).getPrimitiveType(), CSSPrimitiveValue.CSS_EMS);
+		assertEquals(CSSPrimitiveValue.CSS_EMS, ((Measure) value).getPrimitiveType());
 		assertEquals( "75.0em", value.getCssText() );
 	}
 
 	@Test
-	public void testURI() throws Exception {
+	void testURI() throws Exception {
 		CSSValue value = engine.parsePropertyValue("url(./somepath/picture.gif)");
 		assertTrue(value instanceof Measure);
-		assertEquals(((Measure) value).getPrimitiveType(), CSSPrimitiveValue.CSS_URI);
+		assertEquals(CSSPrimitiveValue.CSS_URI, ((Measure) value).getPrimitiveType());
 		assertEquals("url(./somepath/picture.gif)", value.getCssText());
 	}
 
 	@Test
-	public void testList() throws Exception {
+	void testList() throws Exception {
 		CSSValue value = engine.parsePropertyValue("34 34 34");
 		assertTrue(value instanceof CSSValueList);
-		assertEquals(((CSSValueList) value).getCssValueType(),
-				CSSValue.CSS_VALUE_LIST);
+		assertEquals(CSSValue.CSS_VALUE_LIST, ((CSSValueList) value).getCssValueType());
 		assertEquals(3, ((CSSValueList) value).getLength());
 		assertTrue(((CSSValueList) value).item(0) instanceof Measure);
 		assertEquals(CSSPrimitiveValue.CSS_NUMBER,
@@ -119,11 +118,11 @@ public class ValueTest {
 	}
 
 	@Test
-	public void testCommaSeparatedList() throws Exception {
+	void testCommaSeparatedList() throws Exception {
 		CSSValue value = engine.parsePropertyValue("34, 34, 34");
 		assertTrue(value instanceof CSSValueList);
 		CSSValueList list = (CSSValueList) value;
-		assertEquals(list.getCssValueType(), CSSValue.CSS_VALUE_LIST);
+		assertEquals(CSSValue.CSS_VALUE_LIST, list.getCssValueType());
 		assertEquals(5, list.getLength());
 		// FIXME: see comments in bug 278139
 		for (int i = 0; i < list.getLength(); i++) {
