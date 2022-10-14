@@ -36,7 +36,7 @@ public class SelectorTest {
 	}
 
 	@Test
-	public void testSimpleSelector() throws Exception {
+	void testSimpleSelector() throws Exception {
 		SelectorList list = engine.parseSelectors("Type1");
 		assertNotNull(list);
 		assertEquals(1, list.getLength());
@@ -44,7 +44,7 @@ public class SelectorTest {
 	}
 
 	@Test
-	public void testMultipleSelectors() throws Exception {
+	void testMultipleSelectors() throws Exception {
 		SelectorList list = engine.parseSelectors("Type1, Type2");
 		assertNotNull(list);
 		assertEquals(2, list.getLength());
@@ -53,7 +53,7 @@ public class SelectorTest {
 	}
 
 	@Test
-	public void testClassSelector() throws Exception {
+	void testClassSelector() throws Exception {
 		SelectorList list = engine.parseSelectors(".Class1");
 		assertNotNull(list);
 		assertEquals(1, list.getLength());
@@ -61,7 +61,7 @@ public class SelectorTest {
 	}
 
 	@Test
-	public void testAttributeSelector() throws Exception {
+	void testAttributeSelector() throws Exception {
 		SelectorList list = engine.parseSelectors("*[class='Class1']");
 		assertNotNull(list);
 		assertEquals(1, list.getLength());
@@ -69,7 +69,7 @@ public class SelectorTest {
 	}
 
 	@Test
-	public void testErrorAttributeSelector() throws IOException {
+	void testErrorAttributeSelector() throws IOException {
 		try {
 			engine.parseSelectors("*[class='Class1'"); // missing ']'
 			fail("Parser should have errored on missing bracket");

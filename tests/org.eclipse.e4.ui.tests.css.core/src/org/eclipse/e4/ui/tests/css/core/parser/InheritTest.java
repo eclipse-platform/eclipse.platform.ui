@@ -41,7 +41,7 @@ import org.w3c.dom.css.CSSValue;
 public class InheritTest {
 
 	@Test
-	public void testInheritFromParent() throws Exception {
+	void testInheritFromParent() throws Exception {
 		String css = "Canvas { property: myValue; }\n"
 				+ "Button { property: inherit; }\n";
 
@@ -57,7 +57,7 @@ public class InheritTest {
 	}
 
 	@Test
-	public void testInheritAsDefault() throws Exception {
+	void testInheritAsDefault() throws Exception {
 		String css = "* { property: inherit; }\n"
 				+ "Canvas { property: myValue; }\n";
 
@@ -73,7 +73,7 @@ public class InheritTest {
 	}
 
 	@Test
-	public void testInheritExplicitProperty() throws Exception {
+	void testInheritExplicitProperty() throws Exception {
 		String css = "Button { property: inherit; }\n";
 
 		CSSEngine engine = createEngine(css);

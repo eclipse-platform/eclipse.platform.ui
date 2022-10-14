@@ -30,7 +30,7 @@ public class MediaRulesTest {
 
 	@Test
 	@Disabled("//THIS TEST KNOWN TO FAIL Dec 16/08")
-	public void testMediaRule() throws Exception {
+	void testMediaRule() throws Exception {
 		String css = "@media screen, print {\n"
 				+ "BODY { line-height: 1.2 }\n"
 				+ "}\n" + "Label { background-color: #FF0000 }";

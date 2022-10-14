@@ -28,7 +28,7 @@ import org.w3c.css.sac.Selector;
 import org.w3c.css.sac.SelectorList;
 import org.w3c.dom.Element;
 
-public class CSSEngineTest {
+class CSSEngineTest {
 
 	private static class TestCSSEngine extends CSSEngineImpl {
 		@Override
@@ -37,7 +37,7 @@ public class CSSEngineTest {
 	}
 
 	@Test
-	public void testSelectorMatch() throws Exception {
+	void testSelectorMatch() throws Exception {
 		TestCSSEngine engine = new TestCSSEngine();
 		SelectorList list = engine.parseSelectors("Date");
 		engine.setElementProvider((element, engine1) -> new TestElement(element.getClass().getSimpleName(),
@@ -47,7 +47,7 @@ public class CSSEngineTest {
 	}
 
 	@Test
-	public void testSelectorMatchOneOf() throws Exception {
+	void testSelectorMatchOneOf() throws Exception {
 		TestCSSEngine engine = engineWhichProducesElementsWithAttributeA();
 		Selector selector = engine.parseSelectors("E[a~='B']").item(0);
 		assertTrue(engine.matches(selector, "B AB", null));
@@ -57,7 +57,7 @@ public class CSSEngineTest {
 	}
 
 	@Test
-	public void testSelectorAttributeIs() throws Exception {
+	void testSelectorAttributeIs() throws Exception {
 		TestCSSEngine engine = engineWhichProducesElementsWithAttributeA();
 		Selector selector = engine.parseSelectors("E[a='B']").item(0);
 		assertFalse(engine.matches(selector, "ABC", null));
@@ -65,7 +65,7 @@ public class CSSEngineTest {
 	}
 
 	@Test
-	public void testSelectorAttributeIs_EmptySting() throws Exception {
+	void testSelectorAttributeIs_EmptySting() throws Exception {
 		TestCSSEngine engine = engineWhichProducesElementsWithAttributeA();
 		Selector selector = engine.parseSelectors("E[a='']").item(0);
 		assertFalse(engine.matches(selector, "ABC", null));
@@ -73,7 +73,7 @@ public class CSSEngineTest {
 	}
 
 	@Test
-	public void testSelectorAttributeIs_NotPresent() throws Exception {
+	void testSelectorAttributeIs_NotPresent() throws Exception {
 		TestCSSEngine engine = engineWhichProducesElementsWithAttributeA();
 		Selector selector = engine.parseSelectors("E[b='']").item(0);
 		assertFalse(engine.matches(selector, "ABC", null));

@@ -56,7 +56,7 @@ public class AbstractCSSEngineTest {
 	 *      506120 - [CSS] NPE if CSS styling is disabled</a>
 	 */
 	@Test
-	public void testGetElement_null() {
+	void testGetElement_null() {
 		Element result = objectUnderTest.getElement(null);
 		assertNull(result);
 	}

@@ -58,7 +58,7 @@ public class CascadeTest {
 	}
 
 	@Test
-	public void testPosition() throws Exception {
+	void testPosition() throws Exception {
 		// Two rules with the same specificity, the second rule should take
 		// precedence because of its position in the stylesheet
 		String css = "Button { color: blue; font-weight: bold; }\n"
@@ -72,7 +72,7 @@ public class CascadeTest {
 	}
 
 	@Test
-	public void testSpecificity() throws Exception {
+	void testSpecificity() throws Exception {
 		// Two rules with different specificity, the first should take
 		// precedence because of its higher specificity
 		String css = "Label, Button.special { color: black; }\n"
@@ -91,7 +91,7 @@ public class CascadeTest {
 	}
 
 	@Test
-	public void ensureThatClassAndIdareConsideredIfOnTheSameLevel() throws Exception {
+	void ensureThatClassAndIdareConsideredIfOnTheSameLevel() throws Exception {
 		// Rules for elements with children. The first should take
 		// precedence because of its higher specificity
 		String css = "CTabFolder > Composite > Toolbar { color: black; }\n"
@@ -116,10 +116,8 @@ public class CascadeTest {
 
 	}
 
-
-
 	@Test
-	public void testSpecificities() throws Exception {
+	void testSpecificities() throws Exception {
 		// Different specificities
 		String css = "* { color: black; }\n"
 				+ "Button { color: blue; }\n"
@@ -174,7 +172,7 @@ public class CascadeTest {
 	//	}
 
 	@Test
-	public void testBug261081() throws Exception{
+	void testBug261081() throws Exception {
 		// Two rules with the same specificity, the second rule should take
 		// precedence because of its position in the stylesheet
 		String css = "Button, Label { color: blue; font-weight: bold; }\n"
@@ -188,7 +186,7 @@ public class CascadeTest {
 	}
 
 	@Test
-	public void testBug458342_combine() throws Exception {
+	void testBug458342_combine() throws Exception {
 		// the rules of two stylesheets should be combined
 		String css1 = "Button { color: blue; }";
 		String css2 = "Button { font-weight: bold; }";
@@ -202,7 +200,7 @@ public class CascadeTest {
 	}
 
 	@Test
-	public void testBug458342_override() throws Exception {
+	void testBug458342_override() throws Exception {
 		// in case of two stylesheets, the second one should override properties
 		// from the first one
 		String css1 = "Button { color: blue; font-weight: bold; }";
