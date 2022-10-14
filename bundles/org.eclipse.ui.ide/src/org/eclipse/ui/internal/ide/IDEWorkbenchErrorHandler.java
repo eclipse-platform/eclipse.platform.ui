@@ -133,9 +133,13 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 		try {
 			exceptionCount++;
 			if (exceptionCount > 1) {
-				dialog.updateMessage(MessageFormat.format(MSG_FATAL_ERROR,
-						MSG_FATAL_ERROR_Recursive));
-				dialog.getShell().forceActive();
+				try {
+					dialog.updateMessage(MessageFormat.format(MSG_FATAL_ERROR, MSG_FATAL_ERROR_Recursive));
+					dialog.getShell().forceActive();
+				} catch (Exception e) {
+					// avoid further explosion of recursive exceptions
+					e.printStackTrace();
+				}
 			} else if (openQuestionDialog(t)) {
 				closeWorkbench();
 			}
@@ -279,8 +283,10 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 		 */
 		public void updateMessage(String message) {
 			this.message = message;
-			this.messageLabel.setText(message);
-			this.messageLabel.update();
+			if (messageLabel != null && !messageLabel.isDisposed()) {
+				this.messageLabel.setText(message);
+				this.messageLabel.update();
+			}
 		}
 	}
 }
