@@ -164,7 +164,7 @@ public final class FinishedJobs extends EventManager {
 	 *
 	 * @param l listener to remove. Not {@code null}.
 	 */
-	void removeListener(KeptJobsListener l) {
+	public void removeListener(KeptJobsListener l) {
 		removeListenerObject(l);
 	}
 

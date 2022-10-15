@@ -15,12 +15,20 @@
 package org.eclipse.ui.tests.progress;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.Accessible;
 import org.eclipse.swt.layout.FillLayout;
@@ -31,6 +39,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.progress.FinishedJobs;
+import org.eclipse.ui.internal.progress.FinishedJobs.KeptJobsListener;
+import org.eclipse.ui.internal.progress.JobInfo;
+import org.eclipse.ui.internal.progress.JobTreeElement;
 import org.eclipse.ui.internal.progress.ProgressAnimationItem;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.progress.ProgressRegion;
@@ -87,6 +98,73 @@ public class ProgressAnimationItemTest {
 		assertSingleAccessibleListener();
 	}
 
+	@Test
+	public void testKept() throws Exception {
+		DummyJob job = new DummyJob("testKept", Status.OK_STATUS);
+		job.setProperty(IProgressConstants.KEEP_PROPERTY, true);
+		AtomicInteger finishedCount = new AtomicInteger();
+		AtomicInteger removedCount = new AtomicInteger();
+
+		KeptJobsListener listener = new KeptJobsListener() {
+
+			@Override
+			public void finished(JobTreeElement jte) {
+				if (jte instanceof JobInfo && ((JobInfo) jte).getJob() == job) {
+					finishedCount.incrementAndGet();
+				}
+			}
+
+			@Override
+			public void removed(JobTreeElement jte) {
+				if (jte instanceof JobInfo && ((JobInfo) jte).getJob() == job) {
+					removedCount.incrementAndGet();
+				}
+			}
+
+		};
+		FinishedJobs.getInstance().addListener(listener);
+		try {
+			job.schedule();
+			job.join();
+			ProgressManager.getInstance().notifyListeners();
+			assertEquals(1, finishedCount.get());
+			assertEquals(0, removedCount.get());
+
+		} finally {
+			FinishedJobs.getInstance().removeListener(listener);
+		}
+	}
+
+	@Test
+	public void testRescheduled() throws Exception {
+		AtomicInteger runCount = new AtomicInteger();
+		AtomicBoolean contains = new AtomicBoolean();
+		Job job = new Job("testNotKept") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				contains.set(
+						Arrays.asList(ProgressManager.getInstance().getJobInfos(false)).stream().map(i -> i.getJob())
+						.anyMatch(j -> j == this));
+				if (runCount.incrementAndGet() == 1) {
+					schedule(); // reschedule once
+				}
+				return Status.OK_STATUS;
+			}
+		};
+
+		try {
+			job.schedule();
+			job.join();
+			job.join();
+
+			JobInfo[] jobInfos = ProgressManager.getInstance().getJobInfos(false);
+			assertTrue(contains.get());
+			assertFalse(Arrays.asList(jobInfos).stream().map(i -> i.getJob()).anyMatch(j -> j == job));
+			assertEquals(2, runCount.get());
+
+		} finally {
+	}
+}
 	@Test
 	public void testSingleJobRefreshTwice() throws Exception {
 		createAndScheduleJob();
