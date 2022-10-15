@@ -34,6 +34,7 @@ import org.junit.runners.Suite;
 	TransferRuleTest.class,
 	Bug_262032.class,
 	TestBug269121.class,
+	TestGitHubBug227.class
 })
 public final class ConcurrencyTestSuite {
 }
