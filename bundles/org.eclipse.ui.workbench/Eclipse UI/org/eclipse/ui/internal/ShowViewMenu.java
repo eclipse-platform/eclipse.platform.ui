@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -68,18 +68,6 @@ import org.eclipse.ui.views.IViewRegistry;
  * Perspective Customize dialog.
  */
 public class ShowViewMenu extends ContributionItem {
-	/**
-	 * @deprecated As of 3.5, replaced by
-	 *             {@link IWorkbenchCommandConstants#VIEWS_SHOW_VIEW}
-	 */
-	@Deprecated
-	public static final String SHOW_VIEW_ID = IWorkbenchCommandConstants.VIEWS_SHOW_VIEW;
-	/**
-	 * @deprecated As of 3.6, replaced by
-	 *             {@link IWorkbenchCommandConstants#VIEWS_SHOW_VIEW_PARM_ID}
-	 */
-	@Deprecated
-	public static final String VIEW_ID_PARM = IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_ID;
 
 	private IWorkbenchWindow window;
 

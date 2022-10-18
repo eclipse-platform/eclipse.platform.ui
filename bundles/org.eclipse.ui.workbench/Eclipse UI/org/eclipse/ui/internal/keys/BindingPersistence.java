@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -56,11 +56,11 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
-import org.eclipse.ui.internal.ShowViewMenu;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -801,7 +801,7 @@ public class BindingPersistence extends PreferencePersistence {
 			parameterizedCommand = null;
 		} else if (viewParameter != null) {
 			HashMap<String, String> parms = new HashMap<>();
-			parms.put(ShowViewMenu.VIEW_ID_PARM, viewParameter);
+			parms.put(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_ID, viewParameter);
 			parameterizedCommand = ParameterizedCommand.generateCommand(command, parms);
 		} else {
 			parameterizedCommand = readParameters(configurationElement, warningsToLog, command);
