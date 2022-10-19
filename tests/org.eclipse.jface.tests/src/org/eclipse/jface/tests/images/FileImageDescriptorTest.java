@@ -13,7 +13,7 @@
  *     Karsten Stoeckmann <ngc2997@gmx.net> - Test case for Bug 220766
  *     		[JFace] ImageRegistry.get does not work as expected (crashes with NullPointerException)
  *     Christoph Läubrich - Bug 567898 - [JFace][HiDPI] ImageDescriptor support alternative naming scheme for high dpi
- *     Daniel Kruegler - #375, #378, #396, #398
+ *     Daniel Kruegler - #375, #378, #396, #398, #399, #401
  ******************************************************************************/
 
 package org.eclipse.jface.tests.images;
@@ -210,6 +210,31 @@ public class FileImageDescriptorTest extends TestCase {
 		assertEquals(Path.fromOSString(imagePath200).lastSegment(), "zoomIn@2x.png");
 		String imagePath150 = fileNameProvider.getImagePath(150);
 		assertNull("FileImageDescriptor's ImageFileNameProvider does return a @1.5x path", imagePath150);
+	}
+
+	public void testAdaptToURL() {
+		ImageDescriptor descriptor = ImageDescriptor.createFromFile(FileImageDescriptorTest.class,
+				"/icons/imagetests/rectangular-57x16.png");
+
+		URL url = Adapters.adapt(descriptor, URL.class);
+		assertNotNull("FileImageDescriptor does not adapt to URL", url);
+
+		ImageDescriptor descriptorFromUrl = ImageDescriptor.createFromURL(url);
+
+		ImageData imageDataOrig = descriptor.getImageData(100);
+		assertNotNull("Original URL does not return 100% image data", imageDataOrig);
+
+		ImageData imageDataURL = descriptorFromUrl.getImageData(100);
+		assertNotNull("Adapted URL does not return 100% image data", imageDataURL);
+		assertEquals(imageDataOrig.width, imageDataURL.width);
+		assertEquals(imageDataOrig.height, imageDataURL.height);
+
+		ImageData imageDataOrig200 = descriptor.getImageData(200);
+		assertNotNull("Original URL does not return 200% image data", imageDataOrig200);
+
+		ImageData imageDataURL200 = descriptorFromUrl.getImageData(200);
+		assertEquals(imageDataOrig200.width, imageDataURL200.width);
+		assertEquals(imageDataOrig200.height, imageDataURL200.height);
 	}
 
 }
