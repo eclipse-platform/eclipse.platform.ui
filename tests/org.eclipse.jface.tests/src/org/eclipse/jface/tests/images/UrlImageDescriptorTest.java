@@ -10,9 +10,11 @@
  *
  * Contributors:
  *     Christoph Läubrich - initial API and implementation
- *     Daniel Kruegler - #396, #398
+ *     Daniel Kruegler - #396, #398, #399, #401
  ******************************************************************************/
 package org.eclipse.jface.tests.images;
+
+import java.net.URL;
 
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.Path;
@@ -80,6 +82,31 @@ public class UrlImageDescriptorTest extends TestCase {
 		assertEquals(Path.fromOSString(imagePath200).lastSegment(), "zoomIn@2x.png");
 		String imagePath150 = fileNameProvider.getImagePath(150);
 		assertNull("URLImageDescriptor's ImageFileNameProvider does return a @1.5x path", imagePath150);
+	}
+
+	public void testAdaptToURL() {
+		ImageDescriptor descriptor = ImageDescriptor
+				.createFromURL(FileImageDescriptorTest.class.getResource("/icons/imagetests/rectangular-57x16.png"));
+
+		URL url = Adapters.adapt(descriptor, URL.class);
+		assertNotNull("URLImageDescriptor does not adapt to URL", url);
+
+		ImageDescriptor descriptorFromUrl = ImageDescriptor.createFromURL(url);
+
+		ImageData imageDataOrig = descriptor.getImageData(100);
+		assertNotNull("Original URL does not return 100% image data", imageDataOrig);
+
+		ImageData imageDataURL = descriptorFromUrl.getImageData(100);
+		assertNotNull("Adapted URL does not return 100% image data", imageDataURL);
+		assertEquals(imageDataOrig.width, imageDataURL.width);
+		assertEquals(imageDataOrig.height, imageDataURL.height);
+
+		ImageData imageDataOrig200 = descriptor.getImageData(200);
+		assertNotNull("Original URL does not return 200% image data", imageDataOrig200);
+
+		ImageData imageDataURL200 = descriptorFromUrl.getImageData(200);
+		assertEquals(imageDataOrig200.width, imageDataURL200.width);
+		assertEquals(imageDataOrig200.height, imageDataURL200.height);
 	}
 
 }

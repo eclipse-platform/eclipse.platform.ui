@@ -12,7 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 483465
  *     Christoph Läubrich - Bug 567898 - [JFace][HiDPI] ImageDescriptor support alternative naming scheme for high dpi
- *     Daniel Krügler - #376, #396, #398, #399
+ *     Daniel Kruegler - #376, #396, #398, #399, #401
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
@@ -328,9 +328,8 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable, ImageFil
 
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-		if (adapter == ImageFileNameProvider.class) {
-			// Support testing ImageFileNameProvider characteristics, see #396
-			return adapter.cast(this);
+		if (adapter == URL.class) {
+			return adapter.cast(getURL(url));
 		}
 		return null;
 	}
