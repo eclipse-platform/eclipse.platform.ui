@@ -1156,6 +1156,29 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 
 	/**
+	 * Checks if there is a filter currently enabled.
+	 *
+	 * @since 3.20
+	 *
+	 * @return true if a filter is enabled, false if no filter is enabled.
+	 *
+	 */
+	public boolean isFilterEnabled() {
+		return generator != null && generator.getEnabledFilters().size() > 0;
+	}
+
+	/**
+	 * Checks if there is a limit on the number of items displayed.
+	 *
+	 * @since 3.20
+	 *
+	 * @return true if a limits enabled, false if no limits.
+	 */
+	public boolean isMarkerLimitsEnabled() {
+		return generator != null && generator.isMarkerLimitsEnabled();
+	}
+
+	/**
 	 * Restore the expanded categories.
 	 *
 	 */
