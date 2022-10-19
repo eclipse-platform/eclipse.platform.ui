@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -26,6 +26,8 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageDataProvider;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Button;
@@ -36,7 +38,8 @@ import org.eclipse.swt.widgets.Display;
 
 /**
  * The <code>ColorSelector</code> is a wrapper for a button that displays a
- * selected <code>Color</code> and allows the user to change the selection.
+ * swatch of the selected color and allows the user to change the selection
+ * using the operating system's native color chooser dialog.
  */
 public class ColorSelector extends EventManager {
 	/**
@@ -65,12 +68,7 @@ public class ColorSelector extends EventManager {
 	public ColorSelector(Composite parent) {
 		fButton = new Button(parent, SWT.PUSH);
 		fExtent = computeImageSize(parent);
-		fImage = new Image(parent.getDisplay(), fExtent.x, fExtent.y);
-		GC gc = new GC(fImage);
-		gc.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BORDER));
-		gc.fillRectangle(0, 0, fExtent.x, fExtent.y);
-		gc.dispose();
-		fButton.setImage(fImage);
+		updateColorImage();
 		fButton.addSelectionListener(widgetSelectedAdapter(event -> open()));
 		fButton.addDisposeListener(event -> {
 			if (fImage != null) {
@@ -173,12 +171,34 @@ public class ColorSelector extends EventManager {
 	 * setting.
 	 */
 	protected void updateColorImage() {
-		Display display = fButton.getDisplay();
-		GC gc = new GC(fImage);
-		Color color = new Color(display, fColorValue);
-		gc.setBackground(color);
-		gc.fillRectangle(1, 1, fExtent.x - 2, fExtent.y - 2);
-		gc.dispose();
+		if (fImage != null) {
+			fImage.dispose();
+		}
+
+		final Display display = fButton.getDisplay();
+
+		fImage = new Image(display, new ImageDataProvider() {
+
+			@Override
+			public ImageData getImageData(int zoom) {
+				Image image = new Image(display, fExtent.x, fExtent.y);
+				GC gc = new GC(image);
+
+				RGB color = getColorValue();
+				gc.setForeground(display.getSystemColor(SWT.COLOR_WIDGET_BORDER));
+				if (color != null) {
+					gc.setBackground(new Color(display, color));
+					gc.fillRectangle(image.getBounds());
+				}
+				gc.setLineWidth(2);
+				gc.drawRectangle(image.getBounds());
+				gc.dispose();
+
+				ImageData data = image.getImageData(zoom);
+				image.dispose();
+				return data;
+			}
+		});
 		fButton.setImage(fImage);
 	}
 
