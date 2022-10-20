@@ -88,7 +88,7 @@ public abstract class UIWorkingSetWizardsAuto extends UITestCase {
 		}
 	}
 
-	private void deleteResources() throws CoreException {
+	private void deleteResources() {
 		try {
 			if (p1 != null) {
 				FileUtil.deleteProject(p1);
@@ -99,9 +99,7 @@ public abstract class UIWorkingSetWizardsAuto extends UITestCase {
 
 		} catch (CoreException e) {
 			TestPlugin.getDefault().getLog().log(e.getStatus());
-			fail(e.getMessage());
-			throw (e);
-
+			throw new AssertionError(e);
 		}
 
 	}
