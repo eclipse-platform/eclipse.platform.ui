@@ -120,8 +120,6 @@
           <artifactId>tycho-surefire-plugin</artifactId>
           <version>${tycho.version}</version>
           <configuration>
-            <useUIHarness>${tycho.surefire.useUIHarness}</useUIHarness>
-            <useUIThread>${tycho.surefire.useUIThread}</useUIThread>
             <dependencies>
               <dependency>
                 <type>eclipse-plugin</type>
