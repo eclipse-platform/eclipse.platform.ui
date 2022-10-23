@@ -7,7 +7,7 @@ heapdump.*
 core.*
 Snap.*
 # maven
->>>>>>> 2411f5e... Bug 548210 - Only send textDocument/didSave if the supports it
 target/
-/*/target/
 .DS_Store
+.polyglot.*
+pom.tycho
