@@ -31,6 +31,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.ICoreRunnable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -130,13 +131,8 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 
 	public static final Styler HIGHLIGHT_STYLE = org.eclipse.search.internal.ui.text.DecoratingFileSearchLabelProvider.HIGHLIGHT_STYLE;
 
-	private UIJob refreshJob = new UIJob(Messages.QuickSearchDialog_RefreshJob) {
-		@Override
-		public IStatus runInUIThread(IProgressMonitor monitor) {
-			refreshWidgets();
-			return Status.OK_STATUS;
-		}
-	};
+	private UIJob refreshJob = UIJob.create(Messages.QuickSearchDialog_RefreshJob,
+			(ICoreRunnable) m -> refreshWidgets());
 
 	protected void openSelection() {
 		try {
