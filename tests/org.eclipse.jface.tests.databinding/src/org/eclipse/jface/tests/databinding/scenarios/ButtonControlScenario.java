@@ -56,7 +56,6 @@ public class ButtonControlScenario extends ScenariosTestCase {
 		super.tearDown();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testScenario01() {
 		// Bind the button's selection to the adventure "isPetsAllowed"
@@ -84,7 +83,6 @@ public class ButtonControlScenario extends ScenariosTestCase {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testScenario02() {
 		// Test with an SWT.Toggle button
@@ -108,7 +106,6 @@ public class ButtonControlScenario extends ScenariosTestCase {
 		assertEquals(newBoolean, adventure.isPetsAllowed());
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testScenario03() {
 		// Test with an SWT.Radio button

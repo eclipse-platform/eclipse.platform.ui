@@ -49,7 +49,6 @@ public class NPETestScenario extends ScenariosTestCase {
 	 * Asserts the ability to have an initial value of <code>null</code> on the
 	 * model and to update the value by changing the value of the view.
 	 */
-	@SuppressWarnings("unchecked")
 	@Test
 	public void test_InitialNullValue() {
 		Person person = new Person();
