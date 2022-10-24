@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.core.databinding.beans" version="2">
     <resource path="META-INF/MANIFEST.MF">
-        <filter comment="planned-api-deletion" id="923795461">
-            <message_arguments>
-                <message_argument value="1.9.0"/>
-                <message_argument value="1.8.0"/>
-            </message_arguments>
-        </filter>
         <filter comment="Planned API removal so we increase the minor version" id="926941240">
             <message_arguments>
                 <message_argument value="1.9.0"/>
