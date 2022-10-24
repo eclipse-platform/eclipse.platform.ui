@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-Vendor: %Plugin.Providername
 Bundle-SymbolicName: org.eclipse.tests.urischeme
-Bundle-Version: 1.1.200.qualifier
+Bundle-Version: 1.1.300.qualifier
 Bundle-Localization: plugin
 Fragment-Host: org.eclipse.urischeme;bundle-version="1.1.100"
 Automatic-Module-Name: org.eclipse.urischeme.tests
