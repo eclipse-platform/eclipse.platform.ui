@@ -34,4 +34,17 @@ public abstract class MarkerSupportView extends ExtendedMarkersView {
 		super(contentGeneratorId);
 	}
 
+	/**
+	 * Checks if there is a filter currently enabled.
+	 *
+	 * @since 3.20
+	 *
+	 * @return true if a filter is enabled, false if no filter is enabled.
+	 *
+	 */
+	@Override
+	public boolean isFilterEnabled() {
+		return super.isFilterEnabled();
+	}
+
 }

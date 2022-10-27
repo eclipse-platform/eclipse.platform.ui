@@ -23,6 +23,7 @@ import org.eclipse.ui.tests.markers.MarkerHelpRegistryTest;
 import org.eclipse.ui.tests.markers.MarkerQueryTest;
 import org.eclipse.ui.tests.markers.MarkerSortUtilTest;
 import org.eclipse.ui.tests.markers.MarkerSupportRegistryTests;
+import org.eclipse.ui.tests.markers.MarkerSupportViewTest;
 import org.eclipse.ui.tests.markers.MarkerTesterTest;
 import org.eclipse.ui.tests.markers.MarkerViewTests;
 import org.eclipse.ui.tests.markers.MarkerViewUtilTest;
@@ -42,6 +43,7 @@ import org.junit.runners.Suite;
 	DeclarativeFilterDeclarationTest.class,
 	ResourceMappingMarkersTest.class,
 	MarkerSupportRegistryTests.class,
+	MarkerSupportViewTest.class,
 	MarkerSortUtilTest.class,
 	MarkerViewTests.class,
 	MarkerViewUtilTest.class,
