@@ -17,7 +17,9 @@
  *******************************************************************************/
 package org.eclipse.jface.text.source;
 
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.Stack;
 
 import org.eclipse.swt.SWT;
@@ -40,6 +42,7 @@ import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.BlockTextSelection;
 import org.eclipse.jface.text.DocumentRewriteSession;
 import org.eclipse.jface.text.DocumentRewriteSessionType;
+import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IBlockTextSelection;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension4;
@@ -51,6 +54,7 @@ import org.eclipse.jface.text.ISlaveDocumentManagerExtension;
 import org.eclipse.jface.text.ISynchronizable;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewerExtension2;
+import org.eclipse.jface.text.ITextViewerLifecycle;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextViewer;
@@ -89,8 +93,8 @@ import org.eclipse.jface.text.source.inlined.InlinedAnnotationSupport;
  * <p>
  * Clients may subclass this class but should expect some breakage by future releases.</p>
  */
-public class SourceViewer extends TextViewer implements ISourceViewer, ISourceViewerExtension, ISourceViewerExtension2, ISourceViewerExtension3, ISourceViewerExtension4, ISourceViewerExtension5 {
-
+public class SourceViewer extends TextViewer
+		implements ISourceViewer, ISourceViewerExtension, ISourceViewerExtension2, ISourceViewerExtension3, ISourceViewerExtension4, ISourceViewerExtension5 {
 
 	/**
 	 * Layout of a source viewer. Vertical ruler, text widget, and overview ruler are shown side by side.
@@ -389,6 +393,8 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	 */
 	private CodeMiningManager fCodeMiningManager;
 
+	private final Set<ITextViewerLifecycle> lifecycles;
+
 	/**
 	 * Constructs a new source viewer. The vertical ruler is initially visible.
 	 * The viewer has not yet been initialized with a source viewer configuration.
@@ -422,7 +428,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		fIsVerticalRulerVisible= (verticalRuler != null);
 		fOverviewRuler= overviewRuler;
 		fIsOverviewRulerVisible= (showAnnotationsOverview && overviewRuler != null);
-
+		this.lifecycles= new HashSet<>();
 		createControl(parent, styles);
 	}
 
@@ -490,16 +496,14 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 
 		// install content type independent plug-ins
 		fPresentationReconciler= configuration.getPresentationReconciler(this);
-		if (fPresentationReconciler != null)
-			fPresentationReconciler.install(this);
+		addTextViewerLifecycle(fPresentationReconciler);
 
 		fReconciler= configuration.getReconciler(this);
-		if (fReconciler != null)
-			fReconciler.install(this);
+		addTextViewerLifecycle(fReconciler);
 
 		fContentAssistant= configuration.getContentAssistant(this);
+		addTextViewerLifecycle(fContentAssistant);
 		if (fContentAssistant != null) {
-			fContentAssistant.install(this);
 			if (fContentAssistant instanceof IContentAssistantExtension2 && fContentAssistant instanceof IContentAssistantExtension4)
 				fContentAssistantFacade= new ContentAssistantFacade(fContentAssistant);
 			fContentAssistantInstalled= true;
@@ -514,8 +518,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		fContentFormatter= configuration.getContentFormatter(this);
 
 		fInformationPresenter= configuration.getInformationPresenter(this);
-		if (fInformationPresenter != null)
-			fInformationPresenter.install(this);
+		addTextViewerLifecycle(fInformationPresenter);
 
 		setUndoManager(configuration.getUndoManager(this));
 
@@ -537,7 +540,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		String[] types= configuration.getConfiguredContentTypes(this);
 		for (String t : types) {
 
-			setAutoEditStrategies(configuration.getAutoEditStrategies(this, t), t);
+			doSetAutoEditStrategies(configuration.getAutoEditStrategies(this, t), t);
 			setTextDoubleClickStrategy(configuration.getDoubleClickStrategy(this, t), t);
 
 			int[] stateMasks= configuration.getConfiguredTextHoverStateMasks(this, t);
@@ -558,8 +561,19 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 				setDefaultPrefixes(prefixes, t);
 		}
 		setCodeMiningProviders(configuration.getCodeMiningProviders(this));
-
+		installTextViewer();
 		activatePlugins();
+	}
+
+	private void doSetAutoEditStrategies(IAutoEditStrategy[] strategies, String contentType) {
+		super.setAutoEditStrategies(strategies, contentType);
+		if (strategies != null) {
+			for (IAutoEditStrategy strategy : strategies) {
+				if (strategy instanceof ITextViewerLifecycle) {
+					addTextViewerLifecycle((ITextViewerLifecycle) strategy);
+				}
+			}
+		}
 	}
 
 	/**
@@ -712,18 +726,11 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	public void unconfigure() {
 		clearRememberedSelection();
 
-		if (fPresentationReconciler != null) {
-			fPresentationReconciler.uninstall();
-			fPresentationReconciler= null;
-		}
-
-		if (fReconciler != null) {
-			fReconciler.uninstall();
-			fReconciler= null;
-		}
+		uninstallTextViewer();
+		fPresentationReconciler= null;
+		fReconciler= null;
 
 		if (fContentAssistant != null) {
-			fContentAssistant.uninstall();
 			fContentAssistantInstalled= false;
 			fContentAssistant= null;
 			if (fContentAssistantFacade != null)
@@ -1320,6 +1327,25 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	public void setCodeMiningAnnotationPainter(AnnotationPainter painter) {
 		fAnnotationPainter= painter;
 		ensureCodeMiningManagerInstalled();
+	}
+
+	private void addTextViewerLifecycle(ITextViewerLifecycle lifecycle) {
+		if (lifecycle != null) {
+			lifecycles.add(lifecycle);
+		}
+	}
+
+	private void installTextViewer() {
+		for (ITextViewerLifecycle lifecycle : lifecycles) {
+			lifecycle.install(this);
+		}
+	}
+
+	private void uninstallTextViewer() {
+		for (ITextViewerLifecycle lifecycle : lifecycles) {
+			lifecycle.uninstall();
+		}
+		lifecycles.clear();
 	}
 
 }

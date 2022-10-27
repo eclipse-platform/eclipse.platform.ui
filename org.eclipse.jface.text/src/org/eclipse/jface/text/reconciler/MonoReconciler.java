@@ -17,6 +17,8 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.ITextViewerLifecycle;
 import org.eclipse.jface.text.Region;
 
 
@@ -97,5 +99,21 @@ public class MonoReconciler extends AbstractReconciler {
 			IReconcilingStrategyExtension extension= (IReconcilingStrategyExtension) fStrategy;
 			extension.initialReconcile();
 		}
+	}
+
+	@Override
+	public void install(ITextViewer textViewer) {
+		super.install(textViewer);
+		if (fStrategy instanceof ITextViewerLifecycle) {
+			((ITextViewerLifecycle) fStrategy).install(textViewer);
+		}
+	}
+
+	@Override
+	public void uninstall() {
+		if (fStrategy instanceof ITextViewerLifecycle) {
+			((ITextViewerLifecycle) fStrategy).uninstall();
+		}
+		super.uninstall();
 	}
 }

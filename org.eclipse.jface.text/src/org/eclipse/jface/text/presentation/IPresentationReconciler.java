@@ -15,6 +15,7 @@ package org.eclipse.jface.text.presentation;
 
 
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.ITextViewerLifecycle;
 
 
 /**
@@ -55,7 +56,7 @@ import org.eclipse.jface.text.ITextViewer;
  * @see org.eclipse.jface.text.presentation.IPresentationRepairer
  * @see org.eclipse.jface.text.TextPresentation
  */
-public interface IPresentationReconciler {
+public interface IPresentationReconciler extends ITextViewerLifecycle {
 
 	/**
 	 * Installs this presentation reconciler on the given text viewer. After
@@ -71,12 +72,14 @@ public interface IPresentationReconciler {
 	 * @param viewer the viewer on which this presentation reconciler is
 	 *        installed
 	 */
+	@Override
 	void install(ITextViewer viewer);
 
 	/**
 	 * Removes the reconciler from the text viewer it has previously been
 	 * installed on.
 	 */
+	@Override
 	void uninstall();
 
 	/**

@@ -14,6 +14,7 @@
 package org.eclipse.jface.text.reconciler;
 
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.ITextViewerLifecycle;
 
 
 /**
@@ -47,7 +48,7 @@ import org.eclipse.jface.text.ITextViewer;
  * @see ITextViewer
  * @see IReconcilingStrategy
  */
-public interface IReconciler {
+public interface IReconciler extends ITextViewerLifecycle {
 
 	/**
 	 * Installs the reconciler on the given text viewer. After this method has been
@@ -56,12 +57,14 @@ public interface IReconciler {
 	 *
 	 * @param textViewer the viewer on which the reconciler is installed
 	 */
+	@Override
 	void install(ITextViewer textViewer);
 
 	/**
 	 * Removes the reconciler from the text viewer it has
 	 * previously been installed on.
 	 */
+	@Override
 	void uninstall();
 
 	/**

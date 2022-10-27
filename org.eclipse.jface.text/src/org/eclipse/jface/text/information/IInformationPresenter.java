@@ -14,6 +14,7 @@
 package org.eclipse.jface.text.information;
 
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.ITextViewerLifecycle;
 
 
 /**
@@ -46,7 +47,7 @@ import org.eclipse.jface.text.ITextViewer;
  * @see org.eclipse.jface.text.information.IInformationProvider
  * @since 2.0
  */
-public interface IInformationPresenter {
+public interface IInformationPresenter extends ITextViewerLifecycle {
 
 	/**
 	 * Installs the information presenter on the given text viewer. After this method has been
@@ -55,12 +56,14 @@ public interface IInformationPresenter {
 	 *
 	 * @param textViewer the viewer on which the presenter is installed
 	 */
+	@Override
 	void install(ITextViewer textViewer);
 
 	/**
 	 * Removes the information presenter from the text viewer it has previously been
 	 * installed on.
 	 */
+	@Override
 	void uninstall();
 
 	/**

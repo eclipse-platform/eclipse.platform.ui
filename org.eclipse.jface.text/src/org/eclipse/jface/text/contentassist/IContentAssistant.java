@@ -14,6 +14,7 @@
 package org.eclipse.jface.text.contentassist;
 
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.ITextViewerLifecycle;
 
 
 /**
@@ -76,7 +77,7 @@ import org.eclipse.jface.text.ITextViewer;
  * @see org.eclipse.jface.text.ITextViewer
  * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor
  */
- public interface IContentAssistant {
+public interface IContentAssistant extends ITextViewerLifecycle {
 
 	//------ proposal popup orientation styles ------------
 	/** The context info list will overlay the list of completion proposals. */
@@ -98,12 +99,14 @@ import org.eclipse.jface.text.ITextViewer;
 	 *
 	 * @param textViewer the text viewer on which content assist will work
 	 */
+	@Override
 	void install(ITextViewer textViewer);
 
 	/**
 	 * Uninstalls content assist support from the text viewer it has
 	 * previously be installed on.
 	 */
+	@Override
 	void uninstall();
 
 	/**

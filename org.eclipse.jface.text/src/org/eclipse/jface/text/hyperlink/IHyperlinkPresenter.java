@@ -14,6 +14,7 @@
 package org.eclipse.jface.text.hyperlink;
 
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.ITextViewerLifecycle;
 
 
 /**
@@ -39,7 +40,7 @@ import org.eclipse.jface.text.ITextViewer;
  * @see IHyperlinkPresenterExtension2
  * @since 3.1
  */
-public interface IHyperlinkPresenter {
+public interface IHyperlinkPresenter extends ITextViewerLifecycle {
 
 	/**
 	 * Tells whether this presenter is able to handle
@@ -73,10 +74,12 @@ public interface IHyperlinkPresenter {
 	 *
 	 * @param textViewer the text viewer
 	 */
+	@Override
 	void install(ITextViewer textViewer);
 
 	/**
 	 * Uninstalls this hyperlink presenter.
 	 */
+	@Override
 	void uninstall();
 }
