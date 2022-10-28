@@ -44,10 +44,11 @@ public class CodeMiningReconciler extends Reconciler {
 	@Override
 	public void uninstall() {
 		ITextViewer viewer= getTextViewer();
-		if (viewer != null && viewer.getTextWidget().getData(KEY) == this) {
+		if (viewer != null && viewer.getTextWidget() != null && viewer.getTextWidget().getData(KEY) == this) {
 			super.uninstall();
 			viewer.getTextWidget().setData(KEY, null);
 		}
+		viewer= null;
 	}
 
 
