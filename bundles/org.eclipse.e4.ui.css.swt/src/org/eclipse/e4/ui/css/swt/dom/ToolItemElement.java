@@ -38,8 +38,11 @@ public class ToolItemElement extends ItemElement {
 	private SelectionListener selectionListener = new SelectionAdapter() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			ToolItemElement.this.isSelected = getToolItem().getSelection();
-			doApplyStyles();
+			ToolItem toolItem = getToolItem();
+			if (toolItem != null && !toolItem.isDisposed()) {
+				ToolItemElement.this.isSelected = getToolItem().getSelection();
+				doApplyStyles();
+			}
 		}
 	};
 
