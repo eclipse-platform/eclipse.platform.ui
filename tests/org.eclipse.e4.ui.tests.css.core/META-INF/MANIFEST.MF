@@ -7,7 +7,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.swt,
  org.eclipse.e4.ui.css.core,
  org.eclipse.e4.ui.css.swt,
- org.w3c.css.sac
+ org.w3c.css.sac,
+ junit-jupiter-engine
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Eclipse-BundleShape: dir
