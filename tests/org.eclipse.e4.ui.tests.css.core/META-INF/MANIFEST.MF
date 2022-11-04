@@ -16,6 +16,7 @@ Export-Package: org.eclipse.e4.ui.tests.css.core;x-internal:=true,
  org.eclipse.e4.ui.tests.css.core.util;x-internal:=true
 Automatic-Module-Name: org.eclipse.e4.ui.tests.css.core
 Import-Package: org.junit.jupiter.api,
- org.junit.platform.suite.api
+ org.junit.platform.suite.api,
+ org.junit.jupiter.engine
 Bundle-Vendor: %Bundle-Vendor
 
