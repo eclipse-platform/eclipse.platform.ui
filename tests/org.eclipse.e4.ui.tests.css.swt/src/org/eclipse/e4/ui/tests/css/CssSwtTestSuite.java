@@ -55,51 +55,21 @@ import org.eclipse.e4.ui.tests.css.swt.ThemeTest;
 import org.eclipse.e4.ui.tests.css.swt.ThemesExtensionTest;
 import org.eclipse.e4.ui.tests.css.swt.ToolItemTest;
 import org.eclipse.e4.ui.tests.css.swt.TreeTest;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
-// note to contributors: please ignore Eclipse default formatting and keep one class per line.
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-	CSSSWTFontHelperTest.class,
-	CSSSWTColorHelperTest.class,
-	CSSResourcesHelpersTest.class,
-	SWTResourceRegistryKeyFactoryTest.class,
-	SWTResourcesRegistryTest.class,
-	FontDefinitionTest.class,
-	ColorDefinitionTest.class,
-	ThemesExtensionTest.class,
-	IEclipsePreferencesTest.class,
-	EclipsePreferencesHelperTest.class,
-	CSSSWTWidgetTest.class,
-	LabelTest.class,
-	LinkTest.class,
-	CTabFolderTest.class,
-	CTabItemTest.class,
-	IdClassLabelColorTest.class,
-	ShellTest.class,
-	ButtonTest.class,
-	ToolItemTest.class,
-	GradientTest.class,
-	MarginTest.class,
-	InnerClassElementTest.class,
-	EclipsePreferencesHandlerTest.class,
-	PreferenceOverriddenByCssChangeListenerTest.class,
-	ButtonTextTransformTest.class,
-	LabelTextTransformTest.class,
-	TextTextTransformTest.class,
-	DescendentTest.class,
-	ThemeTest.class,
-	Bug459961Test.class,
-	Bug419482Test.class,
-	ShellActiveTest.class,
-	InheritTest.class,
-	TableTest.class,
-	TreeTest.class,
-	TabbedPropertiesListTest.class,
-	TabbedPropertiesTitleTest.class,
-	ExpandableCompositeTest.class,
-	SectionTest.class})
+@Suite
+@SelectClasses({ CSSSWTFontHelperTest.class, CSSSWTColorHelperTest.class, CSSResourcesHelpersTest.class,
+		SWTResourceRegistryKeyFactoryTest.class, SWTResourcesRegistryTest.class, FontDefinitionTest.class,
+		ColorDefinitionTest.class, ThemesExtensionTest.class, IEclipsePreferencesTest.class,
+		EclipsePreferencesHelperTest.class, CSSSWTWidgetTest.class, LabelTest.class, LinkTest.class,
+		CTabFolderTest.class, CTabItemTest.class, IdClassLabelColorTest.class, ShellTest.class, ButtonTest.class,
+		ToolItemTest.class, GradientTest.class, MarginTest.class, InnerClassElementTest.class,
+		EclipsePreferencesHandlerTest.class, PreferenceOverriddenByCssChangeListenerTest.class,
+		ButtonTextTransformTest.class, LabelTextTransformTest.class, TextTextTransformTest.class, DescendentTest.class,
+		ThemeTest.class, Bug459961Test.class, Bug419482Test.class, ShellActiveTest.class, InheritTest.class,
+		TableTest.class, TreeTest.class, TabbedPropertiesListTest.class, TabbedPropertiesTitleTest.class,
+		ExpandableCompositeTest.class, SectionTest.class })
 public class CssSwtTestSuite {
 
 }

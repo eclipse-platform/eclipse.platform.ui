@@ -14,25 +14,25 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.eclipse.ui.internal.themes.FontDefinition;
 import org.eclipse.ui.internal.themes.ThemesExtension;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ThemesExtensionTest extends CSSSWTTestCase {
 
 	@Test
-	public void testThemesExtension() {
+	void testThemesExtension() {
 		//given
 		engine = createEngine(
 				"ThemesExtension {font-definition: '#org-eclipse-ui-workbench-FONT_DEF_1',"
 						+
-				"'#org-eclipse-ui-workbench-FONT_DEF_2'; color-definition: '#org-eclipse-ui-workbench-COLOR_DEF_1';}", display);
+						"'#org-eclipse-ui-workbench-FONT_DEF_2'; color-definition: '#org-eclipse-ui-workbench-COLOR_DEF_1';}", display);
 		ThemesExtension themesExtention = new ThemesExtension();
 
 		//when

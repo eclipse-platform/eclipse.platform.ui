@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
@@ -21,7 +21,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TableTest extends CSSSWTTestCase {
 
@@ -51,14 +51,14 @@ public class TableTest extends CSSSWTTestCase {
 
 
 	@Test
-	public void testTableColor() {
+	void testTableColor() {
 		Table tableToTest = createTestTable("Table { background-color: #FF0000; color: #0000FF }");
 		assertEquals(RED, tableToTest.getBackground().getRGB());
 		assertEquals(BLUE, tableToTest.getForeground().getRGB());
 	}
 
 	@Test
-	public void testTableHeaderColor() {
+	void testTableHeaderColor() {
 		Table tableToTest = createTestTable(
 				"Table { swt-header-background-color: #FF0000; swt-header-color: #0000FF }");
 		assertEquals(RED, tableToTest.getHeaderBackground().getRGB());

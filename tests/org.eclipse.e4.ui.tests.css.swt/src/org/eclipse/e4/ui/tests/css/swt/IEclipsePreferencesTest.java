@@ -14,17 +14,16 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class IEclipsePreferencesTest extends CSSSWTTestCase {
 
-
 	@Test
-	public void testIEclipsePreferences() {
+	void testIEclipsePreferences() {
 		// given
 		IEclipsePreferences preferences = new EclipsePreferences(null, "org.eclipse.jdt.ui") {};
 

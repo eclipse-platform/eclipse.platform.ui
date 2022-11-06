@@ -14,8 +14,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.resources;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -28,11 +28,11 @@ import org.eclipse.e4.ui.css.swt.resources.ResourceByDefinitionKey;
 import org.eclipse.e4.ui.css.swt.resources.SWTResourcesRegistry;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Resource;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SWTResourcesRegistryTest {
 	@Test
-	public void testRemoveResourcesByKeyTypeAndType() {
+	void testRemoveResourcesByKeyTypeAndType() {
 		//given
 		final Resource resource1 = mock(Resource.class);
 		final Resource resource2 = mock(Resource.class);
@@ -62,8 +62,7 @@ public class SWTResourcesRegistryTest {
 		assertTrue(resources.containsKey("key1"));
 	}
 
-	public static class SWTResourcesRegistryTestable extends
-	SWTResourcesRegistry {
+	public static class SWTResourcesRegistryTestable extends SWTResourcesRegistry {
 		public SWTResourcesRegistryTestable() {
 			super(null);
 		}

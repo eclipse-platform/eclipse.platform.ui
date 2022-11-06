@@ -14,10 +14,10 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
@@ -32,14 +32,14 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.themes.ColorDefinition;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.FrameworkUtil;
 
 public class ColorDefinitionTest extends CSSSWTTestCase {
 
 
 	@Test
-	public void testColorDefinition() {
+	void testColorDefinition() {
 		//given
 		CSSEngine engine = createEngine("ColorDefinition#ACTIVE_HYPERLINK_COLOR{color: green}", display);
 		ColorDefinition definition = colorDefinition("ACTIVE_HYPERLINK_COLOR", "name", "categoryId", "description");
@@ -60,7 +60,7 @@ public class ColorDefinitionTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testColorDefinitionWhenNameCategoryIdAndDescriptionOverridden() {
+	void testColorDefinitionWhenNameCategoryIdAndDescriptionOverridden() {
 		// given
 		CSSEngine engine = createEngine("ColorDefinition#ACTIVE_HYPERLINK_COLOR{color: green;" +
 				"label:'nameOverridden'; category:'#categoryIdOverridden'; description: 'descriptionOverridden'}", display);
@@ -82,7 +82,7 @@ public class ColorDefinitionTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testColorDefinitionWhenDefinitionStylesheetNotFound() {
+	void testColorDefinitionWhenDefinitionStylesheetNotFound() {
 		//given
 		CSSEngine engine = createEngine("ColorDefinition#ACTIVE_HYPERLINK_COLOR{color: green}", display);
 		ColorDefinition definition = colorDefinition("color definition uniqueId without matching stylesheet",
@@ -101,7 +101,7 @@ public class ColorDefinitionTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testWidgetWithColorDefinitionAsBackgroundColor() {
+	void testWidgetWithColorDefinitionAsBackgroundColor() {
 		//given
 		registerColorProviderWith("ACTIVE_HYPERLINK_COLOR", new RGB(255, 0, 0));
 
@@ -122,7 +122,7 @@ public class ColorDefinitionTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testUnset() {
+	void testUnset() {
 		CSSEngine engine = createEngine("Button {background-color: unset;}", display);
 
 		Shell shell = new Shell(display, SWT.SHELL_TRIM);
@@ -145,7 +145,7 @@ public class ColorDefinitionTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testSetColorDefinitionWithSystemColor() {
+	void testSetColorDefinitionWithSystemColor() {
 		// given
 		CSSEngine engine = createEngine("ColorDefinition#ACTIVE_HYPERLINK_COLOR{color: '#COLOR-LIST-SELECTION'}",
 				display);

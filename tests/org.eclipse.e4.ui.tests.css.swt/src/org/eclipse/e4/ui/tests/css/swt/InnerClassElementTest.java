@@ -15,14 +15,14 @@
 
 package org.eclipse.e4.ui.tests.css.swt;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class InnerClassElementTest extends CSSSWTTestCase {
 
@@ -56,7 +56,7 @@ public class InnerClassElementTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testInnerClassElement() {
+	void testInnerClassElement() {
 		Label label = createTestLabel("InnerClassElementTest-CustomComposite Label { color: #00ffa0; }");
 
 		assertEquals(0x00, label.getForeground().getRed());
