@@ -14,11 +14,10 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.e4.ui.css.swt.helpers.PropertyHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestPropertyHelper {
 	public static class Base {
@@ -64,37 +63,22 @@ public class TestPropertyHelper {
 	}
 
 	@Test
-	public void testReadWriteProperty() {
+	void testReadWriteProperty() throws Exception {
 		Impl bean = new Impl();
-		try {
-			assertEquals("A",PropertyHelper.getProperty(bean, "a"));
-			assertEquals("B",PropertyHelper.getProperty(bean, "b"));
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail();
-		}
+		assertEquals("A",PropertyHelper.getProperty(bean, "a"));
+		assertEquals("B",PropertyHelper.getProperty(bean, "b"));
 	}
 
 	@Test
-	public void testReadOnlyProperty() {
+	void testReadOnlyProperty() throws Exception {
 		Impl bean = new Impl();
-		try {
-			assertEquals("C",PropertyHelper.getProperty(bean, "c"));
-			assertEquals(true,PropertyHelper.getProperty(bean, "d"));
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail();
-		}
+		assertEquals("C",PropertyHelper.getProperty(bean, "c"));
+		assertEquals(true,PropertyHelper.getProperty(bean, "d"));
 	}
 
 	@Test
-	public void testNestedProperty() {
+	void testNestedProperty() throws Exception {
 		Impl bean = new Impl();
-		try {
-			assertEquals("Nested",PropertyHelper.getProperty(bean, "nested.a"));
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail();
-		}
+		assertEquals("Nested",PropertyHelper.getProperty(bean, "nested.a"));
 	}
 }

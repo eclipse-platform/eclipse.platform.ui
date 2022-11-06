@@ -15,25 +15,24 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Label;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class LabelTest extends CSSSWTTestCase {
 
-
 	@Test
-	public void testColor() {
+	void testColor() {
 		Label labelToTest = createTestLabel("Label { background-color: #FF0000; color: #0000FF }");
 		assertEquals(RED, labelToTest.getBackground().getRGB());
 		assertEquals(BLUE, labelToTest.getForeground().getRGB());
 	}
 
 	@Test
-	public void testFontRegular() {
+	void testFontRegular() {
 		Label labelToTest = createTestLabel("Label { font: Verdana 16px }");
 		assertEquals(1, labelToTest.getFont().getFontData().length);
 		FontData fontData = labelToTest.getFont().getFontData()[0];
@@ -43,7 +42,7 @@ public class LabelTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testFontBold() {
+	void testFontBold() {
 		Label labelToTest = createTestLabel("Label { font: Arial 12px; font-weight: bold }");
 		assertEquals(1, labelToTest.getFont().getFontData().length);
 		FontData fontData = labelToTest.getFont().getFontData()[0];
@@ -53,7 +52,7 @@ public class LabelTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testFontItalic() {
+	void testFontItalic() {
 		Label labelToTest = createTestLabel("Label { font-style: italic }");
 		assertEquals(1, labelToTest.getFont().getFontData().length);
 		FontData fontData = labelToTest.getFont().getFontData()[0];
@@ -61,7 +60,7 @@ public class LabelTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testAlignment() {
+	void testAlignment() {
 		Label labelToTest = createTestLabel("Label { swt-alignment: right }");
 		assertEquals(SWT.RIGHT, labelToTest.getAlignment());
 
@@ -74,7 +73,7 @@ public class LabelTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testAlignment2() {
+	void testAlignment2() {
 		Label labelToTest = createTestLabel("Label { swt-alignment: trail }");
 		assertEquals(SWT.TRAIL, labelToTest.getAlignment());
 

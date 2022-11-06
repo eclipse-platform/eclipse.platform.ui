@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.forms;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.eclipse.e4.ui.tests.css.swt.CSSSWTTestCase;
 import org.eclipse.swt.SWT;
@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.ToggleHyperlink;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ExpandableCompositeTest extends CSSSWTTestCase {
 
@@ -56,7 +56,7 @@ public class ExpandableCompositeTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testExpandableCompositeColor() {
+	void testExpandableCompositeColor() {
 		ExpandableComposite compositeToTest = createTestExpandableComposite(
 				"ExpandableComposite { swt-titlebar-color: #FF0000; tb-toggle-color: #FF0000; tb-toggle-hover-color: #00FF00}");
 		assertNotNull(compositeToTest.getTitleBarForeground());
@@ -70,7 +70,7 @@ public class ExpandableCompositeTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testExpandableComposite_foregroundColorGetsReset_foregroundCollorIsNull() throws Exception {
+	void testExpandableComposite_foregroundColorGetsReset_foregroundCollorIsNull() throws Exception {
 		ExpandableComposite compositeToTest = createTestExpandableComposite(
 				"ExpandableComposite { swt-titlebar-color: #FF0000; tb-toggle-color: #FF0000; tb-toggle-hover-color: #00FF00}");
 		assertNotNull(compositeToTest.getTitleBarForeground());

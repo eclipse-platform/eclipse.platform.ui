@@ -16,11 +16,11 @@ package org.eclipse.e4.ui.css.swt.properties.preference;
 
 import static org.eclipse.e4.ui.css.swt.helpers.EclipsePreferencesHelper.PROPS_OVERRIDDEN_BY_CSS_PROP;
 import static org.eclipse.e4.ui.css.swt.properties.preference.EclipsePreferencesHandler.PREFERENCES_PROP;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -32,15 +32,15 @@ import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.dom.preference.EclipsePreferencesElement;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.css.CSSValue;
 import org.w3c.dom.css.CSSValueList;
 
 public class EclipsePreferencesHandlerTest {
 
 	@Test
-	public void testApplyCSSProperty() {
+	void testApplyCSSProperty() {
 		// given
 		CSSEngine engine = mock(CSSEngine.class);
 
@@ -66,7 +66,7 @@ public class EclipsePreferencesHandlerTest {
 	}
 
 	@Test
-	public void testApplyCSSPropertyWhenCssValueList() {
+	void testApplyCSSPropertyWhenCssValueList() {
 		// given
 		CSSEngine engine = mock(CSSEngine.class);
 
@@ -100,7 +100,7 @@ public class EclipsePreferencesHandlerTest {
 	}
 
 	@Test
-	public void testOverridePropertyWithCSSValue() {
+	void testOverridePropertyWithCSSValue() {
 		// given
 		IEclipsePreferences preferences = new EclipsePreferences();
 
@@ -122,7 +122,7 @@ public class EclipsePreferencesHandlerTest {
 	}
 
 	@Test
-	public void testOverridePropertyWithNameAndValueSplit() {
+	void testOverridePropertyWithNameAndValueSplit() {
 		// given
 		IEclipsePreferences preferences = new EclipsePreferences();
 
@@ -137,8 +137,8 @@ public class EclipsePreferencesHandlerTest {
 	}
 
 	@Test
-	@Ignore("Failing on Hudson, see Bug 501875")
-	public void testOverridePropertyWithNameAndValueSplitAndNameAlreadyAddedByUser() {
+	@Disabled("Failing on Hudson, see Bug 501875")
+	void testOverridePropertyWithNameAndValueSplitAndNameAlreadyAddedByUser() {
 		// given
 		IEclipsePreferences preferences = new EclipsePreferences();
 		// pref is already set that means that user has overridden it with the
@@ -156,7 +156,7 @@ public class EclipsePreferencesHandlerTest {
 	}
 
 	@Test
-	public void testCustomizePreferenceOverriddenByCSS() {
+	void testCustomizePreferenceOverriddenByCSS() {
 		// given
 		IEclipsePreferences preferences = new EclipsePreferences();
 

@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.properties.tabbed;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.e4.ui.tests.css.swt.CSSSWTTestCase;
 import org.eclipse.swt.SWT;
@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyList;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetWidgetFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TabbedPropertiesListTest extends CSSSWTTestCase {
 
@@ -54,7 +54,7 @@ public class TabbedPropertiesListTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void colorsAreStyled() {
+	void colorsAreStyled() {
 		TabbedPropertyList list = createTabbedPropertiesList(null);
 
 		engine.applyStyles(shell, true);
@@ -67,7 +67,7 @@ public class TabbedPropertiesListTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void colorsAreStyledAndReset() {
+	void colorsAreStyledAndReset() {
 		TabbedPropertyList list = createTabbedPropertiesList(null);
 
 		RGB colorListBackgroundBeforeStyling = list.getListBackgroundColor().getRGB();
@@ -86,7 +86,7 @@ public class TabbedPropertiesListTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void colorsAreNotChangedWhenNoStyleGivenInCss() {
+	void colorsAreNotChangedWhenNoStyleGivenInCss() {
 		TabbedPropertyList list = createTabbedPropertiesList(
 				"SomeOtherWidget { listBackground-color: #FF0000; widgetBackground-color: #FF0000; widgetNormalShadow-color: #FF0000; widgetDarkShadow-color: #FF0000; widgetForeground-color: #FF0000;}");
 

@@ -14,8 +14,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.lang.reflect.Field;
 
@@ -27,7 +27,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test gradient capabilities.
@@ -64,7 +64,7 @@ public class GradientTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testGradients() {
+	void testGradients() {
 		CTabFolder folderToTest = createTestCTabFolder(
 				"CTabItem:selected { background-color: #FF0000 #0000FF}");
 		assertEquals(RED, getSelectionBackgroundBegin(folderToTest).getRGB()); //gradient begin
@@ -72,7 +72,7 @@ public class GradientTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testDefaultPercents() {
+	void testDefaultPercents() {
 		CTabFolder folderToTest = createTestCTabFolder(
 				"CTabItem:selected { background-color: #FF0000 #0000FF}");
 		assertEquals(RED, getSelectionBackgroundBegin(folderToTest).getRGB()); //gradient begin
@@ -82,7 +82,7 @@ public class GradientTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testDefaultManyPercents() {
+	void testDefaultManyPercents() {
 		CTabFolder folderToTest = createTestCTabFolder(
 				"CTabItem:selected { background-color: red green blue yellow}");
 		assertArrayEquals(new int[] { 33, 67, 100 }, getSelectionGradientPercents(folderToTest)); // default
@@ -90,14 +90,14 @@ public class GradientTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testSpecifiedPercents() {
+	void testSpecifiedPercents() {
 		CTabFolder folderToTest = createTestCTabFolder(
 				"CTabItem:selected { background-color: #FF0000 #0000FF 53%}");
 		assertArrayEquals(new int[] { 53 }, getSelectionGradientPercents(folderToTest));
 	}
 
 	@Test
-	public void testManyColorsAndSpecifiedManyPercents() {
+	void testManyColorsAndSpecifiedManyPercents() {
 		CTabFolder folderToTest = createTestCTabFolder(
 				"CTabItem:selected { background-color: #FF0000 #00FF00 #0000FF 22% 44%}");
 		assertEquals(RED, getSelectionBackgroundBegin(folderToTest).getRGB()); //gradient begin
@@ -110,7 +110,7 @@ public class GradientTest extends CSSSWTTestCase {
 	 * Tests handling when # of percents isn't one less than number of colors
 	 */
 	@Test
-	public void testBadPercents() {
+	void testBadPercents() {
 		//There should be either zero or three percent declarations, otherwise it acts as default
 		CTabFolder folderToTest = createTestCTabFolder(
 				"CTabItem:selected { background-color: red green blue yellow 10%}");
@@ -123,7 +123,7 @@ public class GradientTest extends CSSSWTTestCase {
 	 * (non-existent color name is ignored)
 	 */
 	@Test
-	public void testBadColors() {
+	void testBadColors() {
 		CTabFolder folderToTest = createTestCTabFolder(
 				"CTabItem:selected { background-color: #FF0000 notAColor #0000FF}");
 		assertEquals(RED, getSelectionBackgroundBegin(folderToTest).getRGB()); //gradient begin
@@ -136,7 +136,7 @@ public class GradientTest extends CSSSWTTestCase {
 	 * Test to ensure that a percent > 100 triggers default
 	 */
 	@Test
-	public void testAboveRangePercents() {
+	void testAboveRangePercents() {
 		CTabFolder folderToTest = createTestCTabFolder(
 				"CTabItem:selected { background-color: #FF0000 #00FF00 #0000FF 20% 110%}");
 		assertEquals(RED, getSelectionBackgroundBegin(folderToTest).getRGB()); //gradient begin
@@ -149,7 +149,7 @@ public class GradientTest extends CSSSWTTestCase {
 	 * Test to ensure that a percent < 0 triggers default
 	 */
 	@Test
-	public void testBelowRangePercents() {
+	void testBelowRangePercents() {
 		CTabFolder folderToTest = createTestCTabFolder(
 				"CTabItem:selected { background-color: #FF0000 #00FF00 #0000FF -20% 50%}");
 		assertEquals(RED, getSelectionBackgroundBegin(folderToTest).getRGB()); //gradient begin
@@ -166,7 +166,7 @@ public class GradientTest extends CSSSWTTestCase {
 	 *           100%;
 	 */
 	@Test
-	public void testAltSyntax() {
+	void testAltSyntax() {
 		CTabFolder folderToTest = createTestCTabFolder(
 				"CTabItem:selected { background-color: gradient, rgb(140,140,140), rgb(48,48,48), 100%;");
 		assertEquals(new RGB(140,140,140), getSelectionBackgroundBegin(folderToTest).getRGB()); //gradient begin

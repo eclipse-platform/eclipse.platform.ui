@@ -14,15 +14,15 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("see bug #273582")
+@Disabled("see bug #273582")
 public class ShellActiveTest extends CSSSWTTestCase {
 
 	static final RGB RED = new RGB(255, 0, 0);
@@ -42,7 +42,7 @@ public class ShellActiveTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testShellActive() throws Exception {
+	void testShellActive() throws Exception {
 		Shell shell = createShell("Shell:active {background-color: #FF0000;}\n" +
 				"Shell {background-color: #0000FF;}");
 		assertEquals(RED, shell.getBackground().getRGB());

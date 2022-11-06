@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -22,8 +22,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class ToolItemTest extends CSSSWTTestCase {
 
@@ -51,21 +51,21 @@ public class ToolItemTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testBackgroundColor() {
+	void testBackgroundColor() {
 		var toolItemToTest = createTestToolItem("ToolItem { background-color: #FF0000;}",
 				SWT.PUSH);
 		assertEquals(RED, toolItemToTest.getBackground().getRGB());
 	}
 
 	@Test
-	public void testForegroundColor() {
+	void testForegroundColor() {
 		var toolItemToTest = createTestToolItem("ToolItem { color: #FF0000;}", SWT.PUSH);
 		assertEquals(RED, toolItemToTest.getForeground().getRGB());
 	}
 
 	@Test
-	@Ignore("Not yet implemented")
-	public void testSelectedPseudo() {
+	@Disabled("Not yet implemented")
+	void testSelectedPseudo() {
 		var toolItemToTest = createTestToolItem(
 				"ToolItem { color: #FF0000; }\n" + "ToolItem:checked { color: #0000FF; }", SWT.PUSH);
 		assertEquals(RED, toolItemToTest.getForeground().getRGB());
@@ -75,7 +75,7 @@ public class ToolItemTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void ensurePseudoAttributeAllowsToSelectionPushButton() {
+	void ensurePseudoAttributeAllowsToSelectionPushButton() {
 		var toolItemToTest = createTestToolItem(
 				"ToolItem[style~='SWT.CHECK'] { background-color: #FF0000; color: #0000FF }", SWT.CHECK);
 

@@ -14,7 +14,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class Bug419482Test extends CSSSWTTestCase {
 
@@ -36,7 +36,7 @@ public class Bug419482Test extends CSSSWTTestCase {
 	private ToolBar toolbar3;
 
 	@Test
-	public void testTwoLevelsWildcard() {
+	void testTwoLevelsWildcard() {
 		String cssString = "Shell > * > * { color: red; } \n" + "Label { color: blue; }";
 
 		Label label = createTestLabel(cssString);
@@ -46,7 +46,7 @@ public class Bug419482Test extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testOneLevelWildcardOneSpecific() {
+	void testOneLevelWildcardOneSpecific() {
 		String cssString = "Shell > * > Label { color: red; } \n" + "Label { color: blue; }";
 
 		Label label = createTestLabel(cssString);
@@ -56,7 +56,7 @@ public class Bug419482Test extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testDescendentsWildcard() {
+	void testDescendentsWildcard() {
 		String cssString = "Shell * { color: red; } \n" + "Label { color: blue; }";
 
 		Label label = createTestLabel(cssString);
@@ -66,7 +66,7 @@ public class Bug419482Test extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testDescendentsSpecific() {
+	void testDescendentsSpecific() {
 		String cssString = "Shell Label { color: red; } \n" + "Label { color: blue; }";
 
 		Label label = createTestLabel(cssString);
@@ -76,7 +76,7 @@ public class Bug419482Test extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testOriginalBugReport() {
+	void testOriginalBugReport() {
 		String css = "Shell, Shell > *, Shell > * > * {\n" + "    background-color: red;\n" + "}\n" + "ToolBar {\n"
 				+ "    background-color: blue;\n" + "}";
 
@@ -93,7 +93,7 @@ public class Bug419482Test extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testOriginalBugReportDifferentOrder() {
+	void testOriginalBugReportDifferentOrder() {
 		String css = "ToolBar {\n" + "    background-color: blue;\n" + "}" + "Shell, Shell > *, Shell > * > * {\n"
 				+ "    background-color: red;\n" + "}\n";
 

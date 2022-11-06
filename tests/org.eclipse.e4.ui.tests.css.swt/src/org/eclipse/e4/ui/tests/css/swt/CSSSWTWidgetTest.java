@@ -14,10 +14,11 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.function.Supplier;
 
@@ -26,13 +27,10 @@ import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.e4.ui.css.swt.dom.html.SWTHTMLElement;
 import org.eclipse.swt.widgets.Widget;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class CSSSWTWidgetTest extends CSSSWTTestCase {
-
-
-
 
 	private static final class WidgetElementWithSupplierReturningNull extends WidgetElement {
 		private WidgetElementWithSupplierReturningNull(Widget widget, CSSEngine engine) {
@@ -60,15 +58,15 @@ public class CSSSWTWidgetTest extends CSSSWTTestCase {
 		}
 	}
 
-	@Ignore
+	@Disabled
 	@Test
-	public void testEngineKey() {
+	void testEngineKey() {
 		Widget widget = createTestLabel("Label { font: Arial 12px; font-weight: bold }");
 		assertEquals(WidgetElement.getEngine(widget), engine);
 	}
 
 	@Test
-	public void testIDKey() {
+	void testIDKey() {
 		final String id = "some.test.id";
 		Widget widget = createTestLabel("Label { font: Arial 12px; font-weight: bold }");
 		WidgetElement.setID(widget, id);
@@ -77,7 +75,7 @@ public class CSSSWTWidgetTest extends CSSSWTTestCase {
 
 
 	@Test
-	public void testCSSClassKey() {
+	void testCSSClassKey() {
 		final String cssClass = "some.test.cssclassname";
 		Widget widget = createTestLabel("Label { font: Arial 12px; font-weight: bold }");
 		WidgetElement.setCSSClass(widget, cssClass);
@@ -85,7 +83,7 @@ public class CSSSWTWidgetTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testHasAttribute() {
+	void testHasAttribute() {
 		Widget widget = createTestLabel("Label { }");
 		String propertySetToEmptyStringKey = "empty-property";
 		widget.setData(propertySetToEmptyStringKey, "");
@@ -95,7 +93,7 @@ public class CSSSWTWidgetTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testGetAttributeWithSwtStylesNull() {
+	void testGetAttributeWithSwtStylesNull() {
 		Widget widget = createTestLabel("Label { }");
 		engine.setElementProvider((element, engine) -> new WidgetElementWithSwtStylesNull((Widget) element, engine));
 
@@ -104,7 +102,7 @@ public class CSSSWTWidgetTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testGetAttributeWithAttributeTypeNull() {
+	void testGetAttributeWithAttributeTypeNull() {
 		Widget widget = createTestLabel("Label { }");
 		engine.setElementProvider(
 				(element, engine) -> new SWTHTMLElementWithAttributeTypeNull((Widget) element, engine));
@@ -113,14 +111,14 @@ public class CSSSWTWidgetTest extends CSSSWTTestCase {
 		assertEquals("", engine.getElement(widget).getAttribute("type"));
 	}
 
-	@Test(expected = AssertionFailedException.class)
-	public void testGetAttributeWithAttributeSupplierReturningNull() {
+	@Test
+	void testGetAttributeWithAttributeSupplierReturningNull() {
 		Widget widget = createTestLabel("Label { }");
 		engine.setElementProvider(
 				(element, engine) -> new WidgetElementWithSupplierReturningNull((Widget) element, engine));
 
 		// throws exception
-		engine.getElement(widget).getAttribute("style");
+		assertThrows(AssertionFailedException.class, () -> engine.getElement(widget).getAttribute("style"));
 
 	}
 }

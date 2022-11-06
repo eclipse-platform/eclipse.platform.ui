@@ -14,7 +14,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.swt.SWT;
@@ -23,7 +23,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /*
  * Tests the CSS class and Id rules
@@ -64,25 +64,25 @@ public class IdClassLabelColorTest extends CSSSWTTestCase {
 
 	//For completeness, test that the html type rule works
 	@Test
-	public void testWidgetClass() {
+	void testWidgetClass() {
 		Label label = createTestLabel("Label { background-color: #FF0000 }");
 		assertEquals(RED, label.getBackground().getRGB());
 	}
 
 	//Test the CSS class rule
 	@Test
-	public void testCssClass() {
+	void testCssClass() {
 		Label labelToTest = createTestLabel("." + CSS_CLASS_NAME + " { background-color: #00FF00 }");
 
 		//Ensure the widget actually thinks it has this CSS class
-		assertEquals(WidgetElement.getCSSClass(labelToTest), CSS_CLASS_NAME);
+		assertEquals(CSS_CLASS_NAME, WidgetElement.getCSSClass(labelToTest));
 
 		assertEquals(GREEN, labelToTest.getBackground().getRGB());
 	}
 
 	//Test the id rule
 	@Test
-	public void testWidgetId() {
+	void testWidgetId() {
 		Label labelToTest = createTestLabel("#" + CSS_ID + " { background-color: #0000FF }");
 
 		//Ensure the widget actually thinks it has this ID

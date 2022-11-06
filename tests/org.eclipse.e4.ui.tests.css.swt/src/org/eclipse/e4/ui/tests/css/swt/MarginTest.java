@@ -14,8 +14,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 import org.eclipse.e4.ui.css.swt.CSSSWTConstants;
 import org.eclipse.swt.SWT;
@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class MarginTest extends CSSSWTTestCase {
 
@@ -113,7 +113,7 @@ public class MarginTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testTopMargin() {
+	void testTopMargin() {
 		Control control = createTestControl("Button { margin-top: 10}");
 		assertEquals(10, getMargin(control, TOP));
 		assertEquals(0, getMargin(control, RIGHT));
@@ -122,7 +122,7 @@ public class MarginTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testRightMargin() {
+	void testRightMargin() {
 		Control control = createTestControl("Button { margin-right: 20}");
 		assertEquals(0, getMargin(control, TOP));
 		assertEquals(20, getMargin(control, RIGHT));
@@ -131,7 +131,7 @@ public class MarginTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testBottomMargin() {
+	void testBottomMargin() {
 		Control control = createTestControl("Button { margin-bottom: 30}");
 		assertEquals(0, getMargin(control, TOP));
 		assertEquals(0, getMargin(control, RIGHT));
@@ -140,7 +140,7 @@ public class MarginTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testLeftMargin() {
+	void testLeftMargin() {
 		Control control = createTestControl("Button { margin-left: 40}");
 		assertEquals(0, getMargin(control, TOP));
 		assertEquals(0, getMargin(control, RIGHT));
@@ -149,7 +149,7 @@ public class MarginTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testMargin1Value() {
+	void testMargin1Value() {
 		Control control = createTestControl("Button { margin: 15}");
 		assertEquals(15, getMargin(control, TOP));
 		assertEquals(15, getMargin(control, RIGHT));
@@ -158,7 +158,7 @@ public class MarginTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testMargin2Values() {
+	void testMargin2Values() {
 		Control control = createTestControl("Button { margin: 10 15}");
 		assertEquals(10, getMargin(control, TOP));
 		assertEquals(15, getMargin(control, RIGHT));
@@ -167,7 +167,7 @@ public class MarginTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testMargin4Values() {
+	void testMargin4Values() {
 		Control control = createTestControl("Button { margin: 10 15 20 40}");
 		assertEquals(10, getMargin(control, TOP));
 		assertEquals(15, getMargin(control, RIGHT));
@@ -179,7 +179,7 @@ public class MarginTest extends CSSSWTTestCase {
 	 * Test handling if there is no layout on the control so can't set margins
 	 */
 	@Test
-	public void testMarginNoLayout() {
+	void testMarginNoLayout() {
 		//shouldn't blow up, nothing should happen
 		Control control = createBadControlNoLayout("Button { margin: 10 15 20 40; background-color: #FF0000 }");
 		//ensure that any styling after 'margin:' gets processed
@@ -190,7 +190,7 @@ public class MarginTest extends CSSSWTTestCase {
 	 * Test handling if there is no composite on the control so can't set margins
 	 */
 	@Test
-	public void testMarginNoComposite() {
+	void testMarginNoComposite() {
 		//shouldn't blow up, nothing should happen
 		Control control = createBadControlNoComposite("Button { margin: 10 15 20 40; background-color: #FF0000 }");
 		//ensure that any styling after 'margin:' gets processed
@@ -201,7 +201,7 @@ public class MarginTest extends CSSSWTTestCase {
 	 * Test handling if there is no key to tell us we can manipulate the composite's layout
 	 */
 	@Test
-	public void testMarginNoKey() {
+	void testMarginNoKey() {
 		//shouldn't blow up, nothing should happen
 		Control control = createBadControlNoKey("Button { margin: 10 15 20 40; background-color: #FF0000 }");
 		//ensure that any styling after 'margin:' gets processed
