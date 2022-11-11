@@ -19,7 +19,7 @@
   </parent>
   <groupId>org.eclipse.e4</groupId>
   <artifactId>org.eclipse.e4.ui.swt.gtk</artifactId>
-  <version>1.1.100-SNAPSHOT</version>
+  <version>1.1.200-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 
   <build>
