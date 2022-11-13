@@ -730,7 +730,7 @@ public class MMenuItemTest {
 
 		MMenu menu = ems.createModelElement(MMenu.class);
 		MDirectMenuItem menuItem = ems.createModelElement(MDirectMenuItem.class);
-		final boolean executed[] = { false };
+		final boolean[] executed = { false };
 		menuItem.setObject(new Object() {
 			@Execute
 			public void execute(MUIElement uiElement, MMenuItem menuItem,
@@ -796,7 +796,7 @@ public class MMenuItemTest {
 
 		MHandler handler = ems.createModelElement(MHandler.class);
 		handler.setCommand(command);
-		final boolean executed[] = { false };
+		final boolean[] executed = { false };
 		handler.setObject(new Object() {
 			@Execute
 			public void execute(MUIElement uiElement, MMenuItem menuItem,
