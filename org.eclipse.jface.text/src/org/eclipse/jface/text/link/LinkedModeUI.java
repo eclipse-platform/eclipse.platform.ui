@@ -290,7 +290,7 @@ public class LinkedModeUI {
 		 * @param model the linked mode model
 		 * @param event the document event
 		 * @return valid exit flags or <code>null</code> if no special action should be taken
-		 * @since 3.21
+		 * @since 3.22
 		 */
 		default ExitFlags doExit(LinkedModeModel model, DocumentEvent event) {
 			return null;
