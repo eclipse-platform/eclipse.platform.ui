@@ -68,6 +68,8 @@ import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
 import org.eclipse.jface.text.quickassist.IQuickAssistProcessor;
 import org.eclipse.jface.text.quickassist.QuickAssistAssistant;
 import org.eclipse.jface.text.reconciler.IReconciler;
+import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
+import org.eclipse.jface.text.reconciler.Reconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
@@ -249,23 +251,38 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 	@Override
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
 		ReconcilerRegistry registry = GenericEditorPlugin.getDefault().getReconcilerRegistry();
-		List<IReconciler> reconcilers = registry.getReconcilers(sourceViewer, editor,
+		List<IReconcilingStrategy> reconcilingStrategies = new ArrayList<>();
+		List<IReconciler> reconcilers = registry.getReconcilers(sourceViewer, editor, reconcilingStrategies,
 				getContentTypes(sourceViewer.getDocument()));
+
 		// Fill with highlight reconcilers
+		List<IReconcilingStrategy> highlightReconcilingStrategies = new ArrayList<>();
 		List<IReconciler> highlightReconcilers = registry.getHighlightReconcilers(sourceViewer, editor,
-				getContentTypes(sourceViewer.getDocument()));
+				highlightReconcilingStrategies, getContentTypes(sourceViewer.getDocument()));
 		if (!highlightReconcilers.isEmpty()) {
 			reconcilers.addAll(highlightReconcilers);
-		} else {
+		} else if (highlightReconcilingStrategies.isEmpty()) {
 			reconcilers.add(new DefaultWordHighlightReconciler());
 		}
+		reconcilingStrategies.addAll(highlightReconcilingStrategies);
+
 		// Fill with folding reconcilers
+		List<IReconcilingStrategy> foldingReconcilingStrategies = new ArrayList<>();
 		List<IReconciler> foldingReconcilers = registry.getFoldingReconcilers(sourceViewer, editor,
-				getContentTypes(sourceViewer.getDocument()));
+				foldingReconcilingStrategies, getContentTypes(sourceViewer.getDocument()));
 		if (!foldingReconcilers.isEmpty()) {
 			reconcilers.addAll(foldingReconcilers);
-		} else {
+		} else if (foldingReconcilingStrategies.isEmpty()) {
 			reconcilers.add(new DefaultFoldingReconciler());
+		}
+		reconcilingStrategies.addAll(foldingReconcilingStrategies);
+
+		if (!reconcilingStrategies.isEmpty()) {
+			// Create the main Reconciler of the generic editor
+			Reconciler reconciler = new Reconciler();
+			reconciler.setReconcilingStrategy(new CompositeReconcilerStrategy(reconcilingStrategies),
+					IDocument.DEFAULT_CONTENT_TYPE);
+			reconcilers.add(0, reconciler);
 		}
 
 		if (!reconcilers.isEmpty()) {

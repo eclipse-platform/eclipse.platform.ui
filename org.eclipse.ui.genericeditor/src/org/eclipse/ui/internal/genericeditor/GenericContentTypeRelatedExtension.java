@@ -53,10 +53,15 @@ public class GenericContentTypeRelatedExtension<T> {
 		this.enabledWhen = buildEnabledWhen(element);
 	}
 
-	@SuppressWarnings("unchecked")
 	public T createDelegate() {
+		T delegateInstance = createDelegateWithoutTypeCheck();
+		return delegateInstance;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <E> E createDelegateWithoutTypeCheck() {
 		try {
-			return (T) extension.createExecutableExtension(CLASS_ATTRIBUTE);
+			return (E) extension.createExecutableExtension(CLASS_ATTRIBUTE);
 		} catch (CoreException e) {
 			GenericEditorPlugin.getDefault().getLog()
 					.log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, e.getMessage(), e));
@@ -120,5 +125,14 @@ public class GenericContentTypeRelatedExtension<T> {
 					"Error while 'enabledWhen' evaluation", e)); //$NON-NLS-1$
 			return false;
 		}
+	}
+
+	/**
+	 * Returns the name of the contribution.
+	 * 
+	 * @return the name of the contribution.
+	 */
+	public String getContributionName() {
+		return extension.getName();
 	}
 }

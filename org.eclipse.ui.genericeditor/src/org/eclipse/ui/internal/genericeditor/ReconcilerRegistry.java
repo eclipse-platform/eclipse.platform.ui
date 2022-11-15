@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.genericeditor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -26,6 +27,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.text.reconciler.IReconciler;
+import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -40,8 +42,11 @@ import org.eclipse.ui.texteditor.ITextEditor;
 public class ReconcilerRegistry {
 
 	private static final String EXTENSION_POINT_ID = GenericEditorPlugin.BUNDLE_ID + ".reconcilers"; //$NON-NLS-1$
+	private static final String RECONCILING_STRATEGY_ELT_NAME = "reconcilingStrategy"; //$NON-NLS-1$
 	private static final String HIGHLIGHT_EXTENSION_POINT_ID = GenericEditorPlugin.BUNDLE_ID + ".highlightReconcilers"; //$NON-NLS-1$
+	private static final String HIGHLIGHT_RECONCILING_STRATEGY_ELT_NAME = "highlightReconcilingStrategy"; //$NON-NLS-1$
 	private static final String FOLDING_EXTENSION_POINT_ID = GenericEditorPlugin.BUNDLE_ID + ".foldingReconcilers"; //$NON-NLS-1$
+	private static final String FOLDING_RECONCILING_STRATEGY_ELT_NAME = "foldingReconcilingStrategy"; //$NON-NLS-1$
 
 	private Map<IConfigurationElement, GenericContentTypeRelatedExtension<IReconciler>> extensions = new HashMap<>();
 	private Map<IConfigurationElement, GenericContentTypeRelatedExtension<IReconciler>> highlightExtensions = new HashMap<>();
@@ -65,71 +70,85 @@ public class ReconcilerRegistry {
 	 * Get the contributed {@link IReconciliers}s that are relevant to hook on
 	 * source viewer according to document content types.
 	 *
-	 * @param sourceViewer the source viewer we're hooking completion to.
-	 * @param editor       the text editor
-	 * @param contentTypes the content types of the document we're editing.
+	 * @param sourceViewer         the source viewer we're hooking completion to.
+	 * @param editor               the text editor
+	 * @param textViewerLifecycles the list of text viewer lifecycle to fill
+	 * @param contentTypes         the content types of the document we're editing.
 	 * @return the list of {@link IReconciler} contributed for at least one of the
 	 *         content types, sorted by most generic content type to most specific.
 	 */
 	public List<IReconciler> getReconcilers(ISourceViewer sourceViewer, ITextEditor editor,
-			Set<IContentType> contentTypes) {
+			List<IReconcilingStrategy> reconcilingStrategies, Set<IContentType> contentTypes) {
 		if (this.outOfSync) {
 			sync();
 		}
-		return this.extensions.values().stream() //
-				.filter(ext -> contentTypes.contains(ext.targetContentType)) //
-				.filter(ext -> ext.matches(sourceViewer, editor)) //
-				.sorted(new ContentTypeSpecializationComparator<IReconciler>().reversed()) //
-				.map(GenericContentTypeRelatedExtension<IReconciler>::createDelegate) //
-				.collect(Collectors.toList());
+		return getReconcilers(sourceViewer, editor, reconcilingStrategies, contentTypes, RECONCILING_STRATEGY_ELT_NAME,
+				this.extensions);
 	}
 
 	/**
 	 * Get the contributed highlight {@link IReconciliers}s that are relevant to
 	 * hook on source viewer according to document content types.
 	 *
-	 * @param sourceViewer the source viewer we're hooking completion to.
-	 * @param editor       the text editor
-	 * @param contentTypes the content types of the document we're editing.
+	 * @param sourceViewer         the source viewer we're hooking completion to.
+	 * @param editor               the text editor
+	 * @param textViewerLifecycles the list of text viewer lifecycle to fill
+	 * @param contentTypes         the content types of the document we're editing.
 	 * @return the list of highlight {@link IReconciler}s contributed for at least
 	 *         one of the content types, sorted by most generic content type to most
 	 *         specific.
 	 */
 	public List<IReconciler> getHighlightReconcilers(ISourceViewer sourceViewer, ITextEditor editor,
-			Set<IContentType> contentTypes) {
+			List<IReconcilingStrategy> reconcilingStrategies, Set<IContentType> contentTypes) {
 		if (this.highlightOutOfSync) {
 			syncHighlight();
 		}
-		return this.highlightExtensions.values().stream() //
-				.filter(ext -> contentTypes.contains(ext.targetContentType)) //
-				.filter(ext -> ext.matches(sourceViewer, editor)) //
-				.sorted(new ContentTypeSpecializationComparator<IReconciler>().reversed()) //
-				.map(GenericContentTypeRelatedExtension<IReconciler>::createDelegate) //
-				.collect(Collectors.toList());
+		return getReconcilers(sourceViewer, editor, reconcilingStrategies, contentTypes,
+				HIGHLIGHT_RECONCILING_STRATEGY_ELT_NAME, this.highlightExtensions);
 	}
 
 	/**
 	 * Get the contributed folding {@link IReconciliers}s that are relevant to hook
 	 * on source viewer according to document content types.
 	 *
-	 * @param sourceViewer the source viewer we're hooking completion to.
-	 * @param editor       the text editor
-	 * @param contentTypes the content types of the document we're editing.
+	 * @param sourceViewer         the source viewer we're hooking completion to.
+	 * @param editor               the text editor
+	 * @param textViewerLifecycles the list of text viewer lifecycle to fill
+	 * @param contentTypes         the content types of the document we're editing.
 	 * @return the list of folding {@link IReconciler}s contributed for at least one
 	 *         of the content types, sorted by most generic content type to most
 	 *         specific.
 	 */
 	public List<IReconciler> getFoldingReconcilers(ISourceViewer sourceViewer, ITextEditor editor,
-			Set<IContentType> contentTypes) {
+			List<IReconcilingStrategy> reconcilingStrategies, Set<IContentType> contentTypes) {
 		if (this.foldingOutOfSync) {
 			syncFolding();
 		}
-		return this.foldingExtensions.values().stream() //
+		return getReconcilers(sourceViewer, editor, reconcilingStrategies, contentTypes,
+				FOLDING_RECONCILING_STRATEGY_ELT_NAME, this.foldingExtensions);
+	}
+
+	private static List<IReconciler> getReconcilers(ISourceViewer sourceViewer, ITextEditor editor,
+			List<IReconcilingStrategy> reconcilingStrategies, Set<IContentType> contentTypes, String contributionName,
+			Map<IConfigurationElement, GenericContentTypeRelatedExtension<IReconciler>> extensionsMap) {
+		List<IReconciler> reconcilers = new ArrayList<>();
+		List<GenericContentTypeRelatedExtension<IReconciler>> extensions = extensionsMap.values().stream() //
 				.filter(ext -> contentTypes.contains(ext.targetContentType)) //
 				.filter(ext -> ext.matches(sourceViewer, editor)) //
 				.sorted(new ContentTypeSpecializationComparator<IReconciler>().reversed()) //
-				.map(GenericContentTypeRelatedExtension<IReconciler>::createDelegate) //
 				.collect(Collectors.toList());
+		for (GenericContentTypeRelatedExtension<IReconciler> ext : extensions) {
+			if (contributionName.equals(ext.getContributionName())) {
+				IReconcilingStrategy reconcilingStrategy = ext.createDelegateWithoutTypeCheck();
+				reconcilingStrategies.add(reconcilingStrategy);
+			} else {
+				IReconciler reconciler = ext.createDelegate();
+				if (reconciler != null) {
+					reconcilers.add(reconciler);
+				}
+			}
+		}
+		return reconcilers;
 	}
 
 	private void sync() {
