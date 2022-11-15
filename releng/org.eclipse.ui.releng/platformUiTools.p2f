@@ -234,7 +234,7 @@
     </iu>
     <iu id='zipeditor.feature.group' name='ZipEditor' version='0.0.0'>
         <repositories size='1'>
-            <repository location='http://zipeditor.sourceforge.net/update'/>
+            <repository location='https://zipeditor.sourceforge.net/update'/>
         </repositories>
     </iu>
     <iu id='com.yourkit.profiler.feature.group' name='Yourkit' version='0.0.0'>
