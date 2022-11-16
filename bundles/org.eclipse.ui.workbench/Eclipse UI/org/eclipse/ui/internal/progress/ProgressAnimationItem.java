@@ -220,8 +220,7 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 				}
 			}
 			if (percentCount > 0) {
-				bar.beginTask(100);
-				bar.worked(percentSum / percentCount); // average
+				bar.setWork(100, percentSum / percentCount); // average
 				AnimationManager.getInstance().setAnimated(true); // reschedule
 			} else {
 				if (jobInfos.length > 0) {
@@ -319,7 +318,7 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 		}
 		top.setLayout(gl);
 
-		bar = new ProgressIndicator(top, flags);		
+		bar = new ProgressIndicator(top, flags);
 		bar.setVisible(false);
 		bar.addMouseListener(mouseListener);
 
