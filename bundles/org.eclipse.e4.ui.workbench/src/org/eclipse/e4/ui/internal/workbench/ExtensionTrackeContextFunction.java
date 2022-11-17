@@ -36,12 +36,15 @@ public class ExtensionTrackeContextFunction extends ContextFunction implements E
 	@Reference
 	private ILog log;
 
-	private Map<IEclipseContext, IExtensionTracker> createdObjects = new ConcurrentHashMap<>();
+	private Map<IEclipseContext, IExtensionTracker> createdObjects = null;
+
+	private IExtensionTracker tracker = null;
 
 	@Override
 	public Object compute(IEclipseContext context, String contextKey) {
-		IExtensionTracker tracker = context.getLocal(IExtensionTracker.class);
+
 		if (tracker == null) {
+			createdObjects = new ConcurrentHashMap<>();
 			tracker = createdObjects.computeIfAbsent(context, ctx -> {
 				return new UIExtensionTracker(runnable -> {
 					UISynchronize synchronize = ctx.get(UISynchronize.class);
@@ -52,6 +55,7 @@ public class ExtensionTrackeContextFunction extends ContextFunction implements E
 
 			});
 		}
+
 		return tracker;
 	}
 
@@ -59,6 +63,7 @@ public class ExtensionTrackeContextFunction extends ContextFunction implements E
 	void shutdown() {
 		createdObjects.values().forEach(IExtensionTracker::close);
 		createdObjects.clear();
+		tracker = null;
 	}
 
 	@Override
