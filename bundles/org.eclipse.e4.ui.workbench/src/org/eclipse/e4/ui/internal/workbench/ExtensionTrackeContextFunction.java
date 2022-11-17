@@ -40,19 +40,15 @@ public class ExtensionTrackeContextFunction extends ContextFunction implements E
 
 	@Override
 	public Object compute(IEclipseContext context, String contextKey) {
-		IExtensionTracker tracker = context.getLocal(IExtensionTracker.class);
-		if (tracker == null) {
-			tracker = createdObjects.computeIfAbsent(context, ctx -> {
-				return new UIExtensionTracker(runnable -> {
-					UISynchronize synchronize = ctx.get(UISynchronize.class);
-					if (synchronize != null) {
-						synchronize.asyncExec(runnable);
-					}
-				}, log);
+		return createdObjects.computeIfAbsent(context, ctx -> {
+			return new UIExtensionTracker(runnable -> {
+				UISynchronize synchronize = ctx.get(UISynchronize.class);
+				if (synchronize != null) {
+					synchronize.asyncExec(runnable);
+				}
+			}, log);
 
-			});
-		}
-		return tracker;
+		});
 	}
 
 	@Deactivate
