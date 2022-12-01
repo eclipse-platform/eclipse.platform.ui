@@ -20,6 +20,8 @@ import java.util.Map.Entry;
 import java.util.StringTokenizer;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 
 import org.eclipse.core.runtime.Assert;
@@ -190,6 +192,33 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 		if (fPreferenceStore == null)
 			return super.getTabWidth(sourceViewer);
 		return fPreferenceStore.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
+	}
+
+	/**
+	 * Returns the lineSpacing for the given source viewer.
+	 * 
+	 * @param sourceViewer the source viewer to be configured by this configuration
+	 * @return the lineSpacing
+	 *
+	 * @see org.eclipse.swt.custom.StyledText#setLineSpacing(int)
+	 * @since 3.15
+	 */
+	@Override
+	public int getLineSpacing(ISourceViewer sourceViewer) {
+		// translate extra percentage into actual height
+		if (fPreferenceStore != null && sourceViewer != null) {
+			Font font= sourceViewer.getTextWidget().getFont();
+			if (font != null) {
+				FontData[] data= font.getFontData();
+				if (data != null && data.length > 0) {
+					int fontHeight= data[0].getHeight();
+					int spacingFactor= fPreferenceStore.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_SPACING);
+					return (int) (fontHeight * spacingFactor / 100.0f);
+				}
+			}
+		}
+		return super.getLineSpacing(sourceViewer);
+
 	}
 
 	@Override

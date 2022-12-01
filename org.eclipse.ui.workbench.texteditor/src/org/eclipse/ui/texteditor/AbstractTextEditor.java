@@ -739,12 +739,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				Font blockFont= JFaceResources.getFont(BLOCK_SELECTION_MODE_FONT);
 				setFont(fSourceViewer, blockFont);
 				disposeFont();
+				updateLineSpacing();
 				updateCaret();
 				return;
 			}
 			if (getFontPropertyPreferenceKey().equals(property) && !isBlockSelectionModeEnabled()) {
 				initializeViewerFont(fSourceViewer);
 				updateCaret();
+				updateLineSpacing();
 				return;
 			}
 		}
@@ -6542,6 +6544,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			return WIDE_CARET_WIDTH;
 
 		return SINGLE_CARET_WIDTH;
+	}
+
+	private void updateLineSpacing() {
+		// Adjust Line space if font property changed
+		int linespace = getSourceViewerConfiguration().getLineSpacing(fSourceViewer);
+		fSourceViewer.getTextWidget().setLineSpacing(linespace);
 	}
 
 	private void updateCaret() {

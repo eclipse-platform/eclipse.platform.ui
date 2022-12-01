@@ -284,6 +284,7 @@
             id="org.eclipse.ui.preferencePages.GeneralTextEditor">
             <keywordReference id="org.eclipse.ui.editors.general"/>
             <keywordReference id="org.eclipse.ui.editors.tabWidth"/>
+            <keywordReference id="org.eclipse.ui.editors.lineSpacing"/>
             <keywordReference id="org.eclipse.ui.editors.lineNumber"/>
             <keywordReference id="org.eclipse.ui.editors.printMargin"/>
             <keywordReference id="org.eclipse.ui.editors.annotationCodeMining"/>
@@ -341,6 +342,9 @@
       <keyword
             label="%preferenceKeywords.tabWidth"
             id="org.eclipse.ui.editors.tabWidth"/>
+      <keyword
+            label="%preferenceKeywords.lineSpacing"
+            id="org.eclipse.ui.editors.lineSpacing"/>
       <keyword
             label="%preferenceKeywords.lineNumber"
             id="org.eclipse.ui.editors.lineNumber"/>

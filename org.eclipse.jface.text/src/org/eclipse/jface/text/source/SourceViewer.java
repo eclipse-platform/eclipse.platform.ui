@@ -521,6 +521,8 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 
 		getTextWidget().setTabs(configuration.getTabWidth(this));
 
+		getTextWidget().setLineSpacing(configuration.getLineSpacing(this));
+
 		setAnnotationHover(configuration.getAnnotationHover(this));
 		setOverviewRulerAnnotationHover(configuration.getOverviewRulerAnnotationHover(this));
 

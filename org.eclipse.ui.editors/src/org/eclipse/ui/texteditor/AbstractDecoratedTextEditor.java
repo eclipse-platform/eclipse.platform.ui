@@ -853,6 +853,16 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				return;
 			}
 
+			if (AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_SPACING.equals(property)) {
+				IPreferenceStore store= getPreferenceStore();
+				if (store != null) {
+					// translate ratio into height
+					int linespace= getSourceViewerConfiguration().getLineSpacing(sourceViewer);
+					sourceViewer.getTextWidget().setLineSpacing(linespace);
+				}
+				return;
+			}
+
 			if (AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS.equals(property)
 					|| AbstractDecoratedTextEditorPreferenceConstants.EDITOR_DELETE_SPACES_AS_TABS.equals(property)) {
 				if (isTabsToSpacesConversionEnabled())

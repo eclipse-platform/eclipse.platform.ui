@@ -84,9 +84,20 @@ public class SourceViewerConfiguration {
 	}
 
 	/**
-	 * Returns the undo manager for the given source viewer. This implementation
-	 * always returns a new instance of <code>DefaultUndoManager</code> whose
-	 * history length is set to 25.
+	 * Returns the line space for the given source viewer. This implementation always returns 0.
+	 * 
+	 * @param sourceViewer the source viewer to be configured by this configuration
+	 * @return the line space
+	 * @see org.eclipse.swt.custom.StyledText#setLineSpacing(int)
+	 * @since 3.23
+	 */
+	public int getLineSpacing(ISourceViewer sourceViewer) {
+		return 0;
+	}
+
+	/**
+	 * Returns the undo manager for the given source viewer. This implementation always returns a
+	 * new instance of <code>DefaultUndoManager</code> whose history length is set to 25.
 	 *
 	 * @param sourceViewer the source viewer to be configured by this configuration
 	 * @return an undo manager or <code>null</code> if no undo/redo should not be supported
