@@ -32,7 +32,8 @@ import org.junit.runners.Suite.SuiteClasses;
 		ReconcilerTest.class,
 		HighlightTest.class,
 		IconsTest.class,
-		TestQuickAssist.class
+		TestQuickAssist.class,
+		DoubleClickTest.class
 })
 public class GenericEditorTestSuite {
 	// see @SuiteClasses

@@ -286,4 +286,17 @@
              contentType="org.eclipse.ui.genericeditor.tests.content-type">
        </quickAssistProcessor>
     </extension>
+	<extension
+			point="org.eclipse.ui.genericeditor.textDoubleClickStrategies">
+		<textDoubleClickStrategy
+			class="org.eclipse.ui.genericeditor.tests.contributions.WideDoubleClickStrategy"
+			contentType="org.eclipse.ui.genericeditor.tests.enabled-when-content-type">
+     		<enabledWhen>
+        		<test
+              			forcePluginActivation="true"
+             			property="org.eclipse.ui.genericeditor.tests.contributions.enabled">
+        		</test>
+     		</enabledWhen>
+		</textDoubleClickStrategy>
+	</extension>
 </plugin>

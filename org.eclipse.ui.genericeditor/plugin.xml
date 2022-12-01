@@ -21,6 +21,7 @@
    <extension-point id="contentAssistProcessors" name="%ExtPoint.contentAssistProcessors" schema="schema/contentAssistProcessors.exsd"/>
    <extension-point id="hoverProviders" name="%ExtPoint.hoverProviders" schema="schema/hoverProviders.exsd"/>
    <extension-point id="autoEditStrategies" name="%ExtPoint.autoEditStrategies" schema="schema/autoEditStrategies.exsd"/>
+   <extension-point id="textDoubleClickStrategies" name="%ExtPoint.textDoubleClickStrategies" schema="schema/textDoubleClickStrategies.exsd"/>
    <extension-point id="highlightReconcilers" name="%ExtPoint.highlightReconcilers" schema="schema/highlightReconcilers.exsd"/>
    <extension-point id="foldingReconcilers" name="%ExtPoint.foldingReconcilers" schema="schema/foldingReconcilers.exsd"/>
    <extension-point id="characterPairMatchers" name="%ExtPoint.characterPairMatchers" schema="schema/characterPairMatchers.exsd"/>

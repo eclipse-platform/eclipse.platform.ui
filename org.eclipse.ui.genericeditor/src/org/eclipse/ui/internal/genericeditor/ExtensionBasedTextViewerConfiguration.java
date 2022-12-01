@@ -15,6 +15,7 @@
  *   Simon Scholz <simon.scholz@vogella.com> - Bug 527830
  *   Angelo Zerr <angelo.zerr@gmail.com> - [generic editor] Default Code folding for generic editor should use IndentFoldingStrategy - Bug 520659
  *   Christoph Läubrich - Bug 570459 - [genericeditor] Support ContentAssistProcessors to be registered as OSGi-Services
+ *   Andrew Lamb - Issue #113 - Extension point for ITextDoubleClickStrategy
  *******************************************************************************/
 package org.eclipse.ui.internal.genericeditor;
 
@@ -26,6 +27,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -48,6 +50,7 @@ import org.eclipse.jface.text.IDocumentPartitioningListener;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.ITextHoverExtension;
 import org.eclipse.jface.text.ITextHoverExtension2;
@@ -400,5 +403,17 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 	 */
 	public void setFallbackContentTypes(Set<IContentType> contentTypes) {
 		this.fallbackContentTypes = (contentTypes == null ? Set.of() : contentTypes);
+	}
+
+	@Override
+	public ITextDoubleClickStrategy getDoubleClickStrategy(ISourceViewer sourceViewer, String contentType) {
+		TextDoubleClickStrategyRegistry registry = GenericEditorPlugin.getDefault()
+				.getTextDoubleClickStrategyRegistry();
+		Optional<ITextDoubleClickStrategy> doubleClickStrategies = registry.getTextDoubleClickStrategy(sourceViewer,
+				editor, getContentTypes(sourceViewer.getDocument()));
+		if (!doubleClickStrategies.isEmpty()) {
+			return doubleClickStrategies.get();
+		}
+		return super.getDoubleClickStrategy(sourceViewer, contentType);
 	}
 }

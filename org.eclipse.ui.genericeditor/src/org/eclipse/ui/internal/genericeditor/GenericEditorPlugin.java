@@ -11,10 +11,12 @@
  * Contributors:
  *   Sopot Cela, Mickael Istria (Red Hat Inc.) - initial implementation
  *   Lucas Bullen (Red Hat Inc.) - Bug 508829 custom reconciler support
+ *   Andrew Lamb - Issue #113 - Extension point for ITextDoubleClickStrategy
  *******************************************************************************/
 package org.eclipse.ui.internal.genericeditor;
 
 import org.eclipse.jface.text.IAutoEditStrategy;
+import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
@@ -47,6 +49,7 @@ public class GenericEditorPlugin extends AbstractUIPlugin {
 	private ReconcilerRegistry reconcilierRegistry;
 	private PresentationReconcilerRegistry presentationReconcilierRegistry;
 	private AutoEditStrategyRegistry autoEditStrategyRegistry;
+	private TextDoubleClickStrategyRegistry textDoubleClickStrategyRegistry;
 	private CharacterPairMatcherRegistry characterPairMatcherRegistry;
 	private IconsRegistry editorImagesRegistry;
 
@@ -171,5 +174,16 @@ public class GenericEditorPlugin extends AbstractUIPlugin {
 			this.editorImagesRegistry = new IconsRegistry();
 		}
 		return this.editorImagesRegistry;
+	}
+
+	/**
+	 * @return the registry allowing to access contributed
+	 *         {@link ITextDoubleClickStrategy}s.
+	 */
+	public synchronized TextDoubleClickStrategyRegistry getTextDoubleClickStrategyRegistry() {
+		if (this.textDoubleClickStrategyRegistry == null) {
+			this.textDoubleClickStrategyRegistry = new TextDoubleClickStrategyRegistry();
+		}
+		return this.textDoubleClickStrategyRegistry;
 	}
 }
