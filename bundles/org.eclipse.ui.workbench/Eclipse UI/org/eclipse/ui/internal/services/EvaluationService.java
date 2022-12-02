@@ -130,7 +130,7 @@ public final class EvaluationService implements IEvaluationService {
 				ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME, ISources.ACTIVE_EDITOR_ID_NAME,
 				ISources.ACTIVE_EDITOR_INPUT_NAME, ISources.SHOW_IN_INPUT, ISources.SHOW_IN_SELECTION,
 				ISources.ACTIVE_PART_NAME, ISources.ACTIVE_PART_ID_NAME, ISources.ACTIVE_SITE_NAME,
-				ISources.ACTIVE_CONTEXT_NAME, ISources.ACTIVE_CURRENT_SELECTION_NAME }));
+				ISources.ACTIVE_CONTEXT_NAME }));
 		context.runAndTrack(ratUpdater);
 	}
 

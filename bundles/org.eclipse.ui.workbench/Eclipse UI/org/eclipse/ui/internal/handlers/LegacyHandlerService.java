@@ -112,7 +112,8 @@ public class LegacyHandlerService implements IHandlerService {
 
 			HandlerActivation bestActivation = null;
 
-			ExpressionContext legacyEvalContext = new ExpressionContext(context);
+			IEvaluationService evaluationService = context.get(IEvaluationService.class);
+			IEvaluationContext legacyEvalContext = evaluationService.getCurrentState();
 
 			HandlerActivation conflictBest = null;
 			HandlerActivation conflictOther = null;
