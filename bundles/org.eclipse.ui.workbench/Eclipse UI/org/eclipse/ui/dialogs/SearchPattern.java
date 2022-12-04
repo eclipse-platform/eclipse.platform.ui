@@ -18,18 +18,15 @@ import org.eclipse.ui.internal.misc.TextMatcher;
 
 /**
  * A search pattern defines how search results are found.
- *
  * <p>
  * This class is intended to be subclassed by clients. A default behavior is
- * provided for each of the methods above, that clients can override if they
- * wish.
- * </p>
+ * provided that clients can override if they wish.
  *
  * @since 3.3
  */
 public class SearchPattern {
 
-	// Rules for pattern matching: (exact, prefix, pattern) [ | case sensitive]
+	// Rules for pattern matching:
 	/**
 	 * Match rule: The search pattern matches exactly the search result, that is,
 	 * the source of the search result equals the search pattern. Search pattern
@@ -46,13 +43,16 @@ public class SearchPattern {
 	 * Match rule: The search pattern contains one or more wild cards ('*' or '?').
 	 * A '*' wild-card can replace 0 or more characters in the search result. A '?'
 	 * wild-card replaces exactly 1 character in the search result.
+	 * <p>
+	 * Unless the pattern ends with ' ' or '>', search is performed as if '*' was
+	 * specified at the end of the pattern.
 	 */
 	public static final int RULE_PATTERN_MATCH = 0x0002;
 
 	/**
 	 * Match rule: The search pattern matches the search result only if cases are
 	 * the same. Can be combined with previous rules, e.g. {@link #RULE_EXACT_MATCH}
-	 * | {@link #RULE_CASE_SENSITIVE}
+	 * | {@link #RULE_CASE_SENSITIVE}.
 	 */
 	public static final int RULE_CASE_SENSITIVE = 0x0008;
 
@@ -72,7 +72,6 @@ public class SearchPattern {
 	 * <code>NullPointerException</code> type.</li>
 	 * </ul>
 	 *
-	 *
 	 * <br>
 	 * Can be combined with {@link #RULE_PREFIX_MATCH} match rule. For example, when
 	 * prefix match rule is combined with Camel Case match rule, <code>"nPE"</code>
@@ -85,7 +84,6 @@ public class SearchPattern {
 	 * <code>"NPE"</code> string pattern, search will only use Camel Case match
 	 * rule, but with <code>N*P*E*</code> string pattern, it will use only Pattern
 	 * match rule.
-	 *
 	 */
 	public static final int RULE_CAMELCASE_MATCH = 0x0080;
 
@@ -109,39 +107,36 @@ public class SearchPattern {
 	 * Creates a new instance of SearchPattern with the following match rules
 	 * configured: {@link #RULE_EXACT_MATCH} | {@link #RULE_PREFIX_MATCH} |
 	 * {@link #RULE_PATTERN_MATCH} | {@link #RULE_CAMELCASE_MATCH} |
-	 * {@link #RULE_BLANK_MATCH} )
-	 *
+	 * {@link #RULE_BLANK_MATCH}.
 	 */
 	public SearchPattern() {
 		this(RULE_EXACT_MATCH | RULE_PREFIX_MATCH | RULE_PATTERN_MATCH | RULE_CAMELCASE_MATCH | RULE_BLANK_MATCH);
 	}
 
 	/**
-	 * Creates a search pattern with the rule to apply for matching index keys. It
-	 * can be exact match, prefix match, pattern match or camelCase match. Rule can
-	 * also be combined with a case sensitivity flag.
+	 * Creates a search pattern with a rule or rules to apply for matching index keys.
 	 *
 	 * @param allowedRules one of {@link #RULE_EXACT_MATCH},
 	 *                     {@link #RULE_PREFIX_MATCH}, {@link #RULE_PATTERN_MATCH},
-	 *                     {@link #RULE_CASE_SENSITIVE},
-	 *                     {@link #RULE_CAMELCASE_MATCH} combined with one of
-	 *                     following values: {@link #RULE_EXACT_MATCH},
-	 *                     {@link #RULE_PREFIX_MATCH}, {@link #RULE_PATTERN_MATCH}
-	 *                     or {@link #RULE_CAMELCASE_MATCH}. e.g.
-	 *                     {@link #RULE_EXACT_MATCH} | {@link #RULE_CASE_SENSITIVE}
-	 *                     if an exact and case sensitive match is requested,
-	 *                     {@link #RULE_PREFIX_MATCH} if a prefix non case sensitive
-	 *                     match is requested or {@link #RULE_EXACT_MATCH} if a non
-	 *                     case sensitive and erasure match is requested.<br>
-	 *                     Note also that default behavior for generic types/methods
-	 *                     search is to find exact matches.
+	 *                     {@link #RULE_CAMELCASE_MATCH},
+	 *                     {@link #RULE_CASE_SENSITIVE}, or their combination in
+	 *                     order to enable more types of matching. Note that
+	 *                     {@link #RULE_CASE_SENSITIVE} is special in that it
+	 *                     just affects how the other match rules
+	 *                     behave.<br>
+	 *                     Examples: {@link #RULE_EXACT_MATCH} |
+	 *                     {@link #RULE_CASE_SENSITIVE} if an exact and case
+	 *                     sensitive match is requested, {@link #RULE_PREFIX_MATCH}
+	 *                     if a prefix non case sensitive match is requested, or
+	 *                     {@link #RULE_EXACT_MATCH} if a non case sensitive and
+	 *                     erasure match is requested.<br>
 	 */
 	public SearchPattern(int allowedRules) {
 		this.allowedRules = allowedRules;
 	}
 
 	/**
-	 * Gets string pattern used by matcher
+	 * Gets string pattern used by matcher.
 	 *
 	 * @return pattern
 	 */
@@ -163,10 +158,14 @@ public class SearchPattern {
 	}
 
 	/**
-	 * Matches text with pattern. matching is determine by matchKind.
+	 * Matches text with pattern. The way of matching is determined by the current
+	 * pattern setup - see {@link #getMatchRule()} for details.
+	 * <p>
+	 * The default implementation generally does only case-insensitive searches,
+	 * i.e. {@link #RULE_CASE_SENSITIVE} is not considered here.
 	 *
 	 * @param text the text to match
-	 * @return true if search pattern was matched with text false in other way
+	 * @return true if search pattern was matched with text
 	 */
 	public boolean matches(String text) {
 		switch (matchRule) {
@@ -231,8 +230,7 @@ public class SearchPattern {
 	/**
 	 * @param text
 	 * @param prefix
-	 * @return true if text starts with given prefix, ignoring case false in other
-	 *         way
+	 * @return true if text starts with given prefix, ignoring case
 	 */
 	private boolean startsWithIgnoreCase(String text, String prefix) {
 		int textLength = text.length();
@@ -512,8 +510,8 @@ public class SearchPattern {
 	}
 
 	/**
-	 * Checks pattern's character is allowed for specified set. It could be override
-	 * if you want change logic of camelCaseMatch methods.
+	 * Checks pattern's character is allowed for specified set. It could be overridden
+	 * if you want to change logic of camelCaseMatch methods.
 	 *
 	 * @param patternChar the char to check
 	 * @return true if patternChar is in set of allowed characters for pattern
@@ -525,7 +523,7 @@ public class SearchPattern {
 
 	/**
 	 * Checks character of element's name is allowed for specified set. It could be
-	 * override if you want change logic of camelCaseMatch methods.
+	 * overridden if you want to change logic of camelCaseMatch methods.
 	 *
 	 * @param nameChar - name of searched element
 	 * @return if nameChar is in set of allowed characters for name of element
@@ -535,15 +533,13 @@ public class SearchPattern {
 	}
 
 	/**
-	 * Returns the rule to apply for matching keys. Can be exact match, prefix
-	 * match, pattern match or camelcase match. Rule can also be combined with a
-	 * case sensitivity flag.
+	 * Returns the active rule to apply for matching keys, based on the currently
+	 * set {@link #setPattern(String) pattern} and allowed rules passed to the
+	 * {@link #SearchPattern(int) constructor}.
 	 *
-	 * @return one of RULE_EXACT_MATCH, RULE_PREFIX_MATCH, RULE_PATTERN_MATCH,
-	 *         RULE_CAMELCASE_MATCH, combined with RULE_CASE_SENSITIVE, e.g.
-	 *         RULE_EXACT_MATCH | RULE_CASE_SENSITIVE if an exact and case sensitive
-	 *         match is requested, or RULE_PREFIX_MATCH if a prefix non case
-	 *         sensitive match is requested.
+	 * @return one of {@link #RULE_BLANK_MATCH}, {@link #RULE_EXACT_MATCH},
+	 *         {@link #RULE_PREFIX_MATCH}, {@link #RULE_PATTERN_MATCH},
+	 *         {@link #RULE_CAMELCASE_MATCH}
 	 */
 	public final int getMatchRule() {
 		return this.matchRule;
@@ -626,7 +622,7 @@ public class SearchPattern {
 	}
 
 	/**
-	 * Check if character is valid camelCase character
+	 * Checks if character is a valid camelCase character.
 	 *
 	 * @param ch character to be validated
 	 * @return true if character is valid
@@ -652,7 +648,6 @@ public class SearchPattern {
 	 * <i>WARNING: This method is <b>not</b> defined in reading order, i.e.
 	 * <code>a.isSubPattern(b)</code> is <code>true</code> iff <code>b</code> is a
 	 * sub-pattern of <code>a</code>, and not vice-versa. </i>
-	 * </p>
 	 *
 	 * @param pattern pattern to be checked
 	 * @return true if the given pattern is a sub pattern of this search pattern
@@ -662,10 +657,11 @@ public class SearchPattern {
 	}
 
 	/**
-	 * Trims sequences of '*' characters
+	 * Replaces sequences of '*' characters by just one '*'. It doesn't do any
+	 * trimming actually.
 	 *
-	 * @param pattern string to be trimmed
-	 * @return trimmed pattern
+	 * @param pattern string to be normalized
+	 * @return normalized pattern
 	 */
 	private String trimWildcardCharacters(String pattern) {
 		return Util.replaceAll(pattern, "\\*+", "\\*"); //$NON-NLS-1$ //$NON-NLS-2$ }
