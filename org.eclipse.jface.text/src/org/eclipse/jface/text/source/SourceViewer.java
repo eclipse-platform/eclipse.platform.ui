@@ -17,9 +17,9 @@
  *******************************************************************************/
 package org.eclipse.jface.text.source;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
 import java.util.Stack;
 
 import org.eclipse.swt.SWT;
@@ -393,7 +393,7 @@ public class SourceViewer extends TextViewer
 	 */
 	private CodeMiningManager fCodeMiningManager;
 
-	private final Set<ITextViewerLifecycle> lifecycles;
+	private final List<ITextViewerLifecycle> lifecycles;
 
 	/**
 	 * Constructs a new source viewer. The vertical ruler is initially visible.
@@ -428,7 +428,7 @@ public class SourceViewer extends TextViewer
 		fIsVerticalRulerVisible= (verticalRuler != null);
 		fOverviewRuler= overviewRuler;
 		fIsOverviewRulerVisible= (showAnnotationsOverview && overviewRuler != null);
-		this.lifecycles= new HashSet<>();
+		this.lifecycles= new ArrayList<>();
 		createControl(parent, styles);
 	}
 
@@ -1330,7 +1330,7 @@ public class SourceViewer extends TextViewer
 	}
 
 	private void addTextViewerLifecycle(ITextViewerLifecycle lifecycle) {
-		if (lifecycle != null) {
+		if (lifecycle != null && !lifecycles.contains(lifecycle)) {
 			lifecycles.add(lifecycle);
 		}
 	}
