@@ -106,11 +106,12 @@ public class DispatcherTest {
 		CheckInvokedHandler.invoked = false;
 		IViewPart projectExplorer = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
 				.showView(IPageLayout.ID_PROJECT_EXPLORER);
+		projectExplorer.getSite().getSelectionProvider().setSelection(new StructuredSelection(file));
+		ISelection selection = projectExplorer.getSite().getSelectionProvider().getSelection();
 
 		// select a file in the project explorer and assert that CTRL+C invokes our test
 		// handler
 		{
-			projectExplorer.getSite().getSelectionProvider().setSelection(new StructuredSelection(file));
 			dispatcher.press(Arrays.asList(KeyStroke.getInstance(SWT.CTRL, 'C')), null);
 			// in the Project Explorer, the custom copy handler should have been called
 			Assert.assertTrue("Handler should have been invoked", CheckInvokedHandler.invoked);
@@ -126,8 +127,8 @@ public class DispatcherTest {
 				ectx.set(ISources.ACTIVE_CURRENT_SELECTION_NAME, null);
 			}
 
-			ISelection selection = projectExplorer.getSite().getSelectionProvider().getSelection();
-			Assert.assertNotNull(selection);
+			// the original selection should not have changed
+			Assert.assertSame(selection, projectExplorer.getSite().getSelectionProvider().getSelection());
 
 			CheckInvokedHandler.invoked = false;
 			dispatcher.press(Arrays.asList(KeyStroke.getInstance(SWT.CTRL, 'C')), null);
