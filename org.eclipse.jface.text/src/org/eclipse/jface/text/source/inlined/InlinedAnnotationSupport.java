@@ -10,8 +10,6 @@
  *
  *  Contributors:
  *  Angelo Zerr <angelo.zerr@gmail.com> - [CodeMining] Provide inline annotations support - Bug 527675
- *  Onisa Andrei-Alexandru <onisaalex@gmail.com> - InlinedAnnotationSupport.findExistingAnnotation() performance
- *  issues with a lot of inlined annotations and a lot of positions - #122
  */
 package org.eclipse.jface.text.source.inlined;
 
@@ -24,8 +22,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
@@ -337,10 +333,9 @@ public class InlinedAnnotationSupport {
 	private AnnotationPainter fPainter;
 
 	/**
-	 * Holds the current inlined annotations based on their {@link Position}s in a HashMap to make
-	 * lookup, insertion and deletion in average-case time complexity of O(1).
+	 * Holds the current inlined annotations.
 	 */
-	private Map<Position, AbstractInlinedAnnotation> fInlinedAnnotationByPositionMap;
+	private Set<AbstractInlinedAnnotation> fInlinedAnnotations;
 
 	/**
 	 * The mouse tracker used to support hover, click on inlined annotation.
@@ -436,8 +431,8 @@ public class InlinedAnnotationSupport {
 			return;
 		}
 		Map<AbstractInlinedAnnotation, Position> annotationsToAdd= new HashMap<>();
-		List<AbstractInlinedAnnotation> annotationsToRemove= fInlinedAnnotationByPositionMap != null
-				? new ArrayList<>(fInlinedAnnotationByPositionMap.values())
+		List<AbstractInlinedAnnotation> annotationsToRemove= fInlinedAnnotations != null
+				? new ArrayList<>(fInlinedAnnotations)
 				: Collections.emptyList();
 		// Loop for annotations to update
 		for (AbstractInlinedAnnotation ann : annotations) {
@@ -476,7 +471,7 @@ public class InlinedAnnotationSupport {
 					}
 				}
 			}
-			fInlinedAnnotationByPositionMap= annotations.stream().collect(Collectors.toMap(AbstractInlinedAnnotation::getPosition, Function.identity()));
+			fInlinedAnnotations= annotations;
 		}
 	}
 
@@ -490,15 +485,16 @@ public class InlinedAnnotationSupport {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends AbstractInlinedAnnotation> T findExistingAnnotation(Position pos) {
-		if (fInlinedAnnotationByPositionMap == null) {
+		if (fInlinedAnnotations == null) {
 			return null;
 		}
-		AbstractInlinedAnnotation inlinedAnnotationAtPosition= fInlinedAnnotationByPositionMap.get(pos);
-		if (inlinedAnnotationAtPosition != null && !inlinedAnnotationAtPosition.getPosition().isDeleted()) {
-			try {
-				return (T) inlinedAnnotationAtPosition;
-			} catch (ClassCastException e) {
+		for (AbstractInlinedAnnotation ann : fInlinedAnnotations) {
+			if (pos.equals(ann.getPosition()) && !ann.getPosition().isDeleted()) {
+				try {
+					return (T) ann;
+				} catch (ClassCastException e) {
 					// Do nothing
+				}
 			}
 		}
 		return null;
@@ -525,18 +521,18 @@ public class InlinedAnnotationSupport {
 	private void removeInlinedAnnotations() {
 
 		IAnnotationModel annotationModel= fViewer.getAnnotationModel();
-		if (annotationModel == null || fInlinedAnnotationByPositionMap == null)
+		if (annotationModel == null || fInlinedAnnotations == null)
 			return;
 
 		synchronized (getLockObject(annotationModel)) {
 			if (annotationModel instanceof IAnnotationModelExtension) {
 				((IAnnotationModelExtension) annotationModel).replaceAnnotations(
-						fInlinedAnnotationByPositionMap.values().toArray(new Annotation[fInlinedAnnotationByPositionMap.size()]), null);
+						fInlinedAnnotations.toArray(new Annotation[fInlinedAnnotations.size()]), null);
 			} else {
-				for (AbstractInlinedAnnotation annotation : fInlinedAnnotationByPositionMap.values())
+				for (AbstractInlinedAnnotation annotation : fInlinedAnnotations)
 					annotationModel.removeAnnotation(annotation);
 			}
-			fInlinedAnnotationByPositionMap= null;
+			fInlinedAnnotations= null;
 		}
 	}
 
@@ -549,8 +545,8 @@ public class InlinedAnnotationSupport {
 	 * @return the {@link AbstractInlinedAnnotation} from the given point and null otherwise.
 	 */
 	private AbstractInlinedAnnotation getInlinedAnnotationAtPoint(ISourceViewer viewer, int x, int y) {
-		if (fInlinedAnnotationByPositionMap != null) {
-			for (AbstractInlinedAnnotation ann : fInlinedAnnotationByPositionMap.values()) {
+		if (fInlinedAnnotations != null) {
+			for (AbstractInlinedAnnotation ann : fInlinedAnnotations) {
 				if (ann.contains(x, y) && isInVisibleLines(ann.getPosition().getOffset())) {
 					return ann;
 				}
