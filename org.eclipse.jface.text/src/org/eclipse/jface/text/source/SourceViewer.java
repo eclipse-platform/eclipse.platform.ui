@@ -496,14 +496,16 @@ public class SourceViewer extends TextViewer
 
 		// install content type independent plug-ins
 		fPresentationReconciler= configuration.getPresentationReconciler(this);
-		addTextViewerLifecycle(fPresentationReconciler);
+		if (fPresentationReconciler != null)
+			fPresentationReconciler.install(this);
 
 		fReconciler= configuration.getReconciler(this);
-		addTextViewerLifecycle(fReconciler);
+		if (fReconciler != null)
+			fReconciler.install(this);
 
 		fContentAssistant= configuration.getContentAssistant(this);
-		addTextViewerLifecycle(fContentAssistant);
 		if (fContentAssistant != null) {
+			fContentAssistant.install(this);
 			if (fContentAssistant instanceof IContentAssistantExtension2 && fContentAssistant instanceof IContentAssistantExtension4)
 				fContentAssistantFacade= new ContentAssistantFacade(fContentAssistant);
 			fContentAssistantInstalled= true;
@@ -518,7 +520,8 @@ public class SourceViewer extends TextViewer
 		fContentFormatter= configuration.getContentFormatter(this);
 
 		fInformationPresenter= configuration.getInformationPresenter(this);
-		addTextViewerLifecycle(fInformationPresenter);
+		if (fInformationPresenter != null)
+			fInformationPresenter.install(this);
 
 		setUndoManager(configuration.getUndoManager(this));
 
@@ -727,10 +730,18 @@ public class SourceViewer extends TextViewer
 		clearRememberedSelection();
 
 		uninstallTextViewer();
-		fPresentationReconciler= null;
-		fReconciler= null;
+		if (fPresentationReconciler != null) {
+			fPresentationReconciler.uninstall();
+			fPresentationReconciler= null;
+		}
+
+		if (fReconciler != null) {
+			fReconciler.uninstall();
+			fReconciler= null;
+		}
 
 		if (fContentAssistant != null) {
+			fContentAssistant.uninstall();
 			fContentAssistantInstalled= false;
 			fContentAssistant= null;
 			if (fContentAssistantFacade != null)
