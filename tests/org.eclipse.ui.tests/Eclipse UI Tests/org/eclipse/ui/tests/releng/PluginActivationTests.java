@@ -50,11 +50,11 @@ public class PluginActivationTests {
 	@Rule
 	public TestWatcher LOG_TESTRUN = TestRunLogUtil.LOG_TESTRUN;
 
-	private static String[] NOT_ACTIVE_BUNDLES = new String[] {
+	private static List<String> NOT_ACTIVE_BUNDLES = List.of(
 			"org.apache.xerces",
 			"com.jcraft.jsch",
 			"javax.servlet",
-			"javax.servlet.jsp",
+			"javax.servlet.jsp-api",
 			"org.apache.ant",
 			"org.apache.commons.logging",
 			"org.apache.lucene",
@@ -105,9 +105,9 @@ public class PluginActivationTests {
 			"org.eclipse.platform",
 			"org.eclipse.rcp",
 			"org.eclipse.ui.browser"
-		};
+	);
 
-	private static String[] ACTIVE_BUNDLES = new String[] {
+	private static List<String> ACTIVE_BUNDLES = List.of(
 			"org.eclipse.osgi",
 			"org.eclipse.equinox.simpleconfigurator",
 			"com.ibm.icu",
@@ -174,7 +174,7 @@ public class PluginActivationTests {
 			"org.eclipse.ui.workbench",
 			"org.eclipse.ui.workbench.texteditor",
 			"org.hamcrest.core"
-		};
+	);
 
 	@Before
 	public void setUpTest() {
@@ -217,9 +217,9 @@ public class PluginActivationTests {
 	 */
 	public static void addLoadedPlugIns(String... loadedPlugins) {
 		Assert.isLegal(loadedPlugins != null);
-		List<String> l = new ArrayList<>(Arrays.asList(NOT_ACTIVE_BUNDLES));
+		List<String> l = new ArrayList<>(NOT_ACTIVE_BUNDLES);
 		l.removeAll(Arrays.asList(loadedPlugins));
-		NOT_ACTIVE_BUNDLES = l.toArray(new String[0]);
+		NOT_ACTIVE_BUNDLES = l;
 	}
 
 	/**
