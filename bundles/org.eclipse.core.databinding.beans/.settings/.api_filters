@@ -1,45 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.core.databinding.beans" version="2">
-    <resource path="META-INF/MANIFEST.MF">
-        <filter comment="Planned API removal so we increase the minor version" id="926941240">
-            <message_arguments>
-                <message_argument value="1.9.0"/>
-                <message_argument value="1.8.0"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.core.databinding.beans.BeanProperties">
-        <filter comment="Planned API removal" id="305324134">
-            <message_arguments>
-                <message_argument value="org.eclipse.core.databinding.beans.BeanProperties"/>
-                <message_argument value="org.eclipse.core.databinding.beans_1.9.0"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.core.databinding.beans.BeansObservables">
-        <filter comment="Planned API removal" id="305324134">
-            <message_arguments>
-                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
-                <message_argument value="org.eclipse.core.databinding.beans_1.9.0"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.core.databinding.beans.PojoObservables">
-        <filter comment="Planned API removal" id="305324134">
-            <message_arguments>
-                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
-                <message_argument value="org.eclipse.core.databinding.beans_1.9.0"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.core.databinding.beans.PojoProperties">
-        <filter comment="Planned API removal" id="305324134">
-            <message_arguments>
-                <message_argument value="org.eclipse.core.databinding.beans.PojoProperties"/>
-                <message_argument value="org.eclipse.core.databinding.beans_1.9.0"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/core/databinding/beans/IBeanListProperty.java" type="org.eclipse.core.databinding.beans.IBeanListProperty">
         <filter comment="Extending interface in accordance with the API specification." id="574619656">
             <message_arguments>
