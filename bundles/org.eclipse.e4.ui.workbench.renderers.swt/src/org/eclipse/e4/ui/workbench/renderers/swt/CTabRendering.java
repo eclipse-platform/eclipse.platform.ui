@@ -19,7 +19,6 @@ package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import java.lang.reflect.Field;
 import java.util.Objects;
-import javax.inject.Inject;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
@@ -131,7 +130,6 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 
 	private boolean drawCustomTabContentBackground;
 
-	@Inject
 	public CTabRendering(CTabFolder parent) {
 		super(parent);
 		parentWrapper = new CTabFolderWrapper(parent);
