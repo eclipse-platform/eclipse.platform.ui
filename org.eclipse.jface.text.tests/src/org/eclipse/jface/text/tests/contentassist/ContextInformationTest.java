@@ -112,6 +112,7 @@ public class ContextInformationTest extends AbstractContentAssistTest {
 		assertEquals("idx= 1", getInfoText(this.infoShell));
 
 		// Hide all
+		getButton().getShell().setFocus();
 		getButton().setFocus();
 		processEvents();
 		assertTrue(this.infoShell.isDisposed() || !this.infoShell.isVisible());
