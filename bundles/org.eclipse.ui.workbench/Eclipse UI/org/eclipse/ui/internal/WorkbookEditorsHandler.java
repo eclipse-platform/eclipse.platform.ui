@@ -91,14 +91,6 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 	 */
 	private static final String OMMITED_PATH_SEGMENTS_SIGNIFIER = "..."; //$NON-NLS-1$
 
-	/**
-	 * Expected value when all editor references passed to
-	 * {@link #generateColumnLabelTexts(List)} share the same path. Usually it's not
-	 * possible to open a file in multiple editors. But when an editor gets split
-	 * (Toggle Split Editor), the same file shows up in separate editors.
-	 */
-	private static final int ALL_PATHS_FULLY_MATCHING = -1;
-
 	private SearchPattern searchPattern;
 
 	private Map<EditorReference, String> editorReferenceColumnLabelTexts;
@@ -197,12 +189,16 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 			if (groupedEditorReferences.size() == 1) {
 				EditorReference editorReference = groupedEditorReferences.get(0).getKey();
 				editorReferenceLabelTexts.put(editorReference, getWorkbenchPartReferenceText(editorReference));
+			} else if (isSplitEditorWithoutAdditionalCollision(groupedEditorReferences)) {
+				groupedEditorReferences.stream().map(Entry::getKey)
+						.forEach(editorReference -> editorReferenceLabelTexts.put(editorReference,
+								getWorkbenchPartReferenceText(editorReference)));
 			} else {
 				Set<Integer> differingMaxSegmentsCounter = new HashSet<>();
 				List<Integer> maxMatchingSegmentsList = new ArrayList<>(groupedEditorReferences.size());
 				for (Entry<EditorReference, IPath> entry : groupedEditorReferences) {
 					IPath path = entry.getValue();
-					int maxMatchingSegments = ALL_PATHS_FULLY_MATCHING;
+					int maxMatchingSegments = -1;
 					for (int i = 0; i < groupedEditorReferences.size(); i++) {
 						IPath currentPath = groupedEditorReferences.get(i).getValue();
 						if (currentPath.equals(path)) {
@@ -221,10 +217,6 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 					Integer maxMatchingSegment = maxMatchingSegmentsList.get(i);
 					IPath path = groupedEditorReferences.get(i).getValue();
 
-					if (maxMatchingSegment == ALL_PATHS_FULLY_MATCHING) {
-						editorReferenceLabelTexts.put(editorReference, getWorkbenchPartReferenceText(editorReference));
-						continue;
-					}
 					String labelText = generateLabelText(editorReference, path, maxMatchingSegment,
 							differingMaxSegmentsCounter.size() == 1 && maxMatchingSegment != 0);
 					editorReferenceLabelTexts.put(editorReference, labelText);
@@ -232,6 +224,22 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 			}
 		}
 		return editorReferenceLabelTexts;
+	}
+
+	/**
+	 * Usually it's not possible to open a file in multiple editors. But when an
+	 * editor gets split (Toggle Split Editor), the same file shows up in separate
+	 * editors. The size of the list can be used as an indicator because an editor
+	 * can only be split once.
+	 *
+	 * @param groupedEditorReferences the editor references grouped by matching file
+	 *                                name
+	 * @return if the passed references are a split editor without any additional
+	 */
+	private boolean isSplitEditorWithoutAdditionalCollision(
+			List<Entry<EditorReference, IPath>> groupedEditorReferences) {
+		return groupedEditorReferences.size() == 2 && groupedEditorReferences.stream().map(Entry::getValue)
+				.allMatch(groupedEditorReferences.get(0).getValue()::equals);
 	}
 
 	/**
