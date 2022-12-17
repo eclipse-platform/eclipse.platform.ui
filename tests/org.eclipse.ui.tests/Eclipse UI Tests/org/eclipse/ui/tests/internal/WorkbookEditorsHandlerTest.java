@@ -211,15 +211,15 @@ public class WorkbookEditorsHandlerTest extends UITestCase {
 
 		assertEquals("Text should have parent folder prepended", "bar" + File.separator + fileName,
 				handler.tableItemTexts.get(0));
-		assertEquals("Text should have full folder chain until differing folder prepended",
-				String.join(File.separator, "test2", "foo", "bar", "baz", fileName),
+		assertEquals("Text should have first differing folder and the mark for collapsed matching folders prepended",
+				String.join(File.separator, "test2", "...", fileName),
 				handler.tableItemTexts.get(1));
-		assertEquals("Text should have full folder chain until differing folder prepended",
-				String.join(File.separator, "test1", "foo", "bar", "baz", fileName),
+		assertEquals("Text should have first differing folder and the mark for collapsed matching folders prepended",
+				String.join(File.separator, "test1", "...", fileName),
 				handler.tableItemTexts.get(2));
 		assertEquals("There should only ever be one selected editor", 1, handler.selectionTexts.size());
 		assertEquals("Selection should be the editor that was active before the currently active editor",
-				String.join(File.separator, "test2", "foo", "bar", "baz", fileName),
+				String.join(File.separator, "test2", "...", fileName),
 				handler.tableItemTexts.get(1));
 	}
 

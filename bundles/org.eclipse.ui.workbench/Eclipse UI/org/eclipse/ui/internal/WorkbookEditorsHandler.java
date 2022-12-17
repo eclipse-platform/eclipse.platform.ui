@@ -20,17 +20,14 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -145,9 +142,17 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 	 * Example with differing segments:
 	 *
 	 * <pre>
-	 * /project/test1/foo/bar/file -> test1/foo/bar/file
-	 * /project/test2/foo/bar/file -> test2/foo/bar/file
+	 * /project/test1/foo/bar/file -> test1/.../file
+	 * /project/test2/foo/bar/file -> test2/.../file
 	 * /project/file               -> project/file
+	 * </pre>
+	 *
+	 * Example with files in root (Windows):
+	 *
+	 * <pre>
+	 * C:\project\test1\foo\bar\file -> bar\file
+	 * D:\file -> D:\file
+	 * C:\file -> C:\file
 	 * </pre>
 	 *
 	 * @param editorReferences the references for which the display label should be
@@ -189,7 +194,6 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 				EditorReference editorReference = groupedEditorReferences.get(0).getKey();
 				editorReferenceLabelTexts.put(editorReference, getWorkbenchPartReferenceText(editorReference));
 			} else {
-				Set<Integer> differingMaxSegmentsCounter = new HashSet<>();
 				List<Integer> maxMatchingSegmentsList = new ArrayList<>(groupedEditorReferences.size());
 				for (Entry<EditorReference, IPath> entry : groupedEditorReferences) {
 					IPath path = entry.getValue();
@@ -203,7 +207,6 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 						maxMatchingSegments = maxMatchingSegments < currentMatchingSegments ? currentMatchingSegments
 								: maxMatchingSegments;
 					}
-					differingMaxSegmentsCounter.add(maxMatchingSegments);
 					maxMatchingSegmentsList.add(maxMatchingSegments);
 				}
 
@@ -212,8 +215,7 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 					Integer maxMatchingSegment = maxMatchingSegmentsList.get(i);
 					IPath path = groupedEditorReferences.get(i).getValue();
 
-					String labelText = generateLabelText(editorReference, path, maxMatchingSegment,
-							differingMaxSegmentsCounter.size() == 1 && maxMatchingSegment != 0);
+					String labelText = generateLabelText(editorReference, path, maxMatchingSegment);
 					editorReferenceLabelTexts.put(editorReference, labelText);
 				}
 			}
@@ -231,27 +233,24 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 	 * @param maxMatchingSegment      the maximal amount of sections this reference
 	 *                                shares with a conflicting reference, including
 	 *                                the file itself
-	 * @param omitMaxMatchingSegments if the match matching segments should be
-	 *                                omitted from the label
 	 * @return the final label text for the editor reference
 	 */
 	private String generateLabelText(EditorReference editorReference, IPath path,
-			Integer maxMatchingSegment, boolean omitMaxMatchingSegments) {
+			Integer maxMatchingSegment) {
 		String labelText;
 		java.nio.file.Path npath = path.toFile().toPath();
-		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			npath = removeWindowsDriveLetter(npath);
-		}
-		if (omitMaxMatchingSegments) {
 			String lastSegment = npath.getFileName().toString();
-			StringBuilder pathSegment = new StringBuilder(getPathSegment(maxMatchingSegment, npath).toString());
-			if (maxMatchingSegment > 1) {
-				pathSegment = pathSegment.append(File.separator).append(OMMITED_PATH_SEGMENTS_SIGNIFIER);
+			StringBuilder prependedSegment = new StringBuilder();
+			if (maxMatchingSegment < npath.getNameCount()) {
+				prependedSegment = prependedSegment.append(getPathSegment(maxMatchingSegment, npath).toString());
+				if (maxMatchingSegment > 1) {
+					prependedSegment = prependedSegment.append(File.separator).append(OMMITED_PATH_SEGMENTS_SIGNIFIER);
+				}
+				prependedSegment = prependedSegment.append(File.separator);
+			} else {
+				prependedSegment = prependedSegment.append(npath.getRoot());
 			}
-			labelText = pathSegment.append(File.separator).append(lastSegment).toString();
-		} else {
-			labelText = npath.subpath(npath.getNameCount() - 1 - maxMatchingSegment, npath.getNameCount()).toString();
-		}
+			labelText = prependedSegment.append(lastSegment).toString();
 		return prependDirtyIndicationIfDirty(editorReference, labelText);
 	}
 
@@ -262,20 +261,6 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 	 */
 	private Path getPathSegment(Integer segmentIndex, java.nio.file.Path path) {
 		return path.subpath(path.getNameCount() - 1 - segmentIndex, path.getNameCount() - segmentIndex);
-	}
-
-	/**
-	 * Removed the Windows Drive letter from the Path.
-	 * <br/>
-	 * <br/>
-	 * Example:<br/>
-	 * {@code C:\git\project\file => git\project\file}
-	 * 
-	 * @param path Path to remove the Windows drive letter from
-	 * @return path Path without the Windows drive letter segment
-	 */
-	private java.nio.file.Path removeWindowsDriveLetter(java.nio.file.Path path) {
-		return path.getRoot().relativize(path);
 	}
 
 	/**
