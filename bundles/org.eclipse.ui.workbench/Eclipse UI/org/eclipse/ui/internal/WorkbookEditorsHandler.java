@@ -64,6 +64,7 @@ import org.eclipse.ui.themes.ITheme;
  */
 public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 
+
 	/**
 	 * Preference node for the workbench SWT renderer
 	 */
@@ -89,6 +90,14 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 	 * file paths.
 	 */
 	private static final String OMMITED_PATH_SEGMENTS_SIGNIFIER = "..."; //$NON-NLS-1$
+
+	/**
+	 * Expected value when all editor references passed to
+	 * {@link #generateColumnLabelTexts(List)} share the same path. Usually it's not
+	 * possible to open a file in multiple editors. But when an editor gets split
+	 * (Toggle Split Editor), the same file shows up in separate editors.
+	 */
+	private static final int ALL_PATHS_FULLY_MATCHING = -1;
 
 	private SearchPattern searchPattern;
 
@@ -193,7 +202,7 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 				List<Integer> maxMatchingSegmentsList = new ArrayList<>(groupedEditorReferences.size());
 				for (Entry<EditorReference, IPath> entry : groupedEditorReferences) {
 					IPath path = entry.getValue();
-					int maxMatchingSegments = -1;
+					int maxMatchingSegments = ALL_PATHS_FULLY_MATCHING;
 					for (int i = 0; i < groupedEditorReferences.size(); i++) {
 						IPath currentPath = groupedEditorReferences.get(i).getValue();
 						if (currentPath.equals(path)) {
@@ -212,6 +221,10 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 					Integer maxMatchingSegment = maxMatchingSegmentsList.get(i);
 					IPath path = groupedEditorReferences.get(i).getValue();
 
+					if (maxMatchingSegment == ALL_PATHS_FULLY_MATCHING) {
+						editorReferenceLabelTexts.put(editorReference, getWorkbenchPartReferenceText(editorReference));
+						continue;
+					}
 					String labelText = generateLabelText(editorReference, path, maxMatchingSegment,
 							differingMaxSegmentsCounter.size() == 1 && maxMatchingSegment != 0);
 					editorReferenceLabelTexts.put(editorReference, labelText);
@@ -270,7 +283,7 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 	 * <br/>
 	 * Example:<br/>
 	 * {@code C:\git\project\file => git\project\file}
-	 * 
+	 *
 	 * @param path Path to remove the Windows drive letter from
 	 * @return path Path without the Windows drive letter segment
 	 */
