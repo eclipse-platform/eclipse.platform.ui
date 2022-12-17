@@ -186,10 +186,8 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 		});
 
 		for (List<Entry<EditorReference, IPath>> groupedEditorReferences : collisionsMap.values()) {
-			if (groupedEditorReferences.size() == 1) {
-				EditorReference editorReference = groupedEditorReferences.get(0).getKey();
-				editorReferenceLabelTexts.put(editorReference, getWorkbenchPartReferenceText(editorReference));
-			} else if (isSplitEditorWithoutAdditionalCollision(groupedEditorReferences)) {
+			if (groupedEditorReferences.size() == 1
+					|| isSplitEditorWithoutAdditionalCollision(groupedEditorReferences)) {
 				groupedEditorReferences.stream().map(Entry::getKey)
 						.forEach(editorReference -> editorReferenceLabelTexts.put(editorReference,
 								getWorkbenchPartReferenceText(editorReference)));
