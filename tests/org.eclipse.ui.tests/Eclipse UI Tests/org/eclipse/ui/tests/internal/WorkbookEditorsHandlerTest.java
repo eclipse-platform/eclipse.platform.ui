@@ -94,6 +94,28 @@ public class WorkbookEditorsHandlerTest extends UITestCase {
 	}
 
 	@Test
+	public void testSingleFileWithEditorSplit() throws Exception {
+		String fileName = "example.txt";
+		IDE.openEditor(activePage, FileUtil.createFile(fileName, project1), true);
+		ICommandService cmdService = PlatformUI.getWorkbench().getService(ICommandService.class);
+		IHandlerService handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
+		final Command splitCmd = cmdService.getCommand("org.eclipse.ui.window.splitEditor");
+		splitCmd.executeWithChecks(handlerService.createExecutionEvent(splitCmd, null));
+
+		final Command cmd = cmdService.getCommand("org.eclipse.ui.window.openEditorDropDown");
+		WorkbookEditorsHandlerTestable handler = new WorkbookEditorsHandlerTestable();
+		cmd.setHandler(handler);
+		final ExecutionEvent event = handlerService.createExecutionEvent(cmd, null);
+
+		handler.execute(event);
+
+		assertEquals("Display text should match file name", fileName, handler.tableItemTexts.get(0));
+		assertEquals("Display text should match file name", fileName, handler.tableItemTexts.get(1));
+		assertEquals("Selection should be the editor that was active before the currently active editor", fileName,
+				handler.tableItemTexts.get(1));
+	}
+
+	@Test
 	public void testMultipleFilesWithNoNameConflict() throws Exception {
 		String fileName = "example.txt";
 		IDE.openEditor(activePage, FileUtil.createFile(fileName, project1), true);
