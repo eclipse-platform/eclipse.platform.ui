@@ -64,7 +64,6 @@ import org.eclipse.ui.themes.ITheme;
  */
 public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 
-
 	/**
 	 * Preference node for the workbench SWT renderer
 	 */
@@ -289,7 +288,7 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 	 * <br/>
 	 * Example:<br/>
 	 * {@code C:\git\project\file => git\project\file}
-	 *
+	 * 
 	 * @param path Path to remove the Windows drive letter from
 	 * @return path Path without the Windows drive letter segment
 	 */
