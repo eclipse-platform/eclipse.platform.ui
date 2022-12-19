@@ -190,8 +190,7 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 		});
 
 		for (List<Entry<EditorReference, IPath>> groupedEditorReferences : collisionsMap.values()) {
-			if (groupedEditorReferences.size() == 1
-					|| isSplitEditorWithoutAdditionalCollision(groupedEditorReferences)) {
+			if (groupedEditorReferences.size() == 1 || allReferencesToSamePath(groupedEditorReferences)) {
 				groupedEditorReferences.stream().map(Entry::getKey)
 						.forEach(editorReference -> editorReferenceLabelTexts.put(editorReference,
 								getWorkbenchPartReferenceText(editorReference)));
@@ -227,17 +226,15 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 
 	/**
 	 * Usually it's not possible to open a file in multiple editors. But when an
-	 * editor gets split (Toggle Split Editor), the same file shows up in separate
-	 * editors. The size of the list can be used as an indicator because an editor
-	 * can only be split once.
+	 * editor gets split (Toggle Split Editor) or cloned (Clone Editor) then
+	 * multiples editor references can point to the same path.
 	 *
 	 * @param groupedEditorReferences the editor references grouped by matching file
 	 *                                name
-	 * @return if the passed references are a split editor without any additional
+	 * @return if all references point to the same path
 	 */
-	private boolean isSplitEditorWithoutAdditionalCollision(
-			List<Entry<EditorReference, IPath>> groupedEditorReferences) {
-		return groupedEditorReferences.size() == 2 && groupedEditorReferences.stream().map(Entry::getValue)
+	private boolean allReferencesToSamePath(List<Entry<EditorReference, IPath>> groupedEditorReferences) {
+		return groupedEditorReferences.stream().map(Entry::getValue)
 				.allMatch(groupedEditorReferences.get(0).getValue()::equals);
 	}
 
