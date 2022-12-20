@@ -1,5 +1,6 @@
 /*/*/bin/
 /*/*/target
+/*/bin/
 *~
 *.rej
 *.bak
@@ -9,6 +10,8 @@ core.*
 Snap.*
 /.settings/
 /.project
+# maven
+target/
 .DS_Store
 .polyglot.*
 pom.tycho
