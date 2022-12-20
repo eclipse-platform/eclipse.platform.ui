@@ -58,8 +58,13 @@
     <module>./bundles/org.eclipse.e4.tools.emf.editor3x</module>
     <module>./bundles/org.eclipse.e4.tools.emf.ui</module>
     <module>./bundles/org.eclipse.e4.tools.jdt.templates</module>
+	<module>./bundles/org.eclipse.e4.tools.compatibility.migration</module>
+	<module>./bundles/org.eclipse.e4.tools.persistence</module>
     <module>./tests/org.eclipse.e4.tools.test</module>
+	<module>./tests/org.eclipse.e4.tools.persistence.tests</module>
+	<module>./tests/org.eclipse.e4.tools.compatibility.migration.tests</module>
     <module>./features/org.eclipse.e4.core.tools.feature</module>
+	<module>./features/org.eclipse.e4.tools.persistence.feature</module>
   </modules>
 
 </project>
