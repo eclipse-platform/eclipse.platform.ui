@@ -206,7 +206,7 @@ public final class IDEActionFactory {
 				throw new IllegalArgumentException();
 			}
 			RetargetAction action = new RetargetAction(getId(), IDEWorkbenchMessages.CloseResourceAction_text);
-			action.setToolTipText(IDEWorkbenchMessages.CloseResourceAction_text);
+			action.setToolTipText(IDEWorkbenchMessages.CloseResourceAction_toolTip);
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId(getCommandId());
 			return action;

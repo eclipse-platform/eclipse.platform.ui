@@ -1525,7 +1525,7 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 
 	private IContributionItem getCloseProjectItem() {
 		return getItem(IDEActionFactory.CLOSE_PROJECT.getId(), IDEActionFactory.CLOSE_PROJECT.getCommandId(), null,
-				null, IDEWorkbenchMessages.CloseResourceAction_text, IDEWorkbenchMessages.CloseResourceAction_text);
+				null, IDEWorkbenchMessages.CloseResourceAction_text, IDEWorkbenchMessages.CloseResourceAction_toolTip);
 	}
 
 	private IContributionItem getItem(String actionId, String commandId,
