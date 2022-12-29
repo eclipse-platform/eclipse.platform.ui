@@ -47,6 +47,7 @@ import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MCompositePart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -67,7 +68,11 @@ import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.widgets.WidgetFactory;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.ACC;
 import org.eclipse.swt.accessibility.Accessible;
@@ -82,15 +87,18 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Monitor;
@@ -207,6 +215,42 @@ public class StackRenderer extends LazyStackRenderer {
 		if (item != null) {
 			itemsToSet.add(item);
 		}
+	}
+
+	@Inject
+	@Optional
+	void subscribePerspectiveSwitched(
+			@UIEventTopic(UIEvents.UILifeCycle.PERSPECTIVE_SWITCHED) org.osgi.service.event.Event event) {
+		Object element = event.getProperty(EventTags.ELEMENT);
+		if (element instanceof MPerspective) {
+			setOnboarding((MPerspective) element);
+		}
+	}
+
+	private void setOnboarding(MPerspective perspective) {
+		if (onBoarding == null) {
+			return;
+		}
+
+		Image image = getImageFromURI(perspective.getIconURI());
+		if (image.isDisposed()) {
+			return;
+		}
+		Image greyImage = new Image(welcomeText.getDisplay(), image, SWT.IMAGE_GRAY);
+		if (welcomeImage.getImage() != null) {
+			welcomeImage.getImage().dispose();
+		}
+		welcomeImage.setImage(greyImage);
+
+		onBoarding.addDisposeListener(e -> {
+			greyImage.dispose();
+			welcomeImage.dispose();
+		});
+
+		String text = NLS.bind("Welcome to the \"{0}\" perspective", perspective.getLabel()); //$NON-NLS-1$
+		welcomeText.setText(text);
+		welcomeText.getParent().requestLayout();
+		welcomeText.getParent().pack(true);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -419,6 +463,11 @@ public class StackRenderer extends LazyStackRenderer {
 	@Optional
 	private UISynchronize synchronize;
 
+	private Label welcomeText;
+	private Label welcomeImage;
+
+	private Composite onBoarding;
+
 	/**
 	 * An event handler for listening to changes to the state of view menus and part
 	 * toolbars. Depending on what state these items are in, the view menu and
@@ -602,7 +651,10 @@ public class StackRenderer extends LazyStackRenderer {
 
 		int styleOverride = getStyleOverride(pStack);
 		int style = styleOverride == -1 ? SWT.BORDER : styleOverride;
-		final CTabFolder tabFolder = new CTabFolder(parentComposite, style);
+		CTabFolder tabFolder = new CTabFolder(parentComposite, style);
+		if (pStack.getTags().contains("org.eclipse.e4.primaryDataStack")) { //$NON-NLS-1$
+			createOnboardingControls(tabFolder);
+		}
 		tabFolder.setMRUVisible(getMRUValue());
 
 		// Adjust the minimum chars based on the location
@@ -621,6 +673,46 @@ public class StackRenderer extends LazyStackRenderer {
 		addTopRight(tabFolder);
 
 		return tabFolder;
+	}
+
+	private void createOnboardingControls(CTabFolder tabFolder) {
+		onBoarding = WidgetFactory.composite(SWT.None).layout(GridLayoutFactory.swtDefaults().create())
+				.create(tabFolder);
+
+		GridDataFactory gridData = GridDataFactory
+				.create(GridData.VERTICAL_ALIGN_CENTER | GridData.HORIZONTAL_ALIGN_CENTER).grab(true, true);
+
+		Composite content = WidgetFactory.composite(SWT.NONE).supplyLayoutData(gridData::create)
+				.layout(GridLayoutFactory.swtDefaults().create()).create(onBoarding);
+
+		Color color = onBoarding.getDisplay().getSystemColor(SWT.COLOR_WIDGET_DISABLED_FOREGROUND);
+		welcomeText = WidgetFactory.label(SWT.NONE).foreground(color).supplyLayoutData(gridData::create)
+				.create(content);
+
+		welcomeImage = WidgetFactory.label(SWT.NONE).foreground(color).supplyLayoutData(gridData::create)
+				.create(content);
+
+		tabFolder.addPaintListener(e -> setOnboardingControlSize(tabFolder, onBoarding));
+
+		tabFolder.addDisposeListener(e -> {
+			if (welcomeImage != null && !welcomeImage.isDisposed() && welcomeImage.getImage() != null && !welcomeImage.getImage().isDisposed()) {
+				welcomeImage.dispose();
+			}
+		});
+	}
+
+	private void setOnboardingControlSize(CTabFolder tabFolder, Composite onBoarding) {
+		if (onBoarding == null || onBoarding.isDisposed() || tabFolder == null || tabFolder.isDisposed()) {
+			return;
+		}
+		// TODO: create extension point to show information in onboarding control, until
+		// then hide it
+//		boolean show = tabFolder.getItemCount() == 0;
+//		if (show) {
+//			onBoarding.setSize(tabFolder.getBounds().width, tabFolder.getBounds().height);
+//		} else {
+			onBoarding.setSize(0, 0);
+//		}
 	}
 
 	private boolean getMRUValue() {
@@ -693,7 +785,6 @@ public class StackRenderer extends LazyStackRenderer {
 		// Set an initial bounds
 		trComp.pack();
 	}
-
 
 	public void adjustTopRight(final CTabFolder tabFolder) {
 		if (tabFolder.isDisposed()) {
