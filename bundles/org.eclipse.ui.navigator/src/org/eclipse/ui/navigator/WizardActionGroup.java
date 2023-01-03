@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.function.Predicate;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.IAction;
@@ -107,16 +108,20 @@ public final class WizardActionGroup extends ActionGroup {
 	 * the window is passed to created WizardShortcutActions for the shell and
 	 * selection service.
 	 */
-	private IWorkbenchWindow window;
+	private final IWorkbenchWindow window;
 
 	/* the correct wizard registry for this action group (getRegistry()) */
-	private IWizardRegistry wizardRegistry;
+	private final IWizardRegistry wizardRegistry;
 
 	private boolean disposed = false;
 
-	private String type;
+	private final String type;
 
-	private INavigatorContentService contentService;
+	private final INavigatorContentService contentService;
+
+	private final Predicate<IWizardDescriptor> descriptorFilter;
+
+	private final boolean useSeparators;
 
 	/**
 	 *
@@ -137,17 +142,7 @@ public final class WizardActionGroup extends ActionGroup {
 	 */
 	public WizardActionGroup(IWorkbenchWindow aWindow,
 			IWizardRegistry aWizardRegistry, String aType) {
-		super();
-		Assert.isNotNull(aWindow);
-		Assert.isNotNull(aWizardRegistry);
-		Assert
-				.isTrue(aType != null
-						&& (TYPE_NEW.equals(aType) || TYPE_IMPORT.equals(aType) || TYPE_EXPORT
-								.equals(aType)));
-		window = aWindow;
-		wizardRegistry = aWizardRegistry;
-		type = aType;
-
+		this(aWindow, aWizardRegistry, aType, null);
 	}
 
 
@@ -172,9 +167,42 @@ public final class WizardActionGroup extends ActionGroup {
 	 */
 	public WizardActionGroup(IWorkbenchWindow aWindow,
 			IWizardRegistry aWizardRegistry, String aType, INavigatorContentService aContentService) {
-		this(aWindow, aWizardRegistry, aType);
-		contentService = aContentService;
+		this(aWindow, aWizardRegistry, aType, aContentService, null, true);
+	}
 
+	/**
+	 *
+	 * @param aWindow          The window that will be used to acquire a Shell and a
+	 *                         Selection Service
+	 * @param aWizardRegistry  The wizard registry will be used to locate the
+	 *                         correct wizard descriptions.
+	 * @param aType            Indicates the value of the type attribute of the
+	 *                         commonWizard extension point. Use any of the TYPE_XXX
+	 *                         constants defined on this class.
+	 * @param aContentService  The content service to use when deciding visibility.
+	 * @param descriptorFilter the filter to set, might be <code>null</code> if no
+	 *                         filtering is desired.
+	 * @param useSeparators    <code>true</code> if seperators should be used,
+	 *                         <code>false</code> otherwhise.
+	 * @see PlatformUI#getWorkbench()
+	 * @see IWorkbench#getNewWizardRegistry()
+	 * @see IWorkbench#getImportWizardRegistry()
+	 * @see IWorkbench#getExportWizardRegistry()
+	 * @since 3.11
+	 */
+	public WizardActionGroup(IWorkbenchWindow aWindow, IWizardRegistry aWizardRegistry, String aType,
+			INavigatorContentService aContentService, Predicate<IWizardDescriptor> descriptorFilter,
+			boolean useSeparators) {
+		Assert.isNotNull(aWindow);
+		Assert.isNotNull(aWizardRegistry);
+		Assert.isNotNull(aType);
+		Assert.isTrue(TYPE_NEW.equals(aType) || TYPE_IMPORT.equals(aType) || TYPE_EXPORT.equals(aType));
+		this.window = aWindow;
+		this.wizardRegistry = aWizardRegistry;
+		this.type = aType;
+		this.contentService = aContentService;
+		this.descriptorFilter = descriptorFilter;
+		this.useSeparators = useSeparators;
 	}
 
 	@Override
@@ -204,15 +232,17 @@ public final class WizardActionGroup extends ActionGroup {
 		Assert.isTrue(!disposed);
 
 		if (descriptors != null) {
-			Map<String, SortedSet> groups = findGroups();
-			SortedSet sortedWizards = null;
+			Map<String, SortedSet<IAction>> groups = findGroups();
+			SortedSet<IAction> sortedWizards = null;
 			String menuGroupId = null;
-			for (Entry<String, SortedSet> entry : groups.entrySet()) {
+			for (Entry<String, SortedSet<IAction>> entry : groups.entrySet()) {
 				menuGroupId = entry.getKey();
 				sortedWizards = entry.getValue();
-				menu.add(new Separator(menuGroupId));
-				for (Iterator wizardItr = sortedWizards.iterator(); wizardItr.hasNext();) {
-					menu.add((IAction) wizardItr.next());
+				if (useSeparators) {
+					menu.add(new Separator(menuGroupId));
+				}
+				for (Iterator<IAction> wizardItr = sortedWizards.iterator(); wizardItr.hasNext();) {
+					menu.add(wizardItr.next());
 				}
 			}
 		}
@@ -221,9 +251,9 @@ public final class WizardActionGroup extends ActionGroup {
 	/**
 	 * @return A Map of menuGroupIds to SortedSets of IActions.
 	 */
-	private synchronized Map/*<String, SortedSet<IAction>>*/<String, SortedSet>  findGroups() {
+	private synchronized Map<String, SortedSet<IAction>> findGroups() {
 		IAction action = null;
-		Map<String, SortedSet> groups = new TreeMap<>();
+		Map<String, SortedSet<IAction>> groups = new TreeMap<>();
 		SortedSet<IAction> sortedWizards = null;
 		String menuGroupId = null;
 		for (CommonWizardDescriptor descriptor : descriptors) {
@@ -245,9 +275,7 @@ public final class WizardActionGroup extends ActionGroup {
 	public void dispose() {
 		super.dispose();
 		actions = null;
-		window = null;
 		descriptors = null;
-		wizardRegistry = null;
 		disposed = true;
 	}
 
@@ -263,7 +291,7 @@ public final class WizardActionGroup extends ActionGroup {
 		// so that image caching in ActionContributionItem works.
 		IAction action = getActions().get(id);
 		if (action == null) {
-			IWizardDescriptor descriptor = wizardRegistry.findWizard(id);
+			IWizardDescriptor descriptor = getDescriptor(id);
 			if (descriptor != null) {
 				action = new WizardShortcutAction(window, descriptor);
 				getActions().put(id, action);
@@ -271,6 +299,17 @@ public final class WizardActionGroup extends ActionGroup {
 		}
 
 		return action;
+	}
+
+
+	protected IWizardDescriptor getDescriptor(String id) {
+		IWizardDescriptor descriptor = wizardRegistry.findWizard(id);
+		if (descriptor != null && descriptorFilter != null) {
+			if (!descriptorFilter.test(descriptor)) {
+				return null;
+			}
+		}
+		return descriptor;
 	}
 
 	/**
@@ -306,12 +345,12 @@ public final class WizardActionGroup extends ActionGroup {
 		descriptors = theWizardDescriptors;
 	}
 
-	private static class ActionComparator implements Comparator {
+	private static class ActionComparator implements Comparator<IAction> {
 
 		private static final ActionComparator INSTANCE = new ActionComparator();
 		@Override
-		public int compare(Object arg0, Object arg1) {
-			return ((IAction)arg0).getText().compareTo(((IAction)arg1).getText());
+		public int compare(IAction arg0, IAction arg1) {
+			return arg0.getText().compareToIgnoreCase(arg1.getText());
 		}
 	}
 }
