@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.resources.actions;
 
+import java.util.Arrays;
+import java.util.function.Predicate;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -22,6 +25,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.NewExampleAction;
 import org.eclipse.ui.actions.NewProjectAction;
+import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMessages;
 import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.ICommonActionExtensionSite;
@@ -29,6 +33,7 @@ import org.eclipse.ui.navigator.ICommonMenuConstants;
 import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
 import org.eclipse.ui.navigator.WizardActionGroup;
 import org.eclipse.ui.wizards.IWizardCategory;
+import org.eclipse.ui.wizards.IWizardDescriptor;
 import org.eclipse.ui.wizards.IWizardRegistry;
 
 /**
@@ -57,6 +62,9 @@ public class NewActionProvider extends CommonActionProvider {
 
 	private static final String NEW_MENU_NAME = "common.new.menu";//$NON-NLS-1$
 
+	private static final Predicate<IWizardDescriptor> PROJECT_WIZARD_FILTER = wizardDescriptor -> Arrays
+			.stream(wizardDescriptor.getTags()).anyMatch(WorkbenchWizardElement.TAG_PROJECT::equals);
+
 	private ActionFactory.IWorkbenchAction showDlgAction;
 
 	private IAction newProjectAction;
@@ -67,6 +75,8 @@ public class NewActionProvider extends CommonActionProvider {
 
 	private boolean contribute = false;
 
+	private WizardActionGroup newProjectWizardActionGroup;
+
 	@Override
 	public void init(ICommonActionExtensionSite anExtensionSite) {
 
@@ -75,9 +85,12 @@ public class NewActionProvider extends CommonActionProvider {
 			showDlgAction = ActionFactory.NEW.create(window);
 			newProjectAction = new NewProjectAction(window);
 			newExampleAction = new NewExampleAction(window);
-
-			newWizardActionGroup = new WizardActionGroup(window, PlatformUI.getWorkbench().getNewWizardRegistry(), WizardActionGroup.TYPE_NEW, anExtensionSite.getContentService());
-
+			newProjectWizardActionGroup = new WizardActionGroup(window,
+					PlatformUI.getWorkbench().getNewWizardRegistry(), WizardActionGroup.TYPE_NEW,
+					anExtensionSite.getContentService(), PROJECT_WIZARD_FILTER, false);
+			newWizardActionGroup = new WizardActionGroup(window, PlatformUI.getWorkbench().getNewWizardRegistry(),
+					WizardActionGroup.TYPE_NEW, anExtensionSite.getContentService(), PROJECT_WIZARD_FILTER.negate(),
+					true);
 			contribute = true;
 		}
 	}
@@ -88,9 +101,11 @@ public class NewActionProvider extends CommonActionProvider {
 	 *
 	 * <ul>
 	 * <li>a new generic project wizard shortcut action, </li>
+	 * <li>a set of context senstive wizard shortcuts (as defined by
+	 * <b>org.eclipse.ui.navigator.commonWizard</b>) that are marked as project wizards, </li>
 	 * <li>a separator, </li>
 	 * <li>a set of context senstive wizard shortcuts (as defined by
-	 * <b>org.eclipse.ui.navigator.commonWizard</b>), </li>
+	 * <b>org.eclipse.ui.navigator.commonWizard</b>) that are not marked as project wizards, </li>
 	 * <li>another separator, </li>
 	 * <li>a generic examples wizard shortcut action, and finally </li>
 	 * <li>a generic "Other" new wizard shortcut action</li>
@@ -106,6 +121,9 @@ public class NewActionProvider extends CommonActionProvider {
 		}
 		// Add new project wizard shortcut
 		submenu.add(newProjectAction);
+		// and all commonWizard contributions that are project wizards
+		newProjectWizardActionGroup.setContext(getContext());
+		newProjectWizardActionGroup.fillContextMenu(submenu);
 		submenu.add(new Separator());
 
 		// fill the menu from the commonWizard contributions
