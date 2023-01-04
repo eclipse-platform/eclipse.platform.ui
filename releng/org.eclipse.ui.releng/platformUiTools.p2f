@@ -57,32 +57,32 @@
         <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
       </repositories>
     </iu>
-    <iu id='org.objectweb.asm.analysis' name='org.objectweb.asm.analysis' version='9.2.0'>
+    <iu id='org.objectweb.asm.analysis' name='org.objectweb.asm.analysis' version='9.4.0'>
       <repositories size='1'>
         <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
       </repositories>
     </iu>
-    <iu id='org.objectweb.asm.util' name='org.objectweb.asm.util' version='9.2.0'>
+    <iu id='org.objectweb.asm.util' name='org.objectweb.asm.util' version='9.4.0'>
       <repositories size='1'>
         <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
       </repositories>
     </iu>
-    <iu id='org.objectweb.asm.commons' name='org.objectweb.asm.commons' version='9.2.0'>
+    <iu id='org.objectweb.asm.commons' name='org.objectweb.asm.commons' version='9.4.0'>
       <repositories size='1'>
         <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
       </repositories>
     </iu>
-    <iu id='org.objectweb.asm.analysis.source' name='org.objectweb.asm.analysis.source' version='9.2.0'>
+    <iu id='org.objectweb.asm.analysis.source' name='org.objectweb.asm.analysis.source' version='9.4.0'>
       <repositories size='1'>
         <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
       </repositories>
     </iu>
-    <iu id='org.objectweb.asm.util.source' name='org.objectweb.asm.util.source' version='9.2.0'>
+    <iu id='org.objectweb.asm.util.source' name='org.objectweb.asm.util.source' version='9.4.0'>
       <repositories size='1'>
         <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
       </repositories>
     </iu>
-    <iu id='org.objectweb.asm.commons.source' name='org.objectweb.asm.commons.source' version='9.2.0'>
+    <iu id='org.objectweb.asm.commons.source' name='org.objectweb.asm.commons.source' version='9.4.0'>
       <repositories size='1'>
         <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
       </repositories>
