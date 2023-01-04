@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2022 EclipseSource GmbH and others.
+ * Copyright (c) 2022, 2023 EclipseSource GmbH and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -65,7 +66,7 @@ class E4MigrationToolTest {
 		IMemento memento;
 		try (FileInputStream input = new FileInputStream(
 				Paths.get("resources/perspective_3x.xml").toAbsolutePath().toString())) {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(input, "utf-8")); //$NON-NLS-1$
+			BufferedReader reader = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8));
 			memento = XMLMemento.createReadRoot(reader);
 		}
 
@@ -87,6 +88,7 @@ class E4MigrationToolTest {
 		assertEquals(1, mApplication.getChildren().size());
 
 		MWindowElement mWindowElement = mApplication.getChildren().get(0).getChildren().get(0);
+		@SuppressWarnings("unchecked")
 		MElementContainer<MPerspectiveStack> windowContainer = (MElementContainer<MPerspectiveStack>)mWindowElement;
 		assertEquals(3, windowContainer.getChildren().get(0).getChildren().size());
 		MPerspective resourceExportPerspective = windowContainer.getChildren().get(0).getChildren().get(0);
@@ -107,7 +109,6 @@ class E4MigrationToolTest {
 					E4MigrationTool.convert(Paths.get("resources/perspective_3x.xml").toFile(),
 							Paths.get("resources/e4_test.xml").toFile());
 				} catch (WorkbenchException | IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 					future.complete(false);
 					PlatformUI.getWorkbench().close();
