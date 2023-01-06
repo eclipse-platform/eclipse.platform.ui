@@ -1,5 +1,5 @@
 /**
- *  Copyright (c) 2017 Angelo ZERR.
+ *  Copyright (c) 2017, 2022 Angelo ZERR.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -88,7 +88,7 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 	 *         label and <code>false</code> otherwise.
 	 */
 	private boolean hasAtLeastOneResolvedMiningNotEmpty() {
-		if (fMinings.stream().anyMatch(m -> m.getLabel() != null)) {
+		if (fMinings.stream().anyMatch(m -> m.getLabel() != null && !m.getLabel().isEmpty())) {
 			return true; // will have a resolved mining.
 		}
 
