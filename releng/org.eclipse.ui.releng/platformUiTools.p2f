@@ -229,7 +229,7 @@
     </iu>
     <iu id='org.eclipse.wst.xml_ui.feature.feature.group' name='XML Editor UI' version='0.0.0'>
         <repositories size='1'>
-            <repository location='https://download.eclipse.org/webtools/CI/3.28.0/I-latest/repository/'/>
+            <repository location='https://download.eclipse.org/webtools/CI/3.29.0/I-latest/repository/'/>
         </repositories>
     </iu>
     <iu id='zipeditor.feature.group' name='ZipEditor' version='0.0.0'>
