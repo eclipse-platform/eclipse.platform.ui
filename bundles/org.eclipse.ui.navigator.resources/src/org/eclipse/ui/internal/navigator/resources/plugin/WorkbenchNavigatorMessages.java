@@ -71,6 +71,7 @@ public class WorkbenchNavigatorMessages extends NLS {
 
 	public static String OpenProjectAction_OpenExistingProject;
 	public static String OpenProjectAction_OpenExistingProject_desc;
+	public static String OpenProjectAction_opening;
 
 	public static String SelectProjectForFolderAction_SelectProject;
 
@@ -78,6 +79,7 @@ public class WorkbenchNavigatorMessages extends NLS {
 
 	public static String workingSet_others;
 	public static String ShowInActionProvider_showInAction_label;
+
 
 
 	static {
