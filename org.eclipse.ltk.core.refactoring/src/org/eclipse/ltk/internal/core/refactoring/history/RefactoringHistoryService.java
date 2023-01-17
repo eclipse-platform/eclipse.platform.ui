@@ -307,7 +307,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	private static final int MAX_MANAGERS= 2;
 
 	/** The refactoring history manager cache */
-	private final Map<IFileStore, RefactoringHistoryManager> fManagerCache= new LinkedHashMap<IFileStore, RefactoringHistoryManager>(MAX_MANAGERS, 0.75f, true) {
+	private final Map<IFileStore, RefactoringHistoryManager> fManagerCache= new LinkedHashMap<>(MAX_MANAGERS, 0.75f, true) {
 
 		private static final long serialVersionUID= 1L;
 
