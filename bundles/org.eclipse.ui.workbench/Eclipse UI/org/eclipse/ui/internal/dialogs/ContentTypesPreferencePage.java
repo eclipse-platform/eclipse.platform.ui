@@ -21,10 +21,9 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -113,7 +112,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements IWorkb
 
 	private Button addEditorAssociationButton;
 
-	private Set<Image> disposableEditorIcons = new HashSet<>();
+	private Collection<Image> disposableEditorIcons = new ArrayList<>();
 
 	private static class Spec {
 		/**
