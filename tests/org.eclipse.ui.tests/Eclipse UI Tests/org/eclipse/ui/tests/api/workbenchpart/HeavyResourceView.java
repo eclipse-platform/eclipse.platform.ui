@@ -53,9 +53,11 @@ public class HeavyResourceView extends ViewPart {
 		};
 
 		Label explanation = new Label(parent, SWT.WRAP);
-		explanation.setText("This view allocates all available SWT resources on demand. "
-				+ "This is not supposed to be a recoverable error, and is expected to crash the workbench. "
-				+ "This view allows us observe the workbench when it crashes in this manner.");
+		explanation.setText("""
+				This view allocates all available SWT resources on demand.
+				This is not supposed to be a recoverable error, and is expected to crash the workbench.
+				This view allows us observe the workbench when it crashes in this manner.
+				""");
 
 		useAllComposites = new Button(parent, SWT.PUSH);
 		useAllComposites.setText("&Allocate all available composites (very slow!)");
