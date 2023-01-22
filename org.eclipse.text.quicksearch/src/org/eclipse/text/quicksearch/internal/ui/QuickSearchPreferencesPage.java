@@ -20,6 +20,7 @@ import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.text.quicksearch.internal.core.preferences.QuickSearchPreferences;
 import org.eclipse.ui.IWorkbench;
@@ -85,6 +86,12 @@ public class QuickSearchPreferencesPage extends FieldEditorPreferencePage implem
 					GridData layout = (GridData) text.getLayoutData();
 					layout.widthHint = 400;
 					layout.minimumWidth = 100;
+					// align label on top because the text widgets are higher than 1 line
+					Label label = getLabelControl();
+					layout = new GridData();
+					layout.verticalAlignment = SWT.TOP;
+					layout.verticalIndent = 3;
+					label.setLayoutData(layout);
 				}
 			};
 			addField(field);
