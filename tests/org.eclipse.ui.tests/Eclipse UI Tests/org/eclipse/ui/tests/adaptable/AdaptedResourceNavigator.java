@@ -87,8 +87,8 @@ public class AdaptedResourceNavigator extends ViewPart {
 	private IPartListener partListener = new IPartListener() {
 		@Override
 		public void partActivated(IWorkbenchPart part) {
-			if (part instanceof IEditorPart) {
-				editorActivated((IEditorPart) part);
+			if (part instanceof IEditorPart editorPart) {
+				editorActivated(editorPart);
 			}
 		}
 
@@ -127,8 +127,7 @@ public class AdaptedResourceNavigator extends ViewPart {
 	 */
 	StructuredSelection convertSelection(ISelection selection) {
 		ArrayList<IResource> list = new ArrayList<>();
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ssel = (IStructuredSelection) selection;
+		if (selection instanceof IStructuredSelection ssel) {
 			for (Object o : ssel) {
 				IResource resource = Adapters.adapt(o, IResource.class);
 				if (resource != null) {
@@ -210,8 +209,7 @@ public class AdaptedResourceNavigator extends ViewPart {
 		}
 
 		IEditorInput input = editor.getEditorInput();
-		if (input instanceof IFileEditorInput) {
-			IFileEditorInput fileInput = (IFileEditorInput) input;
+		if (input instanceof IFileEditorInput fileInput) {
 			IFile file = fileInput.getFile();
 			ISelection newSelection = new StructuredSelection(file);
 			if (!viewer.getSelection().equals(newSelection)) {
@@ -295,8 +293,8 @@ public class AdaptedResourceNavigator extends ViewPart {
 	String getStatusLineMessage(IStructuredSelection selection) {
 		if (selection.size() == 1) {
 			Object o = selection.getFirstElement();
-			if (o instanceof IResource) {
-				return ((IResource) o).getFullPath().makeRelative().toString();
+			if (o instanceof IResource r) {
+				return r.getFullPath().makeRelative().toString();
 			}
 			return ResourceNavigatorMessages.ResourceNavigator_oneItemSelected;
 		}
@@ -310,8 +308,8 @@ public class AdaptedResourceNavigator extends ViewPart {
 	 * Returns the tool tip text for the given element.
 	 */
 	String getToolTipText(Object element) {
-		if (element instanceof IResource) {
-			IPath path = ((IResource) element).getFullPath();
+		if (element instanceof IResource r) {
+			IPath path = r.getFullPath();
 			if (path.isRoot()) {
 				return ResourceNavigatorMessages.ResourceManager_toolTip;
 			}
@@ -408,15 +406,13 @@ public class AdaptedResourceNavigator extends ViewPart {
 		}
 
 		Object obj = selection.getFirstElement();
-		if (obj instanceof IFile && selection.size() == 1) {
-			IFile file = (IFile) obj;
+		if (obj instanceof IFile file && selection.size() == 1) {
 			IWorkbenchPage page = getSite().getPage();
 			IEditorReference editorArray[] = page.getEditorReferences();
 			for (IEditorReference element : editorArray) {
 				IEditorPart editor = element.getEditor(true);
 				IEditorInput input = editor.getEditorInput();
-				if (input instanceof IFileEditorInput
-						&& file.equals(((IFileEditorInput) input).getFile())) {
+				if (input instanceof IFileEditorInput fei && file.equals(fei.getFile())) {
 					page.bringToTop(editor);
 					return;
 				}

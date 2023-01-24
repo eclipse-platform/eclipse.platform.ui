@@ -28,7 +28,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.jface.dialogs.DialogSettings;
@@ -386,7 +385,7 @@ public class QuickAccessDialogTest {
 				res.append(" | ");
 			}
 			return res.toString();
-		}).collect(Collectors.toList());
+		}).toList();
 	}
 
 	private boolean dialogContains(QuickAccessDialog dialog, String substring) {

@@ -124,8 +124,8 @@ public class ContributedServiceTest {
 
 		assertEquals(3, LevelServiceFactory.instancesCreated);
 
-		if (locator instanceof IDisposable) {
-			((IDisposable) locator).dispose();
+		if (locator instanceof IDisposable disposable) {
+			disposable.dispose();
 		}
 
 		locator = lc.createServiceLocator(parent, null, () -> {
@@ -135,8 +135,8 @@ public class ContributedServiceTest {
 		assertEquals(3, l.getLevel());
 
 		assertEquals(4, LevelServiceFactory.instancesCreated);
-		if (locator instanceof IDisposable) {
-			((IDisposable) locator).dispose();
+		if (locator instanceof IDisposable disposable) {
+			disposable.dispose();
 		}
 
 		locator = lc.createServiceLocator(parent, new TempLevelFactory(8), () -> {
@@ -146,8 +146,8 @@ public class ContributedServiceTest {
 		assertEquals(8, l.getLevel());
 
 		assertEquals(4, LevelServiceFactory.instancesCreated);
-		if (locator instanceof IDisposable) {
-			((IDisposable) locator).dispose();
+		if (locator instanceof IDisposable disposable) {
+			disposable.dispose();
 		}
 	}
 

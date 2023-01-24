@@ -34,8 +34,8 @@ public class ViewActionDelegate implements IViewActionDelegate {
 
 	@Override
 	public void run(IAction action) {
-		if (viewPart instanceof MenuContributionHarness) {
-			((MenuContributionHarness)viewPart).updateCount();
+		if (viewPart instanceof MenuContributionHarness mch) {
+			mch.updateCount();
 		}
 	}
 

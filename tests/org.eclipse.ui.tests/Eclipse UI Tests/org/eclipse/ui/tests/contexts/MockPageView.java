@@ -40,8 +40,7 @@ public class MockPageView extends PageBookView {
 
 	@Override
 	protected PageRec doCreatePage(IWorkbenchPart part) {
-		if (part instanceof IEditorPart) {
-			IEditorPart editor = (IEditorPart) part;
+		if (part instanceof IEditorPart editor) {
 			if (editor.getTitle().endsWith(".xml")) {
 				ContextPage page = new ContextPage();
 				initPage(page);

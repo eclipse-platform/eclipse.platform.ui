@@ -35,48 +35,35 @@ public class TestAdaptableWorkbenchAdapter extends LabelProvider implements
 	public TestAdaptableWorkbenchAdapter() {
 	}
 
-	/*
-	 * @see IWorkbenchAdapter#getChildren(Object)
-	 */
 	@Override
 	public Object[] getChildren(Object o) {
-		if (o instanceof AdaptableResourceWrapper) {
-			return ((AdaptableResourceWrapper) o).getChildren();
+		if (o instanceof AdaptableResourceWrapper arw) {
+			return arw.getChildren();
 		}
-		if (o instanceof IResource) {
-			AdaptableResourceWrapper wrapper = new AdaptableResourceWrapper(
-					(IResource) o);
+		if (o instanceof IResource r) {
+			AdaptableResourceWrapper wrapper = new AdaptableResourceWrapper(r);
 			return wrapper.getChildren();
 		}
 		return new Object[0];
 	}
 
-	/*
-	 * @see IWorkbenchAdapter#getImageDescriptor(Object)
-	 */
 	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
 		return null;
 	}
 
-	/*
-	 * @see IWorkbenchAdapter#getLabel(Object)
-	 */
 	@Override
 	public String getLabel(Object o) {
-		if (o instanceof AdaptableResourceWrapper) {
-			return ((AdaptableResourceWrapper) o).getLabel();
+		if (o instanceof AdaptableResourceWrapper arw) {
+			return arw.getLabel();
 		}
 		return null;
 	}
 
-	/*
-	 * @see IWorkbenchAdapter#getParent(Object)
-	 */
 	@Override
 	public Object getParent(Object o) {
-		if (o instanceof AdaptableResourceWrapper) {
-			return ((AdaptableResourceWrapper) o).getParent();
+		if (o instanceof AdaptableResourceWrapper arw) {
+			return arw.getParent();
 		}
 		return null;
 	}
@@ -120,10 +107,10 @@ public class TestAdaptableWorkbenchAdapter extends LabelProvider implements
 	 * object is not adaptable.
 	 */
 	protected final IWorkbenchAdapter getAdapter(Object o) {
-		if (!(o instanceof IAdaptable)) {
+		if (!(o instanceof IAdaptable adapt)) {
 			return null;
 		}
-		return ((IAdaptable) o).getAdapter(IWorkbenchAdapter.class);
+		return adapt.getAdapter(IWorkbenchAdapter.class);
 	}
 
 	@Override

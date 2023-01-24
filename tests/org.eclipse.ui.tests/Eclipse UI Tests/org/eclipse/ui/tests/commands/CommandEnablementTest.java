@@ -359,8 +359,8 @@ public class CommandEnablementTest {
 		}
 		IEclipseContext ctx = fWorkbench.getService(IEclipseContext.class);
 		Object handler = HandlerServiceImpl.lookUpHandler(ctx, command.getId());
-		if (handler instanceof E4HandlerProxy) {
-			return ((E4HandlerProxy) handler).getHandler();
+		if (handler instanceof E4HandlerProxy e4HandlerProxy) {
+			return e4HandlerProxy.getHandler();
 		}
 		return null;
 	}

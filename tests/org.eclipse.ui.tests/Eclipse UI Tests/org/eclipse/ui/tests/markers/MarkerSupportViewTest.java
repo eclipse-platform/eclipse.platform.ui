@@ -172,13 +172,11 @@ public class MarkerSupportViewTest extends UITestCase {
 		private boolean getCheckboxSelectionInDialog(Composite composite, String buttonMessage) {
 			Control[] children = composite.getChildren();
 			for (Control ctrl : children) {
-				if (ctrl instanceof Button) {
-					Button button = (Button) ctrl;
+				if (ctrl instanceof Button button) {
 					if (button.getText().equals(buttonMessage)) {
 						return button.getSelection();
 					}
-				} else if (ctrl instanceof Composite) {
-					Composite ee = (Composite) ctrl;
+				} else if (ctrl instanceof Composite ee) {
 					return getCheckboxSelectionInDialog(ee, buttonMessage);
 				}
 			}
@@ -192,13 +190,11 @@ public class MarkerSupportViewTest extends UITestCase {
 		private void selectCheckboxInDialog(boolean select, Composite composite, String buttonMessage) {
 			Control[] children = composite.getChildren();
 			for (Control ctrl : children) {
-				if (ctrl instanceof Button) {
-					Button button = (Button) ctrl;
+				if (ctrl instanceof Button button) {
 					if (button.getText().equals(buttonMessage)) {
 						button.setSelection(select);
 					}
-				} else if (ctrl instanceof Composite) {
-					Composite ee = (Composite) ctrl;
+				} else if (ctrl instanceof Composite ee) {
 					selectCheckboxInDialog(select, ee, buttonMessage);
 				}
 			}

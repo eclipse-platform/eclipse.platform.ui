@@ -39,8 +39,7 @@ public class ResourceAction implements IObjectActionDelegate {
 
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection structured = (IStructuredSelection) selection;
+		if (selection instanceof IStructuredSelection structured) {
 			if (structured.isEmpty()) {
 				selectedItem = null;
 			} else {

@@ -178,8 +178,7 @@ public class MenuPopulationTest extends MenuTestCase {
 		IContributionItem[] items = menuManager.getItems();
 		boolean found = false;
 		for (IContributionItem item : items) {
-			if(item instanceof MenuManager) {
-				MenuManager aManager = (MenuManager) item;
+			if (item instanceof MenuManager aManager) {
 				if(aManager.getId().equals("lofile")) {
 					found = true;
 					break;
@@ -289,8 +288,7 @@ public class MenuPopulationTest extends MenuTestCase {
 				+ TEST_CONTRIBUTIONS_CACHE_ID);
 
 		IContributionItem ici = manager.find(ID_DEFAULT);
-		if (ici instanceof CommandContributionItem) {
-			CommandContributionItem cmd = (CommandContributionItem) ici;
+		if (ici instanceof CommandContributionItem cmd) {
 			assertIcon(cmd, ICONS_ANYTHING_GIF);
 		} else if (ici instanceof HandledContributionItem) {
 			assertIcon((HandledContributionItem)ici, ICONS_ANYTHING_GIF);
@@ -299,22 +297,21 @@ public class MenuPopulationTest extends MenuTestCase {
 		}
 
 		ici = manager.find(ID_ALL);
-		if (ici instanceof CommandContributionItem) {
-			assertIcon((CommandContributionItem)ici, ICONS_BINARY_GIF);
-		} else if (ici instanceof HandledContributionItem) {
-			assertIcon((HandledContributionItem)ici, ICONS_BINARY_GIF);
+		if (ici instanceof CommandContributionItem cci) {
+			assertIcon(cci, ICONS_BINARY_GIF);
+		} else if (ici instanceof HandledContributionItem hci) {
+			assertIcon(hci, ICONS_BINARY_GIF);
 		} else {
 			fail("Failed to find correct contribution item: " + ID_ALL + ": " + ici);
 		}
 
 
 		ici = manager.find(ID_TOOLBAR);
-		if (ici instanceof CommandContributionItem) {
-			CommandContributionItem cmd = (CommandContributionItem) ici;
+		if (ici instanceof CommandContributionItem cmd) {
 			ImageDescriptor icon = (ImageDescriptor) iconField.get(cmd);
 			assertNull(icon);
-		} else if (ici instanceof HandledContributionItem) {
-			final MHandledItem model = ((HandledContributionItem)ici).getModel();
+		} else if (ici instanceof HandledContributionItem hci) {
+			final MHandledItem model = hci.getModel();
 			String iconString = model.getIconURI();
 			assertTrue(iconString, iconString == null || iconString.isEmpty());
 		}
@@ -329,21 +326,20 @@ public class MenuPopulationTest extends MenuTestCase {
 				+ TEST_CONTRIBUTIONS_CACHE_ID);
 
 		IContributionItem ici = manager.find(ID_DEFAULT);
-		if (ici instanceof CommandContributionItem) {
-			CommandContributionItem cmd = (CommandContributionItem) ici;
+		if (ici instanceof CommandContributionItem cmd) {
 			assertIcon(cmd, ICONS_ANYTHING_GIF);
-		} else if (ici instanceof HandledContributionItem) {
-			assertIcon((HandledContributionItem)ici, ICONS_ANYTHING_GIF);
+		} else if (ici instanceof HandledContributionItem hci) {
+			assertIcon(hci, ICONS_ANYTHING_GIF);
 		} else {
 			fail("Failed to find correct contribution item: " + ID_DEFAULT + ": " + ici);
 		}
 
 
 		ici = manager.find(ID_ALL);
-		if (ici instanceof CommandContributionItem) {
-			assertIcon((CommandContributionItem)ici, ICONS_MOCK_GIF);
-		} else if (ici instanceof HandledContributionItem) {
-			assertIcon((HandledContributionItem)ici, ICONS_MOCK_GIF);
+		if (ici instanceof CommandContributionItem cci) {
+			assertIcon(cci, ICONS_MOCK_GIF);
+		} else if (ici instanceof HandledContributionItem hci) {
+			assertIcon(hci, ICONS_MOCK_GIF);
 		} else {
 			fail("Failed to find correct contribution item: " + ID_ALL + ": " + ici);
 		}
@@ -351,10 +347,10 @@ public class MenuPopulationTest extends MenuTestCase {
 
 
 		ici = manager.find(ID_TOOLBAR);
-		if (ici instanceof CommandContributionItem) {
-			assertIcon((CommandContributionItem)ici, ICONS_VIEW_GIF);
-		} else if (ici instanceof HandledContributionItem) {
-			assertIcon((HandledContributionItem)ici, ICONS_VIEW_GIF);
+		if (ici instanceof CommandContributionItem cci) {
+			assertIcon(cci, ICONS_VIEW_GIF);
+		} else if (ici instanceof HandledContributionItem hci) {
+			assertIcon(hci, ICONS_VIEW_GIF);
 		} else {
 			fail("Failed to find correct contribution item: " + ID_TOOLBAR + ": " + ici);
 		}

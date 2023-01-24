@@ -38,11 +38,10 @@ public class TestAdaptableContentProvider implements ITreeContentProvider,
 	public void dispose() {
 		if (viewer != null) {
 			Object obj = viewer.getInput();
-			if (obj instanceof IWorkspace) {
-				IWorkspace workspace = (IWorkspace) obj;
+			if (obj instanceof IWorkspace workspace) {
 				workspace.removeResourceChangeListener(this);
-			} else if (obj instanceof IContainer) {
-				IWorkspace workspace = ((IContainer) obj).getWorkspace();
+			} else if (obj instanceof IContainer container) {
+				IWorkspace workspace = container.getWorkspace();
 				workspace.removeResourceChangeListener(this);
 			}
 		}
@@ -90,15 +89,15 @@ public class TestAdaptableContentProvider implements ITreeContentProvider,
 		this.viewer = viewer;
 		IWorkspace oldWorkspace = null;
 		IWorkspace newWorkspace = null;
-		if (oldInput instanceof IWorkspace) {
-			oldWorkspace = (IWorkspace) oldInput;
-		} else if (oldInput instanceof IContainer) {
-			oldWorkspace = ((IContainer) oldInput).getWorkspace();
+		if (oldInput instanceof IWorkspace wspace) {
+			oldWorkspace = wspace;
+		} else if (oldInput instanceof IContainer container) {
+			oldWorkspace = container.getWorkspace();
 		}
-		if (newInput instanceof IWorkspace) {
-			newWorkspace = (IWorkspace) newInput;
-		} else if (newInput instanceof IContainer) {
-			newWorkspace = ((IContainer) newInput).getWorkspace();
+		if (newInput instanceof IWorkspace wspace) {
+			newWorkspace = wspace;
+		} else if (newInput instanceof IContainer container) {
+			newWorkspace = container.getWorkspace();
 		}
 		if (oldWorkspace != newWorkspace) {
 			if (oldWorkspace != null) {
@@ -160,8 +159,8 @@ public class TestAdaptableContentProvider implements ITreeContentProvider,
 			for (int i = 0; i < affectedChildren.length; i++) {
 				affected[i] = affectedChildren[i].getResource();
 			}
-			if (viewer instanceof AbstractTreeViewer) {
-				((AbstractTreeViewer) viewer).remove(affected);
+			if (viewer instanceof AbstractTreeViewer atv) {
+				atv.remove(affected);
 			} else {
 				((StructuredViewer) viewer).refresh(resource);
 			}
@@ -174,8 +173,8 @@ public class TestAdaptableContentProvider implements ITreeContentProvider,
 			for (int i = 0; i < affectedChildren.length; i++) {
 				affected[i] = affectedChildren[i].getResource();
 			}
-			if (viewer instanceof AbstractTreeViewer) {
-				((AbstractTreeViewer) viewer).add(resource, affected);
+			if (viewer instanceof AbstractTreeViewer atv) {
+				atv.add(resource, affected);
 			} else {
 				((StructuredViewer) viewer).refresh(resource);
 			}

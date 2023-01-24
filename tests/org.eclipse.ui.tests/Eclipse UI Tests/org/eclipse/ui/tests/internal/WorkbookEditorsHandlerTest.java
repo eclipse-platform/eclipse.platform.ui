@@ -14,8 +14,6 @@
 
 package org.eclipse.ui.tests.internal;
 
-import static java.util.stream.Collectors.toList;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -344,8 +342,8 @@ public class WorkbookEditorsHandlerTest extends UITestCase {
 		@Override
 		protected void addKeyListener(Table table, Shell dialog) {
 			super.addKeyListener(table, dialog);
-			tableItemTexts = Arrays.stream(table.getItems()).map(TableItem::getText).collect(toList());
-			selectionTexts = Arrays.stream(table.getSelection()).map(TableItem::getText).collect(toList());
+			tableItemTexts = Arrays.stream(table.getItems()).map(TableItem::getText).toList();
+			selectionTexts = Arrays.stream(table.getSelection()).map(TableItem::getText).toList();
 		}
 
 		/**
