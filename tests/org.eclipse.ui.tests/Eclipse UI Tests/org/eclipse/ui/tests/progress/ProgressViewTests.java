@@ -206,8 +206,7 @@ public class ProgressViewTests extends ProgressTestCase {
 			if(info instanceof TaskInfo) {
 				// if task info then get the parent and check
 				JobTreeElement parent = info.getParent();
-				if(parent instanceof JobInfo) {
-					JobInfo jobInfo = (JobInfo) parent;
+				if (parent instanceof JobInfo jobInfo) {
 					if (containsJob(jobInfo, job)) {
 						count++;
 					}

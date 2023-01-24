@@ -58,8 +58,8 @@ public class EditorSourceTest extends UITestCase {
 		public void propertyChange(PropertyChangeEvent event) {
 			count++;
 			if (event.getProperty() == IEvaluationService.RESULT
-					&& event.getNewValue() instanceof Boolean) {
-				currentValue = ((Boolean) event.getNewValue()).booleanValue();
+					&& event.getNewValue() instanceof Boolean bool) {
+				currentValue = bool.booleanValue();
 			}
 		}
 	}

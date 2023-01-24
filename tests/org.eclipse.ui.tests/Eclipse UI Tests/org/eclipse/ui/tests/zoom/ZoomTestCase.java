@@ -200,8 +200,8 @@ public class ZoomTestCase extends UITestCase {
 				+ " and found " + partName(activePart), activePart == part);
 
 		// If the part is an editor, assert that the editor is active
-		if (part instanceof IEditorPart) {
-			assertActiveEditor((IEditorPart)part);
+		if (part instanceof IEditorPart editorPart) {
+			assertActiveEditor(editorPart);
 		}
 	}
 
@@ -226,10 +226,10 @@ public class ZoomTestCase extends UITestCase {
 	}
 
 	public void close(IWorkbenchPart part) {
-		if (part instanceof IViewPart) {
-			page.hideView((IViewPart)part);
-		} else if (part instanceof IEditorPart) {
-			page.closeEditor((IEditorPart)part, false);
+		if (part instanceof IViewPart view) {
+			page.hideView(view);
+		} else if (part instanceof IEditorPart editor) {
+			page.closeEditor(editor, false);
 		}
 	}
 }

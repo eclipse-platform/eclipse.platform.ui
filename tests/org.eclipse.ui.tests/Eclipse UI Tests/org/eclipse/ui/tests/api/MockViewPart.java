@@ -137,8 +137,8 @@ public class MockViewPart extends MockWorkbenchPart implements IViewPart {
 				IContributionItem[] items = tbm.getItems();
 				if (items.length > 0) {
 					IContributionItem item = items[items.length - 1];
-					if (item instanceof ActionContributionItem) {
-						if (((ActionContributionItem) item).getAction() instanceof DummyAction) {
+					if (item instanceof ActionContributionItem aci) {
+						if (aci.getAction() instanceof DummyAction) {
 							tbm.remove(item);
 							bars.updateActionBars();
 						}

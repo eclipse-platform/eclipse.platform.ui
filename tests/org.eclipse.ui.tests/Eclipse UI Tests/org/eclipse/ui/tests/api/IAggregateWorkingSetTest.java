@@ -403,10 +403,9 @@ public class IAggregateWorkingSetTest extends UITestCase {
 				// simply resolve the working set before the manager creates
 				// another one
 				Object ws = event.getNewValue();
-				if (!(ws instanceof AggregateWorkingSet)) {
+				if (!(ws instanceof AggregateWorkingSet aws)) {
 					return;
 				}
-				AggregateWorkingSet aws = (AggregateWorkingSet) ws;
 				IMemento m = readField(AbstractWorkingSet.class, "workingSetMemento", IMemento.class, aws);
 				IWorkingSet[] sets = aws.getComponents();
 				if (m != null) {

@@ -60,8 +60,7 @@ public class ActiveContextExpression extends Expression {
 
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof ActiveContextExpression) {
-			ActiveContextExpression ace = (ActiveContextExpression) o;
+		if (o instanceof ActiveContextExpression ace) {
 			return equals(contextId, ace.contextId);
 		}
 		return false;

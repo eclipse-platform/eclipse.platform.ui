@@ -116,10 +116,9 @@ public class FileEditorInputTest extends UITestCase {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (!(obj instanceof IFileEditorInput)) {
+			if (!(obj instanceof IFileEditorInput other)) {
 				return false;
 			}
-			IFileEditorInput other = (IFileEditorInput) obj;
 			return file.equals(other.getFile());
 		}
 

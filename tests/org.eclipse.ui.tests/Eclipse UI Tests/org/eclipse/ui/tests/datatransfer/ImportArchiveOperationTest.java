@@ -318,8 +318,8 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
 			}
 			else {
 				for (IResource resource : resources) {
-					if (resource instanceof IContainer) {
-						verifyFolder((IContainer)resource);
+					if (resource instanceof IContainer c) {
+						verifyFolder(c);
 					} else {
 						assertTrue("Root resource is not present or is not present as a file: " + rootResourceName,
 								resource instanceof IFile && rootResourceName.equals(resource.getName()));

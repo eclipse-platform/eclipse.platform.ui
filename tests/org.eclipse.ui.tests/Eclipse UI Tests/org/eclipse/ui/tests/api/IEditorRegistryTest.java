@@ -151,11 +151,11 @@ public class IEditorRegistryTest {
 		assertTrue("The OS should have at least one external editor", sortedEditorsFromOS.length > 1);
 
 		List<EditorDescriptor> list = Arrays.asList(sortedEditorsFromOS).stream().map(x -> (EditorDescriptor) x)
-				.collect(Collectors.toList());
+				.toList();
 		Map<String, List<Program>> map = list.stream().collect(Collectors.groupingBy(IEditorDescriptor::getId,
 				Collectors.mapping(EditorDescriptor::getProgram, Collectors.toList())));
 
-		assertTrue(!map.isEmpty());
+		assertFalse(map.isEmpty());
 
 		// cycle through external editors
 		for (Entry<String, List<Program>> entry : map.entrySet()) {

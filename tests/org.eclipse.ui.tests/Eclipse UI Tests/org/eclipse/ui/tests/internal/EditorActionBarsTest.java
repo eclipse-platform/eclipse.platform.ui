@@ -175,8 +175,7 @@ public class EditorActionBarsTest extends UITestCase {
 		ICoolBarManager tbm = ((WorkbenchWindow) fWindow).getCoolBarManager();
 		IContributionItem[] coolItems = tbm.getItems();
 		for (IContributionItem coolItem2 : coolItems) {
-			if (coolItem2 instanceof ToolBarContributionItem) {
-				ToolBarContributionItem coolItem = (ToolBarContributionItem) coolItem2;
+			if (coolItem2 instanceof ToolBarContributionItem coolItem) {
 				IToolBarManager citbm = coolItem.getToolBarManager();
 				ToolBar tb = ((ToolBarManager) citbm).getControl();
 				verifyNullToolbar(tb, actionText, citbm);

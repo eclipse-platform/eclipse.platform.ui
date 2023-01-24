@@ -619,8 +619,7 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 
 		IPage currentPage = propertySheet.getCurrentPage();
 		if (standardPage) {
-			if (currentPage instanceof PropertySheetPage) {
-				PropertySheetPage psp = (PropertySheetPage) currentPage;
+			if (currentPage instanceof PropertySheetPage psp) {
 				Field root = PropertySheetPage.class.getDeclaredField("rootEntry");
 				root.setAccessible(true);
 				PropertySheetEntry pse = (PropertySheetEntry) root.get(psp);
