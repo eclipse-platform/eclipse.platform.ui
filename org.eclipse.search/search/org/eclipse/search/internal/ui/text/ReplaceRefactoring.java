@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -27,7 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.filesystem.EFS;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -172,8 +172,11 @@ public class ReplaceRefactoring extends Refactoring {
 
 	private final HashMap<IFile, Set<FileMatch>> fMatches;
 
-	/** Map that keeps already collected locations. */
-	private final Map<URI, IFile> fAlreadyCollected;
+	/**
+	 * Map that keeps already collected locations. Contains both keys:
+	 * IFileStore and URI, see URIUtil.equals(URI, URI)
+	 */
+	private final Map<Object, IFile> fAlreadyCollected;
 
 	/** Map that keeps ignored matches (can be null). */
 	private Map<URI, ArrayList<FileMatch>> fIgnoredMatches;
@@ -290,8 +293,8 @@ public class ReplaceRefactoring extends Refactoring {
 	 * @since 3.7
 	 */
 	private boolean isMatchToBeIncluded(FileMatch match) {
-		IFile file= match.getFile();
-		URI uri= file.getLocationURI();
+		IFile file = match.getFile();
+		URI uri = file.getLocationURI();
 		if (uri == null) {
 			return true;
 		}
@@ -299,22 +302,27 @@ public class ReplaceRefactoring extends Refactoring {
 			return true; // another FileMatch for an IFile which already had
 							// matches
 		}
-
-		for (URI uri2 : fAlreadyCollected.keySet()) {
-			if (URIUtil.equals(uri2, uri)) {
-				if (fIgnoredMatches == null) {
-					fIgnoredMatches= new HashMap<>();
-				}
-				ArrayList<FileMatch> matches= fIgnoredMatches.get(uri);
-				if (matches == null) {
-					matches= new ArrayList<>();
-					fIgnoredMatches.put(uri, matches);
-				}
-				matches.add(match);
-				return false;
+		Object key;
+		try {
+			key = EFS.getStore(uri);
+		} catch (CoreException e) {
+			// fall back to default equality test
+			key = uri;
+		}
+		if (fAlreadyCollected.containsKey(key)) {
+			if (fIgnoredMatches == null) {
+				fIgnoredMatches = new HashMap<>();
 			}
+			ArrayList<FileMatch> matches = fIgnoredMatches.get(uri);
+			if (matches == null) {
+				matches = new ArrayList<>();
+				fIgnoredMatches.put(uri, matches);
+			}
+			matches.add(match);
+			return false;
 		}
 
+		fAlreadyCollected.put(key, file);
 		fAlreadyCollected.put(uri, file);
 		return true;
 	}
