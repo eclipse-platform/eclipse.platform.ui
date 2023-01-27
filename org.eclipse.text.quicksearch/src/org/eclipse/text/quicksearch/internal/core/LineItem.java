@@ -13,12 +13,12 @@
  *******************************************************************************/
 package org.eclipse.text.quicksearch.internal.core;
 
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Objects;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.search.internal.ui.text.FileMatch;
 
 @SuppressWarnings("restriction")
@@ -49,29 +49,11 @@ public class LineItem {
 		// when opened will use an editor chosen by the outer project which may be incorrect (e.g. outer
 		// project is generic and inner project is Java).  So, we convert the file to be the IResource found in
 		// the innermost project.  This fixes: Bug 559340  https://bugs.eclipse.org/bugs/show_bug.cgi?id=559340
-		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-		IPath filePath = file.getLocation();
-		IProject fileProject = file.getProject();
-		IPath currentPath = fileProject.getLocation();
-		IProject innermostProject = file.getProject();
-		for (IProject project : projects) {
-			if (project == fileProject) {
-				continue;
-			}
-			IPath projectPath = project.getLocation();
-			if (projectPath.isPrefixOf(filePath) && currentPath.isPrefixOf(projectPath)) {
-				currentPath = projectPath;
-				innermostProject = project;
-			}
-		}
-		if (innermostProject != fileProject) {
-			IPath newFilePath = filePath.removeFirstSegments(currentPath.segmentCount());
-			IFile newFile = innermostProject.getFile(newFilePath);
-			if (newFile.exists()) {
-				file = newFile;
-			}
-		}
-		return file;
+		URI locationUri= file.getLocationURI();
+		return locationUri == null ? file : //
+			Arrays.stream(file.getWorkspace().getRoot().findFilesForLocationURI(locationUri)) //
+			.min(Comparator.comparingInt(aFile -> aFile.getFullPath().segments().length))  // shortest workspace (project reletive) full path means most nested project
+			.orElse(file);
 	}
 
 	@Override
