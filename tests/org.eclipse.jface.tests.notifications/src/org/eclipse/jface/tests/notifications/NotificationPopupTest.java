@@ -21,7 +21,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.Platform;
@@ -120,7 +119,7 @@ public class NotificationPopupTest {
 	private List<Control> getNotificationPopupControls() {
 		Shell[] shells = this.display.getShells();
 		Shell shell = shells[shells.length - 1];
-		return getChildrenStream(shell).collect(Collectors.toList());
+		return getChildrenStream(shell).toList();
 	}
 
 	private Stream<Control> getChildrenStream(Control c) {
