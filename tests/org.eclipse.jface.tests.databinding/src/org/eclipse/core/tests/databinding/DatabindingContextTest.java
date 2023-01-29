@@ -18,8 +18,8 @@ package org.eclipse.core.tests.databinding;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 
@@ -183,11 +183,7 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 		BindingStub binding = new BindingStub();
 		binding.init(dbc);
 
-		try {
-			dbc.getBindings().remove(0);
-			fail("exception should have been thrown");
-		} catch (UnsupportedOperationException e) {
-		}
+		assertThrows(UnsupportedOperationException.class, () -> dbc.getBindings().remove(0));
 	}
 
 	@Test

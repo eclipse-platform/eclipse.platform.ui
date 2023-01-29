@@ -14,7 +14,7 @@
 
 package org.eclipse.core.tests.databinding;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 import org.eclipse.core.databinding.BindingException;
 import org.eclipse.core.databinding.UpdateSetStrategy;
@@ -38,15 +38,12 @@ public class UpdateSetStrategyTest extends AbstractDefaultRealmTestCase {
 
 		// Invalid use: source type Object does not extend converter from-type
 		// String
-		strategy = new UpdateSetStrategyStub<>();
-		strategy
+		UpdateSetStrategyStub<Object, Object> strategy2 = new UpdateSetStrategyStub<>();
+		strategy2
 				.setConverter(new IdentityConverter(String.class, Object.class));
-		try {
-			strategy.fillDefaults(WritableSet.withElementType(Object.class),
-					WritableSet.withElementType(Object.class));
-			fail("Expected BindingException since Object does not extend String");
-		} catch (BindingException expected) {
-		}
+		assertThrows("Expected BindingException since Object does not extend String", BindingException.class,
+				() -> strategy2.fillDefaults(WritableSet.withElementType(Object.class),
+						WritableSet.withElementType(Object.class)));
 	}
 
 	@Test
@@ -59,14 +56,11 @@ public class UpdateSetStrategyTest extends AbstractDefaultRealmTestCase {
 
 		// Invalid use: converter to-type Object does not extend destination
 		// type String
-		strategy = new UpdateSetStrategyStub<>();
-		strategy.setConverter(new IdentityConverter(Object.class, Object.class));
-		try {
-			strategy.fillDefaults(WritableSet.withElementType(Object.class),
-					WritableSet.withElementType(String.class));
-			fail("Expected BindingException since Object does not extend String");
-		} catch (BindingException expected) {
-		}
+		UpdateSetStrategyStub<Object, Object> strategy2 = new UpdateSetStrategyStub<>();
+		strategy2.setConverter(new IdentityConverter(Object.class, Object.class));
+		assertThrows("Expected BindingException since Object does not extend String", BindingException.class,
+				() -> strategy2.fillDefaults(WritableSet.withElementType(Object.class),
+						WritableSet.withElementType(String.class)));
 	}
 
 	class UpdateSetStrategyStub<S, D> extends UpdateSetStrategy<S, D> {

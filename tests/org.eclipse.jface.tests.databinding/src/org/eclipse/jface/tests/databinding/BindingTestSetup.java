@@ -14,7 +14,7 @@
 
 package org.eclipse.jface.tests.databinding;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.Locale;
 
@@ -53,9 +53,7 @@ public class BindingTestSetup extends TestWatcher {
 
 	private void log(IStatus status) {
 		// we are not expecting anything in the log while we test.
-		if (status.getException() != null) {
-			throw new RuntimeException(status.getException());
-		}
-		fail();
+		assertNotNull(status.getException());
+		throw new RuntimeException(status.getException());
 	}
 }

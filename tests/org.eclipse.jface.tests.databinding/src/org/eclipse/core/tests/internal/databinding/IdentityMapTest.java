@@ -21,8 +21,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -70,20 +70,14 @@ public class IdentityMapTest {
 
 	@Test
 	public void testConstructor_NullComparer() {
-		try {
-			new IdentityMap<>(null);
-			fail("Constructor should throw exception when null comparer passed in");
-		} catch (RuntimeException expected) {
-		}
+		assertThrows("Constructor should throw exception when null comparer passed in", RuntimeException.class,
+				() -> new IdentityMap<>(null));
 	}
 
 	@Test
 	public void testConstructorWithCollection_NullCollection() {
-		try {
-			new IdentityMap<>(null);
-			fail("Constructor should throw exception when null collection passed in");
-		} catch (RuntimeException expected) {
-		}
+		assertThrows("Constructor should throw exception when null collection passed in", RuntimeException.class,
+				() -> new IdentityMap<>(null));
 	}
 
 	@Test
@@ -189,20 +183,12 @@ public class IdentityMapTest {
 
 	@Test
 	public void testKeySet_Add() {
-		try {
-			map.keySet().add(key);
-			fail("Expected UnsupportedOperationException");
-		} catch (UnsupportedOperationException expected) {
-		}
+		assertThrows(UnsupportedOperationException.class, () -> map.keySet().add(key));
 	}
 
 	@Test
 	public void testKeySet_AddAll() {
-		try {
-			map.keySet().addAll(Collections.singleton(key));
-			fail("Expected UnsupportedOperationException");
-		} catch (UnsupportedOperationException expected) {
-		}
+		assertThrows(UnsupportedOperationException.class, () -> map.keySet().addAll(Collections.singleton(key)));
 	}
 
 	@Test
@@ -265,7 +251,7 @@ public class IdentityMapTest {
 	public void testKeySet_RemoveAll() {
 		map.put(key, value);
 		Set<Object> keySet = map.keySet();
-		assertFalse(keySet.removeAll(Collections.EMPTY_SET));
+		assertFalse(keySet.removeAll(Collections.emptySet()));
 		assertEquals(1, map.size());
 		assertTrue(keySet.removeAll(Collections.singleton(key)));
 		assertTrue(map.isEmpty());
@@ -277,7 +263,7 @@ public class IdentityMapTest {
 		Set<Object> keySet = map.keySet();
 		assertFalse(keySet.retainAll(Collections.singleton(key)));
 		assertEquals(1, map.size());
-		assertTrue(keySet.retainAll(Collections.EMPTY_SET));
+		assertTrue(keySet.retainAll(Collections.emptySet()));
 		assertTrue(map.isEmpty());
 	}
 
@@ -315,7 +301,7 @@ public class IdentityMapTest {
 		assertFalse(keySet.equals(null));
 		assertTrue(keySet.equals(keySet));
 
-		assertTrue(keySet.equals(Collections.EMPTY_SET));
+		assertTrue(keySet.equals(Collections.emptySet()));
 		map.put(key, value);
 		assertTrue(keySet.equals(Collections.singleton(key)));
 	}
@@ -346,20 +332,12 @@ public class IdentityMapTest {
 
 	@Test
 	public void testEntrySet_Add() {
-		try {
-			map.entrySet().add(entry);
-			fail("Expected UnsupportedOperationException");
-		} catch (UnsupportedOperationException expected) {
-		}
+		assertThrows(UnsupportedOperationException.class, () -> map.entrySet().add(entry));
 	}
 
 	@Test
 	public void testEntrySet_AddAll() {
-		try {
-			map.entrySet().addAll(Collections.emptySet());
-			fail("Expected UnsupportedOperationException");
-		} catch (UnsupportedOperationException expected) {
-		}
+		assertThrows(UnsupportedOperationException.class, () -> map.entrySet().addAll(Collections.emptySet()));
 	}
 
 	@Test
@@ -383,7 +361,7 @@ public class IdentityMapTest {
 	public void testEntrySet_ContainsAll() {
 		Set<Map.Entry<Object, Object>> entrySet = map.entrySet();
 		assertFalse(entrySet.containsAll(Collections.singleton(new MapEntryStub(key, value))));
-		assertTrue(entrySet.containsAll(Collections.EMPTY_SET));
+		assertTrue(entrySet.containsAll(Collections.emptySet()));
 
 		map.put(key, value);
 		assertTrue(entrySet.containsAll(Collections.singleton(new MapEntryStub(key, value))));
@@ -423,7 +401,7 @@ public class IdentityMapTest {
 	@Test
 	public void testEntrySet_RemoveAll() {
 		Set<Map.Entry<Object, Object>> entrySet = map.entrySet();
-		assertFalse(entrySet.removeAll(Collections.EMPTY_SET));
+		assertFalse(entrySet.removeAll(Collections.emptySet()));
 
 		map.put(key, value);
 		assertEquals(1, map.size());
@@ -434,7 +412,7 @@ public class IdentityMapTest {
 	@Test
 	public void testEntrySet_RetainAll() {
 		Set<Map.Entry<Object, Object>> entrySet = map.entrySet();
-		assertFalse(entrySet.retainAll(Collections.EMPTY_SET));
+		assertFalse(entrySet.retainAll(Collections.emptySet()));
 
 		map.put(key, value);
 		assertEquals(1, map.size());
@@ -480,11 +458,11 @@ public class IdentityMapTest {
 		assertFalse(entrySet.equals(null));
 		assertTrue(entrySet.equals(entrySet));
 
-		assertTrue(entrySet.equals(Collections.EMPTY_SET));
+		assertTrue(entrySet.equals(Collections.emptySet()));
 		assertFalse(entrySet.equals(Collections.singleton(new MapEntryStub(key, value))));
 
 		map.put(key, value);
-		assertFalse(entrySet.equals(Collections.EMPTY_SET));
+		assertFalse(entrySet.equals(Collections.emptySet()));
 		assertTrue(entrySet.equals(Collections.singleton(new MapEntryStub(key, value))));
 	}
 
@@ -539,12 +517,12 @@ public class IdentityMapTest {
 		Map<Object, Object> other = new HashMap<>();
 		other.put(key, value);
 
-		assertTrue(map.equals(Collections.EMPTY_MAP));
+		assertTrue(map.equals(Collections.emptyMap()));
 		assertFalse(map.equals(other));
 
 		map.put(key, value);
 
-		assertFalse(map.equals(Collections.EMPTY_MAP));
+		assertFalse(map.equals(Collections.emptyMap()));
 		assertTrue(map.equals(other));
 	}
 

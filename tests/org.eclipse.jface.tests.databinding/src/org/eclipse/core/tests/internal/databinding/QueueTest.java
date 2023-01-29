@@ -16,8 +16,8 @@ package org.eclipse.core.tests.internal.databinding;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.eclipse.core.internal.databinding.observable.Queue;
 import org.junit.Before;
@@ -51,20 +51,10 @@ public class QueueTest {
 
 	@Test
 	public void testEnqueueAndDequeue() {
-		try {
-			queue.dequeue();
-			fail("expected IllegalStateException");
-		} catch(IllegalStateException ex) {
-			// expected
-		}
+		assertThrows(IllegalStateException.class, () -> queue.dequeue());
 		queue.enqueue("foo");
 		assertEquals("foo", queue.dequeue());
-		try {
-			queue.dequeue();
-			fail("expected IllegalStateException");
-		} catch(IllegalStateException ex) {
-			// expected
-		}
+		assertThrows(IllegalStateException.class, () -> queue.dequeue());
 		queue.enqueue("foo");
 		queue.enqueue("bar");
 		queue.dequeue();

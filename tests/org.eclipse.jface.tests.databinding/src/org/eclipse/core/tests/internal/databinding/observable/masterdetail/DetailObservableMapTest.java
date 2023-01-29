@@ -20,8 +20,8 @@ package org.eclipse.core.tests.internal.databinding.observable.masterdetail;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
@@ -87,13 +87,10 @@ public class DetailObservableMapTest extends AbstractDefaultRealmTestCase {
 		assertEquals(Object.class, detailObservable.getKeyType());
 		assertEquals(Object.class, detailObservable.getValueType());
 
-		try {
-			factory.keyType = String.class;
-			factory.valueType = String.class;
-			observableValue.setValue(new Object());
-			fail("if an element type is set this cannot be changed");
-		} catch (AssertionFailedException e) {
-		}
+		factory.keyType = String.class;
+		factory.valueType = String.class;
+		assertThrows("if an element type is set this cannot be changed", AssertionFailedException.class,
+				() -> observableValue.setValue(new Object()));
 	}
 
 	/**
