@@ -21,8 +21,8 @@ public class TypeMapper
 
 	@Override
 	public Class mapType(Object object) {
-		if (object instanceof TreeNode) {
-			return ((TreeNode) object).getValue().getClass();
+		if (object instanceof TreeNode treeNode) {
+			return treeNode.getValue().getClass();
 		}
 		return super.mapType(object);
 	}

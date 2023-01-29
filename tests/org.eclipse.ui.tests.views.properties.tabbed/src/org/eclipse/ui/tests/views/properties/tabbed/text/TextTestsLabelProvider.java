@@ -28,22 +28,15 @@ import org.eclipse.ui.PlatformUI;
  */
 public class TextTestsLabelProvider extends LabelProvider {
 
-	/**
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
-	 */
 	@Override
 	public Image getImage(Object obj) {
 		return PlatformUI.getWorkbench().getSharedImages().getImage(
 				ISharedImages.IMG_OBJ_FILE);
 	}
 
-	/**
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-	 */
 	@Override
 	public String getText(Object obj) {
-		if (obj instanceof ITextSelection) {
-			ITextSelection textSelection = (ITextSelection) obj;
+		if (obj instanceof ITextSelection textSelection) {
 			if (textSelection.getLength() != 0) {
 				StringTokenizer tokenizer = new StringTokenizer(textSelection
 						.getText());
