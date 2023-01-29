@@ -42,8 +42,8 @@ public class DynamicTestsViewContentProvider implements
 
 	@Override
 	public Object[] getChildren(Object parent) {
-		if (parent instanceof DynamicTestsTreeNode) {
-			return ((DynamicTestsTreeNode) parent).getChildren();
+		if (parent instanceof DynamicTestsTreeNode dynamicNode) {
+			return dynamicNode.getChildren();
 		}
 		return new Object[0];
 	}
@@ -64,16 +64,16 @@ public class DynamicTestsViewContentProvider implements
 
 	@Override
 	public Object getParent(Object child) {
-		if (child instanceof DynamicTestsTreeNode) {
-			return ((DynamicTestsTreeNode) child).getParent();
+		if (child instanceof DynamicTestsTreeNode dynamicNode) {
+			return dynamicNode.getParent();
 		}
 		return null;
 	}
 
 	@Override
 	public boolean hasChildren(Object parent) {
-		if (parent instanceof DynamicTestsTreeNode)
-			return ((DynamicTestsTreeNode) parent).hasChildren();
+		if (parent instanceof DynamicTestsTreeNode dynamicNode)
+			return dynamicNode.hasChildren();
 		return false;
 	}
 

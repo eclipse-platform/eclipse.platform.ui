@@ -63,24 +63,24 @@ public class TestsViewContentProvider
 
 	@Override
 	public Object getParent(Object child) {
-		if (child instanceof TreeNode) {
-			return ((TreeNode) child).getParent();
+		if (child instanceof TreeNode treeNode) {
+			return treeNode.getParent();
 		}
 		return null;
 	}
 
 	@Override
 	public Object[] getChildren(Object parent) {
-		if (parent instanceof TreeNode) {
-			return ((TreeNode) parent).getChildren();
+		if (parent instanceof TreeNode treeNode) {
+			return treeNode.getChildren();
 		}
 		return new Object[0];
 	}
 
 	@Override
 	public boolean hasChildren(Object parent) {
-		if (parent instanceof TreeNode)
-			return ((TreeNode) parent).hasChildren();
+		if (parent instanceof TreeNode treeNode)
+			return treeNode.hasChildren();
 		return false;
 	}
 

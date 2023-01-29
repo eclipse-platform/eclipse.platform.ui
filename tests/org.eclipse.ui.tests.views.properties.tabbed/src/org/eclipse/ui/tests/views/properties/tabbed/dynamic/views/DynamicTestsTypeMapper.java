@@ -24,9 +24,8 @@ public class DynamicTestsTypeMapper extends AbstractTypeMapper {
 
 	@Override
 	public Class mapType(Object object) {
-		if (object instanceof DynamicTestsTreeNode) {
-			return ((DynamicTestsTreeNode) object).getDynamicTestsElement()
-					.getClass();
+		if (object instanceof DynamicTestsTreeNode dynamicNode) {
+			return dynamicNode.getDynamicTestsElement().getClass();
 		}
 		return super.mapType(object);
 	}

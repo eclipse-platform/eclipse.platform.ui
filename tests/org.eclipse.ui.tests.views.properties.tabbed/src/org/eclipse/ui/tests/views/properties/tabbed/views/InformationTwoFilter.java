@@ -28,10 +28,9 @@ public class InformationTwoFilter
 
 	@Override
 	public boolean select(Object object) {
-		if (object instanceof TreeNode) {
-			Element element = (Element) ((TreeNode) object).getValue();
-			if (element instanceof Information) {
-				Information information = (Information) element;
+		if (object instanceof TreeNode treeNode) {
+			Element element = (Element) treeNode.getValue();
+			if (element instanceof Information information) {
 				if (information.getName().contains("Two")) {//$NON-NLS-1$
 					return true;
 				}
