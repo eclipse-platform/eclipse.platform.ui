@@ -13,13 +13,16 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.views.properties.tabbed;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.tests.views.properties.tabbed.model.Error;
 import org.eclipse.ui.tests.views.properties.tabbed.model.File;
 import org.eclipse.ui.tests.views.properties.tabbed.model.Folder;
@@ -28,6 +31,9 @@ import org.eclipse.ui.tests.views.properties.tabbed.model.Warning;
 import org.eclipse.ui.tests.views.properties.tabbed.override.OverrideTestsView;
 import org.eclipse.ui.tests.views.properties.tabbed.views.TestsPerspective;
 import org.eclipse.ui.views.properties.tabbed.ITabDescriptor;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for the override tabs support.
@@ -35,14 +41,12 @@ import org.eclipse.ui.views.properties.tabbed.ITabDescriptor;
  * @author Anthony Hunter
  * @since 3.4
  */
-public class TabbedPropertySheetPageOverrideTest extends TestCase {
+public class TabbedPropertySheetPageOverrideTest {
 
 	private OverrideTestsView overrideTestsView;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
+	@Before
+	public void setUp() throws WorkbenchException {
 		/**
 		 * Close the existing perspectives.
 		 */
@@ -69,17 +73,14 @@ public class TabbedPropertySheetPageOverrideTest extends TestCase {
 		overrideTestsView = (OverrideTestsView) view;
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-
+	@After
+	public void tearDown() {
 		/**
 		 * Bug 175070: Make sure the views have finished painting.
 		 */
 		while (Display.getCurrent().readAndDispatch()) {
 			//
 		}
-
 	}
 
 	/**
@@ -89,6 +90,7 @@ public class TabbedPropertySheetPageOverrideTest extends TestCase {
 	 * available". The override tests provide a custom selection provider that
 	 * allows for the display of a tab and section when the selection is empty.
 	 */
+	@Test
 	public void test_tabForEmpty() {
 		/**
 		 * select nothing
@@ -111,6 +113,7 @@ public class TabbedPropertySheetPageOverrideTest extends TestCase {
 	 * Tests for the dynamic tabs and sections (items) when the Error element is
 	 * selected.
 	 */
+	@Test
 	public void test_tabForError() {
 		/**
 		 * select "Error"
@@ -147,6 +150,7 @@ public class TabbedPropertySheetPageOverrideTest extends TestCase {
 	 * Tests for the dynamic tabs and sections (items) when the File element is
 	 * selected.
 	 */
+	@Test
 	public void test_tabForFile() {
 		/**
 		 * select "File"
@@ -177,6 +181,7 @@ public class TabbedPropertySheetPageOverrideTest extends TestCase {
 	 * Tests for the dynamic tabs and sections (items) when the Folder element
 	 * is selected.
 	 */
+	@Test
 	public void test_tabForFolder() {
 		/**
 		 * select "Folder"
@@ -207,6 +212,7 @@ public class TabbedPropertySheetPageOverrideTest extends TestCase {
 	 * Tests for the dynamic tabs and sections (items) when the Information
 	 * element is selected.
 	 */
+	@Test
 	public void test_tabForInformation() {
 		/**
 		 * select "Information"
@@ -242,6 +248,7 @@ public class TabbedPropertySheetPageOverrideTest extends TestCase {
 	 * Tests for the dynamic tabs and sections (items) when the Warning element
 	 * is selected.
 	 */
+	@Test
 	public void test_tabForWarning() {
 		/**
 		 * select "Warning"
