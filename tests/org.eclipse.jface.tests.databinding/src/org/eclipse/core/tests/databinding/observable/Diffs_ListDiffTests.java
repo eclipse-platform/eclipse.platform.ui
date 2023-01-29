@@ -16,8 +16,6 @@
 package org.eclipse.core.tests.databinding.observable;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,12 +50,7 @@ public class Diffs_ListDiffTests {
 			}
 		};
 
-		try {
-			entry.toString();
-			assertTrue(true);
-		} catch (NullPointerException e) {
-			fail("NPE was thrown.");
-		}
+		entry.toString();
 	}
 
 	@Test
@@ -69,12 +62,7 @@ public class Diffs_ListDiffTests {
 			}
 		};
 
-		try {
-			diff.toString();
-			assertTrue(true);
-		} catch (NullPointerException e) {
-			fail("NPE was thrown.");
-		}
+		diff.toString();
 	}
 
 	@Test
@@ -87,12 +75,7 @@ public class Diffs_ListDiffTests {
 			}
 		};
 
-		try {
-			diff.toString();
-			assertTrue(true);
-		} catch (NullPointerException e) {
-			fail("NPE was thrown.");
-		}
+		diff.toString();
 	}
 
 	@Test
@@ -250,41 +233,39 @@ public class Diffs_ListDiffTests {
 
 	@Test
 	public void testComputeListDiff_SingleInsert() {
-		checkComputedListDiff(Arrays.asList(new Object[] { "a", "c" }), Arrays.asList(new Object[] { "a", "b", "c" }));
+		checkComputedListDiff(List.of("a", "c"), List.of("a", "b", "c"));
 	}
 
 	@Test
 	public void testComputeListDiff_SingleAppend() {
-		checkComputedListDiff(Arrays.asList(new Object[] { "a", "b" }), Arrays.asList(new Object[] { "a", "b", "c" }));
+		checkComputedListDiff(List.of("a", "b"), List.of("a", "b", "c"));
 	}
 
 	@Test
 	public void testComputeListDiff_SingleRemove() {
-		checkComputedListDiff(Arrays.asList(new Object[] { "a", "b", "c" }), Arrays.asList(new Object[] { "a", "b" }));
-		checkComputedListDiff(Arrays.asList(new Object[] { "a", "b", "c" }), Arrays.asList(new Object[] { "a", "c" }));
-		checkComputedListDiff(Arrays.asList(new Object[] { "a", "b", "c" }), Arrays.asList(new Object[] { "b", "c" }));
+		checkComputedListDiff(List.of("a", "b", "c"), List.of("a", "b"));
+		checkComputedListDiff(List.of("a", "b", "c"), List.of("a", "c"));
+		checkComputedListDiff(List.of("a", "b", "c"), List.of("b", "c"));
 	}
 
 	@Test
 	public void testComputeListDiff_MoveDown1() {
-		checkComputedListDiff(Arrays.asList(new Object[] { "a", "b" }), Arrays.asList(new Object[] { "b", "a" }));
+		checkComputedListDiff(List.of("a", "b"), List.of("b", "a"));
 	}
 
 	@Test
 	public void testComputeListDiff_MoveDown2() {
-		checkComputedListDiff(Arrays.asList(new Object[] { "a", "b", "c" }),
-				Arrays.asList(new Object[] { "b", "c", "a" }));
+		checkComputedListDiff(List.of("a", "b", "c"), List.of("b", "c", "a"));
 	}
 
 	@Test
 	public void testComputeListDiff_MoveUp1() {
-		checkComputedListDiff(Arrays.asList(new Object[] { "a", "b" }), Arrays.asList(new Object[] { "b", "a" }));
+		checkComputedListDiff(List.of("a", "b"), List.of("b", "a"));
 	}
 
 	@Test
 	public void testComputeListDiff_MoveUp2() {
-		checkComputedListDiff(Arrays.asList(new Object[] { "a", "b", "c" }),
-				Arrays.asList(new Object[] { "c", "a", "b" }));
+		checkComputedListDiff(List.of("a", "b", "c"), List.of("c", "a", "b"));
 	}
 
 	private static void checkComputedListDiff(List<Object> oldList, List<Object> newList) {

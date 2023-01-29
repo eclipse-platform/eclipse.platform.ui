@@ -15,7 +15,7 @@
 package org.eclipse.core.tests.internal.databinding.conversion;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.internal.databinding.conversion.StatusToStringConverter;
@@ -53,10 +53,6 @@ public class StatusToStringConverterTest {
 
 	@Test
 	public void testIllegalArgumentExceptionIsThrownWithNullInput() throws Exception {
-		try {
-			converter.convert(null);
-			fail();
-		} catch (IllegalArgumentException e) {
-		}
+		assertThrows(IllegalArgumentException.class, () -> converter.convert(null));
 	}
 }

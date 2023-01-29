@@ -32,7 +32,6 @@ import org.eclipse.core.databinding.util.Policy;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -83,9 +82,7 @@ public class SetBindingTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testAddListenerAndInitialSyncAreUninterruptable() {
 		Policy.setLog(status -> {
-			if (!status.isOK()) {
-				Assert.fail("The databinding logger has the not-ok status " + status);
-			}
+			assertTrue("The databinding logger has the not-ok status " + status, status.isOK());
 		});
 
 		model.add("first");

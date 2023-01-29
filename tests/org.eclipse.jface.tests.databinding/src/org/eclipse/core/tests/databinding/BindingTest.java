@@ -15,8 +15,8 @@
 package org.eclipse.core.tests.databinding;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
@@ -61,22 +61,14 @@ public class BindingTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testPreDisposedTarget_FiresIllegalArgumentException() {
-		try {
-			target.dispose();
-			createBinding();
-			fail("Expected IllegalArgumentException");
-		} catch (IllegalArgumentException expected) {
-		}
+		target.dispose();
+		assertThrows(IllegalArgumentException.class, () -> createBinding());
 	}
 
 	@Test
 	public void testPreDisposedModel_FiresIllegalArgumentException() {
-		try {
-			model.dispose();
-			createBinding();
-			fail("Expected IllegalArgumentException");
-		} catch (IllegalArgumentException expected) {
-		}
+		model.dispose();
+		assertThrows(IllegalArgumentException.class, () -> createBinding());
 	}
 
 	@Test

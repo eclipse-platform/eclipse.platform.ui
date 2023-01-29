@@ -1,6 +1,6 @@
 package org.eclipse.jface.tests.internal.databinding.swt;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 import java.util.function.Function;
 
@@ -45,13 +45,9 @@ public class VisibleTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testUnsupportedWidget() {
-		try {
-			// A widget that isn't supported
-			Tracker tracker = new Tracker(new Shell(), SWT.NONE);
-			WidgetProperties.visible().observe(tracker);
-			fail();
-		} catch (IllegalArgumentException exc) {
-		}
+		// A widget that isn't supported
+		Tracker tracker = new Tracker(new Shell(), SWT.NONE);
+		assertThrows(IllegalArgumentException.class, () -> WidgetProperties.visible().observe(tracker));
 	}
 
 	static class Delegate<W extends Widget> extends AbstractObservableValueContractDelegate {

@@ -21,7 +21,6 @@ import static org.eclipse.core.databinding.UpdateListStrategy.POLICY_UPDATE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -340,9 +339,7 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testAddListenerAndInitialSyncAreUninterruptable() {
 		Policy.setLog(status -> {
-			if (!status.isOK()) {
-				fail("The databinding logger has the not-ok status " + status);
-			}
+			assertTrue("The databinding logger has the not-ok status " + status, status.isOK());
 		});
 
 		model.add("first");

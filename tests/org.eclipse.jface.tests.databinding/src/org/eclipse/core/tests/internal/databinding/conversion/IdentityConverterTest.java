@@ -18,8 +18,8 @@ package org.eclipse.core.tests.internal.databinding.conversion;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.eclipse.core.databinding.BindingException;
 import org.eclipse.core.internal.databinding.conversion.IdentityConverter;
@@ -78,12 +78,7 @@ public class IdentityConverterTest {
 	@Test
 	public void testConvert_NullToPrimitive() {
 		IdentityConverter p2b = new IdentityConverter(Float.TYPE, Float.TYPE);
-		try {
-			p2b.convert(null);
-			fail("Should have thrown an exception");
-		} catch (BindingException b) {
-			// success
-		}
+		assertThrows(BindingException.class, () -> p2b.convert(null));
 	}
 
 	@Test
@@ -139,11 +134,6 @@ public class IdentityConverterTest {
 	@Test
 	public void testConvert_InvalidAssignment() throws Exception {
 		IdentityConverter pc = new IdentityConverter(Object.class, Person.class);
-		try {
-			pc.convert(new Animal());
-			fail("Should have gotten an exception");
-		} catch (Exception e) {
-			// success
-		}
+		assertThrows(BindingException.class, () -> pc.convert(new Animal()));
 	}
 }

@@ -16,8 +16,8 @@
 package org.eclipse.jface.tests.databinding.viewers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -73,11 +73,7 @@ public class ObservableListTreeContentProviderTest extends
 
 	@Test
 	public void testConstructor_NullArgumentThrowsException() {
-		try {
-			initContentProvider(null);
-			fail("Constructor should have thrown AssertionFailedException");
-		} catch (AssertionFailedException expected) {
-		}
+		assertThrows(AssertionFailedException.class, () -> initContentProvider(null));
 	}
 
 	@Test
@@ -164,7 +160,7 @@ public class ObservableListTreeContentProviderTest extends
 
 		assertEquals(Collections.singleton(element), realizedElements);
 		viewer.setInput(input2);
-		assertEquals(Collections.EMPTY_SET, realizedElements);
+		assertEquals(Collections.emptySet(), realizedElements);
 	}
 
 	static class Mutable {

@@ -22,7 +22,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -88,13 +87,9 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 	 */
 	@Test
 	public void testNoUpdateTargetFromModel() throws Exception {
-		try {
-			new DataBindingContext().bindValue(new ObservableValueStub<>(), new ObservableValueStub<>(),
-					new UpdateValueStrategy<>(UpdateValueStrategy.POLICY_NEVER),
-					new UpdateValueStrategy<>(UpdateValueStrategy.POLICY_NEVER));
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
+		new DataBindingContext().bindValue(new ObservableValueStub<>(), new ObservableValueStub<>(),
+				new UpdateValueStrategy<>(UpdateValueStrategy.POLICY_NEVER),
+				new UpdateValueStrategy<>(UpdateValueStrategy.POLICY_NEVER));
 	}
 
 	@Test
@@ -274,10 +269,10 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 		bindLoggingValue(
 				loggingTargetToModelStrategy(UpdateValueStrategy.POLICY_UPDATE),
 				loggingModelToTargetStrategy(UpdateValueStrategy.POLICY_UPDATE));
-		assertEquals(Arrays.asList(new String[] { "model-get", "model-convert",
+		assertEquals(List.of("model-get", "model-convert",
 				"model-after-convert", "target-before-set", "target-set",
 				"target-get", "target-convert", "target-after-convert",
-				"model-before-set" }), log);
+				"model-before-set"), log);
 	}
 
 	@Test
@@ -285,10 +280,10 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 		bindLoggingValue(
 				loggingTargetToModelStrategy(UpdateValueStrategy.POLICY_CONVERT),
 				loggingModelToTargetStrategy(UpdateValueStrategy.POLICY_UPDATE));
-		assertEquals(Arrays.asList(new String[] { "model-get", "model-convert",
+		assertEquals(List.of("model-get", "model-convert",
 				"model-after-convert", "target-before-set", "target-set",
 				"target-get", "target-convert", "target-after-convert",
-				"model-before-set" }), log);
+				"model-before-set"), log);
 	}
 
 	@Test
@@ -296,8 +291,7 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 		bindLoggingValue(
 				loggingTargetToModelStrategy(UpdateValueStrategy.POLICY_ON_REQUEST),
 				loggingModelToTargetStrategy(UpdateValueStrategy.POLICY_UPDATE));
-		assertEquals(Arrays.asList(new String[] { "model-get", "model-convert",
-				"model-after-convert", "target-before-set", "target-set" }),
+		assertEquals(List.of("model-get", "model-convert", "model-after-convert", "target-before-set", "target-set"),
 				log);
 
 		log.clear();
@@ -312,9 +306,9 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 
 		log.clear();
 		binding.updateTargetToModel();
-		assertEquals(Arrays.asList(new String[] { "target-get",
+		assertEquals(List.of("target-get",
 				"target-convert", "target-after-convert", "model-before-set",
-				"model-set" }), log);
+				"model-set"), log);
 	}
 
 	@Test
@@ -322,8 +316,7 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 		bindLoggingValue(
 				loggingTargetToModelStrategy(UpdateValueStrategy.POLICY_NEVER),
 				loggingModelToTargetStrategy(UpdateValueStrategy.POLICY_UPDATE));
-		assertEquals(Arrays.asList(new String[] { "model-get", "model-convert",
-				"model-after-convert", "target-before-set", "target-set" }),
+		assertEquals(List.of("model-get", "model-convert", "model-after-convert", "target-before-set", "target-set"),
 				log);
 
 		log.clear();
@@ -332,11 +325,11 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 
 		log.clear();
 		binding.validateTargetToModel();
-		assertEquals(Collections.EMPTY_LIST, log);
+		assertEquals(Collections.emptyList(), log);
 
 		log.clear();
 		binding.updateTargetToModel();
-		assertEquals(Collections.EMPTY_LIST, log);
+		assertEquals(Collections.emptyList(), log);
 	}
 
 	@Test
@@ -345,21 +338,21 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 				loggingTargetToModelStrategy(UpdateValueStrategy.POLICY_UPDATE),
 				loggingModelToTargetStrategy(UpdateValueStrategy.POLICY_CONVERT));
 		assertEquals(
-				Arrays.asList(new String[] { "model-get", "model-convert",
+				List.of("model-get", "model-convert",
 						"model-after-convert", "target-before-set",
 						"target-get", "target-convert", "target-after-convert",
-						"model-before-set" }), log);
+						"model-before-set"),
+				log);
 
 		log.clear();
 		target.setValue(new Object());
-		assertEquals(Arrays.asList(new String[] { "target-set", "target-get",
+		assertEquals(List.of("target-set", "target-get",
 				"target-convert", "target-after-convert", "model-before-set",
-				"model-set" }), log);
+				"model-set"), log);
 
 		log.clear();
 		model.setValue("dummy model value");
-		assertEquals(Arrays.asList(new String[] { "model-set", "model-get",
-				"model-convert", "model-after-convert" }), log);
+		assertEquals(List.of("model-set", "model-get", "model-convert", "model-after-convert"), log);
 	}
 
 	/**

@@ -16,8 +16,8 @@ package org.eclipse.jface.tests.examples.databinding.mask.internal;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.eclipse.jface.examples.databinding.mask.EditMaskParseException;
 import org.eclipse.jface.examples.databinding.mask.internal.EditMaskParser;
@@ -50,12 +50,7 @@ public class EditMaskParserTest {
 	 */
 	@Test
 	public void testEditMaskParser_invalidMask() {
-		try {
-			new EditMaskParser("(###) ###-####\\");
-			fail("Should have thrown exception");
-		} catch (EditMaskParseException e) {
-			// success
-		}
+		assertThrows(EditMaskParseException.class, () -> new EditMaskParser("(###) ###-####\\"));
 	}
 
 	/**

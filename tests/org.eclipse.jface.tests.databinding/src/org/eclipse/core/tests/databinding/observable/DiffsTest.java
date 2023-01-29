@@ -14,9 +14,6 @@
 
 package org.eclipse.core.tests.databinding.observable;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.set.SetDiff;
@@ -46,12 +43,7 @@ public class DiffsTest {
 			}
 		};
 
-		try {
-			diff.toString();
-			assertTrue(true);
-		} catch (NullPointerException e) {
-			fail("NPE was thrown.");
-		}
+		diff.toString();
 	}
 
 	/**
@@ -73,12 +65,7 @@ public class DiffsTest {
 			}
 		};
 
-		try {
-			diff.toString();
-			assertTrue(true);
-		} catch (NullPointerException e) {
-			fail("NPE was thrown.");
-		}
+		diff.toString();
 	}
 
 }

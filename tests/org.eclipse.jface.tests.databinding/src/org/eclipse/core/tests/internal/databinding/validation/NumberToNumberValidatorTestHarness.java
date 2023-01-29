@@ -15,8 +15,8 @@
 package org.eclipse.core.tests.internal.databinding.validation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.internal.databinding.validation.NumberToNumberValidator;
@@ -48,12 +48,7 @@ public abstract class NumberToNumberValidatorTestHarness {
 			return;
 		}
 
-		try {
-			doGetToPrimitiveValidator(Integer.class).validate(null);
-
-			fail("exception should have been thrown");
-		} catch (IllegalArgumentException e) {
-		}
+		assertThrows(IllegalArgumentException.class, () -> doGetToPrimitiveValidator(Integer.class).validate(null));
 	}
 
 	@Test
@@ -78,10 +73,6 @@ public abstract class NumberToNumberValidatorTestHarness {
 
 	@Test
 	public void testValidateIncorrectTypeThrowsIllegalArgumentException() throws Exception {
-		try {
-			doGetToBoxedTypeValidator(Integer.class).validate("");
-			fail("exception should have been thrown");
-		} catch (IllegalArgumentException e) {
-		}
+		assertThrows(IllegalArgumentException.class, () -> doGetToBoxedTypeValidator(Integer.class).validate(""));
 	}
 }

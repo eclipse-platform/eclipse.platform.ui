@@ -16,8 +16,8 @@ package org.eclipse.jface.tests.internal.databinding.viewers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.eclipse.jface.internal.databinding.viewers.ViewerElementWrapper;
 import org.eclipse.jface.viewers.IElementComparer;
@@ -42,11 +42,7 @@ public class ViewerElementWrapperTest {
 
 	@Test
 	public void testConstructor_NullComparer() {
-		try {
-			new ViewerElementWrapper(element, null);
-			fail("Expected NullPointerException");
-		} catch (NullPointerException expected) {
-		}
+		assertThrows(NullPointerException.class, () -> new ViewerElementWrapper(element, null));
 	}
 
 	@Test

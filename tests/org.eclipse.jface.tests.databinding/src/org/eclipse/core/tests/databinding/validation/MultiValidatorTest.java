@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -69,16 +70,12 @@ public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testConstructor_NullArgument() {
-		try {
-			new MultiValidator(null) {
-				@Override
-				protected IStatus validate() {
-					return null;
-				}
-			};
-			fail("Expected AssertionFailedException");
-		} catch (AssertionFailedException expected) {
-		}
+		assertThrows(AssertionFailedException.class, () -> new MultiValidator(null) {
+			@Override
+			protected IStatus validate() {
+				return null;
+			}
+		});
 	}
 
 	@Test
@@ -115,21 +112,14 @@ public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testObserveValidatedValue_NullArgument() {
-		try {
-			validator.observeValidatedValue(null);
-			fail("Expected AssertionFailedException");
-		} catch (AssertionFailedException expected) {
-		}
+		assertThrows(AssertionFailedException.class, () -> validator.observeValidatedValue(null));
 	}
 
 	@Test
 	public void testObserveValidatedValue_WrongRealm() {
 		Realm otherRealm = new CurrentRealm(true);
-		try {
-			validator.observeValidatedValue(new WritableValue<>(otherRealm));
-			fail("Expected AssertionFailedException");
-		} catch (AssertionFailedException expected) {
-		}
+		assertThrows(AssertionFailedException.class,
+				() -> validator.observeValidatedValue(new WritableValue<>(otherRealm)));
 	}
 
 	@Test
@@ -161,11 +151,8 @@ public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
 				return ValidationStatus.ok();
 			}
 		};
-		try {
-			validator.dispose();
-		} catch (NullPointerException e) {
-			fail("Bug 237884: MultiValidator.dispose() causes NPE");
-		}
+		// Bug 237884: MultiValidator.dispose() causes NPE
+		validator.dispose();
 	}
 
 	@Test
