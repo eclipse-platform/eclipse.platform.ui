@@ -2,8 +2,8 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.e4.core.commands.tests;singleton:=true
-Bundle-Version: 0.13.200.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-Version: 0.14.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: org.eclipse.core.commands,
  org.eclipse.e4.core.commands,
  org.eclipse.core.runtime,
