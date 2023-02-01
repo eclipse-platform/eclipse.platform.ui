@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.swt.dnd.DND;
@@ -278,11 +279,12 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		ITextFileBuffer textFileBuffer = textFileBufferManager.getTextFileBuffer(resource.getFullPath(),
 				LocationKind.IFILE);
 		return Arrays.stream(resource.getWorkspace().getRoot().findFilesForLocationURI(resource.getLocationURI())) //
-				.sorted(Comparator.comparingInt(aFile -> aFile.getFullPath().segments().length)) //
-				.findFirst() //
-				.filter(aFile -> textFileBufferManager.getTextFileBuffer(aFile.getFullPath(),
-						LocationKind.IFILE) == textFileBuffer)
-				.orElse(resource);
+				.min(Comparator.comparingInt(aFile -> aFile.getFullPath().segments().length)) //
+				.filter(aFile -> {
+					ITextFileBuffer buffer = textFileBufferManager.getTextFileBuffer(aFile.getFullPath(),
+							LocationKind.IFILE);
+					return textFileBuffer == null || Objects.equals(textFileBuffer, buffer);
+				}).orElse(resource);
 	}
 
 	@Override
