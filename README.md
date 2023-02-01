@@ -8,39 +8,34 @@ Project description:
 
 Platform UI provides the basic building blocks for user interfaces built with Eclipse. 
 
-Some of these form the Eclipse Rich Client Platform (RCP) and can be used for arbitrary rich client applications, while others are specific to the Eclipse IDE. The Platform UI codebase is built on top of the Eclipse Standard Widget Toolkit (SWT), which is developed as an independent project.
+Some of these form the Eclipse Rich Client Platform (RCP) and can be used for arbitrary rich client applications, while others are specific to the Eclipse IDE. The Platform UI codebase is built on top of the Eclipse Standard Widget Toolkit ([SWT](https://www.eclipse.org/swt/)), which is developed as an independent project.
 
-Website: <https://www.eclipse.org/platform/ui/>
+Website: <https://www.eclipse.org/eclipse/>
 
 - <https://projects.eclipse.org/projects/eclipse.platform>
 
-For more information, refer to the [Platform UI wiki page][1].
+For more information, refer to the [Platform UI wiki page](https://wiki.eclipse.org/Platform_UI).
 
 How to contribute:
 --------------------
 Contributions to Platform UI are most welcome. There are many ways to contribute,
 from entering high quality bug reports, to contributing code or documentation changes.
-For a complete guide, see the [Platform UI - How to contribute wiki page][2] page on the team wiki.
+For a complete guide, see the [Platform UI - How to contribute wiki page](https://wiki.eclipse.org/Platform_UI/How_to_Contribute) page on the wiki.
 
 Test dependencies
 -----------------
 
 Several test plug-ins have a dependency to the Mockito and Hamcrest libraries.
-Please install them from the [Orbit Download page][3]:
-
-Currently the following plug-ins are required:
-- net.bytebuddy.byte-buddy
-- net.bytebuddy.byte-buddy-agent
-- org.hamcrest.core
-- org.mockito
-- org.objenesis
+Please install them by installing "Eclipse Test Framework" from the [current release stream p2 repo](https://download.eclipse.org/eclipse/updates/I-builds/).
 
 How to build on the command line
 --------------------------------
 
-You need Maven 3.3.1 installed. After this you can run the build via the following command:
+You need Maven 3.8.x installed. After this you can run the build via the following command:
 
+```
 mvn clean verify -Pbuild-individual-bundles
+```
 
 
 Developer resources:
@@ -58,19 +53,14 @@ Before your contribution can be accepted by the project, you need to create and 
 - <https://www.eclipse.org/legal/CLA.php>
 
 
-Search for bugs:
+Issue Tracking:
 ----------------
 
-This project uses Bugzilla to track ongoing development and issues.
+This project uses Github to track ongoing development and issues.
 
-- <https://bugs.eclipse.org/bugs/buglist.cgi?bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&classification=Eclipse%20Project&component=UI&list_id=12049886&product=Platform&query_format=advanced>
-
-Create a new bug:
------------------
+- https://github.com/issues?user=eclipse-platform
 
 Be sure to search for existing bugs before you create another one. Remember that contributions are always welcome!
-
-- <https://bugs.eclipse.org/bugs/enter_bug.cgi?product=platform;component=UI>
 
 Contact:
 --------
@@ -83,9 +73,4 @@ Contact the project developers via the project's "dev" list.
 License
 -------
 
-[Eclipse Public License (EPL) 2.0][4]
-
-[1]: https://wiki.eclipse.org/Platform_UI
-[2]: https://wiki.eclipse.org/Platform_UI/How_to_Contribute
-[3]: https://download.eclipse.org/tools/orbit/downloads/
-[4]: https://www.eclipse.org/legal/epl-2.0/
+[Eclipse Public License (EPL) 2.0](https://www.eclipse.org/legal/epl-2.0/)
