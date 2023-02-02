@@ -166,8 +166,13 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 			try {
 				IPathEditorInput iPathEditorInput = Adapters.adapt(editorReference.getEditorInput(),
 						IPathEditorInput.class);
-				if (iPathEditorInput != null && iPathEditorInput.getPath() != null) {
-					IPath path = iPathEditorInput.getPath();
+				IPath path;
+				// we only detect collisions for IPathEditorInput and only if the name used by
+				// the editor reference is the filename. Otherwise, this would break scenarios
+				// where editors override the name used, e.g. for virtual file systems using
+				// org.eclipse.core.internal.filesystem.FileCache
+				if (iPathEditorInput != null && (path = iPathEditorInput.getPath()) != null
+						&& editorReference.getName().equals(path.lastSegment())) {
 
 					List<Entry<EditorReference, IPath>> referencesWithSameTitle = collisionsMap
 							.get(editorReference.getTitle());
@@ -178,7 +183,6 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 
 					referencesWithSameTitle.add(Map.entry(editorReference, path));
 				} else {
-					// we only detect collisions for IPathEditorInput
 					editorReferenceLabelTexts.put(editorReference, getWorkbenchPartReferenceText(editorReference));
 				}
 			} catch (PartInitException e) {
