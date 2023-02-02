@@ -12,7 +12,7 @@ Require-Bundle: org.junit,
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Localization: plugin
-Export-Package: org.eclipse.jface.databinding.conformance;uses:="org.eclipse.core.databinding.observable,org.eclipse.jface.databinding.conformance.delegate,junit.framework",
+Export-Package: org.eclipse.jface.databinding.conformance;uses:="org.eclipse.core.databinding.observable,org.eclipse.jface.databinding.conformance.delegate",
  org.eclipse.jface.databinding.conformance.delegate,
  org.eclipse.jface.databinding.conformance.swt,
  org.eclipse.jface.databinding.conformance.util;
@@ -21,6 +21,5 @@ Export-Package: org.eclipse.jface.databinding.conformance;uses:="org.eclipse.cor
    org.eclipse.core.databinding.observable,
    org.eclipse.core.databinding.observable.list,
    org.eclipse.core.databinding.observable.value,
-   junit.framework,
    org.eclipse.core.databinding.observable.set"
 Automatic-Module-Name: org.eclipse.jface.tests.databinding.conformance
