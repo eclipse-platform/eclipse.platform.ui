@@ -16,6 +16,7 @@ package org.eclipse.search.core.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -36,12 +37,12 @@ public class TestSearchResult {
 
 		Match match1= new Match(object, 0, 0);
 		result.addMatch(match1);
-		assertEquals(result.getMatchCount(), 1);
+		assertEquals(1, result.getMatchCount());
 		Match match2= new Match(object, 0, 0);
 		result.addMatch(match2);
-		assertEquals(result.getMatchCount(), 2);
+		assertEquals(2, result.getMatchCount());
 		result.addMatch(match1);
-		assertEquals(result.getMatchCount(), 2);
+		assertEquals(2, result.getMatchCount());
 	}
 
 	@Test
@@ -53,15 +54,15 @@ public class TestSearchResult {
 
 		Match match1= new Match(object, 2, 0);
 		result.addMatch(match1);
-		assertEquals(result.getMatchCount(), 1);
+		assertEquals(1, result.getMatchCount());
 		Match match2= new Match(object, 1, 1);
 		result.addMatch(match2);
 		Match match3= new Match(object, 0, 2);
 		result.addMatch(match3);
 		Match[] matches= result.getMatches(object);
-		assertTrue("matches[0]", matches[0] == match3);
-		assertTrue("matches[1]", matches[1] == match2);
-		assertTrue("matches[2]", matches[2] == match1);
+		assertSame("matches[0]", matches[0], match3);
+		assertSame("matches[1]", matches[1], match2);
+		assertSame("matches[2]", matches[2], match1);
 	}
 
 	@Test
@@ -73,15 +74,15 @@ public class TestSearchResult {
 
 		Match match1= new Match(object, 0, 0);
 		result.addMatch(match1);
-		assertEquals(result.getMatchCount(), 1);
+		assertEquals(1, result.getMatchCount());
 		Match match2= new Match(object, 1, 1);
 		result.addMatch(match2);
 		Match match3= new Match(object, 2, 2);
 		result.addMatch(match3);
 		Match[] matches= result.getMatches(object);
-		assertTrue("matches[0]", matches[0] == match1);
-		assertTrue("matches[1]", matches[1] == match2);
-		assertTrue("matches[2]", matches[2] == match3);
+		assertSame("matches[0]", matches[0], match1);
+		assertSame("matches[1]", matches[1], match2);
+		assertSame("matches[2]", matches[2], match3);
 	}
 
 	@Test
@@ -93,12 +94,12 @@ public class TestSearchResult {
 
 		Match match1= new Match(object, 1, 1);
 		result.addMatch(match1);
-		assertEquals(result.getMatchCount(), 1);
+		assertEquals(1, result.getMatchCount());
 		Match match2= new Match(object, 1, 0);
 		result.addMatch(match2);
 		Match[] matches= result.getMatches(object);
-		assertTrue("matches[0]", matches[0] == match2);
-		assertTrue("matches[1]", matches[1] == match1);
+		assertSame("matches[0]", matches[0], match2);
+		assertSame("matches[1]", matches[1], match1);
 	}
 
 	@Test
@@ -111,9 +112,9 @@ public class TestSearchResult {
 		Match match1= new Match(object, 0, 0);
 		Match match2= new Match(object, 0, 0);
 		result.addMatches(new Match[] { match1, match2 });
-		assertEquals(result.getMatchCount(), 2);
+		assertEquals(2, result.getMatchCount());
 		result.addMatch(match1);
-		assertEquals(result.getMatchCount(), 2);
+		assertEquals(2, result.getMatchCount());
 	}
 
 	@Test
@@ -127,12 +128,12 @@ public class TestSearchResult {
 		result.addMatch(match1);
 		Match match2= new Match(object, 0, 0);
 		result.addMatch(match2);
-		assertEquals(result.getMatchCount(), 2);
+		assertEquals(2, result.getMatchCount());
 
 		result.removeMatch(match1);
-		assertEquals(result.getMatchCount(), 1);
+		assertEquals(1, result.getMatchCount());
 		result.removeMatch(match1);
-		assertEquals(result.getMatchCount(), 1);
+		assertEquals(1, result.getMatchCount());
 
 	}
 
@@ -146,10 +147,10 @@ public class TestSearchResult {
 		Match match1= new Match(object, 0, 0);
 		Match match2= new Match(object, 0, 0);
 		result.addMatches(new Match[] { match1, match2 });
-		assertEquals(result.getMatchCount(), 2);
+		assertEquals(2, result.getMatchCount());
 
 		result.removeMatches(new Match[] { match1, match2 });
-		assertEquals(result.getMatchCount(), 0);
+		assertEquals(0, result.getMatchCount());
 
 	}
 

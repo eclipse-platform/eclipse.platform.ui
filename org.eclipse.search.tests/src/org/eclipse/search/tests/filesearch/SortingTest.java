@@ -60,7 +60,7 @@ public class SortingTest {
 		}
 		// now remove them and readd them in reverse order
 		result.removeAll();
-		assertTrue("removed all matches", result.getMatchCount() == 0);
+		assertEquals("removed all matches", 0, result.getMatchCount());
 
 		for (int i= allMatches.size()-1; i >= 0; i--) {
 			result.addMatch(allMatches.get(i));
