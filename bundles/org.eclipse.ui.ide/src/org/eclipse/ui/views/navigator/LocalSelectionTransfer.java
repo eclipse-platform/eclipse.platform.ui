@@ -29,7 +29,7 @@ import org.eclipse.swt.dnd.TransferData;
  * @deprecated as of 3.5, use
  *             {@link org.eclipse.jface.util.LocalSelectionTransfer} instead
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public class LocalSelectionTransfer extends org.eclipse.jface.util.LocalSelectionTransfer {
 
 	private static final LocalSelectionTransfer INSTANCE = new LocalSelectionTransfer();

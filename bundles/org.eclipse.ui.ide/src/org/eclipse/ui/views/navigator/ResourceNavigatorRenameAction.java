@@ -39,7 +39,7 @@ import org.eclipse.ui.actions.RenameResourceAction;
  *
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public class ResourceNavigatorRenameAction extends RenameResourceAction {
 	private TreeViewer viewer;
 

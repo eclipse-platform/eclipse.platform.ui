@@ -30,7 +30,7 @@ import org.eclipse.ui.IWorkbenchCommandConstants;
  *
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public class ToggleLinkingAction extends ResourceNavigatorAction {
 
 	/**

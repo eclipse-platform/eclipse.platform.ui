@@ -17,11 +17,9 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
-
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.OpenFileAction;
 import org.eclipse.ui.actions.OpenInNewWindowAction;
@@ -33,7 +31,7 @@ import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
  *
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public class OpenActionGroup extends ResourceNavigatorActionGroup {
 
 	private OpenFileAction openFileAction;
