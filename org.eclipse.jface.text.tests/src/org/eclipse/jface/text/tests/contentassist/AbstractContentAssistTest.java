@@ -19,7 +19,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -216,14 +215,14 @@ public class AbstractContentAssistTest {
 	protected List<Shell> getCurrentShells() {
 		return Arrays.stream(getDisplay().getShells())
 				.filter(Shell::isVisible)
-				.collect(Collectors.toList());
+				.toList();
 	}
 
 	protected List<Shell> findNewShells(Collection<Shell> beforeShells) {
 		return Arrays.stream(getDisplay().getShells())
 				.filter(Shell::isVisible)
 				.filter(s -> !beforeShells.contains(s))
-				.collect(Collectors.toList());
+				.toList();
 	}
 
 	protected Shell findNewShell(Collection<Shell> beforeShells) {

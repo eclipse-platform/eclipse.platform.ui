@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import org.junit.After;
 import org.junit.Before;
@@ -506,13 +505,13 @@ public class FilteringAsyncContentAssistTests {
 	private static List<ICompletionProposal> getComputedProposals(ContentAssistant ca, Predicate<ICompletionProposal> p)
 			throws Exception {
 		List<ICompletionProposal> computedProposals = getComputedProposals(ca);
-		return computedProposals == null ? null : computedProposals.stream().filter(p).collect(Collectors.toList());
+		return computedProposals == null ? null : computedProposals.stream().filter(p).toList();
 	}
 
 	private static List<ICompletionProposal> getFilteredProposals(ContentAssistant ca, Predicate<ICompletionProposal> p)
 			throws Exception {
 		List<ICompletionProposal> filteredProposals = getFilteredProposals(ca);
-		return filteredProposals == null ? null : filteredProposals.stream().filter(p).collect(Collectors.toList());
+		return filteredProposals == null ? null : filteredProposals.stream().filter(p).toList();
 	}
 
 	private static class IncompleteCompletionProposal implements ICompletionProposal {

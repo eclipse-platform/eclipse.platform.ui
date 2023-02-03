@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests.contentassist;
 
-import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
@@ -81,9 +80,9 @@ public class IncrementalAsyncContentAssistTests {
 
 		DisplayHelper.sleep(shell.getDisplay(), 300);
 
-		List<String> filteredProposals= FilteringAsyncContentAssistTests.getFilteredProposals(ca).stream() //
-				.map(ICompletionProposal::getDisplayString) //
-				.collect(toList());
+		List<String> filteredProposals= FilteringAsyncContentAssistTests.getFilteredProposals(ca).stream()
+				.map(ICompletionProposal::getDisplayString)
+				.toList();
 		assertEquals(Arrays.asList("testA", "testB", "testC"), filteredProposals);
 	}
 
@@ -101,9 +100,9 @@ public class IncrementalAsyncContentAssistTests {
 
 		DisplayHelper.sleep(shell.getDisplay(), delay + 100);
 
-		List<String> filteredProposals= FilteringAsyncContentAssistTests.getFilteredProposals(ca).stream() //
-				.map(ICompletionProposal::getDisplayString) //
-				.collect(toList());
+		List<String> filteredProposals= FilteringAsyncContentAssistTests.getFilteredProposals(ca).stream()
+				.map(ICompletionProposal::getDisplayString)
+				.toList();
 		assertEquals(Arrays.asList("testA", "testB", "testC"), filteredProposals);
 	}
 
