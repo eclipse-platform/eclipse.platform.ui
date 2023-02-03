@@ -12,6 +12,7 @@ package org.eclipse.jface.text.tests.contentassist;
 
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
@@ -269,7 +270,7 @@ public class FilteringAsyncContentAssistTests {
 
 		List<ICompletionProposal> filteredProposals= getFilteredProposals(ca,
 				p -> p instanceof IncompleteCompletionProposal);
-		assertTrue(filteredProposals != null);
+		assertNotNull(filteredProposals);
 		assertEquals(1, filteredProposals.size());
 
 		filteredProposals.get(0).apply(document);
@@ -350,7 +351,7 @@ public class FilteringAsyncContentAssistTests {
 
 		List<ICompletionProposal> filteredProposals= getFilteredProposals(ca,
 				p -> p instanceof CompletionProposal);
-		assertTrue(filteredProposals != null);
+		assertNotNull(filteredProposals);
 		assertEquals(1, filteredProposals.size());
 
 		filteredProposals.get(0).apply(document);

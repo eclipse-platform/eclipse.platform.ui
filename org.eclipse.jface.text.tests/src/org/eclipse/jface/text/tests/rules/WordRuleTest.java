@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests.rules;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -72,7 +73,7 @@ public class WordRuleTest {
 		WordRule rule= new WordRule(detector, new Token(this));
 
 		RuleBasedScanner scanner= new RuleBasedScanner();
-		scanner.setRules(new IRule[] { rule });
+		scanner.setRules(rule);
 		scanner.setRange(new Document(), 0, 0);
 
 		IToken token= null;
@@ -106,25 +107,25 @@ public class WordRuleTest {
 		// pre: pass in a normal string ("TestTokenString")
 		// post: expect the normal token to be returned
 		RuleBasedScanner scanner= new RuleBasedScanner();
-		scanner.setRules(new IRule[] {rule});
+		scanner.setRules(rule);
 		scanner.setRange(new Document(testTokenStringNormal), 0, testTokenStringNormal.length());
-		assertTrue(scanner.nextToken().getData().equals(testTokenStringNormal));
+		assertEquals(testTokenStringNormal, scanner.nextToken().getData());
 
 		// scenario 2
 		// pre: pass in a normal string but different capitalization ("TestTOKENString")
 		// post: expect the normal token to be returned
 		scanner= new RuleBasedScanner();
-		scanner.setRules(new IRule[] {rule});
+		scanner.setRules(rule);
 		scanner.setRange(new Document(testTokenStringDifferentCapitalization), 0, testTokenStringDifferentCapitalization.length());
-		assertTrue(scanner.nextToken().getData().equals(testTokenStringNormal));
+		assertEquals(testTokenStringNormal, scanner.nextToken().getData());
 
 		// scenario 3
 		// pre: pass in a completely different string ("XXX")
 		// post: expect the default token to be returned because the string can't be matched
 		scanner= new RuleBasedScanner();
-		scanner.setRules(new IRule[] {rule});
+		scanner.setRules(rule);
 		scanner.setRange(new Document(testTokenStringCompletelyDifferent), 0, testTokenStringCompletelyDifferent.length());
-		assertTrue(scanner.nextToken().getData().equals(defaultTokenString));
+		assertEquals(defaultTokenString, scanner.nextToken().getData());
 
 		WordRule ruleWithoutIgnoreCase= new WordRule(detector, defaultToken);
 		ruleWithoutIgnoreCase.addWord(testTokenStringNormal, normalToken);
@@ -133,17 +134,17 @@ public class WordRuleTest {
 		// pre: pass in a normal string ("TestTokenString")
 		// post: expect the normal token to be returned
 		scanner= new RuleBasedScanner();
-		scanner.setRules(new IRule[] {ruleWithoutIgnoreCase});
+		scanner.setRules(ruleWithoutIgnoreCase);
 		scanner.setRange(new Document(testTokenStringNormal), 0, testTokenStringNormal.length());
-		assertTrue(scanner.nextToken().getData().equals(testTokenStringNormal));
+		assertEquals(testTokenStringNormal, scanner.nextToken().getData());
 
 		// scenario 5
 		// pre: pass in a normal string but different capitalization ("TestTOKENString")
 		// post: expect the default token to be returned
 		scanner= new RuleBasedScanner();
-		scanner.setRules(new IRule[] {ruleWithoutIgnoreCase});
+		scanner.setRules(ruleWithoutIgnoreCase);
 		scanner.setRange(new Document(testTokenStringDifferentCapitalization), 0, testTokenStringDifferentCapitalization.length());
-		assertTrue(scanner.nextToken().getData().equals(defaultTokenString));
+		assertEquals(defaultTokenString, scanner.nextToken().getData());
 	}
 
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=175712

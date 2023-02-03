@@ -15,6 +15,7 @@ package org.eclipse.jface.text.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
@@ -438,7 +439,7 @@ public abstract class AbstractUndoManagerTest {
 		long stamp= document.getModificationStamp();
 		fUndoManager.undo();
 		document.replace(0, 0, createRandomString(stringLength));
-		assertFalse(stamp == document.getModificationStamp());
+		assertNotEquals(stamp, document.getModificationStamp());
 
 	}
 

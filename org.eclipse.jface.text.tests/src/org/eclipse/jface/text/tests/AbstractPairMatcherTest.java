@@ -14,7 +14,7 @@
 package org.eclipse.jface.text.tests;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -378,7 +378,7 @@ public abstract class AbstractPairMatcherTest {
 	 */
 	public TestCase createTestCase(String str) {
 		int pos1= str.indexOf('%');
-		assertFalse(pos1 == -1);
+		assertNotEquals(-1, pos1);
 		int pos2= str.lastIndexOf('%');
 		boolean selectionTest= pos1 != pos2;
 
@@ -389,7 +389,7 @@ public abstract class AbstractPairMatcherTest {
 		// account for the length of marker characters
 		if (selectionTest) {
 			if (!enclosingTest) {
-				assertTrue(pos2 - pos1 == 2);
+				assertEquals(2, pos2 - pos1);
 				if (match1 != -1 && match1 < pos1) {
 					pos1-= 1;
 					pos2-= 2;
