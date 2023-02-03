@@ -272,9 +272,10 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 				foldingReconcilingStrategies, getContentTypes(sourceViewer.getDocument()));
 		if (!foldingReconcilers.isEmpty()) {
 			reconcilers.addAll(foldingReconcilers);
-		} else if (foldingReconcilingStrategies.isEmpty()) {
-			reconcilers.add(new DefaultFoldingReconciler());
 		}
+		// add default reconciler:
+		reconcilers.add(new DefaultFoldingReconciler());
+		
 		reconcilingStrategies.addAll(foldingReconcilingStrategies);
 
 		if (!reconcilingStrategies.isEmpty()) {

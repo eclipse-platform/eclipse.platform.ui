@@ -49,6 +49,7 @@ public class IndentFoldingStrategy implements IReconcilingStrategy, IReconciling
 	private ProjectionViewer viewer;
 	private ProjectionAnnotationModel projectionAnnotationModel;
 	private final String lineStartsWithKeyword;
+	private boolean hasExternalFoldingAnnotations = false;
 
 	public IndentFoldingStrategy() {
 		this(null);
@@ -155,6 +156,14 @@ public class IndentFoldingStrategy implements IReconcilingStrategy, IReconciling
 	public void projectionEnabled() {
 		if (viewer != null) {
 			projectionAnnotationModel = viewer.getProjectionAnnotationModel();
+			projectionAnnotationModel.addAnnotationModelListener(model -> {
+				IndentFoldingStrategy.this.hasExternalFoldingAnnotations = containsExtenalFoldingAnnotations();
+				if (hasExternalFoldingAnnotations) {
+					removeCurrentFoldingAnnotations();
+				} else {
+					initialReconcile();
+				}
+			});
 		}
 	}
 
@@ -168,9 +177,34 @@ public class IndentFoldingStrategy implements IReconcilingStrategy, IReconciling
 		}
 	}
 
+	private boolean containsExtenalFoldingAnnotations() {
+		Iterator<Annotation> iter = getAnnotationIterator(null);
+		boolean hasExternalFoldingAnnotation = false;
+		if (iter != null) {
+			while (iter.hasNext()) {
+				Annotation anno = iter.next();
+				if (!(anno instanceof FoldingAnnotation)) {
+					hasExternalFoldingAnnotation = true;
+					break;
+				}
+			}
+		}
+		return hasExternalFoldingAnnotation;
+	}
+
+	private void removeCurrentFoldingAnnotations() {
+		List<Annotation> modifications = new ArrayList<>();
+		List<FoldingAnnotation> deletions = new ArrayList<>();
+		Map<Annotation, Position> additions = new HashMap<>();
+		Iterator<Annotation> iter = getAnnotationIterator(null);
+		deletions = getAllAnnotationsForDeletion(iter);
+		projectionAnnotationModel.modifyAnnotations(deletions.toArray(new Annotation[1]), additions,
+				modifications.toArray(new Annotation[0]));
+	}
+
 	@Override
 	public void reconcile(DirtyRegion dirtyRegion, IRegion subRegion) {
-		if (projectionAnnotationModel != null) {
+		if (projectionAnnotationModel != null && !hasExternalFoldingAnnotations) {
 
 			// these are what are passed off to the annotation model to
 			// actually create and maintain the annotations
@@ -448,6 +482,19 @@ public class IndentFoldingStrategy implements IReconcilingStrategy, IReconciling
 				}
 			}
 		}
+	}
+
+	protected List<FoldingAnnotation> getAllAnnotationsForDeletion(Iterator<Annotation> iter) {
+		List<FoldingAnnotation> deletions = new ArrayList<>();
+		if (iter != null) {
+			while (iter.hasNext()) {
+				Annotation anno = iter.next();
+				if (anno instanceof FoldingAnnotation) {
+					deletions.add((FoldingAnnotation) anno);
+				}
+			}
+		}
+		return deletions;
 	}
 
 	@Override
