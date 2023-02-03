@@ -44,7 +44,7 @@ import org.eclipse.ui.actions.MoveResourceAction;
  * @since 2.0
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public class ResourceNavigatorMoveAction extends MoveResourceAction {
 	private StructuredViewer viewer;
 

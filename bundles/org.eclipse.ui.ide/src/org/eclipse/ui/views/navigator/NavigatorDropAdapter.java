@@ -56,7 +56,7 @@ import org.eclipse.ui.part.ResourceTransfer;
  * @since 2.0
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public class NavigatorDropAdapter extends PluginDropAdapter implements IOverwriteQuery {
 
 	/**

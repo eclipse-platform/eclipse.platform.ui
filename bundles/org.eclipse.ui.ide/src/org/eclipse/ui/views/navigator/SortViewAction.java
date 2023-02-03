@@ -29,7 +29,7 @@ import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
  *
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public class SortViewAction extends ResourceNavigatorAction {
 	private int sortCriteria;
 

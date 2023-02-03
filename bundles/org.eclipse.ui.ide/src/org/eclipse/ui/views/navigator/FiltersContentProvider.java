@@ -36,7 +36,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=549953
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 /* package */class FiltersContentProvider implements IStructuredContentProvider {
 
 	private static List<String> definedFilters;

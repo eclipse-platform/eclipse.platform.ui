@@ -32,7 +32,7 @@ import org.eclipse.ui.actions.SelectionProviderAction;
  *
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public abstract class ResourceNavigatorAction extends SelectionProviderAction {
 
 	private IResourceNavigator navigator;

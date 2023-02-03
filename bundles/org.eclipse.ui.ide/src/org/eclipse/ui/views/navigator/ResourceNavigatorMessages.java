@@ -30,7 +30,7 @@ package org.eclipse.ui.views.navigator;
  *
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public class ResourceNavigatorMessages {
 
 	private ResourceNavigatorMessages() {

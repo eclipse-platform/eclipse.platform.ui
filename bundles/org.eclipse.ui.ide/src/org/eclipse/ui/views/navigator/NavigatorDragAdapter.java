@@ -46,7 +46,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
  * @since 2.0
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public class NavigatorDragAdapter extends DragSourceAdapter {
 	private static final String CHECK_MOVE_TITLE = ResourceNavigatorMessages.DragAdapter_title;
 

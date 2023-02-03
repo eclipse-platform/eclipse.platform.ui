@@ -30,7 +30,7 @@ import org.eclipse.ui.views.framelist.FrameList;
  * @noimplement This interface is not intended to be implemented by clients.
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public interface IResourceNavigator extends IViewPart {
 
 	/**
