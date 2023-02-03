@@ -331,7 +331,7 @@ abstract class AbstractMultiSelectionHandler extends AbstractHandler {
 		return newOffset;
 	}
 
-	private int moveWidgetOffsetByLines(int widgetOffset, int lineDelta) throws BadLocationException {
+	private int moveWidgetOffsetByLines(int widgetOffset, int lineDelta) {
 		Point location = getWidget().getLocationAtOffset(widgetOffset);
 		Point newLocation = new Point(location.x, location.y + lineDelta * getWidget().getLineHeight(widgetOffset));
 		return getWidget().getOffsetAtPoint(newLocation);

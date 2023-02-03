@@ -19,11 +19,9 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.codemining.AbstractCodeMiningProvider;
 import org.eclipse.jface.text.codemining.ICodeMining;
-import org.eclipse.jface.text.codemining.ICodeMiningProvider;
 import org.eclipse.jface.text.codemining.LineContentCodeMining;
 
-public class ToEchoWithHeaderAndInlineCodeMiningProvider extends AbstractCodeMiningProvider
-		implements ICodeMiningProvider {
+public class ToEchoWithHeaderAndInlineCodeMiningProvider extends AbstractCodeMiningProvider {
 
 	private final String toEcho;
 
