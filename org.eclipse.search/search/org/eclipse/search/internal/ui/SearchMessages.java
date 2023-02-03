@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     Christian Walther (Indel AG) - Bug 399094: Add whole word option to file search
  *     Marco Descher <marco@descher.at> - Open Search dialog with previous page instead of using the current selection to detect the page - http://bugs.eclipse.org/33710
  *     Lucas Bullen (Red Hat Inc.) - [Bug 526453] disambiguate "Selected Resources"
+ *     Red Hat Inc. - add support for filtering innermost project files for file search
  *******************************************************************************/
 package org.eclipse.search.internal.ui;
 
@@ -127,6 +128,9 @@ public final class SearchMessages extends NLS {
 	public static String SearchPage_regularExpression;
 	public static String SearchPage_wholeWord;
 	public static String TextSearchEngine_statusMessage;
+	public static String TextSearchInnermostProjectFilter_action_label;
+	public static String TextSearchInnermostProjectFilter_name;
+	public static String TextSearchInnermostProjectFilter_description;
 	public static String TextSearchPage_replace_querycreationproblem_message;
 	public static String TextSearchPage_replace_runproblem_message;
 	public static String TextSearchPage_searchIn_label;
@@ -172,6 +176,8 @@ public final class SearchMessages extends NLS {
 	public static String FileSearchPage_sort_by_label;
 	public static String FileSearchPage_limited_format_files;
 	public static String FileSearchPage_limited_format_matches;
+	public static String FileSearchPage_filtered_message;
+	public static String FileSearchPage_filteredWithCount_message;
 	public static String WorkspaceScope;
 	public static String ScopePart_group_text;
 	public static String ScopePart_selectedResourcesScope_text;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     Juerg Billeter, juergbi@ethz.ch - 47136 Search view should show match objects
  *     Ulrich Etter, etteru@ethz.ch - 47136 Search view should show match objects
  *     Roman Fuchs, fuchsro@ethz.ch - 47136 Search view should show match objects
+ *     Red Hat Inc. - add support for filtering out files not in innermost nested project
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
@@ -92,7 +93,9 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 				if (showLineMatches) {
 					Match[] matches= result.getMatches(element);
 					for (Match match : matches) {
-						insert(((FileMatch) match).getLineElement(), false);
+						if (!match.isFiltered()) {
+							insert(((FileMatch) match).getLineElement(), false);
+						}
 					}
 				} else {
 					insert(element, false);
@@ -173,11 +176,18 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 	private boolean hasMatches(Object element) {
 		if (element instanceof LineElement) {
 			LineElement lineElement= (LineElement) element;
-			return lineElement.hasMatches(fResult);
+			IResource resource = lineElement.getParent();
+			if (getMatchCount(resource) > 0) {
+				return lineElement.hasMatches(fResult);
+			}
 		}
-		return fResult.getMatchCount(element) > 0;
+		return fPage.getDisplayedMatchCount(element) > 0;
 	}
 
+	private int getMatchCount(Object element) {
+		return fResult.getActiveMatchFilters().length > 0 ? fPage.getDisplayedMatchCount(element)
+				: fResult.getMatchCount();
+	}
 
 	private void removeFromSiblings(Object element, Object parent) {
 		Set<Object> siblings= fChildrenMap.get(parent);
@@ -216,7 +226,7 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 			for (Object updatedElement : updatedElements) {
 				if (!(updatedElement instanceof LineElement)) {
 					// change events to elements are reported in file search
-					if (fResult.getMatchCount(updatedElement) > 0) {
+					if (fPage.getDisplayedMatchCount(updatedElement) > 0) {
 						insert(updatedElement, singleElement);
 					} else {
 						remove(updatedElement, singleElement);
@@ -226,7 +236,8 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 					// search
 					LineElement lineElement = (LineElement) updatedElement;
 					boolean hasMatches = lineMatches.contains(lineElement);
-					if (hasMatches) {
+					int matchCount = getMatchCount(lineElement.getParent());
+					if (hasMatches && matchCount > 0) {
 						if (singleElement && hasChild(lineElement.getParent(), lineElement)) {
 							fTreeViewer.update(new Object[] { lineElement, lineElement.getParent() }, null);
 						} else {

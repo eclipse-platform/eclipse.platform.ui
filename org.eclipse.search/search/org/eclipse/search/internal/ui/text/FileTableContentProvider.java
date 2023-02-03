@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,8 +10,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Red Hat Inc. - add support to filter files from non-innermost nested projects
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
@@ -35,15 +39,36 @@ public class FileTableContentProvider implements IStructuredContentProvider, IFi
 		// nothing to do
 	}
 
+	public Object[] getUnfilteredElements(AbstractTextSearchResult searchResult) {
+		int elementLimit = getElementLimit();
+		Object[] elements = searchResult.getElements();
+		if (elementLimit != -1 && elements.length > elementLimit) {
+			Object[] shownElements = new Object[elementLimit];
+			System.arraycopy(elements, 0, shownElements, 0, elementLimit);
+			return shownElements;
+		}
+		return elements;
+	}
+
 	@Override
 	public Object[] getElements(Object inputElement) {
 		if (inputElement instanceof FileSearchResult) {
+			FileSearchResult fileSearchResult = (FileSearchResult) inputElement;
 			int elementLimit= getElementLimit();
-			Object[] elements= ((FileSearchResult)inputElement).getElements();
+			Object[] elements = fileSearchResult.getElements();
 			if (elementLimit != -1 && elements.length > elementLimit) {
 				Object[] shownElements= new Object[elementLimit];
 				System.arraycopy(elements, 0, shownElements, 0, elementLimit);
 				return shownElements;
+			}
+			if (fileSearchResult.getActiveMatchFilters().length > 0) {
+				List<Object> elementList = new ArrayList<>();
+				for (Object element : elements) {
+					if (fPage.getDisplayedMatchCount(element) > 0) {
+						elementList.add(element);
+					}
+				}
+				elements = elementList.toArray();
 			}
 			return elements;
 		}
@@ -63,7 +88,7 @@ public class FileTableContentProvider implements IStructuredContentProvider, IFi
 		int elementLimit= getElementLimit();
 		boolean tableLimited= elementLimit != -1;
 		for (Object updatedElement : updatedElements) {
-			if (fResult.getMatchCount(updatedElement) > 0) {
+			if (fPage.getDisplayedMatchCount(updatedElement) > 0) {
 				if (viewer.testFindItem(updatedElement) != null)
 					viewer.update(updatedElement, null);
 				else {
