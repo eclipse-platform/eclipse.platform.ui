@@ -25,6 +25,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
@@ -146,7 +147,7 @@ public class OpenCloseTest extends UITestCase {
 			IWorkbenchPage page = PlatformUI.getWorkbench().showPerspective(ORG_ECLIPSE_JDT_UI_JAVA_PERSPECTIVE,
 					workbenchWindow);
 			for (int index = 0; index < numIterations; index++) {
-				consoleView = page.showView("org.eclipse.ui.views.ResourceNavigator");
+				consoleView = page.showView(IPageLayout.ID_RES_NAV);
 				page.hideView(consoleView);
 			}
 		} catch (WorkbenchException e) {

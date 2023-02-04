@@ -27,6 +27,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
@@ -41,8 +42,6 @@ import org.junit.Test;
  * @since 3.2
  */
 public class Bug99858Test extends ResourceActionTest {
-
-	private static final String NAVIGATOR_VIEW = "org.eclipse.ui.views.ResourceNavigator";
 
 	public Bug99858Test() {
 		super();
@@ -71,8 +70,7 @@ public class Bug99858Test extends ResourceActionTest {
 		createProjectFile(testProject, "a.txt", contents);
 		createProjectFile(testProject, "b.txt", contents);
 
-		ResourceNavigator view = (ResourceNavigator) page
-				.showView(NAVIGATOR_VIEW);
+		ResourceNavigator view = (ResourceNavigator) page.showView(IPageLayout.ID_RES_NAV);
 		view.setFocus();
 
 		// get a testing version of the delete action, and set it up.

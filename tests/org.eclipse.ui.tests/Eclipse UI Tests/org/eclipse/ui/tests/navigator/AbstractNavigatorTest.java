@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.tests.harness.util.UITestCase;
@@ -31,8 +32,6 @@ import org.eclipse.ui.views.navigator.ResourceNavigator;
  * of tests that use a populated Resource Navigator.
  */
 public abstract class AbstractNavigatorTest extends UITestCase {
-
-	private static final String NAVIGATOR_VIEW_ID = "org.eclipse.ui.views.ResourceNavigator";
 
 	protected IProject testProject;
 
@@ -77,7 +76,7 @@ public abstract class AbstractNavigatorTest extends UITestCase {
 	protected void showNav() throws PartInitException {
 		IWorkbenchWindow window = openTestWindow();
 		navigator = (ResourceNavigator) window.getActivePage().showView(
-				NAVIGATOR_VIEW_ID);
+				IPageLayout.ID_RES_NAV);
 	}
 
 	@Override
