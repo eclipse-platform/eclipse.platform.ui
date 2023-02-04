@@ -36,8 +36,8 @@ import org.w3c.dom.css.CSSValue;
 public class CSSPropertyBackgroundSWTHandler extends AbstractCSSPropertyBackgroundHandler {
 
 	@Override
-	public boolean applyCSSProperty(Object element, String property,
-			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
+	public boolean applyCSSProperty(Object element, String property, CSSValue value, String pseudo, CSSEngine engine)
+			throws Exception {
 		Widget widget = SWTElementHelpers.getWidget(element);
 		if (widget != null) {
 			return super.applyCSSProperty(element, property, value, pseudo, engine);
@@ -46,8 +46,8 @@ public class CSSPropertyBackgroundSWTHandler extends AbstractCSSPropertyBackgrou
 	}
 
 	@Override
-	public String retrieveCSSProperty(Object element, String property,
-			String pseudo, CSSEngine engine) throws Exception {
+	public String retrieveCSSProperty(Object element, String property, String pseudo, CSSEngine engine)
+			throws Exception {
 		Widget widget = SWTElementHelpers.getWidget(element);
 		if (widget != null) {
 			return super.retrieveCSSProperty(widget, property, pseudo, engine);
@@ -56,13 +56,13 @@ public class CSSPropertyBackgroundSWTHandler extends AbstractCSSPropertyBackgrou
 	}
 
 	@Override
-	public void applyCSSPropertyBackgroundColor(Object element, CSSValue value,
-			String pseudo, CSSEngine engine) throws Exception {
+	public void applyCSSPropertyBackgroundColor(Object element, CSSValue value, String pseudo, CSSEngine engine)
+			throws Exception {
+
 		Widget widget = (Widget) ((WidgetElement) element).getNativeWidget();
 		switch (value.getCssValueType()) {
 		case CSSValue.CSS_PRIMITIVE_VALUE:
-			Color newColor = (Color) engine.convert(value, Color.class, widget
-					.getDisplay());
+			Color newColor = (Color) engine.convert(value, Color.class, widget.getDisplay());
 			if (widget instanceof CTabItem) {
 				CTabFolder folder = ((CTabItem) widget).getParent();
 				if ("selected".equals(pseudo)) {
@@ -72,24 +72,34 @@ public class CSSPropertyBackgroundSWTHandler extends AbstractCSSPropertyBackgrou
 					CSSSWTColorHelper.setBackground(folder, newColor);
 				}
 			} else if (widget instanceof ToolItem) {
-				// ToolItem prevents itself from repaints if the same color is set
-				((ToolItem) widget).setBackground(newColor);
+				// In this case we (currently) just do nothing for CSS.
+				// Otherwise there is a conflict with former CTabItem handling - the
+				// toggle buttons are not highlighted any more in dark theme.
+				// This is only a temporary workaround.
+				// (see #467)
 			} else if (widget instanceof Control) {
 				GradientBackgroundListener.remove((Control) widget);
-				CSSSWTColorHelper.setBackground((Control) widget, newColor);
-				CompositeElement.setBackgroundOverriddenByCSSMarker(widget);
+
+				if (widget instanceof CTabFolder) {
+					// in this case we just do nothing for CSS
+					// Reason: Otherwise there are conflict with former CTabItem handling
+					// CompositeElement.setBackgroundOverriddenByCSSMarker(widget) does
+					// also assume that CTabFolder does no background overrides by CSS.
+					// This avoids color changes on tab menu opening (see #536).
+				} else {
+					CSSSWTColorHelper.setBackground((Control) widget, newColor);
+					CompositeElement.setBackgroundOverriddenByCSSMarker(widget);
+				}
 			}
 			break;
 		case CSSValue.CSS_VALUE_LIST:
-			Gradient grad = (Gradient) engine.convert(value, Gradient.class,
-					widget.getDisplay());
+			Gradient grad = (Gradient) engine.convert(value, Gradient.class, widget.getDisplay());
 			if (grad == null) {
 				return; // warn?
 			}
 			if (widget instanceof CTabItem) {
 				CTabFolder folder = ((CTabItem) widget).getParent();
-				Color[] colors = CSSSWTColorHelper.getSWTColors(grad,
-						folder.getDisplay(), engine);
+				Color[] colors = CSSSWTColorHelper.getSWTColors(grad, folder.getDisplay(), engine);
 				int[] percents = CSSSWTColorHelper.getPercents(grad);
 
 				if ("selected".equals(pseudo)) {
@@ -109,12 +119,11 @@ public class CSSPropertyBackgroundSWTHandler extends AbstractCSSPropertyBackgrou
 	}
 
 	@Override
-	public void applyCSSPropertyBackgroundImage(Object element, CSSValue value,
-			String pseudo, CSSEngine engine) throws Exception {
+	public void applyCSSPropertyBackgroundImage(Object element, CSSValue value, String pseudo, CSSEngine engine)
+			throws Exception {
 		// Widget control = (Widget) element;
 		Widget widget = (Widget) ((WidgetElement) element).getNativeWidget();
-		Image image = (Image) engine.convert(value, Image.class,
-				widget.getDisplay());
+		Image image = (Image) engine.convert(value, Image.class, widget.getDisplay());
 		if (widget instanceof CTabFolder && "selected".equals(pseudo)) {
 			((CTabFolder) widget).setSelectionBackground(image);
 		} else if (widget instanceof Button) {
@@ -129,20 +138,17 @@ public class CSSPropertyBackgroundSWTHandler extends AbstractCSSPropertyBackgrou
 	}
 
 	@Override
-	public String retrieveCSSPropertyBackgroundColor(Object element,
-			String pseudo, CSSEngine engine) throws Exception {
+	public String retrieveCSSPropertyBackgroundColor(Object element, String pseudo, CSSEngine engine) throws Exception {
 		Widget widget = (Widget) element;
 		Color color = null;
 		if (widget instanceof CTabItem) {
 			if ("selected".equals(pseudo)) {
-				color = ((CTabItem) widget).getParent()
-						.getSelectionBackground();
+				color = ((CTabItem) widget).getParent().getSelectionBackground();
 			} else {
 				color = ((CTabItem) widget).getParent().getBackground();
 			}
 
-		}
-		else if (widget instanceof ToolItem) {
+		} else if (widget instanceof ToolItem) {
 			color = ((ToolItem) widget).getBackground();
 		}
 
@@ -151,6 +157,5 @@ public class CSSPropertyBackgroundSWTHandler extends AbstractCSSPropertyBackgrou
 		}
 		return engine.convert(color, Color.class, null);
 	}
-
 
 }

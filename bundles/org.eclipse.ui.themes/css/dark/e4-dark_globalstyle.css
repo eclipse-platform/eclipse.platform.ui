@@ -57,9 +57,9 @@ TabFolder > Composite > * > * { /* [style~='SWT.NO_BACKGROUND'] <- generate E4 n
 	color:'#org-eclipse-ui-workbench-DARK_FOREGROUND'; 
 }
 
+/* Toolbar should inherit the colors of its container to avoid drawing artifacts*/
 ToolBar {
-    /* Because resizing leads to a change in style inheritance we do not use 'inherit', but define an explicit background color here */
-    background-color: '#org-eclipse-ui-workbench-DARK_BACKGROUND';
+	background-color:inherit;	
 }
 
 Combo,

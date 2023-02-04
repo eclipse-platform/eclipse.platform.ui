@@ -51,6 +51,7 @@ public class ToolItemTest extends CSSSWTTestCase {
 	}
 
 	@Test
+	@Disabled("Implementation was removed because problems when parent toolbar inside CTabFolder")
 	void testBackgroundColor() {
 		var toolItemToTest = createTestToolItem("ToolItem { background-color: #FF0000;}",
 				SWT.PUSH);
@@ -75,6 +76,7 @@ public class ToolItemTest extends CSSSWTTestCase {
 	}
 
 	@Test
+	@Disabled("Implementation was removed because problems when parent toolbar inside CTabFolder")
 	void ensurePseudoAttributeAllowsToSelectionPushButton() {
 		var toolItemToTest = createTestToolItem(
 				"ToolItem[style~='SWT.CHECK'] { background-color: #FF0000; color: #0000FF }", SWT.CHECK);
@@ -86,6 +88,20 @@ public class ToolItemTest extends CSSSWTTestCase {
 				"ToolItem[style~='SWT.PUSH'] { background-color: #FF0000; color: #0000FF }", SWT.CHECK);
 
 		assertNotEquals(RED, unStyledBToolItem.getBackground().getRGB());
+		assertNotEquals(BLUE, unStyledBToolItem.getForeground().getRGB());
+
+	}
+
+	@Test
+	void ensurePseudoAttributeAllowsToSelectionPushButtonOnlyForeground() {
+		var toolItemToTest = createTestToolItem(
+				"ToolItem[style~='SWT.CHECK'] { color: #0000FF }", SWT.CHECK);
+
+		assertEquals(BLUE, toolItemToTest.getForeground().getRGB());
+
+		var unStyledBToolItem = createTestToolItem(
+				"ToolItem[style~='SWT.PUSH'] { color: #0000FF }", SWT.CHECK);
+
 		assertNotEquals(BLUE, unStyledBToolItem.getForeground().getRGB());
 
 	}
