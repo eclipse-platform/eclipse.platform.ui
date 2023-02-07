@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -60,8 +60,6 @@ import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.views.navigator.ResourceSorter;
-
 /**
  * Implements the Resource Navigator view.
  */
@@ -258,14 +256,6 @@ public class AdaptedResourceNavigator extends ViewPart {
 	 */
 	public AbstractUIPlugin getPlugin() {
 		return WorkbenchPlugin.getDefault();
-	}
-
-	/**
-	 * Returns the current sorter.
-	 * @since 2.0
-	 */
-	public ResourceSorter getSorter() {
-		return (ResourceSorter) getViewer().getSorter();
 	}
 
 	/**
