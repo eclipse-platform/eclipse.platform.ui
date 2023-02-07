@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,18 +20,12 @@ import java.text.Collator;
 // the INavigatorSorterService has a method that returns a ViewerSorter, so
 // we can't convert this to a ViewerComparator.
 import org.eclipse.core.resources.IResource;
-import org.eclipse.ui.views.navigator.ResourceSorter;
+import org.eclipse.ui.views.navigator.ResourceComparator;
 
 /**
- * TODO - This refers to the deprecated ResourceSorter, however we are stuck with this
- * for the time being because the CommonSorter extension point uses a ViewerSorter.
- * We should provide an option for a ViewerComparator and then we can remove this
- * class.
- *
  * @since 3.2
- *
  */
-public class ResourceExtensionSorter extends ResourceSorter {
+public class ResourceExtensionComparator extends ResourceComparator {
 
 	private Collator icuCollator;
 
@@ -40,8 +34,8 @@ public class ResourceExtensionSorter extends ResourceSorter {
 	 * criteria.
 	 *
 	 */
-	public ResourceExtensionSorter() {
-		super(ResourceSorter.NAME);
+	public ResourceExtensionComparator() {
+		super(ResourceComparator.NAME);
 		icuCollator = Collator.getInstance();
 	}
 
