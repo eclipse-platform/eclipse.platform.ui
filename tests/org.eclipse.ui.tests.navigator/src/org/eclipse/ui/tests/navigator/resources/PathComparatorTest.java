@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Red Hat Inc.
+ * Copyright (c) 2016, 2023 Red Hat Inc.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,12 +13,14 @@
  ******************************************************************************/
 package org.eclipse.ui.tests.navigator.resources;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.Comparator;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.internal.navigator.resources.nested.PathComparator;
-import org.junit.Assert;
 import org.junit.Test;
 
 public class PathComparatorTest {
@@ -29,16 +31,15 @@ public class PathComparatorTest {
 
 		boolean equals = p1.equals(p2);
 		int compare = COMPARATOR.compare(p1, p2);
-
 		if (equals != (compare == 0)) {
-			Assert.fail("Path.equals() == " + equals + " inconsistent with " + PathComparator.class.getName()
+			fail("Path.equals() == " + equals + " inconsistent with " + PathComparator.class.getName()
 					+ ".compare() == " + compare + " for paths '" + p1 + "' and '" + p2 + "'");
 		}
 	}
 
 	private static void assertLessThan(IPath p1, IPath p2) {
 		int compare = COMPARATOR.compare(p1, p2);
-		Assert.assertTrue(PathComparator.class.getName() + ".compare() returned " + compare
+		assertTrue(PathComparator.class.getName() + ".compare() returned " + compare
 				+ " expected less than zero for paths '" + p1 + "' and '"
 				+ p2 + "'", compare < 0);
 	}
@@ -49,9 +50,9 @@ public class PathComparatorTest {
 		Path abc = new Path("a/b/c");
 		Path ac = new Path("a/c");
 		Path acb = new Path("a/c/b");
-		Assert.assertTrue(COMPARATOR.compare(ab, abc) < 0);
-		Assert.assertTrue(COMPARATOR.compare(abc, ac) < 0);
-		Assert.assertTrue(COMPARATOR.compare(ac, acb) < 0);
+		assertTrue(COMPARATOR.compare(ab, abc) < 0);
+		assertTrue(COMPARATOR.compare(abc, ac) < 0);
+		assertTrue(COMPARATOR.compare(ac, acb) < 0);
 	}
 
 	@Test
