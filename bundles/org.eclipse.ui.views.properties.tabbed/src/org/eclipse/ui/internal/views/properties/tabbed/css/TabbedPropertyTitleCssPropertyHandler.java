@@ -14,7 +14,6 @@ package org.eclipse.ui.internal.views.properties.tabbed.css;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelper;
 import org.eclipse.e4.ui.css.swt.properties.AbstractCSSPropertySWTHandler;
@@ -23,8 +22,7 @@ import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyTitle;
 import org.w3c.dom.css.CSSValue;
 
-public class TabbedPropertyTitleCssPropertyHandler extends AbstractCSSPropertySWTHandler
-		implements ICSSPropertyHandler {
+public class TabbedPropertyTitleCssPropertyHandler extends AbstractCSSPropertySWTHandler {
 
 	private static final String GRADIENT_START = "swt-backgroundGradientStart-color"; //$NON-NLS-1$
 	private static final String GRADIENT_END = "swt-backgroundGradientEnd-color"; //$NON-NLS-1$

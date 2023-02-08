@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.views.properties.tabbed.views;
 
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeNode;
 import org.eclipse.jface.viewers.Viewer;
@@ -24,12 +23,8 @@ import org.eclipse.ui.tests.views.properties.tabbed.model.Information;
 import org.eclipse.ui.tests.views.properties.tabbed.model.Project;
 import org.eclipse.ui.tests.views.properties.tabbed.model.Warning;
 
-public class TestsViewContentProvider
-	implements IStructuredContentProvider, ITreeContentProvider {
+public class TestsViewContentProvider implements ITreeContentProvider {
 
-	/**
-	 *
-	 */
 	private final TestsView view;
 
 	/**
