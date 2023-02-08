@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 IBM Corporation and others.
+ * Copyright (c) 2006, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -140,15 +140,11 @@ public class TreeContentProviderTest {
 		IViewerLabelProvider labelProvider = new ViewerLabelProvider() {
 			@Override
 			public void updateLabel(ViewerLabel label, Object element) {
-				if (element instanceof SimpleNode) {
-					SimpleNode node = (SimpleNode) element;
-
+				if (element instanceof SimpleNode node) {
 					label.setText(node.getNodeName());
 				}
 
-				if (element instanceof Integer) {
-					Integer node = (Integer) element;
-
+				if (element instanceof Integer node) {
 					label.setText("Integer " + node);
 				}
 			}
