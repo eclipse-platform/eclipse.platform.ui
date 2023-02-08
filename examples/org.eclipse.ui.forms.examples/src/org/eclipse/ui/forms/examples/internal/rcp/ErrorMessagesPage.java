@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -185,8 +185,8 @@ public class ErrorMessagesPage extends FormPage {
 				FormText text = toolkit.createFormText(shell, true);
 				configureFormText(form.getForm(), text);
 				// stext.setFormText(text);
-				if (href instanceof IMessage[])
-					text.setText(createFormTextContent((IMessage[]) href),
+				if (href instanceof IMessage[] message)
+					text.setText(createFormTextContent(message),
 							true, false);
 				shell.setLocation(hl);
 				// Point size = shell.computeSize(400, SWT.DEFAULT);
