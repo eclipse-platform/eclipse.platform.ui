@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Google, Inc. and others.
+ * Copyright (c) 2018, 2023 Google, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -87,9 +87,8 @@ public class HintAdjustmentTest {
 	void verifyComputeSize(Control control) {
 		int widthAdjustment;
 		int heightAdjustment;
-		if (control instanceof Scrollable) {
+		if (control instanceof Scrollable scrollable) {
 			// For scrollables, subtract off the trim size
-			Scrollable scrollable = (Scrollable) control;
 			Rectangle trim = scrollable.computeTrim(0, 0, 0, 0);
 
 			widthAdjustment = trim.width;

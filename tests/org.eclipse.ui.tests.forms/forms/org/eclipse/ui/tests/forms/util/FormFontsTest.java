@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -31,12 +31,13 @@ public class FormFontsTest {
 		Display display = Display.getCurrent();
 		FormFonts instance = FormFonts.getInstance();
 		// ensure the singleton is returning the same instance
-		assertTrue("getInstance() returned a different FormFonts instance", instance.equals(FormFonts.getInstance()));
+		assertEquals("getInstance() returned a different FormFonts instance", instance, FormFonts.getInstance());
 		Font boldSystemFont = instance.getBoldFont(display, display.getSystemFont());
 		instance.markFinished(boldSystemFont, display);
 		// ensure the singleton is returning the same instance after creating and disposing one gradient
-		assertTrue("getInstance() returned a different FormFonts instance after creation and disposal of one bold font",
-				instance.equals(FormFonts.getInstance()));
+		assertEquals(
+				"getInstance() returned a different FormFonts instance after creation and disposal of one bold font",
+				instance, FormFonts.getInstance());
 	}
 
 	@Test

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -40,12 +40,12 @@ public class FormImagesTest {
 		Display display = Display.getCurrent();
 		FormImages instance = FormImages.getInstance();
 		// ensure the singleton is returning the same instance
-		assertTrue("getInstance() returned a different FormImages instance", instance.equals(FormImages.getInstance()));
+		assertEquals("getInstance() returned a different FormImages instance", instance, FormImages.getInstance());
 		Image gradient = instance.getGradient(new Color(display, 1, 1, 1), new Color(display, 7, 7, 7), 21, 21, 0, display);
 		instance.markFinished(gradient, display);
 		// ensure the singleton is returning the same instance after creating and disposing one gradient
-		assertTrue("getInstance() returned a different FormImages instance after creation and disposal of one image",
-				instance.equals(FormImages.getInstance()));
+		assertEquals("getInstance() returned a different FormImages instance after creation and disposal of one image",
+				instance, FormImages.getInstance());
 	}
 
 	@Test
