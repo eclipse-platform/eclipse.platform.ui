@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 IBM Corporation and others.
+ * Copyright (c) 2006, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -41,9 +41,7 @@ public class PropertyActionProvider extends CommonActionProvider {
 	public void init(ICommonActionExtensionSite aSite) {
 
 		ICommonViewerSite viewSite = aSite.getViewSite();
-		if(viewSite instanceof ICommonViewerWorkbenchSite) {
-			ICommonViewerWorkbenchSite workbenchSite =
-				(ICommonViewerWorkbenchSite) viewSite;
+		if (viewSite instanceof ICommonViewerWorkbenchSite workbenchSite) {
 			openAction =
 				new OpenPropertyAction(workbenchSite.getPage(),
 										workbenchSite.getSelectionProvider());
