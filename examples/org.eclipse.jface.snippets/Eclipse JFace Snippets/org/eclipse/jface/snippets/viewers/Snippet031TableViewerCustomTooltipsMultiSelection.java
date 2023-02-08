@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 Adam Neal and others.
+ * Copyright (c) 2007, 2023 Adam Neal and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -59,10 +59,12 @@ public class Snippet031TableViewerCustomTooltipsMultiSelection {
 
 		@Override
 		public String getColumnText(Object element, int columnIndex) {
-			if (element instanceof MyModel) {
+			if (element instanceof MyModel model) {
 				switch (columnIndex) {
-					case 0: return ((MyModel)element).col1;
-					case 1: return ((MyModel)element).col2;
+				case 0:
+					return model.col1;
+				case 1:
+					return model.col2;
 				}
 			}
 			return "";

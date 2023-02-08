@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Tom Schindl and others.
+ * Copyright (c) 2006, 2023 Tom Schindl and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -217,8 +217,8 @@ public class Snippet061FakedNativeCellEditor {
 			if (img != null) {
 				Rectangle bounds;
 
-				if (event.item instanceof TableItem) {
-					bounds = ((TableItem) event.item).getBounds(event.index);
+				if (event.item instanceof TableItem ti) {
+					bounds = ti.getBounds(event.index);
 				} else {
 					bounds = ((TreeItem) event.item).getBounds(event.index);
 				}
