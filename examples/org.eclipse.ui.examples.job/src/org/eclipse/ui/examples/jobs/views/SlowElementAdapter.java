@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -37,8 +37,8 @@ public class SlowElementAdapter implements IDeferredWorkbenchAdapter {
 
 	@Override
 	public void fetchDeferredChildren(Object object, IElementCollector collector, IProgressMonitor monitor) {
-		if (object instanceof SlowElement) {
-			Object[] children = ((SlowElement) object).getChildren();
+		if (object instanceof SlowElement slow) {
+			Object[] children = slow.getChildren();
 			if (isBatchFetchedChildren()) {
 				sleep();
 				collector.add(children, monitor);
@@ -77,8 +77,8 @@ public class SlowElementAdapter implements IDeferredWorkbenchAdapter {
 
 	@Override
 	public Object[] getChildren(Object object) {
-		if (object instanceof SlowElement) {
-			return ((SlowElement) object).getChildren();
+		if (object instanceof SlowElement slow) {
+			return slow.getChildren();
 		}
 		return new Object[0];
 	}
@@ -91,16 +91,16 @@ public class SlowElementAdapter implements IDeferredWorkbenchAdapter {
 
 	@Override
 	public String getLabel(Object o) {
-		if (o instanceof SlowElement) {
-			return ((SlowElement) o).getName();
+		if (o instanceof SlowElement slow) {
+			return slow.getName();
 		}
 		return "unknown"; //$NON-NLS-1$
 	}
 
 	@Override
 	public Object getParent(Object o) {
-		if (o instanceof SlowElement) {
-			return ((SlowElement) o).getParent();
+		if (o instanceof SlowElement slow) {
+			return slow.getParent();
 		}
 		return null;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -24,8 +24,8 @@ public class DeferredContentProvider extends BaseWorkbenchContentProvider {
 
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		if (viewer instanceof AbstractTreeViewer) {
-			manager = new DeferredTreeContentManager((AbstractTreeViewer) viewer);
+		if (viewer instanceof AbstractTreeViewer treeViewer) {
+			manager = new DeferredTreeContentManager(treeViewer);
 		}
 		super.inputChanged(viewer, oldInput, newInput);
 	}
