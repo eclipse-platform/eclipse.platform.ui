@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -49,8 +49,7 @@ public class EditInfoHandler extends AbstractHandler {
 		if (sel == null) {
 			sel = HandlerUtil.getCurrentSelection(event);
 		}
-		if (sel instanceof IStructuredSelection && !sel.isEmpty()) {
-			IStructuredSelection selection = (IStructuredSelection) sel;
+		if (sel instanceof IStructuredSelection selection && !sel.isEmpty()) {
 			Person person = (Person) selection.getFirstElement();
 			PersonInput input = new PersonInput(person.getId());
 			try {

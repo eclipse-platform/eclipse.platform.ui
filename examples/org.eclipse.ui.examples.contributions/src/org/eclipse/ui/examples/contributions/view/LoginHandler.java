@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2008, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -39,8 +39,7 @@ public class LoginHandler extends AbstractHandler {
 		if (sel == null) {
 			sel = HandlerUtil.getCurrentSelection(event);
 		}
-		if (sel instanceof IStructuredSelection && !sel.isEmpty()) {
-			IStructuredSelection selection = (IStructuredSelection) sel;
+		if (sel instanceof IStructuredSelection selection && !sel.isEmpty()) {
 			Person person = (Person) selection.getFirstElement();
 			IPersonService service = part.getSite().getService(IPersonService.class);
 			service.login(person);
