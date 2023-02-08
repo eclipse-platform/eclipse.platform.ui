@@ -20,7 +20,6 @@ import java.util.List;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 
 public class FileTableContentProvider implements IStructuredContentProvider, IFileSearchContentProvider {
@@ -28,7 +27,6 @@ public class FileTableContentProvider implements IStructuredContentProvider, IFi
 	private final Object[] EMPTY_ARR= new Object[0];
 
 	private FileSearchPage fPage;
-	private AbstractTextSearchResult fResult;
 
 	public FileTableContentProvider(FileSearchPage page) {
 		fPage= page;
@@ -77,9 +75,7 @@ public class FileTableContentProvider implements IStructuredContentProvider, IFi
 
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		if (newInput instanceof FileSearchResult) {
-			fResult= (FileSearchResult) newInput;
-		}
+		// nothing to do
 	}
 
 	@Override
