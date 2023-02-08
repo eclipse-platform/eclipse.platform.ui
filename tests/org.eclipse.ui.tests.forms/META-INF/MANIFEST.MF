@@ -2,13 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Forms Test
 Bundle-SymbolicName: org.eclipse.ui.tests.forms;singleton:=true
-Bundle-Version: 3.9.300.qualifier
+Bundle-Version: 3.10.0.qualifier
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.test.performance,
  org.eclipse.ui.forms,
  org.junit
 Bundle-Vendor: Eclipse.org
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Eclipse-BundleShape: dir
 Automatic-Module-Name: org.eclipse.ui.tests.forms
