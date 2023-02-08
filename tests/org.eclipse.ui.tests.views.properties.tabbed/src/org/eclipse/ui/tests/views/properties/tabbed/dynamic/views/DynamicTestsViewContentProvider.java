@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.views.properties.tabbed.dynamic.views;
 
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.tests.views.properties.tabbed.dynamic.model.DynamicTestsElement;
@@ -24,7 +23,7 @@ import org.eclipse.ui.tests.views.properties.tabbed.dynamic.model.DynamicTestsEl
  * @author Anthony Hunter
  */
 public class DynamicTestsViewContentProvider implements
-		IStructuredContentProvider, ITreeContentProvider {
+		ITreeContentProvider {
 
 	private DynamicTestsTreeNode invisibleRoot;
 
