@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2018 IBM Corporation and others.
+ * Copyright (c) 2014, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -153,8 +153,8 @@ public class FoldersView extends ViewPart {
 
 		@Override
 		public Object getParent(Object child) {
-			if (child instanceof TreeItem) {
-				return ((TreeItem) child).getParent();
+			if (child instanceof TreeItem ti) {
+				return ti.getParent();
 			}
 			return null;
 		}
@@ -162,16 +162,16 @@ public class FoldersView extends ViewPart {
 		@Override
 		public Object[] getChildren(Object parent) {
 			List<TreeItem> children = null;
-			if (parent instanceof TreeItem) {
-				children = ((TreeItem) parent).getChildren();
+			if (parent instanceof TreeItem ti) {
+				children = ti.getChildren();
 			}
 			return children != null ? children.toArray() : new Object[0];
 		}
 
 		@Override
 		public boolean hasChildren(Object elem) {
-			if (elem instanceof TreeItem) {
-				return ((TreeItem) elem).getChildren() != null;
+			if (elem instanceof TreeItem ti) {
+				return ti.getChildren() != null;
 			}
 			return false;
 		}
@@ -199,8 +199,7 @@ public class FoldersView extends ViewPart {
 		}
 
 		private boolean isFolderType(Object elem) {
-			return elem instanceof TreeItem
-					&& ((TreeItem) elem).getValue() instanceof FolderType;
+			return elem instanceof TreeItem ti && ti.getValue() instanceof FolderType;
 		}
 
 		@Override
