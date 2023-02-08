@@ -225,4 +225,6 @@ public final class SearchMessages extends NLS {
 	public static String TextSearchEngineRegistry_defaulttextsearch_label;
 	public static String FileSearchQuery_singularPatternWithFileExt;
 	public static String FileSearchQuery_pluralPatternWithFileExt;
+	public static String DragAdapter_title;
+	public static String DragAdapter_checkDeleteMessage;
 }
