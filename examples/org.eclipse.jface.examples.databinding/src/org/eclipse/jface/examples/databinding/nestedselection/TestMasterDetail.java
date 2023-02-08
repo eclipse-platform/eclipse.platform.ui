@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 IBM Corporation and others.
+ * Copyright (c) 2006, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -65,8 +65,8 @@ public class TestMasterDetail {
 			IStatus result = super.doSet(observableValue, value);
 			if (result.isOK()) {
 				Object changed = observableValue;
-				if (changed instanceof IObserving) {
-					changed = ((IObserving) changed).getObserved();
+				if (changed instanceof IObserving o) {
+					changed = o.getObserved();
 				}
 				System.out.println("changed: " + changed);
 			}

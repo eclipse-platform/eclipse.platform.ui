@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2015 db4objects Inc.  http://www.db4o.com
+ * Copyright (C) 2005, 2023 db4objects Inc.  http://www.db4o.com
  *
  *
  * This program and the accompanying materials
@@ -109,9 +109,8 @@ public class DuckType implements InvocationHandler {
 	}
 
 	@Override
-public boolean equals(Object obj) {
-		if (obj instanceof Wrapper) {
-			Wrapper proxy = (Wrapper) obj;
+	public boolean equals(Object obj) {
+		if (obj instanceof Wrapper proxy) {
 			Object wrappedValue = proxy.duckType_GetWrappedValue();
 			return wrappedValue.equals(object);
 		}
@@ -119,7 +118,7 @@ public boolean equals(Object obj) {
 	}
 
 	@Override
-public int hashCode() {
+	public int hashCode() {
 		return object.hashCode();
 	}
 }
