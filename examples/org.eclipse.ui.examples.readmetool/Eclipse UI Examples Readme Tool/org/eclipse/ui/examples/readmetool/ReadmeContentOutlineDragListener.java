@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -55,11 +55,11 @@ public class ReadmeContentOutlineDragListener extends DragSourceAdapter {
 	private String getSegmentText() {
 		StringBuilder result = new StringBuilder();
 		ISelection selection = page.getSelection();
-		if (selection instanceof org.eclipse.jface.viewers.IStructuredSelection) {
+		if (selection instanceof IStructuredSelection structuredSelection) {
 			result.append("\n"); //$NON-NLS-1$
-			for (Object a : (IStructuredSelection) selection) {
-				if (a instanceof MarkElement) {
-					result.append(((MarkElement) a).getLabel(a));
+			for (Object a : structuredSelection) {
+				if (a instanceof MarkElement markElement) {
+					result.append(markElement.getLabel(a));
 					result.append("\n"); //$NON-NLS-1$
 				}
 			}
