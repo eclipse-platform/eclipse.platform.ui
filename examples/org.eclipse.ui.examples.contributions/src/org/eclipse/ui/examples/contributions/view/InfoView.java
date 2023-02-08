@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -79,8 +79,8 @@ public class InfoView extends ViewPart {
 
 		@Override
 		public Object[] getElements(Object inputElement) {
-			if (inputElement instanceof List) {
-				return ((List<?>) inputElement).toArray();
+			if (inputElement instanceof List<?> list) {
+				return list.toArray();
 			}
 			return null;
 		}
