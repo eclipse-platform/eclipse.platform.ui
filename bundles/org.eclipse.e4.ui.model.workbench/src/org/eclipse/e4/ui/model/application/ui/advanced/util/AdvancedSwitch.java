@@ -143,13 +143,13 @@ public class AdvancedSwitch<T1> extends Switch<T1> {
 			if (result == null)
 				result = caseWindowElement(perspectiveStack);
 			if (result == null)
-				result = caseApplicationElement(perspectiveStack);
-			if (result == null)
-				result = caseLocalizable(perspectiveStack);
-			if (result == null)
 				result = caseElementContainer(perspectiveStack);
 			if (result == null)
 				result = caseUIElement(perspectiveStack);
+			if (result == null)
+				result = caseApplicationElement(perspectiveStack);
+			if (result == null)
+				result = caseLocalizable(perspectiveStack);
 			if (result == null)
 				result = defaultCase(theEObject);
 			return result;
