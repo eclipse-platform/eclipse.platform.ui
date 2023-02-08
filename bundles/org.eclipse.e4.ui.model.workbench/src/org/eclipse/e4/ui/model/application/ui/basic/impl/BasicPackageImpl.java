@@ -101,6 +101,83 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART = 0;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.CompositePartImpl <em>Composite Part</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.CompositePartImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getCompositePart()
+	 * @since 1.1
+	 * @generated
+	 */
+	public static final int COMPOSITE_PART = 1;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartStackImpl <em>Part Stack</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.PartStackImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getPartStack()
+	 * @since 1.0
+	 * @generated
+	 */
+	public static final int PART_STACK = 2;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartSashContainerImpl <em>Part Sash Container</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.PartSashContainerImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getPartSashContainer()
+	 * @since 1.0
+	 * @generated
+	 */
+	public static final int PART_SASH_CONTAINER = 3;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl <em>Window</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getWindow()
+	 * @since 1.0
+	 * @generated
+	 */
+	public static final int WINDOW = 4;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.TrimmedWindowImpl <em>Trimmed Window</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.TrimmedWindowImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getTrimmedWindow()
+	 * @since 1.0
+	 * @generated
+	 */
+	public static final int TRIMMED_WINDOW = 5;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.MTrimElement <em>Trim Element</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.MTrimElement
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getTrimElement()
+	 * @since 1.0
+	 * @generated
+	 */
+	public static final int TRIM_ELEMENT = 6;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement <em>Part Sash Container Element</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getPartSashContainerElement()
+	 * @since 1.0
+	 * @generated
+	 */
+	public static final int PART_SASH_CONTAINER_ELEMENT = 7;
+
+	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -108,7 +185,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__ELEMENT_ID = UiPackageImpl.UI_ELEMENT__ELEMENT_ID;
+	public static final int PART_SASH_CONTAINER_ELEMENT__ELEMENT_ID = UiPackageImpl.UI_ELEMENT__ELEMENT_ID;
 
 	/**
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
@@ -118,7 +195,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__PERSISTED_STATE = UiPackageImpl.UI_ELEMENT__PERSISTED_STATE;
+	public static final int PART_SASH_CONTAINER_ELEMENT__PERSISTED_STATE = UiPackageImpl.UI_ELEMENT__PERSISTED_STATE;
 
 	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
@@ -128,7 +205,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__TAGS = UiPackageImpl.UI_ELEMENT__TAGS;
+	public static final int PART_SASH_CONTAINER_ELEMENT__TAGS = UiPackageImpl.UI_ELEMENT__TAGS;
 
 	/**
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
@@ -138,7 +215,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__CONTRIBUTOR_URI = UiPackageImpl.UI_ELEMENT__CONTRIBUTOR_URI;
+	public static final int PART_SASH_CONTAINER_ELEMENT__CONTRIBUTOR_URI = UiPackageImpl.UI_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
@@ -148,7 +225,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__TRANSIENT_DATA = UiPackageImpl.UI_ELEMENT__TRANSIENT_DATA;
+	public static final int PART_SASH_CONTAINER_ELEMENT__TRANSIENT_DATA = UiPackageImpl.UI_ELEMENT__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -158,7 +235,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__WIDGET = UiPackageImpl.UI_ELEMENT__WIDGET;
+	public static final int PART_SASH_CONTAINER_ELEMENT__WIDGET = UiPackageImpl.UI_ELEMENT__WIDGET;
 
 	/**
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
@@ -168,7 +245,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__RENDERER = UiPackageImpl.UI_ELEMENT__RENDERER;
+	public static final int PART_SASH_CONTAINER_ELEMENT__RENDERER = UiPackageImpl.UI_ELEMENT__RENDERER;
 
 	/**
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
@@ -178,7 +255,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__TO_BE_RENDERED = UiPackageImpl.UI_ELEMENT__TO_BE_RENDERED;
+	public static final int PART_SASH_CONTAINER_ELEMENT__TO_BE_RENDERED = UiPackageImpl.UI_ELEMENT__TO_BE_RENDERED;
 
 	/**
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
@@ -188,7 +265,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__ON_TOP = UiPackageImpl.UI_ELEMENT__ON_TOP;
+	public static final int PART_SASH_CONTAINER_ELEMENT__ON_TOP = UiPackageImpl.UI_ELEMENT__ON_TOP;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -198,7 +275,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__VISIBLE = UiPackageImpl.UI_ELEMENT__VISIBLE;
+	public static final int PART_SASH_CONTAINER_ELEMENT__VISIBLE = UiPackageImpl.UI_ELEMENT__VISIBLE;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -208,7 +285,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__PARENT = UiPackageImpl.UI_ELEMENT__PARENT;
+	public static final int PART_SASH_CONTAINER_ELEMENT__PARENT = UiPackageImpl.UI_ELEMENT__PARENT;
 
 	/**
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
@@ -218,7 +295,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__CONTAINER_DATA = UiPackageImpl.UI_ELEMENT__CONTAINER_DATA;
+	public static final int PART_SASH_CONTAINER_ELEMENT__CONTAINER_DATA = UiPackageImpl.UI_ELEMENT__CONTAINER_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
@@ -228,7 +305,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__CUR_SHARED_REF = UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF;
+	public static final int PART_SASH_CONTAINER_ELEMENT__CUR_SHARED_REF = UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF;
 
 	/**
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
@@ -238,7 +315,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__VISIBLE_WHEN = UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN;
+	public static final int PART_SASH_CONTAINER_ELEMENT__VISIBLE_WHEN = UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN;
 
 	/**
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
@@ -248,7 +325,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__ACCESSIBILITY_PHRASE = UiPackageImpl.UI_ELEMENT__ACCESSIBILITY_PHRASE;
+	public static final int PART_SASH_CONTAINER_ELEMENT__ACCESSIBILITY_PHRASE = UiPackageImpl.UI_ELEMENT__ACCESSIBILITY_PHRASE;
 
 	/**
 	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
@@ -258,7 +335,197 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__LOCALIZED_ACCESSIBILITY_PHRASE = UiPackageImpl.UI_ELEMENT__LOCALIZED_ACCESSIBILITY_PHRASE;
+	public static final int PART_SASH_CONTAINER_ELEMENT__LOCALIZED_ACCESSIBILITY_PHRASE = UiPackageImpl.UI_ELEMENT__LOCALIZED_ACCESSIBILITY_PHRASE;
+
+	/**
+	 * The number of structural features of the '<em>Part Sash Container Element</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.0
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART_SASH_CONTAINER_ELEMENT_FEATURE_COUNT = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The operation id for the '<em>Update Localization</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.1
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART_SASH_CONTAINER_ELEMENT___UPDATE_LOCALIZATION = UiPackageImpl.UI_ELEMENT___UPDATE_LOCALIZATION;
+
+	/**
+	 * The number of operations of the '<em>Part Sash Container Element</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.0
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART_SASH_CONTAINER_ELEMENT_OPERATION_COUNT = UiPackageImpl.UI_ELEMENT_OPERATION_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.0
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART__ELEMENT_ID = PART_SASH_CONTAINER_ELEMENT__ELEMENT_ID;
+
+	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.0
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART__PERSISTED_STATE = PART_SASH_CONTAINER_ELEMENT__PERSISTED_STATE;
+
+	/**
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.0
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART__TAGS = PART_SASH_CONTAINER_ELEMENT__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.0
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART__CONTRIBUTOR_URI = PART_SASH_CONTAINER_ELEMENT__CONTRIBUTOR_URI;
+
+	/**
+	 * The feature id for the '<em><b>Transient Data</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.0
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART__TRANSIENT_DATA = PART_SASH_CONTAINER_ELEMENT__TRANSIENT_DATA;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.0
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART__WIDGET = PART_SASH_CONTAINER_ELEMENT__WIDGET;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.0
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART__RENDERER = PART_SASH_CONTAINER_ELEMENT__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.0
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART__TO_BE_RENDERED = PART_SASH_CONTAINER_ELEMENT__TO_BE_RENDERED;
+
+	/**
+	 * The feature id for the '<em><b>On Top</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.0
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART__ON_TOP = PART_SASH_CONTAINER_ELEMENT__ON_TOP;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.0
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART__VISIBLE = PART_SASH_CONTAINER_ELEMENT__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.0
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART__PARENT = PART_SASH_CONTAINER_ELEMENT__PARENT;
+
+	/**
+	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.0
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART__CONTAINER_DATA = PART_SASH_CONTAINER_ELEMENT__CONTAINER_DATA;
+
+	/**
+	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.0
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART__CUR_SHARED_REF = PART_SASH_CONTAINER_ELEMENT__CUR_SHARED_REF;
+
+	/**
+	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.0
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART__VISIBLE_WHEN = PART_SASH_CONTAINER_ELEMENT__VISIBLE_WHEN;
+
+	/**
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.0
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART__ACCESSIBILITY_PHRASE = PART_SASH_CONTAINER_ELEMENT__ACCESSIBILITY_PHRASE;
+
+	/**
+	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.0
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART__LOCALIZED_ACCESSIBILITY_PHRASE = PART_SASH_CONTAINER_ELEMENT__LOCALIZED_ACCESSIBILITY_PHRASE;
 
 	/**
 	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute.
@@ -268,7 +535,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__CONTRIBUTION_URI = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 0;
+	public static final int PART__CONTRIBUTION_URI = PART_SASH_CONTAINER_ELEMENT_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Object</b></em>' attribute.
@@ -278,7 +545,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__OBJECT = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 1;
+	public static final int PART__OBJECT = PART_SASH_CONTAINER_ELEMENT_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Context</b></em>' attribute.
@@ -288,7 +555,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__CONTEXT = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 2;
+	public static final int PART__CONTEXT = PART_SASH_CONTAINER_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
@@ -298,7 +565,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__VARIABLES = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 3;
+	public static final int PART__VARIABLES = PART_SASH_CONTAINER_ELEMENT_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Properties</b></em>' map.
@@ -308,7 +575,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__PROPERTIES = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 4;
+	public static final int PART__PROPERTIES = PART_SASH_CONTAINER_ELEMENT_FEATURE_COUNT + 4;
 
 	/**
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
@@ -318,7 +585,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__LABEL = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 5;
+	public static final int PART__LABEL = PART_SASH_CONTAINER_ELEMENT_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -328,7 +595,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__ICON_URI = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 6;
+	public static final int PART__ICON_URI = PART_SASH_CONTAINER_ELEMENT_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
@@ -338,7 +605,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__TOOLTIP = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 7;
+	public static final int PART__TOOLTIP = PART_SASH_CONTAINER_ELEMENT_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Localized Label</b></em>' attribute.
@@ -348,7 +615,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__LOCALIZED_LABEL = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 8;
+	public static final int PART__LOCALIZED_LABEL = PART_SASH_CONTAINER_ELEMENT_FEATURE_COUNT + 8;
 
 	/**
 	 * The feature id for the '<em><b>Localized Tooltip</b></em>' attribute.
@@ -358,7 +625,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__LOCALIZED_TOOLTIP = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 9;
+	public static final int PART__LOCALIZED_TOOLTIP = PART_SASH_CONTAINER_ELEMENT_FEATURE_COUNT + 9;
 
 	/**
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
@@ -368,7 +635,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__HANDLERS = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 10;
+	public static final int PART__HANDLERS = PART_SASH_CONTAINER_ELEMENT_FEATURE_COUNT + 10;
 
 	/**
 	 * The feature id for the '<em><b>Dirty</b></em>' attribute.
@@ -378,7 +645,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__DIRTY = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 11;
+	public static final int PART__DIRTY = PART_SASH_CONTAINER_ELEMENT_FEATURE_COUNT + 11;
 
 	/**
 	 * The feature id for the '<em><b>Binding Contexts</b></em>' reference list.
@@ -388,7 +655,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__BINDING_CONTEXTS = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 12;
+	public static final int PART__BINDING_CONTEXTS = PART_SASH_CONTAINER_ELEMENT_FEATURE_COUNT + 12;
 
 	/**
 	 * The feature id for the '<em><b>Menus</b></em>' containment reference list.
@@ -398,7 +665,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__MENUS = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 13;
+	public static final int PART__MENUS = PART_SASH_CONTAINER_ELEMENT_FEATURE_COUNT + 13;
 
 	/**
 	 * The feature id for the '<em><b>Toolbar</b></em>' containment reference.
@@ -408,7 +675,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__TOOLBAR = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 14;
+	public static final int PART__TOOLBAR = PART_SASH_CONTAINER_ELEMENT_FEATURE_COUNT + 14;
 
 	/**
 	 * The feature id for the '<em><b>Closeable</b></em>' attribute.
@@ -418,7 +685,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__CLOSEABLE = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 15;
+	public static final int PART__CLOSEABLE = PART_SASH_CONTAINER_ELEMENT_FEATURE_COUNT + 15;
 
 	/**
 	 * The feature id for the '<em><b>Description</b></em>' attribute.
@@ -428,7 +695,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__DESCRIPTION = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 16;
+	public static final int PART__DESCRIPTION = PART_SASH_CONTAINER_ELEMENT_FEATURE_COUNT + 16;
 
 	/**
 	 * The feature id for the '<em><b>Localized Description</b></em>' attribute.
@@ -438,7 +705,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__LOCALIZED_DESCRIPTION = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 17;
+	public static final int PART__LOCALIZED_DESCRIPTION = PART_SASH_CONTAINER_ELEMENT_FEATURE_COUNT + 17;
 
 	/**
 	 * The feature id for the '<em><b>Trim Bars</b></em>' containment reference list.
@@ -449,7 +716,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__TRIM_BARS = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 18;
+	public static final int PART__TRIM_BARS = PART_SASH_CONTAINER_ELEMENT_FEATURE_COUNT + 18;
 
 	/**
 	 * The number of structural features of the '<em>Part</em>' class.
@@ -459,7 +726,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_FEATURE_COUNT = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 19;
+	public static final int PART_FEATURE_COUNT = PART_SASH_CONTAINER_ELEMENT_FEATURE_COUNT + 19;
 
 	/**
 	 * The operation id for the '<em>Update Localization</em>' operation.
@@ -469,7 +736,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART___UPDATE_LOCALIZATION = UiPackageImpl.UI_ELEMENT_OPERATION_COUNT + 0;
+	public static final int PART___UPDATE_LOCALIZATION = PART_SASH_CONTAINER_ELEMENT_OPERATION_COUNT + 0;
 
 	/**
 	 * The number of operations of the '<em>Part</em>' class.
@@ -479,18 +746,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_OPERATION_COUNT = UiPackageImpl.UI_ELEMENT_OPERATION_COUNT + 1;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.CompositePartImpl <em>Composite Part</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.CompositePartImpl
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getCompositePart()
-	 * @since 1.1
-	 * @generated
-	 */
-	public static final int COMPOSITE_PART = 1;
+	public static final int PART_OPERATION_COUNT = PART_SASH_CONTAINER_ELEMENT_OPERATION_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -904,17 +1160,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int COMPOSITE_PART_OPERATION_COUNT = PART_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartStackImpl <em>Part Stack</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.PartStackImpl
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getPartStack()
-	 * @since 1.0
-	 * @generated
-	 */
-	public static final int PART_STACK = 2;
-
-	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1123,17 +1368,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int PART_STACK_OPERATION_COUNT = UiPackageImpl.GENERIC_STACK_OPERATION_COUNT + 0;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartSashContainerImpl <em>Part Sash Container</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.PartSashContainerImpl
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getPartSashContainer()
-	 * @since 1.0
-	 * @generated
-	 */
-	public static final int PART_SASH_CONTAINER = 3;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -1354,17 +1588,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int PART_SASH_CONTAINER_OPERATION_COUNT = UiPackageImpl.GENERIC_TILE_OPERATION_COUNT + 0;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl <em>Window</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getWindow()
-	 * @since 1.0
-	 * @generated
-	 */
-	public static final int WINDOW = 4;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -1755,17 +1978,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int WINDOW_OPERATION_COUNT = UiPackageImpl.ELEMENT_CONTAINER_OPERATION_COUNT + 1;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.TrimmedWindowImpl <em>Trimmed Window</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.TrimmedWindowImpl
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getTrimmedWindow()
-	 * @since 1.0
-	 * @generated
-	 */
-	public static final int TRIMMED_WINDOW = 5;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -2168,17 +2380,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int TRIMMED_WINDOW_OPERATION_COUNT = WINDOW_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.MTrimElement <em>Trim Element</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.MTrimElement
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getTrimElement()
-	 * @since 1.0
-	 * @generated
-	 */
-	public static final int TRIM_ELEMENT = 6;
-
-	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2367,207 +2568,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int TRIM_ELEMENT_OPERATION_COUNT = UiPackageImpl.UI_ELEMENT_OPERATION_COUNT + 0;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement <em>Part Sash Container Element</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getPartSashContainerElement()
-	 * @since 1.0
-	 * @generated
-	 */
-	public static final int PART_SASH_CONTAINER_ELEMENT = 7;
-
-	/**
-	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.0
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_SASH_CONTAINER_ELEMENT__ELEMENT_ID = UiPackageImpl.UI_ELEMENT__ELEMENT_ID;
-
-	/**
-	 * The feature id for the '<em><b>Persisted State</b></em>' map.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.0
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_SASH_CONTAINER_ELEMENT__PERSISTED_STATE = UiPackageImpl.UI_ELEMENT__PERSISTED_STATE;
-
-	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.0
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_SASH_CONTAINER_ELEMENT__TAGS = UiPackageImpl.UI_ELEMENT__TAGS;
-
-	/**
-	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.0
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_SASH_CONTAINER_ELEMENT__CONTRIBUTOR_URI = UiPackageImpl.UI_ELEMENT__CONTRIBUTOR_URI;
-
-	/**
-	 * The feature id for the '<em><b>Transient Data</b></em>' map.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.0
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_SASH_CONTAINER_ELEMENT__TRANSIENT_DATA = UiPackageImpl.UI_ELEMENT__TRANSIENT_DATA;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.0
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_SASH_CONTAINER_ELEMENT__WIDGET = UiPackageImpl.UI_ELEMENT__WIDGET;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.0
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_SASH_CONTAINER_ELEMENT__RENDERER = UiPackageImpl.UI_ELEMENT__RENDERER;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.0
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_SASH_CONTAINER_ELEMENT__TO_BE_RENDERED = UiPackageImpl.UI_ELEMENT__TO_BE_RENDERED;
-
-	/**
-	 * The feature id for the '<em><b>On Top</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.0
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_SASH_CONTAINER_ELEMENT__ON_TOP = UiPackageImpl.UI_ELEMENT__ON_TOP;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.0
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_SASH_CONTAINER_ELEMENT__VISIBLE = UiPackageImpl.UI_ELEMENT__VISIBLE;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.0
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_SASH_CONTAINER_ELEMENT__PARENT = UiPackageImpl.UI_ELEMENT__PARENT;
-
-	/**
-	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.0
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_SASH_CONTAINER_ELEMENT__CONTAINER_DATA = UiPackageImpl.UI_ELEMENT__CONTAINER_DATA;
-
-	/**
-	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.0
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_SASH_CONTAINER_ELEMENT__CUR_SHARED_REF = UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF;
-
-	/**
-	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.0
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_SASH_CONTAINER_ELEMENT__VISIBLE_WHEN = UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN;
-
-	/**
-	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.0
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_SASH_CONTAINER_ELEMENT__ACCESSIBILITY_PHRASE = UiPackageImpl.UI_ELEMENT__ACCESSIBILITY_PHRASE;
-
-	/**
-	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.0
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_SASH_CONTAINER_ELEMENT__LOCALIZED_ACCESSIBILITY_PHRASE = UiPackageImpl.UI_ELEMENT__LOCALIZED_ACCESSIBILITY_PHRASE;
-
-	/**
-	 * The number of structural features of the '<em>Part Sash Container Element</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.0
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_SASH_CONTAINER_ELEMENT_FEATURE_COUNT = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 0;
-
-	/**
-	 * The operation id for the '<em>Update Localization</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.1
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_SASH_CONTAINER_ELEMENT___UPDATE_LOCALIZATION = UiPackageImpl.UI_ELEMENT___UPDATE_LOCALIZATION;
-
-	/**
-	 * The number of operations of the '<em>Part Sash Container Element</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.0
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_SASH_CONTAINER_ELEMENT_OPERATION_COUNT = UiPackageImpl.UI_ELEMENT_OPERATION_COUNT + 0;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.MWindowElement <em>Window Element</em>}' class.
@@ -3880,9 +3880,9 @@ public class BasicPackageImpl extends EPackageImpl {
 		setNsURI(eNS_URI);
 
 		// Obtain other dependent packages
-		UiPackageImpl theUiPackage = (UiPackageImpl) EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI);
 		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl) EPackage.Registry.INSTANCE
 				.getEPackage(ApplicationPackageImpl.eNS_URI);
+		UiPackageImpl theUiPackage = (UiPackageImpl) EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI);
 		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl) EPackage.Registry.INSTANCE
 				.getEPackage(CommandsPackageImpl.eNS_URI);
 		MenuPackageImpl theMenuPackage = (MenuPackageImpl) EPackage.Registry.INSTANCE
@@ -3893,7 +3893,6 @@ public class BasicPackageImpl extends EPackageImpl {
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
-		partEClass.getESuperTypes().add(theUiPackage.getUIElement());
 		partEClass.getESuperTypes().add(this.getPartSashContainerElement());
 		partEClass.getESuperTypes().add(this.getStackElement());
 		partEClass.getESuperTypes().add(theApplicationPackage.getContribution());
@@ -3946,8 +3945,6 @@ public class BasicPackageImpl extends EPackageImpl {
 		g1 = createEGenericType(theUiPackage.getGenericTrimContainer());
 		g2 = createEGenericType(this.getTrimElement());
 		g1.getETypeArguments().add(g2);
-		trimBarEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(theUiPackage.getUIElement());
 		trimBarEClass.getEGenericSuperTypes().add(g1);
 		stackElementEClass.getESuperTypes().add(theUiPackage.getUIElement());
 
