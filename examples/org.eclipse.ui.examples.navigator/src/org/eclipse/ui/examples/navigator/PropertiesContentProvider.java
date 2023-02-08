@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 IBM Corporation.
+ * Copyright (c) 2006, 2023 IBM Corporation.
  * Licensed Material - Property of IBM.
  * All rights reserved.
  * US Government Users Restricted Rights - Use, duplication or disclosure
@@ -65,9 +65,8 @@ public class PropertiesContentProvider implements ITreeContentProvider,
 		Object[] children = null;
 		if (parentElement instanceof PropertiesTreeData) {
 			children = NO_CHILDREN;
-		} else if(parentElement instanceof IFile) {
+		} else if (parentElement instanceof IFile modelFile) {
 			/* possible model file */
-			IFile modelFile = (IFile) parentElement;
 			if(PROPERTIES_EXT.equals(modelFile.getFileExtension())) {
 				children = cachedModelMap.get(modelFile);
 				if(children == null && updateModel(modelFile) != null) {
@@ -109,8 +108,7 @@ public class PropertiesContentProvider implements ITreeContentProvider,
 
 	@Override
 	public Object getParent(Object element) {
-		if (element instanceof PropertiesTreeData) {
-			PropertiesTreeData data = (PropertiesTreeData) element;
+		if (element instanceof PropertiesTreeData data) {
 			return data.getFile();
 		}
 		return null;
@@ -120,8 +118,8 @@ public class PropertiesContentProvider implements ITreeContentProvider,
 	public boolean hasChildren(Object element) {
 		if (element instanceof PropertiesTreeData) {
 			return false;
-		} else if(element instanceof IFile) {
-			return PROPERTIES_EXT.equals(((IFile) element).getFileExtension());
+		} else if(element instanceof IFile file) {
+			return PROPERTIES_EXT.equals(file.getFileExtension());
 		}
 		return false;
 	}

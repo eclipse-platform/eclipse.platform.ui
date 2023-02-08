@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 IBM Corporation.
+ * Copyright (c) 2006, 2023 IBM Corporation.
  * Licensed Material - Property of IBM.
  * All rights reserved.
  * US Government Users Restricted Rights - Use, duplication or disclosure
@@ -34,8 +34,7 @@ public class PropertiesLabelProvider extends LabelProvider implements
 
 	@Override
 	public String getText(Object element) {
-		if (element instanceof PropertiesTreeData) {
-			PropertiesTreeData data = (PropertiesTreeData) element;
+		if (element instanceof PropertiesTreeData data) {
 			return data.getName() + "= " + data.getValue(); //$NON-NLS-1$
 		}
 		return null;
@@ -43,8 +42,7 @@ public class PropertiesLabelProvider extends LabelProvider implements
 
 	@Override
 	public String getDescription(Object anElement) {
-		if (anElement instanceof PropertiesTreeData) {
-			PropertiesTreeData data = (PropertiesTreeData) anElement;
+		if (anElement instanceof PropertiesTreeData data) {
 			return "Property: " + data.getName(); //$NON-NLS-1$
 		}
 		return null;
