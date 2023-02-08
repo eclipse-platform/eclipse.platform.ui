@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2018 IBM Corporation and others.
+ * Copyright (c) 2015, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -33,7 +33,6 @@ import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
-import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.PaintEvent;
@@ -85,10 +84,10 @@ public class FolderPreviewView extends ViewPart {
 	private TableViewer viewer;
 
 	private ISelectionListener mailFolderChangedListener = (part, selection) -> {
-		if (part instanceof FoldersView && selection instanceof StructuredSelection) {
-			Object selected = ((TreeSelection) selection).getFirstElement();
-			if (selected instanceof TreeItem && ((TreeItem) selected).getValue() instanceof FolderType) {
-				updateMailFolder((FolderType) ((TreeItem) selected).getValue());
+		if (part instanceof FoldersView && selection instanceof StructuredSelection structuredSelection) {
+			Object selected = structuredSelection.getFirstElement();
+			if (selected instanceof TreeItem ti && ti.getValue() instanceof FolderType) {
+				updateMailFolder((FolderType) ti.getValue());
 			}
 		}
 	};
@@ -250,8 +249,8 @@ public class FolderPreviewView extends ViewPart {
 	}
 
 	private void refreshControl(org.eclipse.swt.widgets.Control control) {
-		if (control instanceof Composite) {
-			for (Control child : ((Composite) control).getChildren()) {
+		if (control instanceof Composite composite) {
+			for (Control child : composite.getChildren()) {
 				refreshControl(child);
 			}
 		} else {
