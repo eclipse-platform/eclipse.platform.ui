@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -106,8 +106,8 @@ public class ReadmeEditor extends TextEditor {
 	public <T> T getAdapter(Class<T> key) {
 		if (key.equals(IContentOutlinePage.class)) {
 			IEditorInput input = getEditorInput();
-			if (input instanceof IFileEditorInput) {
-				page = new ReadmeContentOutlinePage(((IFileEditorInput) input).getFile());
+			if (input instanceof IFileEditorInput feInput) {
+				page = new ReadmeContentOutlinePage(feInput.getFile());
 				return (T) page;
 			}
 		}

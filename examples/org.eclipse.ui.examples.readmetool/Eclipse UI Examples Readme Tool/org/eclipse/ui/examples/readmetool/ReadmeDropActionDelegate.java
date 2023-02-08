@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -29,8 +29,7 @@ public class ReadmeDropActionDelegate implements IDropActionDelegate {
 
 	@Override
 	public boolean run(Object source, Object target) {
-		if (source instanceof byte[] && target instanceof IFile) {
-			IFile file = (IFile) target;
+		if (source instanceof byte[] && target instanceof IFile file) {
 			try {
 				file.appendContents(new ByteArrayInputStream((byte[]) source), false, true, null);
 			} catch (CoreException e) {
