@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014 IBM Corporation and others.
+ * Copyright (c) 2013, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,9 +14,9 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.bindings.tests;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -109,14 +109,14 @@ public class BindingCreateTest {
 	public void testNoAttrs() {
 		Binding b = bs.createBinding(seq, cmd, ID_WINDOW, null);
 		assertNotNull(b);
-		assertTrue(seq.equals(b.getTriggerSequence()));
-		assertTrue(cmd.equals(b.getParameterizedCommand()));
-		assertTrue(ID_WINDOW.equals(b.getContextId()));
+		assertEquals(seq, b.getTriggerSequence());
+		assertEquals(cmd, b.getParameterizedCommand());
+		assertEquals(ID_WINDOW, b.getContextId());
 		assertNotNull(b.getSchemeId());
-		assertTrue(DEFAULT_SCHEME_ID.equals(b.getSchemeId()));
+		assertEquals(DEFAULT_SCHEME_ID, b.getSchemeId());
 		assertNull(b.getLocale());
 		assertNull(b.getPlatform());
-		assertTrue(b.getType() == Binding.SYSTEM);
+		assertEquals(Binding.SYSTEM, b.getType());
 	}
 
 	@Test
@@ -129,42 +129,42 @@ public class BindingCreateTest {
 	public void testBindingNoScheme() {
 		Binding b = bs.createBinding(seq, cmd, ID_WINDOW, emptyAttrs);
 		assertNotNull(b);
-		assertTrue(seq.equals(b.getTriggerSequence()));
-		assertTrue(cmd.equals(b.getParameterizedCommand()));
-		assertTrue(ID_WINDOW.equals(b.getContextId()));
+		assertEquals(seq, b.getTriggerSequence());
+		assertEquals(cmd, b.getParameterizedCommand());
+		assertEquals(ID_WINDOW, b.getContextId());
 		assertNotNull(b.getSchemeId());
-		assertTrue(DEFAULT_SCHEME_ID.equals(b.getSchemeId()));
+		assertEquals(DEFAULT_SCHEME_ID, b.getSchemeId());
 		assertNull(b.getLocale());
 		assertNull(b.getPlatform());
-		assertTrue(b.getType() == Binding.SYSTEM);
+		assertEquals(Binding.SYSTEM, b.getType());
 	}
 
 	@Test
 	public void testSchemeonly() {
 		Binding b = bs.createBinding(seq, cmd, ID_WINDOW, schemeOnly);
 		assertNotNull(b);
-		assertTrue(seq.equals(b.getTriggerSequence()));
-		assertTrue(cmd.equals(b.getParameterizedCommand()));
-		assertTrue(ID_WINDOW.equals(b.getContextId()));
+		assertEquals(seq, b.getTriggerSequence());
+		assertEquals(cmd, b.getParameterizedCommand());
+		assertEquals(ID_WINDOW, b.getContextId());
 		assertNotNull(b.getSchemeId());
-		assertTrue(DEFAULT_SCHEME_ID.equals(b.getSchemeId()));
+		assertEquals(DEFAULT_SCHEME_ID, b.getSchemeId());
 		assertNull(b.getLocale());
 		assertNull(b.getPlatform());
-		assertTrue(b.getType() == Binding.SYSTEM);
+		assertEquals(Binding.SYSTEM, b.getType());
 	}
 
 	@Test
 	public void testSchemeAndTypeAttrs() {
 		Binding b = bs.createBinding(seq, cmd, ID_WINDOW, schemeAndTypeAttrs);
 		assertNotNull(b);
-		assertTrue(seq.equals(b.getTriggerSequence()));
-		assertTrue(cmd.equals(b.getParameterizedCommand()));
-		assertTrue(ID_WINDOW.equals(b.getContextId()));
+		assertEquals(seq, b.getTriggerSequence());
+		assertEquals(cmd, b.getParameterizedCommand());
+		assertEquals(ID_WINDOW, b.getContextId());
 		assertNotNull(b.getSchemeId());
-		assertTrue(DEFAULT_SCHEME_ID.equals(b.getSchemeId()));
+		assertEquals(DEFAULT_SCHEME_ID, b.getSchemeId());
 		assertNull(b.getLocale());
 		assertNull(b.getPlatform());
-		assertTrue(b.getType() == Binding.USER);
+		assertEquals(Binding.USER, b.getType());
 	}
 
 }
