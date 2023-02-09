@@ -371,7 +371,6 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- end-user-doc -->
 	 * @see #getTrimBars()
 	 * @since 1.3
-	 * </p>
 	 * @generated
 	 * @ordered
 	 */
@@ -768,7 +767,6 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @since 1.3
-	 * </p>
 	 * @generated
 	 */
 	@Override

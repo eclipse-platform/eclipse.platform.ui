@@ -78,8 +78,8 @@ public interface MPerspective
 	 * <!-- begin-model-doc -->
 	 * <p>
 	 * The collection of TrimBars associated with this perspective.
-	 * @since 1.3
 	 * </p>
+	 * @since 1.3
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Trim Bars</em>' containment reference list.
 	 * @model containment="true"
