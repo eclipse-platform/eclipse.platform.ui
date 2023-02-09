@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2016 Daniel Raap and others.
+ * Copyright (c) 2015, 2023 Daniel Raap and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -44,8 +44,8 @@ public class AbstractCSSEngineTest {
 		objectUnderTest.setElementProvider((element, engine) -> {
 			// throws NPE if parameter is null
 			Objects.requireNonNull(element);
-			if (element instanceof Element) {
-				return (Element) element;
+			if (element instanceof Element e) {
+				return e;
 			}
 			return null;
 		});
