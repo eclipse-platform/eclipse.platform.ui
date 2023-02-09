@@ -610,7 +610,6 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @since 1.3
-	 * </p>
 	 * @generated
 	 * @ordered
 	 */
@@ -1358,7 +1357,6 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.advanced.MPerspective#getTrimBars()
 	 * @see #getPerspective()
 	 * @since 1.3
-	 * </p>
 	 * @generated
 	 */
 	public EReference getPerspective_TrimBars() {
@@ -1621,7 +1619,6 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @since 1.3
-		 * </p>
 		 * @generated
 		 */
 		public static final EReference PERSPECTIVE__TRIM_BARS = eINSTANCE.getPerspective_TrimBars();

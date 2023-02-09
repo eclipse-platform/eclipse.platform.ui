@@ -335,7 +335,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @since 1.3
-	 * </p>
 	 * @generated
 	 * @ordered
 	 */
@@ -711,7 +710,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getTrimBars()
 	 * @see #getPartDescriptor()
 	 * @since 1.3
-	 * </p>
 	 * @generated
 	 */
 	public EReference getPartDescriptor_TrimBars() {
@@ -1037,7 +1035,6 @@ public class BasicPackageImpl extends EPackageImpl {
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @since 1.3
-		 * </p>
 		 * @generated
 		 */
 		public static final EReference PART_DESCRIPTOR__TRIM_BARS = eINSTANCE.getPartDescriptor_TrimBars();

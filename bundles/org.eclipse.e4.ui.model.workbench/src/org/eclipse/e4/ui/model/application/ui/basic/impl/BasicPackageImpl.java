@@ -712,7 +712,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @since 1.3
-	 * </p>
 	 * @generated
 	 * @ordered
 	 */
@@ -1093,7 +1092,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @since 1.3
-	 * </p>
 	 * @generated
 	 * @ordered
 	 */
@@ -3494,7 +3492,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.basic.MPart#getTrimBars()
 	 * @see #getPart()
 	 * @since 1.3
-	 * </p>
 	 * @generated
 	 */
 	public EReference getPart_TrimBars() {
@@ -4098,7 +4095,6 @@ public class BasicPackageImpl extends EPackageImpl {
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @since 1.3
-		 * </p>
 		 * @generated
 		 */
 		public static final EReference PART__TRIM_BARS = eINSTANCE.getPart_TrimBars();

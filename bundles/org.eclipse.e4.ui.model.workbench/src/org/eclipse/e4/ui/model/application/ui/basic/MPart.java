@@ -178,8 +178,8 @@ public interface MPart extends MPartSashContainerElement, MStackElement, MContri
 	 * <!-- begin-model-doc -->
 	 * <p>
 	 * The collection of TrimBars associated with this part.
-	 * @since 1.3
 	 * </p>
+	 * @since 1.3
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Trim Bars</em>' containment reference list.
 	 * @model containment="true"

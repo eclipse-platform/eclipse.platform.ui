@@ -369,7 +369,6 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 	 * <!-- end-user-doc -->
 	 * @see #getTrimBars()
 	 * @since 1.3
-	 * </p>
 	 * @generated
 	 * @ordered
 	 */
@@ -500,7 +499,7 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 	@Override
 	public List<MHandler> getHandlers() {
 		if (handlers == null) {
-			handlers = new EObjectContainmentEList<MHandler>(MHandler.class, this,
+			handlers = new EObjectContainmentEList<>(MHandler.class, this,
 					BasicPackageImpl.PART_DESCRIPTOR__HANDLERS);
 		}
 		return handlers;
@@ -514,7 +513,7 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 	@Override
 	public List<MBindingContext> getBindingContexts() {
 		if (bindingContexts == null) {
-			bindingContexts = new EObjectResolvingEList<MBindingContext>(MBindingContext.class, this,
+			bindingContexts = new EObjectResolvingEList<>(MBindingContext.class, this,
 					BasicPackageImpl.PART_DESCRIPTOR__BINDING_CONTEXTS);
 		}
 		return bindingContexts;
@@ -576,7 +575,7 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 	@Override
 	public List<MMenu> getMenus() {
 		if (menus == null) {
-			menus = new EObjectContainmentEList<MMenu>(MMenu.class, this, BasicPackageImpl.PART_DESCRIPTOR__MENUS);
+			menus = new EObjectContainmentEList<>(MMenu.class, this, BasicPackageImpl.PART_DESCRIPTOR__MENUS);
 		}
 		return menus;
 	}
@@ -753,7 +752,7 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 	@Override
 	public List<String> getVariables() {
 		if (variables == null) {
-			variables = new EDataTypeUniqueEList<String>(String.class, this,
+			variables = new EDataTypeUniqueEList<>(String.class, this,
 					BasicPackageImpl.PART_DESCRIPTOR__VARIABLES);
 		}
 		return variables;
@@ -767,7 +766,7 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 	@Override
 	public Map<String, String> getProperties() {
 		if (properties == null) {
-			properties = new EcoreEMap<String, String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP,
+			properties = new EcoreEMap<>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP,
 					StringToStringMapImpl.class, this, BasicPackageImpl.PART_DESCRIPTOR__PROPERTIES);
 		}
 		return properties.map();
@@ -777,13 +776,12 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @since 1.3
-	 * </p>
 	 * @generated
 	 */
 	@Override
 	public List<MTrimBar> getTrimBars() {
 		if (trimBars == null) {
-			trimBars = new EObjectContainmentEList<MTrimBar>(MTrimBar.class, this,
+			trimBars = new EObjectContainmentEList<>(MTrimBar.class, this,
 					BasicPackageImpl.PART_DESCRIPTOR__TRIM_BARS);
 		}
 		return trimBars;
