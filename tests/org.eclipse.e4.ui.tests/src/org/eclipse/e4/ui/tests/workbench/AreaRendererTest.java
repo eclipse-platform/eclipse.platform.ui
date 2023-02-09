@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Bachmann electronic GmbH and others.
+ * Copyright (c) 2019, 2023 Bachmann electronic GmbH and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,9 @@
  ******************************************************************************/
 
 package org.eclipse.e4.ui.tests.workbench;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
@@ -28,7 +31,6 @@ import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.custom.CTabFolder;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -78,7 +80,7 @@ public class AreaRendererTest {
 		wb.createAndRunUI(window);
 
 		// Make sure the widget is now a CTabFolder
-		Assert.assertTrue(area.getWidget() instanceof CTabFolder);
+		assertTrue(area.getWidget() instanceof CTabFolder);
 	}
 
 	@Test
@@ -112,6 +114,6 @@ public class AreaRendererTest {
 		wb.createAndRunUI(window);
 
 		// Make sure the widget is not a CTabFolder
-		Assert.assertFalse(area.getWidget() instanceof CTabFolder);
+		assertFalse(area.getWidget() instanceof CTabFolder);
 	}
 }

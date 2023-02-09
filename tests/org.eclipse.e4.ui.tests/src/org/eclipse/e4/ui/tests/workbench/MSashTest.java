@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,7 +14,8 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
@@ -103,16 +104,16 @@ public class MSashTest {
 			cdVal0 = Integer.parseInt(part0.getContainerData());
 		} catch (NumberFormatException e) {
 		}
-		assertTrue("Part0 data is not an integer", cdVal0 != -1);
+		assertNotEquals("Part0 data is not an integer", -1, cdVal0);
 
 		int cdVal1 = -1;
 		try {
 			cdVal1 = Integer.parseInt(part1.getContainerData());
 		} catch (NumberFormatException e) {
 		}
-		assertTrue("Part1 data is not an integer", cdVal1 != -1);
+		assertNotEquals("Part1 data is not an integer", -1, cdVal1);
 
-		assertTrue("Values should be equal", cdVal0 == cdVal1);
+		assertEquals("Values should be equal", cdVal0, cdVal1);
 	}
 
 	private MWindow createSashWithNViews(int n) {

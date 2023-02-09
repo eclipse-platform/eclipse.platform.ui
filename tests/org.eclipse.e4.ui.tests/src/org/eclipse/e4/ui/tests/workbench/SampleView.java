@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2019 IBM Corporation and others.
+ * Copyright (c) 2009, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -75,34 +75,32 @@ public class SampleView {
 
 			@Override
 			public Object[] getChildren(Object parentElement) {
-				if (parentElement instanceof IConfigurationElement) {
-					return ((IConfigurationElement) parentElement)
-							.getChildren();
+				if (parentElement instanceof IConfigurationElement ce) {
+					return ce.getChildren();
 				}
 				return null;
 			}
 
 			@Override
 			public Object getParent(Object element) {
-				if (element instanceof IConfigurationElement) {
-					return ((IConfigurationElement) element).getParent();
+				if (element instanceof IConfigurationElement ce) {
+					return ce.getParent();
 				}
 				return null;
 			}
 
 			@Override
 			public boolean hasChildren(Object element) {
-				if (element instanceof IConfigurationElement) {
-					return ((IConfigurationElement) element).getChildren().length > 0;
+				if (element instanceof IConfigurationElement ce) {
+					return ce.getChildren().length > 0;
 				}
 				return false;
 			}
 
 			@Override
 			public Object[] getElements(Object inputElement) {
-				if (inputElement instanceof IExtension) {
-					return ((IExtension) inputElement)
-							.getConfigurationElements();
+				if (inputElement instanceof IExtension e) {
+					return e.getConfigurationElements();
 				}
 				return null;
 			}
@@ -119,8 +117,7 @@ public class SampleView {
 		viewer.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element) {
-				if (element instanceof IConfigurationElement) {
-					IConfigurationElement c = (IConfigurationElement) element;
+				if (element instanceof IConfigurationElement c) {
 					String tag = c.getName();
 					String id = c.getAttribute("id"); //$NON-NLS-1$
 					if (id == null) {

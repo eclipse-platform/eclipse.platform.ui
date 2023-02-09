@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,7 @@
 package org.eclipse.e4.ui.tests.application;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -327,7 +328,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 
 		IEclipseContext childContext = rule.getApplicationContext().createChild();
 		IEventBroker childEB = childContext.get(IEventBroker.class);
-		assertFalse("child context has same IEventBroker", appEB == childEB);
+		assertNotEquals("child context has same IEventBroker", appEB, childEB);
 
 		final boolean seen[] = { false };
 		childEB.subscribe(testTopic, event -> seen[0] = true);

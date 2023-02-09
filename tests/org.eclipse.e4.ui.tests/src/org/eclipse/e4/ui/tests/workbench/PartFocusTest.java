@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2017 IBM Corporation and others.
+ * Copyright (c) 2010, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -183,7 +183,7 @@ public class PartFocusTest {
 
 	@Test
 	public void testNoActivationOnExplicitInPartWidgetSelection() {
-		assertTrue(eps.getActivePart() == otherPart);
+		assertEquals(otherPart, eps.getActivePart());
 		assertTrue(((PartBackend) otherPart.getObject()).text1.isFocusControl());
 
 		final boolean[] changed = new boolean[] { false };
