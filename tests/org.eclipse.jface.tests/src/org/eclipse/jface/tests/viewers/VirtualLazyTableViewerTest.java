@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,10 +22,9 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.Table;
 
-
 /**
- * The VirtualLazyTableViewerTest is a test of table viewers
- * with lazy population.
+ * The VirtualLazyTableViewerTest is a test of table viewers with lazy
+ * population.
  */
 public class VirtualLazyTableViewerTest extends VirtualTableViewerTest {
 
@@ -35,6 +34,7 @@ public class VirtualLazyTableViewerTest extends VirtualTableViewerTest {
 
 	/**
 	 * Create a new instance of the receiver/
+	 *
 	 * @param name
 	 */
 	public VirtualLazyTableViewerTest(String name) {
@@ -68,7 +68,7 @@ public class VirtualLazyTableViewerTest extends VirtualTableViewerTest {
 	// this method is called from TestLazyModelContentProvider
 	public void updateElementCalled(int index) {
 		updatedElements.add(Integer.valueOf(index));
-		if(updatedElementFailureTriggerIndex!=-1 && updatedElements.size()>=updatedElementFailureTriggerIndex) {
+		if (updatedElementFailureTriggerIndex != -1 && updatedElements.size() >= updatedElementFailureTriggerIndex) {
 			fail("unexpected call to updateElement, this is the " + updatedElements.size() + "th call");
 		}
 	}
@@ -81,7 +81,7 @@ public class VirtualLazyTableViewerTest extends VirtualTableViewerTest {
 		int selectionSize = children.length / 2;
 		int[] indices = new int[selectionSize];
 		for (int i = 0; i < indices.length; i++) {
-			indices[i]  = i * 2;
+			indices[i] = i * 2;
 		}
 
 		Table table = ((TableViewer) fViewer).getTable();
@@ -96,12 +96,9 @@ public class VirtualLazyTableViewerTest extends VirtualTableViewerTest {
 
 		IStructuredSelection result = fViewer.getStructuredSelection();
 		assertEquals(selectionSize, result.size());
-		assertTrue("First elements do not match ",
-				result.getFirstElement() == children[indices[0]]);
+		assertEquals("First elements do not match ", result.getFirstElement(), children[indices[0]]);
 		int lastIndex = indices[indices.length - 1];
-		assertTrue(
-				"Last elements do not match ",
-				result.toArray()[result.size() - 1] == children[lastIndex]);
+		assertEquals("Last elements do not match ", result.toArray()[result.size() - 1], children[lastIndex]);
 
 	}
 
@@ -113,10 +110,10 @@ public class VirtualLazyTableViewerTest extends VirtualTableViewerTest {
 		fViewer.setInput(fRootElement);
 
 		int materializedSize = updatedElements.size();
-		assertTrue("Expected less than " + fRootElement.getChildCount()
-				+ ", actual " + materializedSize,
+		assertTrue("Expected less than " + fRootElement.getChildCount() + ", actual " + materializedSize,
 				materializedSize < fRootElement.getChildCount());
-		// create a new model and check if we get an equal number of calls to updateElement
+		// create a new model and check if we get an equal number of calls to
+		// updateElement
 		setUpModel();
 		updatedElements.clear();
 		fViewer.setInput(fRootElement);
@@ -125,15 +122,14 @@ public class VirtualLazyTableViewerTest extends VirtualTableViewerTest {
 
 	public void testBug160153() {
 		int childCount = fRootElement.getChildCount();
-		TestElement lastChild = fRootElement.getChildAt(childCount-1);
+		TestElement lastChild = fRootElement.getChildAt(childCount - 1);
 		// materialize last child
 		fViewer.setSelection(new StructuredSelection(lastChild));
 		processEvents();
 		assertNotNull("last Child should be in the map", fViewer.testFindItem(lastChild));
-		((TableViewer)fViewer).setItemCount(childCount - 1);
+		((TableViewer) fViewer).setItemCount(childCount - 1);
 		assertNull("last Child should no longer be in the map", fViewer.testFindItem(lastChild));
 	}
-
 
 	@Override
 	public void testSorter() {

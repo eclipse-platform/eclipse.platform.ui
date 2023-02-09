@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2019 IBM Corporation and others.
+ * Copyright (c) 2004, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -77,8 +77,8 @@ public class ResourceManagerTest extends TestCase {
 
 		@Override
 		public boolean equals(Object arg0) {
-			if (arg0 instanceof TestDescriptor) {
-				TestDescriptor td = (TestDescriptor) arg0;
+			if (arg0 instanceof TestDescriptor description) {
+				TestDescriptor td = description;
 
 				return td.toWrap.equals(toWrap);
 			}
@@ -152,10 +152,8 @@ public class ResourceManagerTest extends TestCase {
 
 	protected void validateResource(Object resource) throws Exception {
 		Assert.assertNotNull("Allocated resource was null", resource);
-		if (resource instanceof Image) {
-			Image image = (Image) resource;
-
-			Assert.assertTrue("Image is disposed", !image.isDisposed());
+		if (resource instanceof Image image) {
+			assertFalse("Image is disposed", image.isDisposed());
 			return;
 		}
 	}

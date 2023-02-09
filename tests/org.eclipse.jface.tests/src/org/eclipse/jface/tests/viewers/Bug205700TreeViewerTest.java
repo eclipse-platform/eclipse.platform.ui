@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 Lasse Knudsen and others.
+ * Copyright (c) 2007, 2023 Lasse Knudsen and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -175,8 +175,8 @@ public class Bug205700TreeViewerTest extends TestCase {
 	private static class InternalLabelProvider extends LabelProvider {
 		@Override
 		public String getText(Object element) {
-			if (element instanceof TreeNode) {
-				return ((TreeNode) element).getName();
+			if (element instanceof TreeNode treeNode) {
+				return treeNode.getName();
 			}
 			return null;
 		}
@@ -185,24 +185,24 @@ public class Bug205700TreeViewerTest extends TestCase {
 	private static class InternalContentProvider implements ITreeContentProvider {
 		@Override
 		public Object[] getChildren(Object parentElement) {
-			if (parentElement instanceof TreeNode) {
-				return ((TreeNode) parentElement).getChildren().toArray();
+			if (parentElement instanceof TreeNode treeNode) {
+				return treeNode.getChildren().toArray();
 			}
 			return new Object[0];
 		}
 
 		@Override
 		public Object getParent(Object element) {
-			if (element instanceof TreeNode) {
-				return ((TreeNode) element).getParent();
+			if (element instanceof TreeNode treeNode) {
+				return treeNode.getParent();
 			}
 			return null;
 		}
 
 		@Override
 		public boolean hasChildren(Object element) {
-			if (element instanceof TreeNode) {
-				return !((TreeNode) element).getChildren().isEmpty();
+			if (element instanceof TreeNode treeNode) {
+				return treeNode.getChildren().isEmpty();
 			}
 			return false;
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -44,8 +44,7 @@ public class TestElement implements Cloneable {
 		fId = container.getID() + "-" + p;
 	}
 
-	public TestElement(TestModel model, TestElement container, int level,
-			int position) {
+	public TestElement(TestModel model, TestElement container, int level, int position) {
 		fModel = model;
 		fContainer = container;
 		if (container != null) {
@@ -81,8 +80,7 @@ public class TestElement implements Cloneable {
 	}
 
 	public TestElement[] addChildren(int event) {
-		TestElement elements[] = new TestElement[] {
-				new TestElement(fModel, this), new TestElement(fModel, this) };
+		TestElement elements[] = new TestElement[] { new TestElement(fModel, this), new TestElement(fModel, this) };
 
 		elements[0].fSomeName = "added1";
 		elements[1].fSomeName = "added2";
@@ -120,13 +118,11 @@ public class TestElement implements Cloneable {
 	}
 
 	static public TestElement createModel(int numLevels, int numChildren) {
-		return new TestElement(new TestModel(numLevels, numChildren), null, 0,
-				0);
+		return new TestElement(new TestModel(numLevels, numChildren), null, 0, 0);
 	}
 
 	public void deleteChild(TestElement element) {
-		deleteChild(element, new TestModelChange(TestModelChange.REMOVE, this,
-				element));
+		deleteChild(element, new TestModelChange(TestModelChange.REMOVE, this, element));
 	}
 
 	public void deleteChild(TestElement element, TestModelChange change) {
@@ -140,8 +136,7 @@ public class TestElement implements Cloneable {
 			fChildren.remove(te);
 			te.fIsDeleted = true;
 		}
-		fModel.fireModelChanged(new TestModelChange(
-				TestModelChange.STRUCTURE_CHANGE, this));
+		fModel.fireModelChanged(new TestModelChange(TestModelChange.STRUCTURE_CHANGE, this));
 	}
 
 	public void deleteSomeChildren() {
@@ -150,17 +145,15 @@ public class TestElement implements Cloneable {
 			fChildren.remove(te);
 			te.fIsDeleted = true;
 		}
-		fModel.fireModelChanged(new TestModelChange(
-				TestModelChange.STRUCTURE_CHANGE, this));
+		fModel.fireModelChanged(new TestModelChange(TestModelChange.STRUCTURE_CHANGE, this));
 	}
 
 	@Override
 	public boolean equals(Object arg) {
-		if (!(arg instanceof TestElement)) {
-			return false;
+		if (arg instanceof TestElement element) {
+			return element.fId.equals(fId);
 		}
-		TestElement element = (TestElement) arg;
-		return element.fId.equals(fId);
+		return false;
 	}
 
 	public TestElement getChildAt(int i) {
@@ -173,9 +166,10 @@ public class TestElement implements Cloneable {
 
 	/**
 	 * Get the children of the receiver.
+	 *
 	 * @return TestElement[]
 	 */
-	public TestElement[] getChildren(){
+	public TestElement[] getChildren() {
 		TestElement[] result = new TestElement[fChildren.size()];
 		fChildren.toArray(result);
 		return result;
@@ -223,8 +217,7 @@ public class TestElement implements Cloneable {
 
 	public void setLabel(String label) {
 		fSomeName = label;
-		fModel.fireModelChanged(new TestModelChange(
-				TestModelChange.NON_STRUCTURE_CHANGE, this));
+		fModel.fireModelChanged(new TestModelChange(TestModelChange.NON_STRUCTURE_CHANGE, this));
 	}
 
 	public boolean testDeleted() {

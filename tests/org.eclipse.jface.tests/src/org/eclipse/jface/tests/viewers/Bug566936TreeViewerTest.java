@@ -105,8 +105,8 @@ public class Bug566936TreeViewerTest {
 		@SuppressWarnings("rawtypes")
 		@Override
 		public Object[] getElements(Object inputElement) {
-			if (inputElement instanceof List) {
-				return ((List) inputElement).toArray();
+			if (inputElement instanceof List list) {
+				return list.toArray();
 			}
 			return new Object[0];
 		}

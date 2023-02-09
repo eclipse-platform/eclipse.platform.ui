@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 3034 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -187,7 +187,7 @@ public class TableViewerTest extends StructuredItemViewerTest {
 		TestElement first = fRootElement.getFirstChild();
 		((TestElement) fViewer.getInput()).deleteChild(first);
 		tableviewer.remove(first);
-		assertTrue("Removed item still exists", fViewer.testFindItem(first) == null);
+		assertNull("Removed item still exists", fViewer.testFindItem(first));
 
 	}
 

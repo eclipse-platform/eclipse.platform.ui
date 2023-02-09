@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -24,8 +24,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 
-public class TestModelContentProvider implements ITestModelListener,
-		ITreeContentProvider {
+public class TestModelContentProvider implements ITestModelListener, ITreeContentProvider {
 	Viewer fViewer;
 
 	@Override
@@ -33,52 +32,48 @@ public class TestModelContentProvider implements ITestModelListener,
 	}
 
 	protected void doInsert(TestModelChange change) {
-		if (fViewer instanceof ListViewer) {
-			if (change.getParent() != null
-					&& change.getParent().equals(fViewer.getInput())) {
-				((ListViewer) fViewer).add((Object[]) change.getChildren());
+		if (fViewer instanceof ListViewer viewer) {
+			if (change.getParent() != null && change.getParent().equals(fViewer.getInput())) {
+				viewer.add((Object[]) change.getChildren());
 			}
-		} else if (fViewer instanceof TableViewer) {
-			if (change.getParent() != null
-					&& change.getParent().equals(fViewer.getInput())) {
-				((TableViewer) fViewer).add(change.getChildren());
+		} else if (fViewer instanceof TableViewer viewer) {
+			if (change.getParent() != null && change.getParent().equals(fViewer.getInput())) {
+				viewer.add(change.getChildren());
 			}
-		} else if (fViewer instanceof AbstractTreeViewer) {
-			((AbstractTreeViewer) fViewer).add(change.getParent(), (Object[]) change
-					.getChildren());
-		} else if (fViewer instanceof ComboViewer) {
-			((ComboViewer) fViewer).add((Object[]) change.getChildren());
+		} else if (fViewer instanceof AbstractTreeViewer viewer) {
+			viewer.add(change.getParent(), (Object[]) change.getChildren());
+		} else if (fViewer instanceof ComboViewer viewer) {
+			viewer.add((Object[]) change.getChildren());
 		} else {
 			Assert.isTrue(false, "Unknown kind of viewer");
 		}
 	}
 
 	protected void doNonStructureChange(TestModelChange change) {
-		if (fViewer instanceof StructuredViewer) {
-			((StructuredViewer) fViewer).update(change.getParent(),
-					new String[] { IBasicPropertyConstants.P_TEXT });
+		if (fViewer instanceof StructuredViewer viewer) {
+			viewer.update(change.getParent(), new String[] { IBasicPropertyConstants.P_TEXT });
 		} else {
 			Assert.isTrue(false, "Unknown kind of viewer");
 		}
 	}
 
 	protected void doRemove(TestModelChange change) {
-		if (fViewer instanceof ListViewer) {
-			((ListViewer) fViewer).remove((Object[]) change.getChildren());
-		} else if (fViewer instanceof TableViewer) {
-			((TableViewer) fViewer).remove(change.getChildren());
-		} else if (fViewer instanceof AbstractTreeViewer) {
-			((AbstractTreeViewer) fViewer).remove((Object[]) change.getChildren());
-		} else if (fViewer instanceof ComboViewer) {
-			((ComboViewer) fViewer).remove((Object[]) change.getChildren());
+		if (fViewer instanceof ListViewer viewer) {
+			viewer.remove((Object[]) change.getChildren());
+		} else if (fViewer instanceof TableViewer viewer) {
+			viewer.remove(change.getChildren());
+		} else if (fViewer instanceof AbstractTreeViewer viewer) {
+			viewer.remove((Object[]) change.getChildren());
+		} else if (fViewer instanceof ComboViewer viewer) {
+			viewer.remove((Object[]) change.getChildren());
 		} else {
 			Assert.isTrue(false, "Unknown kind of viewer");
 		}
 	}
 
 	protected void doStructureChange(TestModelChange change) {
-		if (fViewer instanceof StructuredViewer) {
-			((StructuredViewer) fViewer).refresh(change.getParent());
+		if (fViewer instanceof StructuredViewer viewer) {
+			viewer.refresh(change.getParent());
 		} else {
 			Assert.isTrue(false, "Unknown kind of viewer");
 		}
@@ -146,8 +141,7 @@ public class TestModelContentProvider implements ITestModelListener,
 			throw new IllegalArgumentException("Unknown kind of change");
 		}
 
-		StructuredSelection selection = new StructuredSelection(change
-				.getChildren());
+		StructuredSelection selection = new StructuredSelection(change.getChildren());
 		if ((change.getModifiers() & TestModelChange.SELECT) != 0) {
 			((StructuredViewer) fViewer).setSelection(selection);
 		}

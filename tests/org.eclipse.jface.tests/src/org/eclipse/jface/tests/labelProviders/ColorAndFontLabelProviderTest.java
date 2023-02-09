@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,8 @@
  ******************************************************************************/
 
 package org.eclipse.jface.tests.labelProviders;
+
+import static org.junit.Assert.assertNotEquals;
 
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
@@ -36,8 +38,7 @@ import org.eclipse.swt.widgets.TableItem;
  */
 public class ColorAndFontLabelProviderTest extends CompositeLabelProviderTest {
 
-	class ColorAndFontProvider extends LabelProvider implements IColorProvider,
-			IFontProvider {
+	class ColorAndFontProvider extends LabelProvider implements IColorProvider, IFontProvider {
 
 		/**
 		 * Create a new instance of the receiver.
@@ -61,7 +62,6 @@ public class ColorAndFontLabelProviderTest extends CompositeLabelProviderTest {
 			return foreground;
 		}
 
-
 	}
 
 	/**
@@ -84,18 +84,15 @@ public class ColorAndFontLabelProviderTest extends CompositeLabelProviderTest {
 	}
 
 	/**
-	 * Test that all of the colours and fonts from the label provider are
-	 * applied.
+	 * Test that all of the colours and fonts from the label provider are applied.
 	 */
 	public void testColorsAndFonts() {
 		Table table = (Table) fViewer.getControl();
 		TableItem item = table.getItem(0);
 
-		assertTrue("Background was not set", item.getBackground(0).equals(
-				background));
-		assertTrue("Foreground was not set", item.getForeground(0).equals(
-				foreground));
-		assertTrue("Font was not set", item.getFont(0).equals(font));
+		assertEquals("Background was not set", item.getBackground(0), background);
+		assertEquals("Foreground was not set", item.getForeground(0), foreground);
+		assertEquals("Font was not set", item.getFont(0), font);
 
 		Font oldFont = font;
 
@@ -103,12 +100,11 @@ public class ColorAndFontLabelProviderTest extends CompositeLabelProviderTest {
 		fViewer.refresh(item.getData());
 
 		Display display = table.getDisplay();
-		assertTrue("Background was not cleared", item.getBackground(0).equals(
-				display.getSystemColor(SWT.COLOR_LIST_BACKGROUND)));
-		assertTrue("Foreground was not cleared", item.getForeground(0).equals(
-				display.getSystemColor(SWT.COLOR_LIST_FOREGROUND)));
-		assertFalse("Font was not cleared", item.getFont(0).getFontData()[0]
-				.equals(oldFont.getFontData()[0]));
+		assertEquals("Background was not cleared", item.getBackground(0),
+				display.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+		assertEquals("Foreground was not cleared", item.getForeground(0),
+				display.getSystemColor(SWT.COLOR_LIST_FOREGROUND));
+		assertNotEquals("Font was not cleared", item.getFont(0).getFontData()[0], oldFont.getFontData()[0]);
 
 	}
 
