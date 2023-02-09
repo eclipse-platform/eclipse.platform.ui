@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -90,7 +90,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 	public void testDeleteChildren() {
 		TestElement first = fRootElement.getFirstChild();
 		first.deleteChildren();
-		assertTrue("no children", getItemCount(first) == 0);
+		assertEquals("no children", 0, getItemCount(first));
 	}
 
 	public void testDeleteChildrenExpanded() {
@@ -100,7 +100,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		assertNotNull("first child is visible", fViewer.testFindItem(first2));
 
 		first.deleteChildren();
-		assertTrue("no children", getItemCount(first) == 0);
+		assertEquals("no children", 0, getItemCount(first));
 	}
 
 	public void testExpand() {
@@ -157,7 +157,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		fTreeViewer.expandToLevel(first2, 0);
 
 		fTreeViewer.addFilter(new TestLabelFilter());
-		assertTrue("filtered count", getItemCount() == 5);
+		assertEquals("filtered count", 5, getItemCount());
 	}
 
 	public void testInsertChildReveal() {

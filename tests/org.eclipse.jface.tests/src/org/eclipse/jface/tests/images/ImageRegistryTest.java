@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2016 IBM Corporation and others.
+ * Copyright (c) 2004, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -40,7 +40,7 @@ public class ImageRegistryTest extends TestCase {
 		ImageRegistry reg = JFaceResources.getImageRegistry();
 
 		Image result = reg.get((String) null);
-		assertTrue("Registry should handle null", result == null);
+		assertNull("Registry should handle null", result);
 	}
 
 	public void testGetString() {
@@ -58,7 +58,7 @@ public class ImageRegistryTest extends TestCase {
 
 		for (String imageName : imageNames) {
 			Image image1 = reg.get(imageName);
-			assertTrue("Returned null image", image1 != null);
+			assertNotNull("Returned null image", image1);
 		}
 
 	}
@@ -79,7 +79,7 @@ public class ImageRegistryTest extends TestCase {
 				iconDialog.getQuestionImage(), iconDialog.getWarningImage() };
 
 		for (Image image : images) {
-			assertTrue("Returned null image", image != null);
+			assertNotNull("Returned null image", image);
 		}
 
 	}

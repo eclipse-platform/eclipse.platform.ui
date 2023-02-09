@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -28,8 +28,8 @@ public abstract class TestSelectionAction extends TestBrowserAction implements I
 	}
 
 	public TestElement getTestElement(ISelection selection) {
-		if (selection instanceof IStructuredSelection) {
-			return (TestElement) ((IStructuredSelection) selection).getFirstElement();
+		if (selection instanceof IStructuredSelection s) {
+			return (TestElement) s.getFirstElement();
 		}
 		return null;
 	}

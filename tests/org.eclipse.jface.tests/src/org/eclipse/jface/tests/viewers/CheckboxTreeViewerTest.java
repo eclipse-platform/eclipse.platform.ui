@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -91,15 +91,15 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 		CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;
 		TestElement element = fRootElement.getFirstChild();
 
-		assertTrue(ctv.getGrayedElements().length == 0);
+		assertEquals(0, ctv.getGrayedElements().length);
 		assertTrue(!ctv.getGrayed(element));
 
 		ctv.setGrayed(element, true);
-		assertTrue(ctv.getGrayedElements().length == 1);
+		assertEquals(1, ctv.getGrayedElements().length);
 		assertTrue(ctv.getGrayed(element));
 
 		ctv.setGrayed(element, false);
-		assertTrue(ctv.getGrayedElements().length == 0);
+		assertEquals(0, ctv.getGrayedElements().length);
 		assertTrue(!ctv.getGrayed(element));
 	}
 
@@ -112,14 +112,14 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 
 		ctv.setParentsGrayed(firstfirstfirst, true);
 		Object[] elements = ctv.getGrayedElements();
-		assertTrue(elements.length == 3);
+		assertEquals(3, elements.length);
 		for (Object element : elements) {
 			assertTrue(ctv.getGrayed(element));
 		}
 
-		assertTrue(elements[0] == first);
-		assertTrue(elements[1] == firstfirst);
-		assertTrue(elements[2] == firstfirstfirst);
+		assertEquals(first, elements[0]);
+		assertEquals(firstfirst, elements[1]);
+		assertEquals(firstfirstfirst, elements[2]);
 		ctv.setParentsGrayed(firstfirstfirst, false);
 	}
 
@@ -138,13 +138,13 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 		TestMethodsInvokedCheckStateProvider provider = new TestMethodsInvokedCheckStateProvider();
 
 		ctv.setCheckStateProvider(provider);
-		assertTrue("isChecked should be invoked on a refresh", (!provider.isCheckedInvokedOn.isEmpty()));
-		assertTrue("isGrayed should be invoked on a refresh", (!provider.isGrayedInvokedOn.isEmpty()));
+		assertFalse("isChecked should be invoked on a refresh", provider.isCheckedInvokedOn.isEmpty());
+		assertFalse("isGrayed should be invoked on a refresh", provider.isGrayedInvokedOn.isEmpty());
 
 		provider.reset();
 		ctv.refresh();
-		assertTrue("isChecked should be invoked on a refresh", (!provider.isCheckedInvokedOn.isEmpty()));
-		assertTrue("isGrayed should be invoked on a refresh", (!provider.isGrayedInvokedOn.isEmpty()));
+		assertFalse("isChecked should be invoked on a refresh", provider.isCheckedInvokedOn.isEmpty());
+		assertFalse("isGrayed should be invoked on a refresh", provider.isGrayedInvokedOn.isEmpty());
 
 	}
 

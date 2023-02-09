@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -150,9 +150,9 @@ public class TableFontProviderTest extends StructuredViewerTest {
 		FontData[] font1Data = font1.getFontData();
 		FontData[] font2Data = font2.getFontData();
 
-		assertTrue("Mismatched sizes", font1Data.length == font2Data.length);
+		assertEquals("Mismatched sizes", font1Data.length, font2Data.length);
 		for (int a = 0; a < font2Data.length; a++) {
-			assertTrue("Mismatched fontData", font1Data[a].equals(font2Data[a]));
+			assertEquals("Mismatched fontData", font1Data[a], font2Data[a]);
 		}
 
 	}

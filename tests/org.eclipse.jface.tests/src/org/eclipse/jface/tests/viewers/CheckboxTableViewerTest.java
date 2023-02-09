@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -201,15 +201,15 @@ public class CheckboxTableViewerTest extends TableViewerTest {
 		CheckboxTableViewer ctv = (CheckboxTableViewer) fViewer;
 		TestElement element = fRootElement.getFirstChild();
 
-		assertTrue(ctv.getGrayedElements().length == 0);
+		assertEquals(0, ctv.getGrayedElements().length);
 		assertTrue(!ctv.getGrayed(element));
 
 		ctv.setGrayed(element, true);
-		assertTrue(ctv.getGrayedElements().length == 1);
+		assertEquals(1, ctv.getGrayedElements().length);
 		assertTrue(ctv.getGrayed(element));
 
 		ctv.setGrayed(element, false);
-		assertTrue(ctv.getGrayedElements().length == 0);
+		assertEquals(0, ctv.getGrayedElements().length);
 		assertTrue(!ctv.getGrayed(element));
 
 		ctv.setAllGrayed(false);
@@ -220,20 +220,20 @@ public class CheckboxTableViewerTest extends TableViewerTest {
 		TestElement first = fRootElement.getFirstChild();
 		TestElement last = fRootElement.getLastChild();
 
-		assertTrue(ctv.getGrayedElements().length == 0);
+		assertEquals(0, ctv.getGrayedElements().length);
 		assertTrue(!ctv.getGrayed(first));
 		assertTrue(!ctv.getGrayed(last));
 
 		ctv.setGrayed(first, true);
 		ctv.setGrayed(last, true);
 		Object[] elements = ctv.getGrayedElements();
-		assertTrue(elements.length == 2);
-		assertTrue(elements[0] == first);
-		assertTrue(elements[1] == last);
+		assertEquals(2, elements.length);
+		assertEquals(first, elements[0]);
+		assertEquals(last, elements[1]);
 
 		ctv.setGrayed(first, false);
 		ctv.setGrayed(last, false);
-		assertTrue(ctv.getGrayedElements().length == 0);
+		assertEquals(0, ctv.getGrayedElements().length);
 
 		ctv.setAllGrayed(false);
 	}
