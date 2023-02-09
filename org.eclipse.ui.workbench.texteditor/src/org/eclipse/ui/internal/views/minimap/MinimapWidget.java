@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Angelo ZERR.
+ * Copyright (c) 2018, 2023 Angelo ZERR.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  * Angelo Zerr <angelo.zerr@gmail.com> - [minimap] Initialize minimap view - Bug 535450
  * Arne Deutsch <arne.deutsch@itemis.de> - Correct view height - Bug 536207
+ * Gerald Mitchell <gerald.mitchell@ibm.com> - Minimap can cause NPE #69
  *******************************************************************************/
 package org.eclipse.ui.internal.views.minimap;
 
@@ -259,24 +260,33 @@ public class MinimapWidget {
 
 		void updateMinimap(boolean textChanged) {
 			StyledText editorTextWidget = fEditorViewer.getTextWidget();
+			if (editorTextWidget == null) {
+     				fMinimapTracker.updateMinimap(
+          				fEditorViewer.getTopIndex(),
+         				fEditorViewer.getBottomIndex(),
+         				0, textChanged);
+     				return;
+			}
 			int editorTopIndex = JFaceTextUtil.getPartialTopIndex(editorTextWidget);
 			int editorBottomIndex = JFaceTextUtil.getPartialBottomIndex(editorTextWidget);
-			int maximalLines = fEditorViewer.getTextWidget().getClientArea().height
-					/ fEditorViewer.getTextWidget().getLineHeight();
+			int lineHeight = editorTextWidget.getLineHeight();
+			int maximalLines = (lineHeight == 0) ? 0 : editorTextWidget.getClientArea().height/ lineHeight;
 			fMinimapTracker.updateMinimap(editorTopIndex, editorBottomIndex, maximalLines, textChanged);
 		}
 
 		void install() {
 			StyledText editorTextWidget = fEditorViewer.getTextWidget();
 			fScaledFonts = new HashMap<>();
-			// Compute scaled font
-			Font scaledFont = getScaledFont(editorTextWidget.getFont());
-			fMinimapTextWidget.setFont(scaledFont);
-			// track changed content of styled text of the editor
-			editorTextWidget.getContent().addTextChangeListener(this);
-			// track changed styles of styled text of the editor
-			fMinimapTextWidget.setBackground(editorTextWidget.getBackground());
-			fMinimapTextWidget.setForeground(editorTextWidget.getForeground());
+			if (editorTextWidget != null) {
+				// Compute scaled font
+				Font scaledFont = getScaledFont(editorTextWidget.getFont());
+				fMinimapTextWidget.setFont(scaledFont);
+				// track changed content of styled text of the editor
+				editorTextWidget.getContent().addTextChangeListener(this);
+				// track changed styles of styled text of the editor
+				fMinimapTextWidget.setBackground(editorTextWidget.getBackground());
+				fMinimapTextWidget.setForeground(editorTextWidget.getForeground());
+			}
 			if (fEditorViewer instanceof ITextViewerExtension4) {
 				((ITextViewerExtension4) fEditorViewer).addTextPresentationListener(this);
 			}
@@ -284,7 +294,9 @@ public class MinimapWidget {
 			// track changed of vertical bar scroll to update highlight
 			// Viewport.
 			fEditorViewer.addViewportListener(this);
-			editorTextWidget.addControlListener(this);
+			if (editorTextWidget != null) {
+				editorTextWidget.addControlListener(this);
+			}
 			synchTextAndStyles();
 		}
 
@@ -295,18 +307,25 @@ public class MinimapWidget {
 
 		private void synchStyles() {
 			StyledText editorTextWidget = fEditorViewer.getTextWidget();
+			if (editorTextWidget == null) {
+				return;
+			}
 			StyleRange[] ranges = editorTextWidget.getStyleRanges();
+			// SWT error if ranges is null
 			if (ranges != null) {
 				for (StyleRange range : ranges) {
 					updateStyle(range);
 				}
+				fMinimapTextWidget.setStyleRanges(ranges);
 			}
-			fMinimapTextWidget.setStyleRanges(ranges);
 		}
 
 		private void synchText() {
 			StyledText editorTextWidget = fEditorViewer.getTextWidget();
-			fMinimapTextWidget.setText(editorTextWidget.getText());
+			fMinimapTextWidget.setText(
+				// provide an empty value for when the StyledText is not available
+				(editorTextWidget == null) ? "" : editorTextWidget.getText() //$NON-NLS-1$
+			);
 		}
 
 		void uninstall() {
