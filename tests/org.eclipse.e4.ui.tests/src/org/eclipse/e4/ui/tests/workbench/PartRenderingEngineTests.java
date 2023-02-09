@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2019 IBM Corporation and others.
+ * Copyright (c) 2009, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -153,8 +153,8 @@ public class PartRenderingEngineTests {
 		try {
 			advisor.eventLoopException(ex);
 		} catch (Throwable t) {
-			if (t instanceof ThreadDeath) {
-				throw (ThreadDeath) t;
+			if (t instanceof ThreadDeath td) {
+				throw td;
 			}
 			// couldn't handle the exception, print to console
 			t.printStackTrace();
@@ -410,7 +410,7 @@ public class PartRenderingEngineTests {
 				toolbar = (ToolBar) child;
 			}
 		}
-		assertTrue(toolbar != null);
+		assertNotNull(toolbar);
 
 		assertTrue(toolbar.getVisible());
 
@@ -790,9 +790,8 @@ public class PartRenderingEngineTests {
 			assertNull("Changing the TBR of all elements to false should have set the field to null",
 					container.getSelectedElement());
 		} else {
-			assertTrue(
-					"Changing the TBR of the selected element should have set the field to null",
-					container.getSelectedElement() == null);
+			assertNull("Changing the TBR of the selected element should have set the field to null",
+					container.getSelectedElement());
 		}
 	}
 
@@ -826,17 +825,16 @@ public class PartRenderingEngineTests {
 		// the selected element doesn't change its value
 		container.setSelectedElement(partA);
 		container.getChildren().remove(partB);
-		assertTrue(
+		assertEquals(
 				"Changing the parent of a non-selected element should not change the value of the container's seletedElement",
-				container.getSelectedElement() == partA);
+				partA, container.getSelectedElement());
 
 		// Ensure that changing the parent of the selected element
 		// results in it going null
 		container.setSelectedElement(partA);
 		container.getChildren().remove(partA);
-		assertTrue(
-				"Changing the parent of the selected element should have set the field to null",
-				container.getSelectedElement() == null);
+		assertNull("Changing the parent of the selected element should have set the field to null",
+				container.getSelectedElement());
 	}
 
 	@Test
@@ -2549,8 +2547,8 @@ public class PartRenderingEngineTests {
 
 		contextRule.createAndRunWorkbench(window);
 
-		assertTrue(part.getContext() != null);
-		assertTrue(part.getContext().getParent() == detachedWindow.getContext());
+		assertNotNull(part.getContext());
+		assertEquals(detachedWindow.getContext(), part.getContext().getParent());
 
 		detachedWindow.getChildren().remove(part);
 		window.getChildren().add(part);

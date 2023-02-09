@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -191,11 +191,11 @@ public abstract class HeadlessApplicationTest extends HeadlessApplicationElement
 			Set<String> variables) {
 		variables.addAll(context.getVariables());
 
-		if (context instanceof MUIElement) {
-			MElementContainer<?> parent = ((MUIElement) context).getParent();
+		if (context instanceof MUIElement c) {
+			MElementContainer<?> parent = c.getParent();
 			while (parent != null) {
-				if (parent instanceof MContext) {
-					getVariables((MContext) parent, variables);
+				if (parent instanceof MContext mc) {
+					getVariables(mc, variables);
 				}
 				parent = parent.getParent();
 			}
@@ -335,9 +335,8 @@ public abstract class HeadlessApplicationTest extends HeadlessApplicationElement
 		List<?> children = container.getChildren();
 		for (Object child : children) {
 			MApplicationElement element = (MApplicationElement) child;
-			if (element instanceof MElementContainer<?>) {
-				MApplicationElement found = findElement(
-						(MElementContainer<?>) element, id);
+			if (element instanceof MElementContainer<?> c) {
+				MApplicationElement found = findElement(c, id);
 				if (found != null) {
 					return found;
 				}

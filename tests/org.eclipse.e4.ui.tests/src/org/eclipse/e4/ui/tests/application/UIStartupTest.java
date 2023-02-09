@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2018 IBM Corporation and others.
+ * Copyright (c) 2009, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -139,9 +139,8 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 	}
 
 	private static MWindowElement getNonContainer(MWindowElement activeChild) {
-		if (activeChild instanceof MElementContainer<?>) {
-			activeChild = (MWindowElement) ((MElementContainer<?>) activeChild)
-					.getSelectedElement();
+		if (activeChild instanceof MElementContainer<?> c) {
+			activeChild = (MWindowElement) c.getSelectedElement();
 			assertNotNull(activeChild);
 
 			activeChild = getNonContainer(activeChild);

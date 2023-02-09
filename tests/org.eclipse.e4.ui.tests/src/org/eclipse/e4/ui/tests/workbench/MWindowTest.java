@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2019 IBM Corporation and others.
+ * Copyright (c) 2009, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -102,13 +102,13 @@ public class MWindowTest {
 		assertTrue(topWidget instanceof Shell);
 
 		Shell shell = (Shell) topWidget;
-		assertTrue(shell.getVisible() == true);
+		assertTrue(shell.getVisible());
 
 		window.setVisible(false);
-		assertTrue(shell.getVisible() == false);
+		assertFalse(shell.getVisible());
 
 		window.setVisible(true);
-		assertTrue(shell.getVisible() == true);
+		assertTrue(shell.getVisible());
 	}
 
 	@Test
@@ -125,7 +125,7 @@ public class MWindowTest {
 		assertTrue(topWidget instanceof Shell);
 
 		Shell shell = (Shell) topWidget;
-		assertTrue(shell.getVisible() == false);
+		assertFalse(shell.getVisible());
 	}
 
 	@Test
@@ -185,7 +185,7 @@ public class MWindowTest {
 				break;
 			}
 		}
-		assertFalse(window.getContext() == child);
+		assertNotEquals(window.getContext(), child);
 
 		MPart contextPart = child.get(MPart.class);
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -92,23 +92,20 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 			if (UIEvents.isADD(event)) {
 				for (Object element : UIEvents.asIterable(event,
 						UIEvents.EventTags.NEW_VALUE)) {
-					if (element instanceof MUIElement) {
+					if (element instanceof MUIElement e) {
 						Object parent = event
 								.getProperty(UIEvents.EventTags.ELEMENT);
-						IEclipseContext parentContext = getParentContext((MUIElement) element);
-						if (element instanceof MContext) {
-							IEclipseContext context = ((MContext) element)
-									.getContext();
+						IEclipseContext parentContext = getParentContext(e);
+						if (element instanceof MContext c) {
+							IEclipseContext context = c.getContext();
 							if (context != null
 									&& context.getParent() != parentContext) {
 								context.deactivate();
 							}
 						}
-						createGui((MUIElement) element, parent,
-								parentContext);
+						createGui(e, parent, parentContext);
 
-						if (parent instanceof MPartStack) {
-							MPartStack stack = (MPartStack) parent;
+						if (parent instanceof MPartStack stack) {
 							List<MStackElement> children = stack
 									.getChildren();
 							MStackElement stackElement = (MStackElement) element;
@@ -129,11 +126,10 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 		activeChildHandler = event -> {
 			Object element = event
 					.getProperty(UIEvents.EventTags.NEW_VALUE);
-			if (element instanceof MUIElement) {
+			if (element instanceof MUIElement uiElement) {
 				Object parent = event
 						.getProperty(UIEvents.EventTags.ELEMENT);
 				if (parent instanceof MGenericStack) {
-					MUIElement uiElement = (MUIElement) element;
 					IEclipseContext parentContext = getParentContext(uiElement);
 					createGui(uiElement, parent, parentContext);
 
@@ -175,8 +171,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 
 	private void adjustPlaceholders(MUIElement element) {
 		if (element.isToBeRendered()) {
-			if (element instanceof MPlaceholder) {
-				MPlaceholder placeholder = (MPlaceholder) element;
+			if (element instanceof MPlaceholder placeholder) {
 				MUIElement ref = placeholder.getRef();
 				if (ref != null) {
 					ref.setCurSharedRef(placeholder);
@@ -184,15 +179,13 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 				}
 			}
 
-			if (element instanceof MGenericStack<?>) {
-				MGenericStack<?> stack = (MGenericStack<?>) element;
+			if (element instanceof MGenericStack<?> stack) {
 				Object selectedElement = stack.getSelectedElement();
 				if (selectedElement != null) {
 					adjustPlaceholders((MUIElement) selectedElement);
 				}
-			} else if (element instanceof MElementContainer<?>) {
-				for (Object child : ((MElementContainer<?>) element)
-						.getChildren()) {
+			} else if (element instanceof MElementContainer<?> container) {
+				for (Object child : container.getChildren()) {
 					adjustPlaceholders((MUIElement) child);
 				}
 			}
@@ -230,8 +223,8 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 		}
 
 		if (element.getWidget() != null) {
-			if (element instanceof MContext) {
-				IEclipseContext context = ((MContext) element).getContext();
+			if (element instanceof MContext c) {
+				IEclipseContext context = c.getContext();
 				if (context.getParent() != parentContext) {
 					context.setParent(parentContext);
 				}
@@ -244,8 +237,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 		Object widget = new Object();
 		element.setWidget(widget);
 
-		if (element instanceof MContext) {
-			MContext mcontext = (MContext) element;
+		if (element instanceof MContext mcontext) {
 			IEclipseContext createdContext = mcontext.getContext();
 			if (createdContext == null) {
 				String contextName = element.getClass().getInterfaces()[0]
@@ -263,8 +255,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 
 				mcontext.setContext(createdContext);
 
-				if (element instanceof MContribution && createContributions) {
-					MContribution contribution = (MContribution) element;
+				if (element instanceof MContribution contribution && createContributions) {
 					String uri = contribution.getContributionURI();
 					if (uri != null) {
 						Object clientObject = contributionFactory.create(uri,
@@ -282,8 +273,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 			}
 		}
 
-		if (element instanceof MGenericStack) {
-			MGenericStack<?> container = (MGenericStack<?>) element;
+		if (element instanceof MGenericStack container) {
 			MUIElement active = container.getSelectedElement();
 			if (active != null) {
 				createGui(active, container, getParentContext(active));
@@ -294,15 +284,13 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 							.setSelectedElement((MUIElement) children.get(0));
 				}
 			}
-		} else if (element instanceof MElementContainer<?>) {
-			for (Object child : ((MElementContainer<?>) element).getChildren()) {
-				if (child instanceof MUIElement) {
-					createGui((MUIElement) child, element,
-							getParentContext((MUIElement) child));
-					if (child instanceof MContext) {
-						IEclipseContext childContext = ((MContext) child)
-								.getContext();
-						IEclipseContext pContext = getParentContext((MUIElement) child);
+		} else if (element instanceof MElementContainer<?> c) {
+			for (Object child : c.getChildren()) {
+				if (child instanceof MUIElement e) {
+					createGui(e, element, getParentContext(e));
+					if (child instanceof MContext mc) {
+						IEclipseContext childContext = mc.getContext();
+						IEclipseContext pContext = getParentContext(e);
 						if (childContext != null
 								&& pContext.getActiveChild() == null) {
 							childContext.activate();
@@ -311,21 +299,18 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 				}
 			}
 
-			if (element instanceof MWindow) {
-				MWindow window = (MWindow) element;
+			if (element instanceof MWindow window) {
 				for (MWindow childWindow : window.getWindows()) {
 					createGui(childWindow, element, window.getContext());
 				}
 			}
 
-			if (element instanceof MPerspective) {
-				MPerspective perspective = (MPerspective) element;
+			if (element instanceof MPerspective perspective) {
 				for (MWindow childWindow : perspective.getWindows()) {
 					createGui(childWindow, element, perspective.getContext());
 				}
 			}
-		} else if (element instanceof MPlaceholder) {
-			MPlaceholder placeholder = (MPlaceholder) element;
+		} else if (element instanceof MPlaceholder placeholder) {
 			MUIElement ref = placeholder.getRef();
 			if (ref != null) {
 				ref.setCurSharedRef(placeholder);
@@ -363,20 +348,19 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 
 	@Override
 	public void removeGui(MUIElement element) {
-		if (element instanceof MElementContainer<?>) {
-			for (Object child : ((MElementContainer<?>) element).getChildren()) {
-				if (child instanceof MUIElement) {
-					removeGui((MUIElement) child);
+		if (element instanceof MElementContainer<?> c) {
+			for (Object child : c.getChildren()) {
+				if (child instanceof MUIElement e) {
+					removeGui(e);
 				}
 			}
 		}
 
-		if (element instanceof MPlaceholder) {
-			removePlaceholder((MPlaceholder) element);
+		if (element instanceof MPlaceholder p) {
+			removePlaceholder(p);
 		}
 
-		if (element instanceof MContext) {
-			MContext mcontext = (MContext) element;
+		if (element instanceof MContext mcontext) {
 			IEclipseContext context = mcontext.getContext();
 			if (context != null) {
 				IEclipseContext parentContext = context.getParent();
@@ -441,8 +425,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 
 	@Override
 	public void focusGui(MUIElement element) {
-		Object implementation = element instanceof MContribution ? ((MContribution) element)
-				.getObject() : null;
+		Object implementation = element instanceof MContribution c ? c.getObject() : null;
 		if (implementation != null) {
 			IEclipseContext context = getContext(element);
 			Object defaultValue = new Object();
@@ -455,8 +438,8 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 	}
 
 	private IEclipseContext getContext(MUIElement parent) {
-		if (parent instanceof MContext) {
-			return ((MContext) parent).getContext();
+		if (parent instanceof MContext c) {
+			return c.getContext();
 		}
 		return modelService.getContainingContext(parent);
 	}

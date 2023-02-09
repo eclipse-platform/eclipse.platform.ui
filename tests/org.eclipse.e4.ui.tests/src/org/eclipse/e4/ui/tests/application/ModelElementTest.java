@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -49,8 +49,7 @@ public class ModelElementTest {
 
 	private void checkPackageForMApplicationInterface(List<EClass> failedClasses, EPackage ePackage) {
 		for (EClassifier classifier : ePackage.getEClassifiers()) {
-			if (classifier instanceof EClass) {
-				EClass c = (EClass) classifier;
+			if (classifier instanceof EClass c) {
 				if (!c.isInterface() && c != ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP
 						&& c != ApplicationPackageImpl.Literals.STRING_TO_OBJECT_MAP) {
 					if (!MApplicationElement.class.isAssignableFrom(c.getInstanceClass())) {
@@ -90,8 +89,7 @@ public class ModelElementTest {
 			// For these three cases the difference is very small.
 			if (classifier != UiPackageImpl.Literals.IMPERATIVE_EXPRESSION
 					&& classifier != MenuPackageImpl.Literals.HANDLED_MENU_ITEM
-					&& classifier != MenuPackageImpl.Literals.HANDLED_TOOL_ITEM && classifier instanceof EClass) {
-				EClass c = (EClass) classifier;
+					&& classifier != MenuPackageImpl.Literals.HANDLED_TOOL_ITEM && classifier instanceof EClass c) {
 				EList<EClass> eSuperTypes = c.getESuperTypes();
 				int bestReusedGeneratedFeatureCount = 0;
 				EClass bestESuperType = null;
