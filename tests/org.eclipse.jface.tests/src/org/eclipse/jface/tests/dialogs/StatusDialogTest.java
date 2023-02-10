@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Rüdiger Herrmann and others.
+ * Copyright (c) 2012 RÃ¼diger Herrmann and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     Rüdiger Herrmann - initial API and implementation
+ *     RÃ¼diger Herrmann - initial API and implementation
  ******************************************************************************/
 package org.eclipse.jface.tests.dialogs;
 
