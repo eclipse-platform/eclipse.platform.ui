@@ -18,9 +18,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ DialogTest.class, DialogSettingsTest.class, InputDialogTest.class, TitleAreaDialogTest.class,
-		SafeRunnableErrorTest.class, ProgressIndicatorStyleTest.class, ProgressMonitorDialogTest.class,
-		PlainMessageDialogTest.class })
+@Suite.SuiteClasses({ DialogTest.class, StatusDialogTest.class, DialogSettingsTest.class, InputDialogTest.class,
+		TitleAreaDialogTest.class, SafeRunnableErrorTest.class, ProgressIndicatorStyleTest.class,
+		ProgressMonitorDialogTest.class, PlainMessageDialogTest.class })
 public class AllDialogTests {
 
 	public static void main(String[] args) {
