@@ -40,6 +40,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
+@Deprecated(forRemoval = true)
 public class ResourceNavigatorTest extends UITestCase {
 	private IWorkbenchPage activePage;
 
