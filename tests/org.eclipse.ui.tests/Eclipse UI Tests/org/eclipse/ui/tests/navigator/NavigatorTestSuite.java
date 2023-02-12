@@ -17,6 +17,7 @@ package org.eclipse.ui.tests.navigator;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
+@SuppressWarnings("removal")
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	ResourceNavigatorTest.class,
