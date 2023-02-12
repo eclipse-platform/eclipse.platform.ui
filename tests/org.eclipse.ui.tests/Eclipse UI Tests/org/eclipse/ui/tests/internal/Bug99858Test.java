@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -25,14 +25,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.actions.TextActionHandler;
-import org.eclipse.ui.views.navigator.ResourceNavigator;
 import org.junit.Test;
 
 /**
@@ -57,8 +52,7 @@ public class Bug99858Test extends ResourceActionTest {
 	 */
 	@Test
 	public void testDeleteClosedProject() throws Throwable {
-		IWorkbenchPage page = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getActivePage();
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IProject testProject = workspace.getRoot().getProject(
@@ -70,19 +64,6 @@ public class Bug99858Test extends ResourceActionTest {
 		createProjectFile(testProject, "a.txt", contents);
 		createProjectFile(testProject, "b.txt", contents);
 
-		ResourceNavigator view = (ResourceNavigator) page.showView(IPageLayout.ID_RES_NAV);
-		view.setFocus();
-
-		// get a testing version of the delete action, and set it up.
-		TestDeleteResourceAction newDel = new TestDeleteResourceAction(
-				view.getViewSite());
-		newDel.setEnabled(true);
-		TextActionHandler tmpHandler = new TextActionHandler(view.getViewSite()
-				.getActionBars());
-		tmpHandler.setDeleteAction(newDel);
-
-		view.getViewSite().getActionBars().updateActionBars();
-
 		processUIEvents();
 
 		StructuredSelection s = new StructuredSelection(testProject);
@@ -90,24 +71,21 @@ public class Bug99858Test extends ResourceActionTest {
 		// close the project and update the selection events.
 		testProject.close(null);
 		assertFalse(testProject.isAccessible());
-		view.getViewSite().getSelectionProvider().setSelection(s);
-		newDel.selectionChanged(s);
 		processUIEvents();
 
-		IAction del = view.getViewSite().getActionBars()
-				.getGlobalActionHandler(ActionFactory.DELETE.getId());
-
-		assertTrue(del.isEnabled());
+		TestDeleteResourceAction deleteAction = new TestDeleteResourceAction(
+				page.getWorkbenchWindow());
+		deleteAction.setEnabled(true);
+		deleteAction.selectionChanged(s);
+		assertTrue(deleteAction.isEnabled());
 
 		// run the delete event.
-		del.runWithEvent(null);
+		deleteAction.run();
 
 		processUIEvents();
 
-		// the delete even ran
-		assertTrue(newDel.fRan);
-
 		joinDeleteResourceActionJobs();
+		processUIEvents();
 
 		// if our project still exists, the delete failed.
 		assertFalse(testProject.exists());
