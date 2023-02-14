@@ -2,12 +2,6 @@
 /*/*/target
 /*/bin/
 *~
-*.rej
-*.bak
-javacore.*
-heapdump.*
-core.*
-Snap.*
 /.settings/
 /.project
 # maven
@@ -15,3 +9,15 @@ target/
 .DS_Store
 .polyglot.*
 pom.tycho
+*~
+*.rej
+*.bak
+*.patch
+javacore.*
+heapdump.*
+core.*
+Snap.*
+target/
+.DS_Store
+.metadata
+.project

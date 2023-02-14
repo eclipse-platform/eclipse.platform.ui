@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="org.eclipse.e4.tools.emf.ui.editors" name="%extension-point.name" schema="schema/org.eclipse.e4.tools.emf.ui.editors.exsd"/>
+   <extension-point id="org.eclipse.e4.tools.emf.ui.scripting" name="Scripting" schema="schema/org.eclipse.e4.tools.emf.ui.scripting.exsd"/>
+   <extension
+         point="org.eclipse.e4.ui.css.swt.theme">
+      <stylesheet
+            uri="css/default.css">
+      </stylesheet>
+   </extension>
+   <extension
+         point="org.eclipse.equinox.preferences.preferences">
+      <initializer
+            class="org.eclipse.e4.tools.emf.ui.internal.PreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         id="id1"
+         point="org.eclipse.e4.workbench.model">
+      <fragment
+            apply="notexists"
+            uri="fragment.e4xmi">
+      </fragment>
+   </extension>
+
+</plugin>

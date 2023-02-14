@@ -37,11 +37,8 @@ The project maintains the following source code repositories
 * https://github.com/eclipse-platform/eclipse.platform.text
 * https://github.com/eclipse-platform/eclipse.platform.ua
 * https://github.com/eclipse-platform/eclipse.platform.ui
-* https://github.com/eclipse-platform/eclipse.platform.ui.tools
 
 This project uses GitHub to track ongoing development and issues.
-
-* Link: https://github.com/issues?user=eclipse-platform
 
 Be sure to search for existing bugs before you create another one. Remember that
 contributions are always welcome!

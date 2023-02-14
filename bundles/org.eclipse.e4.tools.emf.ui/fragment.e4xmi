@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmi:id="_GxnD8Ly2EeOxWJvPH-7sUQ">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_Kmj8QLy2EeOxWJvPH-7sUQ" featurename="commands" parentElementId="xpath:/">
+    <elements xsi:type="commands:Command" xmi:id="_RRp7QLy2EeOxWJvPH-7sUQ" elementId="org.eclipse.e4.tools.emf.ui.command.mark_duplicate_ids" commandName="%mark_duplicate_ids_commandName" description="%mark_duplicate_ids_description">
+      <persistedState key="persistState" value="false"/>
+    </elements>
+    <elements xsi:type="commands:Command" xmi:id="_9ITpgL2IEeOqSr2XZwfnmA" elementId="org.eclipse.e4.tools.emf.ui.command.mark_duplicate_labels" commandName="%mark_duplicate_labels_commandName" description="%mark_duplicate_labels_description">
+      <persistedState key="persistState" value="false"/>
+    </elements>
+    <elements xsi:type="commands:Command" xmi:id="_RObi4L2MEeOqSr2XZwfnmA" elementId="org.eclipse.e4.tools.emf.ui.command.mark_duplicate_attributes" commandName="%mark_duplicate_attributes_commandName" description="%mark_duplicate_attributes_description">
+      <persistedState key="persistState" value="false"/>
+    </elements>
+    <elements xsi:type="commands:Command" xmi:id="_dySeYLzDEeO8eO1Rpb-rFA" elementId="org.eclipse.e4.tools.emf.ui.command.repair_duplicate_ids" commandName="%repair_duplicate_ids_commandName" description="%repair_duplicate_ids_description">
+      <persistedState key="persistState" value="false"/>
+    </elements>
+    <elements xsi:type="commands:Command" xmi:id="_CFlw8L2LEeOqSr2XZwfnmA" elementId="org.eclipse.e4.tools.emf.ui.command.unmark" commandName="%unmark_commandName" description="%unmark_description">
+      <persistedState key="persistState" value="false"/>
+    </elements>
+    <elements xsi:type="commands:Command" xmi:id="_jd7xgO5mEeOQXaYP-M2JBA" elementId="org.eclipse.e4.tools.emf.ui.command.autosizeColumns" commandName="%autosizeColumns_commandName" description="%autosizeColumns_description">
+      <persistedState key="persistState" value="false"/>
+    </elements>
+    <elements xsi:type="commands:Command" xmi:id="_vsQXAPFwEeOSJuCPb-hb7A" elementId="org.eclipse.e4.tools.emf.ui.command.resetToDefault" commandName="%resetToDefault_commandName" description="%resetToDefault_description">
+      <persistedState key="persistState" value="false"/>
+    </elements>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_jtmcsLy3EeOxWJvPH-7sUQ" featurename="handlers" parentElementId="xpath:/">
+    <elements xsi:type="commands:Handler" xmi:id="_p45hULy3EeOxWJvPH-7sUQ" elementId="org.eclipse.e4.tools.emf.ui.handler.mark_duplicate_ids" contributionURI="bundleclass://org.eclipse.e4.tools.emf.ui/org.eclipse.e4.tools.emf.ui.internal.handlers.MarkDuplicateElementIdsHandler" command="_RRp7QLy2EeOxWJvPH-7sUQ">
+      <persistedState key="persistState" value="false"/>
+    </elements>
+    <elements xsi:type="commands:Handler" xmi:id="_AOEgkL2JEeOqSr2XZwfnmA" elementId="org.eclipse.e4.tools.emf.ui.handler.mark_duplicate_labels" contributionURI="bundleclass://org.eclipse.e4.tools.emf.ui/org.eclipse.e4.tools.emf.ui.internal.handlers.MarkDuplicateLabelsHandler" command="_9ITpgL2IEeOqSr2XZwfnmA">
+      <persistedState key="persistState" value="false"/>
+    </elements>
+    <elements xsi:type="commands:Handler" xmi:id="_TgJt4L2MEeOqSr2XZwfnmA" elementId="org.eclipse.e4.tools.emf.ui.handler.mark_duplicate_attributes" contributionURI="bundleclass://org.eclipse.e4.tools.emf.ui/org.eclipse.e4.tools.emf.ui.internal.handlers.MarkDuplicateAttributesHandler" command="_RObi4L2MEeOqSr2XZwfnmA">
+      <persistedState key="persistState" value="false"/>
+    </elements>
+    <elements xsi:type="commands:Handler" xmi:id="_smaaALzDEeO8eO1Rpb-rFA" elementId="org.eclipse.e4.tools.emf.ui.handler.repair_duplicate_ids" contributionURI="bundleclass://org.eclipse.e4.tools.emf.ui/org.eclipse.e4.tools.emf.ui.internal.handlers.RepairDuplicateItemsHandler" command="_dySeYLzDEeO8eO1Rpb-rFA">
+      <persistedState key="persistState" value="false"/>
+    </elements>
+    <elements xsi:type="commands:Handler" xmi:id="_Fin4gL2LEeOqSr2XZwfnmA" elementId="org.eclipse.e4.tools.emf.ui.handler.unmark" contributionURI="bundleclass://org.eclipse.e4.tools.emf.ui/org.eclipse.e4.tools.emf.ui.internal.handlers.UnmarkItemsHandler" command="_CFlw8L2LEeOqSr2XZwfnmA">
+      <persistedState key="persistState" value="false"/>
+    </elements>
+    <elements xsi:type="commands:Handler" xmi:id="_hZcKMO5mEeOQXaYP-M2JBA" elementId="org.eclipse.e4.tools.emf.ui.handler.autosizeColumns" contributionURI="bundleclass://org.eclipse.e4.tools.emf.ui/org.eclipse.e4.tools.emf.ui.internal.handlers.AutosizeColumnsHandler" command="_jd7xgO5mEeOQXaYP-M2JBA">
+      <persistedState key="persistState" value="false"/>
+    </elements>
+    <elements xsi:type="commands:Handler" xmi:id="_8AHVUPFwEeOSJuCPb-hb7A" elementId="org.eclipse.e4.tools.emf.ui.handler.resetToDefault" contributionURI="bundleclass://org.eclipse.e4.tools.emf.ui/org.eclipse.e4.tools.emf.ui.internal.handlers.ResetToDefaultHandler" command="_vsQXAPFwEeOSJuCPb-hb7A">
+      <persistedState key="persistState" value="false"/>
+    </elements>
+  </fragments>
+</fragment:ModelFragments>
