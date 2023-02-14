@@ -13,13 +13,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.eclipse</groupId>
+  	<groupId>org.eclipse.platform</groupId>
     <artifactId>eclipse.platform.ui.tools</artifactId>
     <version>4.27.0-SNAPSHOT</version>
     <relativePath>../../</relativePath>
   </parent>
 
-  <groupId>eclipse.platform.ui.tools</groupId>
+  <groupId>eclipse.platform.ui</groupId>
   <artifactId>org.eclipse.e4.tools.emf.ui</artifactId>
   <version>4.7.400-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>

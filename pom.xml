@@ -37,6 +37,7 @@
     <module>bundles</module>
     <module>tests</module>
     <module>examples</module>
+    <module>tools</module>
   </modules>
 
   <!-- 
