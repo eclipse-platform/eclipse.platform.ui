@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %Bundle-Name
+Bundle-Vendor: %Bundle-Vendor
+Bundle-SymbolicName: org.eclipse.e4.tools.compatibility.migration
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: org.eclipse.e4.tools.compatibiliy.migration
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Require-Bundle: org.eclipse.e4.tools.persistence;bundle-version="1.0.0",
+ org.eclipse.core.runtime;bundle-version="[3.20.0,4.0.0)",
+ org.eclipse.e4.ui.workbench;bundle-version="[1.10.0,2.0.0)",
+ org.eclipse.ui;bundle-version="[3.110.0,4.0.0)",
+ org.eclipse.e4.core.contexts
+Export-Package: org.eclipse.e4.tools.compatibiliy.migration,
+ org.eclipse.e4.tools.internal.compatibiliy.migration;x-internal:=true
+Bundle-ActivationPolicy: lazy

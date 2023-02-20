@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.eclipse.e4.tools.emf.editor3x.E4WorkbenchModelEditor"
+            default="true"
+            extensions="e4xmi"
+            icon="icons/full/obj16/application_view_tile.png"
+            id="org.eclipse.e4.tools.emf.editor3x.e4wbm"
+            name="%editor.name">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.e4.tools.emf.ui.editors">
+      <contributionClassCreator
+            class="org.eclipse.e4.tools.emf.editor3x.extension.HandlerContributionEditor">
+      </contributionClassCreator>
+      <contributionClassCreator
+            class="org.eclipse.e4.tools.emf.editor3x.extension.PartContributionEditor">
+      </contributionClassCreator>
+      <contributionClassCreator
+            class="org.eclipse.e4.tools.emf.editor3x.extension.AddonContributionEditor">
+      </contributionClassCreator>
+      <contributionClassCreator
+            class="org.eclipse.e4.tools.emf.editor3x.extension.DynamicMenuContributionContributionEditor">
+      </contributionClassCreator>
+      <contributionClassCreator
+            class="org.eclipse.e4.tools.emf.editor3x.extension.ToolControlContributionEditor">
+      </contributionClassCreator>
+      <contributionClassCreator
+            class="org.eclipse.e4.tools.emf.editor3x.extension.ImperativeExpressionContributionEditor">
+      </contributionClassCreator>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="org.eclipse.e4.tools.emf.editor3x.ModelEditorPreferencePage"
+            id="org.eclipse.e4.tools.emf.editor3x.modeleditor"
+            name="%page.name">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ltk.core.refactoring.renameParticipants">
+      <renameParticipant
+            class="org.eclipse.e4.tools.emf.editor3x.refactorparticipants.ModelRenameParticipant"
+            id="org.eclipse.e4.tools.emf.editor3x.renameParticipant"
+            name="Workbench Model Contribution Participant">
+         <enablement>
+	  	  <with variable="affectedNatures">
+	  	    <iterate operator="or">
+	  	      <equals value="org.eclipse.pde.PluginNature"/>
+	  	    </iterate>
+	  	  </with>
+	  	  <with variable="element">
+           <or>
+            <instanceof
+                  value="org.eclipse.jdt.core.IType">
+            </instanceof>
+            <instanceof
+                  value="org.eclipse.jdt.core.IPackageFragment">
+            </instanceof>
+            <instanceof
+                  value="org.eclipse.core.resources.IFile">
+            </instanceof>
+            <instanceof
+                  value="org.eclipse.core.resources.IFolder">
+            </instanceof>
+            <instanceof
+                  value="org.eclipse.core.resources.IProject">
+            </instanceof>
+         </or>
+	  	  </with>
+	  	</enablement>
+      </renameParticipant>
+   </extension>
+   <extension
+         point="org.eclipse.ltk.core.refactoring.moveParticipants">
+      <moveParticipant
+            class="org.eclipse.e4.tools.emf.editor3x.refactorparticipants.ModelMoveParticipant"
+            id="org.eclipse.e4.tools.emf.editor3x.moveParticipant"
+            name="Workbench Model Contribution Participant">
+         <enablement>
+	  	  <with variable="affectedNatures">
+	  	    <iterate operator="or">
+	  	      <equals value="org.eclipse.pde.PluginNature"/>
+	  	    </iterate>
+	  	  </with>
+	  	  <with variable="element">
+         <or>
+            <instanceof
+                  value="org.eclipse.jdt.core.IType">
+            </instanceof>
+            <instanceof
+                  value="org.eclipse.jdt.core.IPackageFragment">
+            </instanceof>
+            <instanceof
+                  value="org.eclipse.core.resources.IFile">
+            </instanceof>
+            <instanceof
+                  value="org.eclipse.core.resources.IFolder">
+            </instanceof>
+         </or>
+	  	  </with>
+	  	</enablement>
+      </moveParticipant>
+   </extension>
+
+</plugin>

@@ -1,0 +1,5 @@
+# To force a version qualifier update add the bug here
+Bug 403237 - o.e.e4.tools cannot be build with "mvn clean install"
+Bug 463856 - Trouble doing an I-build of org.eclipse.e4.core.tools.feature
+Bug 540097 - Comparator Errors in I20181012-1800 Build
+Bug 551174 - Comparator errors in 4.14 I build - I20190917-1800

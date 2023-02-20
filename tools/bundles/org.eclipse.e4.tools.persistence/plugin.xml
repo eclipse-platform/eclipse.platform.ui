@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+-->
+
+<plugin>
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated persistence -->
+      <package
+            uri="http://www.eclipse.org/e4/tools/persistence"
+            class="org.eclipse.e4.tools.internal.persistence.IPersistencePackage"
+            genModel="model/persistence.genmodel"/>
+   </extension>
+
+</plugin>
