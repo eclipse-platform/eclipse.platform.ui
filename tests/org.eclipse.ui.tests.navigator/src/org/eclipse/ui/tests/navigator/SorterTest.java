@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 Oakland Software Incorporated and others.
+ * Copyright (c) 2008, 2023 Oakland Software Incorporated and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,7 +19,6 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.util.Arrays;
@@ -76,7 +75,7 @@ public class SorterTest extends NavigatorTestBase {
 
 		// We should not get any notification because of the way that
 		// sorters are found
-		assertTrue("Status Count: " + _statusCount, _statusCount == 0);
+		assertEquals("Status Count: " + _statusCount, 0, _statusCount);
 	}
 
 	// bug 231855 [CommonNavigator] CommonViewerSorter does not support

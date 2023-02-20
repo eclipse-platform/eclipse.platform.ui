@@ -14,14 +14,13 @@
 
 package org.eclipse.ui.tests.internal;
 
-import static java.util.stream.Collectors.toList;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.widgets.Display;
@@ -35,6 +34,7 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbookEditorsHandler;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
@@ -333,6 +333,41 @@ public class WorkbookEditorsHandlerTest extends UITestCase {
 				handler.tableItemTexts.get(1));
 	}
 
+	@Test
+	public void testTwoFilesWithNameClashButEditorInputNameIsDiffereentThanFileName() throws Exception {
+		String fileName = "example.txt";
+		String editorInputName = "Example";
+		class EditorInputWithCustomName extends FileEditorInput {
+
+			public EditorInputWithCustomName(IFile file) {
+				super(file);
+			}
+
+			@Override
+			public String getName() {
+				return editorInputName;
+			}
+		}
+
+		IFile file1 = FileUtil.createFile(fileName, project1);
+		IFile file2 = FileUtil.createFile(fileName, project2);
+		IDE.openEditor(activePage, new EditorInputWithCustomName(file1),
+				IDE.getEditorDescriptor(file1, true, true).getId(), true);
+		IDE.openEditor(activePage, new EditorInputWithCustomName(file2),
+				IDE.getEditorDescriptor(file2, true, true).getId(), true);
+		ICommandService cmdService = PlatformUI.getWorkbench().getService(ICommandService.class);
+		final Command cmd = cmdService.getCommand("org.eclipse.ui.window.openEditorDropDown");
+		WorkbookEditorsHandlerTestable handler = new WorkbookEditorsHandlerTestable();
+		cmd.setHandler(handler);
+		IHandlerService handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
+		final ExecutionEvent event = handlerService.createExecutionEvent(cmd, null);
+
+		handler.execute(event);
+
+		assertEquals("Display text should match name of editor input", editorInputName, handler.tableItemTexts.get(0));
+		assertEquals("Display text should match name of editor input", editorInputName, handler.tableItemTexts.get(1));
+	}
+
 	class WorkbookEditorsHandlerTestable extends WorkbookEditorsHandler {
 		List<String> selectionTexts;
 		List<String> tableItemTexts;
@@ -344,8 +379,8 @@ public class WorkbookEditorsHandlerTest extends UITestCase {
 		@Override
 		protected void addKeyListener(Table table, Shell dialog) {
 			super.addKeyListener(table, dialog);
-			tableItemTexts = Arrays.stream(table.getItems()).map(TableItem::getText).collect(toList());
-			selectionTexts = Arrays.stream(table.getSelection()).map(TableItem::getText).collect(toList());
+			tableItemTexts = Arrays.stream(table.getItems()).map(TableItem::getText).toList();
+			selectionTexts = Arrays.stream(table.getSelection()).map(TableItem::getText).toList();
 		}
 
 		/**

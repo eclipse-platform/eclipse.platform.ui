@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -215,14 +215,16 @@ public class StructuredSelectionTest extends TestCase {
 				assertTrue(EQUALS_CONSITENCY_MSG, o1.equals(o2));
 				assertTrue(EQUALS_CONSITENCY_MSG, o2.equals(o1));
 			}
+
+			// For any non-null reference value x, x.equals(null) should return false.
 			assertFalse(NOT_EQUALS_NULL_MSG, o1.equals(null));
 			assertFalse(NOT_EQUALS_NULL_MSG, o2.equals(null));
 
 			// a.equals(b) => a.hashCode() == b.hashCode()
-			assertTrue(EQUALS_IMPLIES_SAME_HASHCODE_MSG, o1.hashCode() == o2.hashCode());
+			assertEquals(EQUALS_IMPLIES_SAME_HASHCODE_MSG, o1.hashCode(), o2.hashCode());
 			for (int i = 0; i < CONSISTENCY_THRESHOLD; i++) {
-				assertTrue(HASHCODE_CONSISTENCY_MSG, o1.hashCode() == o1.hashCode());
-				assertTrue(HASHCODE_CONSISTENCY_MSG, o2.hashCode() == o2.hashCode());
+				assertEquals(HASHCODE_CONSISTENCY_MSG, o1.hashCode(), o1.hashCode());
+				assertEquals(HASHCODE_CONSISTENCY_MSG, o2.hashCode(), o2.hashCode());
 			}
 		}
 

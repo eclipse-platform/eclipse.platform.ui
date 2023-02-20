@@ -53,10 +53,10 @@ public class AdaptableResourceWrapper implements IAdaptable {
 	public AdaptableResourceWrapper[] getChildren() {
 		AdaptableResourceWrapper[] wrappers = new AdaptableResourceWrapper[0];
 
-		if (resource instanceof IContainer) {
+		if (resource instanceof IContainer container) {
 			IResource[] children;
 			try {
-				children = ((IContainer) resource).members();
+				children = container.members();
 			} catch (CoreException exception) {
 				return wrappers;
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -71,8 +71,8 @@ public class PersonInput implements IEditorInput {
 
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof PersonInput) {
-			return index == ((PersonInput)o).index;
+		if (o instanceof PersonInput pi) {
+			return index == pi.index;
 		}
 		return false;
 	}

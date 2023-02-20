@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2018 IBM Corporation and others.
+ * Copyright (c) 2005, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -167,8 +167,8 @@ public class UndoHistoryView extends ViewPart implements
 
 		@Override
 		public String getText(Object obj) {
-			if (!showDebug && obj instanceof IUndoableOperation) {
-				return ((IUndoableOperation)obj).getLabel();
+			if (!showDebug && obj instanceof IUndoableOperation operation) {
+				return operation.getLabel();
 			}
 			return obj.toString();
 		}

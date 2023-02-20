@@ -95,7 +95,7 @@
          </enablement>
 
         <commonSorter
-              class="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionSorter"
+              class="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionComparator"
               id="org.eclipse.ui.navigator.resources.sorters.defaultSorter">
            <parentExpression>
            		  <or>
@@ -448,7 +448,7 @@
             </instanceof>
          </possibleChildren>
          <commonSorter
-               class="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionSorter"
+               class="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionComparator"
                id="org.eclipse.ui.navigator.resources.sorters.defaultSorter">
             <parentExpression>
                <or>

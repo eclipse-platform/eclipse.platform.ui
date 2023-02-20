@@ -90,7 +90,7 @@ public interface IPageLayout {
 	 * @deprecated this has been replaced by the Common Navigator Framework as of
 	 *             release 3.5.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true)
 	String ID_RES_NAV = "org.eclipse.ui.views.ResourceNavigator"; //$NON-NLS-1$
 
 	/**

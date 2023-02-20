@@ -94,11 +94,11 @@ public class ActionSetTests extends DynamicTestCase {
 		IRendererFactory factory = window.getService(IRendererFactory.class);
 		MWindow mwindow = window.getModel();
 		AbstractPartRenderer obj = factory.getRenderer(mwindow.getMainMenu(), null);
-		if (!(obj instanceof MenuManagerRenderer)) {
+		if (!(obj instanceof MenuManagerRenderer menuManagerRenderer)) {
 			return;
 		}
 
-		ContributionRecord[] records = ((MenuManagerRenderer) obj).getContributionRecords();
+		ContributionRecord[] records = menuManagerRenderer.getContributionRecords();
 		for (ContributionRecord rec : records) {
 			String id = rec.getMenuContribution().getElementId();
 			if (id != null && id.startsWith("org.eclipse.newActionSet1.newActionSet2")) {

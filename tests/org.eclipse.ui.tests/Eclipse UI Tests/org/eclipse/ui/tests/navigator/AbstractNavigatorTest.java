@@ -21,10 +21,11 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.tests.harness.util.UITestCase;
-import org.eclipse.ui.views.navigator.ResourceNavigator;
 
 /**
  * The AbstractNavigatorTest is the abstract superclass
@@ -32,15 +33,13 @@ import org.eclipse.ui.views.navigator.ResourceNavigator;
  */
 public abstract class AbstractNavigatorTest extends UITestCase {
 
-	private static final String NAVIGATOR_VIEW_ID = "org.eclipse.ui.views.ResourceNavigator";
-
 	protected IProject testProject;
 
 	protected IFolder testFolder;
 
 	protected IFile testFile;
 
-	protected ResourceNavigator navigator;
+	protected IViewPart navigator;
 
 	public AbstractNavigatorTest(String testName) {
 		super(testName);
@@ -76,8 +75,7 @@ public abstract class AbstractNavigatorTest extends UITestCase {
 	/** Shows the Navigator in a new test window. */
 	protected void showNav() throws PartInitException {
 		IWorkbenchWindow window = openTestWindow();
-		navigator = (ResourceNavigator) window.getActivePage().showView(
-				NAVIGATOR_VIEW_ID);
+		navigator = window.getActivePage().showView(IPageLayout.ID_PROJECT_EXPLORER);
 	}
 
 	@Override

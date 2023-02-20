@@ -248,10 +248,10 @@ public class CommandParameterTypeTest {
 
 	private boolean checkParamType2(IParameter parameter, Object value)
 			throws CommandException {
-		if (!(parameter instanceof ITypedParameter)) {
+		if (!(parameter instanceof ITypedParameter typedParameter)) {
 			return false;
 		}
-		ParameterType type = ((ITypedParameter) parameter).getParameterType();
+		ParameterType type = typedParameter.getParameterType();
 		if (type == null) {
 			return false;
 		}

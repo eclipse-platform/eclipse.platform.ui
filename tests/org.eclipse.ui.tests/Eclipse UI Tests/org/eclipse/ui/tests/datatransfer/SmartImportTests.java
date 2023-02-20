@@ -166,11 +166,11 @@ public class SmartImportTests extends UITestCase {
 	 * @param dialog
 	 */
 	private Button getFinishButton(Control control) {
-		if (control instanceof Button && ((Button) control).getText().equals(IDialogConstants.FINISH_LABEL)) {
-			return (Button)control;
-		} else if (control instanceof Composite) {
+		if (control instanceof Button b && b.getText().equals(IDialogConstants.FINISH_LABEL)) {
+			return b;
+		} else if (control instanceof Composite comp) {
 			Button res = null;
-			for (Control child : ((Composite)control).getChildren()) {
+			for (Control child : comp.getChildren()) {
 				res = getFinishButton(child);
 				if (res != null) {
 					return res;
@@ -248,10 +248,10 @@ public class SmartImportTests extends UITestCase {
 
 	private CheckboxTreeViewer getTreeViewer(Composite parent) {
 		for (Control control : parent.getChildren()) {
-			if (control instanceof FilteredTree) {
-				return (CheckboxTreeViewer) ((FilteredTree) control).getViewer();
-			} else if (control instanceof Composite) {
-				CheckboxTreeViewer res = getTreeViewer((Composite) control);
+			if (control instanceof FilteredTree fTree) {
+				return (CheckboxTreeViewer) fTree.getViewer();
+			} else if (control instanceof Composite comp) {
+				CheckboxTreeViewer res = getTreeViewer(comp);
 				if (res != null) {
 					return res;
 				}
@@ -376,8 +376,8 @@ public class SmartImportTests extends UITestCase {
 
 	private static ToolItem getStopButton(ProgressMonitorPart part) {
 		for (Control control : part.getChildren()) {
-			if (control instanceof ToolBar) {
-				for (ToolItem item : ((ToolBar) control).getItems()) {
+			if (control instanceof ToolBar toolbar) {
+				for (ToolItem item : toolbar.getItems()) {
 					if (item.getToolTipText().equals(JFaceResources.getString("ProgressMonitorPart.cancelToolTip"))) { //$NON-NLS-1$ ))
 						return item;
 					}
@@ -501,10 +501,10 @@ public class SmartImportTests extends UITestCase {
 
 	private static Combo getComboWithSelection(String selection, Composite parent) {
 		for (Control control : parent.getChildren()) {
-			if (control instanceof Combo && ((Combo) control).getText().equals(selection)) {
-				return (Combo) control;
-			} else if (control instanceof Composite) {
-				Combo res = getComboWithSelection(selection, (Composite) control);
+			if (control instanceof Combo combo && combo.getText().equals(selection)) {
+				return combo;
+			} else if (control instanceof Composite comp) {
+				Combo res = getComboWithSelection(selection, comp);
 				if (res != null) {
 					return res;
 				}

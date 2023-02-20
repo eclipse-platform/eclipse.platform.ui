@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2020 IBM Corporation and others.
+ * Copyright (c) 2013, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -236,7 +236,7 @@ public class ToolBarManagerTest extends JFaceActionTest {
 		assertTrue((toolBar.getStyle() & expected) != 0);
 
 		int opposite = (expected & SWT.HORIZONTAL) != 0 ? SWT.VERTICAL : SWT.HORIZONTAL;
-		assertFalse((toolBar.getStyle() & opposite) != 0);
+		assertEquals(0, (toolBar.getStyle() & opposite));
 	}
 
 	private final class ObservableControlContribution extends ControlContribution {

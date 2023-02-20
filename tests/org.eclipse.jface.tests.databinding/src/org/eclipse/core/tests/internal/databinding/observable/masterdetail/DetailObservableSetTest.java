@@ -20,11 +20,11 @@ package org.eclipse.core.tests.internal.databinding.observable.masterdetail;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.IObservable;
@@ -40,8 +40,8 @@ import org.eclipse.core.internal.databinding.observable.masterdetail.DetailObser
 import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.jface.databinding.conformance.MutableObservableSetContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
-import org.eclipse.jface.databinding.conformance.util.TestCollection;
 import org.eclipse.jface.databinding.conformance.util.DisposeEventTracker;
+import org.eclipse.jface.databinding.conformance.util.TestCollection;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.junit.Test;
 
@@ -67,15 +67,13 @@ public class DetailObservableSetTest extends AbstractDefaultRealmTestCase {
 		assertNull(detailObservable.getElementType());
 
 		factory.type = Object.class;
-		observableValue.setValue(new WritableSet(Arrays
-				.asList(new Object[] { new Object() }), String.class));
+		observableValue.setValue(new WritableSet(List.of(new Object()), String.class));
 		assertNull("element type not null", detailObservable.getElementType());
 
 		factory.type = String.class;
 		// set the value again to ensure that the observable doesn't update the
 		// element type with that of the new element type
-		observableValue.setValue(new WritableSet(Arrays
-				.asList(new String[] { "1" }), Object.class));
+		observableValue.setValue(new WritableSet(List.of("1"), Object.class));
 		assertNull("element type not null", detailObservable.getElementType());
 	}
 
@@ -87,20 +85,16 @@ public class DetailObservableSetTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testElementTypeNotNull() throws Exception {
 		WritableValue observableValue = new WritableValue(new WritableSet(
-				new HashSet(), Object.class), null);
+				new HashSet<>(), Object.class), null);
 
 		WritableSetFactory factory = new WritableSetFactory();
 		DetailObservableSet detailObservable = new DetailObservableSet(factory,
 				observableValue, Object.class);
 		assertEquals(factory.type, detailObservable.getElementType());
 
-		try {
-			factory.type = String.class;
-			observableValue.setValue(new WritableSet(Arrays
-					.asList(new Object[] { new Object() }), String.class));
-			fail("if an element type is set this cannot be changed");
-		} catch (AssertionFailedException e) {
-		}
+		factory.type = String.class;
+		assertThrows("if an element type is set this cannot be changed", AssertionFailedException.class,
+				() -> observableValue.setValue(new WritableSet(List.of(new Object()), String.class)));
 	}
 
 	/**
@@ -168,7 +162,7 @@ public class DetailObservableSetTest extends AbstractDefaultRealmTestCase {
 
 		@Override
 		public IObservable createObservable(Object target) {
-			return new WritableSet(new HashSet(), type);
+			return new WritableSet(new HashSet<>(), type);
 		}
 	}
 
@@ -221,7 +215,7 @@ public class DetailObservableSetTest extends AbstractDefaultRealmTestCase {
 		@Override
 		public IObservable createObservable(Object target) {
 			int elementCount = ((Integer) target).intValue();
-			final Set wrappedSet = new HashSet();
+			final Set wrappedSet = new HashSet<>();
 			for (int i = 0; i < elementCount; i++)
 				wrappedSet.add(new Object());
 			return new WritableSet(realm, wrappedSet, elementType);

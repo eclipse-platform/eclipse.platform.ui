@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2017 IBM Corporation and others.
+ * Copyright (c) 2004, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -218,12 +218,12 @@ public class LazySortedCollectionTest extends TestCase {
 	}
 
 	public void testComparisonCount() {
-		Assert.assertTrue("additions should not require any comparisons", comparator.comparisons == 0);
+		assertEquals("additions should not require any comparisons", 0, comparator.comparisons);
 
 		queryRange(0, elements.length, false);
 
-		Assert.assertTrue("requesting the complete set of unsorted elements should not require any comparisons",
-				comparator.comparisons == 0);
+		assertEquals("requesting the complete set of unsorted elements should not require any comparisons", 0,
+				comparator.comparisons);
 	}
 
 	/**

@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
@@ -39,6 +40,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
+@Deprecated(forRemoval = true)
 public class ResourceNavigatorTest extends UITestCase {
 	private IWorkbenchPage activePage;
 
@@ -69,7 +71,7 @@ public class ResourceNavigatorTest extends UITestCase {
 	}
 
 	private void setupView() throws Throwable {
-		view = activePage.showView("org.eclipse.ui.views.ResourceNavigator");
+		view = activePage.showView(IPageLayout.ID_RES_NAV);
 	}
 
 	private void setupResources() throws Throwable {

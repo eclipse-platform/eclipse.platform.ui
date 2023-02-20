@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 Tom Schindl and others.
+ * Copyright (c) 2007, 2023 Tom Schindl and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -76,8 +76,8 @@ public class Snippet034CellEditorPerRow {
 
 		@Override
 		protected Object getValue(Object element) {
-			if( element instanceof MyModel2 ) {
-				return Integer.valueOf(((MyModel) element).counter);
+			if (element instanceof MyModel2 mm2) {
+				return Integer.valueOf(mm2.counter);
 			} else {
 				return ((MyModel) element).counter + "";
 			}

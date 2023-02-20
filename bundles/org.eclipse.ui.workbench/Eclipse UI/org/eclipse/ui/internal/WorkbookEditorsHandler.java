@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.runtime.Adapters;
@@ -161,46 +162,56 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 	 */
 	private Map<EditorReference, String> generateColumnLabelTexts(List<EditorReference> editorReferences) {
 		Map<EditorReference, String> editorReferenceLabelTexts = new HashMap<>(editorReferences.size());
-		Map<String, List<Entry<EditorReference, IPath>>> collisionsMap = new HashMap<>(editorReferences.size());
-		editorReferences.forEach(editorReference -> {
-			try {
-				IPathEditorInput iPathEditorInput = Adapters.adapt(editorReference.getEditorInput(),
-						IPathEditorInput.class);
-				if (iPathEditorInput != null && iPathEditorInput.getPath() != null) {
-					IPath path = iPathEditorInput.getPath();
+		Map<String, List<EditorReference>> collisionsMap = editorReferences.stream()
+				.collect(Collectors.groupingBy(r -> r.getName()));
 
-					List<Entry<EditorReference, IPath>> referencesWithSameTitle = collisionsMap
-							.get(editorReference.getTitle());
-					if (referencesWithSameTitle == null) {
-						referencesWithSameTitle = new ArrayList<>();
-						collisionsMap.put(editorReference.getTitle(), referencesWithSameTitle);
-					}
-
-					referencesWithSameTitle.add(Map.entry(editorReference, path));
-				} else {
-					// we only detect collisions for IPathEditorInput
-					editorReferenceLabelTexts.put(editorReference, getWorkbenchPartReferenceText(editorReference));
-				}
-			} catch (PartInitException e) {
-				// This should never happen as all the parts are initialized?
-				String message = "Expected parts to be initialized"; //$NON-NLS-1$
-				final IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
-				WorkbenchPlugin.log(message, status);
-			}
-		});
-
-		for (List<Entry<EditorReference, IPath>> groupedEditorReferences : collisionsMap.values()) {
-			if (groupedEditorReferences.size() == 1 || allReferencesToSamePath(groupedEditorReferences)) {
-				groupedEditorReferences.stream().map(Entry::getKey)
-						.forEach(editorReference -> editorReferenceLabelTexts.put(editorReference,
-								getWorkbenchPartReferenceText(editorReference)));
+		for (Entry<String, List<EditorReference>> groupedEditorReferences : collisionsMap.entrySet()) {
+			if (groupedEditorReferences.getValue().size() == 1) {
+				groupedEditorReferences.getValue().stream().forEach(editorReference -> editorReferenceLabelTexts
+						.put(editorReference, getWorkbenchPartReferenceText(editorReference)));
 			} else {
-				List<Integer> maxMatchingSegmentsList = new ArrayList<>(groupedEditorReferences.size());
-				for (Entry<EditorReference, IPath> entry : groupedEditorReferences) {
+				List<Entry<EditorReference, IPath>> refsToMakeDistinguishableViaPathSegments = new ArrayList<>();
+				for (EditorReference editorReference : groupedEditorReferences.getValue()) {
+					try {
+						// we only detect collisions for IPathEditorInput and only if the name used by
+						// the editor reference is the filename. Otherwise, this would break scenarios
+						// where editors override the name used, e.g. for virtual file systems using
+						// org.eclipse.core.internal.filesystem.FileCache
+						IPathEditorInput iPathEditorInput = Adapters.adapt(editorReference.getEditorInput(),
+								IPathEditorInput.class);
+						IPath path;
+						if (iPathEditorInput != null && (path = iPathEditorInput.getPath()) != null
+								&& groupedEditorReferences.getKey().equals(path.lastSegment())) {
+							refsToMakeDistinguishableViaPathSegments.add(Map.entry(editorReference, path));
+						} else {
+							editorReferenceLabelTexts.put(editorReference,
+									getWorkbenchPartReferenceText(editorReference));
+						}
+					} catch (PartInitException e) {
+						// This should never happen as all the parts are initialized?
+						String message = "Expected parts to be initialized"; //$NON-NLS-1$
+						final IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
+						WorkbenchPlugin.log(message, status);
+					}
+				}
+
+				if (refsToMakeDistinguishableViaPathSegments.isEmpty()) {
+					continue;
+				}
+
+				if (allReferencesToSamePath(refsToMakeDistinguishableViaPathSegments)) {
+					refsToMakeDistinguishableViaPathSegments.stream().forEach(
+							e -> editorReferenceLabelTexts.put(e.getKey(), getWorkbenchPartReferenceText(e.getKey())));
+					continue;
+				}
+
+				List<Integer> maxMatchingSegmentsList = new ArrayList<>(
+						refsToMakeDistinguishableViaPathSegments.size());
+				for (Entry<EditorReference, IPath> entry : refsToMakeDistinguishableViaPathSegments) {
 					IPath path = entry.getValue();
 					int maxMatchingSegments = -1;
-					for (int i = 0; i < groupedEditorReferences.size(); i++) {
-						IPath currentPath = groupedEditorReferences.get(i).getValue();
+					for (int i = 0; i < refsToMakeDistinguishableViaPathSegments.size(); i++) {
+						IPath currentPath = refsToMakeDistinguishableViaPathSegments.get(i).getValue();
 						if (currentPath.equals(path)) {
 							continue;
 						}
@@ -212,9 +223,9 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 				}
 
 				for (int i = 0; i < maxMatchingSegmentsList.size(); i++) {
-					EditorReference editorReference = groupedEditorReferences.get(i).getKey();
+					EditorReference editorReference = refsToMakeDistinguishableViaPathSegments.get(i).getKey();
 					Integer maxMatchingSegment = maxMatchingSegmentsList.get(i);
-					IPath path = groupedEditorReferences.get(i).getValue();
+					IPath path = refsToMakeDistinguishableViaPathSegments.get(i).getValue();
 
 					String labelText = generateLabelText(editorReference, path, maxMatchingSegment);
 					editorReferenceLabelTexts.put(editorReference, labelText);

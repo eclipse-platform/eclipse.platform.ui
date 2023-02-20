@@ -33,7 +33,6 @@ import org.eclipse.e4.ui.model.application.ui.MLocalizable;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
@@ -372,7 +371,6 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- end-user-doc -->
 	 * @see #getTrimBars()
 	 * @since 1.3
-	 * </p>
 	 * @generated
 	 * @ordered
 	 */
@@ -477,7 +475,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	@Override
 	public List<String> getVariables() {
 		if (variables == null) {
-			variables = new EDataTypeUniqueEList<String>(String.class, this, BasicPackageImpl.PART__VARIABLES);
+			variables = new EDataTypeUniqueEList<>(String.class, this, BasicPackageImpl.PART__VARIABLES);
 		}
 		return variables;
 	}
@@ -490,7 +488,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	@Override
 	public Map<String, String> getProperties() {
 		if (properties == null) {
-			properties = new EcoreEMap<String, String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP,
+			properties = new EcoreEMap<>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP,
 					StringToStringMapImpl.class, this, BasicPackageImpl.PART__PROPERTIES);
 		}
 		return properties.map();
@@ -600,7 +598,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	@Override
 	public List<MHandler> getHandlers() {
 		if (handlers == null) {
-			handlers = new EObjectContainmentEList<MHandler>(MHandler.class, this, BasicPackageImpl.PART__HANDLERS);
+			handlers = new EObjectContainmentEList<>(MHandler.class, this, BasicPackageImpl.PART__HANDLERS);
 		}
 		return handlers;
 	}
@@ -636,7 +634,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	@Override
 	public List<MBindingContext> getBindingContexts() {
 		if (bindingContexts == null) {
-			bindingContexts = new EObjectResolvingEList<MBindingContext>(MBindingContext.class, this,
+			bindingContexts = new EObjectResolvingEList<>(MBindingContext.class, this,
 					BasicPackageImpl.PART__BINDING_CONTEXTS);
 		}
 		return bindingContexts;
@@ -650,7 +648,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	@Override
 	public List<MMenu> getMenus() {
 		if (menus == null) {
-			menus = new EObjectContainmentEList<MMenu>(MMenu.class, this, BasicPackageImpl.PART__MENUS);
+			menus = new EObjectContainmentEList<>(MMenu.class, this, BasicPackageImpl.PART__MENUS);
 		}
 		return menus;
 	}
@@ -769,13 +767,12 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @since 1.3
-	 * </p>
 	 * @generated
 	 */
 	@Override
 	public List<MTrimBar> getTrimBars() {
 		if (trimBars == null) {
-			trimBars = new EObjectContainmentEList<MTrimBar>(MTrimBar.class, this, BasicPackageImpl.PART__TRIM_BARS);
+			trimBars = new EObjectContainmentEList<>(MTrimBar.class, this, BasicPackageImpl.PART__TRIM_BARS);
 		}
 		return trimBars;
 	}
@@ -1069,12 +1066,6 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 */
 	@Override
 	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
-		if (baseClass == MPartSashContainerElement.class) {
-			switch (derivedFeatureID) {
-			default:
-				return -1;
-			}
-		}
 		if (baseClass == MStackElement.class) {
 			switch (derivedFeatureID) {
 			default:
@@ -1159,12 +1150,6 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 */
 	@Override
 	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
-		if (baseClass == MPartSashContainerElement.class) {
-			switch (baseFeatureID) {
-			default:
-				return -1;
-			}
-		}
 		if (baseClass == MStackElement.class) {
 			switch (baseFeatureID) {
 			default:
@@ -1263,12 +1248,6 @@ public class PartImpl extends UIElementImpl implements MPart {
 				return BasicPackageImpl.PART___UPDATE_LOCALIZATION;
 			default:
 				return super.eDerivedOperationID(baseOperationID, baseClass);
-			}
-		}
-		if (baseClass == MPartSashContainerElement.class) {
-			switch (baseOperationID) {
-			default:
-				return -1;
 			}
 		}
 		if (baseClass == MStackElement.class) {

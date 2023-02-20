@@ -3,9 +3,9 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-Vendor: %Plugin.Providername
 Bundle-SymbolicName: org.eclipse.tests.urischeme
-Bundle-Version: 1.1.400.qualifier
+Bundle-Version: 1.2.0.qualifier
 Bundle-Localization: plugin
 Fragment-Host: org.eclipse.urischeme;bundle-version="1.1.100"
 Automatic-Module-Name: org.eclipse.urischeme.tests
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: org.junit;bundle-version="[4.12.0,5.0.0)"

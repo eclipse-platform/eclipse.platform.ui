@@ -80,8 +80,8 @@ public class TiledEditor extends MultiEditor {
 			final int index = i;
 			e.addPropertyListener((source, property) -> {
 				if (property == IEditorPart.PROP_DIRTY || property == IWorkbenchPart.PROP_TITLE) {
-					if (source instanceof IEditorPart) {
-						updateInnerEditorTitle((IEditorPart) source, innerEditorTitle[index]);
+					if (source instanceof IEditorPart editorPart) {
+						updateInnerEditorTitle(editorPart, innerEditorTitle[index]);
 					}
 				}
 			});

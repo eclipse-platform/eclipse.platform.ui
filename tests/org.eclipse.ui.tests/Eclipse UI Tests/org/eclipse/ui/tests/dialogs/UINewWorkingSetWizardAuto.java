@@ -67,8 +67,7 @@ public class UINewWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 		 * Should have at least resourceWorkingSetPage and MockWorkingSet
 		 */
 		assertTrue(descriptors.length >= 2);
-		if (page instanceof WorkingSetTypePage) {
-			WorkingSetTypePage typePage = (WorkingSetTypePage) page;
+		if (page instanceof WorkingSetTypePage typePage) {
 			List<Widget> widgets = getWidgets((Composite) page.getControl(),
 					Table.class);
 			Table table = (Table) widgets.get(0);

@@ -16,8 +16,8 @@
 package org.eclipse.jface.tests.databinding.viewers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -75,11 +75,7 @@ public class ObservableSetTreeContentProviderTest extends AbstractDefaultRealmTe
 
 	@Test
 	public void testConstructor_NullArgumentThrowsException() {
-		try {
-			initContentProvider(null);
-			fail("Constructor should have thrown AssertionFailedException");
-		} catch (AssertionFailedException expected) {
-		}
+		assertThrows(AssertionFailedException.class, () -> initContentProvider(null));
 	}
 
 	@Test
@@ -98,9 +94,9 @@ public class ObservableSetTreeContentProviderTest extends AbstractDefaultRealmTe
 		Object element1 = new Object();
 		elements.add(element1);
 
-		List<Object> elementList = Arrays.asList(contentProvider.getElements(input));
+		List<Object> elementList = List.of(contentProvider.getElements(input));
 		assertEquals(2, elementList.size());
-		assertTrue(elementList.containsAll(Arrays.asList(new Object[] { element0, element1 })));
+		assertTrue(elementList.containsAll(List.of(element0, element1)));
 	}
 
 	@Test
@@ -152,7 +148,7 @@ public class ObservableSetTreeContentProviderTest extends AbstractDefaultRealmTe
 		IObservableSet<Object> knownElements = contentProvider.getKnownElements();
 		assertEquals(Collections.singleton(element), knownElements);
 		viewer.setInput(input2);
-		assertEquals(Collections.EMPTY_SET, knownElements);
+		assertEquals(Collections.emptySet(), knownElements);
 	}
 
 	@Test
@@ -179,7 +175,7 @@ public class ObservableSetTreeContentProviderTest extends AbstractDefaultRealmTe
 
 		assertEquals(Collections.singleton(element), realizedElements);
 		viewer.setInput(input2);
-		assertEquals(Collections.EMPTY_SET, realizedElements);
+		assertEquals(Collections.emptySet(), realizedElements);
 	}
 
 	static class Mutable {

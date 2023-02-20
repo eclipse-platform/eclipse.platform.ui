@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui.tests.views.properties.tabbed;singleton:=true
-Bundle-Version: 3.7.400.qualifier
+Bundle-Version: 3.8.0.qualifier
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -12,7 +12,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jface.text
 Bundle-Vendor: %Plugin.providerName
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: org.eclipse.ui.tests.views.properties.tabbed,
  org.eclipse.ui.tests.views.properties.tabbed.decorations,
  org.eclipse.ui.tests.views.properties.tabbed.decorations.views,

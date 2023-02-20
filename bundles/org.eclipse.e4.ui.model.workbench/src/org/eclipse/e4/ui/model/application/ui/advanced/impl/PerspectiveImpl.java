@@ -239,7 +239,6 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	 * <!-- end-user-doc -->
 	 * @see #getTrimBars()
 	 * @since 1.3
-	 * </p>
 	 * @generated
 	 * @ordered
 	 */
@@ -273,7 +272,7 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	@Override
 	public List<MPartSashContainerElement> getChildren() {
 		if (children == null) {
-			children = new EObjectContainmentWithInverseEList<MPartSashContainerElement>(
+			children = new EObjectContainmentWithInverseEList<>(
 					MPartSashContainerElement.class, this, AdvancedPackageImpl.PERSPECTIVE__CHILDREN,
 					UiPackageImpl.UI_ELEMENT__PARENT) {
 				private static final long serialVersionUID = 1L;
@@ -428,7 +427,7 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	@Override
 	public List<String> getVariables() {
 		if (variables == null) {
-			variables = new EDataTypeUniqueEList<String>(String.class, this,
+			variables = new EDataTypeUniqueEList<>(String.class, this,
 					AdvancedPackageImpl.PERSPECTIVE__VARIABLES);
 		}
 		return variables;
@@ -442,7 +441,7 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	@Override
 	public Map<String, String> getProperties() {
 		if (properties == null) {
-			properties = new EcoreEMap<String, String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP,
+			properties = new EcoreEMap<>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP,
 					StringToStringMapImpl.class, this, AdvancedPackageImpl.PERSPECTIVE__PROPERTIES);
 		}
 		return properties.map();
@@ -456,7 +455,7 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	@Override
 	public List<MHandler> getHandlers() {
 		if (handlers == null) {
-			handlers = new EObjectContainmentEList<MHandler>(MHandler.class, this,
+			handlers = new EObjectContainmentEList<>(MHandler.class, this,
 					AdvancedPackageImpl.PERSPECTIVE__HANDLERS);
 		}
 		return handlers;
@@ -470,7 +469,7 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	@Override
 	public List<MBindingContext> getBindingContexts() {
 		if (bindingContexts == null) {
-			bindingContexts = new EObjectResolvingEList<MBindingContext>(MBindingContext.class, this,
+			bindingContexts = new EObjectResolvingEList<>(MBindingContext.class, this,
 					AdvancedPackageImpl.PERSPECTIVE__BINDING_CONTEXTS);
 		}
 		return bindingContexts;
@@ -484,7 +483,7 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	@Override
 	public List<MWindow> getWindows() {
 		if (windows == null) {
-			windows = new EObjectContainmentEList<MWindow>(MWindow.class, this,
+			windows = new EObjectContainmentEList<>(MWindow.class, this,
 					AdvancedPackageImpl.PERSPECTIVE__WINDOWS);
 		}
 		return windows;
@@ -494,13 +493,12 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @since 1.3
-	 * </p>
 	 * @generated
 	 */
 	@Override
 	public List<MTrimBar> getTrimBars() {
 		if (trimBars == null) {
-			trimBars = new EObjectContainmentEList<MTrimBar>(MTrimBar.class, this,
+			trimBars = new EObjectContainmentEList<>(MTrimBar.class, this,
 					AdvancedPackageImpl.PERSPECTIVE__TRIM_BARS);
 		}
 		return trimBars;

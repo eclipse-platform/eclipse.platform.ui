@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 IBM Corporation and others.
+ * Copyright (c) 2006, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -62,9 +62,8 @@ public class OpenPropertyAction extends Action {
 		if(!selection.isEmpty()) {
 			IStructuredSelection sSelection = (IStructuredSelection) selection;
 			if(sSelection.size() == 1 &&
-				sSelection.getFirstElement() instanceof PropertiesTreeData)
-			{
-				data = ((PropertiesTreeData)sSelection.getFirstElement());
+					sSelection.getFirstElement() instanceof PropertiesTreeData ptData) {
+				data = ptData;
 				return true;
 			}
 		}
@@ -80,9 +79,7 @@ public class OpenPropertyAction extends Action {
 				IFile propertiesFile = data.getFile();
 				IEditorPart editor = IDE.openEditor(page, propertiesFile);
 
-				if (editor instanceof ITextEditor) {
-					ITextEditor textEditor = (ITextEditor) editor;
-
+				if (editor instanceof ITextEditor textEditor) {
 					IDocumentProvider documentProvider =
 						textEditor.getDocumentProvider();
 					IDocument document =

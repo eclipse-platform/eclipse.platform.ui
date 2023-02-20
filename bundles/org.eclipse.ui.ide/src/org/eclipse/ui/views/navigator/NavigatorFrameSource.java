@@ -26,7 +26,7 @@ import org.eclipse.ui.views.framelist.TreeViewerFrameSource;
  *
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public class NavigatorFrameSource extends TreeViewerFrameSource {
 
 	private ResourceNavigator navigator;

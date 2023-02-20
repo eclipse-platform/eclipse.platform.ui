@@ -50,7 +50,7 @@ import org.eclipse.ui.part.ResourceTransfer;
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  * @since 2.0
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 /* package */class CopyAction extends SelectionListenerAction {
 
 	/**

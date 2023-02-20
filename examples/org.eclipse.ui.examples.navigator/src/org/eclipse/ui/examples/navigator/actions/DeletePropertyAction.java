@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2018 IBM Corporation and others.
+ * Copyright (c) 2005, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -46,8 +46,8 @@ public class DeletePropertyAction extends ActionDelegate {
 
 	@Override
 	public void selectionChanged(IAction action, ISelection sel) {
-		if(sel instanceof IStructuredSelection)
-			selection = (IStructuredSelection) sel;
+		if (sel instanceof IStructuredSelection structuredSelection)
+			selection = structuredSelection;
 		else
 			selection = StructuredSelection.EMPTY;
 	}
@@ -64,9 +64,7 @@ public class DeletePropertyAction extends ActionDelegate {
 					if(selection.size() == 1) {
 
 						Object firstElement = selection.getFirstElement();
-						if(firstElement instanceof PropertiesTreeData) {
-							PropertiesTreeData data = (PropertiesTreeData) firstElement;
-
+						if (firstElement instanceof PropertiesTreeData data) {
 							IFile propertiesFile = data.getFile();
 							monitor.worked(1);
 

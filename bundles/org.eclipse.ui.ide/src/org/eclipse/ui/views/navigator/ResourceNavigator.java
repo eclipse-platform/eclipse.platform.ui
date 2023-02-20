@@ -114,7 +114,7 @@ import org.osgi.framework.FrameworkUtil;
  *
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public class ResourceNavigator extends ViewPart implements ISetSelectionTarget, IResourceNavigator {
 
 	private TreeViewer viewer;

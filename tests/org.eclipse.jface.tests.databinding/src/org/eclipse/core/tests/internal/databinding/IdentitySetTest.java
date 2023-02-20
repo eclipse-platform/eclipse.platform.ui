@@ -20,13 +20,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.internal.databinding.identity.IdentitySet;
 import org.eclipse.jface.internal.databinding.viewers.ViewerElementSet;
@@ -46,20 +47,14 @@ public class IdentitySetTest {
 
 	@Test
 	public void testConstructor_NullComparer() {
-		try {
-			new ViewerElementSet<>(null);
-			fail("Constructor should throw exception when null comparer passed in");
-		} catch (RuntimeException expected) {
-		}
+		assertThrows("Constructor should throw exception when null comparer passed in", RuntimeException.class,
+				() -> new ViewerElementSet<>(null));
 	}
 
 	@Test
 	public void testConstructorWithCollection_NullCollection() {
-		try {
-			new ViewerElementSet<>(null);
-			fail("Constructor should throw exception when null collection passed in");
-		} catch (RuntimeException expected) {
-		}
+		assertThrows("Constructor should throw exception when null collection passed in", RuntimeException.class,
+				() -> new ViewerElementSet<>(null));
 	}
 
 	@Test
@@ -97,7 +92,7 @@ public class IdentitySetTest {
 	public void testAddAll_ContainsAllHonorsComparer() {
 		String o1 = new String("o1");
 		String o2 = new String("o2");
-		Collection<Object> items = Arrays.asList(new Object[] { o1, o2 });
+		Collection<Object> items = List.of(o1, o2);
 		assertTrue(set.addAll(items));
 
 		assertTrue(set.containsAll(items));
@@ -163,7 +158,7 @@ public class IdentitySetTest {
 
 		Object o1 = new Object();
 		Object o2 = new Object();
-		set.addAll(Arrays.asList(new Object[] { o1, o2 }));
+		set.addAll(List.of(o1, o2));
 
 		assertTrue(set.removeAll(Collections.singleton(o1)));
 		assertFalse(set.contains(o1));
@@ -180,7 +175,7 @@ public class IdentitySetTest {
 		set.add(o1);
 		set.add(o2);
 
-		assertFalse(set.retainAll(Arrays.asList(new Object[] { o1, o2 }))); // no
+		assertFalse(set.retainAll(List.of(o1, o2))); // no
 		// change
 
 		assertTrue(set.contains(o2));
@@ -188,7 +183,7 @@ public class IdentitySetTest {
 		assertFalse(set.contains(o2));
 
 		assertTrue(set.contains(o1));
-		assertTrue(set.retainAll(Collections.EMPTY_SET));
+		assertTrue(set.retainAll(Collections.emptySet()));
 		assertFalse(set.contains(o1));
 	}
 
@@ -229,7 +224,7 @@ public class IdentitySetTest {
 		assertFalse(set.equals(null));
 		assertFalse(set.equals(new Object()));
 
-		assertTrue(set.equals(Collections.EMPTY_SET));
+		assertTrue(set.equals(Collections.emptySet()));
 
 		Object o = new String("string");
 		Object distinct = new String("string");

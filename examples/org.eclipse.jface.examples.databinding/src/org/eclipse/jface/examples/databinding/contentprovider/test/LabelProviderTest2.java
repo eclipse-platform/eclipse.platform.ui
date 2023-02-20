@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 IBM Corporation and others.
+ * Copyright (c) 2006, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -97,9 +97,7 @@ public class LabelProviderTest2 {
 
 			@Override
 			public void updateLabel(ViewerLabel label, Object element) {
-				if (element instanceof RenamableItem) {
-					RenamableItem item = (RenamableItem) element;
-
+				if (element instanceof RenamableItem item) {
 					label.setText(item.getName());
 				}
 			}

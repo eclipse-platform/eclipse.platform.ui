@@ -87,8 +87,7 @@ public class MultiVariablePageEditor extends MultiPageEditorPart {
 	protected void pageChange(int newPageIndex) {
 		super.pageChange(newPageIndex);
 		IEditorPart part = getEditor(newPageIndex);
-		if (part instanceof TextEditor) {
-			TextEditor editor = (TextEditor) part;
+		if (part instanceof TextEditor editor) {
 			IDocumentProvider provider = editor.getDocumentProvider();
 			IDocument doc = provider.getDocument(getEditorInput());
 			FindReplaceDocumentAdapter find = new FindReplaceDocumentAdapter(

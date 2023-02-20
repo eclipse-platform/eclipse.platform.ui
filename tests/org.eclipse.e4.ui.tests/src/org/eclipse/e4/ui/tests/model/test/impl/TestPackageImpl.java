@@ -74,7 +74,7 @@ public class TestPackageImpl extends EPackageImpl implements MTestPackage {
 
 		// Obtain or create and register package
 		Object registeredTestPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
-		TestPackageImpl theTestPackage = registeredTestPackage instanceof TestPackageImpl ? (TestPackageImpl)registeredTestPackage : new TestPackageImpl();
+		TestPackageImpl theTestPackage = registeredTestPackage instanceof TestPackageImpl p ? p : new TestPackageImpl();
 
 		isInited = true;
 

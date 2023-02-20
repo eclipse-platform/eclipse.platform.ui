@@ -232,8 +232,8 @@ public class UIWizards {
 		ISelection selection = getWorkbench().getActiveWorkbenchWindow()
 				.getSelectionService().getSelection();
 		IStructuredSelection selectionToPass = null;
-		if (selection instanceof IStructuredSelection) {
-			selectionToPass = (IStructuredSelection) selection;
+		if (selection instanceof IStructuredSelection sse) {
+			selectionToPass = sse;
 		} else {
 			selectionToPass = StructuredSelection.EMPTY;
 		}
@@ -266,8 +266,8 @@ public class UIWizards {
 		ISelection selection = getWorkbench().getActiveWorkbenchWindow()
 				.getSelectionService().getSelection();
 		IStructuredSelection selectionToPass = null;
-		if (selection instanceof IStructuredSelection) {
-			selectionToPass = (IStructuredSelection) selection;
+		if (selection instanceof IStructuredSelection sse) {
+			selectionToPass = sse;
 		} else {
 			selectionToPass = StructuredSelection.EMPTY;
 		}

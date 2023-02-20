@@ -39,8 +39,7 @@ public class OverrideTestsLabelProvider extends LabelProvider implements
 
 	@Override
 	public Image getImage(Object object) {
-		if (object instanceof Element) {
-			Element element = (Element) object;
+		if (object instanceof Element element) {
 			return element.getImage();
 		}
 		return super.getImage(object);
@@ -48,8 +47,7 @@ public class OverrideTestsLabelProvider extends LabelProvider implements
 
 	@Override
 	public String getText(Object object) {
-		if (object instanceof Element) {
-			Element element = (Element) object;
+		if (object instanceof Element element) {
 			return element.getName();
 		}
 		return super.getText(object);

@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.views.properties.tabbed.views;
 
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeNode;
 import org.eclipse.jface.viewers.Viewer;
@@ -24,12 +23,8 @@ import org.eclipse.ui.tests.views.properties.tabbed.model.Information;
 import org.eclipse.ui.tests.views.properties.tabbed.model.Project;
 import org.eclipse.ui.tests.views.properties.tabbed.model.Warning;
 
-public class TestsViewContentProvider
-	implements IStructuredContentProvider, ITreeContentProvider {
+public class TestsViewContentProvider implements ITreeContentProvider {
 
-	/**
-	 *
-	 */
 	private final TestsView view;
 
 	/**
@@ -63,24 +58,24 @@ public class TestsViewContentProvider
 
 	@Override
 	public Object getParent(Object child) {
-		if (child instanceof TreeNode) {
-			return ((TreeNode) child).getParent();
+		if (child instanceof TreeNode treeNode) {
+			return treeNode.getParent();
 		}
 		return null;
 	}
 
 	@Override
 	public Object[] getChildren(Object parent) {
-		if (parent instanceof TreeNode) {
-			return ((TreeNode) parent).getChildren();
+		if (parent instanceof TreeNode treeNode) {
+			return treeNode.getChildren();
 		}
 		return new Object[0];
 	}
 
 	@Override
 	public boolean hasChildren(Object parent) {
-		if (parent instanceof TreeNode)
-			return ((TreeNode) parent).hasChildren();
+		if (parent instanceof TreeNode treeNode)
+			return treeNode.hasChildren();
 		return false;
 	}
 

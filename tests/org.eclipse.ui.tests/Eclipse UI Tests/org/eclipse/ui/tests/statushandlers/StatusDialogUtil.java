@@ -113,12 +113,9 @@ public class StatusDialogUtil {
 		Composite linkArea = (Composite) c.getChildren()[0];
 		for (int i = 0; i < linkArea.getChildren().length; i++) {
 			Widget w = linkArea.getChildren()[i];
-			if (w instanceof Link) {
-				if (((Link) w)
-						.getText()
-						.equals(
-								WorkbenchMessages.WorkbenchStatusDialog_SupportHyperlink)) {
-					return (Link) w;
+			if (w instanceof Link link) {
+				if (link.getText().equals(WorkbenchMessages.WorkbenchStatusDialog_SupportHyperlink)) {
+					return link;
 				}
 			}
 		}
@@ -133,12 +130,9 @@ public class StatusDialogUtil {
 		Composite linkArea = (Composite) c.getChildren()[0];
 		for (int i = 0; i < linkArea.getChildren().length; i++) {
 			Widget w = linkArea.getChildren()[i];
-			if (w instanceof Link) {
-				if (((Link) w)
-						.getText()
-						.equals(
-								WorkbenchMessages.ErrorLogUtil_ShowErrorLogHyperlink)) {
-					return (Link) w;
+			if (w instanceof Link link) {
+				if (link.getText().equals(WorkbenchMessages.ErrorLogUtil_ShowErrorLogHyperlink)) {
+					return link;
 				}
 			}
 		}

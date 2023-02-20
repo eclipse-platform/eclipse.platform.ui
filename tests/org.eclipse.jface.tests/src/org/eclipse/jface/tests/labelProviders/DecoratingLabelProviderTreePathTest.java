@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -35,11 +35,10 @@ import org.eclipse.swt.widgets.TreeItem;
  * @since 3.3
  *
  */
-public class DecoratingLabelProviderTreePathTest extends
-		CompositeLabelProviderTest {
+public class DecoratingLabelProviderTreePathTest extends CompositeLabelProviderTest {
 
-	class TreePathTestLabelProvider extends LabelProvider implements
-			IColorProvider, IFontProvider, ITreePathLabelProvider {
+	class TreePathTestLabelProvider extends LabelProvider
+			implements IColorProvider, IFontProvider, ITreePathLabelProvider {
 		@Override
 		public Color getForeground(Object element) {
 			return foreground;
@@ -87,18 +86,15 @@ public class DecoratingLabelProviderTreePathTest extends
 	}
 
 	/**
-	 * Test that all of the colours and fonts from the label provider are
-	 * applied.
+	 * Test that all of the colours and fonts from the label provider are applied.
 	 */
 	public void testColorsAndFonts() {
 		Tree tree = (Tree) fViewer.getControl();
 		TreeItem item = tree.getItem(0);
 
-		assertTrue("Background was not set", item.getBackground(0).equals(
-				background));
-		assertTrue("Foreground was not set", item.getForeground(0).equals(
-				foreground));
-		assertTrue("Font was not set", item.getFont(0).equals(font));
+		assertEquals("Background was not set", item.getBackground(0), background);
+		assertEquals("Foreground was not set", item.getForeground(0), foreground);
+		assertEquals("Font was not set", item.getFont(0), font);
 
 	}
 }

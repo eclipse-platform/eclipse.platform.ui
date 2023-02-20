@@ -14,7 +14,7 @@
 
 package org.eclipse.core.tests.databinding;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 import org.eclipse.core.databinding.BindingException;
 import org.eclipse.core.databinding.UpdateListStrategy;
@@ -38,14 +38,11 @@ public class UpdateListStrategyTest extends AbstractDefaultRealmTestCase {
 
 		// Invalid use: source type Object does not extend converter from-type
 		// String
-		strategy = new UpdateListStrategyStub<>();
-		strategy.setConverter(new IdentityConverter(String.class, Object.class));
-		try {
-			strategy.fillDefaults(WritableList.withElementType(Object.class),
-					WritableList.withElementType(Object.class));
-			fail("Expected BindingException since Object does not extend String");
-		} catch (BindingException expected) {
-		}
+		UpdateListStrategyStub<Object, Object> strategy2 = new UpdateListStrategyStub<>();
+		strategy2.setConverter(new IdentityConverter(String.class, Object.class));
+		assertThrows("Expected BindingException since Object does not extend String", BindingException.class,
+				() -> strategy2.fillDefaults(WritableList.withElementType(Object.class),
+						WritableList.withElementType(Object.class)));
 	}
 
 	@Test
@@ -58,14 +55,11 @@ public class UpdateListStrategyTest extends AbstractDefaultRealmTestCase {
 
 		// Invalid use: converter to-type Object does not extend destination
 		// type String
-		strategy = new UpdateListStrategyStub<>();
-		strategy.setConverter(new IdentityConverter(Object.class, Object.class));
-		try {
-			strategy.fillDefaults(WritableList.withElementType(Object.class),
-					WritableList.withElementType(String.class));
-			fail("Expected BindingException since Object does not extend String");
-		} catch (BindingException expected) {
-		}
+		UpdateListStrategyStub<Object, Object> strategy2 = new UpdateListStrategyStub<>();
+		strategy2.setConverter(new IdentityConverter(Object.class, Object.class));
+		assertThrows("Expected BindingException since Object does not extend String", BindingException.class,
+				() -> strategy2.fillDefaults(WritableList.withElementType(Object.class),
+						WritableList.withElementType(String.class)));
 	}
 
 	class UpdateListStrategyStub<S, D> extends UpdateListStrategy<S, D> {

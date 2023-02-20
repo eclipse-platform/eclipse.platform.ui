@@ -35,7 +35,6 @@ import static org.eclipse.e4.ui.internal.workbench.Policy.TRACE_FLAG;
 
 import java.util.Hashtable;
 import java.util.List;
-import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.debug.DebugOptionsListener;
 import org.eclipse.osgi.service.debug.DebugTrace;
@@ -58,9 +57,7 @@ public class Activator implements BundleActivator, DebugOptionsListener {
 	private static Activator activator;
 
 	private BundleContext context;
-	private ServiceTracker<Location, Location> locationTracker;
 
-	private ServiceTracker<DebugOptions, DebugOptions> debugTracker;
 	private ServiceTracker<LogService, LogService> logTracker;
 
 	/** Tracks all bundles which are in the state: RESOLVED, STARTING, ACTIVE or STOPPING. */
@@ -112,15 +109,6 @@ public class Activator implements BundleActivator, DebugOptionsListener {
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		if (locationTracker != null) {
-			locationTracker.close();
-			locationTracker = null;
-		}
-		if (debugTracker != null) {
-			trace = null;
-			debugTracker.close();
-			debugTracker = null;
-		}
 		if (logTracker != null) {
 			logTracker.close();
 			logTracker = null;

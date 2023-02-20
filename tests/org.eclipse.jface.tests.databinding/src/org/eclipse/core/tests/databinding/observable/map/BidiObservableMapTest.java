@@ -16,8 +16,8 @@ package org.eclipse.core.tests.databinding.observable.map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -58,11 +58,7 @@ public class BidiObservableMapTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testConstructor_NullArgument() {
-		try {
-			new BidirectionalMap<>(null);
-			fail("Expected NullPointerException");
-		} catch (NullPointerException expected) {
-		}
+		assertThrows(NullPointerException.class, () -> new BidirectionalMap<>(null));
 	}
 
 	public void withAndWithoutListeners(Runnable runnable) throws Exception {

@@ -32,7 +32,7 @@ import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
  *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=549953
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public class FilterSelectionAction extends ResourceNavigatorAction {
 	private static final String FILTER_TOOL_TIP = ResourceNavigatorMessages.FilterSelection_toolTip;
 

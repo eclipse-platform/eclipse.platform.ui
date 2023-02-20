@@ -15,8 +15,8 @@ package org.eclipse.core.tests.databinding.bind;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
@@ -102,20 +102,13 @@ public class BindSetTest extends AbstractDefaultRealmTestCase {
 		var target = new WritableSet<String>();
 		var model = new WritableSet<String>();
 
-		try {
-			Bind.twoWay().from(model).to(target).updateOnlyOnRequest().updateOnlyOnRequest();
-			fail();
-		} catch (IllegalStateException e) {
-		}
+		assertThrows(IllegalStateException.class,
+				() -> Bind.twoWay().from(model).to(target).updateOnlyOnRequest().updateOnlyOnRequest());
 	}
 
 	@Test
 	public void setNull() {
-		try {
-			Bind.twoWay().from((IObservableSet<Object>) null);
-			fail();
-		} catch (NullPointerException e) {
-		}
+		assertThrows(NullPointerException.class, () -> Bind.twoWay().from((IObservableSet<Object>) null));
 	}
 
 	@Test

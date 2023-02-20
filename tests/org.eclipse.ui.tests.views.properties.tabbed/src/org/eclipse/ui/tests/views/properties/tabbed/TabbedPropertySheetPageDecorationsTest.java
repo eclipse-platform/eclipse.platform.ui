@@ -14,6 +14,10 @@
 
 package org.eclipse.ui.tests.views.properties.tabbed;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeNode;
@@ -22,26 +26,25 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyComposite;
 import org.eclipse.ui.tests.views.properties.tabbed.decorations.TabbedPropertySheetPageWithDecorations;
 import org.eclipse.ui.tests.views.properties.tabbed.decorations.views.DecorationTestsView;
 import org.eclipse.ui.tests.views.properties.tabbed.views.TestsPerspective;
 import org.eclipse.ui.tests.views.properties.tabbed.views.TestsViewContentProvider;
 import org.eclipse.ui.views.properties.tabbed.ITabDescriptor;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class TabbedPropertySheetPageDecorationsTest extends TestCase {
+public class TabbedPropertySheetPageDecorationsTest {
 
 	private DecorationTestsView decorationTestsView;
 
 	private TreeNode[] treeNodes;
 
-	@Override
-	protected void setUp()
-		throws Exception {
-		super.setUp();
-
+	@Before
+	public void setUp() throws WorkbenchException {
 		/**
 		 * Close the existing perspectives.
 		 */
@@ -80,7 +83,7 @@ public class TabbedPropertySheetPageDecorationsTest extends TestCase {
 		assertTrue(contentProvider instanceof TestsViewContentProvider);
 		TestsViewContentProvider viewContentProvider = (TestsViewContentProvider) contentProvider;
 		treeNodes = viewContentProvider.getInvisibleRoot().getChildren();
-		assertEquals(treeNodes.length, 8);
+		assertEquals(8, treeNodes.length);
 	}
 
 	private void closeIntroView(IWorkbenchPage workbenchPage) {
@@ -90,10 +93,8 @@ public class TabbedPropertySheetPageDecorationsTest extends TestCase {
 		}
 	}
 
-	@Override
-	protected void tearDown()
-		throws Exception {
-		super.tearDown();
+	@After
+	public void tearDown() {
 
 		/**
 		 * Bug 175070: Make sure the views have finished painting.
@@ -126,6 +127,7 @@ public class TabbedPropertySheetPageDecorationsTest extends TestCase {
 	/**
 	 * When Information node is selected, the Information tab is widest if decorations are not used.
 	 */
+	@Test
 	public void test_widestLabelIndex1_WithoutDecorations() {
 		((TabbedPropertySheetPageWithDecorations)decorationTestsView.getTabbedPropertySheetPage()).useDecorations(false);
 		/**
@@ -160,6 +162,7 @@ public class TabbedPropertySheetPageDecorationsTest extends TestCase {
 	/**
 	 * When Information node is selected, the Name tab is widest if decorations are used.
 	 */
+	@Test
 	public void test_widestLabelIndex1_WithDecorations() {
 		((TabbedPropertySheetPageWithDecorations)decorationTestsView.getTabbedPropertySheetPage()).useDecorations(true);
 		/**
@@ -194,6 +197,7 @@ public class TabbedPropertySheetPageDecorationsTest extends TestCase {
 	/**
 	 * When Two Information nodes are selected, the Information tab is widest if decorations are not used.
 	 */
+	@Test
 	public void test_widestLabelIndex2_WithoutDecorations() {
 		((TabbedPropertySheetPageWithDecorations)decorationTestsView.getTabbedPropertySheetPage()).useDecorations(false);
 		/**
@@ -224,6 +228,7 @@ public class TabbedPropertySheetPageDecorationsTest extends TestCase {
 	/**
 	 * When Two Information nodes are selected, the Message tab is widest if decorations are used.
 	 */
+	@Test
 	public void test_widestLabelIndex2_WithDecorations() {
 		((TabbedPropertySheetPageWithDecorations)decorationTestsView.getTabbedPropertySheetPage()).useDecorations(true);
 		/**

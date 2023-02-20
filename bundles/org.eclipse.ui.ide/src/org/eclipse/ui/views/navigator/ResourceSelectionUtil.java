@@ -40,7 +40,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
  * @deprecated as of 3.5, use {@link org.eclipse.ui.ide.ResourceSelectionUtil}
  *             instead.
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public class ResourceSelectionUtil {
 	private ResourceSelectionUtil() {
 	}

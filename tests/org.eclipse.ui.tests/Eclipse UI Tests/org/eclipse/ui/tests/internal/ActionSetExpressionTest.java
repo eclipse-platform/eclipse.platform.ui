@@ -43,8 +43,8 @@ public class ActionSetExpressionTest extends ActionExpressionTest {
 				"org.eclipse.ui.tests.internal.ListElementMenu");
 		while (item instanceof SubContributionItem) {
 			item = ((SubContributionItem) item).getInnerItem();
-			if (item instanceof MenuManager) {
-				return (MenuManager) item;
+			if (item instanceof MenuManager mm) {
+				return mm;
 			}
 		}
 		fail("Unable to find menu manager");

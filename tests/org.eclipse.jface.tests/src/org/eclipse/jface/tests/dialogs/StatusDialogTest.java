@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Rüdiger Herrmann and others.
+ * Copyright (c) 2012 RÃ¼diger Herrmann and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,11 +9,9 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     Rüdiger Herrmann - initial API and implementation
+ *     RÃ¼diger Herrmann - initial API and implementation
  ******************************************************************************/
 package org.eclipse.jface.tests.dialogs;
-
-import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -22,6 +20,8 @@ import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+
+import junit.framework.TestCase;
 
 public class StatusDialogTest extends TestCase {
 
@@ -34,7 +34,7 @@ public class StatusDialogTest extends TestCase {
 		dialog.open();
 		dialog.updateStatus(new Status(IStatus.ERROR, PLUGIN_ID, "&"));
 		CLabel statusLabel = findStatusLabel(dialog.getShell());
-		assertEquals( "&&", statusLabel.getText());
+		assertEquals("&&", statusLabel.getText());
 	}
 
 	@Override
@@ -51,14 +51,14 @@ public class StatusDialogTest extends TestCase {
 		CLabel result = null;
 		Control[] children = parent.getChildren();
 		for (Control child : children) {
-			if (child instanceof CLabel) {
-				result = (CLabel) child;
+			if (child instanceof CLabel cLabel) {
+				result = cLabel;
 			}
 		}
 		if (result == null) {
 			for (Control child : children) {
-				if (child instanceof Composite) {
-					result = findStatusLabel((Composite) child);
+				if (child instanceof Composite composite) {
+					result = findStatusLabel(composite);
 				}
 			}
 		}

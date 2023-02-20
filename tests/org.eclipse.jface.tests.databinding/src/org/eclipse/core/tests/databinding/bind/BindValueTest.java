@@ -15,8 +15,8 @@ package org.eclipse.core.tests.databinding.bind;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -197,20 +197,13 @@ public class BindValueTest extends AbstractDefaultRealmTestCase {
 		var target = new WritableValue<String>();
 		var model = new WritableValue<String>();
 
-		try {
-			Bind.twoWay().from(model).to(target).convertOnly().convertOnly();
-			fail();
-		} catch (IllegalStateException e) {
-		}
+		assertThrows(IllegalStateException.class,
+				() -> Bind.twoWay().from(model).to(target).convertOnly().convertOnly());
 	}
 
 	@Test
 	public void setNull() {
-		try {
-			Bind.twoWay().from((IObservableValue<Object>) null);
-			fail();
-		} catch (NullPointerException e) {
-		}
+		assertThrows(NullPointerException.class, () -> Bind.twoWay().from((IObservableValue<Object>) null));
 	}
 
 	@Test

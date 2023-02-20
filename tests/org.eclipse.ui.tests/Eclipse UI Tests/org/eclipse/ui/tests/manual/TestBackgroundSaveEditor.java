@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2017 IBM Corporation and others.
+ * Copyright (c) 2006, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -263,7 +263,6 @@ public class TestBackgroundSaveEditor extends EditorPart implements ISaveablesSo
 		dbc.bindValue(
 				WidgetProperties.buttonSelection().observe(backgroundExceptionButton),
 				BeanProperties.value("throwExceptionInBackground").observe(data), null, null);
-		;
 
 		new Label(optionsGroup, SWT.NONE).setText("Foreground save time:");
 		Text optionsForegroundTime = new Text(optionsGroup, SWT.BORDER);

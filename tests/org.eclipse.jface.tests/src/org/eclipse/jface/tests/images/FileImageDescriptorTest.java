@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2022 IBM Corporation and others.
+ * Copyright (c) 2008, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Iterator;
 
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.FileLocator;
@@ -92,9 +91,8 @@ public class FileImageDescriptorTest extends TestCase {
 
 		}
 
-		Iterator<Image> imageIterator = images.iterator();
-		while (imageIterator.hasNext()) {
-			imageIterator.next().dispose();
+		for (Image image : images) {
+			image.dispose();
 		}
 
 	}
@@ -107,7 +105,7 @@ public class FileImageDescriptorTest extends TestCase {
 		ImageDescriptor descriptor = ImageDescriptor.createFromFile(FileImageDescriptorTest.class, "anything.gif");
 
 		Image image = descriptor.createImage();
-		assertTrue("Could not find image", image != null);
+		assertNotNull("Could not find image", image);
 		image.dispose();
 
 	}
@@ -120,7 +118,7 @@ public class FileImageDescriptorTest extends TestCase {
 		ImageDescriptor descriptor = ImageDescriptor.createFromFile(FileImageDescriptorTest.class, "missing.gif");
 
 		Image image = descriptor.createImage(false);
-		assertTrue("Found an image but should be null", image == null);
+		assertNull("Found an image but should be null", image);
 	}
 
 	/**
@@ -131,7 +129,7 @@ public class FileImageDescriptorTest extends TestCase {
 		ImageDescriptor descriptor = ImageDescriptor.createFromFile(FileImageDescriptorTest.class, "missing.gif");
 
 		Image image = descriptor.createImage(true);
-		assertTrue("Did not find default image", image != null);
+		assertNotNull("Did not find default image", image);
 	}
 
 	public void testGetxName() {

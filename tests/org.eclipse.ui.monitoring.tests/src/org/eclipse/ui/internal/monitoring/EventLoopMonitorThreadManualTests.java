@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014, 2019 Google Inc and others.
+ * Copyright (C) 2014, 2023 Google Inc and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -239,16 +239,17 @@ public class EventLoopMonitorThreadManualTests {
 				worstRelativeDiffOneThread = relativeDiffOneThread;
 			}
 			if (PRINT_TO_CONSOLE) {
-				System.out.println(String.format(
-						"Measurement %d of %d took %.3fs. Relative increase = %.3f%% "
-						+ "(allowed < %.3f%%).",
-						i, NUM_UI_STACK_MEASUREMENTS, tWork[0] / 1e9, relativeDiffOneThread * 100,
-						maxRelativeIncreaseOneStackAllowed * 100));
+				System.out.println(String.format("""
+						Measurement %d of %d took %.3fs. Relative increase = %.3f%%
+						(allowed < %.3f%%).""",
+					i, NUM_UI_STACK_MEASUREMENTS, tWork[0] / 1e9, relativeDiffOneThread * 100,
+					maxRelativeIncreaseOneStackAllowed * 100));
 			}
 			assertTrue(
-				String.format("Relative overhead of monitoring surpassed threshold for "
-					+ "measurement %d of %d. It took %.3fs with a relative increase of %.3f%% "
-					+ "(allowed < %.3f%%).",
+					String.format("""
+						Relative overhead of monitoring surpassed threshold for
+						measurement %d of %d. It took %.3fs with a relative increase of %.3f%%
+						(allowed < %.3f%%).""",
 					i, NUM_UI_STACK_MEASUREMENTS, tWork[0] / 1e9, relativeDiffOneThread * 100,
 					maxRelativeIncreaseOneStackAllowed * 100),
 				relativeDiffOneThread <= maxRelativeIncreaseOneStackAllowed);
@@ -270,18 +271,18 @@ public class EventLoopMonitorThreadManualTests {
 				worstRelativeDiffAllThreads = relativeDiffAllThreads;
 			}
 			if (PRINT_TO_CONSOLE) {
-				System.out.println(String.format(
-						"Measurement %d of %d took %.3fs, Relative increase = %.3f%% "
-						+ "(allowed < %.3f%%).",
-						i, NUM_ALL_STACKS_MEASUREMENTS, tWork[0] / 1e9, relativeDiffAllThreads * 100,
-						maxRelativeIncreaseAllStacksAllowed * 100));
-			}
-			assertTrue(
-				String.format("Relative overhead of monitoring with stack traces of all threads "
-					+ "surpassed threshold for measurement %d of %d. It took %.3fs with a relative "
-					+ "increase of %.3f%% (allowed < %.3f%%).",
+				System.out.println(String.format("""
+						Measurement %d of %d took %.3fs, Relative increase = %.3f%%
+						(allowed < %.3f%%).""",
 					i, NUM_ALL_STACKS_MEASUREMENTS, tWork[0] / 1e9, relativeDiffAllThreads * 100,
-					maxRelativeIncreaseAllStacksAllowed * 100),
+					maxRelativeIncreaseAllStacksAllowed * 100));
+			}
+			assertTrue(String.format("""
+					Relative overhead of monitoring with stack traces of all threads
+					surpassed threshold for measurement %d of %d. It took %.3fs with a relative
+					increase of %.3f%% (allowed < %.3f%%).""",
+				i, NUM_ALL_STACKS_MEASUREMENTS, tWork[0] / 1e9, relativeDiffAllThreads * 100,
+				maxRelativeIncreaseAllStacksAllowed * 100),
 				relativeDiffAllThreads <= maxRelativeIncreaseAllStacksAllowed);
 		}
 		killMonitorThread(monitor2, display);
@@ -379,13 +380,15 @@ public class EventLoopMonitorThreadManualTests {
 		assertEquals("Did not log expected number of freeze events,",
 				NUM_UI_STACK_MEASUREMENTS + NUM_ALL_STACKS_MEASUREMENTS,
 				logger.getLoggedEvents().size());
-		assertTrue(String.format("Relative overhead of monitoring with stack traces of the UI "
-				+ "thread was %.3f%% (allowed < %.3f%%).",
+		assertTrue(String.format("""
+					Relative overhead of monitoring with stack traces of the UI
+					thread was %.3f%% (allowed < %.3f%%).""",
 				worstRelativeDiffOneThread * 100,
 				maxRelativeIncreaseOneStackAllowed * 100),
 				worstRelativeDiffOneThread <= maxRelativeIncreaseOneStackAllowed);
-		assertTrue(String.format("Relative overhead of monitoring with stack traces of all "
-				+ "threads was %.3f%% (allowed < %.3f%%).",
+		assertTrue(String.format("""
+					Relative overhead of monitoring with stack traces of all
+					threads was %.3f%% (allowed < %.3f%%).""",
 				worstRelativeDiffAllThreads * 100,
 				maxRelativeIncreaseAllStacksAllowed * 100),
 				worstRelativeDiffAllThreads <= maxRelativeIncreaseAllStacksAllowed);
@@ -602,14 +605,15 @@ public class EventLoopMonitorThreadManualTests {
 		double tWork = 2.0 * mean / WORK_INTEGRATION_ITERATIONS;
 
 		// Passing the hash to println method ensures that it cannot be optimized away completely.
-		System.out.println(String.format("Measurement converged in %d ms (%d loops) "
-				+ "tWork = %.3fns, relErr = %f, outliers = %d",
-				System.currentTimeMillis() - startWallTime,
-				n,
-				tWork,
-				avgAbsRelErr,
-				outliers,
-				hash));
+		System.out.println(String.format("""
+				Measurement converged in %d ms (%d loops)
+				tWork = %.3fns, relErr = %f, outliers = %d""",
+			System.currentTimeMillis() - startWallTime,
+			n,
+			tWork,
+			avgAbsRelErr,
+			outliers,
+			hash));
 		return tWork;
 	}
 

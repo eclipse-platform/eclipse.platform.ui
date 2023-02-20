@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  ******************************************************************************/
 package org.eclipse.e4.ui.tests.application;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -118,18 +119,14 @@ public class EModelServiceInsertTest {
 
 		boolean horizontal = where == EModelService.LEFT_OF
 				|| where == EModelService.RIGHT_OF;
-		assertTrue("invalid sash orientation", psc.isHorizontal() == horizontal);
+		assertEquals("invalid sash orientation", horizontal, psc.isHorizontal());
 
 		if (where == EModelService.LEFT_OF || where == EModelService.ABOVE) {
-			assertTrue("new part should be first",
-					psc.getChildren().indexOf(newPart) == 0);
-			assertTrue("old part should be second",
-					psc.getChildren().indexOf(relTo) == 1);
+			assertEquals("new part should be first", 0, psc.getChildren().indexOf(newPart));
+			assertEquals("old part should be second", 1, psc.getChildren().indexOf(relTo));
 		} else {
-			assertTrue("old part should be first",
-					psc.getChildren().indexOf(relTo) == 0);
-			assertTrue("new part should be second",
-					psc.getChildren().indexOf(newPart) == 1);
+			assertEquals("old part should be first", 0, psc.getChildren().indexOf(relTo));
+			assertEquals("new part should be second", 1, psc.getChildren().indexOf(newPart));
 		}
 	}
 

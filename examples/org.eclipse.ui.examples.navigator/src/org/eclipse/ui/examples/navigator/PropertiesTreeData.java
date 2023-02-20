@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 IBM Corporation and others.
+ * Copyright (c) 2006, 2023 IBM Corporation and others.
  * Licensed Material - Property of IBM.
  * All rights reserved.
  * US Government Users Restricted Rights - Use, duplication or disclosure
@@ -67,8 +67,7 @@ public class PropertiesTreeData {
 
 	@Override
 	public boolean equals(Object obj) {
-		return obj instanceof PropertiesTreeData
-				&& ((PropertiesTreeData) obj).getName().equals(name);
+		return obj instanceof PropertiesTreeData data && data.getName().equals(name);
 	}
 
 	@Override
