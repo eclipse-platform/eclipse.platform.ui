@@ -44,7 +44,7 @@
       xsi:type="setup.targlets:TargletTask">
     <targlet
         name="Platform UI"
-        activeRepositoryList="EMF+GEF">
+        activeRepositoryList="Nebula+EMF+GEF">
       <requirement
           name="*"/>
       <sourceLocator
@@ -63,7 +63,9 @@
         </predicate>
       </sourceLocator>
       <repositoryList
-          name="EMF+GEF">
+          name="Nebula+EMF+GEF">
+        <repository
+            url="https://download.eclipse.org/nebula/snapshot"/>
         <repository
             url="https://download.eclipse.org/modeling/emf/emf/builds/milestone/latest"/>
         <repository
@@ -82,7 +84,7 @@
             project="org.eclipse.ui"/>
         <operand
             xsi:type="workingsets:ExclusionPredicate"
-            excludedWorkingSet="//@setupTasks.3/@workingSets[name='Platform%20UI%20Examples'] //@setupTasks.3/@workingSets[name='Platform%20UI%20Tests']"/>
+            excludedWorkingSet="//@setupTasks.3/@workingSets[name='Platform%20UI%20Examples'] //@setupTasks.3/@workingSets[name='Platform%20UI%20Tests'] //@setupTasks.3/@workingSets[name='Platform%20UI%20Tools']"/>
       </predicate>
     </workingSet>
     <workingSet
@@ -95,6 +97,18 @@
         <operand
             xsi:type="predicates:NamePredicate"
             pattern=".*\.tests.*|org\.eclipse\.ui\.dynamicCode"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Platform UI Tools">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.ui"/>
+        <operand
+            xsi:type="predicates:NamePredicate"
+            pattern="org\.eclipse\.e4\.(tools|core\.tools).*"/>
       </predicate>
     </workingSet>
     <workingSet
