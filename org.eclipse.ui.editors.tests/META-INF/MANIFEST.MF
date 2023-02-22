@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui.editors.tests;singleton:=true
-Bundle-Version: 3.12.600.qualifier
+Bundle-Version: 3.13.0.qualifier
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.ui.editors.tests
@@ -23,7 +23,7 @@ Require-Bundle:
  org.eclipse.jface.text;bundle-version="3.19.0",
  org.eclipse.ui;bundle-version="3.119.100",
  org.eclipse.ui.tests.harness;bundle-version="1.8.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Eclipse-BundleShape: dir
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: org.eclipse.ui.editors.tests
