@@ -4664,4 +4664,15 @@
           <run class="org.eclipse.ui.tests.datatransfer.ImportTestUtils$TestBuilder"/>
     </builder>
  </extension>
+ <extension
+       id="virtual-test"
+       name="virtual-test"
+       point="org.eclipse.core.filesystem.filesystems">
+    <filesystem
+          scheme="virtual-test">
+       <run
+             class="org.eclipse.ui.tests.internal.VirtualTestFileSystem">
+       </run>
+    </filesystem>
+ </extension>
 </plugin>

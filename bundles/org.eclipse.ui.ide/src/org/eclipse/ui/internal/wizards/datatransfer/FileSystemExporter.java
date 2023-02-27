@@ -14,8 +14,13 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.wizards.datatransfer;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.StandardCopyOption;
@@ -74,9 +79,20 @@ public class FileSystemExporter {
 	 *  file system
 	 */
 	protected void writeFile(IFile file, IPath destinationPath)
-			throws IOException {
-		Files.copy(file.getLocation().toFile().toPath(), destinationPath.toFile().toPath(),
-				StandardCopyOption.COPY_ATTRIBUTES, LinkOption.NOFOLLOW_LINKS);
+			throws CoreException, IOException {
+		IPath sourceLocation = file.getLocation();
+		if (sourceLocation != null) {
+			// local file, preserve attributes
+			Files.copy(sourceLocation.toFile().toPath(), destinationPath.toFile().toPath(),
+					StandardCopyOption.COPY_ATTRIBUTES, LinkOption.NOFOLLOW_LINKS);
+		} else {
+			// virtual file system, transfer stream
+			try (InputStream is = new BufferedInputStream(file.getContents(false))) {
+				try (OutputStream os = new BufferedOutputStream(new FileOutputStream(destinationPath.toOSString()))) {
+					is.transferTo(os);
+				}
+			}
+		}
 	}
 
 	/**
