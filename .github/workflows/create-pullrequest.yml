@@ -1,0 +1,19 @@
+name: Create or update pull request for non-master branches
+on:
+  push:
+    branches-ignore: master
+jobs:
+  action-pull-request:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2.3.4
+        with:
+          fetch-depth: 0
+      - name: Create or update pull request
+        uses: devops-infra/action-pull-request@v0.4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          template: .github/PULL_REQUEST_TEMPLATE.md
+          get_diff: true
+
