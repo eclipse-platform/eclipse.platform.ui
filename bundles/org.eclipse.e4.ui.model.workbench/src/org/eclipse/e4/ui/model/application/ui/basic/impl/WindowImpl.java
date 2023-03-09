@@ -413,7 +413,7 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	@Override
 	public List<MWindowElement> getChildren() {
 		if (children == null) {
-			children = new EObjectContainmentWithInverseEList<MWindowElement>(MWindowElement.class, this,
+			children = new EObjectContainmentWithInverseEList<>(MWindowElement.class, this,
 					BasicPackageImpl.WINDOW__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT) {
 				private static final long serialVersionUID = 1L;
 
@@ -566,7 +566,7 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	@Override
 	public List<String> getVariables() {
 		if (variables == null) {
-			variables = new EDataTypeUniqueEList<String>(String.class, this, BasicPackageImpl.WINDOW__VARIABLES);
+			variables = new EDataTypeUniqueEList<>(String.class, this, BasicPackageImpl.WINDOW__VARIABLES);
 		}
 		return variables;
 	}
@@ -579,7 +579,7 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	@Override
 	public Map<String, String> getProperties() {
 		if (properties == null) {
-			properties = new EcoreEMap<String, String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP,
+			properties = new EcoreEMap<>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP,
 					StringToStringMapImpl.class, this, BasicPackageImpl.WINDOW__PROPERTIES);
 		}
 		return properties.map();
@@ -593,7 +593,7 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	@Override
 	public List<MHandler> getHandlers() {
 		if (handlers == null) {
-			handlers = new EObjectContainmentEList<MHandler>(MHandler.class, this, BasicPackageImpl.WINDOW__HANDLERS);
+			handlers = new EObjectContainmentEList<>(MHandler.class, this, BasicPackageImpl.WINDOW__HANDLERS);
 		}
 		return handlers;
 	}
@@ -606,7 +606,7 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	@Override
 	public List<MBindingContext> getBindingContexts() {
 		if (bindingContexts == null) {
-			bindingContexts = new EObjectResolvingEList<MBindingContext>(MBindingContext.class, this,
+			bindingContexts = new EObjectResolvingEList<>(MBindingContext.class, this,
 					BasicPackageImpl.WINDOW__BINDING_CONTEXTS);
 		}
 		return bindingContexts;
@@ -620,7 +620,7 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	@Override
 	public List<MUIElement> getSnippets() {
 		if (snippets == null) {
-			snippets = new EObjectContainmentEList<MUIElement>(MUIElement.class, this,
+			snippets = new EObjectContainmentEList<>(MUIElement.class, this,
 					BasicPackageImpl.WINDOW__SNIPPETS);
 		}
 		return snippets;
@@ -892,7 +892,7 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	@Override
 	public List<MWindow> getWindows() {
 		if (windows == null) {
-			windows = new EObjectContainmentEList<MWindow>(MWindow.class, this, BasicPackageImpl.WINDOW__WINDOWS);
+			windows = new EObjectContainmentEList<>(MWindow.class, this, BasicPackageImpl.WINDOW__WINDOWS);
 		}
 		return windows;
 	}
@@ -905,7 +905,7 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	@Override
 	public List<MUIElement> getSharedElements() {
 		if (sharedElements == null) {
-			sharedElements = new EObjectContainmentEList<MUIElement>(MUIElement.class, this,
+			sharedElements = new EObjectContainmentEList<>(MUIElement.class, this,
 					BasicPackageImpl.WINDOW__SHARED_ELEMENTS);
 		}
 		return sharedElements;

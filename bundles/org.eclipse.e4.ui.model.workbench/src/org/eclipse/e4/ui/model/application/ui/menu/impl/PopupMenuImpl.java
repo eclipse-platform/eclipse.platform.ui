@@ -142,7 +142,7 @@ public class PopupMenuImpl extends MenuImpl implements MPopupMenu {
 	@Override
 	public List<String> getVariables() {
 		if (variables == null) {
-			variables = new EDataTypeUniqueEList<String>(String.class, this, MenuPackageImpl.POPUP_MENU__VARIABLES);
+			variables = new EDataTypeUniqueEList<>(String.class, this, MenuPackageImpl.POPUP_MENU__VARIABLES);
 		}
 		return variables;
 	}
@@ -155,7 +155,7 @@ public class PopupMenuImpl extends MenuImpl implements MPopupMenu {
 	@Override
 	public Map<String, String> getProperties() {
 		if (properties == null) {
-			properties = new EcoreEMap<String, String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP,
+			properties = new EcoreEMap<>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP,
 					StringToStringMapImpl.class, this, MenuPackageImpl.POPUP_MENU__PROPERTIES);
 		}
 		return properties.map();

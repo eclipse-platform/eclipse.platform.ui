@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmi:id="_zPmxwL5fEe2xycAdAs49Bg">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_2DG0IL5fEe2xycAdAs49Bg" featurename="commands" parentElementId="org.eclipse.e4.legacy.ide.application">
+    <elements xsi:type="commands:Command" xmi:id="__OUmgL5fEe2xycAdAs49Bg" elementId="org.eclipse.ui.tests.command.iconTest" commandName="Test Icon Command" commandIconURI="platform:/plugin/org.eclipse.ui.tests/icons/view.gif"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_MALdgL5iEe2xycAdAs49Bg" featurename="handlers" parentElementId="org.eclipse.e4.legacy.ide.application">
+    <elements xsi:type="commands:Handler" xmi:id="_NTEBsL5iEe2xycAdAs49Bg" elementId="org.eclipse.ui.tests.handler.iconTest" contributionURI="bundleclass://org.eclipse.ui.tests/org.eclipse.ui.tests.commands.EmptyE4CommandHandler" command="__OUmgL5fEe2xycAdAs49Bg"/>
+  </fragments>
+</fragment:ModelFragments>

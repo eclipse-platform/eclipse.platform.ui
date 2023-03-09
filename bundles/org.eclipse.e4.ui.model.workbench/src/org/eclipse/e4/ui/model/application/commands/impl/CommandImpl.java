@@ -45,6 +45,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.CommandImpl#getDescription <em>Description</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.CommandImpl#getParameters <em>Parameters</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.CommandImpl#getCategory <em>Category</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.CommandImpl#getCommandIconURI <em>Command Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.CommandImpl#getLocalizedCommandName <em>Localized Command Name</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.CommandImpl#getLocalizedDescription <em>Localized Description</em>}</li>
  * </ul>
@@ -112,6 +113,28 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 	 * @ordered
 	 */
 	protected MCategory category;
+
+	/**
+	 * The default value of the '{@link #getCommandIconURI() <em>Command Icon URI</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCommandIconURI()
+	 * @since 2.4
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String COMMAND_ICON_URI_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getCommandIconURI() <em>Command Icon URI</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCommandIconURI()
+	 * @since 2.4
+	 * @generated
+	 * @ordered
+	 */
+	protected String commandIconURI = COMMAND_ICON_URI_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getLocalizedCommandName() <em>Localized Command Name</em>}' attribute.
@@ -208,7 +231,7 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 	@Override
 	public List<MCommandParameter> getParameters() {
 		if (parameters == null) {
-			parameters = new EObjectContainmentEList<MCommandParameter>(MCommandParameter.class, this,
+			parameters = new EObjectContainmentEList<>(MCommandParameter.class, this,
 					CommandsPackageImpl.COMMAND__PARAMETERS);
 		}
 		return parameters;
@@ -254,6 +277,32 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.COMMAND__CATEGORY, oldCategory,
 					category));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 2.4
+	 * @generated
+	 */
+	@Override
+	public String getCommandIconURI() {
+		return commandIconURI;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 2.4
+	 * @generated
+	 */
+	@Override
+	public void setCommandIconURI(String newCommandIconURI) {
+		String oldCommandIconURI = commandIconURI;
+		commandIconURI = newCommandIconURI;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.COMMAND__COMMAND_ICON_URI,
+					oldCommandIconURI, commandIconURI));
 	}
 
 	/**
@@ -325,6 +374,8 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 			if (resolve)
 				return getCategory();
 			return basicGetCategory();
+		case CommandsPackageImpl.COMMAND__COMMAND_ICON_URI:
+			return getCommandIconURI();
 		case CommandsPackageImpl.COMMAND__LOCALIZED_COMMAND_NAME:
 			return getLocalizedCommandName();
 		case CommandsPackageImpl.COMMAND__LOCALIZED_DESCRIPTION:
@@ -356,6 +407,9 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 		case CommandsPackageImpl.COMMAND__CATEGORY:
 			setCategory((MCategory) newValue);
 			return;
+		case CommandsPackageImpl.COMMAND__COMMAND_ICON_URI:
+			setCommandIconURI((String) newValue);
+			return;
 		default:
 			super.eSet(featureID, newValue);
 			return;
@@ -382,6 +436,9 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 		case CommandsPackageImpl.COMMAND__CATEGORY:
 			setCategory((MCategory) null);
 			return;
+		case CommandsPackageImpl.COMMAND__COMMAND_ICON_URI:
+			setCommandIconURI(COMMAND_ICON_URI_EDEFAULT);
+			return;
 		default:
 			super.eUnset(featureID);
 			return;
@@ -404,6 +461,9 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 			return parameters != null && !parameters.isEmpty();
 		case CommandsPackageImpl.COMMAND__CATEGORY:
 			return category != null;
+		case CommandsPackageImpl.COMMAND__COMMAND_ICON_URI:
+			return COMMAND_ICON_URI_EDEFAULT == null ? commandIconURI != null
+					: !COMMAND_ICON_URI_EDEFAULT.equals(commandIconURI);
 		case CommandsPackageImpl.COMMAND__LOCALIZED_COMMAND_NAME:
 			return LOCALIZED_COMMAND_NAME_EDEFAULT == null ? getLocalizedCommandName() != null
 					: !LOCALIZED_COMMAND_NAME_EDEFAULT.equals(getLocalizedCommandName());
@@ -464,6 +524,8 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 		result.append(commandName);
 		result.append(", description: "); //$NON-NLS-1$
 		result.append(description);
+		result.append(", commandIconURI: "); //$NON-NLS-1$
+		result.append(commandIconURI);
 		result.append(')');
 		return result.toString();
 	}

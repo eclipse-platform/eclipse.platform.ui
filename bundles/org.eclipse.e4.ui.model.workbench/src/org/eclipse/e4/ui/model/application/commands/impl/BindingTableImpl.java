@@ -92,7 +92,7 @@ public class BindingTableImpl extends ApplicationElementImpl implements MBinding
 	@Override
 	public List<MKeyBinding> getBindings() {
 		if (bindings == null) {
-			bindings = new EObjectContainmentEList<MKeyBinding>(MKeyBinding.class, this,
+			bindings = new EObjectContainmentEList<>(MKeyBinding.class, this,
 					CommandsPackageImpl.BINDING_TABLE__BINDINGS);
 		}
 		return bindings;

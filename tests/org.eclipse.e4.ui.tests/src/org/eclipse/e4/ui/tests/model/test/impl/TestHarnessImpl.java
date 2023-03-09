@@ -60,6 +60,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getDescription <em>Description</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getParameters <em>Parameters</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getCategory <em>Category</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getCommandIconURI <em>Command Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getLocalizedCommandName <em>Localized Command Name</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getLocalizedDescription <em>Localized Description</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getContext <em>Context</em>}</li>
@@ -143,6 +144,26 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 	 * @ordered
 	 */
 	protected MCategory category;
+	/**
+	 * The default value of the '{@link #getCommandIconURI() <em>Command Icon URI</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCommandIconURI()
+	 * @since 2.4
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String COMMAND_ICON_URI_EDEFAULT = null;
+	/**
+	 * The cached value of the '{@link #getCommandIconURI() <em>Command Icon URI</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCommandIconURI()
+	 * @since 2.4
+	 * @generated
+	 * @ordered
+	 */
+	protected String commandIconURI = COMMAND_ICON_URI_EDEFAULT;
 	/**
 	 * The default value of the '{@link #getLocalizedCommandName() <em>Localized Command Name</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -587,7 +608,7 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 	@Override
 	public List<MCommandParameter> getParameters() {
 		if (parameters == null) {
-			parameters = new EObjectContainmentEList<MCommandParameter>(MCommandParameter.class, this, MTestPackage.TEST_HARNESS__PARAMETERS);
+			parameters = new EObjectContainmentEList<>(MCommandParameter.class, this, MTestPackage.TEST_HARNESS__PARAMETERS);
 		}
 		return parameters;
 	}
@@ -630,6 +651,31 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 	}
 
 	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 2.4
+	 * @generated
+	 */
+	@Override
+	public String getCommandIconURI() {
+		return commandIconURI;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 2.4
+	 * @generated
+	 */
+	@Override
+	public void setCommandIconURI(String newCommandIconURI) {
+		String oldCommandIconURI = commandIconURI;
+		commandIconURI = newCommandIconURI;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MTestPackage.TEST_HARNESS__COMMAND_ICON_URI, oldCommandIconURI, commandIconURI));
+	}
+
+	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * @generated
 	 */
@@ -657,7 +703,7 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 	@Override
 	public List<String> getVariables() {
 		if (variables == null) {
-			variables = new EDataTypeUniqueEList<String>(String.class, this, MTestPackage.TEST_HARNESS__VARIABLES);
+			variables = new EDataTypeUniqueEList<>(String.class, this, MTestPackage.TEST_HARNESS__VARIABLES);
 		}
 		return variables;
 	}
@@ -669,7 +715,7 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 	@Override
 	public Map<String, String> getProperties() {
 		if (properties == null) {
-			properties = new EcoreEMap<String,String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, MTestPackage.TEST_HARNESS__PROPERTIES);
+			properties = new EcoreEMap<>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, MTestPackage.TEST_HARNESS__PROPERTIES);
 		}
 		return properties.map();
 	}
@@ -994,7 +1040,7 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 	@Override
 	public List<MUIElement> getChildren() {
 		if (children == null) {
-			children = new EObjectContainmentWithInverseEList<MUIElement>(MUIElement.class, this, MTestPackage.TEST_HARNESS__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT);
+			children = new EObjectContainmentWithInverseEList<>(MUIElement.class, this, MTestPackage.TEST_HARNESS__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT);
 		}
 		return children;
 	}
@@ -1176,7 +1222,7 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 	@Override
 	public List<MUIElement> getSnippets() {
 		if (snippets == null) {
-			snippets = new EObjectContainmentEList<MUIElement>(MUIElement.class, this, MTestPackage.TEST_HARNESS__SNIPPETS);
+			snippets = new EObjectContainmentEList<>(MUIElement.class, this, MTestPackage.TEST_HARNESS__SNIPPETS);
 		}
 		return snippets;
 	}
@@ -1318,6 +1364,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 			case MTestPackage.TEST_HARNESS__CATEGORY:
 				if (resolve) return getCategory();
 				return basicGetCategory();
+			case MTestPackage.TEST_HARNESS__COMMAND_ICON_URI:
+				return getCommandIconURI();
 			case MTestPackage.TEST_HARNESS__LOCALIZED_COMMAND_NAME:
 				return getLocalizedCommandName();
 			case MTestPackage.TEST_HARNESS__LOCALIZED_DESCRIPTION:
@@ -1403,6 +1451,9 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 				return;
 			case MTestPackage.TEST_HARNESS__CATEGORY:
 				setCategory((MCategory)newValue);
+				return;
+			case MTestPackage.TEST_HARNESS__COMMAND_ICON_URI:
+				setCommandIconURI((String)newValue);
 				return;
 			case MTestPackage.TEST_HARNESS__CONTEXT:
 				setContext((IEclipseContext)newValue);
@@ -1502,6 +1553,9 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 			case MTestPackage.TEST_HARNESS__CATEGORY:
 				setCategory((MCategory)null);
 				return;
+			case MTestPackage.TEST_HARNESS__COMMAND_ICON_URI:
+				setCommandIconURI(COMMAND_ICON_URI_EDEFAULT);
+				return;
 			case MTestPackage.TEST_HARNESS__CONTEXT:
 				setContext(CONTEXT_EDEFAULT);
 				return;
@@ -1593,6 +1647,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 				return parameters != null && !parameters.isEmpty();
 			case MTestPackage.TEST_HARNESS__CATEGORY:
 				return category != null;
+			case MTestPackage.TEST_HARNESS__COMMAND_ICON_URI:
+				return COMMAND_ICON_URI_EDEFAULT == null ? commandIconURI != null : !COMMAND_ICON_URI_EDEFAULT.equals(commandIconURI);
 			case MTestPackage.TEST_HARNESS__LOCALIZED_COMMAND_NAME:
 				return LOCALIZED_COMMAND_NAME_EDEFAULT == null ? getLocalizedCommandName() != null : !LOCALIZED_COMMAND_NAME_EDEFAULT.equals(getLocalizedCommandName());
 			case MTestPackage.TEST_HARNESS__LOCALIZED_DESCRIPTION:
@@ -1672,6 +1728,7 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 				case MTestPackage.TEST_HARNESS__DESCRIPTION: return CommandsPackageImpl.COMMAND__DESCRIPTION;
 				case MTestPackage.TEST_HARNESS__PARAMETERS: return CommandsPackageImpl.COMMAND__PARAMETERS;
 				case MTestPackage.TEST_HARNESS__CATEGORY: return CommandsPackageImpl.COMMAND__CATEGORY;
+				case MTestPackage.TEST_HARNESS__COMMAND_ICON_URI: return CommandsPackageImpl.COMMAND__COMMAND_ICON_URI;
 				case MTestPackage.TEST_HARNESS__LOCALIZED_COMMAND_NAME: return CommandsPackageImpl.COMMAND__LOCALIZED_COMMAND_NAME;
 				case MTestPackage.TEST_HARNESS__LOCALIZED_DESCRIPTION: return CommandsPackageImpl.COMMAND__LOCALIZED_DESCRIPTION;
 				default: return -1;
@@ -1764,6 +1821,7 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 				case CommandsPackageImpl.COMMAND__DESCRIPTION: return MTestPackage.TEST_HARNESS__DESCRIPTION;
 				case CommandsPackageImpl.COMMAND__PARAMETERS: return MTestPackage.TEST_HARNESS__PARAMETERS;
 				case CommandsPackageImpl.COMMAND__CATEGORY: return MTestPackage.TEST_HARNESS__CATEGORY;
+				case CommandsPackageImpl.COMMAND__COMMAND_ICON_URI: return MTestPackage.TEST_HARNESS__COMMAND_ICON_URI;
 				case CommandsPackageImpl.COMMAND__LOCALIZED_COMMAND_NAME: return MTestPackage.TEST_HARNESS__LOCALIZED_COMMAND_NAME;
 				case CommandsPackageImpl.COMMAND__LOCALIZED_DESCRIPTION: return MTestPackage.TEST_HARNESS__LOCALIZED_DESCRIPTION;
 				default: return -1;
@@ -1930,6 +1988,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 		result.append(commandName);
 		result.append(", description: ");
 		result.append(description);
+		result.append(", commandIconURI: ");
+		result.append(commandIconURI);
 		result.append(", context: ");
 		result.append(context);
 		result.append(", variables: ");

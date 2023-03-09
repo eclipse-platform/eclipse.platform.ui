@@ -102,7 +102,7 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 				clazz = null;
 			}
 
-			children = new EObjectContainmentWithInverseEList<T>(MUIElement.class, this,
+			children = new EObjectContainmentWithInverseEList<>(MUIElement.class, this,
 					UiPackageImpl.ELEMENT_CONTAINER__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT) {
 
 				/**

@@ -109,7 +109,7 @@ public class ToolBarContributionImpl extends ElementContainerImpl<MToolBarElemen
 	@Override
 	public List<MToolBarElement> getChildren() {
 		if (children == null) {
-			children = new EObjectContainmentWithInverseEList<MToolBarElement>(MToolBarElement.class, this,
+			children = new EObjectContainmentWithInverseEList<>(MToolBarElement.class, this,
 					MenuPackageImpl.TOOL_BAR_CONTRIBUTION__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT) {
 				private static final long serialVersionUID = 1L;
 
