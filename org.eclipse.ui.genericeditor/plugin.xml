@@ -56,6 +56,11 @@
 		         id="org.eclipse.ui.commands.toggleState">
 		   </state>
       </command>
+      <command
+            description="%gotoMatchingBracketCommand_description"
+            id="org.eclipse.ui.genericeditor.gotoMatchingBracket"
+            name="%gotoMatchingBracketCommand_name">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.contexts">
@@ -79,6 +84,12 @@
             contextId="org.eclipse.ui.genericeditor.genericEditorContext"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+M2+G">
+      </key>
+      <key
+            commandId="org.eclipse.ui.genericeditor.gotoMatchingBracket"
+            contextId="org.eclipse.ui.genericeditor.genericEditorContext"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M2+P">
       </key>
    </extension>
    <extension
@@ -125,6 +136,11 @@
          <class
                class="org.eclipse.ui.internal.genericeditor.ToggleHighlight"></class>
       </handler>
+      <handler
+            commandId="org.eclipse.ui.genericeditor.gotoMatchingBracket">
+         <class
+               class="org.eclipse.ui.internal.genericeditor.GotoMatchingBracketHandler"></class>
+      </handler>      
    </extension>
    <extension
          point="org.eclipse.ui.genericeditor.hoverProviders">

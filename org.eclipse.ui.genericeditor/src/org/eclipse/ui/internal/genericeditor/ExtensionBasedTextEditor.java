@@ -16,6 +16,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.genericeditor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
@@ -24,19 +25,24 @@ import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.hyperlink.HyperlinkManager;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetectorExtension2;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
+import org.eclipse.jface.text.source.ICharacterPairMatcherExtension;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.editors.text.EditorsUI;
@@ -64,6 +70,9 @@ public class ExtensionBasedTextEditor extends TextEditor {
 	private ExtensionBasedTextViewerConfiguration configuration;
 	private Image contentTypeImage;
 	private ImageDescriptor contentTypeImageDescripter;
+
+	private List<IRegion> fPreviousSelections;
+	private ICharacterPairMatcher pairMatcher;
 
 	/**
 	 *
@@ -190,8 +199,8 @@ public class ExtensionBasedTextEditor extends TextEditor {
 		List<ICharacterPairMatcher> matchers = GenericEditorPlugin.getDefault().getCharacterPairMatcherRegistry()
 				.getCharacterPairMatchers(viewer, this, configuration.getContentTypes(viewer.getDocument()));
 		if (!matchers.isEmpty()) {
-			ICharacterPairMatcher matcher = matchers.get(0);
-			support.setCharacterPairMatcher(matcher);
+			pairMatcher = matchers.get(0);
+			support.setCharacterPairMatcher(pairMatcher);
 			support.setMatchingCharacterPainterPreferenceKeys(MATCHING_BRACKETS, MATCHING_BRACKETS_COLOR,
 					HIGHLIGHT_BRACKET_AT_CARET_LOCATION, ENCLOSING_BRACKETS);
 		}
@@ -226,4 +235,116 @@ public class ExtensionBasedTextEditor extends TextEditor {
 		}
 		super.dispose();
 	}
+
+	/**
+	 * Jumps to the matching bracket.
+	 */
+	public void gotoMatchingBracket() {
+		if (pairMatcher == null || !(pairMatcher instanceof ICharacterPairMatcherExtension)) {
+			return;
+		}
+
+		ISourceViewer sourceViewer = getSourceViewer();
+		IDocument document = sourceViewer.getDocument();
+		if (document == null)
+			return;
+
+		IRegion selection = getSignedSelection(sourceViewer);
+		if (fPreviousSelections == null)
+			initializePreviousSelectionList();
+
+		ICharacterPairMatcherExtension fBracketMatcher = (ICharacterPairMatcherExtension) pairMatcher;
+		IRegion region = fBracketMatcher.match(document, selection.getOffset(), selection.getLength());
+		if (region == null) {
+			region = fBracketMatcher.findEnclosingPeerCharacters(document, selection.getOffset(),
+					selection.getLength());
+			initializePreviousSelectionList();
+			fPreviousSelections.add(selection);
+		} else {
+			if (fPreviousSelections.size() == 2) {
+				if (!selection.equals(fPreviousSelections.get(1))) {
+					initializePreviousSelectionList();
+				}
+			} else if (fPreviousSelections.size() == 3) {
+				if (selection.equals(fPreviousSelections.get(2)) && !selection.equals(fPreviousSelections.get(0))) {
+					IRegion originalSelection = fPreviousSelections.get(0);
+					sourceViewer.setSelectedRange(originalSelection.getOffset(), originalSelection.getLength());
+					sourceViewer.revealRange(originalSelection.getOffset(), originalSelection.getLength());
+					initializePreviousSelectionList();
+					return;
+				}
+				initializePreviousSelectionList();
+			}
+		}
+
+		if (region == null) {
+			setStatusLineErrorMessage(Messages.GotoMatchingBracket_error_noMatchingBracket);
+			sourceViewer.getTextWidget().getDisplay().beep();
+			return;
+		}
+
+		int offset = region.getOffset();
+		int length = region.getLength();
+
+		if (length < 1)
+			return;
+
+		int anchor = pairMatcher.getAnchor();
+		// http://dev.eclipse.org/bugs/show_bug.cgi?id=34195
+		int targetOffset = (ICharacterPairMatcher.RIGHT == anchor) ? offset + 1 : offset + length - 1;
+
+		boolean visible = false;
+		if (sourceViewer instanceof ITextViewerExtension5) {
+			ITextViewerExtension5 extension = (ITextViewerExtension5) sourceViewer;
+			visible = (extension.modelOffset2WidgetOffset(targetOffset) > -1);
+		} else {
+			IRegion visibleRegion = sourceViewer.getVisibleRegion();
+			// http://dev.eclipse.org/bugs/show_bug.cgi?id=34195
+			visible = (targetOffset >= visibleRegion.getOffset()
+					&& targetOffset <= visibleRegion.getOffset() + visibleRegion.getLength());
+		}
+
+		if (!visible) {
+			setStatusLineErrorMessage(Messages.GotoMatchingBracket_error_bracketOutsideSelectedElement);
+			sourceViewer.getTextWidget().getDisplay().beep();
+			return;
+		}
+
+		int adjustment = 0; // getOffsetAdjustment(document, selection.getOffset() + selection.getLength(),
+		// selection.getLength());
+		targetOffset += adjustment;
+		int direction = (selection.getLength() == 0) ? 0 : ((selection.getLength() > 0) ? 1 : -1);
+		if (fPreviousSelections.size() == 1 && direction < 0) {
+			targetOffset++;
+		}
+
+		if (fPreviousSelections.size() > 0) {
+			fPreviousSelections.add(new Region(targetOffset, direction));
+		}
+		sourceViewer.setSelectedRange(targetOffset, direction);
+		sourceViewer.revealRange(targetOffset, direction);
+	}
+
+	private void initializePreviousSelectionList() {
+		fPreviousSelections = new ArrayList<>(3);
+	}
+
+	/*
+	 * Copy of
+	 * org.eclipse.jface.text.source.MatchingCharacterPainter.getSignedSelection(
+	 * ISourceViewer)
+	 */
+	private static final IRegion getSignedSelection(ISourceViewer sourceViewer) {
+		Point viewerSelection = sourceViewer.getSelectedRange();
+
+		StyledText text = sourceViewer.getTextWidget();
+		Point selection = text.getSelectionRange();
+		if (text.getCaretOffset() == selection.x) {
+			viewerSelection.x = viewerSelection.x + viewerSelection.y;
+			viewerSelection.y = -viewerSelection.y;
+		}
+
+		return new Region(viewerSelection.x, viewerSelection.y);
+	}
+
 }

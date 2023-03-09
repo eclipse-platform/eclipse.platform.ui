@@ -22,6 +22,9 @@ public class Messages extends NLS {
 	public static String TextViewer_open_hyperlink_error_title;
 	public static String TextViewer_open_hyperlink_error_message;
 
+	public static String GotoMatchingBracket_error_noMatchingBracket;
+	public static String GotoMatchingBracket_error_bracketOutsideSelectedElement;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
