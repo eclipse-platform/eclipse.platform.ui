@@ -21,8 +21,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -54,10 +56,16 @@ import org.eclipse.ui.services.IEvaluationService;
 public final class EvaluationService implements IEvaluationService {
 	public static final String DEFAULT_VAR = "org.eclipse.ui.internal.services.EvaluationService.default_var"; //$NON-NLS-1$
 	private static final String RE_EVAL = "org.eclipse.ui.internal.services.EvaluationService.evaluate"; //$NON-NLS-1$
+
+	private static final List<String> LEGACY_WORKBENCH_VARIABLES = Arrays.asList(ISources.ACTIVE_WORKBENCH_WINDOW_NAME,
+			ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME, ISources.ACTIVE_EDITOR_ID_NAME,
+			ISources.ACTIVE_EDITOR_INPUT_NAME, ISources.SHOW_IN_INPUT, ISources.SHOW_IN_SELECTION,
+			ISources.ACTIVE_PART_NAME, ISources.ACTIVE_PART_ID_NAME, ISources.ACTIVE_SITE_NAME,
+			ISources.ACTIVE_CONTEXT_NAME, ISources.ACTIVE_CURRENT_SELECTION_NAME);
+
 	private boolean evaluate = false;
 	private ExpressionContext legacyContext;
 	private IEclipseContext context;
-	private IEclipseContext ratContext;
 	private int notifying = 0;
 
 	private ListenerList<IPropertyChangeListener> serviceListeners = new ListenerList<>(ListenerList.IDENTITY);
@@ -65,19 +73,18 @@ public final class EvaluationService implements IEvaluationService {
 	LinkedList<EvaluationReference> refs = new LinkedList<>();
 	private ISourceProviderListener contextUpdater;
 
-	private HashSet<String> ratVariables = new HashSet<>();
-	private RunAndTrack ratUpdater = new RunAndTrack() {
+	private Set<String> knownReferencedVariables = new HashSet<>();
+	// Keeps the local/hidden legacyContext variables pool up-to-date.
+	private RunAndTrack legacyContextUpdater = new RunAndTrack() {
 		@Override
 		public boolean changed(IEclipseContext context) {
 			context.get(RE_EVAL);
-			String[] vars = ratVariables.toArray(new String[ratVariables.size()]);
-			for (String var : vars) {
+			List<String> allVars = new ArrayList<>(LEGACY_WORKBENCH_VARIABLES);
+			allVars.addAll(knownReferencedVariables);
+			for (String var : allVars) {
+				// pipe from originating context into legacy context
 				Object value = context.getActive(var);
-				if (value == null) {
-					ratContext.remove(var);
-				} else {
-					ratContext.set(var, value);
-				}
+				changeVariable(var, value);
 			}
 			// This ties tool item enablement to variable changes that can
 			// effect the enablement.
@@ -86,13 +93,12 @@ public final class EvaluationService implements IEvaluationService {
 		}
 	};
 
-	private HashSet<String> variableFilter = new HashSet<>();
 	private IEventBroker eventBroker;
 
 	public EvaluationService(IEclipseContext c) {
 		context = c;
-		ratContext = context.getParent().createChild(getClass().getName());
-		legacyContext = new ExpressionContext(context);
+		IEclipseContext legacyContextEclipseContext = context.getParent().createChild(getClass().getName());
+		legacyContext = new ExpressionContext(legacyContextEclipseContext);
 		ExpressionContext.defaultVariableConverter = new ContextFunction() {
 			@Override
 			public Object compute(IEclipseContext context, String contextKey) {
@@ -126,12 +132,7 @@ public final class EvaluationService implements IEvaluationService {
 				}
 			}
 		};
-		variableFilter.addAll(Arrays.asList(new String[] { ISources.ACTIVE_WORKBENCH_WINDOW_NAME,
-				ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME, ISources.ACTIVE_EDITOR_ID_NAME,
-				ISources.ACTIVE_EDITOR_INPUT_NAME, ISources.SHOW_IN_INPUT, ISources.SHOW_IN_SELECTION,
-				ISources.ACTIVE_PART_NAME, ISources.ACTIVE_PART_ID_NAME, ISources.ACTIVE_SITE_NAME,
-				ISources.ACTIVE_CONTEXT_NAME, ISources.ACTIVE_CURRENT_SELECTION_NAME }));
-		context.runAndTrack(ratUpdater);
+		context.runAndTrack(legacyContextUpdater);
 	}
 
 	private void contextEvaluate() {
@@ -140,7 +141,7 @@ public final class EvaluationService implements IEvaluationService {
 	}
 
 	protected void changeVariable(final String name, final Object value) {
-		if (name == null || variableFilter.contains(name)) {
+		if (name == null) {
 			return;
 		}
 		if (value == null) {
@@ -209,7 +210,7 @@ public final class EvaluationService implements IEvaluationService {
 	@Override
 	public IEvaluationReference addEvaluationListener(Expression expression, IPropertyChangeListener listener,
 			String property) {
-		EvaluationReference ref = new EvaluationReference(ratContext, expression, listener, property);
+		EvaluationReference ref = new EvaluationReference(legacyContext.eclipseContext, expression, listener, property);
 		addEvaluationReference(ref);
 		return ref;
 	}
@@ -223,12 +224,12 @@ public final class EvaluationService implements IEvaluationService {
 			ExpressionInfo info = new ExpressionInfo();
 			eref.getExpression().collectExpressionInfo(info);
 			for (String varName : info.getAccessedVariableNames()) {
-				if (ratVariables.add(varName)) {
+				if (knownReferencedVariables.add(varName)) {
 					changed = true;
 				}
 			}
 
-			if (info.hasDefaultVariableAccess() && ratVariables.add(IServiceConstants.ACTIVE_SELECTION)) {
+			if (info.hasDefaultVariableAccess() && knownReferencedVariables.add(IServiceConstants.ACTIVE_SELECTION)) {
 				changed = true;
 			}
 		}
@@ -236,7 +237,7 @@ public final class EvaluationService implements IEvaluationService {
 			contextEvaluate();
 		}
 		eref.participating = true;
-		ratContext.runAndTrack(eref);
+		legacyContext.eclipseContext.runAndTrack(eref);
 	}
 
 	private void invalidate(IEvaluationReference ref, boolean remove) {
