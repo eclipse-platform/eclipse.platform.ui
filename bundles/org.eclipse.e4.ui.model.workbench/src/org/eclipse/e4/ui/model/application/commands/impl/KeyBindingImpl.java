@@ -180,7 +180,7 @@ public class KeyBindingImpl extends ApplicationElementImpl implements MKeyBindin
 	@Override
 	public List<MParameter> getParameters() {
 		if (parameters == null) {
-			parameters = new EObjectContainmentEList<MParameter>(MParameter.class, this,
+			parameters = new EObjectContainmentEList<>(MParameter.class, this,
 					CommandsPackageImpl.KEY_BINDING__PARAMETERS);
 		}
 		return parameters;

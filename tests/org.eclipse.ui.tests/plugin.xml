@@ -4675,4 +4675,12 @@
        </run>
     </filesystem>
  </extension>
+ <extension
+       id="org.eclipse.ui.tests.fragment"
+       point="org.eclipse.e4.workbench.model">
+    <fragment
+          uri="fragment.e4xmi"
+          apply="always">
+    </fragment>
+ </extension>
 </plugin>

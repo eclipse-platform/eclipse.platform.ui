@@ -184,7 +184,7 @@ public class HandledToolItemImpl extends ToolItemImpl implements MHandledToolIte
 	@Override
 	public List<MParameter> getParameters() {
 		if (parameters == null) {
-			parameters = new EObjectContainmentEList<MParameter>(MParameter.class, this,
+			parameters = new EObjectContainmentEList<>(MParameter.class, this,
 					MenuPackageImpl.HANDLED_TOOL_ITEM__PARAMETERS);
 		}
 		return parameters;

@@ -166,6 +166,8 @@ public class Messages {
 	public String CommandEditor_LabelDescription;
 	public String CommandEditor_Parameters;
 	public String CommandEditor_Category;
+	public String CommandEditor_IconURI;
+	public String CommandEditor_IconURI_Tooltip;
 	public String CommandEditor_AddCommandParameter;
 	public String CommandEditor_NewCommandParameter;
 
@@ -646,6 +648,10 @@ public class Messages {
 	public String KeyBindingCommandSelectionDialog_ShellTitle;
 	public String KeyBindingCommandSelectionDialog_DialogTitle;
 	public String KeyBindingCommandSelectionDialog_DialogMessage;
+
+	public String CommandIconDialogEditor_ShellTitle;
+	public String CommandIconDialogEditor_DialogTitle;
+	public String CommandIconDialogEditor_DialogMessage;
 
 	public String MenuIconDialogEditor_ShellTitle;
 	public String MenuIconDialogEditor_DialogTitle;

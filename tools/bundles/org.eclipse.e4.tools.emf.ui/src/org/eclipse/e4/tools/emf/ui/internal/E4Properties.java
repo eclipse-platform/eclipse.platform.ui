@@ -549,6 +549,11 @@ public class E4Properties {
 	}
 
 	@SuppressWarnings("unchecked")
+	public static IValueProperty<MCommand, String> commandIcon(EditingDomain editingDomain) {
+		return EMFEditProperties.value(editingDomain, CommandsPackageImpl.Literals.COMMAND__COMMAND_ICON_URI);
+	}
+
+	@SuppressWarnings("unchecked")
 	public static IValueProperty<MCommand, MCategory> category() {
 		return EMFProperties.value(CommandsPackageImpl.Literals.COMMAND__CATEGORY);
 	}

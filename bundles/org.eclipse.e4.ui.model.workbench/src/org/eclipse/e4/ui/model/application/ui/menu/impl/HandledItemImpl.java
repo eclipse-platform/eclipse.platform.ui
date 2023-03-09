@@ -183,7 +183,7 @@ public abstract class HandledItemImpl extends ItemImpl implements MHandledItem {
 	@Override
 	public List<MParameter> getParameters() {
 		if (parameters == null) {
-			parameters = new EObjectContainmentEList<MParameter>(MParameter.class, this,
+			parameters = new EObjectContainmentEList<>(MParameter.class, this,
 					MenuPackageImpl.HANDLED_ITEM__PARAMETERS);
 		}
 		return parameters;
