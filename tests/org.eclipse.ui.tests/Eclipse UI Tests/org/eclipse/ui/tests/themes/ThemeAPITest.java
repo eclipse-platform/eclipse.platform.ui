@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ColorRegistry;
@@ -31,6 +33,7 @@ import org.eclipse.ui.internal.themes.ThemeElementHelper;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -160,6 +163,11 @@ public class ThemeAPITest extends ThemeTest {
 		super(ThemeAPITest.class.getSimpleName());
 	}
 
+	@BeforeClass
+	public static void enableTheme() {
+		InstanceScope.INSTANCE.getNode("org.eclipse.e4.ui.workbench.renderers.swt").putBoolean(PartRenderingEngine.ENABLED_THEME_KEY, true);
+	}
+	
 	private void checkEvents(ThemePropertyListener listener, Object source,
 			Object oldObject, Object newObject) {
 		boolean array = oldObject instanceof Object[];

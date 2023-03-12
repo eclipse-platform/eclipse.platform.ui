@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.themes;
 
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine;
 import org.eclipse.jface.resource.ColorDescriptor;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
@@ -22,6 +24,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -36,6 +39,12 @@ public class JFaceThemeTest extends ThemeTest {
 
 	public JFaceThemeTest() {
 		super(JFaceThemeTest.class.getSimpleName());
+	}
+
+	@BeforeClass
+	public static void enableTheme() {
+		InstanceScope.INSTANCE.getNode("org.eclipse.e4.ui.workbench.renderers.swt")
+				.putBoolean(PartRenderingEngine.ENABLED_THEME_KEY, true);
 	}
 
 	private void setAndTest(String themeId, IPropertyChangeListener listener) {
