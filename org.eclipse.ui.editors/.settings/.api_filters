@@ -1,5 +1,45 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.ui.editors" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.text/pull/160" id="923795461">
+            <message_arguments>
+                <message_argument value="3.16.0"/>
+                <message_argument value="3.15.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.ui.editors.text.EncodingActionGroup">
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.text/pull/160" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.editors.text.EncodingActionGroup"/>
+                <message_argument value="org.eclipse.ui.editors_3.16.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.ui.editors.text.IEncodingActionsConstants">
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.text/pull/160" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.editors.text.IEncodingActionsConstants"/>
+                <message_argument value="org.eclipse.ui.editors_3.16.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.ui.editors.text.IEncodingActionsDefinitionIds">
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.text/pull/160" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.editors.text.IEncodingActionsDefinitionIds"/>
+                <message_argument value="org.eclipse.ui.editors_3.16.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.ui.editors.text.IEncodingActionsHelpContextIds">
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.text/pull/160" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.editors.text.IEncodingActionsHelpContextIds"/>
+                <message_argument value="org.eclipse.ui.editors_3.16.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/ui/editors/text/ITextEditorHelpContextIds.java" type="org.eclipse.ui.editors.text.ITextEditorHelpContextIds">
         <filter id="571473929">
             <message_arguments>
