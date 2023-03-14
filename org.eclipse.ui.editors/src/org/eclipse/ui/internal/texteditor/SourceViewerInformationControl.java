@@ -13,6 +13,18 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.texteditor;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.IInformationControlExtension;
+import org.eclipse.jface.text.IInformationControlExtension3;
+import org.eclipse.jface.text.IInformationControlExtension5;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
@@ -34,25 +46,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.core.runtime.Assert;
-
-import org.eclipse.jface.resource.JFaceResources;
-
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IInformationControl;
-import org.eclipse.jface.text.IInformationControlCreator;
-import org.eclipse.jface.text.IInformationControlExtension;
-import org.eclipse.jface.text.IInformationControlExtension3;
-import org.eclipse.jface.text.IInformationControlExtension5;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.source.SourceViewer;
-
-import org.eclipse.ui.internal.editors.text.EditorsPlugin;
-
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
+import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 
 /**
  * Source viewer based implementation of <code>IInformationControl</code>.
@@ -216,8 +211,8 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 	 * @see org.eclipse.jface.text.IInformationControlExtension2#setInput(java.lang.Object)
 	 */
 	public void setInput(Object input) {
-		if (input instanceof String)
-			setInformation((String)input);
+		if (input instanceof String string)
+			setInformation(string);
 		else
 			setInformation(null);
 	}

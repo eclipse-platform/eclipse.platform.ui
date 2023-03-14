@@ -128,9 +128,8 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 	 */
 	protected void setEncoding(String encoding, boolean overwrite) {
 		IDocumentProvider p= fTextEditor.getDocumentProvider();
-		if (p instanceof IStorageDocumentProvider) {
+		if (p instanceof IStorageDocumentProvider provider) {
 			final IEditorInput input= fTextEditor.getEditorInput();
-			IStorageDocumentProvider provider= (IStorageDocumentProvider)p;
 			String current= provider.getEncoding(input);
 			if (!fTextEditor.isDirty()) {
 				String internal= encoding == null ? "" : encoding; //$NON-NLS-1$
@@ -157,8 +156,7 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 	@Override
 	public String getEncoding() {
 		IDocumentProvider p= fTextEditor.getDocumentProvider();
-		if (p instanceof IStorageDocumentProvider) {
-			IStorageDocumentProvider provider= (IStorageDocumentProvider) p;
+		if (p instanceof IStorageDocumentProvider provider) {
 			return provider.getEncoding(fTextEditor.getEditorInput());
 		}
 		return null;
@@ -167,8 +165,7 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 	@Override
 	public String getDefaultEncoding() {
 		IDocumentProvider p= fTextEditor.getDocumentProvider();
-		if (p instanceof IStorageDocumentProvider) {
-			IStorageDocumentProvider provider= (IStorageDocumentProvider) p;
+		if (p instanceof IStorageDocumentProvider provider) {
 			return provider.getDefaultEncoding();
 		}
 		return null;
@@ -268,8 +265,8 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 	 */
 	public void createStatusEncodingChangeControl(Composite parent, final IStatus status) {
 		final IAction action= fTextEditor.getAction(ITextEditorActionConstants.CHANGE_ENCODING);
-		if (action instanceof TextEditorAction)
-			((TextEditorAction)action).update();
+		if (action instanceof TextEditorAction textEditorAction)
+			textEditorAction.update();
 
 		if (action == null || !action.isEnabled())
 			return;

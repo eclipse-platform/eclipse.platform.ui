@@ -160,8 +160,8 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	 */
 	@Deprecated
 	protected IVerticalRuler getVerticalRuler() {
-		if (fRuler instanceof IVerticalRuler)
-			return (IVerticalRuler) fRuler;
+		if (fRuler instanceof IVerticalRuler verticalRuler)
+			return verticalRuler;
 		return null;
 	}
 
@@ -270,8 +270,8 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	protected AbstractMarkerAnnotationModel getAnnotationModel() {
 		IDocumentProvider provider= fTextEditor.getDocumentProvider();
 		IAnnotationModel model= provider.getAnnotationModel(fTextEditor.getEditorInput());
-		if (model instanceof AbstractMarkerAnnotationModel)
-			return (AbstractMarkerAnnotationModel) model;
+		if (model instanceof AbstractMarkerAnnotationModel markerModel)
+			return markerModel;
 		return null;
 	}
 
@@ -402,7 +402,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	protected boolean askForLabel(Map<String, Object> attributes) {
 
 		Object o= attributes.get("message"); //$NON-NLS-1$
-		String proposal= (o instanceof String) ? (String) o : ""; //$NON-NLS-1$
+		String proposal= (o instanceof String s) ? s : ""; //$NON-NLS-1$
 		String title= getString(fBundle, fPrefix + "add.dialog.title", fPrefix + "add.dialog.title"); //$NON-NLS-2$ //$NON-NLS-1$
 		String message= getString(fBundle, fPrefix + "add.dialog.message", fPrefix + "add.dialog.message"); //$NON-NLS-2$ //$NON-NLS-1$
 		String addButtonText= getString(fBundle, fPrefix + "add.dialog.addbutton", fPrefix + "add.dialog.addbutton"); //$NON-NLS-1$ //$NON-NLS-2$

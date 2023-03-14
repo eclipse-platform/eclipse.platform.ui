@@ -16,9 +16,6 @@ package org.eclipse.ui.texteditor;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResource;
@@ -27,7 +24,8 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
-
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 
@@ -142,8 +140,7 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 		Iterator<Annotation> e= getAnnotationIterator(false);
 		while (e.hasNext()) {
 			Object o= e.next();
-			if (o instanceof MarkerAnnotation) {
-				MarkerAnnotation a= (MarkerAnnotation)o;
+			if (o instanceof MarkerAnnotation a) {
 				IMarker marker= a.getMarker();
 
 				if (removedMarkers.remove(marker))

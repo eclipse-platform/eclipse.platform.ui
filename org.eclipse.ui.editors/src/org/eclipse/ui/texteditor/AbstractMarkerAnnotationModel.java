@@ -485,8 +485,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 		Iterator<Annotation> e= getAnnotationIterator(false);
 		while (e.hasNext()) {
 			Object o= e.next();
-			if (o instanceof MarkerAnnotation) {
-				MarkerAnnotation a= (MarkerAnnotation) o;
+			if (o instanceof MarkerAnnotation a) {
 				if (marker.equals(a.getMarker())) {
 					return a;
 				}
@@ -631,8 +630,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 			// update all markers with the positions known by the annotation model
 			for (Iterator<Annotation> e= getAnnotationIterator(false); e.hasNext();) {
 				Object o= e.next();
-				if (o instanceof MarkerAnnotation) {
-					MarkerAnnotation a= (MarkerAnnotation) o;
+				if (o instanceof MarkerAnnotation a) {
 					IMarker marker= a.getMarker();
 					Position position= annotationMap.get(a);
 					if ( !updateMarker(marker, document, position)) {
@@ -662,8 +660,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 		// re-initializes the positions from the markers
 		for (Iterator<Annotation> e= getAnnotationIterator(false); e.hasNext();) {
 			Object o= e.next();
-			if (o instanceof MarkerAnnotation) {
-				MarkerAnnotation a= (MarkerAnnotation) o;
+			if (o instanceof MarkerAnnotation a) {
 				Position p= createPositionFromMarker(a.getMarker());
 				if (p != null) {
 					removeAnnotation(a, false);
@@ -679,8 +676,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 		// add the markers of deleted positions back to the annotation model
 		for (Annotation annotation : fDeletedAnnotations) {
 			Object o= annotation;
-			if (o instanceof MarkerAnnotation) {
-				MarkerAnnotation a= (MarkerAnnotation) o;
+			if (o instanceof MarkerAnnotation a) {
 				Position p= createPositionFromMarker(a.getMarker());
 				if (p != null)
 					try {

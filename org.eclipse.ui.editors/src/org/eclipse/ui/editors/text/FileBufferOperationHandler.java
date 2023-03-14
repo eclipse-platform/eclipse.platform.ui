@@ -101,8 +101,7 @@ public class FileBufferOperationHandler extends AbstractHandler {
 			return;
 
 		ISelection selection= getSelection();
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection structuredSelection= (IStructuredSelection) selection;
+		if (selection instanceof IStructuredSelection structuredSelection) {
 			ArrayList<Object> resources= new ArrayList<>(structuredSelection.size());
 
 			Iterator<?> e= structuredSelection.iterator();
@@ -110,8 +109,7 @@ public class FileBufferOperationHandler extends AbstractHandler {
 				Object element= e.next();
 				if (element instanceof IResource)
 					resources.add(element);
-				else if (element instanceof IAdaptable) {
-					IAdaptable adaptable= (IAdaptable) element;
+				else if (element instanceof IAdaptable adaptable) {
 					Object adapter= adaptable.getAdapter(IResource.class);
 					if (adapter instanceof IResource)
 						resources.add(adapter);
@@ -125,16 +123,14 @@ public class FileBufferOperationHandler extends AbstractHandler {
 			IWorkbenchWindow window= getWorkbenchWindow();
 			if (window != null) {
 				IWorkbenchPart workbenchPart= window.getPartService().getActivePart();
-				if (workbenchPart instanceof IEditorPart) {
-					IEditorPart editorPart= (IEditorPart) workbenchPart;
+				if (workbenchPart instanceof IEditorPart editorPart) {
 					IEditorInput input= editorPart.getEditorInput();
 					Object adapter= input.getAdapter(IResource.class);
-					if (adapter instanceof IResource)
-						fResources= new IResource[] { (IResource) adapter };
+					if (adapter instanceof IResource resource)
+						fResources= new IResource[] { resource };
 					else {
 						adapter= input.getAdapter(ILocationProvider.class);
-						if (adapter instanceof ILocationProvider) {
-							ILocationProvider provider= (ILocationProvider) adapter;
+						if (adapter instanceof ILocationProvider provider) {
 							fLocation= provider.getPath(input);
 						}
 					}

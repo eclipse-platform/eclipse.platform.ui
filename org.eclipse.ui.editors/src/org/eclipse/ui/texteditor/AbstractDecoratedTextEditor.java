@@ -26,33 +26,13 @@ import java.text.MessageFormat;
 import java.util.Date;
 import java.util.Iterator;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.custom.StyledTextPrintOptions;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.core.commands.operations.IOperationApprover;
 import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.IFileBufferStatusCodes;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
-
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -60,10 +40,12 @@ import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.IFileBufferStatusCodes;
-
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -77,11 +59,6 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.window.Window;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
@@ -116,7 +93,23 @@ import org.eclipse.jface.text.source.LineNumberChangeRulerColumn;
 import org.eclipse.jface.text.source.LineNumberRulerColumn;
 import org.eclipse.jface.text.source.OverviewRuler;
 import org.eclipse.jface.text.source.SourceViewer;
-
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.window.Window;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.StyledTextPrintOptions;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -132,6 +125,12 @@ import org.eclipse.ui.actions.OpenWithMenu;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.dialogs.SaveAsDialog;
+import org.eclipse.ui.editors.text.DefaultEncodingSupport;
+import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.editors.text.ForwardingDocumentProvider;
+import org.eclipse.ui.editors.text.IEncodingSupport;
+import org.eclipse.ui.editors.text.IStorageDocumentProvider;
+import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
 import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IGotoMarker;
@@ -154,20 +153,12 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ShowInContext;
-import org.eclipse.ui.views.markers.MarkerViewUtil;
-
 import org.eclipse.ui.texteditor.rulers.IColumnSupport;
 import org.eclipse.ui.texteditor.rulers.IContributedRulerColumn;
 import org.eclipse.ui.texteditor.rulers.RulerColumnDescriptor;
 import org.eclipse.ui.texteditor.rulers.RulerColumnPreferenceAdapter;
 import org.eclipse.ui.texteditor.rulers.RulerColumnRegistry;
-
-import org.eclipse.ui.editors.text.DefaultEncodingSupport;
-import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.editors.text.ForwardingDocumentProvider;
-import org.eclipse.ui.editors.text.IEncodingSupport;
-import org.eclipse.ui.editors.text.IStorageDocumentProvider;
-import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
+import org.eclipse.ui.views.markers.MarkerViewUtil;
 
 
 /**
@@ -466,8 +457,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		if (isPrefQuickDiffAlwaysOn())
 			showChangeInformation(true);
 
-		if (fOverviewRuler instanceof IOverviewRulerExtension)
-			((IOverviewRulerExtension)fOverviewRuler).setUseSaturatedColors(isPrefUseSaturatedColorsOn());
+		if (fOverviewRuler instanceof IOverviewRulerExtension rulerEx)
+			rulerEx.setUseSaturatedColors(isPrefUseSaturatedColorsOn());
 
 		if (!isOverwriteModeEnabled())
 			enableOverwriteMode(false);
@@ -479,8 +470,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 		// Assign the quick assist assistant to the annotation access.
 		ISourceViewer viewer= getSourceViewer();
-		if (fAnnotationAccess instanceof IAnnotationAccessExtension2 && viewer instanceof ISourceViewerExtension3)
-			((IAnnotationAccessExtension2)fAnnotationAccess).setQuickAssistAssistant(((ISourceViewerExtension3)viewer).getQuickAssistAssistant());
+		if (fAnnotationAccess instanceof IAnnotationAccessExtension2 annotationEx2 && viewer instanceof ISourceViewerExtension3 viewerEx3)
+			annotationEx2.setQuickAssistAssistant(viewerEx3.getQuickAssistAssistant());
 
 		createOverviewRulerContextMenu();
 	}
@@ -525,8 +516,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	protected Control createStatusControl(Composite parent, final IStatus status) {
 		Object adapter= getAdapter(IEncodingSupport.class);
 		DefaultEncodingSupport encodingSupport= null;
-		if (adapter instanceof DefaultEncodingSupport)
-			encodingSupport= (DefaultEncodingSupport)adapter;
+		if (adapter instanceof DefaultEncodingSupport enc)
+			encodingSupport= enc;
 
 		if (encodingSupport == null || !encodingSupport.isEncodingError(status))
 			return super.createStatusControl(parent, status);
@@ -762,9 +753,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				super.initializeColumn(column);
 				RulerColumnDescriptor descriptor= column.getDescriptor();
 				IVerticalRuler ruler= internalGetVerticalRuler();
-				if (ruler instanceof CompositeRuler) {
+				if (ruler instanceof CompositeRuler compRuler) {
 					if (AnnotationColumn.ID.equals(descriptor.getId())) {
-						((AnnotationColumn)column).setDelegate(createAnnotationRulerColumn((CompositeRuler) ruler));
+						((AnnotationColumn) column).setDelegate(createAnnotationRulerColumn(compRuler));
 					} else if (LineNumberColumn.ID.equals(descriptor.getId())) {
 						fLineColumn= ((LineNumberColumn) column);
 						fLineColumn.setForwarder(new LineNumberColumn.ICompatibilityForwarder() {
@@ -813,8 +804,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			}
 
 			if (USE_SATURATED_COLORS_IN_OVERVIEW_RULER.equals(property)) {
-				if (fOverviewRuler instanceof IOverviewRulerExtension) {
-					((IOverviewRulerExtension)fOverviewRuler).setUseSaturatedColors(isPrefUseSaturatedColorsOn());
+				if (fOverviewRuler instanceof IOverviewRulerExtension overviewRulerEx) {
+					overviewRulerEx.setUseSaturatedColors(isPrefUseSaturatedColorsOn());
 					fOverviewRuler.update();
 				}
 			}
@@ -872,10 +863,10 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				return;
 			}
 
-			if (AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE.equals(property) && sourceViewer instanceof ITextViewerExtension6) {
+			if (AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE.equals(property) && sourceViewer instanceof ITextViewerExtension6 sourceViewerExt6) {
 				IPreferenceStore store= getPreferenceStore();
 				if (store != null)
-					((ITextViewerExtension6)sourceViewer).getUndoManager().setMaximalUndoLevel(store.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE));
+					sourceViewerExt6.getUndoManager().setMaximalUndoLevel(store.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE));
 				return;
 			}
 
@@ -888,13 +879,12 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				}
 			}
 
-			if (sourceViewer instanceof ITextViewerExtension6) {
+			if (sourceViewer instanceof ITextViewerExtension6 textViewer6) {
 				HyperlinkDetectorDescriptor[] descriptor= EditorsUI.getHyperlinkDetectorRegistry().getHyperlinkDetectorDescriptors();
 				for (HyperlinkDetectorDescriptor d : descriptor) {
 					if (d.getId().equals(property) || (d.getId() + HyperlinkDetectorDescriptor.STATE_MASK_POSTFIX).equals(property)) {
 						IHyperlinkDetector[] detectors= getSourceViewerConfiguration().getHyperlinkDetectors(sourceViewer);
 						int stateMask= getSourceViewerConfiguration().getHyperlinkStateMask(sourceViewer);
-						ITextViewerExtension6 textViewer6= (ITextViewerExtension6)sourceViewer;
 						textViewer6.setHyperlinkDetectors(detectors, stateMask);
 						return;
 					}
@@ -911,8 +901,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 */
 	protected void showOverviewRuler() {
 		if (fOverviewRuler != null) {
-			if (getSourceViewer() instanceof ISourceViewerExtension) {
-				((ISourceViewerExtension) getSourceViewer()).showAnnotationsOverview(true);
+			if (getSourceViewer() instanceof ISourceViewerExtension sourceViewerExt) {
+				sourceViewerExt.showAnnotationsOverview(true);
 				fSourceViewerDecorationSupport.updateOverviewDecorations();
 			}
 		}
@@ -922,9 +912,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * Hides the overview ruler.
 	 */
 	protected void hideOverviewRuler() {
-		if (getSourceViewer() instanceof ISourceViewerExtension) {
+		if (getSourceViewer() instanceof ISourceViewerExtension sourceViewerExt) {
 			fSourceViewerDecorationSupport.hideAnnotationOverview();
-			((ISourceViewerExtension) getSourceViewer()).showAnnotationsOverview(false);
+			sourceViewerExt.showAnnotationsOverview(false);
 		}
 	}
 
@@ -1011,9 +1001,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 		// look up the current range of the marker when the document has been edited
 		IAnnotationModel model= getDocumentProvider().getAnnotationModel(getEditorInput());
-		if (model instanceof AbstractMarkerAnnotationModel) {
+		if (model instanceof AbstractMarkerAnnotationModel markerModel) {
 
-			AbstractMarkerAnnotationModel markerModel= (AbstractMarkerAnnotationModel) model;
 			Position pos= markerModel.getMarkerPosition(marker);
 			if (pos != null && !pos.isDeleted()) {
 				// use position instead of marker values
@@ -1081,8 +1070,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		if (fIsDerivedStateValidated)
 			return fIsEditingDerivedFileAllowed;
 
-		if (getDocumentProvider() instanceof IDocumentProviderExtension) {
-			IDocumentProviderExtension extension= (IDocumentProviderExtension)getDocumentProvider();
+		if (getDocumentProvider() instanceof IDocumentProviderExtension extension) {
 			IStatus status= extension.getStatus(getEditorInput());
 			String pluginId= status.getPlugin();
 			boolean isDerivedStatus= status.getCode() == IFileBufferStatusCodes.DERIVED_FILE && (FileBuffers.PLUGIN_ID.equals(pluginId) || EditorsUI.PLUGIN_ID.equals(pluginId));
@@ -1266,8 +1254,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		setAction(ITextEditorActionConstants.CONTEXT_PREFERENCES, action);
 
 		IAction showWhitespaceCharactersAction= getAction(ITextEditorActionConstants.SHOW_WHITESPACE_CHARACTERS);
-		if (showWhitespaceCharactersAction instanceof ShowWhitespaceCharactersAction)
-			((ShowWhitespaceCharactersAction)showWhitespaceCharactersAction).setPreferenceStore(EditorsUI.getPreferenceStore());
+		if (showWhitespaceCharactersAction instanceof ShowWhitespaceCharactersAction act)
+			act.setPreferenceStore(EditorsUI.getPreferenceStore());
 
 		setAction(ITextEditorActionConstants.REFRESH, new RefreshEditorAction(this));
 		markAsPropertyDependentAction(ITextEditorActionConstants.REFRESH, true);
@@ -1303,10 +1291,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 */
 	private void showChangeRulerInformation() {
 		IVerticalRuler ruler= getVerticalRuler();
-		if (!(ruler instanceof CompositeRuler) || fLineColumn == null)
+		if (!(ruler instanceof CompositeRuler compositeRuler) || fLineColumn == null)
 			return;
-
-		CompositeRuler compositeRuler= (CompositeRuler)ruler;
 
 		// fake a mouse move (some hovers rely on this to determine the hovered line):
 		int x= fLineColumn.getControl().getLocation().x;
@@ -1452,8 +1438,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	protected void setDocumentProvider(IEditorInput input) {
 		fImplicitDocumentProvider= DocumentProviderRegistry.getDefault().getDocumentProvider(input);
 		IDocumentProvider provider= super.getDocumentProvider();
-		if (provider instanceof ForwardingDocumentProvider) {
-			ForwardingDocumentProvider forwarder= (ForwardingDocumentProvider) provider;
+		if (provider instanceof ForwardingDocumentProvider forwarder) {
 			forwarder.setParentProvider(fImplicitDocumentProvider);
 		}
 	}
@@ -1576,7 +1561,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		} else {
 			SaveAsDialog dialog= new SaveAsDialog(shell);
 
-			IFile original= (input instanceof IFileEditorInput) ? ((IFileEditorInput) input).getFile() : null;
+			IFile original= (input instanceof IFileEditorInput fileEditorInput) ? fileEditorInput.getFile() : null;
 			if (original != null)
 				dialog.setOriginalFile(original);
 			else
@@ -1911,12 +1896,12 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			revisionMenu.add(new Separator());
 
 			IAction action= getAction(ITextEditorActionConstants.REVISION_SHOW_AUTHOR_TOGGLE);
-			if (action instanceof IUpdate)
-				((IUpdate)action).update();
+			if (action instanceof IUpdate updateAction)
+				updateAction.update();
 			revisionMenu.add(action);
 			action= getAction(ITextEditorActionConstants.REVISION_SHOW_ID_TOGGLE);
-			if (action instanceof IUpdate)
-				((IUpdate)action).update();
+			if (action instanceof IUpdate updateAction)
+				updateAction.update();
 			revisionMenu.add(action);
 		}
 
@@ -2011,8 +1996,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				protected void openEditor(IEditorDescriptor editorDescriptor, boolean openUsingDescriptor) {
 					super.openEditor(editorDescriptor, openUsingDescriptor);
 					ISelection selection= getSelectionProvider().getSelection();
-					if (selection instanceof ITextSelection) {
-						revealInEditor(page.getActiveEditor(), ((ITextSelection)selection).getOffset(), ((ITextSelection)selection).getLength());
+					if (selection instanceof ITextSelection textSelection) {
+						revealInEditor(page.getActiveEditor(), textSelection.getOffset(), textSelection.getLength());
 					}
 				}
 			});
@@ -2033,26 +2018,26 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.7
 	 */
 	private static void revealInEditor(IEditorPart editor, final int offset, final int length) {
-		if (editor instanceof ITextEditor) {
-			((ITextEditor)editor).selectAndReveal(offset, length);
+		if (editor instanceof ITextEditor textEditor) {
+			textEditor.selectAndReveal(offset, length);
 			return;
 		}
 
 		// Support for non-text editor - try IGotoMarker interface
 		final IGotoMarker gotoMarkerTarget;
-		if (editor instanceof IGotoMarker)
-			gotoMarkerTarget= (IGotoMarker)editor;
+		if (editor instanceof IGotoMarker gotoMarker)
+			gotoMarkerTarget= gotoMarker;
 		else
 			gotoMarkerTarget= editor != null ? editor.getAdapter(IGotoMarker.class) : null;
 		if (gotoMarkerTarget != null) {
 			final IEditorInput input= editor.getEditorInput();
-			if (input instanceof IFileEditorInput) {
+			if (input instanceof IFileEditorInput fileInput) {
 				WorkspaceModifyOperation op= new WorkspaceModifyOperation() {
 					@Override
 					protected void execute(IProgressMonitor monitor) throws CoreException {
 						IMarker marker= null;
 						try {
-							marker= ((IFileEditorInput)input).getFile().createMarker(IMarker.TEXT);
+							marker= fileInput.getFile().createMarker(IMarker.TEXT);
 							marker.setAttribute(IMarker.CHAR_START, offset);
 							marker.setAttribute(IMarker.CHAR_END, offset + length);
 
@@ -2242,8 +2227,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		}
 
 		IMarker marker= null;
-		if (annotation instanceof MarkerAnnotation)
-			marker= ((MarkerAnnotation)annotation).getMarker();
+		if (annotation instanceof MarkerAnnotation markerAnnotation)
+			marker= markerAnnotation.getMarker();
 
 		if (marker != null) {
 			try {

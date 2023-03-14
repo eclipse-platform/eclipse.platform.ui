@@ -13,17 +13,14 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.internal.text.html.BrowserInformationControl;
 import org.eclipse.jface.internal.text.html.HTMLPrinter;
 import org.eclipse.jface.resource.JFaceResources;
-
 import org.eclipse.jface.text.AbstractReusableInformationControlCreator;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlExtension4;
-
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.editors.text.EditorsUI;
 
 
@@ -123,8 +120,8 @@ class RevisionHoverInformationControlCreator extends AbstractReusableInformation
 		if (!super.canReuse(control))
 			return false;
 
-		if (control instanceof IInformationControlExtension4)
-			((IInformationControlExtension4)control).setStatusText(EditorsUI.getTooltipAffordanceString());
+		if (control instanceof IInformationControlExtension4 extension4)
+			extension4.setStatusText(EditorsUI.getTooltipAffordanceString());
 
 		return true;
 	}

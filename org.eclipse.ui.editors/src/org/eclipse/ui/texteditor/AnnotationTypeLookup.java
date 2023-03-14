@@ -115,7 +115,7 @@ public final class AnnotationTypeLookup {
 
 		Object value= fMapping.get(markerType);
 
-		if (value instanceof String)
+		if (value instanceof String )
 			return (String) value;
 
 		if (value instanceof Map) {

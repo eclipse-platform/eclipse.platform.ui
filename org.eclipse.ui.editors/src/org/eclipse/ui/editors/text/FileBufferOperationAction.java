@@ -86,16 +86,14 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 		fResources= new HashSet<>();
 		fLocation= null;
 
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection structuredSelection= (IStructuredSelection) selection;
+		if (selection instanceof IStructuredSelection structuredSelection) {
 
 			Iterator<?> e= structuredSelection.iterator();
 			while (e.hasNext()) {
 				Object element= e.next();
 				if (element instanceof IResource)
 					fResources.add(element);
-				else if (element instanceof IAdaptable) {
-					IAdaptable adaptable= (IAdaptable) element;
+				else if (element instanceof IAdaptable adaptable) {
 					Object adapter= adaptable.getAdapter(IResource.class);
 					if (adapter instanceof IResource)
 						fResources.add(adapter);
@@ -107,16 +105,14 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 			IWorkbenchWindow window= getWorkbenchWindow();
 			if (window != null) {
 				IWorkbenchPart workbenchPart= window.getPartService().getActivePart();
-				if (workbenchPart instanceof IEditorPart) {
-					IEditorPart editorPart= (IEditorPart) workbenchPart;
+				if (workbenchPart instanceof IEditorPart editorPart) {
 					IEditorInput input= editorPart.getEditorInput();
 					Object adapter= input.getAdapter(IResource.class);
 					if (adapter instanceof IResource)
 						fResources.add(adapter);
 					else {
 						adapter= input.getAdapter(ILocationProvider.class);
-						if (adapter instanceof ILocationProvider) {
-							ILocationProvider provider= (ILocationProvider) adapter;
+						if (adapter instanceof ILocationProvider provider) {
 							fLocation= provider.getPath(input);
 						}
 					}

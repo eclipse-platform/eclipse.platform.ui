@@ -176,7 +176,7 @@ public class AddMarkerAction extends TextEditorAction {
 	protected boolean askForLabel(Map<String, Object> attributes) {
 
 		Object o= attributes.get("message"); //$NON-NLS-1$
-		String proposal= (o instanceof String) ? (String) o : ""; //$NON-NLS-1$
+		String proposal= (o instanceof String s) ? s : ""; //$NON-NLS-1$
 		String title= getString(fBundle, fPrefix + "dialog.title", fPrefix + "dialog.title"); //$NON-NLS-2$ //$NON-NLS-1$
 		String message= getString(fBundle, fPrefix + "dialog.message", fPrefix + "dialog.message"); //$NON-NLS-2$ //$NON-NLS-1$
 		IInputValidator inputValidator= newText -> (newText == null || newText.trim().isEmpty()) ? " " : null;

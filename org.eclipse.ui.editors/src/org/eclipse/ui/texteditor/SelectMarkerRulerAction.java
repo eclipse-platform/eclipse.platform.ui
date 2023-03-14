@@ -19,22 +19,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import org.osgi.framework.Bundle;
-
-import org.eclipse.swt.widgets.Shell;
-
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-
 import org.eclipse.jface.dialogs.ErrorDialog;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -45,12 +38,13 @@ import org.eclipse.jface.text.source.IAnnotationAccessExtension;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
-
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.views.markers.MarkerViewUtil;
+import org.osgi.framework.Bundle;
 
 
 /**
@@ -146,9 +140,8 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 
 		// look up the current range of the marker when the document has been edited
 		IAnnotationModel model= documentProvider.getAnnotationModel(editorInput);
-		if (model instanceof AbstractMarkerAnnotationModel) {
+		if (model instanceof AbstractMarkerAnnotationModel markerModel) {
 
-			AbstractMarkerAnnotationModel markerModel= (AbstractMarkerAnnotationModel) model;
 			Position pos= markerModel.getMarkerPosition(marker);
 			if (pos != null && !pos.isDeleted()) {
 				// use position instead of marker values
@@ -233,8 +226,8 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	 */
 	protected final IAnnotationAccessExtension getAnnotationAccessExtension() {
 		Object adapter= fTextEditor.getAdapter(IAnnotationAccess.class);
-		if (adapter instanceof IAnnotationAccessExtension)
-			return (IAnnotationAccessExtension)adapter;
+		if (adapter instanceof IAnnotationAccessExtension annotationExtension)
+			return annotationExtension;
 
 		return null;
 	}
@@ -264,8 +257,8 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	protected final AbstractMarkerAnnotationModel getAnnotationModel() {
 		IDocumentProvider provider= fTextEditor.getDocumentProvider();
 		IAnnotationModel model= provider.getAnnotationModel(fTextEditor.getEditorInput());
-		if (model instanceof AbstractMarkerAnnotationModel)
-			return (AbstractMarkerAnnotationModel) model;
+		if (model instanceof AbstractMarkerAnnotationModel annotationModel)
+			return annotationModel;
 		return null;
 	}
 
@@ -409,13 +402,13 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 		List<IMarker> markers= null;
 		while (it.hasNext()) {
 			Annotation annotation= it.next();
-			if (annotation instanceof MarkerAnnotation) {
+			if (annotation instanceof MarkerAnnotation markerAnnotation) {
 				Position position= model.getPosition(annotation);
 				if (includesLine(position, document, activeLine)) {
 					if (markers == null)
 						markers= new ArrayList<>(10);
 
-					markers.add(((MarkerAnnotation) annotation).getMarker());
+					markers.add(markerAnnotation.getMarker());
 				}
 			}
 		}

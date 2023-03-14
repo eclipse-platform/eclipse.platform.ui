@@ -226,8 +226,7 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 
 	@Override
 	public int getLayer(Annotation annotation) {
-		if (annotation instanceof IAnnotationPresentation) {
-			IAnnotationPresentation presentation= (IAnnotationPresentation) annotation;
+		if (annotation instanceof IAnnotationPresentation presentation) {
 			return presentation.getLayer();
 		}
 
@@ -255,8 +254,7 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 	@Override
 	public void paint(Annotation annotation, GC gc, Canvas canvas, Rectangle bounds) {
 
-		if (annotation instanceof IAnnotationPresentation) {
-			IAnnotationPresentation presentation= (IAnnotationPresentation) annotation;
+		if (annotation instanceof IAnnotationPresentation presentation) {
 			presentation.paint(gc, canvas, bounds);
 			return;
 		}
@@ -360,8 +358,7 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 	 */
 	private Image getImage(Annotation annotation, AnnotationPreference preference, String annotationType) {
 
-		if (annotation instanceof AnnotationBag) {
-			AnnotationBag bag= (AnnotationBag)annotation;
+		if (annotation instanceof AnnotationBag bag) {
 			if (!bag.isEmpty())
 				annotation= bag.iterator().next();
 		}
@@ -433,8 +430,7 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 	 * @since 3.2
 	 */
 	protected boolean hasQuickFix(Annotation annotation) {
-		if (annotation instanceof IQuickFixableAnnotation) {
-			IQuickFixableAnnotation quickFixableAnnotation= (IQuickFixableAnnotation)annotation;
+		if (annotation instanceof IQuickFixableAnnotation quickFixableAnnotation) {
 			if (!quickFixableAnnotation.isQuickFixableStateSet())
 				quickFixableAnnotation.setQuickFixable(fQuickAssistAssistant != null && fQuickAssistAssistant.canFix(annotation));
 			return quickFixableAnnotation.isQuickFixable();
