@@ -577,4 +577,30 @@ public interface IPageLayout {
 	 * @since 3.3
 	 */
 	IPlaceholderFolderLayout getFolderForView(String id);
+
+	/**
+	 * Sets the onboarding text. The text is shown in the editor area in case no
+	 * editor is open.
+	 *
+	 * @param text the onboarding text
+	 * @since 3.129
+	 */
+	void setEditorOnboardingText(String text);
+
+	/**
+	 * Sets the onboarding image. The image is shown in the editor area in case no
+	 * editor is open.
+	 *
+	 * @param imageUri the uri of the onboarding image
+	 * @since 3.129
+	 */
+	void setEditorOnboardingImage(String imageUri);
+
+	/**
+	 * Adds a command for the empty editor area.
+	 *
+	 * @param commandId an id of an onboarding command
+	 * @since 3.129
+	 */
+	void addEditorOnboardingCommand(String commandId);
 }

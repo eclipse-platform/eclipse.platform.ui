@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="org.eclipse.ui.examples.perspective.PerspectiveFactory"
+            icon="$nl$/icons/full/etool16/default_persp.png"
+            id="org.eclipse.ui.examples.perspective.perspective"
+            name="Example Perspective">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            editorOnboardingImage="$nl$/icons/default_persp_grey.png"
+            editorOnboardingText="Welcome to the example perspective"
+            targetID="org.eclipse.ui.examples.perspective.perspective">
+         <editorOnboardingCommand
+               id="org.eclipse.ui.examples.perspective.commands.exampleCommand">
+         </editorOnboardingCommand>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            id="org.eclipse.ui.examples.perspective.commands.category"
+            name="Example Category">
+      </category>
+      <command
+            categoryId="org.eclipse.ui.examples.perspective.commands.category"
+            id="org.eclipse.ui.examples.perspective.commands.exampleCommand"
+            name="Example Command">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.ui.examples.perspective.handlers.ExampleCommandHandler"
+            commandId="org.eclipse.ui.examples.perspective.commands.exampleCommand">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="org.eclipse.ui.examples.perspective.commands.exampleCommand"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+6">
+      </key>
+   </extension>
+
+</plugin>

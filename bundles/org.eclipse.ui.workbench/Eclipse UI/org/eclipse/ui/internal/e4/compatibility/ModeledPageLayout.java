@@ -69,6 +69,9 @@ public class ModeledPageLayout implements IPageLayout {
 	public static final String HIDDEN_TOOLBAR_PREFIX = "persp.hideToolbarSC:"; //$NON-NLS-1$
 	public static final String HIDDEN_ACTIONSET_PREFIX = "persp.hideActionSetSC:"; //$NON-NLS-1$
 	public static final String HIDDEN_ITEMS_KEY = "persp.hiddenItems"; //$NON-NLS-1$
+	public static final String EDITOR_ONBOARDING_TEXT = "persp.editorOnboardingText:"; //$NON-NLS-1$
+	public static final String EDITOR_ONBOARDING_IMAGE = "persp.editorOnboardingImageUri:"; //$NON-NLS-1$
+	public static final String EDITOR_ONBOARDING_COMMAND = "persp.editorOnboardingCommand:"; //$NON-NLS-1$
 
 	public static List<String> getIds(MPerspective model, String tagPrefix) {
 		if (model == null) {
@@ -613,6 +616,21 @@ public class ModeledPageLayout implements IPageLayout {
 				addViewActivator(viewModel);
 			}
 		}
+	}
+
+	@Override
+	public void setEditorOnboardingText(String text) {
+		perspModel.getTags().add(EDITOR_ONBOARDING_TEXT + text);
+	}
+
+	@Override
+	public void setEditorOnboardingImage(String iconUri) {
+		perspModel.getTags().add(EDITOR_ONBOARDING_IMAGE + iconUri);
+	}
+
+	@Override
+	public void addEditorOnboardingCommand(String commandId) {
+		perspModel.getTags().add(EDITOR_ONBOARDING_COMMAND + commandId);
 	}
 
 }

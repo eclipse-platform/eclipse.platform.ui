@@ -19,10 +19,13 @@ import java.util.Set;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewLayout;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.e4.compatibility.ModeledPageLayout;
+import org.eclipse.ui.internal.menus.MenuHelper;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.RegistryReader;
 
@@ -103,6 +106,29 @@ public class PerspectiveExtensionReader extends RegistryReader {
 	 * Process an extension. Assumption: Extension is for current perspective.
 	 */
 	private boolean processExtension(IConfigurationElement element) {
+		String[] attributes = element.getAttributeNames();
+		for (String attribute : attributes) {
+			boolean result = false;
+			switch (attribute) {
+			case IWorkbenchRegistryConstants.ATT_EDITOR_ONBOARDING_TEXT:
+				result = processEditorOnboardingText(element.getAttribute(attribute));
+				break;
+			case IWorkbenchRegistryConstants.ATT_EDITOR_ONBOARDING_IMAGE:
+				result = processEditorOnboardingImage(element, element.getAttribute(attribute));
+				break;
+			case IWorkbenchRegistryConstants.ATT_TARGET_ID:
+				result = true;
+				break;
+
+			default:
+				break;
+			}
+			if (!result) {
+				WorkbenchPlugin.log("Unable to process attribute: " + //$NON-NLS-1$
+						attribute + " in perspective extension: " + //$NON-NLS-1$
+						element.getDeclaringExtension().getUniqueIdentifier());
+			}
+		}
 		IConfigurationElement[] children = element.getChildren();
 		for (IConfigurationElement child : children) {
 			String type = child.getName();
@@ -132,6 +158,9 @@ public class PerspectiveExtensionReader extends RegistryReader {
 					break;
 				case IWorkbenchRegistryConstants.TAG_HIDDEN_TOOLBAR_ITEM:
 					result = processHiddenToolBarItem(child);
+					break;
+				case IWorkbenchRegistryConstants.TAG_EDITOR_ONBOARDING_COMMAND:
+					result = processEditorOnboardingCommand(child);
 					break;
 				default:
 					break;
@@ -309,8 +338,7 @@ public class PerspectiveExtensionReader extends RegistryReader {
 			} else // Fix for 99155, CGross (schtoo@schtoo.com)
 			// Adding standalone placeholder for standalone views
 			if (VAL_TRUE.equals(standalone)) {
-				pageLayout.addStandaloneViewPlaceholder(id, intRelation, ratio, relative,
-						!VAL_FALSE.equals(showTitle));
+				pageLayout.addStandaloneViewPlaceholder(id, intRelation, ratio, relative, !VAL_FALSE.equals(showTitle));
 			} else {
 				pageLayout.addPlaceholder(id, intRelation, ratio, relative);
 			}
@@ -347,6 +375,48 @@ public class PerspectiveExtensionReader extends RegistryReader {
 		String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
 		if (id != null) {
 			pageLayout.addNewWizardShortcut(id);
+		}
+		return true;
+	}
+
+	/**
+	 * Process the onboarding text.
+	 *
+	 * @param text the text
+	 */
+	private boolean processEditorOnboardingText(String text) {
+		if (text != null) {
+			pageLayout.setEditorOnboardingText(text);
+		}
+		return true;
+	}
+
+	/**
+	 * Process the onboarding image.
+	 *
+	 * @param element a configuration element
+	 * @param imageUri the image uri
+	 */
+	private boolean processEditorOnboardingImage(IConfigurationElement element, String imageUri) {
+		if (imageUri != null) {
+			String namespaceId = element.getNamespaceIdentifier();
+			ImageDescriptor descriptor = ResourceLocator.imageDescriptorFromBundle(namespaceId, imageUri).orElse(null);
+			if (descriptor != null) {
+				pageLayout.setEditorOnboardingImage(MenuHelper.getImageUrl(descriptor));
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Process an onbarding command.
+	 *
+	 * @param element a configuration element
+	 */
+	private boolean processEditorOnboardingCommand(IConfigurationElement element) {
+		String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+		if (id != null) {
+			pageLayout.addEditorOnboardingCommand(id);
 		}
 		return true;
 	}

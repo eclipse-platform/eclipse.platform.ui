@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -72,7 +73,6 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.widgets.WidgetFactory;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.ACC;
 import org.eclipse.swt.accessibility.Accessible;
@@ -228,29 +228,18 @@ public class StackRenderer extends LazyStackRenderer {
 	}
 
 	private void setOnboarding(MPerspective perspective) {
-		if (onBoarding == null) {
+		if (welcomeImage == null || welcomeText == null) {
 			return;
 		}
 
-		Image image = getImageFromURI(perspective.getIconURI());
-		if (image.isDisposed()) {
-			return;
-		}
-		Image greyImage = new Image(welcomeText.getDisplay(), image, SWT.IMAGE_GRAY);
-		if (welcomeImage.getImage() != null) {
-			welcomeImage.getImage().dispose();
-		}
-		welcomeImage.setImage(greyImage);
+		String textId = "persp.editorOnboardingText:"; //$NON-NLS-1$
+		perspective.getTags().stream().filter(tag -> tag.startsWith(textId)).map(tag -> tag.substring(textId.length()))
+				.findFirst().ifPresentOrElse(welcomeText::setText, () -> welcomeText.setText("")); //$NON-NLS-1$
 
-		onBoarding.addDisposeListener(e -> {
-			greyImage.dispose();
-			welcomeImage.dispose();
-		});
-
-		String text = NLS.bind("Welcome to the \"{0}\" perspective", perspective.getLabel()); //$NON-NLS-1$
-		welcomeText.setText(text);
-		welcomeText.getParent().requestLayout();
-		welcomeText.getParent().pack(true);
+		String iconId = "persp.editorOnboardingImageUri:"; //$NON-NLS-1$
+		perspective.getTags().stream().filter(tag -> tag.startsWith(iconId)).map(tag -> tag.substring(iconId.length()))
+				.findFirst().map(this::getImageFromURI).filter(Predicate.not(Image::isDisposed))
+				.ifPresentOrElse(welcomeImage::setImage, () -> welcomeImage.setImage(null));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -466,8 +455,6 @@ public class StackRenderer extends LazyStackRenderer {
 	private Label welcomeText;
 	private Label welcomeImage;
 
-	private Composite onBoarding;
-
 	/**
 	 * An event handler for listening to changes to the state of view menus and part
 	 * toolbars. Depending on what state these items are in, the view menu and
@@ -652,7 +639,7 @@ public class StackRenderer extends LazyStackRenderer {
 		int styleOverride = getStyleOverride(pStack);
 		int style = styleOverride == -1 ? SWT.BORDER : styleOverride;
 		CTabFolder tabFolder = new CTabFolder(parentComposite, style);
-		if (pStack.getTags().contains("org.eclipse.e4.primaryDataStack")) { //$NON-NLS-1$
+		if (pStack.getTags().contains("EditorStack")) { //$NON-NLS-1$
 			createOnboardingControls(tabFolder);
 		}
 		tabFolder.setMRUVisible(getMRUValue());
@@ -676,7 +663,7 @@ public class StackRenderer extends LazyStackRenderer {
 	}
 
 	private void createOnboardingControls(CTabFolder tabFolder) {
-		onBoarding = WidgetFactory.composite(SWT.None).layout(GridLayoutFactory.swtDefaults().create())
+		Composite onBoarding = WidgetFactory.composite(SWT.None).layout(GridLayoutFactory.swtDefaults().create())
 				.create(tabFolder);
 
 		GridDataFactory gridData = GridDataFactory
@@ -686,18 +673,22 @@ public class StackRenderer extends LazyStackRenderer {
 				.layout(GridLayoutFactory.swtDefaults().create()).create(onBoarding);
 
 		Color color = onBoarding.getDisplay().getSystemColor(SWT.COLOR_WIDGET_DISABLED_FOREGROUND);
-		welcomeText = WidgetFactory.label(SWT.NONE).foreground(color).supplyLayoutData(gridData::create)
-				.create(content);
+		welcomeImage = WidgetFactory.label(SWT.NONE).supplyLayoutData(gridData::create).create(content);
 
-		welcomeImage = WidgetFactory.label(SWT.NONE).foreground(color).supplyLayoutData(gridData::create)
+		welcomeText = WidgetFactory.label(SWT.NONE).foreground(color).supplyLayoutData(gridData::create)
 				.create(content);
 
 		tabFolder.addPaintListener(e -> setOnboardingControlSize(tabFolder, onBoarding));
 
 		tabFolder.addDisposeListener(e -> {
-			if (welcomeImage != null && !welcomeImage.isDisposed() && welcomeImage.getImage() != null && !welcomeImage.getImage().isDisposed()) {
+			if (welcomeImage != null && !welcomeImage.isDisposed() && welcomeImage.getImage() != null
+					&& !welcomeImage.getImage().isDisposed()) {
 				welcomeImage.dispose();
 			}
+		});
+
+		onBoarding.addDisposeListener(e -> {
+			welcomeImage.dispose();
 		});
 	}
 
@@ -705,14 +696,12 @@ public class StackRenderer extends LazyStackRenderer {
 		if (onBoarding == null || onBoarding.isDisposed() || tabFolder == null || tabFolder.isDisposed()) {
 			return;
 		}
-		// TODO: create extension point to show information in onboarding control, until
-		// then hide it
-//		boolean show = tabFolder.getItemCount() == 0;
-//		if (show) {
-//			onBoarding.setSize(tabFolder.getBounds().width, tabFolder.getBounds().height);
-//		} else {
+		boolean show = tabFolder.getItemCount() == 0;
+		if (show) {
+			onBoarding.setSize(tabFolder.getBounds().width, tabFolder.getBounds().height);
+		} else {
 			onBoarding.setSize(0, 0);
-//		}
+		}
 	}
 
 	private boolean getMRUValue() {
