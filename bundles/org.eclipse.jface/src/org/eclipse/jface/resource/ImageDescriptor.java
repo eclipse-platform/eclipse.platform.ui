@@ -227,11 +227,23 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor {
 
 	@Override
 	public Object createResource(Device device) throws DeviceResourceException {
-		Image result = createImage(false, device);
-		if (result == null) {
-			throw new DeviceResourceException(this);
+		try {
+			return new Image(device, new ImageDataProvider() {
+
+				@Override
+				public ImageData getImageData(int zoom) {
+					ImageData imageData = ImageDescriptor.this.getImageData(zoom);
+					if (imageData == null && zoom == 100) {
+						throw new IllegalStateException(String.format(
+								"The ImageDescriptor of type %s returned no image data at zoom=100!", //$NON-NLS-1$
+								getClass().getName()));
+					}
+					return imageData;
+				}
+			});
+		} catch (IllegalStateException | IllegalArgumentException | SWTException e) {
+			throw new DeviceResourceException(this, e);
 		}
-		return result;
 	}
 
 	@Override
