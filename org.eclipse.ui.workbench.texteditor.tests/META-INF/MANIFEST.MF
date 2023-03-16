@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui.workbench.texteditor.tests
-Bundle-Version: 3.13.200.qualifier
+Bundle-Version: 3.14.0.qualifier
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
 Export-Package: 
@@ -18,6 +18,6 @@ Require-Bundle:
  org.junit;bundle-version="4.12.0",
  org.eclipse.text.tests;bundle-version="[3.5.0,4.0.0)",
  org.eclipse.core.expressions;bundle-version="[3.5.0,4.0.0)"
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Eclipse-BundleShape: dir
 Automatic-Module-Name: org.eclipse.ui.workbench.texteditor.tests
