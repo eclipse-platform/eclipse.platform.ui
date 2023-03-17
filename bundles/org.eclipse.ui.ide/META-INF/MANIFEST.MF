@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui.ide; singleton:=true
-Bundle-Version: 3.20.200.qualifier
+Bundle-Version: 3.21.0.qualifier
 Bundle-ClassPath: .
 Bundle-Activator: org.eclipse.ui.internal.ide.IDEWorkbenchPlugin
 Bundle-ActivationPolicy: lazy
@@ -68,6 +68,6 @@ Require-Bundle: org.eclipse.core.resources;bundle-version="[3.17.0,4.0.0)";resol
 Import-Package: javax.annotation,
  javax.inject,
  org.osgi.service.event;version="[1.4.0,2.0.0)"
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: org.eclipse.ui.ide
 

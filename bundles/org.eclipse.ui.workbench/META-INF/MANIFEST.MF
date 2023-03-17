@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.ui.workbench; singleton:=true
-Bundle-Version: 3.128.0.qualifier
+Bundle-Version: 3.129.0.qualifier
 Bundle-ClassPath: .
 Bundle-Activator: org.eclipse.ui.internal.WorkbenchPlugin
 Bundle-ActivationPolicy: lazy
@@ -138,7 +138,7 @@ Import-Package: com.ibm.icu.util,
  org.w3c.dom,
  org.w3c.dom.css,
  org.xml.sax
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Service-Component: OSGI-INF/org.eclipse.ui.internal.themes.ColorAndFontProviderImpl.xml
 Require-Capability: osgi.extender;
   filter:="(&(osgi.extender=osgi.component)(version>=1.2)(!(version>=2.0)))"
