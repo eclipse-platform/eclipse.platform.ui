@@ -85,15 +85,6 @@ public interface IPageLayout {
 	String ID_EDITOR_AREA = "org.eclipse.ui.editorss"; //$NON-NLS-1$
 
 	/**
-	 * The view id for the workbench's Resource Navigator standard component.
-	 *
-	 * @deprecated this has been replaced by the Common Navigator Framework as of
-	 *             release 3.5.
-	 */
-	@Deprecated(forRemoval = true)
-	String ID_RES_NAV = "org.eclipse.ui.views.ResourceNavigator"; //$NON-NLS-1$
-
-	/**
 	 * The view id for the Project Explorer.
 	 *
 	 * @since 3.5
