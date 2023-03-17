@@ -25,10 +25,10 @@ import java.text.CollationKey;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -154,7 +154,7 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 	 * Cache for Collator used by sorting. The allocated memory is reclaimed as soon
 	 * as the Dialog is closed.
 	 */
-	private final Map<String, CollationKey> collationKeyCache = new HashMap<>();
+	private final Map<String, CollationKey> collationKeyCache = new ConcurrentHashMap<>();
 	private final java.util.Comparator<String> collator = new Comparator<>() {
 		Collator c = Collator.getInstance();
 
