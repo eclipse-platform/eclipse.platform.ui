@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -193,12 +193,6 @@ public class MarkerAnnotationPreferences {
 		}
 	}
 
-	private static final class AccessChecker extends SecurityManager {
-		@Override
-		public Class<?>[] getClassContext() {
-			return super.getClassContext();
-		}
-	}
 	/**
 	 * Checks correct access.
 	 *
@@ -206,12 +200,15 @@ public class MarkerAnnotationPreferences {
 	 * @since 3.0
 	 */
 	private static void checkAccess() throws IllegalStateException {
-		Class<?>[] elements = new AccessChecker().getClassContext();
-		if (!(elements[3].equals(EditorsUI.class)
-				|| elements[4].equals(EditorsUI.class)))
+		@SuppressWarnings("boxing")
+		boolean calledByEditorsUI= StackWalker
+				.getInstance().walk(
+						s -> s.anyMatch(
+								f -> f.getClassName().equals(EditorsUI.class.getCanonicalName())));
+		if (!calledByEditorsUI) {
 			throw new IllegalStateException();
+		}
 	}
-
 
 	/** The list of extension fragments. */
 	private List<AnnotationPreference> fFragments;
