@@ -156,14 +156,16 @@ public class IndentFoldingStrategy implements IReconcilingStrategy, IReconciling
 	public void projectionEnabled() {
 		if (viewer != null) {
 			projectionAnnotationModel = viewer.getProjectionAnnotationModel();
-			projectionAnnotationModel.addAnnotationModelListener(model -> {
-				IndentFoldingStrategy.this.hasExternalFoldingAnnotations = containsExtenalFoldingAnnotations();
-				if (hasExternalFoldingAnnotations) {
-					removeCurrentFoldingAnnotations();
-				} else {
-					initialReconcile();
-				}
-			});
+			if (projectionAnnotationModel != null) {
+				projectionAnnotationModel.addAnnotationModelListener(model -> {
+					IndentFoldingStrategy.this.hasExternalFoldingAnnotations = containsExternalFoldingAnnotations();
+					if (hasExternalFoldingAnnotations) {
+						removeCurrentFoldingAnnotations();
+					} else {
+						initialReconcile();
+					}
+				});
+			}
 		}
 	}
 
@@ -177,7 +179,7 @@ public class IndentFoldingStrategy implements IReconcilingStrategy, IReconciling
 		}
 	}
 
-	private boolean containsExtenalFoldingAnnotations() {
+	private boolean containsExternalFoldingAnnotations() {
 		Iterator<Annotation> iter = getAnnotationIterator(null);
 		boolean hasExternalFoldingAnnotation = false;
 		if (iter != null) {
