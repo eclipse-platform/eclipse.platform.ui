@@ -607,6 +607,14 @@ public class KeyBindingDispatcher {
 						if (isTracingEnabled()) {
 							logger.trace("Error matches for key: " + sequenceAfterKeyStroke + ", :" + errorMatches); //$NON-NLS-1$//$NON-NLS-2$
 						}
+
+						if (sequenceBeforeKeyStroke.isEmpty() && keyAssistDialog != null
+								&& keyAssistDialog.isShowingBindings(errorMatches)) {
+							if (isTracingEnabled()) {
+								logger.trace("Key assist dialog is already showing error matches: " + errorMatches); //$NON-NLS-1$
+							}
+							return false;
+						}
 					} else if (isTracingEnabled() && !Character.isLetterOrDigit(event.character)) {
 						logger.trace("No binding for keys: " + sequenceBeforeKeyStroke + " " //$NON-NLS-1$//$NON-NLS-2$
 								+ sequenceAfterKeyStroke + " in " + describe(context)); //$NON-NLS-1$
