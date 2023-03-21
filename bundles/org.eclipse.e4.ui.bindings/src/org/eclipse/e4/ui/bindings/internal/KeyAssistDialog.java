@@ -16,6 +16,7 @@ package org.eclipse.e4.ui.bindings.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
@@ -518,6 +519,21 @@ public class KeyAssistDialog extends PopupDialog {
 	@Override
 	public void setParentShell(Shell newParentShell) {
 		super.setParentShell(newParentShell);
+	}
+
+	/**
+	 * Tests whether the key assist dialog is currently showing a set of bindings.
+	 *
+	 * @param bindings A set of conflicts or partial matches.
+	 * @return Whether the key assist dialog shows the bindings.
+	 */
+	public boolean isShowingBindings(Collection<Binding> bindings) {
+		if (matches == null || !matches.equals(new HashSet<>(bindings))) {
+			return false;
+		}
+
+		Shell shell = getShell();
+		return shell != null && !shell.isDisposed() && shell.isVisible();
 	}
 
 	/**
