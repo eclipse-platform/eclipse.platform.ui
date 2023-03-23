@@ -134,7 +134,7 @@ public class XmiTab extends Composite {
 
 		final String property = System
 				.getProperty(ORG_ECLIPSE_E4_TOOLS_MODELEDITOR_FILTEREDTREE_ENABLED_XMITAB_DISABLED);
-		if (property != null || preferences.getBoolean("tab-form-search-show", false)) { //$NON-NLS-1$
+		if (property != null || preferences.getBoolean("tab-form-search-show", true)) { //$NON-NLS-1$
 			sourceViewer.setEditable(false);
 			sourceViewer.getTextWidget().setEnabled(false);
 		}
