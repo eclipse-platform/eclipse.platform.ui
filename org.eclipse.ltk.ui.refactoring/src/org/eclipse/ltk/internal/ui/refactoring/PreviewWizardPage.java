@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -505,6 +505,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	@Override
 	public void setVisible(boolean visible) {
 		fCurrentSelection= null;
+		clearGroupCategories();
 		final RefactoringWizard refactoringWizard= getRefactoringWizard();
 		if (hasChanges()) {
 			fPageContainer.showPage(fStandardPage);
@@ -526,6 +527,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 						fTreeViewer.setSelection(new StructuredSelection(element));
 					}
 				}
+				updateTreeViewerPaneTitle();
 			} else if (!visible) // dispose the previewer
 				fCurrentPreviewViewer.setInput(new ChangePreviewViewerInput(new NullChange()));
 			((FilterDropDownAction) fFilterDropDownAction).initialize(collectGroupCategories());
