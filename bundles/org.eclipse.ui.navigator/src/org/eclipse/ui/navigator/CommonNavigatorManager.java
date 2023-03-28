@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2018 IBM Corporation and others.
+ * Copyright (c) 2003, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -297,8 +297,8 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 
 		Image img = null;
 		if (aSelection != null && !aSelection.isEmpty()
-				&& aSelection instanceof IStructuredSelection) {
-			img = labelProvider.getImage(((IStructuredSelection) aSelection)
+				&& aSelection instanceof IStructuredSelection strSelection) {
+			img = labelProvider.getImage((strSelection)
 					.getFirstElement());
 		}
 
