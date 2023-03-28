@@ -71,6 +71,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.widgets.LabelFactory;
 import org.eclipse.jface.widgets.WidgetFactory;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -686,8 +687,8 @@ public class StackRenderer extends LazyStackRenderer {
 				.layout(GridLayoutFactory.swtDefaults().create()).create(onBoarding);
 
 		Color color = onBoarding.getDisplay().getSystemColor(SWT.COLOR_WIDGET_DISABLED_FOREGROUND);
-		welcomeText = WidgetFactory.label(SWT.NONE).foreground(color).supplyLayoutData(gridData::create)
-				.create(content);
+		LabelFactory labelFactory = WidgetFactory.label(SWT.NONE).foreground(color).supplyLayoutData(gridData::create);
+		welcomeText = labelFactory.create(content);
 
 		welcomeImage = WidgetFactory.label(SWT.NONE).foreground(color).supplyLayoutData(gridData::create)
 				.create(content);
@@ -695,7 +696,8 @@ public class StackRenderer extends LazyStackRenderer {
 		tabFolder.addPaintListener(e -> setOnboardingControlSize(tabFolder, onBoarding));
 
 		tabFolder.addDisposeListener(e -> {
-			if (welcomeImage != null && !welcomeImage.isDisposed() && welcomeImage.getImage() != null && !welcomeImage.getImage().isDisposed()) {
+			if (welcomeImage != null && !welcomeImage.isDisposed() && welcomeImage.getImage() != null
+					&& !welcomeImage.getImage().isDisposed()) {
 				welcomeImage.dispose();
 			}
 		});
@@ -711,7 +713,7 @@ public class StackRenderer extends LazyStackRenderer {
 //		if (show) {
 //			onBoarding.setSize(tabFolder.getBounds().width, tabFolder.getBounds().height);
 //		} else {
-			onBoarding.setSize(0, 0);
+		onBoarding.setSize(0, 0);
 //		}
 	}
 
