@@ -22,7 +22,8 @@ import org.junit.runners.Suite;
 	BindingLookupTest.class,
 	KeyDispatcherTest.class,
 	BindingTableTests.class,
-	BindingCreateTest.class })
+	BindingCreateTest.class,
+	KeyAssistDialogTest.class })
 
 public class BindingTestSuite {
 }
