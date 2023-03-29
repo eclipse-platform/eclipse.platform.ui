@@ -25,16 +25,13 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-
-import org.eclipse.core.resources.IMarker;
-
 import org.eclipse.jface.text.quickassist.IQuickFixableAnnotation;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationAccessExtension;
 import org.eclipse.jface.text.source.IAnnotationPresentation;
-
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 
 /**
@@ -149,7 +146,7 @@ public class AnnotationCodeMiningFilter {
 				return resultSeverity;
 			}
 
-			return a.getText().compareTo(b.getText());
+			return a.getText() == null ? (b.getText() == null ? 0 : -1) : (b.getText() == null ? 1 : a.getText().compareTo(a.getText()));
 		});
 	}
 
