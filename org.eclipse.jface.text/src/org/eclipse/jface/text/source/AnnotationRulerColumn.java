@@ -191,10 +191,12 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 
 		@Override
 		public void textChanged(TextEvent event) {
-			if (event.getViewerRedrawState() && fCachedTextWidget.getLineCount() != previousLineCount) {
-				previousLineCount= fCachedTextWidget.getLineCount();
-				postRedraw();
-			}
+			fCachedTextWidget.getDisplay().execute(() -> {
+				if (event.getViewerRedrawState() && fCachedTextWidget.getLineCount() != previousLineCount) {
+					previousLineCount= fCachedTextWidget.getLineCount();
+					postRedraw();
+				}
+			});
 		}
 	};
 
