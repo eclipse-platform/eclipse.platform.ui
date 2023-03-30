@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="org.eclipse.ui.examples.perspective.PerspectiveFactory"
+            icon="$nl$/icons/full/etool16/default_persp.png"
+            id="org.eclipse.ui.examples.perspective.perspective"
+            name="%perspective.name">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            editorOnboardingImage="$nl$/icons/full/default_persp_grey.png"
+            editorOnboardingText="%perspectiveExtension.editorOnboardingText"
+            targetID="org.eclipse.ui.examples.perspective.perspective">
+         <editorOnboardingCommand
+               id="org.eclipse.ui.window.quickAccess">
+         </editorOnboardingCommand>
+         <editorOnboardingCommand
+               id="org.eclipse.ui.window.showKeyAssist">
+         </editorOnboardingCommand>
+         <editorOnboardingCommand
+               id="org.eclipse.ui.navigate.openResource">
+         </editorOnboardingCommand>
+      </perspectiveExtension>
+   </extension>
+
+</plugin>
