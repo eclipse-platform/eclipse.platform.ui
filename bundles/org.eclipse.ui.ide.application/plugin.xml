@@ -53,6 +53,8 @@
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
+            editorOnboardingImage="$nl$/icons/full/onboarding_resource_persp.png"
+            editorOnboardingText="%perspectiveExtension.editorOnboardingText"
             targetID="org.eclipse.ui.resourcePerspective">
          <showInPart
                id="org.eclipse.ui.navigator.ProjectExplorer">
