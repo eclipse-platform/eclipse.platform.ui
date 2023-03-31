@@ -11,7 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Christoph Läubrich - Bug 567898 - [JFace][HiDPI] ImageDescriptor support alternative naming scheme for high dpi
- *     Daniel Kruegler - #375, #376, #378, #396, #398, #401
+ *     Daniel Krügler - #375, #376, #378, #396
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
@@ -42,20 +42,45 @@ import org.eclipse.swt.graphics.ImageFileNameProvider;
 /**
  * An image descriptor that loads its image information from a file.
  */
-class FileImageDescriptor extends ImageDescriptor implements IAdaptable, ImageFileNameProvider {
+class FileImageDescriptor extends ImageDescriptor implements IAdaptable {
 
 	private static final Pattern XPATH_PATTERN = Pattern.compile("(\\d+)x(\\d+)"); //$NON-NLS-1$
+
+	private class ImageProvider implements ImageFileNameProvider {
+		@Override
+		public String getImagePath(int zoom) {
+			final boolean logIOException = zoom == 100;
+			if (zoom == 100) {
+				return getFilePath(name, logIOException);
+			}
+			String xName = getxName(name, zoom);
+			if (xName != null) {
+				String xResult = getFilePath(xName, logIOException);
+				if (xResult != null) {
+					return xResult;
+				}
+			}
+			String xPath = getxPath(name, zoom);
+			if (xPath != null) {
+				String xResult = getFilePath(xPath, logIOException);
+				if (xResult != null) {
+					return xResult;
+				}
+			}
+			return null;
+		}
+	}
 
 	/**
 	 * The class whose resource directory contain the file, or <code>null</code>
 	 * if none.
 	 */
-	private final Class<?> location;
+	private Class<?> location;
 
 	/**
 	 * The name of the file.
 	 */
-	private final String name;
+	private String name;
 
 	/**
 	 * Creates a new file image descriptor. The file has the given file name and
@@ -214,7 +239,7 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable, ImageFi
 	public Image createImage(boolean returnMissingImageOnError, Device device) {
 		if (InternalPolicy.DEBUG_LOAD_URL_IMAGE_DESCRIPTOR_2x) {
 			try {
-				return new Image(device, this);
+				return new Image(device, new ImageProvider());
 			} catch (SWTException | IllegalArgumentException exception) {
 				// If we fail, fall back to the old 1x implementation.
 			}
@@ -255,6 +280,7 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable, ImageFi
 	 * @return {@link String} or <code>null</code> if the file cannot be found
 	 */
 	String getFilePath(String name, boolean logIOException) {
+
 		if (location == null)
 			return new Path(name).toOSString();
 
@@ -264,6 +290,7 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable, ImageFi
 			return null;
 		try {
 			if (!InternalPolicy.OSGI_AVAILABLE) {// Stand-alone case
+
 				return new Path(resource.getFile()).toOSString();
 			}
 			return new Path(FileLocator.toFileURL(resource).getPath()).toOSString();
@@ -281,36 +308,11 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable, ImageFi
 	}
 
 	@Override
-	public String getImagePath(int zoom) {
-		final boolean logIOException = zoom == 100;
-		if (zoom == 100) {
-			return getFilePath(name, logIOException);
-		}
-		String xName = getxName(name, zoom);
-		if (xName != null) {
-			String xResult = getFilePath(xName, logIOException);
-			if (xResult != null) {
-				return xResult;
-			}
-		}
-		String xPath = getxPath(name, zoom);
-		if (xPath != null) {
-			String xResult = getFilePath(xPath, logIOException);
-			if (xResult != null) {
-				return xResult;
-			}
-		}
-		return null;
-	}
-
-	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-		if (adapter == URL.class) {
-			if (location != null && name != null) {
-				return adapter.cast(location.getResource(name));
-			}
+		if (adapter == ImageFileNameProvider.class) {
+			// Support testing ImageFileNameProvider characteristics, see #396
+			return adapter.cast(new ImageProvider());
 		}
 		return null;
 	}
-
 }
