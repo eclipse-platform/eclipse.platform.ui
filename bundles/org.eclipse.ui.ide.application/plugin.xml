@@ -57,6 +57,15 @@
          <showInPart
                id="org.eclipse.ui.navigator.ProjectExplorer">
          </showInPart>
+         <editorOnboardingCommand
+               id="org.eclipse.ui.window.quickAccess">
+         </editorOnboardingCommand>
+         <editorOnboardingCommand
+               id="org.eclipse.ui.window.showKeyAssist">
+         </editorOnboardingCommand>
+         <editorOnboardingCommand
+               id="org.eclipse.ui.newWizard">
+         </editorOnboardingCommand>
       </perspectiveExtension>
    </extension>
    <extension
