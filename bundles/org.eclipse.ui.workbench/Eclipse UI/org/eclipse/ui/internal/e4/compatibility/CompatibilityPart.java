@@ -18,6 +18,7 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -383,9 +384,21 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 			case IWorkbenchPartConstants.PROP_TITLE:
 				part.setLabel(computeLabel());
 
-				if (wrapped.getTitleImage() != null) {
-					Image newImage = wrapped.getTitleImage();
-					part.getTransientData().put(IPresentationEngine.OVERRIDE_ICON_IMAGE_KEY, newImage);
+				Image titleImage = wrapped.getTitleImage();
+				if (titleImage != null) {
+					Map<String, Object> data = part.getTransientData();
+					// we need to do an identity compare here, because images are considered equal
+					// when there imageproviders are equal, but the native image instance might be
+					// different and therefore disposed indivually!
+					Object object = data.get(IPresentationEngine.OVERRIDE_ICON_IMAGE_KEY);
+					if (titleImage != object) {
+						if (titleImage.equals(object)) {
+							// to trigger a change, we need to perform a remove/add instead of a simple put
+							// operation
+							data.remove(IPresentationEngine.OVERRIDE_ICON_IMAGE_KEY);
+						}
+						data.put(IPresentationEngine.OVERRIDE_ICON_IMAGE_KEY, titleImage);
+					}
 				}
 				String titleToolTip = wrapped.getTitleToolTip();
 				if (titleToolTip != null) {
