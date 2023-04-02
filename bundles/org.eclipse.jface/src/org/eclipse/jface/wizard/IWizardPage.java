@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
 package org.eclipse.jface.wizard;
 
 import org.eclipse.jface.dialogs.IDialogPage;
+import org.eclipse.swt.graphics.Point;
 
 /**
  * Interface for a wizard page.
@@ -31,6 +32,18 @@ public interface IWizardPage extends IDialogPage {
 	 *   and <code>false</code> otherwise
 	 */
 	public boolean canFlipToNextPage();
+
+	/**
+	 * Returns the minimum page size used of this page. May return {@code null} if
+	 * this page doesn't specify a minimum size..
+	 *
+	 * @see IWizard#getMinimumWizardSize()
+	 * @return the minimum page size encoded as <code>new Point(width,height)</code>
+	 * @since 3.30
+	 */
+	default Point getMinimumPageSize() {
+		return null;
+	}
 
 	/**
 	 * Returns this page's name.

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.jface" version="2">
+    <resource path="src/org/eclipse/jface/wizard/IWizard.java" type="org.eclipse.jface.wizard.IWizard">
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/516" id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.wizard.IWizard"/>
+                <message_argument value="getMinimumWizardSize()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/jface/wizard/IWizardPage.java" type="org.eclipse.jface.wizard.IWizardPage">
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/516" id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.wizard.IWizardPage"/>
+                <message_argument value="getMinimumPageSize()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
