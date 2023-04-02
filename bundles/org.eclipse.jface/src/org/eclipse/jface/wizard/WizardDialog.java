@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -748,6 +748,10 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 			if (page.getControl() != null) {
 				page.getControl().setVisible(false);
 			}
+		}
+		Point minWizardSize = wizard.getMinimumWizardSize();
+		if (minWizardSize != null) {
+			getShell().setMinimumSize(minWizardSize);
 		}
 	}
 

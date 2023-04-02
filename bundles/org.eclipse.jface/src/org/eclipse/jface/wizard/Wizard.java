@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -26,7 +26,9 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.window.IShellProvider;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
@@ -299,6 +301,27 @@ public abstract class Wizard implements IWizard, IShellProvider {
 	@Override
 	public String getWindowTitle() {
 		return windowTitle;
+	}
+
+	@Override
+	public Point getMinimumWizardSize() {
+		int minWidth = SWT.DEFAULT;
+		int minHeight = SWT.DEFAULT;
+
+		for (IWizardPage page : pages) {
+			Point minPageSize = page.getMinimumPageSize();
+
+			if (minPageSize != null) {
+				minWidth = Math.max(minWidth, minPageSize.x);
+				minHeight = Math.max(minHeight, minPageSize.y);
+			}
+		}
+
+		if (minWidth == SWT.DEFAULT || minHeight == SWT.DEFAULT) {
+			return null;
+		}
+
+		return new Point(minWidth, minHeight);
 	}
 
 	@Override
