@@ -48,6 +48,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.function.Predicate;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -2810,7 +2811,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 	/**
 	 * Extends the perspectives within the given stack with action set contributions
-	 * from the <code>perspectiveExtensions</code> extension point.
+	 * and the onboarding commands from the <code>perspectiveExtensions</code>
+	 * extension point.
 	 *
 	 * @param perspectiveStack the stack that contain the perspectives to be
 	 *                         extended
@@ -2826,13 +2828,18 @@ public class WorkbenchPage implements IWorkbenchPage {
 						desc, this, true);
 
 				PerspectiveExtensionReader reader = new PerspectiveExtensionReader();
-				reader.setIncludeOnlyTags(new String[] { IWorkbenchRegistryConstants.TAG_ACTION_SET });
+				reader.setIncludeOnlyTags(new String[] { IWorkbenchRegistryConstants.TAG_ACTION_SET,
+						IWorkbenchRegistryConstants.TAG_EDITOR_ONBOARDING_COMMAND,
+						IWorkbenchRegistryConstants.ATT_EDITOR_ONBOARDING_TEXT,
+						IWorkbenchRegistryConstants.ATT_EDITOR_ONBOARDING_IMAGE });
 				reader.extendLayout(null, id, modelLayout);
 
 				addActionSet(perspective, temporary);
+				replaceOnboarding(temporary, perspective);
 			}
 		}
 	}
+
 
 	ArrayList<String> getPerspectiveExtensionActionSets(String id) {
 		IPerspectiveDescriptor desc = getWorkbenchWindow().getWorkbench().getPerspectiveRegistry()
@@ -2851,6 +2858,22 @@ public class WorkbenchPage implements IWorkbenchPage {
 	}
 
 	/**
+	 * Removes all onboarding information from target and re-adds them from source.
+	 *
+	 * @param source the source to copy onboarding information from
+	 * @param target the target to copy onboarding information to
+	 */
+	private void replaceOnboarding(MPerspective source, MPerspective target) {
+		Predicate<String> isEditorOnboardingTag = tag -> tag.startsWith(ModeledPageLayout.EDITOR_ONBOARDING);
+
+		List<String> targetTags = target.getTags();
+		targetTags.removeIf(isEditorOnboardingTag);
+
+		List<String> sourceTags = source.getTags();
+		sourceTags.stream().filter(isEditorOnboardingTag).forEach(targetTags::add);
+	}
+
+	/**
 	 * Copies action set extensions from the temporary perspective to the other one.
 	 *
 	 * @param perspective the perspective to copy action set contributions to
@@ -2860,7 +2883,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		List<String> tags = perspective.getTags();
 		List<String> extendedTags = temporary.getTags();
 		for (String extendedTag : extendedTags) {
-			if (!tags.contains(extendedTag)) {
+			if (extendedTag.startsWith(ModeledPageLayout.ACTION_SET_TAG) && !tags.contains(extendedTag)) {
 				tags.add(extendedTag);
 			}
 		}

@@ -108,25 +108,27 @@ public class PerspectiveExtensionReader extends RegistryReader {
 	private boolean processExtension(IConfigurationElement element) {
 		String[] attributes = element.getAttributeNames();
 		for (String attribute : attributes) {
-			boolean result = false;
-			switch (attribute) {
-			case IWorkbenchRegistryConstants.ATT_EDITOR_ONBOARDING_TEXT:
-				result = processEditorOnboardingText(element.getAttribute(attribute));
-				break;
-			case IWorkbenchRegistryConstants.ATT_EDITOR_ONBOARDING_IMAGE:
-				result = processEditorOnboardingImage(element, element.getAttribute(attribute));
-				break;
-			case IWorkbenchRegistryConstants.ATT_TARGET_ID:
-				result = true;
-				break;
+			if (!attribute.equals(IWorkbenchRegistryConstants.ATT_TARGET_ID) && includeTag(attribute)) {
+				boolean result = false;
+				switch (attribute) {
+				case IWorkbenchRegistryConstants.ATT_EDITOR_ONBOARDING_TEXT:
+					result = processEditorOnboardingText(element.getAttribute(attribute));
+					break;
+				case IWorkbenchRegistryConstants.ATT_EDITOR_ONBOARDING_IMAGE:
+					result = processEditorOnboardingImage(element, element.getAttribute(attribute));
+					break;
+				case IWorkbenchRegistryConstants.ATT_TARGET_ID:
+					result = true;
+					break;
 
-			default:
-				break;
-			}
-			if (!result) {
-				Platform.getLog(getClass()).error("Unable to process attribute: " + //$NON-NLS-1$
-						attribute + " in perspective extension: " + //$NON-NLS-1$
-						element.getDeclaringExtension().getUniqueIdentifier());
+				default:
+					break;
+				}
+				if (!result) {
+					Platform.getLog(getClass()).error("Unable to process attribute: " + //$NON-NLS-1$
+							attribute + " in perspective extension: " + //$NON-NLS-1$
+							element.getDeclaringExtension().getUniqueIdentifier());
+				}
 			}
 		}
 		IConfigurationElement[] children = element.getChildren();

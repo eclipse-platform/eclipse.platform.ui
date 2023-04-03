@@ -76,9 +76,10 @@ public class ModeledPageLayout implements IPageLayout {
 	public static final String HIDDEN_TOOLBAR_PREFIX = "persp.hideToolbarSC:"; //$NON-NLS-1$
 	public static final String HIDDEN_ACTIONSET_PREFIX = "persp.hideActionSetSC:"; //$NON-NLS-1$
 	public static final String HIDDEN_ITEMS_KEY = "persp.hiddenItems"; //$NON-NLS-1$
-	public static final String EDITOR_ONBOARDING_TEXT = "persp.editorOnboardingText:"; //$NON-NLS-1$
-	public static final String EDITOR_ONBOARDING_IMAGE = "persp.editorOnboardingImageUri:"; //$NON-NLS-1$
-	public static final String EDITOR_ONBOARDING_COMMAND = "persp.editorOnboardingCommand:"; //$NON-NLS-1$
+	public static final String EDITOR_ONBOARDING = "persp.editorOnboarding"; //$NON-NLS-1$
+	public static final String EDITOR_ONBOARDING_TEXT = EDITOR_ONBOARDING + "Text:"; //$NON-NLS-1$
+	public static final String EDITOR_ONBOARDING_IMAGE = EDITOR_ONBOARDING + "ImageUri:"; //$NON-NLS-1$
+	public static final String EDITOR_ONBOARDING_COMMAND = EDITOR_ONBOARDING + "Command:"; //$NON-NLS-1$
 
 	public static List<String> getIds(MPerspective model, String tagPrefix) {
 		if (model == null) {
