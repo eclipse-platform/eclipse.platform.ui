@@ -720,7 +720,7 @@ public class StackRenderer extends LazyStackRenderer {
 		}
 		boolean show = tabFolder.getItemCount() == 0;
 		if (show) {
-			int spacing = 50;
+			int spacing = 50; //Needed so that tabfolder borders are still shown
 			onBoarding.setBounds(spacing, spacing, tabFolder.getBounds().width - 2 * spacing,
 					tabFolder.getBounds().height - 2 * spacing);
 		} else {
