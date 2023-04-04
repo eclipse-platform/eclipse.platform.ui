@@ -39,7 +39,7 @@
       </contextType>
       <include
             file="templates/default-e4templates.xml"
-            translations="templates/default-e4templates.properties">
+            translations="$nl$/templates/default-e4templates.properties">
       </include>
             <resolver
             class="org.eclipse.jdt.internal.corext.template.java.FieldResolver"
