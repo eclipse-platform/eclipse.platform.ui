@@ -51,6 +51,11 @@ public class ChooseWorkspaceDialogTests {
 				actualFilteredPaths);
 	}
 
+	@Test
+	public void forceBuild() {
+		assertEquals(1, 1);
+	}
+
 	static void adoptToWindows(String[] paths) {
 		if (File.separatorChar == '\\') {
 			for (int i = 0; i < paths.length; i++) {

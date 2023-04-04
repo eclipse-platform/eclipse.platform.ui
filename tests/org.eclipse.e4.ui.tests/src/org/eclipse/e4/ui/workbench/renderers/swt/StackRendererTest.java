@@ -399,6 +399,11 @@ public class StackRendererTest {
 		assertNotNull(toolbar.getWidget());
 	}
 
+	@Test
+	public void forceBuild() {
+		assertEquals(1, 1);
+	}
+
 	// helper functions
 
 	/*
