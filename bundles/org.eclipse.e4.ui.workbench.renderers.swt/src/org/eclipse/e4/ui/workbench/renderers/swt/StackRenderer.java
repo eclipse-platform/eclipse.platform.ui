@@ -683,10 +683,11 @@ public class StackRenderer extends LazyStackRenderer {
 
 	private void createOnboardingControls(CTabFolder tabFolder) {
 		Composite onBoarding = WidgetFactory.composite(SWT.NONE).layout(GridLayoutFactory.swtDefaults().create())
-				.create(tabFolder);
+				.background(tabFolder.getBackground()).create(tabFolder);
 
 		onboardingComposite = WidgetFactory.composite(SWT.NONE).supplyLayoutData(onBoardingGridDataFactory::create)
-				.layout(GridLayoutFactory.swtDefaults().create()).create(onBoarding);
+				.layout(GridLayoutFactory.swtDefaults().create()).background(tabFolder.getBackground())
+				.create(onBoarding);
 
 		GridDataFactory gridDataFactory = onBoardingGridDataFactory.copy().indent(SWT.DEFAULT, 10);
 
@@ -720,7 +721,7 @@ public class StackRenderer extends LazyStackRenderer {
 		}
 		boolean show = tabFolder.getItemCount() == 0;
 		if (show) {
-			int spacing = 50; //Needed so that tabfolder borders are still shown
+			int spacing = 50; // Needed so that tabfolder borders are still shown
 			onBoarding.setBounds(spacing, spacing, tabFolder.getBounds().width - 2 * spacing,
 					tabFolder.getBounds().height - 2 * spacing);
 		} else {
