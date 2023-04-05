@@ -720,12 +720,12 @@ public class StackRenderer extends LazyStackRenderer {
 			return;
 		}
 		boolean show = tabFolder.getItemCount() == 0;
+		int spacing = 50; // Needed so that tabfolder borders are still shown
 		if (show) {
-			int spacing = 50; // Needed so that tabfolder borders are still shown
 			onBoarding.setBounds(spacing, spacing, tabFolder.getBounds().width - 2 * spacing,
 					tabFolder.getBounds().height - 2 * spacing);
 		} else {
-			onBoarding.setSize(0, 0);
+			onBoarding.setBounds(spacing, spacing, 0, 0);
 		}
 	}
 
