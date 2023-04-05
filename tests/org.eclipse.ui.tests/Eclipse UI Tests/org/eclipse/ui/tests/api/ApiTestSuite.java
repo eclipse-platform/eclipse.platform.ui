@@ -81,7 +81,9 @@ import org.junit.runners.Suite;
 	 MultipleWindowsTest.class,
 	 Bug543609Test.class,
 	 SaveablesListTest.class,
-	 PerspectiveExtensionReaderTest.class
+	 PerspectiveExtensionReaderTest.class,
+	 ModeledPageLayoutTest.class,
+
 })
 public class ApiTestSuite {
 
