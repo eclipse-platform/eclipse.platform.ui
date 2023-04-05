@@ -45,12 +45,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.JFaceTextUtil;
 import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.TextEvent;
 
 
 /**
@@ -186,20 +184,6 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 
 	private Consumer<StyledText> lineHeightChangeHandler= t -> postRedraw();
 
-	private ITextListener fLineListener = new ITextListener() {
-		private int previousLineCount = -1;
-
-		@Override
-		public void textChanged(TextEvent event) {
-			fCachedTextWidget.getDisplay().execute(() -> {
-				if (event.getViewerRedrawState() && fCachedTextWidget.getLineCount() != previousLineCount) {
-					previousLineCount= fCachedTextWidget.getLineCount();
-					postRedraw();
-				}
-			});
-		}
-	};
-
 	/**
 	 * Constructs this column with the given arguments.
 	 *
@@ -330,7 +314,6 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 
 		if (fCachedTextViewer != null) {
 			VisibleLinesTracker.track(fCachedTextViewer, lineHeightChangeHandler);
-			fCachedTextViewer.addTextListener(fLineListener);
 			// on word wrap toggle a "resized" ControlEvent is fired: suggest a redraw of the ruler
 			fCachedTextWidget.addControlListener(new ControlAdapter() {
 				@Override
@@ -499,7 +482,6 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 
 		if (fCachedTextViewer != null) {
 			VisibleLinesTracker.untrack(fCachedTextViewer, lineHeightChangeHandler);
-			fCachedTextViewer.removeTextListener(fLineListener);
 		}
 
 		if (fModel != null)
