@@ -81,8 +81,10 @@ import org.eclipse.swt.accessibility.Accessible;
 import org.eclipse.swt.accessibility.AccessibleListener;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
+import org.eclipse.swt.custom.CTabFolder2Listener;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -711,7 +713,10 @@ public class StackRenderer extends LazyStackRenderer {
 				.create(onboardingComposite);
 
 		onBoarding.setLocation(ONBOARDING_SPACING, ONBOARDING_TOP_SPACING);
-		tabFolder.addPaintListener(e -> setOnboardingControlSize(tabFolder, onBoarding));
+		Consumer<ControlEvent> sizeUpdate = e -> setOnboardingControlSize(tabFolder, onBoarding);
+		tabFolder.addControlListener(ControlListener.controlResizedAdapter(sizeUpdate));
+		Consumer<CTabFolderEvent> tabCountUpdate = e -> setOnboardingControlSize(tabFolder, onBoarding);
+		tabFolder.addCTabFolder2Listener(CTabFolder2Listener.itemsCountAdapter(tabCountUpdate));
 
 		tabFolder.addDisposeListener(e -> {
 			if (onboardingImage != null && !onboardingImage.isDisposed() && onboardingImage.getImage() != null
