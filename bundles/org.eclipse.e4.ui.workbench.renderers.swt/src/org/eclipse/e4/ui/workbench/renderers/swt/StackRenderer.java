@@ -72,6 +72,7 @@ import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.widgets.WidgetFactory;
 import org.eclipse.swt.SWT;
@@ -170,6 +171,11 @@ public class StackRenderer extends LazyStackRenderer {
 	// Minimum characters in for stacks inside the shared area
 	private static int MIN_EDITOR_CHARS = 15;
 
+	/**
+	 * Spacing for onboarding composite, needed so that tabfolder borders are shown
+	 */
+	public static final int ONBOARDING_SPACING = 30;
+
 	private Image viewMenuImage;
 	private String viewMenuURI = "platform:/plugin/org.eclipse.e4.ui.workbench.renderers.swt/icons/full/elcl16/view_menu.png"; //$NON-NLS-1$
 
@@ -255,7 +261,7 @@ public class StackRenderer extends LazyStackRenderer {
 		String[] commands = perspective.getTags().stream().filter(tag -> tag.startsWith(commandId))
 				.map(tag -> tag.substring(commandId.length())).toArray(String[]::new);
 
-		Color color = JFaceResources.getColorRegistry().get("QUALIFIER_COLOR"); //$NON-NLS-1$
+		Color color = JFaceResources.getColorRegistry().get(JFacePreferences.QUALIFIER_COLOR);
 
 		for (int i = 0; i < commands.length; i++) {
 			onBoardingGridDataFactory.indent(SWT.DEFAULT, i == 0 ? 10 : SWT.DEFAULT);
@@ -694,20 +700,14 @@ public class StackRenderer extends LazyStackRenderer {
 		onboardingImage = WidgetFactory.label(SWT.NONE).supplyLayoutData(gridDataFactory::create)
 				.create(onboardingComposite);
 
-		Color color = JFaceResources.getColorRegistry().get("QUALIFIER_COLOR"); //$NON-NLS-1$ ;
+		Color color = JFaceResources.getColorRegistry().get(JFacePreferences.QUALIFIER_COLOR);
 		onboardingText = WidgetFactory.label(SWT.NONE).foreground(color).supplyLayoutData(gridDataFactory::create)
 				.create(onboardingComposite);
 
+		onBoarding.setLocation(ONBOARDING_SPACING, ONBOARDING_SPACING);
 		tabFolder.addPaintListener(e -> setOnboardingControlSize(tabFolder, onBoarding));
 
 		tabFolder.addDisposeListener(e -> {
-			if (onboardingImage != null && !onboardingImage.isDisposed() && onboardingImage.getImage() != null
-					&& !onboardingImage.getImage().isDisposed()) {
-				onboardingImage.dispose();
-			}
-		});
-
-		onBoarding.addDisposeListener(e -> {
 			if (onboardingImage != null && !onboardingImage.isDisposed() && onboardingImage.getImage() != null
 					&& !onboardingImage.getImage().isDisposed()) {
 				onboardingImage.dispose();
@@ -720,12 +720,22 @@ public class StackRenderer extends LazyStackRenderer {
 			return;
 		}
 		boolean show = tabFolder.getItemCount() == 0;
-		int spacing = 50; // Needed so that tabfolder borders are still shown
+		boolean visible = onBoarding.isVisible();
 		if (show) {
-			onBoarding.setBounds(spacing, spacing, tabFolder.getBounds().width - 2 * spacing,
-					tabFolder.getBounds().height - 2 * spacing);
+			if (!visible) {
+				onBoarding.setVisible(true);
+			}
+			Rectangle folderBounds = tabFolder.getBounds();
+			int width = folderBounds.width - 2 * ONBOARDING_SPACING;
+			int height = folderBounds.height - 2 * ONBOARDING_SPACING;
+			if (!new Point(width, height).equals(onBoarding.getSize())) {
+				onBoarding.setSize(width, height);
+			}
 		} else {
-			onBoarding.setBounds(spacing, spacing, 0, 0);
+			if (visible) {
+				onBoarding.setVisible(false);
+				onBoarding.setSize(0, 0);
+			}
 		}
 	}
 

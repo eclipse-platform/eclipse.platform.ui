@@ -417,7 +417,8 @@ public class StackRendererTest {
 		assertEquals(3, tabFolder.getChildren().length);
 
 		Composite outerOnboardingComposite = (Composite) tabFolder.getChildren()[2];
-		Rectangle expected = new Rectangle(50, 50, tabFolder.getSize().x - 100, tabFolder.getSize().y - 100);
+		int spacing = StackRenderer.ONBOARDING_SPACING;
+		Rectangle expected = new Rectangle(spacing, spacing, tabFolder.getSize().x - spacing*2, tabFolder.getSize().y - spacing*2);
 		assertEquals(expected, outerOnboardingComposite.getBounds());
 		Composite innerOnboardingComposite = (Composite) outerOnboardingComposite.getChildren()[0];
 		assertEquals(2, innerOnboardingComposite.getChildren().length);
@@ -476,8 +477,9 @@ public class StackRendererTest {
 		assertNotNull(tabFolder.getChildren());
 		assertEquals(3, tabFolder.getChildren().length);
 
+		int spacing = StackRenderer.ONBOARDING_SPACING;
 		Composite outerOnboardingComposite = (Composite) tabFolder.getChildren()[2];
-		Rectangle expected = new Rectangle(50, 50, tabFolder.getSize().x - 100, tabFolder.getSize().y - 100);
+		Rectangle expected = new Rectangle(spacing, spacing, tabFolder.getSize().x - spacing*2, tabFolder.getSize().y - spacing*2);
 		assertEquals(expected, outerOnboardingComposite.getBounds());
 
 		MPart part1 = ems.createModelElement(MPart.class);
@@ -486,7 +488,7 @@ public class StackRendererTest {
 
 		tabFolder.notifyListeners(SWT.Paint, new Event());
 
-		expected = new Rectangle(50, 50, 0, 0);
+		expected = new Rectangle(spacing, spacing, 0, 0);
 		assertEquals(expected, outerOnboardingComposite.getBounds());
 	}
 
