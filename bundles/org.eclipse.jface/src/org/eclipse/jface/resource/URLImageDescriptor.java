@@ -12,7 +12,8 @@
  *     IBM Corporation - initial API and implementation
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 483465
  *     Christoph Läubrich - Bug 567898 - [JFace][HiDPI] ImageDescriptor support alternative naming scheme for high dpi
- *     Daniel Kruegler - #376, #396, #398, #399, #401
+ *     Daniel Kruegler - #376, #396, #398, #399, #401,
+ *                       #679: Ensure that fresh ImageFileNameProvider/ImageDataProvider instances are created to preserve Image#equals invariant.
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
@@ -42,7 +43,58 @@ import org.eclipse.swt.graphics.ImageFileNameProvider;
  * public API. Use ImageDescriptor#createFromURL to create a descriptor that
  * uses a URL.
  */
-class URLImageDescriptor extends ImageDescriptor implements IAdaptable, ImageFileNameProvider, ImageDataProvider {
+class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
+
+	private static class URLImageFileNameProvider implements ImageFileNameProvider {
+
+		private final String url;
+
+		public URLImageFileNameProvider(String url) {
+			this.url = url;
+		}
+
+		@Override
+		public String getImagePath(int zoom) {
+			URL tempURL = getURL(url);
+			if (tempURL != null) {
+				final boolean logIOException = zoom == 100;
+				if (zoom == 100) {
+					return getFilePath(tempURL, logIOException);
+				}
+				URL xUrl = getxURL(tempURL, zoom);
+				if (xUrl != null) {
+					String xResult = getFilePath(xUrl, logIOException);
+					if (xResult != null) {
+						return xResult;
+					}
+				}
+				String xpath = FileImageDescriptor.getxPath(url, zoom);
+				if (xpath != null) {
+					URL xPathUrl = getURL(xpath);
+					if (xPathUrl != null) {
+						return getFilePath(xPathUrl, logIOException);
+					}
+				}
+			}
+			return null;
+		}
+
+	}
+
+	private static class URLImageDataProvider implements ImageDataProvider {
+
+		private final String url;
+
+		public URLImageDataProvider(String url) {
+			this.url = url;
+		}
+
+		@Override
+		public ImageData getImageData(int zoom) {
+			return URLImageDescriptor.getImageData(url, zoom);
+		}
+
+	}
 
 	private static long cumulativeTime;
 
@@ -79,6 +131,10 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable, ImageFil
 
 	@Override
 	public ImageData getImageData(int zoom) {
+		return getImageData(url, zoom);
+	}
+
+	private static ImageData getImageData(String url, int zoom) {
 		URL tempURL = getURL(url);
 		if (tempURL != null) {
 			if (zoom == 100) {
@@ -238,7 +294,10 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable, ImageFil
 			if (InternalPolicy.DEBUG_LOAD_URL_IMAGE_DESCRIPTOR_2x) {
 				if (!InternalPolicy.DEBUG_LOAD_URL_IMAGE_DESCRIPTOR_DIRECTLY) {
 					try {
-						return new Image(device, (ImageFileNameProvider) this);
+						// We really want a fresh ImageFileNameProvider instance to make
+						// sure the code that uses created images can use equals(),
+						// see Image#equals
+						return new Image(device, new URLImageFileNameProvider(url));
 					} catch (SWTException | IllegalArgumentException exception) {
 						// If we fail fall back to the slower input stream method.
 					}
@@ -246,7 +305,10 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable, ImageFil
 
 				Image image = null;
 				try {
-					image = new Image(device, (ImageDataProvider) this);
+					// We really want a fresh ImageDataProvider instance to make
+					// sure the code that uses created images can use equals(),
+					// see Image#equals
+					image = new Image(device, new URLImageDataProvider(url));
 				} catch (SWTException e) {
 					if (e.code != SWT.ERROR_INVALID_IMAGE) {
 						throw e;
@@ -301,35 +363,15 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable, ImageFil
 	}
 
 	@Override
-	public String getImagePath(int zoom) {
-		URL tempURL = getURL(url);
-		if (tempURL != null) {
-			final boolean logIOException = zoom == 100;
-			if (zoom == 100) {
-				return getFilePath(tempURL, logIOException);
-			}
-			URL xUrl = getxURL(tempURL, zoom);
-			if (xUrl != null) {
-				String xResult = getFilePath(xUrl, logIOException);
-				if (xResult != null) {
-					return xResult;
-				}
-			}
-			String xpath = FileImageDescriptor.getxPath(url, zoom);
-			if (xpath != null) {
-				URL xPathUrl = getURL(xpath);
-				if (xPathUrl != null) {
-					return getFilePath(xPathUrl, logIOException);
-				}
-			}
-		}
-		return null;
-	}
-
-	@Override
 	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter == URL.class) {
 			return adapter.cast(getURL(url));
+		}
+		if (adapter == ImageFileNameProvider.class) {
+			return adapter.cast(new URLImageFileNameProvider(url));
+		}
+		if (adapter == ImageDataProvider.class) {
+			return adapter.cast(new URLImageDataProvider(url));
 		}
 		return null;
 	}

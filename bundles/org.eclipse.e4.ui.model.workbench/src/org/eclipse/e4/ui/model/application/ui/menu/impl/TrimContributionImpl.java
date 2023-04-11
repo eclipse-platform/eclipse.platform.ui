@@ -109,7 +109,7 @@ public class TrimContributionImpl extends ElementContainerImpl<MTrimElement> imp
 	@Override
 	public List<MTrimElement> getChildren() {
 		if (children == null) {
-			children = new EObjectContainmentWithInverseEList<MTrimElement>(MTrimElement.class, this,
+			children = new EObjectContainmentWithInverseEList<>(MTrimElement.class, this,
 					MenuPackageImpl.TRIM_CONTRIBUTION__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT) {
 				private static final long serialVersionUID = 1L;
 

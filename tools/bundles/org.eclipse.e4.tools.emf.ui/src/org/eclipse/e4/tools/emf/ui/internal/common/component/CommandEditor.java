@@ -25,6 +25,8 @@ import javax.inject.Inject;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.tools.emf.ui.common.ImageTooltip;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.E4Properties;
@@ -33,6 +35,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.AbstractPickList.PickListFeat
 import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.CommandCategorySelectionDialog;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.CommandIconDialogEditor;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MCommandParameter;
 import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
@@ -68,6 +71,9 @@ public class CommandEditor extends AbstractComponentEditor<MCommand> {
 	private StackLayout stackLayout;
 	private final List<Action> actions = new ArrayList<>();
 	private MessageFormat newCommandParameterName;
+
+	@Inject
+	private IEclipseContext eclipseContext;
 
 	@Inject
 	public CommandEditor() {
@@ -171,7 +177,7 @@ public class CommandEditor extends AbstractComponentEditor<MCommand> {
 		{
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.CommandEditor_Category);
-			l.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
+			l.setLayoutData(new GridData());
 
 			final Text t = new Text(parent, SWT.BORDER);
 			TextPasteHandler.createFor(t);
@@ -188,6 +194,33 @@ public class CommandEditor extends AbstractComponentEditor<MCommand> {
 				public void widgetSelected(SelectionEvent e) {
 					final CommandCategorySelectionDialog dialog = new CommandCategorySelectionDialog(b.getShell(),
 							getEditor().getModelProvider(), getMaster().getValue(), Messages);
+					dialog.open();
+				}
+			});
+		}
+
+		// ------------------------------------------------------------
+		{
+			final Label l = new Label(parent, SWT.NONE);
+			l.setText(Messages.CommandEditor_IconURI);
+			l.setLayoutData(new GridData());
+			l.setToolTipText(Messages.CommandEditor_IconURI_Tooltip);
+
+			final Text t = new Text(parent, SWT.BORDER);
+			TextPasteHandler.createFor(t);
+			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			context.bindValue(textProp.observeDelayed(200, t),
+					E4Properties.commandIcon(getEditingDomain()).observeDetail(getMaster()));
+
+			new ImageTooltip(t, Messages, this);
+
+			Button b = ControlFactory.createFindButton(parent, resourcePool);
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					final CommandIconDialogEditor dialog = new CommandIconDialogEditor(b.getShell(), eclipseContext,
+							project,
+							getEditingDomain(), getMaster().getValue(), Messages);
 					dialog.open();
 				}
 			});
