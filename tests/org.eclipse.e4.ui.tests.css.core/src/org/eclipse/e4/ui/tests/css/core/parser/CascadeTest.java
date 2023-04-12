@@ -94,9 +94,11 @@ public class CascadeTest {
 	void ensureThatClassAndIdareConsideredIfOnTheSameLevel() throws Exception {
 		// Rules for elements with children. The first should take
 		// precedence because of its higher specificity
-		String css = "CTabFolder > Composite > Toolbar { color: black; }\n"
-				+ "CTabFolder > Composite > .special { color: blue; font-weight: bold; }\n"
-				+ "CTabFolder > Composite > #special { color: red; font-weight: bold; }\n";
+		String css = """
+			CTabFolder > Composite > Toolbar { color: black; }
+			CTabFolder > Composite > .special { color: blue; font-weight: bold; }
+			CTabFolder > Composite > #special { color: red; font-weight: bold; }
+			""";
 		ViewCSS viewCSS = createViewCss(css);
 
 		TestElement tabFolder = new TestElement("CTabFolder", engine);
@@ -119,11 +121,13 @@ public class CascadeTest {
 	@Test
 	void testSpecificities() throws Exception {
 		// Different specificities
-		String css = "* { color: black; }\n"
-				+ "Button { color: blue; }\n"
-				+ "Button[BORDER] { color: gray; }\n"
-				+ "Button.special { color: green; }\n"
-				+ "Button#myid { color: red; }\n";
+		String css = """
+			* { color: black; }
+			Button { color: blue; }
+			Button[BORDER] { color: gray; }
+			Button.special { color: green; }
+			Button#myid { color: red; }
+			""";
 		ViewCSS viewCSS = createViewCss(css);
 
 		TestElement label = new TestElement("Label", engine);
