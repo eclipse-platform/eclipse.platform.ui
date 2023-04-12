@@ -427,7 +427,17 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 	 * The main area of the dialog is just a row with the current selection
 	 * information and a drop-down of the most recently used workspaces.
 	 */
-	private void createWorkspaceBrowseRow(Composite parent) {
+	protected Control createWorkspaceBrowseRow(Composite parent) {
+		Composite panel = createBrowseComposite(parent);
+
+		createPathCombo(panel);
+
+		createBrowseButton(panel);
+
+		return panel;
+	}
+
+	protected Composite createBrowseComposite(Composite parent) {
 		Composite panel = new Composite(parent, SWT.NONE);
 
 		BorderLayout layout = new BorderLayout();
@@ -437,7 +447,10 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 		panel.setLayout(layout);
 		panel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		panel.setFont(parent.getFont());
+		return panel;
+	}
 
+	protected Combo createPathCombo(Composite panel) {
 		text = new Combo(panel, SWT.BORDER | SWT.LEAD | SWT.DROP_DOWN);
 		new DirectoryProposalContentAssist().apply(text);
 		text.setTextDirection(SWT.AUTO_TEXT_DIRECTION);
@@ -458,7 +471,10 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 			}
 		});
 		setInitialTextValues(text);
+		return text;
+	}
 
+	protected Button createBrowseButton(Composite panel) {
 		Button browseButton = new Button(panel, SWT.PUSH);
 		browseButton.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_browseLabel);
 		browseButton.setToolTipText(IDEWorkbenchMessages.ChooseWorkspaceDialog_browseTooltip);
@@ -478,12 +494,12 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 			}
 		});
 		int smallButtonLimit = browseButton.getFont().getFontData()[0].getHeight() * 40;
-		parent.addControlListener(new ControlListener() {
+		panel.getParent().addControlListener(new ControlListener() {
 
 			@Override
 			public void controlResized(ControlEvent e) {
 				// browseButton
-				Point size = parent.getSize();
+				Point size = panel.getParent().getSize();
 				if (size.x < smallButtonLimit) {
 					browseButton.setText(OPEN_FOLDER_EMOJI);
 				} else {
@@ -496,6 +512,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 
 			}
 		});
+		return browseButton;
 	}
 
 	/**
