@@ -70,7 +70,11 @@ public class ContributionFactoryGenerator extends ContextFunction {
 		final ContributionRoot root = new ContributionRoot(menuService, new HashSet<>(), null, factory);
 		ServiceLocator sl = new ServiceLocator();
 		sl.setContext(context);
-		factory.createContributionItems(sl, root);
+		try {
+			factory.createContributionItems(sl, root);
+		} catch (Throwable ex) {
+			WorkbenchPlugin.log(ex);
+		}
 		final List contributionItems = root.getItems();
 		final Map<IContributionItem, Expression> itemsToExpression = root.getVisibleWhen();
 		List<MUIElement> menuElements = new ArrayList<>();
