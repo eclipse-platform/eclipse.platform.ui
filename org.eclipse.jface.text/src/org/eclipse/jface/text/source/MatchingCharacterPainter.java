@@ -245,28 +245,23 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	 * @param gc the GC to draw into or <code>null</code> to send a redraw request
 	 * @param offset the offset of the widget region
 	 */
-	private void draw(GC gc, int offset) {
-		int length = 1;
+	private void draw(final GC gc, final int offset) {
 		if (gc != null) {
-
 			gc.setForeground(fColor);
 
-			Rectangle bounds= fTextWidget.getTextBounds(offset, offset + length - 1);
-			int height= fTextWidget.getCaret().getSize().y;
+			final Rectangle bounds= fTextWidget.getTextBounds(offset, offset);
+
+			// determine the character width separately, because the getTextBounds above
+			// will also include any in-line annotations (e.g. codemining annotations) in the width
+			final String matchingCharacter= fTextWidget.getText(offset, offset);
+			final int width= gc.textExtent(matchingCharacter).x;
+
+			final int height= fTextWidget.getCaret().getSize().y;
 
 			// draw box around line segment
-			gc.drawRectangle(bounds.x, bounds.y + bounds.height - height, bounds.width - 1, height - 1);
-
-			// draw box around character area
-//			int widgetBaseline= fTextWidget.getBaseline();
-//			FontMetrics fm= gc.getFontMetrics();
-//			int fontBaseline= fm.getAscent() + fm.getLeading();
-//			int fontBias= widgetBaseline - fontBaseline;
-
-//			gc.drawRectangle(left.x, left.y + fontBias, right.x - left.x - 1, fm.getHeight() - 1);
-
+			gc.drawRectangle(bounds.x, bounds.y + bounds.height - height, width, height - 1);
 		} else {
-			fTextWidget.redrawRange(offset, length, true);
+			fTextWidget.redrawRange(offset, 1, true);
 		}
 	}
 
