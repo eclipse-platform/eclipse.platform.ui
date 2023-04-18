@@ -80,7 +80,8 @@ import org.junit.runners.Suite;
 	 Bug407422Test.class,
 	 MultipleWindowsTest.class,
 	 Bug543609Test.class,
-	 SaveablesListTest.class
+	 SaveablesListTest.class,
+	 PerspectiveExtensionReaderTest.class,
 })
 public class ApiTestSuite {
 
