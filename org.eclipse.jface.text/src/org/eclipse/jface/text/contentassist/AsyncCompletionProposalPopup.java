@@ -244,9 +244,10 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 						if (offset != fInvocationOffset || fComputedProposals != requestSpecificProposals) {
 							return;
 						}
+						boolean stillComputing= fComputedProposals.contains(computingProposal);
 						if (autoInsert
 								&& !autoActivated
-								&& !fComputedProposals.contains(computingProposal)
+								&& !stillComputing
 								&& fComputedProposals.size() == 1
 								&& remaining.get() == 0
 								&& canAutoInsert(fComputedProposals.get(0))) {
@@ -256,18 +257,17 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 							}
 							return;
 						}
-						if (!fComputedProposals.contains(computingProposal) && callback != null) {
+						if (!stillComputing && callback != null) {
 							callback.accept(fComputedProposals);
 						} else {
-							boolean stillComputing= fComputedProposals.contains(computingProposal);
 							boolean hasProposals= (stillComputing && fComputedProposals.size() > 1)
 									|| (!stillComputing && !fComputedProposals.isEmpty());
 
 							if ((autoActivated && hasProposals) || !autoActivated) {
 								setProposals(fComputedProposals, false);
 								displayProposals(true);
-							} else if (isValid(fProposalShell) && !fProposalShell.isVisible() && remaining.get() == 0) {
-								hide(); // we only tear down if the popup is not visible.
+							} else if (isValid(fProposalShell) && fProposalShell.isVisible() && remaining.get() == 0) {
+								hide(); // we only tear down if the popup is visible.
 							}
 						}
 					});
