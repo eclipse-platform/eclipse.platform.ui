@@ -2,6 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Jface notifications tests
 Bundle-SymbolicName: org.eclipse.jface.tests.notifications
+Bundle-Vendor: Eclipse.org
 Bundle-Version: 0.2.0.qualifier
 Automatic-Module-Name: org.eclipse.jface.notifications.tests
 Bundle-RequiredExecutionEnvironment: JavaSE-17
