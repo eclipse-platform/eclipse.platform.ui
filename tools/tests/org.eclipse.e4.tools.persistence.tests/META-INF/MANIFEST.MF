@@ -2,6 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Tests
 Bundle-SymbolicName: org.eclipse.e4.tools.persistence.tests;singleton:=true
+Bundle-Vendor: Eclipse.org
 Bundle-Version: 1.1.0.qualifier
 Automatic-Module-Name: org.eclipse.e4.tools.persistence.tests
 Bundle-RequiredExecutionEnvironment: JavaSE-17
