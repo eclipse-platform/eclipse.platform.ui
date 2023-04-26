@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
+import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -142,14 +143,8 @@ public class ContentGeneratorDescriptor {
 			extendedElements.addAll(Arrays.asList(extensionFilters));
 		}
 		if (extendedElements.size() > 0) {
-			IConfigurationElement[] allGroups = new IConfigurationElement[filterGroups.length + extendedElements.size()];
-			System.arraycopy(filterGroups, 0, allGroups, 0, filterGroups.length);
-			Iterator<IConfigurationElement> extras = extendedElements.iterator();
-			int index = filterGroups.length;
-			while (extras.hasNext()) {
-				allGroups[index] = extras.next();
-			}
-			return allGroups;
+			return Stream.concat(Arrays.stream(filterGroups), extendedElements.stream())
+					.toArray(IConfigurationElement[]::new);
 		}
 		return filterGroups;
 	}
