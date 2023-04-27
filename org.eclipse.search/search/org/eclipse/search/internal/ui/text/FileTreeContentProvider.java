@@ -31,13 +31,12 @@ import java.util.stream.StreamSupport;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.Match;
+import org.eclipse.search.ui.text.MatchFilter;
 
 
 public class FileTreeContentProvider implements ITreeContentProvider, IFileSearchContentProvider {
@@ -213,6 +212,16 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 		return StreamSupport.stream(Spliterators.spliteratorUnknownSize(e.asIterator(), Spliterator.ORDERED), false);
 	}
 
+	private boolean isUnfiltered(FileMatch m) {
+		MatchFilter[] filters = fResult.getActiveMatchFilters();
+		for (MatchFilter filter : filters) {
+			if (filter.filters(m)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	@Override
 	public synchronized void elementsChanged(Object[] updatedElements) {
 		boolean singleElement = updatedElements.length == 1;
@@ -221,7 +230,8 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 				.map(u -> ((LineElement) u).getParent()).distinct()
 				// query matches:
 				.map(fResult::getMatchSet).flatMap(FileTreeContentProvider::toStream)
-				.map(m -> ((FileMatch) m).getLineElement()).collect(Collectors.toSet());
+				.map(m -> ((FileMatch) m)).filter(this::isUnfiltered).map(m -> m.getLineElement())
+				.collect(Collectors.toSet());
 		try {
 			for (Object updatedElement : updatedElements) {
 				if (!(updatedElement instanceof LineElement)) {
@@ -236,8 +246,7 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 					// search
 					LineElement lineElement = (LineElement) updatedElement;
 					boolean hasMatches = lineMatches.contains(lineElement);
-					int matchCount = getMatchCount(lineElement.getParent());
-					if (hasMatches && matchCount > 0) {
+					if (hasMatches) {
 						if (singleElement && hasChild(lineElement.getParent(), lineElement)) {
 							fTreeViewer.update(new Object[] { lineElement, lineElement.getParent() }, null);
 						} else {
