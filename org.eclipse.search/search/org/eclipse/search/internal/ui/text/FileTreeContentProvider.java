@@ -18,6 +18,7 @@
 package org.eclipse.search.internal.ui.text;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -225,13 +226,26 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 	@Override
 	public synchronized void elementsChanged(Object[] updatedElements) {
 		boolean singleElement = updatedElements.length == 1;
-		Set<LineElement> lineMatches = Arrays.stream(updatedElements).filter(LineElement.class::isInstance)
+		Set<LineElement> lineMatches = Collections.emptySet();
+		// if we have active match filters, we should only use non-filtered FileMatch
+		// objects
+		// to collect LineElements to update
+		if (fResult.getActiveMatchFilters().length > 0) {
+			lineMatches = Arrays.stream(updatedElements).filter(LineElement.class::isInstance)
 				// only for distinct files:
 				.map(u -> ((LineElement) u).getParent()).distinct()
 				// query matches:
 				.map(fResult::getMatchSet).flatMap(FileTreeContentProvider::toStream)
 				.map(m -> ((FileMatch) m)).filter(this::isUnfiltered).map(m -> m.getLineElement())
 				.collect(Collectors.toSet());
+		} else {
+			lineMatches = Arrays.stream(updatedElements).filter(LineElement.class::isInstance)
+					// only for distinct files:
+					.map(u -> ((LineElement) u).getParent()).distinct()
+					// query matches:
+					.map(fResult::getMatchSet).flatMap(FileTreeContentProvider::toStream)
+					.map(m -> ((FileMatch) m).getLineElement()).collect(Collectors.toSet());
+		}
 		try {
 			for (Object updatedElement : updatedElements) {
 				if (!(updatedElement instanceof LineElement)) {
