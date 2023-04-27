@@ -185,7 +185,8 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 	}
 
 	private int getMatchCount(Object element) {
-		return fResult.getActiveMatchFilters().length > 0 ? fPage.getDisplayedMatchCount(element)
+		return fResult.getActiveMatchFilters() != null && fResult.getActiveMatchFilters().length > 0
+				? fPage.getDisplayedMatchCount(element)
 				: fResult.getMatchCount();
 	}
 
@@ -215,22 +216,35 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 
 	private boolean isUnfiltered(FileMatch m) {
 		MatchFilter[] filters = fResult.getActiveMatchFilters();
-		for (MatchFilter filter : filters) {
-			if (filter.filters(m)) {
-				return false;
+		if (filters != null) {
+			for (MatchFilter filter : filters) {
+				if (filter.filters(m)) {
+					return false;
+				}
 			}
 		}
 		return true;
 	}
 
+	/**
+	 *
+	 * Update the search contents. Screen out any results that are filtered via
+	 * active match filters (e.g. selected filters in the pull-down menu of the
+	 * FileSearchPage). For example, one match filter exists to screen matches that
+	 * are duplicates reported when one or more projects are nested within another.
+	 * Each outer project will own a separate IResource for files found in inner
+	 * projects and searches will report for both inner and outer resources. The
+	 * filter mentioned only eliminates duplicates that are not from the innermost
+	 * nested project owning the file.
+	 * 
+	 */
 	@Override
 	public synchronized void elementsChanged(Object[] updatedElements) {
 		boolean singleElement = updatedElements.length == 1;
 		Set<LineElement> lineMatches = Collections.emptySet();
 		// if we have active match filters, we should only use non-filtered FileMatch
-		// objects
-		// to collect LineElements to update
-		if (fResult.getActiveMatchFilters().length > 0) {
+		// objects to collect LineElements to update
+		if (fResult.getActiveMatchFilters() != null && fResult.getActiveMatchFilters().length > 0) {
 			lineMatches = Arrays.stream(updatedElements).filter(LineElement.class::isInstance)
 				// only for distinct files:
 				.map(u -> ((LineElement) u).getParent()).distinct()
@@ -249,8 +263,9 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 		try {
 			for (Object updatedElement : updatedElements) {
 				if (!(updatedElement instanceof LineElement)) {
-					// change events to elements are reported in file search
-					if (fPage.getDisplayedMatchCount(updatedElement) > 0) {
+					// change events to elements are reported in file search.
+					// ask the page to determine if element is filtered.
+					if (getMatchCount(updatedElement) > 0) {
 						insert(updatedElement, singleElement);
 					} else {
 						remove(updatedElement, singleElement);
