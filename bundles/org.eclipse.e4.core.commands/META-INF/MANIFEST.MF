@@ -12,8 +12,7 @@ Import-Package: javax.annotation,
  org.eclipse.core.commands.common,
  org.eclipse.core.expressions,
  org.eclipse.e4.core.contexts,
- org.eclipse.e4.core.services.log,
- org.osgi.framework;version="1.5.0"
+ org.eclipse.e4.core.services.log
 Export-Package: org.eclipse.e4.core.commands,
  org.eclipse.e4.core.commands.internal;x-friends:="org.eclipse.e4.ui.bindings,org.eclipse.ui.workbench"
 Require-Bundle: org.eclipse.equinox.common;bundle-version="[3.6.0,4.0.0)",
