@@ -67,7 +67,7 @@ public class NotificationPopupTest {
 	public void createsWithTextAndTitle() {
 		NotificationPopup notication = this.builder.text("This is a test").title("Hello World", false).delay(1).build();
 		notication.open();
-		List<Control> controls = getNotificationPopupControls();
+		List<Control> controls = getNotificationPopupControls(notication);
 
 		assertThat(controls, hasItem(aLabelWith("Hello World")));
 		assertThat(controls, hasItem(aLabelWith("This is a test")));
@@ -78,7 +78,7 @@ public class NotificationPopupTest {
 	public void createsWithCloseButton() {
 		NotificationPopup notication = this.builder.text("This is a test").title("Hello World", true).delay(1).build();
 		notication.open();
-		List<Control> controls = getNotificationPopupControls();
+		List<Control> controls = getNotificationPopupControls(notication);
 
 		assertThat(controls, hasItem(aLabelWith(CommonImages.getImage(CommonImages.NOTIFICATION_CLOSE))));
 		notication.close();
@@ -95,7 +95,7 @@ public class NotificationPopupTest {
 		}).delay(1).build();
 
 		notication.open();
-		List<Control> controls = getNotificationPopupControls();
+		List<Control> controls = getNotificationPopupControls(notication);
 
 		assertThat(controls, hasItem(is(text[0])));
 		notication.close();
@@ -111,14 +111,13 @@ public class NotificationPopupTest {
 		}, false).delay(1).build();
 
 		notication.open();
-		List<Control> controls = getNotificationPopupControls();
+		List<Control> controls = getNotificationPopupControls(notication);
 		notication.close();
 		assertThat(controls, hasItem(is(text[0])));
 	}
 
-	private List<Control> getNotificationPopupControls() {
-		Shell[] shells = this.display.getShells();
-		Shell shell = shells[shells.length - 1];
+	private List<Control> getNotificationPopupControls(NotificationPopup notication) {
+		Shell shell = notication.getShell();
 		return getChildrenStream(shell).toList();
 	}
 
