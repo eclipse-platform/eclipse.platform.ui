@@ -42,6 +42,18 @@ import org.eclipse.core.runtime.Path;
  * @see #resolve(String)
  */
 public class FileLocationDetails {
+
+	private static final Pattern lPattern = Pattern.compile("^(?<path>.*?)[+:](?<line>\\d+)$"); //$NON-NLS-1$
+	private static final Pattern lcPattern = Pattern.compile("^(?<path>.*?)[+:](?<line>\\d+)[:+](?<column>\\d+)$"); //$NON-NLS-1$
+
+	private static String getPath(Matcher m) {
+		return m.group("path"); //$NON-NLS-1$
+	}
+
+	private static int getValue(String name, Matcher m) {
+		return Integer.parseInt(m.group(name));
+	}
+
 	// vars are package protected for access from DelayedEventsProcessor
 	Path path;
 	IFileStore fileStore;
@@ -51,28 +63,23 @@ public class FileLocationDetails {
 	int column = -1;
 
 	/**
-	 * Check if path exists with optional encoded line and/or column
-	 * specification
+	 * Check if path exists with optional encoded line and/or column specification
 	 *
-	 * @param path
-	 *            the possibly-encoded file path with optional line/column
-	 *            details
+	 * @param path the possibly-encoded file path with optional line/column details
 	 * @return the location details or {@code null} if the file doesn't exist
 	 */
 	public static FileLocationDetails resolve(String path) {
+		// Ideally we'd use a regex, except that we need to be greedy in matching.
+		// For example, we're trying to open /tmp/foo:3:3
+		// and there is an actual file named /tmp/foo:3
 		FileLocationDetails details = checkLocation(path, -1, -1);
 		if (details != null) {
 			return details;
 		}
-		// Ideally we'd use a regex, except that we need to be greedy
-		// in matching. For example, we're trying to open /tmp/foo:3:3
-		// and there is an actual file named /tmp/foo:3
-		Pattern lPattern = Pattern.compile("^(?<path>.*?)[+:](?<line>\\d+)$"); //$NON-NLS-1$
-		Pattern lcPattern = Pattern.compile("^(?<path>.*?)[+:](?<line>\\d+)[:+](?<column>\\d+)$"); //$NON-NLS-1$
 		Matcher m = lPattern.matcher(path);
 		if (m.matches()) {
 			try {
-				details = checkLocation(m.group("path"), Integer.parseInt(m.group("line")), -1); //$NON-NLS-1$//$NON-NLS-2$
+				details = checkLocation(getPath(m), getValue("line", m), -1); //$NON-NLS-1$
 				if (details != null) {
 					return details;
 				}
@@ -84,8 +91,7 @@ public class FileLocationDetails {
 		m = lcPattern.matcher(path);
 		if (m.matches()) {
 			try {
-				details = checkLocation(m.group("path"), Integer.parseInt(m.group("line")), //$NON-NLS-1$//$NON-NLS-2$
-						m.group("column") != null ? Integer.parseInt(m.group("column")) : -1); //$NON-NLS-1$ //$NON-NLS-2$
+				details = checkLocation(getPath(m), getValue("line", m), getValue("column", m)); //$NON-NLS-1$ //$NON-NLS-2$
 				if (details != null) {
 					return details;
 				}
