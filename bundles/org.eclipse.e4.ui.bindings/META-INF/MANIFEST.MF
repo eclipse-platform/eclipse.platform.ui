@@ -14,10 +14,8 @@ Import-Package: javax.annotation,
  org.eclipse.e4.core.services.log,
  org.eclipse.jface.bindings,
  org.eclipse.jface.bindings.keys,
- org.eclipse.jface.bindings.keys.formatting,
  org.eclipse.jface.dialogs,
- org.eclipse.jface.window,
- org.osgi.framework;version="1.5.0"
+ org.eclipse.jface.window
 Require-Bundle: org.eclipse.swt;bundle-version="[3.6.0,4.0.0)",
  org.eclipse.core.commands;bundle-version="[3.5.0,4.0.0)",
  org.eclipse.e4.core.contexts;bundle-version="1.0.0",

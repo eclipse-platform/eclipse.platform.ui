@@ -40,7 +40,7 @@ Require-Bundle: org.eclipse.swt;bundle-version="[3.111.0,4.0.0)";visibility:=ree
  org.eclipse.equinox.bidi;bundle-version="[0.10.0,2.0.0)";resolution:=optional
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Import-Package: javax.xml.parsers,
- org.osgi.framework,
+ org.osgi.framework;version="[1.8.0,2.0.0)",
  org.w3c.dom,
  org.xml.sax
 Automatic-Module-Name: org.eclipse.jface

@@ -9,9 +9,8 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Import-Package: javax.annotation,
  javax.inject;version="1.0.0",
- org.osgi.framework;version="1.3.0",
- org.osgi.service.event;resolution:=optional,
- org.osgi.util.tracker;version="1.5.1"
+ org.osgi.framework;version="[1.3.0,2.0.0)",
+ org.osgi.service.event;version="[1.4.0,2.0.0)"
 Require-Bundle: org.eclipse.core.commands;bundle-version="[3.4.0,4.0.0)",
  org.eclipse.e4.core.services;bundle-version="0.9.0",
  org.eclipse.e4.core.contexts;bundle-version="0.9.0",
