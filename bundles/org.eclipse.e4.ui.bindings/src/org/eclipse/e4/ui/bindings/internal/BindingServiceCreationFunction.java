@@ -16,11 +16,14 @@ package org.eclipse.e4.ui.bindings.internal;
 
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.osgi.service.component.annotations.Component;
 
 /**
  *
  */
+@Component(service = IContextFunction.class, property = "service.context.key=org.eclipse.e4.ui.bindings.EBindingService")
 public class BindingServiceCreationFunction extends ContextFunction {
 
 	@Override
