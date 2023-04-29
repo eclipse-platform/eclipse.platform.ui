@@ -36,7 +36,7 @@ public class FileLocationDetailsTest {
 	@Before
 	public void setUp() throws IOException {
 		tempFile = File.createTempFile(getClass().getSimpleName(), "java");
-		path = tempFile.getAbsolutePath();
+		path = tempFile.getAbsolutePath().replace('\\', '/');
 	}
 
 	@After

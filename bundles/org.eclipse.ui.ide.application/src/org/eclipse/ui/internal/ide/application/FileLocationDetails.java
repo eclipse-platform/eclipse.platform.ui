@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.application;
 
+import java.nio.file.InvalidPathException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,6 +21,7 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * @since 3.3
@@ -72,16 +74,21 @@ public class FileLocationDetails {
 		// Ideally we'd use a regex, except that we need to be greedy in matching.
 		// For example, we're trying to open /tmp/foo:3:3
 		// and there is an actual file named /tmp/foo:3
-		FileLocationDetails details = checkLocation(path, -1, -1);
-		if (details != null) {
-			return details;
+		if (isValidPath(path)) {
+			FileLocationDetails details = checkLocation(path, -1, -1);
+			if (details != null) {
+				return details;
+			}
 		}
 		Matcher m = lPattern.matcher(path);
 		if (m.matches()) {
 			try {
-				details = checkLocation(getPath(m), getValue("line", m), -1); //$NON-NLS-1$
-				if (details != null) {
-					return details;
+				String matchedPath = getPath(m);
+				if (isValidPath(matchedPath)) {
+					FileLocationDetails details = checkLocation(matchedPath, getValue("line", m), -1); //$NON-NLS-1$
+					if (details != null) {
+						return details;
+					}
 				}
 			} catch (NumberFormatException e) {
 				// shouldn't happen
@@ -91,7 +98,7 @@ public class FileLocationDetails {
 		m = lcPattern.matcher(path);
 		if (m.matches()) {
 			try {
-				details = checkLocation(getPath(m), getValue("line", m), getValue("column", m)); //$NON-NLS-1$ //$NON-NLS-2$
+				FileLocationDetails details = checkLocation(getPath(m), getValue("line", m), getValue("column", m)); //$NON-NLS-1$//$NON-NLS-2$
 				if (details != null) {
 					return details;
 				}
@@ -101,6 +108,17 @@ public class FileLocationDetails {
 		}
 		// no matches on line or line+column
 		return null;
+	}
+
+	private static boolean isValidPath(String path) {
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			try { // On windows : is forbidden in filenames
+				java.nio.file.Path.of(path);
+			} catch (InvalidPathException e) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/** Return details if {@code path} exists */
