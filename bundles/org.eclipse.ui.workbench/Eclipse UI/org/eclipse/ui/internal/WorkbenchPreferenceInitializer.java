@@ -124,6 +124,8 @@ public class WorkbenchPreferenceInitializer extends AbstractPreferenceInitialize
 		node.putBoolean(IPreferenceConstants.SHOW_KEYS_ENABLED_FOR_MOUSE_EVENTS, false);
 		node.putInt(IPreferenceConstants.SHOW_KEYS_TIME_TO_CLOSE, 3000);
 
+		node.putInt(IWorkbenchPreferenceConstants.DISPOSE_CLOSED_BROWSER_HOVER_TIMEOUT, -1);
+
 		node.put(IWorkbenchPreferenceConstants.RESOURCE_RENAME_MODE,
 				IWorkbenchPreferenceConstants.RESOURCE_RENAME_MODE_INLINE);
 
