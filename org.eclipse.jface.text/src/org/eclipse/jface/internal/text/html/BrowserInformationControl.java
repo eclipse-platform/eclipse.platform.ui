@@ -169,6 +169,9 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 	 */
 	private final String fSymbolicFontName;
 
+	private int fDisposeTimeout;
+
+	private Runnable fDisposeTask;
 
 	/**
 	 * Creates a browser information control with the given shell as parent.
@@ -335,6 +338,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		if (!visible) {
 			super.setVisible(false);
 			setInput(null);
+			startDisposeTimeout(shell.getDisplay());
 			return;
 		}
 
@@ -596,4 +600,29 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		return new Point((int) (widthInChars * width), heightInChars * height);
 	}
 
+	/**
+	 * Sets a timeout, after which a not visible control will be disposed.
+	 *
+	 * @param disposeTimeout The timeout in milliseconds. Non-positive values result in no timeout,
+	 *            i.e. don't dispose non-visible controls.
+	 */
+	public void setDisposeTimeout(int disposeTimeout) {
+		fDisposeTimeout= disposeTimeout;
+	}
+
+	private void startDisposeTimeout(Display display) {
+		class DisposeTask implements Runnable {
+			@Override
+			public void run() {
+				fDisposeTask= null;
+				if (!isVisible()) {
+					dispose();
+				}
+			}
+		}
+		if (fDisposeTimeout > 0 && fDisposeTask == null) {
+			fDisposeTask= new DisposeTask();
+			display.timerExec(fDisposeTimeout, fDisposeTask);
+		}
+	}
 }
