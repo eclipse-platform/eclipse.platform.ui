@@ -25,8 +25,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.ForkJoinWorkerThread;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -44,7 +42,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.core.runtime.SafeRunner;
 
 import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
-import org.eclipse.jface.util.SafeRunnable;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
@@ -375,38 +372,26 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 		}
 		List<CompletableFuture<List<ICompletionProposal>>> futures = new ArrayList<>(processors.size());
 		for (IContentAssistProcessor processor : processors) {
-			// Use a custom ForkJoinWorkerThreadFactory, to prevent issues with a
-			// potential SecurityManager. Threads created by ForkJoinPool.commonPool(),
-			// which is used in CompletableFuture.supplyAsync(), get no permissions.
-			ForkJoinPool commonPool= new ForkJoinPool(ForkJoinPool.getCommonPoolParallelism(),
-					pool -> new ForkJoinWorkerThread(pool) {
-						// anonymous subclass to access protected constructor
-					}, null, false);
-			futures.add(CompletableFuture.supplyAsync(() -> this.getCompletionProposals(processor, invocationOffset), commonPool));
+			futures.add(CompletableFuture.supplyAsync(() -> {
+				AtomicReference<List<ICompletionProposal>> result= new AtomicReference<>();
+				SafeRunner.run(() -> {
+					ICompletionProposal[] proposals= processor.computeCompletionProposals(fViewer, invocationOffset);
+					if (proposals == null) {
+						result.set(Collections.emptyList());
+					} else {
+						result.set(Arrays.asList(proposals));
+					}
+				});
+				List<ICompletionProposal> proposals= result.get();
+				if (proposals == null) { // an error occurred during computeCompletionProposal,
+					// possible improvement: give user feedback by returning an error "proposal" shown
+					// in completion popup and providing details
+					return Collections.emptyList();
+				}
+				return proposals;
+			}));
 		}
 		return futures;
-	}
-
-	private List<ICompletionProposal> getCompletionProposals(IContentAssistProcessor processor, int invocationOffset) {
-		AtomicReference<List<ICompletionProposal>> result= new AtomicReference<>();
-		SafeRunner.run(new SafeRunnable() {
-			@Override
-			public void run() throws Exception {
-				ICompletionProposal[] proposals= processor.computeCompletionProposals(fViewer, invocationOffset);
-				if (proposals == null) {
-					result.set(Collections.emptyList());
-				} else {
-					result.set(Arrays.asList(proposals));
-				}
-			}
-		});
-		List<ICompletionProposal> proposals= result.get();
-		if (proposals == null) { // an error occurred during computeCompletionProposal,
-			// possible improvement: give user feedback by returning an error "proposal" shown
-			// in completion popup and providing details
-			return Collections.emptyList();
-		}
-		return proposals;
 	}
 
 	private String getTokenContentType(int invocationOffset) throws BadLocationException {
