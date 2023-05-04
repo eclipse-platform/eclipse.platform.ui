@@ -114,7 +114,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 * @param statusFieldText the text to be used in the status field or <code>null</code> to hide the status field
 	 */
 	public AbstractInformationControl(Shell parentShell, String statusFieldText) {
-		this(parentShell, SWT.TOOL | SWT.ON_TOP, statusFieldText, null);
+		this(parentShell, SWT.TOOL | SWT.ON_TOP | SWT.RESIZE, statusFieldText, null);
 	}
 
 	/**

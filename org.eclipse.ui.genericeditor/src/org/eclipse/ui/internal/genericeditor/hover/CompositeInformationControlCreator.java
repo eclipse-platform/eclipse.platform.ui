@@ -18,6 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.eclipse.jface.text.AbstractInformationControl;
 import org.eclipse.jface.text.AbstractReusableInformationControlCreator;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IInformationControl;
@@ -70,10 +71,10 @@ public class CompositeInformationControlCreator
 			return false;
 		}
 		Iterator<Entry<ITextHover, IInformationControlCreator>> thisIterator = this.creators.entrySet().iterator();
-		Iterator<Entry<ITextHover, IInformationControl>> otherIterator = other.controls.entrySet().iterator();
+		Iterator<Entry<ITextHover, AbstractInformationControl>> otherIterator = other.controls.entrySet().iterator();
 		do {
 			Entry<ITextHover, IInformationControlCreator> thisEntry = thisIterator.next();
-			Entry<ITextHover, IInformationControl> otherEntry = otherIterator.next();
+			Entry<ITextHover, AbstractInformationControl> otherEntry = otherIterator.next();
 			if (!thisEntry.getKey().equals(otherEntry.getKey())) {
 				return false;
 			}
@@ -117,7 +118,9 @@ public class CompositeInformationControlCreator
 
 	@Override
 	public IInformationControl createInformationControl(Shell parent) {
-		return new CompositeInformationControl(parent, this.creators);
+		return creators.size() == 1 ? //
+			creators.values().iterator().next().createInformationControl(parent) : //
+			new CompositeInformationControl(parent, this.creators);
 	}
 
 }

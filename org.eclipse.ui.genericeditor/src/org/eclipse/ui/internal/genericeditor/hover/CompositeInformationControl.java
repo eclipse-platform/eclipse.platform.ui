@@ -36,15 +36,16 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.internal.genericeditor.GenericEditorPlugin;
 
 public class CompositeInformationControl extends AbstractInformationControl implements IInformationControlExtension2 {
 
 	final LinkedHashMap<ITextHover, IInformationControlCreator> creators;
-	LinkedHashMap<ITextHover, IInformationControl> controls;
+	LinkedHashMap<ITextHover, AbstractInformationControl> controls;
 
 	public CompositeInformationControl(Shell parentShell, LinkedHashMap<ITextHover, IInformationControlCreator> creators) {
-		super(parentShell, true); // TODO check best constructor
+		super(parentShell, EditorsUI.getTooltipAffordanceString()); // TODO check best constructor
 		Assert.isLegal(creators.size() > 1, "Do not compose a unique hover"); //$NON-NLS-1$
 		this.creators = creators;
 		create();
@@ -66,20 +67,30 @@ public class CompositeInformationControl extends AbstractInformationControl impl
 
 	@Override
 	public void setInput(Object input) {
+		int withContent = 0;
 		@SuppressWarnings("unchecked")
 		Map<ITextHover, Object> inputs = (Map<ITextHover, Object>)input;
 		for (Entry<ITextHover, Object> entry : inputs.entrySet()) {
-			IInformationControl informationControl = controls.get(entry.getKey());
+			AbstractInformationControl informationControl = controls.get(entry.getKey());
 			if (informationControl != null) {
 				if (informationControl instanceof IInformationControlExtension2) {
 					((IInformationControlExtension2)informationControl).setInput(entry.getValue());
-					continue;
+				} else {
+					String information = entry.getValue().toString();
+					if(!information.isEmpty()){
+						informationControl.setInformation(information);
+					}
 				}
-				String information = entry.getValue().toString();
-				if(!information.isEmpty()){
-					informationControl.setInformation(information);
+				if (informationControl.hasContents()) {
+					withContent++;
 				}
 			}
+		}
+		if (withContent > 1) {
+			controls.values().forEach(control -> control.setStatusText(null));
+			setStatusText(EditorsUI.getTooltipAffordanceString());
+		} else {
+			setStatusText(null);
 		}
 	}
 
@@ -90,8 +101,8 @@ public class CompositeInformationControl extends AbstractInformationControl impl
 		parent.setLayout(layout);
 		for (Entry<ITextHover, IInformationControlCreator> hoverControlCreator : this.creators.entrySet()) {
 			IInformationControl informationControl = hoverControlCreator.getValue().createInformationControl(parent.getShell());
-			if (informationControl instanceof AbstractInformationControl) {
-				List<Control> children = Arrays.asList(((AbstractInformationControl)informationControl).getShell().getChildren());
+			if (informationControl instanceof AbstractInformationControl abstractInformationControl) {
+				List<Control> children = Arrays.asList(abstractInformationControl.getShell().getChildren());
 				children.remove(parent);
 				if (children.isEmpty() ) {
 					continue;
@@ -99,7 +110,7 @@ public class CompositeInformationControl extends AbstractInformationControl impl
 				for (Control control : children) {
 					control.setParent(parent);
 				}
-				controls.put(hoverControlCreator.getKey(), informationControl);
+				controls.put(hoverControlCreator.getKey(), abstractInformationControl);
 			} else {
 				GenericEditorPlugin.getDefault().getLog().log(new Status(IStatus.WARNING, GenericEditorPlugin.BUNDLE_ID,
 						"Only text hovers producing an AbstractInformationControl can be aggregated; got a " + informationControl.getClass().getSimpleName())); //$NON-NLS-1$
@@ -127,7 +138,7 @@ public class CompositeInformationControl extends AbstractInformationControl impl
 		} else {
 			LinkedHashMap<ITextHover, IInformationControlCreator> presenterCreators = new LinkedHashMap<>();
 			boolean allNull = true;
-			for (Entry<ITextHover, IInformationControl> hover : this.controls.entrySet()) {
+			for (Entry<ITextHover, AbstractInformationControl> hover : this.controls.entrySet()) {
 				IInformationControlCreator creator = null;
 				if (hover.getValue() instanceof IInformationControlExtension5)
 				creator = ((IInformationControlExtension5)hover.getValue()).getInformationPresenterControlCreator();
