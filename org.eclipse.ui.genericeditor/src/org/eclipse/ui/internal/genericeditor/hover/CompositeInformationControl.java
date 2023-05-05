@@ -45,7 +45,7 @@ public class CompositeInformationControl extends AbstractInformationControl impl
 	LinkedHashMap<ITextHover, AbstractInformationControl> controls;
 
 	public CompositeInformationControl(Shell parentShell, LinkedHashMap<ITextHover, IInformationControlCreator> creators) {
-		super(parentShell, EditorsUI.getTooltipAffordanceString()); // TODO check best constructor
+		super(parentShell, EditorsUI.getTooltipAffordanceString(), true);
 		Assert.isLegal(creators.size() > 1, "Do not compose a unique hover"); //$NON-NLS-1$
 		this.creators = creators;
 		create();

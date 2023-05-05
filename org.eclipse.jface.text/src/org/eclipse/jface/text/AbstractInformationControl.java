@@ -104,6 +104,22 @@ public abstract class AbstractInformationControl implements IInformationControl,
 
 	/**
 	 * Creates an abstract information control with the given shell as parent.
+	 * The control will optionally show a status line with the given status field text.
+	 * <p>
+	 * <em>Important: Subclasses are required to call {@link #create()} at the end of their constructor.</em>
+	 * </p>
+	 *
+	 * @param parentShell the parent of this control's shell
+	 * @param statusFieldText the text to be used in the status field or <code>null</code> to hide the status field
+	 * @param resizable whether to make the control resizable
+	 * @since 3.24
+	 */
+	public AbstractInformationControl(Shell parentShell, String statusFieldText, boolean resizable) {
+		this(parentShell, SWT.TOOL | SWT.ON_TOP | (resizable ? SWT.RESIZE : 0), statusFieldText, null);
+	}
+
+	/**
+	 * Creates an abstract information control with the given shell as parent.
 	 * The control will not be resizable and optionally show a status line with
 	 * the given status field text.
 	 * <p>
@@ -114,7 +130,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 * @param statusFieldText the text to be used in the status field or <code>null</code> to hide the status field
 	 */
 	public AbstractInformationControl(Shell parentShell, String statusFieldText) {
-		this(parentShell, SWT.TOOL | SWT.ON_TOP | SWT.RESIZE, statusFieldText, null);
+		this(parentShell, statusFieldText, false);
 	}
 
 	/**
