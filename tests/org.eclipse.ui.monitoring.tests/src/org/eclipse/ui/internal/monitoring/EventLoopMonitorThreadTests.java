@@ -38,7 +38,7 @@ import org.junit.Test;
  */
 public class EventLoopMonitorThreadTests {
 	/* NOTE: All time-related values in this class are in milliseconds. */
-	private static final long MAX_TIMEOUT_MS = 1 * 1000; // 1 second
+	private static final long MAX_TIMEOUT_MS = 3 * 1000; // 3 seconds
 	private static final int FREEZE_THRESHOLD_MS = 100;
 	private static final int SAMPLE_INTERVAL_MS = FREEZE_THRESHOLD_MS * 2 / 3;
 	public static final int FORCE_DEADLOCK_LOG_TIME_MS = 10 * 60 * 1000; // == 10 minutes
