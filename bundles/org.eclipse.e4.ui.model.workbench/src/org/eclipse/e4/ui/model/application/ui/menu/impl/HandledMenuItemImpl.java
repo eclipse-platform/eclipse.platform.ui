@@ -184,7 +184,7 @@ public class HandledMenuItemImpl extends MenuItemImpl implements MHandledMenuIte
 	@Override
 	public List<MParameter> getParameters() {
 		if (parameters == null) {
-			parameters = new EObjectContainmentEList<MParameter>(MParameter.class, this,
+			parameters = new EObjectContainmentEList<>(MParameter.class, this,
 					MenuPackageImpl.HANDLED_MENU_ITEM__PARAMETERS);
 		}
 		return parameters;

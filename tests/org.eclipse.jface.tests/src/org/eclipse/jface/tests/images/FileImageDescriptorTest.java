@@ -13,10 +13,13 @@
  *     Karsten Stoeckmann <ngc2997@gmx.net> - Test case for Bug 220766
  *     		[JFace] ImageRegistry.get does not work as expected (crashes with NullPointerException)
  *     Christoph Läubrich - Bug 567898 - [JFace][HiDPI] ImageDescriptor support alternative naming scheme for high dpi
- *     Daniel Kruegler - #375, #378, #396, #398, #399, #401
+ *     Daniel Kruegler - #375, #378, #396, #398, #399, #401,
+ *                       #682: Add test case to ensure that a descriptor creates different images
  ******************************************************************************/
 
 package org.eclipse.jface.tests.images;
+
+import static org.junit.Assert.assertNotEquals;
 
 import java.io.IOException;
 import java.net.URL;
@@ -132,6 +135,21 @@ public class FileImageDescriptorTest extends TestCase {
 		assertNotNull("Did not find default image", image);
 	}
 
+	/**
+	 * Test that individually created images of a given descriptor are not equal
+	 * (See issue #682).
+	 */
+	public void testDifferentImagesPerFileImageDescriptor() {
+		ImageDescriptor descriptor = ImageDescriptor.createFromFile(FileImageDescriptorTest.class, "anything.gif");
+		Image image1 = descriptor.createImage();
+		assertNotNull("Could not find first image", image1);
+		Image image2 = descriptor.createImage();
+		assertNotNull("Could not find second image", image2);
+		assertNotEquals("Found equal images for FileImageDescriptor", image1, image2);
+		image1.dispose();
+		image2.dispose();
+	}
+
 	public void testGetxName() {
 		ImageDescriptor descriptor = ImageDescriptor.createFromFile(FileImageDescriptorTest.class,
 				"/icons/imagetests/zoomIn.png");
@@ -180,7 +198,9 @@ public class FileImageDescriptorTest extends TestCase {
 		ImageFileNameProvider fileNameProvider = Adapters.adapt(descriptor, ImageFileNameProvider.class);
 		assertNotNull("FileImageDescriptor does not adapt to ImageFileNameProvider", fileNameProvider);
 		ImageFileNameProvider fileNameProvider2nd = Adapters.adapt(descriptor, ImageFileNameProvider.class);
-		assertSame("FileImageDescriptor does not return unique ImageFileNameProvider", fileNameProvider,
+		// Issue #679: The returned ImageFileNameProvider must be different each time,
+		// because Image#equals depends on this non-uniqueness:
+		assertNotSame("FileImageDescriptor does return identical ImageFileNameProvider", fileNameProvider,
 				fileNameProvider2nd);
 		String imagePath100 = fileNameProvider.getImagePath(100);
 		assertNotNull("FileImageDescriptor's ImageFileNameProvider does not return the 100% path", imagePath100);

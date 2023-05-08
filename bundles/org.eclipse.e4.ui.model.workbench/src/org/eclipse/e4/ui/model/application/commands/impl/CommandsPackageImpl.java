@@ -501,6 +501,16 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int COMMAND__CATEGORY = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 3;
 
 	/**
+	 * The feature id for the '<em><b>Command Icon URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 2.4
+	 * @generated
+	 * @ordered
+	 */
+	public static final int COMMAND__COMMAND_ICON_URI = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 4;
+
+	/**
 	 * The feature id for the '<em><b>Localized Command Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -509,7 +519,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int COMMAND__LOCALIZED_COMMAND_NAME = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT
-			+ 4;
+			+ 5;
 
 	/**
 	 * The feature id for the '<em><b>Localized Description</b></em>' attribute.
@@ -520,7 +530,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int COMMAND__LOCALIZED_DESCRIPTION = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT
-			+ 5;
+			+ 6;
 
 	/**
 	 * The number of structural features of the '<em>Command</em>' class.
@@ -530,7 +540,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int COMMAND_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 6;
+	public static final int COMMAND_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 7;
 
 	/**
 	 * The operation id for the '<em>Update Localization</em>' operation.
@@ -1654,6 +1664,20 @@ public class CommandsPackageImpl extends EPackageImpl {
 	}
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.commands.MCommand#getCommandIconURI <em>Command Icon URI</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Command Icon URI</em>'.
+	 * @see org.eclipse.e4.ui.model.application.commands.MCommand#getCommandIconURI()
+	 * @see #getCommand()
+	 * @since 2.4
+	 * @generated
+	 */
+	public EAttribute getCommand_CommandIconURI() {
+		return (EAttribute) commandEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
 	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.commands.MCommand#getLocalizedCommandName <em>Localized Command Name</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1664,7 +1688,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getCommand_LocalizedCommandName() {
-		return (EAttribute) commandEClass.getEStructuralFeatures().get(4);
+		return (EAttribute) commandEClass.getEStructuralFeatures().get(5);
 	}
 
 	/**
@@ -1678,7 +1702,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getCommand_LocalizedDescription() {
-		return (EAttribute) commandEClass.getEStructuralFeatures().get(5);
+		return (EAttribute) commandEClass.getEStructuralFeatures().get(6);
 	}
 
 	/**
@@ -2059,6 +2083,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		createEAttribute(commandEClass, COMMAND__DESCRIPTION);
 		createEReference(commandEClass, COMMAND__PARAMETERS);
 		createEReference(commandEClass, COMMAND__CATEGORY);
+		createEAttribute(commandEClass, COMMAND__COMMAND_ICON_URI);
 		createEAttribute(commandEClass, COMMAND__LOCALIZED_COMMAND_NAME);
 		createEAttribute(commandEClass, COMMAND__LOCALIZED_DESCRIPTION);
 		createEOperation(commandEClass, COMMAND___UPDATE_LOCALIZATION);
@@ -2188,6 +2213,9 @@ public class CommandsPackageImpl extends EPackageImpl {
 		initEReference(getCommand_Category(), this.getCategory(), null, "category", null, 0, 1, MCommand.class, //$NON-NLS-1$
 				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE,
 				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCommand_CommandIconURI(), ecorePackage.getEString(), "commandIconURI", null, 0, 1, //$NON-NLS-1$
+				MCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+				!IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCommand_LocalizedCommandName(), ecorePackage.getEString(), "localizedCommandName", null, 0, 1, //$NON-NLS-1$
 				MCommand.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
 				IS_DERIVED, IS_ORDERED);
@@ -2440,6 +2468,15 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EReference COMMAND__CATEGORY = eINSTANCE.getCommand_Category();
+
+		/**
+		 * The meta object literal for the '<em><b>Command Icon URI</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @since 2.4
+		 * @generated
+		 */
+		public static final EAttribute COMMAND__COMMAND_ICON_URI = eINSTANCE.getCommand_CommandIconURI();
 
 		/**
 		 * The meta object literal for the '<em><b>Localized Command Name</b></em>' attribute feature.

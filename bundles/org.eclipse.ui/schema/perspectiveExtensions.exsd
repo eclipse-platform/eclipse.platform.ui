@@ -103,8 +103,8 @@ are appended to the initial definition.
             <annotation>
                <documentation>
                   The image is shown in the editor area in case no editor is open.
-The image shall be grey and not colored and shall have a size of 350 x 350 px.
-Plus a second image for high resolution with a size of 700 x 700 px and a name like [image_name]@2x.[image_type].
+The image shall be grey and not colored and shall have a size of 250 x 250 px.
+Plus a second image for high resolution with a size of 500 x 500 px and a name like [image_name]@2x.[image_type].
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>

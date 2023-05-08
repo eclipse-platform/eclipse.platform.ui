@@ -674,4 +674,15 @@ public interface IWorkbenchPreferenceConstants {
 	 */
 	String RESOURCE_RENAME_MODE_DIALOG = "dialog"; //$NON-NLS-1$
 
+	/**
+	 * Preference for the <i>advised</i> time (in ms) after a closed browser hover
+	 * is to be disposed.
+	 * <p>
+	 * The integer default value for this preference is: <code>-1</code>.
+	 * Non-positive values indicate closed hovers are not disposed automatically.
+	 * </p>
+	 *
+	 * @since 3.129
+	 */
+	String DISPOSE_CLOSED_BROWSER_HOVER_TIMEOUT = "disposeClosedBrowserHoverTimeout"; //$NON-NLS-1$
 }

@@ -64,16 +64,12 @@ public class LogViewLabelProvider extends LabelProvider implements ITableLabelPr
 
 		LogEntry entry = (LogEntry) element;
 		if (columnIndex == 0) {
-			switch (entry.getSeverity()) {
-				case IStatus.INFO :
-					return infoImage;
-				case IStatus.OK :
-					return okImage;
-				case IStatus.WARNING :
-					return warningImage;
-				default :
-					return (entry.getStack() == null ? errorImage : errorWithStackImage);
-			}
+			return switch (entry.getSeverity()) {
+			case IStatus.INFO -> infoImage;
+			case IStatus.OK -> okImage;
+			case IStatus.WARNING -> warningImage;
+			default -> (entry.getStack() == null ? errorImage : errorWithStackImage);
+			};
 		}
 		return null;
 	}

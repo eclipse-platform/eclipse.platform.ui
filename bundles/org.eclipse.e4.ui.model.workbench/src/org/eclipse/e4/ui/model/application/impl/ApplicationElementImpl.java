@@ -170,7 +170,7 @@ public abstract class ApplicationElementImpl extends org.eclipse.emf.ecore.impl.
 	@Override
 	public Map<String, String> getPersistedState() {
 		if (persistedState == null) {
-			persistedState = new EcoreEMap<String, String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP,
+			persistedState = new EcoreEMap<>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP,
 					StringToStringMapImpl.class, this, ApplicationPackageImpl.APPLICATION_ELEMENT__PERSISTED_STATE);
 		}
 		return persistedState.map();
@@ -184,7 +184,7 @@ public abstract class ApplicationElementImpl extends org.eclipse.emf.ecore.impl.
 	@Override
 	public List<String> getTags() {
 		if (tags == null) {
-			tags = new EDataTypeUniqueEList<String>(String.class, this,
+			tags = new EDataTypeUniqueEList<>(String.class, this,
 					ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS);
 		}
 		return tags;
@@ -226,7 +226,7 @@ public abstract class ApplicationElementImpl extends org.eclipse.emf.ecore.impl.
 	@Override
 	public Map<String, Object> getTransientData() {
 		if (transientData == null) {
-			transientData = new EcoreEMap<String, Object>(ApplicationPackageImpl.Literals.STRING_TO_OBJECT_MAP,
+			transientData = new EcoreEMap<>(ApplicationPackageImpl.Literals.STRING_TO_OBJECT_MAP,
 					StringToObjectMapImpl.class, this, ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA);
 		}
 		return transientData.map();

@@ -1134,21 +1134,13 @@ public class LogView extends ViewPart implements LogListener {
 	private LogEntry createLogEntry(org.osgi.service.log.LogEntry input) {
 		// create a status from OSGi LogEntry
 		LogLevel logLevel = input.getLogLevel();
-		int severity;
-		switch (logLevel) {
-		case ERROR:
-			severity = IStatus.ERROR;
-			break;
-		case WARN:
-			severity = IStatus.WARNING;
-			break;
-		case INFO:
-			severity = IStatus.INFO;
-			break;
-		case DEBUG:
-		default:
-			severity = IStatus.OK;
-		}
+		int severity = switch (logLevel) {
+		case ERROR -> IStatus.ERROR;
+		case WARN -> IStatus.WARNING;
+		case INFO -> IStatus.INFO;
+		case DEBUG -> IStatus.OK;
+		default -> IStatus.OK;
+		};
 		IStatus status = new Status(severity, input.getBundle().getSymbolicName(), input.getMessage(),
 				input.getException());
 		return createLogEntry(status);

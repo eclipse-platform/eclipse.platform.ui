@@ -115,7 +115,7 @@ public class CompositePartImpl extends PartImpl implements MCompositePart {
 	@Override
 	public List<MPartSashContainerElement> getChildren() {
 		if (children == null) {
-			children = new EObjectContainmentWithInverseEList<MPartSashContainerElement>(
+			children = new EObjectContainmentWithInverseEList<>(
 					MPartSashContainerElement.class, this, BasicPackageImpl.COMPOSITE_PART__CHILDREN,
 					UiPackageImpl.UI_ELEMENT__PARENT) {
 				private static final long serialVersionUID = 1L;

@@ -19,28 +19,28 @@
 
 <templates>
 
-<template name="Inject -  Preference value as method injection" description="Injected Preference Value" id="org.eclipse.e4.tools.jdt.templates.preference" context="e4-members" enabled="true" autoinsert="false">@Inject
+<template name="Inject -  Preference value as method injection" description="%Templates.injected_preference_value" id="org.eclipse.e4.tools.jdt.templates.preference" context="e4-members" enabled="true" autoinsert="false">@Inject
 void setPreferenceValue(@Named("preference-PREFERENCE_KEY") String preferenceValue) {
 	${cursor}
 }</template>
 
-<template name="Inject - Preferences service as field" description="Injected Preferences Service" id="org.eclipse.e4.tools.jdt.templates.preferences" context="e4-members" enabled="true" autoinsert="false">@Inject
+<template name="Inject - Preferences service as field" description="%Templates.injected_preference_field" id="org.eclipse.e4.tools.jdt.templates.preferences" context="e4-members" enabled="true" autoinsert="false">@Inject
 IEclipsePreferences preferences;</template>
 
-<template name="Inject - Logger service as field" description="Injected Logger" id="org.eclipse.e4.tools.jdt.templates.logger" context="e4-members" enabled="true" autoinsert="false">@Inject
+<template name="Inject - Logger service as field" description="%Templates.injected_logger" id="org.eclipse.e4.tools.jdt.templates.logger" context="e4-members" enabled="true" autoinsert="false">@Inject
 Logger logger;</template>
 
-<template name="Inject - Eventbroker service as field" description="Injected Event Broker" id="org.eclipse.e4.tools.jdt.templates.eventbroker" context="e4-members" enabled="true" autoinsert="false">@Inject
+<template name="Inject - Eventbroker service as field" description="%Templates.injected_eventbroker" id="org.eclipse.e4.tools.jdt.templates.eventbroker" context="e4-members" enabled="true" autoinsert="false">@Inject
 IEventBroker eventBroker;
 ${imp:import(org.eclipse.e4.core.services.events.IEventBroker)}
 </template>
 
-<template name="Inject - ESelection service as field" description="Injected ESEectionService" id="org.eclipse.e4.tools.jdt.templates.selectionservice" context="e4-members" enabled="true" autoinsert="false">@Inject
+<template name="Inject - ESelection service as field" description="%Templates.injected_eselectionservice" id="org.eclipse.e4.tools.jdt.templates.selectionservice" context="e4-members" enabled="true" autoinsert="false">@Inject
 ESelectionService selectionService;
 ${imp:import(org.eclipse.e4.ui.workbench.modeling.ESelectionService)}
 </template>
 
-<template name="Inject -  Subscribe to event topic via method" description="Event Handler Method" id="org.eclipse.e4.tools.jdt.templates.eventhandler" context="e4-members" enabled="true" autoinsert="false"> @Inject
+<template name="Inject -  Subscribe to event topic via method" description="%Templates.injected_eventhandler_method" id="org.eclipse.e4.tools.jdt.templates.eventhandler" context="e4-members" enabled="true" autoinsert="false"> @Inject
     @Optional
     private void subscribeApplicationCompleted
             (@UIEventTopic(UIEvents.UILifeCycle.APP_STARTUP_COMPLETE)
@@ -49,39 +49,39 @@ ${imp:import(org.eclipse.e4.ui.workbench.modeling.ESelectionService)}
 	${cursor}
 }</template>
 
-<template name="Inject - IStylingEngine service as field" description="Injected Styling Engine" id="org.eclipse.e4.tools.jdt.templates.stylingengine" context="e4-members" enabled="true" autoinsert="false">@Inject
+<template name="Inject - IStylingEngine service as field" description="%Templates.injected_stylingengine" id="org.eclipse.e4.tools.jdt.templates.stylingengine" context="e4-members" enabled="true" autoinsert="false">@Inject
 IStylingEngine stylingEngine;</template>
 
 
-<template name="PostConstruct" description="Creates @PostConstruct method" id="org.eclipse.e4.tools.jdt.templates.init" context="e4-members" enabled="true" autoinsert="false">@PostConstruct
+<template name="PostConstruct" description="%Templates.postconstruct_method" id="org.eclipse.e4.tools.jdt.templates.init" context="e4-members" enabled="true" autoinsert="false">@PostConstruct
 public void postConstruct(${type:newType(org.eclipse.swt.widgets.Composite)} parent) { 
 	${cursor}
 }
 ${imp:import(javax.annotation.PostConstruct)}
 </template>
 
-<template name="Focus" description="Creates @Focus method" id="org.eclipse.e4.tools.jdt.templates.focus" context="e4-members" enabled="true" autoinsert="false">@Focus
+<template name="Focus" description="%Templates.focus_method" id="org.eclipse.e4.tools.jdt.templates.focus" context="e4-members" enabled="true" autoinsert="false">@Focus
 public void onFocus() {
 	${cursor}
 }
 ${imp:import(org.eclipse.e4.ui.di.Focus)}
 </template>
 
-<template name="PreDestroy" description="Creates @PreDestroy method" id="org.eclipse.e4.tools.jdt.templates.dispose" context="e4-members" enabled="true" autoinsert="false">@PreDestroy
+<template name="PreDestroy" description="%Templates.predestroy_method" id="org.eclipse.e4.tools.jdt.templates.dispose" context="e4-members" enabled="true" autoinsert="false">@PreDestroy
 public void preDestroy() {
 	${cursor}
 }
 ${imp:import(javax.annotation.PreDestroy)}
 </template>
 
-<template name="Execute" description="Creates Execute method" id="org.eclipse.e4.tools.jdt.templates.execute" context="e4-members" enabled="true" autoinsert="false">@Execute
+<template name="Execute" description="%Templates.execute_method" id="org.eclipse.e4.tools.jdt.templates.execute" context="e4-members" enabled="true" autoinsert="false">@Execute
 public void execute() {
 	${cursor}
 }
 ${imp:import(org.eclipse.e4.core.di.annotations.Execute)}
 </template>
 
-<template name="CanExecute" description="Creates CanExecute method" id="org.eclipse.e4.tools.jdt.templates.canexecute" context="e4-members" enabled="true" autoinsert="false">@CanExecute
+<template name="CanExecute" description="%Templates.canexecute_method" id="org.eclipse.e4.tools.jdt.templates.canexecute" context="e4-members" enabled="true" autoinsert="false">@CanExecute
 public boolean canExecute() {
 	return true;
 }

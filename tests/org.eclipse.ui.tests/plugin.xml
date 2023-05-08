@@ -97,6 +97,11 @@
             class="org.eclipse.ui.tests.internal.Bug540297WorkbenchPageFindViewTest$MyPerspective"
             id="org.eclipse.ui.tests.internal.Bug540297WorkbenchPageFindViewTest.MyPerspective2"
             name="org.eclipse.ui.tests.internal.Bug540297WorkbenchPageFindViewTest.MyPerspective2"/>
+      <perspective
+            class="org.eclipse.ui.tests.api.OnboardingPerspective"
+            id="org.eclipse.ui.tests.OnboardingPerspective"
+            name="UI Test Perspective for onboarding">
+      </perspective>
    </extension>
    
    <extension
@@ -123,6 +128,14 @@
                relative="org.eclipse.ui.views.ContentOutline"
                visible="true">
          </view>
+      </perspectiveExtension>
+      <perspectiveExtension
+            editorOnboardingImage="icons/anything.gif"
+            editorOnboardingText="The onboarding text"
+            targetID="org.eclipse.ui.tests.OnboardingPerspective">
+         <editorOnboardingCommand
+               id="org.eclipse.ui.window.quickAccess">
+         </editorOnboardingCommand>
       </perspectiveExtension>
    </extension>
    
@@ -4674,5 +4687,13 @@
              class="org.eclipse.ui.tests.internal.VirtualTestFileSystem">
        </run>
     </filesystem>
+ </extension>
+ <extension
+       id="org.eclipse.ui.tests.fragment"
+       point="org.eclipse.e4.workbench.model">
+    <fragment
+          uri="fragment.e4xmi"
+          apply="always">
+    </fragment>
  </extension>
 </plugin>

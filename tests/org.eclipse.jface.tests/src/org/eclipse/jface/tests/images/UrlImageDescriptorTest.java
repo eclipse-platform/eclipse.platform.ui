@@ -10,21 +10,41 @@
  *
  * Contributors:
  *     Christoph Läubrich - initial API and implementation
- *     Daniel Kruegler - #396, #398, #399, #401
+ *     Daniel Kruegler - #396, #398, #399, #401,
+ *                       #682: Add test case to ensure that a descriptor creates different images
  ******************************************************************************/
 package org.eclipse.jface.tests.images;
+
+import static org.junit.Assert.assertNotEquals;
 
 import java.net.URL;
 
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageFileNameProvider;
 
 import junit.framework.TestCase;
 
 public class UrlImageDescriptorTest extends TestCase {
+
+	/**
+	 * Test that individually created images of a given descriptor are not equal
+	 * (See issue #682).
+	 */
+	public void testDifferentImagesPerUrlImageDescriptor() {
+		ImageDescriptor descriptor = ImageDescriptor
+				.createFromURL(FileImageDescriptorTest.class.getResource("/icons/imagetests/anything.gif"));
+		Image image1 = descriptor.createImage();
+		assertNotNull("Could not find first image", image1);
+		Image image2 = descriptor.createImage();
+		assertNotNull("Could not find second image", image2);
+		assertNotEquals("Found equal images for URLImageDescriptor", image1, image2);
+		image1.dispose();
+		image2.dispose();
+	}
 
 	public void testGetxName() {
 		ImageDescriptor descriptor = ImageDescriptor
@@ -53,7 +73,9 @@ public class UrlImageDescriptorTest extends TestCase {
 		ImageFileNameProvider fileNameProvider = Adapters.adapt(descriptor, ImageFileNameProvider.class);
 		assertNotNull("URLImageDescriptor does not adapt to ImageFileNameProvider", fileNameProvider);
 		ImageFileNameProvider fileNameProvider2nd = Adapters.adapt(descriptor, ImageFileNameProvider.class);
-		assertSame("URLImageDescriptor does not return unique ImageFileNameProvider", fileNameProvider,
+		// Issue #679: The returned ImageFileNameProvider must be different each time,
+		// because Image#equals depends on this non-uniqueness:
+		assertNotSame("URLImageDescriptor does return identical ImageFileNameProvider", fileNameProvider,
 				fileNameProvider2nd);
 		String imagePath100 = fileNameProvider.getImagePath(100);
 		assertNotNull("URLImageDescriptor ImageFileNameProvider does not return the 100% path", imagePath100);

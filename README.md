@@ -20,7 +20,7 @@ How to contribute:
 --------------------
 Contributions to Platform UI are most welcome. There are many ways to contribute,
 from entering high quality bug reports, to contributing code or documentation changes.
-For a complete guide, see the [Platform UI - How to contribute wiki page](https://wiki.eclipse.org/Platform_UI/How_to_Contribute) page on the wiki.
+For a complete guide, see the https://github.com/eclipse-platform/.github/blob/main/CONTRIBUTING.md.
 
 Test dependencies
 -----------------

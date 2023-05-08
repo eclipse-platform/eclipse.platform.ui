@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %Plugin.name
+Bundle-SymbolicName: org.eclipse.ui.examples.perspective;singleton:=true
+Bundle-Vendor: %Plugin.Providername
+Bundle-Version: 1.0.0.qualifier
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.ui.workbench,
+ org.eclipse.core.commands,
+ org.eclipse.jface,
+ org.eclipse.ui
+Automatic-Module-Name: org.eclipse.ui.examples.perspective
+Bundle-RequiredExecutionEnvironment: JavaSE-17

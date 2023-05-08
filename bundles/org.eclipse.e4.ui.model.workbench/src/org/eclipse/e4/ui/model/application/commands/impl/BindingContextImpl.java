@@ -168,7 +168,7 @@ public class BindingContextImpl extends ApplicationElementImpl implements MBindi
 	@Override
 	public List<MBindingContext> getChildren() {
 		if (children == null) {
-			children = new EObjectContainmentEList<MBindingContext>(MBindingContext.class, this,
+			children = new EObjectContainmentEList<>(MBindingContext.class, this,
 					CommandsPackageImpl.BINDING_CONTEXT__CHILDREN);
 		}
 		return children;
