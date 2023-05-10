@@ -49,9 +49,9 @@ public class TaskBarProgressManager {
 
 	private boolean isAnimated = false;
 
-	private List<Job> jobs = Collections.synchronizedList(new ArrayList<Job>());
+	private List<Job> jobs = Collections.synchronizedList(new ArrayList<>());
 
-	private Map<Job, JobInfo> jobInfoMap = Collections.synchronizedMap(new HashMap<Job, JobInfo>());
+	private Map<Job, JobInfo> jobInfoMap = Collections.synchronizedMap(new HashMap<>());
 
 	private final TaskItem taskItem;
 

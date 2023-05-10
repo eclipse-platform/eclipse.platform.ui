@@ -19,7 +19,6 @@ package org.eclipse.ui.internal.dialogs.cpd;
 import java.util.ArrayList;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
@@ -96,7 +95,7 @@ public class CustomizeActionBars implements IActionBarConfigurer2, IActionBars2 
 		menuRenderer.linkModelToManager(mainMenu, menuManager);
 		windowModel.setMainMenu(mainMenu);
 
-		coolBarManager = new CoolBarToTrimManager(app, windowModel, new ArrayList<MTrimElement>(), rendererFactory);
+		coolBarManager = new CoolBarToTrimManager(app, windowModel, new ArrayList<>(), rendererFactory);
 	}
 
 	@Override
