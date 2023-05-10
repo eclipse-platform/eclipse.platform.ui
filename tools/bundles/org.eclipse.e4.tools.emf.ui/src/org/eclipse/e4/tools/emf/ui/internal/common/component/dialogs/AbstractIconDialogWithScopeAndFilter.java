@@ -70,7 +70,7 @@ import org.eclipse.swt.widgets.Shell;
  */
 public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContributionDialog {
 	private final IProject project;
-	private final Map<IFile, Image> icons = Collections.synchronizedMap(new HashMap<IFile, Image>());
+	private final Map<IFile, Image> icons = Collections.synchronizedMap(new HashMap<>());
 
 	static public class Entry {
 		IFile file;

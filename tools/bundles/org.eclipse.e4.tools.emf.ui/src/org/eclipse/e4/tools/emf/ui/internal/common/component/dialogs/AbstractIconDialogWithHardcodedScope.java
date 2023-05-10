@@ -72,7 +72,7 @@ import org.eclipse.swt.widgets.Text;
 public abstract class AbstractIconDialogWithHardcodedScope extends SaveDialogBoundsSettingsDialog {
 	private TableViewer viewer;
 	private IProject project;
-	private Map<IFile, Image> icons = Collections.synchronizedMap(new HashMap<IFile, Image>());
+	private Map<IFile, Image> icons = Collections.synchronizedMap(new HashMap<>());
 	private ResourceSearchScope searchScope = ResourceSearchScope.PROJECT;
 
 	protected Messages Messages;

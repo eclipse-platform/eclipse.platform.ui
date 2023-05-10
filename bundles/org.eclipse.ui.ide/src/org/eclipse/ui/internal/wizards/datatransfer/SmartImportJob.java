@@ -113,8 +113,8 @@ public class SmartImportJob extends Job {
 		setWorkingSets(workingSets);
 		this.configureProjects = configureProjects;
 		this.deepChildrenDetection = recuriveChildrenDetection;
-		this.report = Collections.synchronizedMap(new HashMap<IProject, List<ProjectConfigurator>>());
-		this.errors = Collections.synchronizedMap(new HashMap<IPath, Exception>());
+		this.report = Collections.synchronizedMap(new HashMap<>());
+		this.errors = Collections.synchronizedMap(new HashMap<>());
 		this.crawlerJobGroup = new JobGroup(DataTransferMessages.SmartImportJob_detectAndConfigureProjects, 0, 1);
 	}
 
@@ -350,7 +350,7 @@ public class SmartImportJob extends Job {
 		}
 		parentContainer.refreshLocal(IResource.DEPTH_ONE, progressMonitor); // make sure we know all children
 		Set<IFolder> childrenToProcess = new HashSet<>();
-		final Set<IProject> res = Collections.synchronizedSet(new HashSet<IProject>());
+		final Set<IProject> res = Collections.synchronizedSet(new HashSet<>());
 		for (IResource childResource : parentContainer.members()) {
 			if (childResource.getType() == IResource.FOLDER && !childResource.isDerived()) {
 				IPath location = childResource.getLocation();
