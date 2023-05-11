@@ -80,6 +80,7 @@ public class ModeledPageLayout implements IPageLayout {
 	public static final String EDITOR_ONBOARDING_TEXT = EDITOR_ONBOARDING + "Text:"; //$NON-NLS-1$
 	public static final String EDITOR_ONBOARDING_IMAGE = EDITOR_ONBOARDING + "ImageUri:"; //$NON-NLS-1$
 	public static final String EDITOR_ONBOARDING_COMMAND = EDITOR_ONBOARDING + "Command:"; //$NON-NLS-1$
+	public static final String EDITOR_ONBOARDING_COMMAND_SEPARATOR = "$$$"; //$NON-NLS-1$
 
 	public static List<String> getIds(MPerspective model, String tagPrefix) {
 		if (model == null) {
@@ -643,14 +644,13 @@ public class ModeledPageLayout implements IPageLayout {
 		if (numberOfOnboardingCommands >= 5)
 			return;
 
-		String commandText = "{0}: {1}"; //$NON-NLS-1$
 		Predicate<MKeyBinding> commandWithEqualId = b -> b.getCommand().getElementId().equals(commandId);
 		Function<MKeyBinding, String> toCommandText = b -> {
 			try {
-				return NLS.bind(commandText, b.getCommand().getCommandName(),
-						KeySequence.getInstance(b.getKeySequence()).format());
+				return b.getCommand().getCommandName() + EDITOR_ONBOARDING_COMMAND_SEPARATOR
+						+ KeySequence.getInstance(b.getKeySequence()).format();
 			} catch (ParseException e) {
-				return NLS.bind(commandText, b.getCommand().getCommandName(), b.getKeySequence());
+				return b.getCommand().getCommandName() + EDITOR_ONBOARDING_COMMAND_SEPARATOR + b.getKeySequence();
 			}
 		};
 
