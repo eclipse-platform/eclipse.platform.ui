@@ -19,6 +19,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
@@ -43,8 +45,10 @@ public class CompositeInformationControl extends AbstractInformationControl impl
 
 	final LinkedHashMap<ITextHover, IInformationControlCreator> creators;
 	LinkedHashMap<ITextHover, AbstractInformationControl> controls;
+	private GridLayout layout;
 
-	public CompositeInformationControl(Shell parentShell, LinkedHashMap<ITextHover, IInformationControlCreator> creators) {
+	public CompositeInformationControl(Shell parentShell,
+			LinkedHashMap<ITextHover, IInformationControlCreator> creators) {
 		super(parentShell, EditorsUI.getTooltipAffordanceString(), true);
 		Assert.isLegal(creators.size() > 1, "Do not compose a unique hover"); //$NON-NLS-1$
 		this.creators = creators;
@@ -55,7 +59,7 @@ public class CompositeInformationControl extends AbstractInformationControl impl
 	public boolean hasContents() {
 		for (IInformationControl control : controls.values()) {
 			if (control instanceof IInformationControlExtension) {
-				if (((IInformationControlExtension)control).hasContents()) {
+				if (((IInformationControlExtension) control).hasContents()) {
 					return true;
 				}
 			} else {
@@ -69,15 +73,15 @@ public class CompositeInformationControl extends AbstractInformationControl impl
 	public void setInput(Object input) {
 		int withContent = 0;
 		@SuppressWarnings("unchecked")
-		Map<ITextHover, Object> inputs = (Map<ITextHover, Object>)input;
+		Map<ITextHover, Object> inputs = (Map<ITextHover, Object>) input;
 		for (Entry<ITextHover, Object> entry : inputs.entrySet()) {
 			AbstractInformationControl informationControl = controls.get(entry.getKey());
 			if (informationControl != null) {
 				if (informationControl instanceof IInformationControlExtension2) {
-					((IInformationControlExtension2)informationControl).setInput(entry.getValue());
+					((IInformationControlExtension2) informationControl).setInput(entry.getValue());
 				} else {
 					String information = entry.getValue().toString();
-					if(!information.isEmpty()){
+					if (!information.isEmpty()) {
 						informationControl.setInformation(information);
 					}
 				}
@@ -97,14 +101,15 @@ public class CompositeInformationControl extends AbstractInformationControl impl
 	@Override
 	public void createContent(Composite parent) {
 		this.controls = new LinkedHashMap<>(); // TODO maybe use canReuse or canReplace
-		GridLayout layout = new GridLayout(1, false);
+		layout = new GridLayout(1, false);
 		parent.setLayout(layout);
 		for (Entry<ITextHover, IInformationControlCreator> hoverControlCreator : this.creators.entrySet()) {
-			IInformationControl informationControl = hoverControlCreator.getValue().createInformationControl(parent.getShell());
+			IInformationControl informationControl = hoverControlCreator.getValue()
+					.createInformationControl(parent.getShell());
 			if (informationControl instanceof AbstractInformationControl abstractInformationControl) {
 				List<Control> children = Arrays.asList(abstractInformationControl.getShell().getChildren());
 				children.remove(parent);
-				if (children.isEmpty() ) {
+				if (children.isEmpty()) {
 					continue;
 				}
 				for (Control control : children) {
@@ -112,8 +117,10 @@ public class CompositeInformationControl extends AbstractInformationControl impl
 				}
 				controls.put(hoverControlCreator.getKey(), abstractInformationControl);
 			} else {
-				GenericEditorPlugin.getDefault().getLog().log(new Status(IStatus.WARNING, GenericEditorPlugin.BUNDLE_ID,
-						"Only text hovers producing an AbstractInformationControl can be aggregated; got a " + informationControl.getClass().getSimpleName())); //$NON-NLS-1$
+				GenericEditorPlugin.getDefault().getLog()
+						.log(new Status(IStatus.WARNING, GenericEditorPlugin.BUNDLE_ID,
+								"Only text hovers producing an AbstractInformationControl can be aggregated; got a " //$NON-NLS-1$
+										+ informationControl.getClass().getSimpleName()));
 				informationControl.dispose();
 			}
 		}
@@ -133,7 +140,7 @@ public class CompositeInformationControl extends AbstractInformationControl impl
 		} else if (controls.size() == 1) {
 			IInformationControl control = controls.values().iterator().next();
 			if (control instanceof IInformationControlExtension5) {
-				return ((IInformationControlExtension5)control).getInformationPresenterControlCreator();
+				return ((IInformationControlExtension5) control).getInformationPresenterControlCreator();
 			}
 		} else {
 			LinkedHashMap<ITextHover, IInformationControlCreator> presenterCreators = new LinkedHashMap<>();
@@ -141,7 +148,8 @@ public class CompositeInformationControl extends AbstractInformationControl impl
 			for (Entry<ITextHover, AbstractInformationControl> hover : this.controls.entrySet()) {
 				IInformationControlCreator creator = null;
 				if (hover.getValue() instanceof IInformationControlExtension5)
-				creator = ((IInformationControlExtension5)hover.getValue()).getInformationPresenterControlCreator();
+					creator = ((IInformationControlExtension5) hover.getValue())
+							.getInformationPresenterControlCreator();
 				if (creator == null) {
 					creator = this.creators.get(hover.getKey());
 				} else {
@@ -160,8 +168,22 @@ public class CompositeInformationControl extends AbstractInformationControl impl
 	}
 
 	@Override
+	public Point computeSizeConstraints(int widthInChars, int heightInChars) {
+		return computeCompositeSize(ctrl -> ctrl.computeSizeConstraints(widthInChars, heightInChars),
+				() -> super.computeSizeConstraints(widthInChars, heightInChars));
+	}
+
+	@Override
 	public Point computeSizeHint() {
-		return getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		return computeCompositeSize(AbstractInformationControl::computeSizeHint,
+				() -> getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
+	}
+
+	private Point computeCompositeSize(Function<AbstractInformationControl, Point> computeSize,
+			Supplier<Point> getDefault) {
+		return controls.values().stream().map(computeSize)
+				.reduce((size1, size2) -> new Point(size1.x + size2.x, size1.y + size2.y + layout.verticalSpacing))
+				.orElseGet(getDefault);
 	}
 
 }
