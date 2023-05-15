@@ -55,6 +55,7 @@ public class PipelineChainTest extends NavigatorTestBase {
 		activateAndWait(EXTENSIONS);
 	}
 
+
 	private void _initContentWithLabel() {
 		String[] EXTENSIONS = new String[] {
 				COMMON_NAVIGATOR_RESOURCE_EXT,
@@ -84,22 +85,22 @@ public class PipelineChainTest extends NavigatorTestBase {
 	public void testPipelinedChildren() throws Exception
 	{
 		_initContent();
-		_testPipelinedChildren();
+		_testPipelinedChildren("testPipelinedChildren");
 	}
 
 	@Test
 	public void testPipelinedChildrenWithLabel() throws Exception
 	{
 		_initContentWithLabel();
-		_testPipelinedChildren();
+		_testPipelinedChildren("testPipelinedChildrenWithLabel");
 	}
 
-	private void _testPipelinedChildren() throws CoreException {
+	private void _testPipelinedChildren(String testName) throws CoreException {
 		final String NEW_FOLDER = "newFolder_" + System.currentTimeMillis();
 
 		IFolder newFolder = _p1.getFolder(NEW_FOLDER);
 
-		TestPipelineProvider.reset();
+		TestPipelineProvider.reset(testName);
 		newFolder.create(true, true, new NullProgressMonitor());
 		TreeItem[] rootItems = _viewer.getTree().getItems();
 
@@ -118,7 +119,7 @@ public class PipelineChainTest extends NavigatorTestBase {
 	public void testInterceptAdd() throws CoreException
 	{
 		_initContent();
-		_testInterceptAdd();
+		_testInterceptAdd("testInterceptAdd");
 	}
 
 	/** Verifies that interceptAdd is called in the right sequence */
@@ -126,10 +127,10 @@ public class PipelineChainTest extends NavigatorTestBase {
 	public void testInterceptAddWithLabel() throws CoreException
 	{
 		_initContentWithLabel();
-		_testInterceptAdd();
+		_testInterceptAdd("testInterceptAddWithLabel");
 	}
 
-	private void _testInterceptAdd() throws CoreException {
+	private void _testInterceptAdd(String testName) throws CoreException {
 		final String NEW_FOLDER_1 = "newFolder1";
 
 
@@ -138,7 +139,7 @@ public class PipelineChainTest extends NavigatorTestBase {
 		_expand(rootItems);
 
 		IFolder newFolder1 = _p1.getFolder(NEW_FOLDER_1);
-		TestPipelineProvider.reset();
+		TestPipelineProvider.reset(testName);
 		newFolder1.create(true, true, new NullProgressMonitor());
 
 		assertEquals("Wrong query sequence for interceptAdd", "ACGFBDE",
@@ -151,7 +152,7 @@ public class PipelineChainTest extends NavigatorTestBase {
 	public void testInterceptRemove() throws CoreException
 	{
 		_initContent();
-		_testInterceptRemove();
+		_testInterceptRemove("testInterceptRemove");
 	}
 
 	/** Verifies that interceptRemove is called in the right sequence */
@@ -160,10 +161,10 @@ public class PipelineChainTest extends NavigatorTestBase {
 	public void testInterceptRemoveWithLabel() throws CoreException
 	{
 		_initContentWithLabel();
-		_testInterceptRemove();
+		_testInterceptRemove("testInterceptRemoveWithLabel");
 	}
 
-	private void _testInterceptRemove() throws CoreException {
+	private void _testInterceptRemove(String testName) throws CoreException {
 		final String NEW_FOLDER_1 = "newFolder1";
 
 
@@ -176,7 +177,7 @@ public class PipelineChainTest extends NavigatorTestBase {
 			newFolder1.create(true, true, new NullProgressMonitor());
 		}
 
-		TestPipelineProvider.reset();
+		TestPipelineProvider.reset(testName);
 		newFolder1.delete(true, new NullProgressMonitor());
 
 		assertEquals("Wrong query sequence for interceptRemove", "ACGFBDE",
@@ -189,7 +190,7 @@ public class PipelineChainTest extends NavigatorTestBase {
 	public void testInterceptRefreshOnChildTypeChange() throws CoreException
 	{
 		_initContent();
-		_testInterceptRefreshOnChildTypeChange();
+		_testInterceptRefreshOnChildTypeChange("testInterceptRefreshOnChildTypeChange");
 	}
 
 	/** Verifies that interceptRefresh or interceptUpdate is called in the right sequence */
@@ -198,10 +199,10 @@ public class PipelineChainTest extends NavigatorTestBase {
 	public void testInterceptRefreshOnChildTypeChangeWithLabel() throws CoreException
 	{
 		_initContentWithLabel();
-		_testInterceptRefreshOnChildTypeChange();
+		_testInterceptRefreshOnChildTypeChange("testInterceptRefreshOnChildTypeChangeWithLabel");
 	}
 
-	private void _testInterceptRefreshOnChildTypeChange() throws CoreException {
+	private void _testInterceptRefreshOnChildTypeChange(String testName) throws CoreException {
 
 		final IFile file2 = _p2.getFile("file2.txt");
 
@@ -210,7 +211,7 @@ public class PipelineChainTest extends NavigatorTestBase {
 			file2.create(null, true, null);
 		};
 
-		TestPipelineProvider.reset();
+		TestPipelineProvider.reset(testName);
 		ResourcesPlugin.getWorkspace().run(runnable, new NullProgressMonitor());
 
 		assertEquals("Wrong query sequence for interceptRefresh/update", "ACGFBDE",
@@ -223,7 +224,7 @@ public class PipelineChainTest extends NavigatorTestBase {
 	public void testInterceptUpdate() throws CoreException
 	{
 		_initContent();
-		_testInterceptUpdate();
+		_testInterceptUpdate("testInterceptUpdate");
 	}
 
 	// Bug 285529 Incorrect pipeline logic for interceptXXX methods
@@ -231,10 +232,10 @@ public class PipelineChainTest extends NavigatorTestBase {
 	public void testInterceptUpdateWithLabel() throws CoreException
 	{
 		_initContentWithLabel();
-		_testInterceptUpdate();
+		_testInterceptUpdate("testInterceptUpdateWithLabel");
 	}
 
-	private void _testInterceptUpdate() throws CoreException {
+	private void _testInterceptUpdate(String testName) throws CoreException {
 		final String NEW_FOLDER_1 = "newFolder1";
 
 
@@ -247,13 +248,10 @@ public class PipelineChainTest extends NavigatorTestBase {
 			newFolder1.create(true, true, new NullProgressMonitor());
 		}
 
-		TestPipelineProvider.reset();
+		TestPipelineProvider.reset(testName);
 		newFolder1.move(newFolder1.getFullPath().removeLastSegments(1).append("newFolderRenamed"), true, null);
 
 		assertEquals("Wrong query sequence for interceptUpdate", "ACGFBDE",
 				TestPipelineProvider.REMOVES.get(newFolder1));
 	}
-
-
-
 }

@@ -42,11 +42,8 @@ import org.eclipse.ui.tests.navigator.m12.model.ResourceWrapper;
  */
 public class TestPipelineProvider extends ResourceWrapperContentProvider {
 
-	public static final Map ELEMENTS = new HashMap(),
-	CHILDREN = new HashMap(),
-	ADDS = new HashMap(),
-	REMOVES = new HashMap(),
-	UPDATES = new HashMap();
+	public static final Map ELEMENTS = new HashMap(), CHILDREN = new HashMap(), ADDS = new HashMap(),
+			REMOVES = new HashMap(), UPDATES = new HashMap();
 
 	private String _id;
 
@@ -71,7 +68,6 @@ public class TestPipelineProvider extends ResourceWrapperContentProvider {
 		_track(ELEMENTS, anInput, _id);
 	}
 
-
 	@Override
 	public boolean hasPipelinedChildren(Object anInput, boolean currentHasChildren) {
 		return currentHasChildren;
@@ -94,13 +90,13 @@ public class TestPipelineProvider extends ResourceWrapperContentProvider {
 	 */
 	private void _track(Map map, Object key, String id) {
 		if (key instanceof ResourceWrapper) {
-			key = ((ResourceWrapper)key).getResource();
+			key = ((ResourceWrapper) key).getResource();
 		}
 
 		System.out.println("track:  " + mapName(map) + " " + key + " id: " + id);
 
 		String queries = (String) map.get(key);
-		StringBuilder buf = new StringBuilder(queries==null ? "" : queries);
+		StringBuilder buf = new StringBuilder(queries == null ? "" : queries);
 		buf.append(id);
 		map.put(key, buf.toString());
 	}
@@ -108,7 +104,7 @@ public class TestPipelineProvider extends ResourceWrapperContentProvider {
 	@Override
 	public PipelinedShapeModification interceptAdd(PipelinedShapeModification anAddModification) {
 		Set children = anAddModification.getChildren();
-		for (Iterator it = children.iterator(); it.hasNext(); ) {
+		for (Iterator it = children.iterator(); it.hasNext();) {
 			_track(ADDS, it.next(), _id);
 		}
 		return super.interceptAdd(anAddModification);
@@ -117,7 +113,7 @@ public class TestPipelineProvider extends ResourceWrapperContentProvider {
 	@Override
 	public boolean interceptRefresh(PipelinedViewerUpdate update) {
 		Set targets = update.getRefreshTargets();
-		for (Iterator it = targets.iterator(); it.hasNext(); ) {
+		for (Iterator it = targets.iterator(); it.hasNext();) {
 			_track(UPDATES, it.next(), _id);
 		}
 		return super.interceptRefresh(update);
@@ -126,7 +122,7 @@ public class TestPipelineProvider extends ResourceWrapperContentProvider {
 	@Override
 	public PipelinedShapeModification interceptRemove(PipelinedShapeModification aRemoveModification) {
 		Set children = aRemoveModification.getChildren();
-		for (Iterator it = children.iterator(); it.hasNext(); ) {
+		for (Iterator it = children.iterator(); it.hasNext();) {
 			_track(REMOVES, it.next(), _id);
 		}
 		return super.interceptRemove(aRemoveModification);
@@ -135,7 +131,7 @@ public class TestPipelineProvider extends ResourceWrapperContentProvider {
 	@Override
 	public boolean interceptUpdate(PipelinedViewerUpdate update) {
 		Set targets = update.getRefreshTargets();
-		for (Iterator it = targets.iterator(); it.hasNext(); ) {
+		for (Iterator it = targets.iterator(); it.hasNext();) {
 			_track(UPDATES, it.next(), _id);
 		}
 		return super.interceptUpdate(update);
@@ -146,7 +142,7 @@ public class TestPipelineProvider extends ResourceWrapperContentProvider {
 		_id = config.getExtension().getId();
 		int i = _id.lastIndexOf('.');
 		if (i >= 0) {
-			_id = _id.substring(i+1);
+			_id = _id.substring(i + 1);
 		}
 
 	}
@@ -155,7 +151,7 @@ public class TestPipelineProvider extends ResourceWrapperContentProvider {
 	public Object[] getChildren(Object parentElement) {
 		try {
 			_track(CHILDREN, parentElement, _id + "1");
-			return ((ResourceWrapper)parentElement).getChildren();
+			return ((ResourceWrapper) parentElement).getChildren();
 		} catch (CoreException e) {
 			e.printStackTrace();
 			return NO_CHILDREN;
@@ -199,10 +195,9 @@ public class TestPipelineProvider extends ResourceWrapperContentProvider {
 	}
 
 	@Override
-	protected Object _convertToModelObject(Object object)
-	{
+	protected Object _convertToModelObject(Object object) {
 		if (object instanceof IResource) {
-			return M1Core.getModelObject((IResource)object);
+			return M1Core.getModelObject((IResource) object);
 		}
 		return null;
 	}
@@ -221,16 +216,18 @@ public class TestPipelineProvider extends ResourceWrapperContentProvider {
 		return "??? unknown";
 	}
 
-	/**
-	 *
-	 */
-	public static void reset() {
-		ELEMENTS.clear();
-		CHILDREN.clear();
-		ADDS.clear();
-		REMOVES.clear();
-		UPDATES.clear();
+	public static void reset(String hint) {
+		System.out.println(hint + ": Clearing all maps!");
+		logAndClear(ELEMENTS);
+		logAndClear(CHILDREN);
+		logAndClear(ADDS);
+		logAndClear(REMOVES);
+		logAndClear(UPDATES);
+	}
 
+	private static void logAndClear(Map m) {
+		System.out.println("Clearing " + mapName(m) + " (it had " + m.size() + " entries)");
+		m.clear();
 	}
 
 }
