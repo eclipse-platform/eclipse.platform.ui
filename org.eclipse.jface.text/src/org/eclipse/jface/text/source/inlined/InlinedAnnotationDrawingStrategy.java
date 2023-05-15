@@ -16,9 +16,12 @@ package org.eclipse.jface.text.source.inlined;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.GlyphMetrics;
 import org.eclipse.swt.graphics.Point;
@@ -37,6 +40,31 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 		this.viewer = viewer;
 	}
 
+	private static final String INLINE_ANNOTATION_FONT = InlinedAnnotationDrawingStrategy.class.getSimpleName() + ".font"; //$NON-NLS-1$
+
+	private record GCConfig(Color foreground, Color background, Font font) {
+
+		private static final GCConfig NO_CONFIG = new GCConfig(null, null, null);
+		public static GCConfig fromGC(GC gc) {
+			return gc != null ? new GCConfig(gc.getForeground(), gc.getBackground(), gc.getFont()) : NO_CONFIG;
+		}
+
+		public void applyTo(GC gc) {
+			if (gc == null) {
+				return;
+			}
+			if (foreground != null) {
+				gc.setForeground(foreground);
+			}
+			if (background != null) {
+				gc.setBackground(background);
+			}
+			if (font != null) {
+				gc.setFont(font);
+			}
+		}
+	}
+
 	@Override
 	public void draw(Annotation annotation, GC gc, StyledText textWidget, int widgetOffset, int length, Color color) {
 		if (annotation instanceof AbstractInlinedAnnotation inlinedAnnotation) {
@@ -46,10 +74,48 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 			InlinedAnnotationSupport support = InlinedAnnotationSupport.getSupport(textWidget);
 			inlinedAnnotation.setSupport(support);
 			if (support.isInVisibleLines(widgetOffset) && inlinedAnnotation.isFirstVisibleOffset(widgetOffset, viewer)) {
-				draw((AbstractInlinedAnnotation) annotation, gc, textWidget, widgetOffset, length,
-						color);
+				GCConfig initialGCConfig = GCConfig.fromGC(gc);
+				GCConfig annotationGCConfig = new GCConfig(color, textWidget.getBackground(), getAnnotationFont(textWidget));
+				annotationGCConfig.applyTo(gc);
+
+				draw(inlinedAnnotation, gc, textWidget, widgetOffset, length, color);
+				initialGCConfig.applyTo(gc);
 			}
 		}
+	}
+
+	private Font getAnnotationFont(StyledText textWidget) {
+		Font annotationFont = (Font)textWidget.getData(INLINE_ANNOTATION_FONT);
+		if (!match(annotationFont, textWidget)) {
+			if (annotationFont != null) {
+				annotationFont.dispose();
+			}
+			annotationFont = null;
+		}
+		if (annotationFont == null) {
+			annotationFont = createInlineAnnotationFont(textWidget);
+			textWidget.setData(INLINE_ANNOTATION_FONT, annotationFont);
+			textWidget.addDisposeListener(e -> ((Font)textWidget.getData(INLINE_ANNOTATION_FONT)).dispose());
+		}
+		return annotationFont;
+	}
+
+	private Font createInlineAnnotationFont(StyledText widget) {
+		Font initialFont = widget.getFont();
+		FontData[] fontData = initialFont.getFontData();
+		for (FontData data : fontData) {
+			data.setStyle(data.getStyle() | SWT.ITALIC);
+		}
+		return new Font(initialFont.getDevice(), fontData);
+	}
+
+	private boolean match(Font annotationFont, StyledText widget) {
+		if (annotationFont == null) {
+			return false;
+		}
+		int widgetFontHeight = widget.getFont().getFontData()[0].getHeight();
+		int annotationFontHeight = annotationFont.getFontData()[0].getHeight();
+		return annotationFontHeight == widgetFontHeight; 
 	}
 
 	/**
@@ -281,7 +347,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 
 			// When line text has line header annotation, there is a space on the top, adjust the y by using char height
 			int verticalDrawingOffset= charBounds.height - textWidget.getLineHeight();
-			annotationBounds.y+= verticalDrawingOffset;
+			annotationBounds.y += verticalDrawingOffset;
 
 			// Draw the line content annotation
 			annotation.setLocation(annotationBounds.x, annotationBounds.y);

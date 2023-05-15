@@ -141,14 +141,12 @@ public class CodeMiningLineContentAnnotation extends LineContentAnnotation imple
 			}
 			// draw the mining
 			if (nbDraw > 0) {
-				initGC(textWidget, color, gc);
 				gc.drawText(SEPARATOR, x, y);
 				if (separatorWidth == -1) {
 					separatorWidth= gc.stringExtent(SEPARATOR).x;
 				}
 				x+= separatorWidth;
 			}
-			initGC(textWidget, color, gc);
 			@SuppressWarnings("null")
 			Point loc= mining.draw(gc, textWidget, color, x, y);
 			fBounds.add(new Rectangle(x, y, loc.x, loc.y));
@@ -156,19 +154,6 @@ public class CodeMiningLineContentAnnotation extends LineContentAnnotation imple
 			nbDraw++;
 		}
 		return x - originalX;
-	}
-
-	/**
-	 * Initialize GC with given color and styled text background color and font.
-	 *
-	 * @param textWidget the text widget
-	 * @param color      the color
-	 * @param gc         the gc to initialize
-	 */
-	private void initGC(StyledText textWidget, Color color, GC gc) {
-		gc.setForeground(color);
-		gc.setBackground(textWidget.getBackground());
-		gc.setFont(textWidget.getFont());
 	}
 
 	@Override
