@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Rolf Theunissen <rolf.theunissen@gmail.com> - Bug 546632, 564561
+ *     Ole Osterhagen <ole@osterhagen.info> - Issue 230
  ******************************************************************************/
 
 package org.eclipse.e4.ui.workbench.renderers.swt;
@@ -20,6 +21,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.InvocationHandler;
@@ -51,6 +53,7 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Widget;
@@ -493,6 +496,37 @@ public class StackRendererTest {
 
 		expected = new Rectangle(StackRenderer.ONBOARDING_SPACING, StackRenderer.ONBOARDING_TOP_SPACING, 0, 0);
 		assertEquals(expected, outerOnboardingComposite.getBounds());
+	}
+
+	/**
+	 * https://github.com/eclipse-platform/eclipse.platform.ui/issues/230
+	 */
+	@Test
+	public void testToolbarIsReparentedToNewCompositeForTopRightOfTabFolder() {
+		MPartStack partStack2 = ems.createModelElement(MPartStack.class);
+		window.getChildren().add(partStack2);
+
+		MPart part = ems.createModelElement(MPart.class);
+		part.setToolbar(ems.createModelElement(MToolBar.class));
+
+		MPlaceholder placeHolder1 = ems.createModelElement(MPlaceholder.class);
+		placeHolder1.setRef(part);
+		partStack.getChildren().add(placeHolder1);
+
+		MPlaceholder placeHolder2 = ems.createModelElement(MPlaceholder.class);
+		placeHolder2.setRef(part);
+		partStack2.getChildren().add(placeHolder2);
+
+		// Ensure that the placeholder for the part is selected. Otherwise it would be
+		// selected by the framework which triggers a selection event. This event would
+		// re-parent the toolbar anyway.
+		partStack2.setSelectedElement(placeHolder2);
+
+		contextRule.createAndRunWorkbench(window);
+
+		CTabFolder tabFolder = (CTabFolder) partStack2.getWidget();
+		Control toolbarControl = (Control) part.getToolbar().getWidget();
+		assertSame(tabFolder.getTopRight(), toolbarControl.getParent());
 	}
 
 	// helper functions
