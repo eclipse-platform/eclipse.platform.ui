@@ -14,6 +14,7 @@
  *     Fabio Zadrozny (fabiofz@gmail.com) - Bug 436763
  *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 457939
  *     Rolf Theunissen <rolf.theunissen@gmail.com> - Bug 564561
+ *     Ole Osterhagen <ole@osterhagen.info> - Issue 230
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -26,6 +27,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
@@ -313,6 +315,13 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			MToolBar toolbar = ((MPart) element).getToolbar();
 			if (toolbar != null) {
 				toolbar.setVisible(true);
+
+				// Ensure that the toolbar control is under its 'real' parent
+				AbstractPartRenderer renderer = (AbstractPartRenderer) element.getRenderer();
+				if (renderer != null && renderer.getUIContainer(toolbar) instanceof Composite composite
+						&& toolbar.getWidget() instanceof Control control && control.getParent() != composite) {
+					control.setParent(composite);
+				}
 			}
 		}
 
