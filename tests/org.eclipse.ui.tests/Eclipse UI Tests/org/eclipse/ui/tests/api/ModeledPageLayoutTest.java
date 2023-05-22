@@ -95,9 +95,9 @@ public class ModeledPageLayoutTest {
 
 		assertThat(perspective.getTags(),
 				hasItems(
-						ModeledPageLayout.EDITOR_ONBOARDING_COMMAND + "Find Actions$$$"
+						ModeledPageLayout.EDITOR_ONBOARDING_COMMAND + "Find Actions: "
 								+ KeySequence.getInstance("M1+3").format(),
-						ModeledPageLayout.EDITOR_ONBOARDING_COMMAND + "Show Key Assist$$$"
+						ModeledPageLayout.EDITOR_ONBOARDING_COMMAND + "Show Key Assist: "
 								+ KeySequence.getInstance("M2+M1+L").format()));
 	}
 

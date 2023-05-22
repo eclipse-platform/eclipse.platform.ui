@@ -443,7 +443,7 @@ public class StackRendererTest {
 		MPerspective perspective = ems.createModelElement(MPerspective.class);
 		perspective.getTags().add("persp.editorOnboardingText:Onboarding text");
 		perspective.getTags().add("persp.editorOnboardingImageUri:" + PART_ICON);
-		perspective.getTags().add("persp.editorOnboardingCommand:Find Actions$$$STRG+3");
+		perspective.getTags().add("persp.editorOnboardingCommand:Find Actions: STRG+3");
 
 		partStack.getTags().add("EditorStack");
 
@@ -461,11 +461,10 @@ public class StackRendererTest {
 
 		Composite outerOnboardingComposite = (Composite) tabFolder.getChildren()[2];
 		Composite innerOnboardingComposite = (Composite) outerOnboardingComposite.getChildren()[0];
-		assertEquals(4, innerOnboardingComposite.getChildren().length);
+		assertEquals(3, innerOnboardingComposite.getChildren().length);
 		assertNotNull(((Label) innerOnboardingComposite.getChildren()[0]).getImage());
 		assertEquals("Onboarding text", ((Label) innerOnboardingComposite.getChildren()[1]).getText());
-		assertEquals("Find Actions", ((Label) innerOnboardingComposite.getChildren()[2]).getText());
-		assertEquals("STRG+3", ((Label) innerOnboardingComposite.getChildren()[3]).getText());
+		assertEquals("Find Actions: STRG+3", ((Label) innerOnboardingComposite.getChildren()[2]).getText());
 	}
 
 	@Test
