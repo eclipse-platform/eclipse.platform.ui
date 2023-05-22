@@ -21,7 +21,7 @@
 
   <groupId>eclipse.platform.ui</groupId>
   <artifactId>org.eclipse.e4.tools.emf.ui</artifactId>
-  <version>4.8.0-SNAPSHOT</version>
+  <version>4.8.100-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 
   <properties>

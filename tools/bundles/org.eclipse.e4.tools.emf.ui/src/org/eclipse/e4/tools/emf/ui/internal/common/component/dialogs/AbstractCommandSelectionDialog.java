@@ -14,6 +14,8 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,10 +73,14 @@ public abstract class AbstractCommandSelectionDialog extends SaveDialogBoundsSet
 		setTitle(getDialogTitle());
 		setMessage(getDialogMessage());
 
-		final Image titleImage = new Image(composite.getDisplay(), getClass().getClassLoader().getResourceAsStream(
-				"/icons/full/wizban/newexp_wiz.png")); //$NON-NLS-1$
-		setTitleImage(titleImage);
-		getShell().addDisposeListener(e -> titleImage.dispose());
+		try (InputStream resourceStream = getClass().getClassLoader()
+				.getResourceAsStream("/icons/full/wizban/newexp_wiz.png")) { //$NON-NLS-1$
+			final Image titleImage = new Image(composite.getDisplay(), resourceStream);
+			setTitleImage(titleImage);
+			getShell().addDisposeListener(e -> titleImage.dispose());
+		} catch (IOException ex) {
+			throw new RuntimeException(ex);
+		}
 
 		final Composite container = new Composite(composite, SWT.NONE);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
