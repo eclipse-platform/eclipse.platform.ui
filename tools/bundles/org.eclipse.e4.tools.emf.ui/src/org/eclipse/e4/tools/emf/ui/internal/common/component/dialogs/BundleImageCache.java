@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -94,8 +96,13 @@ public class BundleImageCache {
 
 	protected Image getPlaceholder() {
 		if (imgPlaceholder == null) {
-			imgPlaceholder = new Image(Display.getDefault(),
-				classloader.getResourceAsStream("/icons/full/obj16/missing_image_placeholder.png")); //$NON-NLS-1$
+			try (InputStream resourceStream = classloader
+					.getResourceAsStream("/icons/full/obj16/missing_image_placeholder.png")) { //$NON-NLS-1$
+				imgPlaceholder = new Image(Display.getDefault(),
+						resourceStream);
+			} catch (IOException ex) {
+				throw new RuntimeException(ex);
+			}
 		}
 		return imgPlaceholder;
 	}
