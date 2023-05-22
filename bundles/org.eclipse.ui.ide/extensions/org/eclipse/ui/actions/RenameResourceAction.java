@@ -241,7 +241,9 @@ public class RenameResourceAction extends WorkspaceAction {
 		TreeItem[] selectedItems = tree.getSelection();
 		treeEditor.horizontalAlignment = SWT.LEFT;
 		treeEditor.grabHorizontal = true;
-		treeEditor.setEditor(result, selectedItems[0]);
+		if (selectedItems.length != 0) {
+			treeEditor.setEditor(result, selectedItems[0]);
+		}
 		return result;
 	}
 
