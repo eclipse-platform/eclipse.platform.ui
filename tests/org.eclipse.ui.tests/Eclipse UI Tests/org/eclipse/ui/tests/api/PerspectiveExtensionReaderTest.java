@@ -80,7 +80,7 @@ public class PerspectiveExtensionReaderTest {
 		assertThat(perspective.getTags(), hasItems(//
 				EDITOR_ONBOARDING_TEXT + "The onboarding text", //
 				EDITOR_ONBOARDING_IMAGE + "platform:/plugin/org.eclipse.ui.tests/icons/anything.gif", //
-				EDITOR_ONBOARDING_COMMAND + "Find Actions: " + KeySequence.getInstance("M1+3").format()));
+				EDITOR_ONBOARDING_COMMAND + "Find Actions$$$" + KeySequence.getInstance("M1+3").format()));
 	}
 
 	private MKeyBinding createBinding(String elementId, String name, String keys) {
