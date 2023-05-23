@@ -266,8 +266,8 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 							if ((autoActivated && hasProposals) || !autoActivated) {
 								setProposals(fComputedProposals, false);
 								displayProposals(true);
-							} else if (isValid(fProposalShell) && fProposalShell.isVisible() && remaining.get() == 0) {
-								hide(); // we only tear down if the popup is visible.
+							} else if (isValid(fProposalShell) && (!fProposalShell.isVisible() || !hasProposals) && remaining.get() == 0) {
+								hide(); // we only tear down if the popup is not visible or it is visible but has no proposals.
 							}
 						}
 					});
