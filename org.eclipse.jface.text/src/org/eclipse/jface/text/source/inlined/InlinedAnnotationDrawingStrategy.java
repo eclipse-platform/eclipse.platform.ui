@@ -13,6 +13,9 @@
  */
 package org.eclipse.jface.text.source.inlined;
 
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
@@ -21,9 +24,6 @@ import org.eclipse.swt.graphics.GlyphMetrics;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 
-import org.eclipse.jface.text.source.Annotation;
-import org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy;
-
 /**
  * {@link IDrawingStrategy} implementation to render {@link AbstractInlinedAnnotation}.
  *
@@ -31,15 +31,24 @@ import org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy;
  */
 class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 
+	private final ITextViewer viewer;
+
+	public InlinedAnnotationDrawingStrategy(ITextViewer viewer) {
+		this.viewer = viewer;
+	}
+
 	@Override
 	public void draw(Annotation annotation, GC gc, StyledText textWidget, int widgetOffset, int length, Color color) {
-		if (!(annotation instanceof AbstractInlinedAnnotation)) {
-			return;
-		}
-		AbstractInlinedAnnotation inlinedAnnotation= (AbstractInlinedAnnotation) annotation;
-		if (inlinedAnnotation.isInVisibleLines() && inlinedAnnotation.isFirstVisibleOffset(widgetOffset)) {
-			draw((AbstractInlinedAnnotation) annotation, gc, textWidget, widgetOffset, length,
-					color);
+		if (annotation instanceof AbstractInlinedAnnotation inlinedAnnotation) {
+			if (textWidget != viewer.getTextWidget()) {
+				throw new IllegalArgumentException("Text widget and Text viewer are not related!"); //$NON-NLS-1$
+			}
+			InlinedAnnotationSupport support = InlinedAnnotationSupport.getSupport(textWidget);
+			inlinedAnnotation.setSupport(support);
+			if (support.isInVisibleLines(widgetOffset) && inlinedAnnotation.isFirstVisibleOffset(widgetOffset, viewer)) {
+				draw((AbstractInlinedAnnotation) annotation, gc, textWidget, widgetOffset, length,
+						color);
+			}
 		}
 	}
 
@@ -126,9 +135,9 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 	 */
 	private static void draw(LineContentAnnotation annotation, GC gc, StyledText textWidget, int widgetOffset, int length,
 			Color color) {
-		if (annotation.isEndOfLine(widgetOffset)) {
+		if (annotation.isEndOfLine(widgetOffset, textWidget)) {
 			drawAfterLine(annotation, gc, textWidget, widgetOffset, length, color);
-		} else if (annotation.drawRightToPreviousChar(widgetOffset)) {
+		} else if (LineContentAnnotation.drawRightToPreviousChar(widgetOffset, textWidget)) {
 			drawAsRightOfPreviousCharacter(annotation, gc, textWidget, widgetOffset, length, color);
 		} else {
 			drawAsLeftOf1stCharacter(annotation, gc, textWidget, widgetOffset, length, color);
@@ -202,7 +211,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 					// END TO REMOVE
 
 					// Annotation takes place, add GlyphMetrics width to the style
-					StyleRange newStyle= annotation.updateStyle(style, gc.getFontMetrics());
+					StyleRange newStyle= annotation.updateStyle(style, gc.getFontMetrics(), textWidget.getData() instanceof ITextViewer viewer ? viewer : annotation.getViewer());
 					if (newStyle != null) {
 						textWidget.setStyleRange(newStyle);
 						return;
@@ -285,7 +294,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 				// END TO REMOVE
 
 				// Annotation takes place, add GlyphMetrics width to the style
-				StyleRange newStyle= annotation.updateStyle(style, gc.getFontMetrics());
+				StyleRange newStyle= annotation.updateStyle(style, gc.getFontMetrics(), InlinedAnnotationSupport.getSupport(textWidget).getViewer());
 				if (newStyle != null) {
 					textWidget.setStyleRange(newStyle);
 					return;

@@ -15,20 +15,19 @@ package org.eclipse.jface.text.source.inlined;
 
 import java.util.function.Consumer;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.GC;
-
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
 
 /**
  * Abstract class for inlined annotation.
@@ -71,7 +70,6 @@ public abstract class AbstractInlinedAnnotation extends Annotation {
 	protected AbstractInlinedAnnotation(Position position, ISourceViewer viewer) {
 		super(TYPE, false, ""); //$NON-NLS-1$
 		this.position= position;
-		fViewer= viewer;
 	}
 
 	/**
@@ -85,9 +83,9 @@ public abstract class AbstractInlinedAnnotation extends Annotation {
 		return position;
 	}
 
-	final Position computeWidgetPosition() {
-		if (fViewer instanceof ITextViewerExtension5) {
-			IRegion region= ((ITextViewerExtension5) fViewer).modelRange2WidgetRange(new Region(position.getOffset(), position.getLength()));
+	final Position computeWidgetPosition(ITextViewer viewer) {
+		if (viewer instanceof ITextViewerExtension5 projectionViewer) {
+			IRegion region= projectionViewer.modelRange2WidgetRange(new Region(position.getOffset(), position.getLength()));
 			if (region != null) {
 				return new Position(region.getOffset(), region.getLength());
 			} else {
@@ -191,6 +189,7 @@ public abstract class AbstractInlinedAnnotation extends Annotation {
 	 */
 	void setSupport(InlinedAnnotationSupport support) {
 		this.support= support;
+		this.fViewer = support.getViewer();
 	}
 
 	/**
@@ -203,10 +202,14 @@ public abstract class AbstractInlinedAnnotation extends Annotation {
 		return support.isInVisibleLines(getPosition().getOffset());
 	}
 
-	boolean isFirstVisibleOffset(int widgetOffset) {
-		if (fViewer instanceof ProjectionViewer) {
-			IRegion widgetRange= ((ProjectionViewer) fViewer).modelRange2WidgetRange(new Region(position.getOffset(), position.getLength()));
-			return widgetOffset == widgetRange.getOffset();
+	boolean isFirstVisibleOffset(int widgetOffset, ITextViewer viewer) {
+		if (viewer == null) {
+			// fail back to initial viewer
+			viewer = fViewer;
+		}
+		if (viewer instanceof ProjectionViewer projectionViewer) {
+			IRegion widgetRange= projectionViewer.modelRange2WidgetRange(new Region(position.getOffset(), position.getLength()));
+			return widgetRange != null && widgetOffset == widgetRange.getOffset();
 		} else {
 			return position.getOffset() == widgetOffset;
 		}
@@ -221,18 +224,6 @@ public abstract class AbstractInlinedAnnotation extends Annotation {
 	 */
 	protected boolean isInVisibleLines(int offset) {
 		return support.isInVisibleLines(offset);
-	}
-
-	/**
-	 * Returns the font according the specified <code>style</code> that the receiver will use to
-	 * paint textual information.
-	 *
-	 * @param style the style of Font widget to get.
-	 * @return the receiver's font according the specified <code>style</code>
-	 *
-	 */
-	Font getFont(int style) {
-		return support.getFont(style);
 	}
 
 	/**

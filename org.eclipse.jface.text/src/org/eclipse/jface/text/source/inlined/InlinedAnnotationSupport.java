@@ -58,7 +58,6 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationPainter;
-import org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
 import org.eclipse.jface.text.source.IAnnotationModelExtension2;
@@ -75,11 +74,6 @@ import org.eclipse.jface.text.source.ISourceViewer;
  * @since 3.13
  */
 public class InlinedAnnotationSupport {
-
-	/**
-	 * The annotation inlined strategy singleton.
-	 */
-	private static final IDrawingStrategy INLINED_STRATEGY= new InlinedAnnotationDrawingStrategy();
 
 	/**
 	 * The annotation inlined strategy ID.
@@ -114,10 +108,9 @@ public class InlinedAnnotationSupport {
 					.forEachRemaining(annotation -> {
 						if (annotation instanceof LineContentAnnotation) {
 							LineContentAnnotation ann= (LineContentAnnotation) annotation;
-							StyleRange style= ann.updateStyle(null, fFontMetrics);
+							StyleRange style= ann.updateStyle(null, fFontMetrics, fViewer);
 							if (style != null) {
-								if (fViewer instanceof ITextViewerExtension5) {
-									ITextViewerExtension5 projectionViewer= (ITextViewerExtension5) fViewer;
+								if (fViewer instanceof ITextViewerExtension5 projectionViewer) {
 									IRegion annotationRegion= projectionViewer.widgetRange2ModelRange(new Region(style.start, style.length));
 									style.start= annotationRegion.getOffset();
 									style.length= annotationRegion.getLength();
@@ -274,7 +267,7 @@ public class InlinedAnnotationSupport {
 		private void update(MouseEvent e) {
 			fAnnotation= null;
 			fAction= null;
-			AbstractInlinedAnnotation annotation= getInlinedAnnotationAtPoint(fViewer, e.x, e.y);
+			AbstractInlinedAnnotation annotation= getInlinedAnnotationAtPoint(e.x, e.y);
 			if (annotation != null) {
 				Consumer<MouseEvent> action= annotation.getAction(e);
 				if (action != null) {
@@ -360,6 +353,7 @@ public class InlinedAnnotationSupport {
 		if (text == null || text.isDisposed()) {
 			return;
 		}
+		text.setData(INLINED_STRATEGY_ID, this);
 		if (fViewer instanceof ITextViewerExtension4) {
 			updateStylesWidth= new UpdateStylesWidth();
 			((ITextViewerExtension4) fViewer).addTextPresentationListener(updateStylesWidth);
@@ -378,7 +372,7 @@ public class InlinedAnnotationSupport {
 	 * Initialize painter with inlined drawing strategy.
 	 */
 	private void initPainter() {
-		fPainter.addDrawingStrategy(INLINED_STRATEGY_ID, INLINED_STRATEGY);
+		fPainter.addDrawingStrategy(INLINED_STRATEGY_ID, new InlinedAnnotationDrawingStrategy(this.fViewer));
 		fPainter.addAnnotationType(AbstractInlinedAnnotation.TYPE, INLINED_STRATEGY_ID);
 	}
 
@@ -448,10 +442,6 @@ public class InlinedAnnotationSupport {
 		}
 		// Update annotation model
 		synchronized (getLockObject(annotationModel)) {
-			// Update annotations with this inlined annotation support.
-			for (AbstractInlinedAnnotation ann : annotations) {
-				ann.setSupport(this);
-			}
 			if (annotationsToAdd.isEmpty() && annotationsToRemove.isEmpty()) {
 				// None change, do nothing. Here the user could change position of codemining
 				// range
@@ -539,14 +529,14 @@ public class InlinedAnnotationSupport {
 	/**
 	 * Returns the {@link AbstractInlinedAnnotation} from the given point and null otherwise.
 	 *
-	 * @param viewer the source viewer
 	 * @param x      the x coordinate of the point
 	 * @param y      the y coordinate of the point
 	 * @return the {@link AbstractInlinedAnnotation} from the given point and null otherwise.
 	 */
-	private AbstractInlinedAnnotation getInlinedAnnotationAtPoint(ISourceViewer viewer, int x, int y) {
+	private AbstractInlinedAnnotation getInlinedAnnotationAtPoint(int x, int y) {
 		if (fInlinedAnnotations != null) {
 			for (AbstractInlinedAnnotation ann : fInlinedAnnotations) {
+				ann.setSupport(this);
 				if (ann.contains(x, y) && isInVisibleLines(ann.getPosition().getOffset())) {
 					return ann;
 				}
@@ -569,6 +559,7 @@ public class InlinedAnnotationSupport {
 		}
 		return visibleLines.isInVisibleLines(offset);
 	}
+
 
 	/**
 	 * Returns the font according the specified <code>style</code> that the receiver will use to
@@ -631,5 +622,17 @@ public class InlinedAnnotationSupport {
 		if (boldItalicFont != null)
 			boldItalicFont.dispose();
 		boldFont= italicFont= boldItalicFont= null;
+	}
+
+	/**
+	 * @return the contextual viewer (this one can change)
+	 */
+	ISourceViewer getViewer() {
+		return this.fViewer;
+	}
+
+	static InlinedAnnotationSupport getSupport(StyledText widget) {
+		return widget.getData(InlinedAnnotationSupport.INLINED_STRATEGY_ID) instanceof InlinedAnnotationSupport support ?
+			support : null;
 	}
 }

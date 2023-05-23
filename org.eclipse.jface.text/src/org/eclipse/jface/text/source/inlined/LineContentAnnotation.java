@@ -13,17 +13,17 @@
  */
 package org.eclipse.jface.text.source.inlined;
 
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.ITextViewerExtension5;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.TextPresentation;
+import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.GlyphMetrics;
-
-import org.eclipse.jface.text.ITextViewerExtension5;
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.TextPresentation;
-import org.eclipse.jface.text.source.ISourceViewer;
 
 /**
  * Inlined annotation which is drawn in the line content and which takes some place with a given
@@ -112,15 +112,17 @@ public class LineContentAnnotation extends AbstractInlinedAnnotation {
 	 *
 	 * @param style the current style and null otherwise.
 	 * @param fontMetrics font metrics
+	 * @param viewer the viewer where the annotation is to be rendered
 	 * @return the style to apply with GlyphMetrics width only if needed. It uses widget position,
 	 *         not model position.
 	 */
-	StyleRange updateStyle(StyleRange style, FontMetrics fontMetrics) {
-		Position widgetPosition= computeWidgetPosition();
+	StyleRange updateStyle(StyleRange style, FontMetrics fontMetrics, ITextViewer viewer) {
+		Position widgetPosition= computeWidgetPosition(viewer);
 		if (widgetPosition == null) {
 			return null;
 		}
-		boolean usePreviousChar= drawRightToPreviousChar(widgetPosition.getOffset());
+		StyledText textWidget = viewer.getTextWidget();
+		boolean usePreviousChar= drawRightToPreviousChar(widgetPosition.getOffset(), textWidget);
 		if (width == 0 || getRedrawnCharacterWidth() == 0) {
 			return null;
 		}
@@ -155,13 +157,12 @@ public class LineContentAnnotation extends AbstractInlinedAnnotation {
 		return style;
 	}
 
-	boolean drawRightToPreviousChar(int widgetOffset) {
+	static boolean drawRightToPreviousChar(int widgetOffset, StyledText textWidget) {
 		return widgetOffset > 0 &&
-				getTextWidget().getLineAtOffset(widgetOffset) == getTextWidget().getLineAtOffset(widgetOffset - 1);
+				textWidget.getLineAtOffset(widgetOffset) == textWidget.getLineAtOffset(widgetOffset - 1);
 	}
 
-	boolean isEndOfLine(int widgetOffset) {
-		StyledText text= getTextWidget();
+	boolean isEndOfLine(int widgetOffset, StyledText text) {
 		if (text.getCharCount() <= widgetOffset) { // Assuming widgetOffset >= 0
 			return true;
 		}
