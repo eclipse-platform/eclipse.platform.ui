@@ -184,6 +184,12 @@ public class StackRenderer extends LazyStackRenderer {
 	 */
 	public static final int ONBOARDING_SPACING = 2;
 
+	/**
+	 * The threshold to show the onbarding image. If tabfolder height gets below
+	 * this threshold, the image is hidden.
+	 */
+	public static final int ONBOARDING_SHOW_IMAGE_HEIGHT_THRESHOLD = 450;
+
 	private Image viewMenuImage;
 	private String viewMenuURI = "platform:/plugin/org.eclipse.e4.ui.workbench.renderers.swt/icons/full/elcl16/view_menu.png"; //$NON-NLS-1$
 
@@ -725,9 +731,10 @@ public class StackRenderer extends LazyStackRenderer {
 				.create(onboardingComposite);
 
 		onBoarding.setLocation(ONBOARDING_SPACING, ONBOARDING_TOP_SPACING);
-		Consumer<ControlEvent> sizeUpdate = e -> setOnboardingControlSize(tabFolder, onBoarding);
+		Consumer<ControlEvent> sizeUpdate = e -> setOnboardingControlSize(tabFolder, onBoarding, onboardingImage);
 		tabFolder.addControlListener(ControlListener.controlResizedAdapter(sizeUpdate));
-		Consumer<CTabFolderEvent> tabCountUpdate = e -> setOnboardingControlSize(tabFolder, onBoarding);
+		Consumer<CTabFolderEvent> tabCountUpdate = e -> setOnboardingControlSize(tabFolder, onBoarding,
+				onboardingImage);
 		tabFolder.addCTabFolder2Listener(CTabFolder2Listener.itemsCountAdapter(tabCountUpdate));
 
 		tabFolder.addDisposeListener(e -> {
@@ -738,14 +745,15 @@ public class StackRenderer extends LazyStackRenderer {
 		});
 	}
 
-	private void setOnboardingControlSize(CTabFolder tabFolder, Composite onBoarding) {
+	private void setOnboardingControlSize(CTabFolder tabFolder, Composite onBoarding, Label onBoardingImage) {
 		if (onBoarding == null || onBoarding.isDisposed() || tabFolder == null || tabFolder.isDisposed()) {
 			return;
 		}
-		boolean show = tabFolder.getItemCount() == 0;
-		boolean visible = onBoarding.isVisible();
-		if (show) {
-			if (!visible) {
+		boolean showComposite = tabFolder.getItemCount() == 0;
+		boolean compositeVisible = onBoarding.isVisible();
+		boolean imageVisible = onBoardingImage.isVisible();
+		if (showComposite) {
+			if (!compositeVisible) {
 				onBoarding.setVisible(true);
 			}
 			Rectangle folderBounds = tabFolder.getBounds();
@@ -753,9 +761,17 @@ public class StackRenderer extends LazyStackRenderer {
 			int height = folderBounds.height - ONBOARDING_TOP_SPACING - ONBOARDING_SPACING;
 			if (!new Point(width, height).equals(onBoarding.getSize())) {
 				onBoarding.setSize(width, height);
+
+				boolean showImage = height > ONBOARDING_SHOW_IMAGE_HEIGHT_THRESHOLD;
+				if (imageVisible != showImage || showComposite != compositeVisible) {
+					onBoardingImage.setVisible(showImage);
+					((GridData) onBoardingImage.getLayoutData()).exclude = !showImage;
+					onboardingComposite.getParent().layout(true);
+				}
+
 			}
 		} else {
-			if (visible) {
+			if (compositeVisible) {
 				onBoarding.setVisible(false);
 				onBoarding.setSize(0, 0);
 			}
