@@ -202,8 +202,6 @@ public class StackRenderer extends LazyStackRenderer {
 	private Composite onboardingComposite;
 	private Label onboardingText;
 	private Label onboardingImage;
-	private GridDataFactory onBoardingGridDataFactory = GridDataFactory
-			.create(GridData.VERTICAL_ALIGN_CENTER | GridData.HORIZONTAL_ALIGN_CENTER).grab(true, true);
 
 	List<CTabItem> getItemsToSet(MPart part) {
 		List<CTabItem> itemsToSet = new ArrayList<>();
@@ -271,10 +269,19 @@ public class StackRenderer extends LazyStackRenderer {
 
 		Color color = JFaceResources.getColorRegistry().get(JFacePreferences.QUALIFIER_COLOR);
 
+		GridDataFactory labelGridDataFactory = GridDataFactory.swtDefaults().align(SWT.RIGHT, SWT.CENTER);
+		GridDataFactory commandGridDataFactory = GridDataFactory.swtDefaults().align(SWT.LEFT, SWT.CENTER);
+
 		for (int i = 0; i < commands.length; i++) {
-			onBoardingGridDataFactory.indent(SWT.DEFAULT, i == 0 ? 10 : SWT.DEFAULT);
-			WidgetFactory.label(SWT.NONE).text(commands[i]).foreground(color)
-					.supplyLayoutData(onBoardingGridDataFactory::create).create(onboardingComposite);
+			labelGridDataFactory.indent(SWT.DEFAULT, i == 0 ? 10 : SWT.DEFAULT);
+			commandGridDataFactory.indent(SWT.DEFAULT, i == 0 ? 10 : SWT.DEFAULT);
+
+			String[] commandAndText = commands[i].split("\\$\\$\\$"); //$NON-NLS-1$
+
+			WidgetFactory.label(SWT.NONE).text(commandAndText[0]).foreground(color)
+					.supplyLayoutData(labelGridDataFactory::create).create(onboardingComposite);
+			WidgetFactory.label(SWT.NONE).text(commandAndText[1]).foreground(color)
+					.supplyLayoutData(commandGridDataFactory::create).create(onboardingComposite);
 		}
 	}
 
@@ -699,11 +706,14 @@ public class StackRenderer extends LazyStackRenderer {
 		Composite onBoarding = WidgetFactory.composite(SWT.NONE).layout(GridLayoutFactory.swtDefaults().create())
 				.background(tabFolder.getBackground()).create(tabFolder);
 
-		onboardingComposite = WidgetFactory.composite(SWT.NONE).supplyLayoutData(onBoardingGridDataFactory::create)
-				.layout(GridLayoutFactory.swtDefaults().create()).background(tabFolder.getBackground())
+		onboardingComposite = WidgetFactory.composite(SWT.NONE).background(tabFolder.getBackground())
 				.create(onBoarding);
+		GridDataFactory.create(GridData.VERTICAL_ALIGN_CENTER | GridData.HORIZONTAL_ALIGN_CENTER).grab(true, true)
+				.applyTo(onboardingComposite);
 
-		GridDataFactory gridDataFactory = onBoardingGridDataFactory.copy().indent(SWT.DEFAULT, 10);
+		GridLayoutFactory.swtDefaults().numColumns(2).equalWidth(true).applyTo(onboardingComposite);
+
+		GridDataFactory gridDataFactory = GridDataFactory.swtDefaults().indent(SWT.DEFAULT, 10).span(2, 1);
 
 		onboardingImage = WidgetFactory.label(SWT.NONE).supplyLayoutData(gridDataFactory::create)
 				.create(onboardingComposite);
