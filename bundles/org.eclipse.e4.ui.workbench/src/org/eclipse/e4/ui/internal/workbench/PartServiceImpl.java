@@ -764,8 +764,11 @@ public class PartServiceImpl implements EPartService {
 			partActivationHistory.activate(part, activateBranch);
 
 			if (requiresFocus) {
-				IPresentationEngine pe = part.getContext().get(IPresentationEngine.class);
-				pe.focusGui(part);
+				IEclipseContext context = part.getContext();
+				if (context != null) {
+					IPresentationEngine pe = context.get(IPresentationEngine.class);
+					pe.focusGui(part);
+				}
 			}
 
 			// store the activation time to sort the parts in MRU order
