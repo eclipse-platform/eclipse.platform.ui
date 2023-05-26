@@ -253,7 +253,8 @@ public class StackRenderer extends LazyStackRenderer {
 	}
 
 	private void setOnboarding(MPerspective perspective) {
-		if (onboardingImage == null || onboardingText == null) {
+		if (onboardingImage == null || onboardingText == null || onboardingComposite == null
+				|| onboardingComposite.isDisposed()) {
 			return;
 		}
 
