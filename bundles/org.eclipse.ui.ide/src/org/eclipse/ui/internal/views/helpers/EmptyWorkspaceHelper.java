@@ -243,6 +243,9 @@ public final class EmptyWorkspaceHelper {
 			return;
 		}
 		IWorkbenchPage page = win.getActivePage();
+		if (page == null) {
+			return;
+		}
 		String[] wizardIds = page.getNewWizardShortcuts();
 		projectWizardActions.clear();
 		for (String wizardId : wizardIds) {
