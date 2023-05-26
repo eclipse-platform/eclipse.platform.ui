@@ -71,7 +71,7 @@ public class GenericEditorContentAssistant extends ContentAssistant {
 
 		setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_BELOW);
 		setProposalPopupOrientation(IContentAssistant.PROPOSAL_REMOVE);
-		setAutoActivationDelay(0);
+		setAutoActivationDelay(10);
 		enableColoredLabels(true);
 		enableAutoActivation(true);
 		enableAutoActivateCompletionOnType(true);
