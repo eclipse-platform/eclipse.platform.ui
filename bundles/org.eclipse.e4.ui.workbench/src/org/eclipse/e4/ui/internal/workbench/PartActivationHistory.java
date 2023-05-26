@@ -54,17 +54,18 @@ class PartActivationHistory {
 
 	void activate(MPart part, boolean activateBranch) {
 		IEclipseContext context = part.getContext();
-		if (activateBranch) {
-			context.activateBranch();
-		} else {
-			IEclipseContext parent = context.getParent();
-			do {
-				context.activate();
-				context = parent;
-				parent = parent.getParent();
-			} while (parent.get(MWindow.class) != null);
+		if (context != null) {
+			if (activateBranch) {
+				context.activateBranch();
+			} else {
+				IEclipseContext parent = context.getParent();
+				do {
+					context.activate();
+					context = parent;
+					parent = parent.getParent();
+				} while (parent.get(MWindow.class) != null);
+			}
 		}
-
 		prepend(part);
 	}
 
