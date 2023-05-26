@@ -454,6 +454,9 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
 	private String computeTitlePath(IFileEditorInput editorInput) {
 		IFile file = editorInput.getFile();
+		if (file == null) {
+			return null;
+		}
 		IPath location = file.getLocation();
 		if (location != null) {
 			return location.toFile().toString();
