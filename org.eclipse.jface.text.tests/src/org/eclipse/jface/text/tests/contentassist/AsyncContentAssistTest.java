@@ -19,9 +19,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
-import java.util.Set;
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 import org.junit.After;
 import org.junit.Before;
@@ -117,18 +116,14 @@ public class AsyncContentAssistTest {
 		shell.open();
 		DisplayHelper.driveEventQueue(shell.getDisplay());
 		Display display = shell.getDisplay();
-		final Set<Shell> beforeShells = Arrays.stream(display.getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
+		final Collection<Shell> beforeShells= AbstractContentAssistTest.getCurrentShells();
 		contentAssistant.showPossibleCompletions();
+		Shell newShell= AbstractContentAssistTest.findNewShell(beforeShells);
 		assertTrue("Completion item not shown", new DisplayHelper() {
 			@Override
 			protected boolean condition() {
-				Set<Shell> newShells = Arrays.stream(display.getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
-				newShells.removeAll(beforeShells);
-				if (!newShells.isEmpty()) {
-					Table completionTable = findCompletionSelectionControl(newShells.iterator().next());
+				Table completionTable= findCompletionSelectionControl(newShell);
 					return Arrays.stream(completionTable.getItems()).map(TableItem::getText).anyMatch(item -> item.contains(BarContentAssistProcessor.PROPOSAL.substring(document.getLength())));
-				}
-				return false;
 			}
 		}.waitForCondition(display, 2000));
 	}
@@ -151,7 +146,6 @@ public class AsyncContentAssistTest {
 		contentAssistant.install(viewer);
 		shell.open();
 		Display display= shell.getDisplay();
-		final Set<Shell> beforeShells= Arrays.stream(display.getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
 		Event keyEvent= new Event();
 		Control control= viewer.getTextWidget();
 		AtomicBoolean testEnded= new AtomicBoolean();
@@ -183,16 +177,14 @@ public class AsyncContentAssistTest {
 					}
 				}
 			});
+			final Collection<Shell> beforeShells= AbstractContentAssistTest.getCurrentShells();
+			AbstractContentAssistTest.processEvents();
+			Shell newShell= AbstractContentAssistTest.findNewShell(beforeShells);
 			assertTrue("Completion item not shown", new DisplayHelper() {
 				@Override
 				protected boolean condition() {
-					Set<Shell> newShells= Arrays.stream(display.getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
-					newShells.removeAll(beforeShells);
-					if (!newShells.isEmpty()) {
-						Table completionTable= findCompletionSelectionControl(newShells.iterator().next());
-						return Arrays.stream(completionTable.getItems()).map(TableItem::getText).anyMatch(item -> item.contains(BarContentAssistProcessor.PROPOSAL.substring(document.getLength())));
-					}
-					return false;
+					Table completionTable= findCompletionSelectionControl(newShell);
+					return Arrays.stream(completionTable.getItems()).map(TableItem::getText).anyMatch(item -> item.contains(BarContentAssistProcessor.PROPOSAL.substring(document.getLength())));
 				}
 			}.waitForCondition(display, 4000));
 		} finally {

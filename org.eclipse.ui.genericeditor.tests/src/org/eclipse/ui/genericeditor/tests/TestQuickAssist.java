@@ -50,16 +50,13 @@ public class TestQuickAssist extends AbstratGenericEditorTest {
 
 	@Test
 	public void testCompletion() throws Exception {
-		final Set<Shell> beforeShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
-		openQuickAssist();
-		this.completionShell= CompletionTest.findNewShell(beforeShells, editor.getSite().getShell().getDisplay());
+		this.completionShell=openQuickAssist();
 		final Table completionProposalList = CompletionTest.findCompletionSelectionControl(completionShell);
 		checkCompletionContent(completionProposalList, new String[] { DEFAULT_PROPOSAL });
 	}
 
 	@Test
 	public void testMarkerQuickAssist() throws Exception {
-		final Set<Shell> beforeShells= Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
 		DisplayHelper.driveEventQueue(Display.getDefault());
 		IMarker marker= null;
 		try {
@@ -70,8 +67,7 @@ public class TestQuickAssist extends AbstratGenericEditorTest {
 			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
 			marker.setAttribute(IMarker.MESSAGE, "We have a problem");
 			marker.setAttribute(MarkerResolutionGenerator.FIXME, true);
-			openQuickAssist();
-			this.completionShell= CompletionTest.findNewShell(beforeShells, editor.getSite().getShell().getDisplay());
+			this.completionShell= openQuickAssist();
 			final Table completionProposalList= CompletionTest.findCompletionSelectionControl(completionShell);
 			checkCompletionContent(completionProposalList, new String[] { DEFAULT_PROPOSAL, FIXME_PROPOSAL });
 		} finally {
@@ -83,7 +79,6 @@ public class TestQuickAssist extends AbstratGenericEditorTest {
 
 	@Test
 	public void testMarkerQuickAssistLineOnly() throws Exception {
-		final Set<Shell> beforeShells= Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
 		DisplayHelper.driveEventQueue(Display.getDefault());
 		IMarker marker= null;
 		try {
@@ -92,8 +87,7 @@ public class TestQuickAssist extends AbstratGenericEditorTest {
 			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
 			marker.setAttribute(IMarker.MESSAGE, "We have a problem");
 			marker.setAttribute(MarkerResolutionGenerator.FIXME, true);
-			openQuickAssist();
-			this.completionShell= CompletionTest.findNewShell(beforeShells, editor.getSite().getShell().getDisplay());
+			this.completionShell= openQuickAssist();
 			final Table completionProposalList= CompletionTest.findCompletionSelectionControl(completionShell);
 			checkCompletionContent(completionProposalList, new String[] { DEFAULT_PROPOSAL, FIXME_PROPOSAL });
 		} finally {
@@ -103,12 +97,15 @@ public class TestQuickAssist extends AbstratGenericEditorTest {
 		}
 	}
 
-	private void openQuickAssist() {
+	private Shell openQuickAssist() {
 		editor.selectAndReveal(3, 0);
 		TextOperationAction action = (TextOperationAction) editor.getAction(ITextEditorActionConstants.QUICK_ASSIST);
 		action.update();
+		final Set<Shell> beforeShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
 		action.run();
+		Shell shell= CompletionTest.findNewShell(beforeShells, editor.getSite().getShell().getDisplay(), true);
 		waitAndDispatch(100);
+		return shell;
 	}
 
 	/**

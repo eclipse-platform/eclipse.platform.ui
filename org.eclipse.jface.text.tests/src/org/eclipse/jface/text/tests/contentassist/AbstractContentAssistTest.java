@@ -14,6 +14,7 @@
 
 package org.eclipse.jface.text.tests.contentassist;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -204,36 +205,35 @@ public class AbstractContentAssistTest {
 	}
 
 
-	protected void processEvents() {
+	protected static void processEvents() {
 		DisplayHelper.driveEventQueue(getDisplay());
 	}
 
-	private Display getDisplay() {
+	private static Display getDisplay() {
 		return Display.getDefault();
 	}
 
-	protected List<Shell> getCurrentShells() {
+	protected static List<Shell> getCurrentShells() {
 		return Arrays.stream(getDisplay().getShells())
 				.filter(Shell::isVisible)
 				.toList();
 	}
 
-	protected List<Shell> findNewShells(Collection<Shell> beforeShells) {
+	protected static List<Shell> findNewShells(Collection<Shell> beforeShells) {
 		return Arrays.stream(getDisplay().getShells())
 				.filter(Shell::isVisible)
 				.filter(s -> !beforeShells.contains(s))
 				.toList();
 	}
 
-	protected Shell findNewShell(Collection<Shell> beforeShells) {
-		DisplayHelper.sleep(getDisplay(), 100);
+	protected static Shell findNewShell(Collection<Shell> beforeShells) {
 		List<Shell> afterShells= findNewShells(beforeShells);
-		if (afterShells.isEmpty()) {
-			DisplayHelper.sleep(getDisplay(), 1000);
+		for (int attempt= 0; afterShells.size() != 1 && attempt < 10; attempt++) {
+			DisplayHelper.sleep(getDisplay(), 100);
+			afterShells= findNewShells(beforeShells);
 		}
-		afterShells= findNewShells(beforeShells);
-		assertTrue("No new shell found, existing: " + beforeShells, afterShells.size() > beforeShells.size());
-		return afterShells.get(afterShells.size() - 1);
+		assertEquals("Not unique new shell found", 1, afterShells.size());
+		return afterShells.get(0);
 	}
 
 }

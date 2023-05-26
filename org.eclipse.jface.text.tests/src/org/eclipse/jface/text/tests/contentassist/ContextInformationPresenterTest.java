@@ -87,13 +87,13 @@ public class ContextInformationPresenterTest extends AbstractContentAssistTest {
 
 	@Test
 	public void testContextInfo_withStyledTextPresentation() throws Exception {
-		final List<Shell> beforeShells= getCurrentShells();
 		setupSourceViewer(createBarContentAssist(), BarContentAssistProcessor.PROPOSAL);
 
 		postSourceViewerKeyEvent(SWT.ARROW_RIGHT, 0, SWT.KeyDown);
 		selectAndReveal(4, 0);
 		processEvents();
 
+		final List<Shell> beforeShells= getCurrentShells();
 		triggerContextInformation();
 		this.infoShell= findNewShell(beforeShells);
 		assertEquals("idx= 0", getInfoText(this.infoShell));

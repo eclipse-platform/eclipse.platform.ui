@@ -16,6 +16,7 @@ package org.eclipse.ui.genericeditor.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -74,10 +75,8 @@ public class CompletionTest extends AbstratGenericEditorTest {
 
 	@Test
 	public void testCompletion() throws Exception {
-		final Set<Shell> beforeShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
 		editor.selectAndReveal(3, 0);
-		openConentAssist();
-		this.completionShell= findNewShell(beforeShells, editor.getSite().getShell().getDisplay());
+		this.completionShell= openConentAssist();
 		final Table completionProposalList = findCompletionSelectionControl(completionShell);
 		checkCompletionContent(completionProposalList);
 		// TODO find a way to actually trigger completion and verify result against Editor content
@@ -90,7 +89,7 @@ public class CompletionTest extends AbstratGenericEditorTest {
 		TestLogListener listener= new TestLogListener();
 		log.addLogListener(listener);
 		createAndOpenFile("Bug570488.txt", "bar 'bar'");
-		openConentAssist();
+		openConentAssist(false);
 		DisplayHelper.driveEventQueue(Display.getCurrent());
 		assertFalse("There are errors in the log", listener.messages.stream().anyMatch(s -> s.matches(IStatus.ERROR)));
 		log.removeLogListener(listener);
@@ -106,10 +105,8 @@ public class CompletionTest extends AbstratGenericEditorTest {
 		ServiceRegistration<IContentAssistProcessor> registration= bundleContext.registerService(IContentAssistProcessor.class, service,
 				new Hashtable<>(Collections.singletonMap("contentType", "org.eclipse.ui.genericeditor.tests.content-type")));
 		DisplayHelper.driveEventQueue(Display.getCurrent());
-		final Set<Shell> beforeShells= Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
 		editor.selectAndReveal(3, 0);
-		openConentAssist();
-		this.completionShell= findNewShell(beforeShells, editor.getSite().getShell().getDisplay());
+		this.completionShell= openConentAssist();
 		final Table completionProposalList= findCompletionSelectionControl(completionShell);
 		checkCompletionContent(completionProposalList);
 		assertTrue("Service was not called!", service.called);
@@ -118,11 +115,9 @@ public class CompletionTest extends AbstratGenericEditorTest {
 
 	@Test
 	public void testCompletionUsingViewerSelection() throws Exception {
-		final Set<Shell> beforeShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
 		editor.getDocumentProvider().getDocument(editor.getEditorInput()).set("abc");
 		editor.selectAndReveal(0, 3);
-		openConentAssist();
-		this.completionShell= findNewShell(beforeShells, editor.getSite().getShell().getDisplay());
+		this.completionShell= openConentAssist();
 		final Table completionProposalList = findCompletionSelectionControl(completionShell);
 		assertTrue(new DisplayHelper() {
 			@Override
@@ -137,30 +132,28 @@ public class CompletionTest extends AbstratGenericEditorTest {
 		// Confirm that when disabled, a completion shell is present
 		EnabledPropertyTester.setEnabled(false);
 		createAndOpenFile("enabledWhen.txt", "bar 'bar'");
-		final Set<Shell> beforeShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
 		editor.selectAndReveal(3, 0);
-		openConentAssist();
-		Shell[] afterShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells())
-				.filter(Shell::isVisible)
-				.filter(shell -> !beforeShells.contains(shell))
-				.toArray(Shell[]::new);
-		assertEquals("A new shell was found", 0, afterShells.length);
+		assertNull("A new shell was found", openConentAssist(false));
 		cleanFileAndEditor();
 
 		// Confirm that when enabled, a completion shell is present
 		EnabledPropertyTester.setEnabled(true);
 		createAndOpenFile("enabledWhen.txt", "bar 'bar'");
-		final Set<Shell> beforeEnabledShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
-		editor.selectAndReveal(3, 0);
-		openConentAssist();
-		assertNotNull(findNewShell(beforeEnabledShells, editor.getSite().getShell().getDisplay()));
+		editor.selectAndReveal(3, 0);		
+		assertNotNull(openConentAssist());
 	}
 
-	private void openConentAssist() {
+	private Shell openConentAssist() {
+		return openConentAssist(true);
+	}
+	private Shell openConentAssist(boolean expectShell) {
 		ContentAssistAction action = (ContentAssistAction) editor.getAction(ITextEditorActionConstants.CONTENT_ASSIST);
 		action.update();
-		action.run();
-		waitAndDispatch(100);
+		final Set<Shell> beforeShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
+		action.run(); //opens shell
+		Shell shell= findNewShell(beforeShells, editor.getSite().getShell().getDisplay(),expectShell);
+		waitAndDispatch(100); // can dispose shell when focus lost during debugging
+		return shell;
 	}
 
 	/**
@@ -198,21 +191,21 @@ public class CompletionTest extends AbstratGenericEditorTest {
 		assertEquals("Addition of completion proposal should keep selection", selectedProposal, completionProposalList.getSelection()[0].getData());
 	}
 
-	public static Shell findNewShell(Set<Shell> beforeShells, Display display) {
+	public static Shell findNewShell(Set<Shell> beforeShells, Display display, boolean expectShell) {
 		Shell[] afterShells = Arrays.stream(display.getShells())
 				.filter(Shell::isVisible)
 				.filter(shell -> !beforeShells.contains(shell))
 				.toArray(Shell[]::new);
-		assertEquals("No new shell found", 1, afterShells.length);
-		return afterShells[0];
+		if (expectShell) {
+			assertEquals("No new shell found", 1, afterShells.length);
+		}
+		return afterShells.length > 0 ? afterShells[0] : null;
 	}
 
 	@Test
 	public void testCompletionFreeze_bug521484() throws Exception {
-		final Set<Shell> beforeShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
 		editor.selectAndReveal(3, 0);
-		openConentAssist();
-		this.completionShell= findNewShell(beforeShells, editor.getSite().getShell().getDisplay());
+		this.completionShell=openConentAssist();
 		final Table completionProposalList = findCompletionSelectionControl(this.completionShell);
 		// should be instantaneous, but happens to go asynchronous on CI so let's allow a wait
 		new DisplayHelper() {
@@ -235,11 +228,11 @@ public class CompletionTest extends AbstratGenericEditorTest {
 
 	@Test
 	public void testMoveCaretBackUsesAllProcessors_bug522255() throws Exception {
-		final Set<Shell> beforeShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
 		testCompletion();
 		emulatePressLeftArrowKey();
+		final Set<Shell> beforeShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
 		DisplayHelper.sleep(editor.getSite().getShell().getDisplay(), LongRunningBarContentAssistProcessor.DELAY + 500); // adding delay is a workaround for bug521484, use only 100ms without the bug
-		this.completionShell= findNewShell(beforeShells, editor.getSite().getShell().getDisplay());
+		this.completionShell= findNewShell(beforeShells, editor.getSite().getShell().getDisplay(), true);
 		final Table completionProposalList = findCompletionSelectionControl(this.completionShell);
 		assertEquals("Missing proposals from a Processor", 2, completionProposalList.getItemCount()); // replace with line below when #5214894 is done
 		// checkCompletionContent(completionProposalList); // use this instead of assert above when #521484 is done

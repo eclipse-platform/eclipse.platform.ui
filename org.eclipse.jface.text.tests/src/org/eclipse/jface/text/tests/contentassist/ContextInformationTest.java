@@ -49,12 +49,12 @@ public class ContextInformationTest extends AbstractContentAssistTest {
 
 	@Test
 	public void testContextInfo() throws Exception {
-		final List<Shell> beforeShells= getCurrentShells();
 		setupSourceViewer(createBarContentAssist(), BarContentAssistProcessor.PROPOSAL);
 
 		selectAndReveal(4, 0);
 		processEvents();
 
+		final List<Shell> beforeShells= getCurrentShells();
 		triggerContextInformation();
 		this.infoShell= findNewShell(beforeShells);
 		assertEquals("idx= 0", getInfoText(this.infoShell));
@@ -69,12 +69,12 @@ public class ContextInformationTest extends AbstractContentAssistTest {
 
 	@Test
 	public void testContextInfo_hide_Bug512251() throws Exception {
-		final List<Shell> beforeShells= getCurrentShells();
 		setupSourceViewer(createBarContentAssist(), BarContentAssistProcessor.PROPOSAL);
 
 		selectAndReveal(4, 0);
 		processEvents();
 
+		final List<Shell> beforeShells= getCurrentShells();
 		triggerContextInformation();
 		this.infoShell= findNewShell(beforeShells);
 
@@ -92,15 +92,14 @@ public class ContextInformationTest extends AbstractContentAssistTest {
 
 	@Test
 	public void testContextInfo_hide_focusOut() throws Exception {
-		assumeFalse("Test fails on Mac: Bug 558989", Platform.OS_MACOSX.equals(Platform.getOS()));
-		assumeFalse("Test fails on CentOS 8: See https://github.com/eclipse-platform/eclipse.platform.text/pull/162", Platform.OS_LINUX.equals(Platform.getOS()));
-
-		final List<Shell> beforeShells= getCurrentShells();
+		// opens source viewer shell:
 		setupSourceViewer(createBarContentAssist(), BarContentAssistProcessor.PROPOSAL);
 
 		selectAndReveal(4, 0);
 		processEvents();
 
+		final List<Shell> beforeShells= getCurrentShells();
+		// opens content assist shell:
 		triggerContextInformation();
 		this.infoShell= findNewShell(beforeShells);
 		assertEquals("idx= 0", getInfoText(this.infoShell));
@@ -114,18 +113,21 @@ public class ContextInformationTest extends AbstractContentAssistTest {
 
 		// Hide all
 		getButton().setFocus();
+		// hides and disposes Shell (by org.eclipse.jface.text.contentassist.ContentAssistant.hide()):
 		processEvents();
-		assertTrue(this.infoShell.isDisposed() || !this.infoShell.isVisible());
+		assumeFalse("Test fails on Mac: Bug 558989", Platform.OS_MACOSX.equals(Platform.getOS()));
+		assumeFalse("Test fails on CentOS 8: See https://github.com/eclipse-platform/eclipse.platform.text/pull/162", Platform.OS_LINUX.equals(Platform.getOS()));
+		assertTrue("Shell not disposed:" + this.infoShell, this.infoShell.isDisposed());
 	}
 
 	@Test
 	public void testContextInfo_hide_keyEsc() throws Exception {
-		final List<Shell> beforeShells= getCurrentShells();
 		setupSourceViewer(createBarContentAssist(), BarContentAssistProcessor.PROPOSAL);
 
 		selectAndReveal(4, 0);
 		processEvents();
 
+		final List<Shell> beforeShells= getCurrentShells();
 		triggerContextInformation();
 		this.infoShell= findNewShell(beforeShells);
 		assertEquals("idx= 0", getInfoText(this.infoShell));
@@ -149,12 +151,12 @@ public class ContextInformationTest extends AbstractContentAssistTest {
 
 	@Test
 	public void testContextInfo_hide_validRange() throws Exception {
-		final List<Shell> beforeShells= getCurrentShells();
 		setupSourceViewer(createBarContentAssist(), BarContentAssistProcessor.PROPOSAL + '\n');
 
 		selectAndReveal(4, 0);
 		processEvents();
 
+		final List<Shell> beforeShells= getCurrentShells();
 		triggerContextInformation();
 		this.infoShell= findNewShell(beforeShells);
 		assertEquals("idx= 0", getInfoText(this.infoShell));
