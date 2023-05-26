@@ -414,9 +414,12 @@ public class EvaluationServiceTest extends UITestCase {
 
 		@Override
 		public EvaluationResult evaluate(IEvaluationContext context) {
-			String variable = (String) context.getVariable("username");
-			return lookFor.equals(variable) ? EvaluationResult.TRUE
-					: EvaluationResult.FALSE;
+			Object o = context.getVariable("username");
+			if (o instanceof String) {
+				String variable = (String) o;
+				return lookFor.equals(variable) ? EvaluationResult.TRUE : EvaluationResult.FALSE;
+			}
+			return EvaluationResult.FALSE;
 		}
 	}
 
