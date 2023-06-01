@@ -20,7 +20,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.After;
 import org.junit.Before;
@@ -50,6 +49,7 @@ import org.eclipse.jface.text.tests.util.DisplayHelper;
 public class AsyncContentAssistTest {
 
 	private ILogListener listener;
+
 	private IStatus errorStatus;
 
 	private Shell shell;
@@ -58,8 +58,8 @@ public class AsyncContentAssistTest {
 	public void setUp() {
 		shell= new Shell();
 		listener= (status, plugin) -> {
-			if(status.getSeverity() == IStatus.ERROR && "org.eclipse.jface.text".equals(status.getPlugin())) {
-				errorStatus = status;
+			if (status.getSeverity() == IStatus.ERROR && "org.eclipse.jface.text".equals(status.getPlugin())) {
+				errorStatus= status;
 			}
 		};
 		Platform.addLogListener(listener);
@@ -73,10 +73,10 @@ public class AsyncContentAssistTest {
 
 	@Test
 	public void testAsyncFailureStackOverflow() {
-		SourceViewer viewer = new SourceViewer(shell, null, SWT.NONE);
-		Document document = new Document("a");
+		SourceViewer viewer= new SourceViewer(shell, null, SWT.NONE);
+		Document document= new Document("a");
 		viewer.setDocument(document);
-		ContentAssistant contentAssistant = new ContentAssistant(true);
+		ContentAssistant contentAssistant= new ContentAssistant(true);
 		contentAssistant.addContentAssistProcessor(new DelayedErrorContentAssistProcessor(), IDocument.DEFAULT_CONTENT_TYPE);
 		contentAssistant.addContentAssistProcessor(new ImmediateContentAssistProcessor(), IDocument.DEFAULT_CONTENT_TYPE);
 		contentAssistant.install(viewer);
@@ -88,10 +88,10 @@ public class AsyncContentAssistTest {
 
 	@Test
 	public void testSyncFailureNPE() {
-		SourceViewer viewer = new SourceViewer(shell, null, SWT.NONE);
-		Document document = new Document("a");
+		SourceViewer viewer= new SourceViewer(shell, null, SWT.NONE);
+		Document document= new Document("a");
 		viewer.setDocument(document);
-		ContentAssistant contentAssistant = new ContentAssistant(true);
+		ContentAssistant contentAssistant= new ContentAssistant(true);
 		contentAssistant.addContentAssistProcessor(new ImmediateContentAssistProcessor(), IDocument.DEFAULT_CONTENT_TYPE);
 		contentAssistant.addContentAssistProcessor(new ImmediateNullContentAssistProcessor(), IDocument.DEFAULT_CONTENT_TYPE);
 		contentAssistant.install(viewer);
@@ -105,17 +105,17 @@ public class AsyncContentAssistTest {
 	public void testCompletePrefix() {
 		shell.setLayout(new FillLayout());
 		shell.setSize(500, 300);
-		SourceViewer viewer = new SourceViewer(shell, null, SWT.NONE);
-		Document document = new Document("b");
+		SourceViewer viewer= new SourceViewer(shell, null, SWT.NONE);
+		Document document= new Document("b");
 		viewer.setDocument(document);
 		viewer.setSelectedRange(1, 0);
-		ContentAssistant contentAssistant = new ContentAssistant(true);
+		ContentAssistant contentAssistant= new ContentAssistant(true);
 		contentAssistant.addContentAssistProcessor(new BarContentAssistProcessor(), IDocument.DEFAULT_CONTENT_TYPE);
 		contentAssistant.enablePrefixCompletion(true);
 		contentAssistant.install(viewer);
 		shell.open();
 		DisplayHelper.driveEventQueue(shell.getDisplay());
-		Display display = shell.getDisplay();
+		Display display= shell.getDisplay();
 		final Collection<Shell> beforeShells= AbstractContentAssistTest.getCurrentShells();
 		contentAssistant.showPossibleCompletions();
 		Shell newShell= AbstractContentAssistTest.findNewShell(beforeShells);
@@ -123,7 +123,7 @@ public class AsyncContentAssistTest {
 			@Override
 			protected boolean condition() {
 				Table completionTable= findCompletionSelectionControl(newShell);
-					return Arrays.stream(completionTable.getItems()).map(TableItem::getText).anyMatch(item -> item.contains(BarContentAssistProcessor.PROPOSAL.substring(document.getLength())));
+				return Arrays.stream(completionTable.getItems()).map(TableItem::getText).anyMatch(item -> item.contains(BarContentAssistProcessor.PROPOSAL.substring(document.getLength())));
 			}
 		}.waitForCondition(display, 2000));
 	}
@@ -133,7 +133,7 @@ public class AsyncContentAssistTest {
 		shell.setLayout(new FillLayout());
 		shell.setSize(500, 300);
 		SourceViewer viewer= new SourceViewer(shell, null, SWT.NONE);
-		Document document= new Document("b");
+		Document document= new Document("something");
 		viewer.setDocument(document);
 		viewer.setSelectedRange(1, 0);
 		ContentAssistant contentAssistant= new ContentAssistant(true);
@@ -148,56 +148,32 @@ public class AsyncContentAssistTest {
 		Display display= shell.getDisplay();
 		Event keyEvent= new Event();
 		Control control= viewer.getTextWidget();
-		AtomicBoolean testEnded= new AtomicBoolean();
-		try {
-			display.timerExec(0, new Runnable() {
-				@Override
-				public void run() {
-					if (control.isDisposed() || testEnded.get()) {
-						// https://github.com/eclipse-platform/eclipse.platform.text/issues/75#issuecomment-1263429480
-						return; // do not fail other unit tests
-					}
-					control.getShell().forceActive();
-					if (!control.forceFocus()) {
-						display.timerExec(200, this);
-						System.out.println("no focus");
-						return;
-					}
-					keyEvent.widget= control;
-					keyEvent.type= SWT.KeyDown;
-					keyEvent.character= 'b';
-					keyEvent.keyCode= 'b';
-					control.getDisplay().post(keyEvent);
-					keyEvent.type= SWT.KeyUp;
-					control.getDisplay().post(keyEvent);
-					DisplayHelper.driveEventQueue(control.getDisplay());
-					if (!document.get().startsWith("bb")) {
-						System.out.println("character b not added to control");
-						display.timerExec(200, this);
-					}
-				}
-			});
-			final Collection<Shell> beforeShells= AbstractContentAssistTest.getCurrentShells();
-			AbstractContentAssistTest.processEvents();
-			Shell newShell= AbstractContentAssistTest.findNewShell(beforeShells);
-			assertTrue("Completion item not shown", new DisplayHelper() {
-				@Override
-				protected boolean condition() {
-					Table completionTable= findCompletionSelectionControl(newShell);
-					return Arrays.stream(completionTable.getItems()).map(TableItem::getText).anyMatch(item -> item.contains(BarContentAssistProcessor.PROPOSAL.substring(document.getLength())));
-				}
-			}.waitForCondition(display, 4000));
-		} finally {
-			testEnded.set(true);
-		}
+		keyEvent.widget= control;
+		keyEvent.type= SWT.KeyDown;
+		keyEvent.character= 'b';
+		keyEvent.keyCode= 'b';
+		control.getShell().forceActive();
+		control.getDisplay().post(keyEvent);
+		keyEvent.type= SWT.KeyUp;
+		control.getDisplay().post(keyEvent);
+		final Collection<Shell> beforeShells= AbstractContentAssistTest.getCurrentShells();
+		AbstractContentAssistTest.processEvents();
+		Shell newShell= AbstractContentAssistTest.findNewShell(beforeShells);
+		assertTrue("Completion item not shown", new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				Table completionTable= findCompletionSelectionControl(newShell);
+				return Arrays.stream(completionTable.getItems()).map(TableItem::getText).anyMatch(item -> item.contains(BarContentAssistProcessor.PROPOSAL.substring(document.getLength())));
+			}
+		}.waitForCondition(display, 4000));
 	}
 
 	private static Table findCompletionSelectionControl(Widget control) {
 		if (control instanceof Table) {
-			return (Table)control;
+			return (Table) control;
 		} else if (control instanceof Composite) {
-			for (Widget child : ((Composite)control).getChildren()) {
-				Table res = findCompletionSelectionControl(child);
+			for (Widget child : ((Composite) control).getChildren()) {
+				Table res= findCompletionSelectionControl(child);
 				if (res != null) {
 					return res;
 				}
