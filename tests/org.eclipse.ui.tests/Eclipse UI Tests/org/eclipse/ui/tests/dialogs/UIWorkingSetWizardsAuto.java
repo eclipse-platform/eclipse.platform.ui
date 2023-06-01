@@ -19,6 +19,7 @@ import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -99,9 +100,40 @@ public abstract class UIWorkingSetWizardsAuto extends UITestCase {
 
 		} catch (CoreException e) {
 			TestPlugin.getDefault().getLog().log(e.getStatus());
-			throw new AssertionError(e);
+			throw createAssertionError(e);
 		}
 
+	}
+
+	private AssertionError createAssertionError(CoreException originalException) {
+		Throwable cause = originalException.getCause();
+		if (cause == null) {
+			IStatus mostSevere = findMostSevere(originalException.getStatus());
+			cause = mostSevere.getException();
+		}
+
+		return new AssertionError(originalException.getMessage(), cause);
+	}
+
+	private IStatus findMostSevere(IStatus status) {
+		if (!status.isMultiStatus()) {
+			return status;
+		}
+
+		IStatus mostSevere = null;
+
+		for (IStatus childStatus : status.getChildren()) {
+			IStatus mostSevereChild = findMostSevere(childStatus);
+			if (mostSevere == null || mostSevereChild.getSeverity() > mostSevere.getSeverity()) {
+				mostSevere = mostSevereChild;
+			}
+		}
+
+		if (mostSevere == null) {
+			mostSevere = status;
+		}
+
+		return mostSevere;
 	}
 
 	private Shell getShell() {
