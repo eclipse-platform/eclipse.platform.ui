@@ -1215,16 +1215,25 @@ public class LogView extends ViewPart implements LogListener {
 
 	@Override
 	public void setFocus() {
-		if (!isDisposed()) {
-			if (fMemento.getBoolean(P_SHOW_FILTER_TEXT).booleanValue()) {
-				Text filterControl = fFilteredTree.getFilterControl();
-				if (filterControl != null && !filterControl.isDisposed()) {
-					filterControl.setFocus();
+		if (isDisposed()) {
+			return;
+		}
+		if (fMemento.getBoolean(P_SHOW_FILTER_TEXT).booleanValue()) {
+			Text filterControl = fFilteredTree.getFilterControl();
+			if (filterControl != null && !filterControl.isDisposed()) {
+				if (!filterControl.setFocus()) {
+					setFocusToParentComposite();
 				}
-			} else if (!fFilteredTree.isDisposed()) {
-				fFilteredTree.setFocus();
+			}
+		} else if (!fFilteredTree.isDisposed()) {
+			if (!fFilteredTree.setFocus()) {
+				setFocusToParentComposite();
 			}
 		}
+	}
+
+	private void setFocusToParentComposite() {
+		fFilteredTree.getParent().setFocus();
 	}
 
 	private void handleSelectionChanged(IStructuredSelection selection) {
