@@ -852,8 +852,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 			return result;
 		}
 		if (filters != null) {
-			for (Object element : filters) {
-				ViewerFilter f = (ViewerFilter) element;
+			for (ViewerFilter f : filters) {
 				Object[] filteredResult = f.filter(this, parent, result);
 				if (associateListener != null && filteredResult.length != result.length) {
 					notifyFilteredOut(result, filteredResult);

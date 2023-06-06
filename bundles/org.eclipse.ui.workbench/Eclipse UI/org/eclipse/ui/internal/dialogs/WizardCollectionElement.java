@@ -172,7 +172,7 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
 	 * @return the element
 	 */
 	public WorkbenchWizardElement findWizard(String searchId, boolean recursive) {
-		for (Object wizard : getWizards()) {
+		for (IWizardDescriptor wizard : getWizards()) {
 			WorkbenchWizardElement currentWizard = (WorkbenchWizardElement) wizard;
 			if (currentWizard.getId().equals(searchId)) {
 				return currentWizard;

@@ -66,8 +66,7 @@ public class EObjModelHandler extends ModelHandlerBase implements IAdapterFactor
 		EList<EStructuralFeature> features = eObj.eClass().getEAllStructuralFeatures();
 		String[] ids = new String[features.size()];
 		int count = 0;
-		for (Object name : features) {
-			EStructuralFeature structuralFeature = (EStructuralFeature) name;
+		for (EStructuralFeature structuralFeature : features) {
 			String featureName = structuralFeature.getName();
 			ids[count++] = featureName;
 		}
