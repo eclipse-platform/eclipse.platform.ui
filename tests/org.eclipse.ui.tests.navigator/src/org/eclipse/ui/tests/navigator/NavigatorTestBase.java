@@ -431,5 +431,27 @@ public class NavigatorTestBase {
 		}
 	}
 
+	/**
+	 * Wait up to 60 seconds for a test label provider to be initialized.
+	 *
+	 * @param tlp the label provider.
+	 */
+	protected void waitForInitialization(TestLabelProvider tlp) {
+
+		for (int i = 0; i < 1200; i++) {
+			TreeItem[] rootItems = _viewer.getTree().getItems();
+
+			if (tlp != null && rootItems[0].getBackground(0).equals(tlp.backgroundColor)) {
+				System.out.println("The label provider '" + tlp.getClass().getCanonicalName()
+						+ "' was initialized after "
+						+ (i * 50) + " ms");
+				return;
+			}
+
+			DisplayHelper.sleep(50);
+		}
+
+		fail("The label provider was not initialized.");
+	}
 
 }
