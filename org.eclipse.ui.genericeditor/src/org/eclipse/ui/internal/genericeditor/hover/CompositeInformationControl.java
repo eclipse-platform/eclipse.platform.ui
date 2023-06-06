@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.AbstractInformationControl;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
-import org.eclipse.jface.text.IInformationControlExtension;
 import org.eclipse.jface.text.IInformationControlExtension2;
 import org.eclipse.jface.text.IInformationControlExtension5;
 import org.eclipse.jface.text.ITextHover;
@@ -57,12 +56,8 @@ public class CompositeInformationControl extends AbstractInformationControl impl
 
 	@Override
 	public boolean hasContents() {
-		for (IInformationControl control : controls.values()) {
-			if (control instanceof IInformationControlExtension) {
-				if (((IInformationControlExtension) control).hasContents()) {
-					return true;
-				}
-			} else {
+		for (AbstractInformationControl control : controls.values()) {
+			if (control.hasContents()) {
 				return true;
 			}
 		}
