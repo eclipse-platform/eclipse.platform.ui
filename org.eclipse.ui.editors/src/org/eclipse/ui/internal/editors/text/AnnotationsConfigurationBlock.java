@@ -15,6 +15,7 @@ package org.eclipse.ui.internal.editors.text;
 
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -308,7 +309,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 				if (value) {
 					// enable whatever is in the combo
 					String[] decoration= (String[]) fDecorationViewer.getStructuredSelection().getFirstElement();
-					if (HIGHLIGHT.equals(decoration))
+					if (Arrays.equals(HIGHLIGHT, decoration))
 						fStore.setValue(item.highlightKey, true);
 					else
 						fStore.setValue(item.textKey, true);
@@ -386,7 +387,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 			ListItem item= getSelectedItem();
 
 			if (fShowInTextCheckBox.getSelection()) {
-				if (HIGHLIGHT.equals(decoration)) {
+				if (Arrays.equals(HIGHLIGHT, decoration)) {
 					fStore.setValue(item.highlightKey, true);
 					if (item.textKey != null) {
 						fStore.setValue(item.textKey, false);

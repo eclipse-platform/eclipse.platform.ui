@@ -310,7 +310,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 				if (value) {
 					// enable whatever is in the combo
 					String[] decoration= (String[]) fDecorationViewer.getStructuredSelection().getFirstElement();
-					if (HIGHLIGHT.equals(decoration))
+					if (Arrays.equals(HIGHLIGHT, decoration))
 						getPreferenceStore().setValue(item.highlightKey, true);
 					else
 						getPreferenceStore().setValue(item.textKey, true);
@@ -342,7 +342,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 			ListItem item= getSelectedItem();
 
 			if (fShowInTextCheckBox.getSelection()) {
-				if (HIGHLIGHT.equals(decoration)) {
+				if (Arrays.equals(HIGHLIGHT, decoration)) {
 					getPreferenceStore().setValue(item.highlightKey, true);
 					getPreferenceStore().setValue(item.textKey, false);
 					getPreferenceStore().setValue(item.textStyleKey, AnnotationPreference.STYLE_NONE);
