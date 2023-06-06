@@ -173,12 +173,8 @@ public class ModelUtils {
 			String elementID = element.getElementId();
 			boolean found = false;
 			if ((elementID != null) && (elementID.length() != 0)) {
-				for (Object existingObject : list) {
-					if (!(existingObject instanceof MApplicationElement)) {
-						continue;
-					}
-					MApplicationElement existingEObject = (MApplicationElement) existingObject;
-					if (!elementID.equals(existingEObject.getElementId())) {
+				for (MApplicationElement existingEObject : list) {
+					if (existingEObject == null || !elementID.equals(existingEObject.getElementId())) {
 						continue;
 					}
 					if (EcoreUtil.equals((EObject) existingEObject, (EObject) element)) {

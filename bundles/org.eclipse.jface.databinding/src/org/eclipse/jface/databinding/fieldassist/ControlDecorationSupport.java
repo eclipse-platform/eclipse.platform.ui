@@ -374,8 +374,8 @@ public class ControlDecorationSupport {
 		targets.addDisposeListener(disposeListener);
 		targets.addListChangeListener(targetsChangeListener);
 
-		for (Object name : targets)
-			targetAdded((IObservable) name);
+		for (IObservable target : targets)
+			targetAdded(target);
 
 		statusChanged(validationStatus.getValue());
 	}

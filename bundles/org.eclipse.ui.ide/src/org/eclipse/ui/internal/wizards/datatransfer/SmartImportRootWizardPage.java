@@ -803,9 +803,8 @@ public class SmartImportRootWizardPage extends WizardPage {
 				selectionSummary.setText(NLS.bind(DataTransferMessages.SmartImportProposals_selectionSummary,
 						directoriesToImport.size(), 1));
 			} else {
-				Set<File> excludedDirectories = new HashSet(((Map<File, ?>) this.tree.getInput()).keySet());
-				for (Object item : this.directoriesToImport) {
-					File directory = (File) item;
+				Set<File> excludedDirectories = new HashSet<>(((Map<File, ?>) this.tree.getInput()).keySet());
+				for (File directory : this.directoriesToImport) {
 					excludedDirectories.remove(directory);
 				}
 				getWizard().getImportJob().setDirectoriesToImport(directoriesToImport);

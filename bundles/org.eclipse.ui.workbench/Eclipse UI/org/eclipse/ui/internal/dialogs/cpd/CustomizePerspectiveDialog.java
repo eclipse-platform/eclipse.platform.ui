@@ -451,7 +451,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 				shortcutItem.setCheckState(state);
 			}
 
-			for (Object o : getChildren()) {
+			for (TreeItem o : getChildren()) {
 				Category category = (Category) o;
 				category.setItemsState(state);
 			}

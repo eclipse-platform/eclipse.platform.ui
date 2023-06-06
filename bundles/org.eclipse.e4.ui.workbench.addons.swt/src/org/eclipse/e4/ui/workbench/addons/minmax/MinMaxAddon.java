@@ -39,6 +39,7 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
@@ -291,7 +292,7 @@ public class MinMaxAddon {
 
 				// gather up any minimized stacks for this perspective...
 				List<MToolControl> toRemove = new ArrayList<>();
-				for (MUIElement child : bar.getChildren()) {
+				for (MTrimElement child : bar.getChildren()) {
 					String trimElementId = child.getElementId();
 					if (child instanceof MToolControl && trimElementId.contains(perspectiveId)) {
 						toRemove.add((MToolControl) child);
