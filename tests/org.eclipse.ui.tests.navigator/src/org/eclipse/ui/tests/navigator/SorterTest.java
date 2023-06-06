@@ -39,6 +39,7 @@ import org.eclipse.ui.tests.navigator.extension.TestComparatorData;
 import org.eclipse.ui.tests.navigator.extension.TestContentProvider;
 import org.eclipse.ui.tests.navigator.extension.TestContentProviderResource;
 import org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData;
+import org.eclipse.ui.tests.navigator.extension.TestLabelProviderBlue;
 import org.eclipse.ui.tests.navigator.extension.TestSorterDataAndResource;
 import org.eclipse.ui.tests.navigator.extension.TestSorterResource;
 import org.junit.Test;
@@ -282,6 +283,9 @@ public class SorterTest extends NavigatorTestBase {
 				new String[] { TEST_CONTENT_SORTER_MODEL }, false);
 		_contentService.getActivationService().activateExtensions(
 				new String[] { TEST_CONTENT_SORTER_MODEL }, false);
+
+		// Let the label provider refresh
+		waitForInitialization(TestLabelProviderBlue.instance);
 
 		dynamicAddModelObjects();
 
