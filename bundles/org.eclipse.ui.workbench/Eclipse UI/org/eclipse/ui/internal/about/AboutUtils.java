@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2021 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -223,30 +223,17 @@ public class AboutUtils {
 		}
 		path = path.append(ERROR_LOG_COPY_FILENAME);
 		File copy = path.toFile();
-		FileReader in = null;
-		FileWriter out = null;
-		try {
-			in = new FileReader(file);
+		try (FileReader in = new FileReader(file)) {
 			// don't append data, overwrite what was there
-			out = new FileWriter(copy);
-			char buffer[] = new char[4096];
-			int count;
-			while ((count = in.read(buffer, 0, buffer.length)) > 0) {
-				out.write(buffer, 0, count);
+			try (FileWriter out = new FileWriter(copy)) {
+				char buffer[] = new char[4096];
+				int count;
+				while ((count = in.read(buffer, 0, buffer.length)) > 0) {
+					out.write(buffer, 0, count);
+				}
 			}
 		} catch (IOException e) {
 			return null;
-		} finally {
-			try {
-				if (in != null) {
-					in.close();
-				}
-				if (out != null) {
-					out.close();
-				}
-			} catch (IOException e) {
-				return null;
-			}
 		}
 		return copy;
 

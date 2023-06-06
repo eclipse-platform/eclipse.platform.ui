@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 TwelveTone LLC and others.
+ * Copyright (c) 2014, 2023 TwelveTone LLC and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -335,48 +335,43 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 							final String installLocation = pluginModelBase.getInstallLocation();
 							if (installLocation.endsWith(".jar")) { //$NON-NLS-1$
 								url = new URL("file:///" + installLocation); //$NON-NLS-1$
-								final ZipInputStream zis = new ZipInputStream(url.openStream());
-								while (true) {
-									final ZipEntry entry = zis.getNextEntry();
-									if (entry == null) {
-										break;
-									}
-									final String name2 = entry.getName();
-									if (shouldIgnore(name2)) {
-										continue;
-									}
-									final Matcher m = patternFile.matcher(name2);
-									if (m.matches()) {
-										final Entry e = new Entry();
-										e.installLocation = installLocation;
-										cacheLocation.add(installLocation);
-										e.name = m.group(2);
-										e.path = m.group(1);
-										if (e.path != null) {
-											e.pakage = e.path.replace("/", "."); //$NON-NLS-1$ //$NON-NLS-2$
-											if (e.pakage.startsWith(".")) { //$NON-NLS-1$
-												e.pakage = e.pakage.substring(1);
-											}
-											if (e.pakage.endsWith(".")) { //$NON-NLS-1$
-												e.pakage = e.pakage.substring(0, e.pakage.length() - 1);
-											}
-										} else {
-											e.pakage = ""; //$NON-NLS-1$
+								try (final ZipInputStream zis = new ZipInputStream(url.openStream())) {
+									while (true) {
+										final ZipEntry entry = zis.getNextEntry();
+										if (entry == null) {
+											break;
 										}
-										cachePackage.add(e.pakage);
-
-										e.bundleSymName = pluginBase.getId();
-										if (e.path == null) {
-											e.path = ""; //$NON-NLS-1$
+										final String name2 = entry.getName();
+										if (shouldIgnore(name2)) {
+											continue;
 										}
-										cacheEntry.add(e);
-										cacheBundleId.add(pluginBase.getId());
+										final Matcher m = patternFile.matcher(name2);
+										if (m.matches()) {
+											final Entry e = new Entry();
+											e.installLocation = installLocation;
+											cacheLocation.add(installLocation);
+											e.name = m.group(2);
+											e.path = m.group(1);
+											if (e.path != null) {
+												e.pakage = e.path.replace("/", "."); //$NON-NLS-1$ //$NON-NLS-2$
+												if (e.pakage.startsWith(".")) { //$NON-NLS-1$
+													e.pakage = e.pakage.substring(1);
+												}
+												if (e.pakage.endsWith(".")) { //$NON-NLS-1$
+													e.pakage = e.pakage.substring(0, e.pakage.length() - 1);
+												}
+											} else {
+												e.pakage = ""; //$NON-NLS-1$
+											}
+											cachePackage.add(e.pakage);
 
-										//
-										// System.out.println(group
-										// + " -> "
-										// +
-										// m.group(2));
+											e.bundleSymName = pluginBase.getId();
+											if (e.path == null) {
+												e.path = ""; //$NON-NLS-1$
+											}
+											cacheEntry.add(e);
+											cacheBundleId.add(pluginBase.getId());
+										}
 									}
 								}
 							} else {
