@@ -711,9 +711,11 @@ public class StackRenderer extends LazyStackRenderer {
 		GridDataFactory.create(GridData.VERTICAL_ALIGN_CENTER | GridData.HORIZONTAL_ALIGN_CENTER).grab(true, true)
 				.applyTo(onboardingComposite);
 
-		GridLayoutFactory.swtDefaults().numColumns(2).equalWidth(true).applyTo(onboardingComposite);
+		GridLayoutFactory.swtDefaults().numColumns(2).equalWidth(true).spacing(10, SWT.DEFAULT)
+				.applyTo(onboardingComposite);
 
-		GridDataFactory gridDataFactory = GridDataFactory.swtDefaults().indent(SWT.DEFAULT, 10).span(2, 1);
+		GridDataFactory gridDataFactory = GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER)
+				.indent(SWT.DEFAULT, 10).span(2, 1);
 
 		onboardingImage = WidgetFactory.label(SWT.NONE).supplyLayoutData(gridDataFactory::create)
 				.create(onboardingComposite);
