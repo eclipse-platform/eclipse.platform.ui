@@ -385,7 +385,7 @@ public class UndoHistoryView extends ViewPart implements
 				StringBuilder buf = new StringBuilder(operation.getLabel());
 				buf.append("\n");
 				buf.append("Enabled=");	//$NON-NLS-1$
-				buf.append(Boolean.valueOf(operation.canUndo()).toString());
+				buf.append(Boolean.toString(operation.canUndo()));
 				buf.append("\n");
 				buf.append(operation.getClass().toString());
 				showMessage(buf.toString());

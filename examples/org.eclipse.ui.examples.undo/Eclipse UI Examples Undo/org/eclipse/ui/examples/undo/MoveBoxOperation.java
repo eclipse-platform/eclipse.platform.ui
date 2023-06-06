@@ -73,15 +73,15 @@ public class MoveBoxOperation extends BoxOperation {
 		stringBuffer.append(super.getLabel());
 		stringBuffer.append("["); //$NON-NLS-1$
 		stringBuffer.append("("); //$NON-NLS-1$
-		stringBuffer.append(Integer.valueOf(origin.x).toString());
+		stringBuffer.append(Integer.toString(origin.x));
 		stringBuffer.append(", "); //$NON-NLS-1$
-		stringBuffer.append(Integer.valueOf(origin.y).toString());
+		stringBuffer.append(Integer.toString(origin.y));
 		stringBuffer.append(')');
 		stringBuffer.append(", "); //$NON-NLS-1$
 		stringBuffer.append("("); //$NON-NLS-1$
-		stringBuffer.append(Integer.valueOf(target.x).toString());
+		stringBuffer.append(Integer.toString(target.x));
 		stringBuffer.append(", "); //$NON-NLS-1$
-		stringBuffer.append(Integer.valueOf(target.y).toString());
+		stringBuffer.append(Integer.toString(target.y));
 		stringBuffer.append(')');
 		stringBuffer.append(']');
 		return stringBuffer.toString();

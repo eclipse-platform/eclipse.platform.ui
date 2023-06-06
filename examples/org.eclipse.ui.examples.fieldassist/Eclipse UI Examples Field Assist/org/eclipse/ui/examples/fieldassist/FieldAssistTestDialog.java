@@ -66,7 +66,7 @@ public class FieldAssistTestDialog extends StatusDialog {
 		// content assist, so many of the methods are ignored.
 		@Override
 		public String getControlContents(Control control) {
-			return Integer.valueOf(((Spinner) control).getSelection()).toString();
+			return Integer.toString(((Spinner) control).getSelection());
 		}
 
 		@Override

@@ -92,10 +92,10 @@ public class SizePropertySource
 	@Override
 	public Object getPropertyValue(Object propName) {
 		if (ID_WIDTH.equals(propName)) {
-			return new String(Integer.valueOf(point.x).toString());
+			return Integer.toString(point.x);
 		}
 		if (ID_HEIGHT.equals(propName)) {
-			return new String(Integer.valueOf(point.y).toString());
+			return Integer.toString(point.y);
 		}
 		return null;
 	}
