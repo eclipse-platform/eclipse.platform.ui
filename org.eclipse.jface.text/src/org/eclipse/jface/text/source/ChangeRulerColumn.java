@@ -135,7 +135,7 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 	/** The ruler's annotation model. */
 	private IAnnotationModel fAnnotationModel;
 	/** The width of the change ruler column. */
-	private final int fWidth= 5;
+	private static final int fWidth= 5;
 
 	/** Cache for the actual scroll position in pixels */
 	private int fScrollPos;

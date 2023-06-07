@@ -34,7 +34,7 @@ import org.eclipse.search.tests.ResourceHelper;
 
 public class FileCharSequenceTests {
 
-	private final String TEST_CONTENT= "ABCDEFGHIJKLMNOPQRSTUVWXYZÜöäüèéùabcdefghijklmnopqrstuvwxyz1234567890@\'\"\n$¢"; //€
+	private static final String TEST_CONTENT= "ABCDEFGHIJKLMNOPQRSTUVWXYZÜöäüèéùabcdefghijklmnopqrstuvwxyz1234567890@\'\"\n$¢"; //€
 
 	private IProject fProject;
 
