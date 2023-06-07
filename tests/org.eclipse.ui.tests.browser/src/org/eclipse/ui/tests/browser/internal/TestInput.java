@@ -27,8 +27,8 @@ import org.junit.Test;
 
 public class TestInput {
 
-	private final String URL1 = "http://www.eclipse.org";
-	private final String URL2 = "http://bugs.eclipse.org";
+	private static final String URL1 = "http://www.eclipse.org";
+	private static final String URL2 = "http://bugs.eclipse.org";
 	private static final String ID1 = "browser.id1";
 	private static final String ID2 = "browser.id2";
 

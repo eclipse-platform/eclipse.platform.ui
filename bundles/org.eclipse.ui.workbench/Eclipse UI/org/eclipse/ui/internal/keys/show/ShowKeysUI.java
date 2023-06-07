@@ -155,7 +155,7 @@ public class ShowKeysUI implements IDisposable {
 		private static final int POPUP_FONT_SIZEFACTOR_KEY_LABEL = 2;
 		private static final int POPUP_FONT_SIZEFACTOR_KEY = POPUP_FONT_SIZEFACTOR_KEY_LABEL + 1;
 		private static final int MARGIN_BOTTOM = 25;
-		private final String keysPageId = "org.eclipse.ui.preferencePages.Keys"; //$NON-NLS-1$
+		private static final String keysPageId = "org.eclipse.ui.preferencePages.Keys"; //$NON-NLS-1$
 
 		private final List<Resource> resources = new ArrayList<>(3);
 		private final int timeToClose;

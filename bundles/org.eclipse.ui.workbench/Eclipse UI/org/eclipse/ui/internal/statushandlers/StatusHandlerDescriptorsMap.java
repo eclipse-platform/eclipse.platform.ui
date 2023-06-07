@@ -26,7 +26,7 @@ import java.util.Map;
  */
 class StatusHandlerDescriptorsMap {
 
-	private final String ASTERISK = "*"; //$NON-NLS-1$
+	private static final String ASTERISK = "*"; //$NON-NLS-1$
 
 	private HashMap map;
 

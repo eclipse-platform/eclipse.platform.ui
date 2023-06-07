@@ -44,7 +44,7 @@ public class GlobalKeyAssistDialog extends KeyAssistDialog {
 	/**
 	 * ID of the key binding preference page
 	 */
-	private final String keysPageId = "org.eclipse.ui.preferencePages.Keys"; //$NON-NLS-1$
+	private static final String keysPageId = "org.eclipse.ui.preferencePages.Keys"; //$NON-NLS-1$
 
 	/**
 	 * Whether this dialog is currently open, if the dialog is opened again, we open

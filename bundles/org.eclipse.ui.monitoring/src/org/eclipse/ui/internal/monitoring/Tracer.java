@@ -33,7 +33,7 @@ public class Tracer {
 	private static final SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm:ss.SSS"); //$NON-NLS-1$
 	private final Date date = new Date();
 	private final String prefix;
-	private final PrintStream out = System.out;
+	private static final PrintStream out = System.out;
 
 	/**
 	 * Returns {@code true} if the debug option is set, but only if the platform is running in debug

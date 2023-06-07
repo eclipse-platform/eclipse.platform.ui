@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class AboutDialogE4 extends TrayDialog {
 
-	private final int maxImageWidth = 250;
+	private static final int maxImageWidth = 250;
 
 	private final ProductInformation product;
 

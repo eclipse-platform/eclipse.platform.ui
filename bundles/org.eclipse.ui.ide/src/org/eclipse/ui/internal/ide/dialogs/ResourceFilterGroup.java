@@ -1298,7 +1298,7 @@ public class ResourceFilterGroup {
 			return null;
 		}
 
-		private final String MYTYPENAME = "org.eclipse.ui.ide.internal.filterCopy"; //$NON-NLS-1$
+		private static final String MYTYPENAME = "org.eclipse.ui.ide.internal.filterCopy"; //$NON-NLS-1$
 		private final int MYTYPEID = registerType(MYTYPENAME);
 
 		@Override

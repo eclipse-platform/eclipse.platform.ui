@@ -94,13 +94,13 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 
 	private static final FullDecoratorDefinition[] EMPTY_FULL_DEF = new FullDecoratorDefinition[0];
 
-	private final String PREFERENCE_SEPARATOR = ","; //$NON-NLS-1$
+	private static final String PREFERENCE_SEPARATOR = ","; //$NON-NLS-1$
 
-	private final String VALUE_SEPARATOR = ":"; //$NON-NLS-1$
+	private static final String VALUE_SEPARATOR = ":"; //$NON-NLS-1$
 
-	private final String P_TRUE = "true"; //$NON-NLS-1$
+	private static final String P_TRUE = "true"; //$NON-NLS-1$
 
-	private final String P_FALSE = "false"; //$NON-NLS-1$
+	private static final String P_FALSE = "false"; //$NON-NLS-1$
 
 	private LocalResourceManager resourceManager;
 
