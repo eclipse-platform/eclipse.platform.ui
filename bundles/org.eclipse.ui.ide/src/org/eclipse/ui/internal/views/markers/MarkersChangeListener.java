@@ -679,8 +679,8 @@ class MarkerUpdateScheduler {
 		 * update when we are receiving post-build events and change-events
 		 * continuously over a short gap of time.
 		 */
-		private final long CANCEL_MARGIN_DELAY = (SHORT_DELAY * 3);
-		private final long NO_CANCEL_TIME_OUT = (LONG_DELAY * 3);
+		private static final long CANCEL_MARGIN_DELAY = (SHORT_DELAY * 3);
+		private static final long NO_CANCEL_TIME_OUT = (LONG_DELAY * 3);
 		//this to account for an ordinary change that may come in
 		//after post build
 		private static final long AFTER_MARGIN = 2;

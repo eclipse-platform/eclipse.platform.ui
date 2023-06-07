@@ -24,7 +24,7 @@ import org.eclipse.core.resources.IMarker;
  */
 public final class NameAttribute {
 
-	private final String key = "org.eclipse.ui.views.markers.name"; //$NON-NLS-1$
+	private static final String key = "org.eclipse.ui.views.markers.name"; //$NON-NLS-1$
 
 	/**
 	 * Returns the key used to retrieve the name attribute

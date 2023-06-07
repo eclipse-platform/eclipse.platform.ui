@@ -109,7 +109,7 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 	private static final char BLANK = ' ';
 
 	// this is hard-coded, as a UI option is most probably not necessary
-	private final boolean autoInfixSearch = true;
+	private static final boolean autoInfixSearch = true;
 
 	private int getDefaultMatchRules() {
 		return SearchPattern.DEFAULT_MATCH_RULES | (autoInfixSearch ? SearchPattern.RULE_SUBSTRING_MATCH : 0);

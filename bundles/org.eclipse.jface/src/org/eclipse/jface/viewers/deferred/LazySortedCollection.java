@@ -42,7 +42,7 @@ import org.eclipse.core.runtime.Assert;
  * @since 3.1
  */
 public class LazySortedCollection {
-	private final int MIN_CAPACITY = 8;
+	private static final int MIN_CAPACITY = 8;
 	private Object[] contents = new Object[MIN_CAPACITY];
 	private int[] leftSubTree = new int[MIN_CAPACITY];
 	private int[] rightSubTree = new int[MIN_CAPACITY];

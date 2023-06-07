@@ -289,7 +289,7 @@ public class ModelEditor implements IGotoObject {
 	public static final int TAB_FORM = 0;
 	public static final int TAB_XMI = 1;
 	public static final int TAB_LIST = 2;
-	final String key = "org.eclipse.e4.tools.active-object-viewer"; //$NON-NLS-1$
+	static final String key = "org.eclipse.e4.tools.active-object-viewer"; //$NON-NLS-1$
 
 
 

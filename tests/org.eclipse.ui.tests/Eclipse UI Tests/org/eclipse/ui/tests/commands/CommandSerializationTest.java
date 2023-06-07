@@ -36,7 +36,7 @@ import org.junit.Test;
  */
 public class CommandSerializationTest {
 
-	private final String showPerspectiveCommandId = "org.eclipse.ui.perspectives.showPerspective";
+	private static final String showPerspectiveCommandId = "org.eclipse.ui.perspectives.showPerspective";
 
 	/**
 	 * Test a serialization of the show perspective command with no parameters.
