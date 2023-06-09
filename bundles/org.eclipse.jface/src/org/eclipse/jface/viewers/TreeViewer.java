@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.jface.util.Policy;
+import org.eclipse.jface.viewers.internal.ExpandableNode;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.events.TreeListener;
@@ -550,6 +551,9 @@ public class TreeViewer extends AbstractTreeViewer {
 			virtualMaterializeItem(treeItem);
 			return treeItem.getItemCount() > 0;
 		}
+		if (element instanceof ExpandableNode) {
+			return false;
+		}
 		return super.isExpandable(element);
 	}
 
@@ -820,6 +824,12 @@ public class TreeViewer extends AbstractTreeViewer {
 			if (internalIsInputOrEmptyPath(parentOrTreePath)) {
 				Tree tree = (Tree) getControl();
 				if (index < tree.getItemCount()) {
+
+					if (getItemsLimit() > 0 && hasLimitedChildrenItems(tree)) {
+						internalRefreshStruct(tree, getInput(), false);
+						return;
+					}
+
 					TreeItem item1 = tree.getItem(index);
 					if (item1.getData() != null) {
 						removedPath = getTreePathFromItem(item1);
@@ -833,6 +843,12 @@ public class TreeViewer extends AbstractTreeViewer {
 					TreeItem parentItem = (TreeItem) parentWidget;
 					if (parentItem.isDisposed())
 						continue;
+
+					if (getItemsLimit() > 0 && hasLimitedChildrenItems(parentWidget)) {
+						internalRefreshStruct(parentWidget, parentWidget.getData(), false);
+						continue;
+					}
+
 					if (index < parentItem.getItemCount()) {
 						TreeItem item2 = parentItem.getItem(index);
 
@@ -1116,4 +1132,66 @@ public class TreeViewer extends AbstractTreeViewer {
 		}
 	}
 
+	@Override
+	void handleExpandableNodeClicked(Widget w) {
+		if (!(w instanceof Item item)) {
+			return;
+		}
+
+		Object data = item.getData();
+		if (data == null) {
+			return;
+		}
+
+		Object[] children = getSortedChildren(data);
+		if (children.length == 0) {
+			return;
+		}
+
+		Widget parent = getParentItem(item);
+		if (parent == null) {
+			parent = getControl();
+		}
+		// destroy widget
+		disassociate(item);
+		item.dispose();
+
+		// create children on parent
+		for (Object element : children) {
+			createTreeItem(parent, element, -1);
+		}
+
+		if (children.length > 0) {
+			// If we've expanded but still have not reached the limit
+			// select new expandable node, so user can click through
+			// to the end
+			Object lastElement = getLastElement(parent);
+			if (lastElement instanceof ExpandableNode node) {
+				setSelection(new StructuredSelection(node), true);
+			} else {
+				// reset the selection. client's selection listener should not be triggered.
+				// there was only one selection on Expandable Node.
+				Item[] curSel = this.getTree().getSelection();
+				if (curSel.length == 1) {
+					this.getTree().deselect((TreeItem) curSel[0]);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Returns the data of the last item on the viewer.
+	 *
+	 * @param parent
+	 *
+	 * @return may return null
+	 */
+	Object getLastElement(Widget parent) {
+		Item[] items = getChildren(parent);
+		int length = items.length;
+		if (length == 0) {
+			return null;
+		}
+		return items[length - 1].getData();
+	}
 }

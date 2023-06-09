@@ -17,15 +17,21 @@
 
 package org.eclipse.jface.viewers;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.internal.InternalPolicy;
 import org.eclipse.jface.util.Policy;
+import org.eclipse.jface.viewers.internal.ExpandableNode;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
@@ -45,6 +51,13 @@ import org.eclipse.swt.widgets.Widget;
  *
  */
 public abstract class ColumnViewer extends StructuredViewer {
+
+	/**
+	 * Number of items to be shown before an {@link ExpandableNode} is displayed,
+	 * default is zero (no limits).
+	 */
+	private int itemsLimit;
+
 	private CellEditor[] cellEditors;
 
 	private ICellModifier cellModifier;
@@ -63,6 +76,8 @@ public abstract class ColumnViewer extends StructuredViewer {
 
 	private MouseListener mouseListener;
 
+	private Set<ExpandableNode> expandableNodes;
+
 	// after logging for the first
 	// time
 
@@ -70,7 +85,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 	 * Create a new instance of the receiver.
 	 */
 	public ColumnViewer() {
-
+		expandableNodes = new HashSet<>();
 	}
 
 	@Override
@@ -652,8 +667,11 @@ public abstract class ColumnViewer extends StructuredViewer {
 		ViewerCell cell = getCell(new Point(e.x, e.y));
 
 		if (cell != null) {
-			triggerEditorActivationEvent(new ColumnViewerEditorActivationEvent(
-					cell, e));
+			if (cell.getElement() instanceof ExpandableNode) {
+				handleExpandableNodeClicked(cell.getItem());
+			} else {
+				triggerEditorActivationEvent(new ColumnViewerEditorActivationEvent(cell, e));
+			}
 		}
 	}
 
@@ -701,6 +719,9 @@ public abstract class ColumnViewer extends StructuredViewer {
 		boolean oldBusy = isBusy();
 		setBusy(true);
 		try {
+			if (parent instanceof ExpandableNode expNode) {
+				return expNode.getRemainingElements();
+			}
 			return super.getRawChildren(parent);
 		} finally {
 			setBusy(oldBusy);
@@ -816,5 +837,220 @@ public abstract class ColumnViewer extends StructuredViewer {
 	 */
 	public boolean isBusy() {
 		return busy;
+	}
+
+	@Override
+	protected Object[] getSortedChildren(Object parent) {
+		Object[] sorted = super.getSortedChildren(parent);
+		return applyItemsLimit(parent, sorted);
+	}
+
+	/**
+	 * Apply items limit for the items to be created on the viewer. This method is
+	 * supposed to be called at the end of {@link #getSortedChildren(Object)} call,
+	 * which always returns the complete list of elements to be populated.
+	 * <p>
+	 * <ul>
+	 * <li>If the {@link #setDisplayIncrementally(int)} is not used by viewer, this method
+	 * does nothing.</li>
+	 * <li>If the {@link #setDisplayIncrementally(int)} is used by viewer, this method might
+	 * modify the list by reducing number of elements according to the limit set,
+	 * and by adding an {@link ExpandableNode} as last element.</li>
+	 * <li>If the {@link #getSortedChildren(Object)} is not overridden by the
+	 * subclass, this method shouldn't be used by clients.</li>
+	 * </ul>
+	 * Note that in case of parent is {@link ExpandableNode} we will return next
+	 * block of limited elements to be created.
+	 *
+	 * @param parent parent element
+	 * @param sorted all children of given parent, as returned by
+	 *               {@link #getSortedChildren(Object)}
+	 * @return returns only limited items.
+	 * @see ColumnViewer#setDisplayIncrementally(int)
+	 */
+	final Object[] applyItemsLimit(Object parent, Object[] sorted) {
+		// limit the number of items to be created. sorted always gets the remaining
+		// elements to be created.
+		final int itemsLimit = getItemsLimit();
+		if (itemsLimit <= 0 || sorted.length <= itemsLimit) {
+			return sorted;
+		}
+
+		int offSet = itemsLimit;
+		int srcPos = 0;
+
+		Object[] partialChildren = new Object[itemsLimit + 1];
+
+		// Extract a subset of children
+		System.arraycopy(sorted, srcPos, partialChildren, 0, itemsLimit);
+
+		if (parent instanceof ExpandableNode expNode) {
+			// pass on original children
+			sorted = expNode.getAllElements();
+			srcPos = expNode.getOffset();
+			offSet = srcPos + itemsLimit;
+		}
+
+		// Add an expandable node
+		partialChildren[itemsLimit] = createExpandableNode(sorted, offSet, itemsLimit);
+
+		return partialChildren;
+	}
+
+	/**
+	 * Concrete viewer is supposed to "expand" {@link ExpandableNode} located at
+	 * given cell.
+	 * <p>
+	 * Default implementation does nothing.
+	 *
+	 * @param cell selected on click
+	 */
+	void handleExpandableNodeClicked(Widget cell) {
+		// default implementation does nothing. Actual viewers can decide how to
+		// populate remaining elements.
+	}
+
+	/**
+	 * If the items limit is not set, or the number of visible children is below the
+	 * items limit, this method does nothing and returns {@code null}.
+	 * <p>
+	 * In other case, this method tries to fetch (probably updated) model elements
+	 * up to the number of given visible elements, expanding possible existing
+	 * {@link ExpandableNode} elements if needed.
+	 * <p>
+	 * Implementation note: we should not dispose already visible items and we
+	 * should display limited elements along with already visible items.
+	 *
+	 * @param parent          model item to be refreshed.
+	 * @param visibleChildren currently visible children. This includes any elements
+	 *                        already expanded by user.
+	 * @return list of children to be displayed/refreshed or {@code null} if given
+	 *         items length does not exceed items limit
+	 */
+	Object[] getChildrenWithLimitApplied(final Object parent, Item[] visibleChildren) {
+		final int limit = getItemsLimit();
+		final int visibleItemsLength = visibleChildren.length;
+		if (visibleItemsLength < limit || limit <= 0) {
+			return null;
+		}
+
+		// fetch entire sorted children we need them in any of next cases.
+		setDisplayIncrementally(0);
+		Object[] sortedAll;
+		try {
+			sortedAll = getSortedChildren(parent);
+		} finally {
+			setDisplayIncrementally(limit);
+		}
+		
+		// model has lost some elements and length is less then visible items.
+		if (sortedAll.length < visibleItemsLength) {
+			return sortedAll;
+		}
+
+		// all elements from the model were visible. Probably refresh triggered to update
+		// labels.
+		if (sortedAll.length == visibleItemsLength
+				&& !(visibleChildren[visibleItemsLength - 1].getData() instanceof ExpandableNode)) {
+			return sortedAll;
+		}
+
+		// there can any number of elements in the model. but viewer was showing
+		// ExpandableNode. Then return the same length.
+		if (visibleChildren[visibleItemsLength - 1].getData() instanceof ExpandableNode) {
+			// Now we need exactly previously visible length.
+			Object[] subArray = new Object[visibleItemsLength];
+			System.arraycopy(sortedAll, 0, subArray, 0, visibleItemsLength - 1);
+			subArray[visibleItemsLength - 1] = new ExpandableNode(sortedAll, visibleItemsLength - 1, limit, this);
+			return subArray;
+		}
+
+		// probably model has updated with huge data and requesting refresh. we should
+		// not let the viewer explode.
+		// How many next elements can be populated ?
+		// We will populate only visible items + limit.
+		int max = visibleItemsLength + limit;
+
+		if (sortedAll.length < max) {
+			return sortedAll;
+		}
+
+		// create 'max' elements.
+		Object[] subArray = new Object[max];
+		System.arraycopy(sortedAll, 0, subArray, 0, max - 1);
+		subArray[max - 1] = new ExpandableNode(sortedAll, max - 1, limit, this);
+		return subArray;
+	}
+
+	/**
+	 * Returns the current viewer limit on direct children at one level. Limit that
+	 * is less than or equal to zero has no effect on the viewer.
+	 *
+	 * @return current limit
+	 */
+	int getItemsLimit() {
+		return itemsLimit;
+	}
+
+	/**
+	 * Sets the viewers items limit on direct children at one level.
+	 * <p>
+	 * If the number of direct children will exceed this limit, the viewer will only
+	 * show a subset of children up to the limit and add an {@link ExpandableNode}
+	 * element after last shown item.
+	 * </p>
+	 * <p>
+	 * This method must be called before {@link #setInput(Object)}. A parameter less
+	 * than or equal to zero has no effect on the viewer.
+	 * </p>
+	 * <p>
+	 * This API does not guaranteed to work with {@link SWT#VIRTUAL} viewers.
+	 * </p>
+	 *
+	 * @param incrementSize A non-negative integer greater than 0 to enable items
+	 *                      limit
+	 * @since 3.31
+	 */
+	public void setDisplayIncrementally(int incrementSize) {
+		itemsLimit = incrementSize;
+	}
+
+	ExpandableNode createExpandableNode(Object[] result, int startOffSet, int limit) {
+		ExpandableNode expandableNode = new ExpandableNode(result, startOffSet, limit, this);
+		expandableNodes.add(expandableNode);
+		return expandableNode;
+	}
+
+	@Override
+	protected void disassociate(Item item) {
+		Object element = item.getData();
+		if (element instanceof ExpandableNode expNode) {
+			expandableNodes.remove(expNode);
+		}
+		super.disassociate(item);
+	}
+
+	Set<ExpandableNode> getExpandableNodes() {
+		return expandableNodes;
+	}
+
+	@Override
+	protected void handleDoubleSelect(SelectionEvent event) {
+		if (event.item != null && event.item.getData() instanceof ExpandableNode) {
+			handleExpandableNodeClicked(event.item);
+			// we do not want client listeners to be notified for this item.
+			return;
+		}
+		super.handleDoubleSelect(event);
+	}
+
+	/**
+	 * @param element
+	 * @return return if it is an instance of ExpandableNode
+	 * @since 3.31
+	 */
+	protected boolean isExpandableNode(Object element) {
+		return element instanceof ExpandableNode;
+
 	}
 }

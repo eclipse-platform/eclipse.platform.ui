@@ -685,4 +685,17 @@ public interface IWorkbenchPreferenceConstants {
 	 * @since 3.129
 	 */
 	String DISPOSE_CLOSED_BROWSER_HOVER_TIMEOUT = "disposeClosedBrowserHoverTimeout"; //$NON-NLS-1$
+
+	/**
+	 * This preference specifies the limit for number of children that can be shown
+	 * per parent element without expanding.
+	 * <p>
+	 * This preference is an <code>int</code> value that defines how many child
+	 * elements a parent viewer element can show before workbench will create
+	 * "expand" item that hides all remaining child elements.
+	 * </p>
+	 *
+	 * @since 3.130
+	 */
+	String LARGE_VIEW_LIMIT = "largeViewLimit"; //$NON-NLS-1$
 }

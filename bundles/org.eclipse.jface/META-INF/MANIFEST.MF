@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.jface;singleton:=true
-Bundle-Version: 3.30.100.qualifier
+Bundle-Version: 3.31.0.qualifier
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.jface,
@@ -29,6 +29,7 @@ Export-Package: org.eclipse.jface,
  org.eclipse.jface.util,
  org.eclipse.jface.viewers,
  org.eclipse.jface.viewers.deferred,
+ org.eclipse.jface.viewers.internal;x-friends:="org.eclipse.ui.tests,org.eclipse.jface.tests",
  org.eclipse.jface.widgets,
  org.eclipse.jface.window,
  org.eclipse.jface.wizard,

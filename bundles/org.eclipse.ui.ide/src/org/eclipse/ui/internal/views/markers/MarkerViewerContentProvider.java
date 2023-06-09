@@ -82,7 +82,10 @@ class MarkerViewerContentProvider implements ITreeContentProvider {
 
 	@Override
 	public Object getParent(Object element) {
-		Object parent = ((MarkerSupportItem) element).getParent();
+		Object parent = null;
+		if (element instanceof MarkerSupportItem markerItem) {
+			parent = markerItem.getParent();
+		}
 		if (parent == null)
 			return input;
 		return parent;

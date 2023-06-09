@@ -110,6 +110,7 @@ import org.eclipse.ui.part.MarkerTransfer;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.eclipse.ui.views.WorkbenchViewerSetup;
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerItem;
 import org.eclipse.ui.views.markers.internal.ContentGeneratorDescriptor;
@@ -256,6 +257,7 @@ public class ExtendedMarkersView extends ViewPart {
 
 		viewer = new MarkersTreeViewer(new Tree(parent, SWT.H_SCROLL
 				/*| SWT.VIRTUAL */| SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION));
+		WorkbenchViewerSetup.setupViewer(viewer);
 		viewer.getTree().setLinesVisible(true);
 		viewer.setUseHashlookup(true);
 		createColumns(new TreeColumn[0], new int[0]);
@@ -872,18 +874,20 @@ public class ExtendedMarkersView extends ViewPart {
 		final List<IMarker> result = new ArrayList<>(structured.size());
 		MarkerCategory lastCategory = null;
 		for (Iterator<?> i = structured.iterator(); i.hasNext();) {
-			final MarkerSupportItem next = (MarkerSupportItem) i.next();
-			if (next.isConcrete()) {
-				if (lastCategory != null && lastCategory == next.getParent()) {
-					continue;
-				}
-				result.add(next.getMarker());
-			} else {
-				lastCategory = (MarkerCategory) next;
-				final MarkerEntry[] children = (MarkerEntry[]) lastCategory.getChildren();
+			Object item = i.next();
+			if (item instanceof MarkerSupportItem next) {
+				if (next.isConcrete()) {
+					if (lastCategory != null && lastCategory == next.getParent()) {
+						continue;
+					}
+					result.add(next.getMarker());
+				} else {
+					lastCategory = (MarkerCategory) next;
+					final MarkerEntry[] children = (MarkerEntry[]) lastCategory.getChildren();
 
-				for (MarkerEntry element : children) {
-					result.add(element.getMarker());
+					for (MarkerEntry element : children) {
+						result.add(element.getMarker());
+					}
 				}
 			}
 		}
@@ -1377,13 +1381,15 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @param newSelection
 	 */
 	void updateStatusLine(IStructuredSelection newSelection) {
-		String message;
+		String message = null;
 
 		if (newSelection == null || newSelection.isEmpty()) {
 			message = MarkerSupportInternalUtilities.EMPTY_STRING;
 		} else if (newSelection.size() == 1) {
 			// Use the Message attribute of the marker
-			message = ((MarkerSupportItem) newSelection.getFirstElement()).getDescription();
+			if (newSelection.getFirstElement() instanceof MarkerSupportItem element) {
+				message = element.getDescription();
+			}
 
 		} else {
 			Iterator<?> elements = newSelection.iterator();
@@ -1734,5 +1740,13 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	boolean isVisible() {
 		return isViewVisible;
+	}
+
+	@Override
+	public <T> T getAdapter(Class<T> adapter) {
+		if (adapter == MarkersTreeViewer.class) {
+			return adapter.cast(viewer);
+		}
+		return super.getAdapter(adapter);
 	}
 }
