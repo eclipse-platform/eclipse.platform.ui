@@ -24,6 +24,7 @@ package org.eclipse.jface.viewers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -34,6 +35,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.internal.InternalPolicy;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.jface.viewers.internal.ExpandableNode;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionEvent;
@@ -43,6 +45,7 @@ import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -286,6 +289,15 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 					comparator.sort(this, filtered);
 				}
 			}
+			// there are elements to be shown and viewer is showing limited items.
+			// newly added element can be inside expandable node or can be visible item.
+			// Assumption that user has already updated the model and needs addition of
+			// item.
+			if (getItemsLimit() > 0 && hasLimitedChildrenItems(widget)) {
+				internalRefreshStruct(widget, parent, false);
+				return;
+			}
+
 			createAddedElements(widget, filtered);
 			if (InternalPolicy.DEBUG_LOG_EQUAL_VIEWER_ELEMENTS) {
 				Item[] children = getChildren(widget);
@@ -635,10 +647,11 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	@Override
 	protected Object[] getSortedChildren(Object parentElementOrTreePath) {
-		Object[] result = getFilteredChildren(parentElementOrTreePath);
+		Object[] result = null;
 		ViewerComparator comparator = getComparator();
 		if (parentElementOrTreePath != null
 				&& comparator instanceof TreePathViewerSorter) {
+			result = getFilteredChildren(parentElementOrTreePath);
 			TreePathViewerSorter tpvs = (TreePathViewerSorter) comparator;
 
 			// be sure we're not modifying the original array from the model
@@ -655,10 +668,9 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 				}
 			}
 			tpvs.sort(this, path, result);
-		} else if (comparator != null) {
-			// be sure we're not modifying the original array from the model
-			result = result.clone();
-			comparator.sort(this, result);
+			result = applyItemsLimit(parentElementOrTreePath, result);
+		} else {
+			return super.getSortedChildren(parentElementOrTreePath);
 		}
 		return result;
 	}
@@ -958,6 +970,12 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		}
 
 		for (int column = 0; column < columnCount; column++) {
+
+			// ExpandableNode is shown in first column only.
+			if (element instanceof ExpandableNode && column != 0) {
+				continue;
+			}
+
 			ViewerColumn columnViewer = getViewerColumn(column);
 			ViewerCell cellToUpdate = updateCell(viewerRowFromItem, column,
 					element);
@@ -1422,6 +1440,9 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 					return super.getRawChildren(parent);
 				}
 				IContentProvider cp = getContentProvider();
+				if (getItemsLimit() > 0 && parent instanceof ExpandableNode expNode) {
+					return expNode.getRemainingElements();
+				}
 				if (cp instanceof ITreePathContentProvider) {
 					ITreePathContentProvider tpcp = (ITreePathContentProvider) cp;
 					if (path == null) {
@@ -1518,6 +1539,13 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 */
 	@Override
 	protected void handleDoubleSelect(SelectionEvent event) {
+		// expand ExpandableNode for default selection.
+		if (event.item != null && event.item.getData() instanceof ExpandableNode node) {
+			handleExpandableNodeClicked(event.item);
+			// do not notify client listeners for this item.
+			return;
+		}
+		
 		// handle case where an earlier selection listener disposed the control.
 		Control control = getControl();
 		if (control != null && !control.isDisposed()) {
@@ -1968,7 +1996,14 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 */
 	/* package */void internalRefreshStruct(Widget widget, Object element,
 			boolean updateLabels) {
-		updateChildren(widget, element, null, updateLabels);
+
+		// updateChildren will ask getSortedChildren for items to be populated.
+		// getSortedChildren always returns the limited items doesn't matter if there
+		// were any items expanded. We need to fetch exactly same number of
+		// elements which were shown in the viewer.
+		Object[] updatedChildren = getChildrenWithLimitApplied(element, getChildren(widget));
+
+		updateChildren(widget, element, updatedChildren, updateLabels);
 		Item[] children = getChildren(widget);
 		if (children != null) {
 			for (Item item : children) {
@@ -1999,6 +2034,27 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			if (equals(element, input)) {
 				setInput(null);
 				return;
+			}
+
+			boolean continueOuter = false;
+			if (getItemsLimit() > 0) {
+				Widget[] itemsOfElement = internalFindItems(element);
+				for (Widget item : itemsOfElement) {
+					if (item instanceof TreeItem) {
+						TreeItem parentItem = ((TreeItem) item).getParentItem();
+						if (parentItem == null) {
+							internalRefreshStruct(((TreeItem) item).getParent(), getInput(), false);
+							continueOuter = true;
+							break;
+						}
+						// refresh parent item with the latest model.
+						internalRefreshStruct(parentItem, parentItem.getData(), false);
+						continueOuter = true;
+					}
+				}
+			}
+			if (continueOuter) {
+				continue;
 			}
 			Widget[] childItems = internalFindItems(element);
 			if (childItems.length > 0) {
@@ -2052,6 +2108,15 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 			// Iterate over the child items and remove each one
 			Item[] children = getChildren(parentItem);
+
+			// there are elements to be shown and viewer is showing limited items.
+			// newly added element can be inside expandable node or can be visible item.
+			// Assumption that user has already updated the model and needs removal of
+			// an item.
+			if (getItemsLimit() > 0 && hasLimitedChildrenItems(parentItem)) {
+				internalRefreshStruct(parentItem, parentItem.getData(), false);
+				continue;
+			}
 
 			if (children.length == 1 && children[0].getData() == null &&
 					parentItem instanceof Item) { // dummy node
@@ -2579,6 +2644,41 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 				}
 			}
 		}
+
+		// there can be some items inside expandable node and not populated yet. In this
+		// case try to find the item to select inside all the visible expandable nodes.
+		if (newSelection.size() < v.size() && getItemsLimit() > 0) {
+			// make out still not found items
+			List<Object> notFound = new ArrayList<>();
+			for (Object toSelect : v) {
+				boolean bFound = false;
+				for (Item found : newSelection) {
+					if (equals(toSelect, found.getData())) {
+						bFound = true;
+						break;
+					}
+				}
+				if (!bFound) {
+					notFound.add(toSelect);
+				}
+			}
+
+			// find out all visible expandable nodes
+			Collection<ExpandableNode> expandItems = getExpandableNodes();
+
+			// search for still missing items inside expandable nodes
+			for (Object nFound : notFound) {
+				for (ExpandableNode expNode : expandItems) {
+					if (findElementInExpandableNode(expNode, nFound)) {
+						Widget w = findItem(expNode);
+						if (w instanceof Item item) {
+							newSelection.add(item);
+						}
+					}
+				}
+			}
+		}
+
 		setSelection(newSelection);
 
 		// Although setting the selection in the control should reveal it,
@@ -2592,6 +2692,16 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 				showItem(newSelection.get(i));
 			}
 		}
+	}
+
+	private boolean findElementInExpandableNode(ExpandableNode expNode, Object toFind) {
+		Object[] remEles = getFilteredChildren(expNode);
+		for (Object element : remEles) {
+			if (equals(element, toFind)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -3251,6 +3361,18 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			this.isExpandableCheckFilters = checkFilters;
 			refresh();
 		}
+	}
+
+	/**
+	 * @param widget
+	 * @return if the given widget's children has an expandable node at the end.
+	 */
+	boolean hasLimitedChildrenItems(Widget widget) {
+		Item[] items = getChildren(widget);
+		if (items.length == 0) {
+			return false;
+		}
+		return items[items.length - 1].getData() instanceof ExpandableNode;
 	}
 
 }

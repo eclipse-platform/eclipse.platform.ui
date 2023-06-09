@@ -20,6 +20,7 @@
 package org.eclipse.jface.viewers;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.viewers.internal.ExpandableNode;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
@@ -454,6 +455,46 @@ public class TableViewer extends AbstractTableViewer {
 			return null;
 		}
 		return super.doFindItem(element);
+	}
+
+	@Override
+	void handleExpandableNodeClicked(Widget w) {
+		if (!(w instanceof Item item)) {
+			return;
+		}
+
+		Object data = item.getData();
+
+		if (!(data instanceof ExpandableNode expNode)) {
+			return;
+		}
+
+		Object[] sortedChildren = expNode.getRemainingElements();
+		Object[] nextChildren = applyItemsLimit(data, sortedChildren);
+		disassociate(item);
+		int index = doIndexOf(item);
+		// will also call item.dispose()
+		doRemove(new int[] { index });
+
+		if (nextChildren.length > 0) {
+			// create remaining elements
+			for (Object nextChild : nextChildren) {
+				createItem(nextChild, -1);
+			}
+			// If we've expanded but still have not reached the limit
+			// select new expandable node, so user can click through
+			// to the end
+			if (getLastElement() instanceof ExpandableNode node) {
+				setSelection(new StructuredSelection(node), true);
+			} else {
+				// reset the selection. client's selection listener should not be triggered.
+				// there was only one selection on Expandable Node.
+				int[] curSel = this.getTable().getSelectionIndices();
+				if (curSel.length == 1) {
+					this.getTable().deselect(curSel[0]);
+				}
+			}
+		}
 	}
 
 }

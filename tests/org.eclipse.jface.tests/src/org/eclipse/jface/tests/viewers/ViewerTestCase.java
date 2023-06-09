@@ -100,6 +100,10 @@ public abstract class ViewerTestCase extends TestCase {
 			if (display != null) {
 				while (display.readAndDispatch()) {
 					// loop until there are no more events to dispatch
+					try {
+						Thread.sleep(50);
+					} catch (InterruptedException e) {
+					}
 				}
 			}
 		}
