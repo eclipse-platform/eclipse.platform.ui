@@ -56,10 +56,10 @@ public class WizardTest extends TestCase {
 		assertEquals("Wizard has wrong number of pages", NUM_PAGES, wizard.getPageCount());
 
 		//test page name
-		assertEquals("WizardPage.getName() returned wrong name", wizard.page1Name, wizard.page1.getName());
+		assertEquals("WizardPage.getName() returned wrong name", TheTestWizard.page1Name, wizard.page1.getName());
 
 		//test getPage()
-		assertSame("Wizard.getPage() returned wrong page", wizard.getPage(wizard.page1Name), wizard.page1);
+		assertSame("Wizard.getPage() returned wrong page", wizard.getPage(TheTestWizard.page1Name), wizard.page1);
 
 		//test title
 		wizard.setWindowTitle(WIZARD_TITLE);
