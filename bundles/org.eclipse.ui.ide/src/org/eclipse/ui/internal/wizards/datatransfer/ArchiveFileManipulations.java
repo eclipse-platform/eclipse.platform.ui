@@ -74,22 +74,12 @@ public class ArchiveFileManipulations {
 			return false;
 		}
 
-		ZipFile zipFile = null;
-		try {
-			zipFile = new ZipFile(fileName);
+		try (ZipFile zipFile = new ZipFile(fileName)) {
+			return true;
 		} catch (IOException ioException) {
 			return false;
-		} finally {
-			if (zipFile != null) {
-				try {
-					zipFile.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			}
 		}
 
-		return true;
 	}
 
 	/**

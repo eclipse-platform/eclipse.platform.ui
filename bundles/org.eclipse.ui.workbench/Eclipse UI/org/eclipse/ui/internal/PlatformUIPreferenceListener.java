@@ -84,11 +84,9 @@ public class PlatformUIPreferenceListener implements IEclipsePreferences.IPrefer
 			if (registry instanceof EditorRegistry) {
 				EditorRegistry editorRegistry = (EditorRegistry) registry;
 				IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-				Reader reader = null;
-				try {
-					String xmlString = store.getString(IPreferenceConstants.RESOURCES);
-					if (xmlString != null && xmlString.length() > 0) {
-						reader = new StringReader(xmlString);
+				String xmlString = store.getString(IPreferenceConstants.RESOURCES);
+				if (xmlString != null && xmlString.length() > 0) {
+					try (Reader reader = new StringReader(xmlString)) {
 						// Build the editor map.
 						HashMap<String, IEditorDescriptor> editorMap = new HashMap<>();
 						int i = 0;
@@ -114,16 +112,10 @@ public class PlatformUIPreferenceListener implements IEclipsePreferences.IPrefer
 						}
 						// Update the file to editor(s) mappings
 						editorRegistry.readResources(editorMap, reader);
-					}
-				} catch (WorkbenchException e) {
-					WorkbenchPlugin.log(e);
-				} finally {
-					if (reader != null) {
-						try {
-							reader.close();
-						} catch (IOException e) {
-							WorkbenchPlugin.log(e);
-						}
+					} catch (WorkbenchException e) {
+						WorkbenchPlugin.log(e);
+					} catch (IOException closeException) {
+						WorkbenchPlugin.log(closeException);
 					}
 				}
 			}

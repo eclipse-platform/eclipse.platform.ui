@@ -171,30 +171,13 @@ public final class AboutInfo {
 			return null;
 		}
 
-		InputStream in = null;
-		try {
-			CRC32 checksum = new CRC32();
-			in = new CheckedInputStream(url.openStream(), checksum);
-
+		CRC32 checksum = new CRC32();
+		try (InputStream in = new CheckedInputStream(url.openStream(), checksum)) {
 			// the contents don't matter, the read just needs a place to go
-			byte[] sink = new byte[2048];
-			while (true) {
-				if (in.read(sink) <= 0) {
-					break;
-				}
-			}
-
+			in.readAllBytes();
 			return checksum.getValue();
 		} catch (IOException e) {
 			return null;
-		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-					// do nothing
-				}
-			}
 		}
 	}
 

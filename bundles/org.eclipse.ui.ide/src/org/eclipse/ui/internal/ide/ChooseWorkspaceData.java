@@ -310,8 +310,10 @@ public class ChooseWorkspaceData {
 			//		</recentWorkspaces>
 			//	</launchWorkspaceData>
 
-			Reader reader = new FileReader(persUrl.getFile());
-			XMLMemento memento = XMLMemento.createReadRoot(reader);
+			XMLMemento memento;
+			try (Reader reader = new FileReader(persUrl.getFile())) {
+				memento = XMLMemento.createReadRoot(reader);
+			}
 			if (memento == null || !compatibleFileProtocol(memento)) {
 				return false;
 			}
