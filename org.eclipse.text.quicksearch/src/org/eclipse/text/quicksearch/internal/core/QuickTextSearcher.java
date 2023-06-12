@@ -131,11 +131,8 @@ public class QuickTextSearcher {
 				return;
 			}
 
-
-			LineReader lr = null;
 			currentFile = f;
-			try {
-				lr = new LineReader(new InputStreamReader(f.getContents(true), f.getCharset()), MAX_LINE_LEN);
+			try (LineReader lr = new LineReader(new InputStreamReader(f.getContents(true), f.getCharset()), MAX_LINE_LEN)) {
 				String line = null;
 				int lineIndex = 1;
 				while ((line = lr.readLine()) != null) {
@@ -153,11 +150,9 @@ public class QuickTextSearcher {
 					lineIndex++;
 				}
 			} catch (Exception e) {
+				// ignored
 			} finally {
 				currentFile = null;
-				if (lr != null) {
-					lr.close();
-				}
 			}
 		}
 

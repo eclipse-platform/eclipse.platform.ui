@@ -13,11 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.editors.quickdiff;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import org.eclipse.swt.widgets.Display;
@@ -355,50 +353,26 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 	 * @exception CoreException if the given storage can not be accessed or read
 	 */
 	private static void setDocumentContent(IDocument document, IStorage storage, String encoding, IProgressMonitor monitor, boolean skipUTF8BOM) throws CoreException {
-		Reader in= null;
-		InputStream contentStream= storage.getContents();
-		try {
-
+		// impl like org.eclipse.core.internal.filebuffers.ResourceTextFileBuffer.setDocumentContent(IDocument, IFile, String)
+		if (encoding == null) {
+			encoding= Charset.defaultCharset().name();
+		}
+		try (InputStream contentStream= storage.getContents()){
 			if (skipUTF8BOM) {
-				for (int i= 0; i < 3; i++)
-					if (contentStream.read() == -1) {
-						throw new IOException(QuickDiffMessages.getString("LastSaveReferenceProvider.LastSaveReferenceProvider.error.notEnoughBytesForBOM")); //$NON-NLS-1$
+				byte[] bom= contentStream.readNBytes(IContentDescription.BOM_UTF_8.length);
+				if (bom.length != IContentDescription.BOM_UTF_8.length) {
+					throw new IOException(QuickDiffMessages.getString("LastSaveReferenceProvider.LastSaveReferenceProvider.error.notEnoughBytesForBOM")); //$NON-NLS-1$
 				}
 			}
 
-			final int DEFAULT_FILE_SIZE= 15 * 1024;
-
-			if (encoding == null)
-				in= new BufferedReader(new InputStreamReader(contentStream), DEFAULT_FILE_SIZE);
-			else
-				in= new BufferedReader(new InputStreamReader(contentStream, encoding), DEFAULT_FILE_SIZE);
-			StringBuilder buffer= new StringBuilder(DEFAULT_FILE_SIZE);
-			char[] readBuffer= new char[2048];
-			int n= in.read(readBuffer);
 			try {
-				while (n > 0) {
-					if (monitor != null && monitor.isCanceled())
-						return;
-
-					buffer.append(readBuffer, 0, n);
-					n= in.read(readBuffer);
-				}
+				String content= new String(contentStream.readAllBytes(), encoding);
+				document.set(content);
 			} catch (OutOfMemoryError e) {
 				throw new IOException("OutOfMemoryError occurred while reading " + storage.getFullPath(), e); //$NON-NLS-1$
 			}
-			document.set(buffer.toString());
-
 		} catch (IOException x) {
 			throw new CoreException(Status.error("Failed to access or read " + storage.getFullPath(), x)); //$NON-NLS-1$
-		} finally {
-			try {
-				if (in != null)
-					in.close();
-				else
-					contentStream.close();
-			} catch (IOException x) {
-				// ignore
-			}
 		}
 	}
 

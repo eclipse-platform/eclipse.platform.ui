@@ -64,8 +64,9 @@ public class ConvertLineDelemiterTest {
 				for (String inputDelim : DELIMS) {
 					String input= testFile.apply(inputDelim);
 					IFile file= ResourcesPlugin.getWorkspace().getRoot().getFile(new Path("/ConvertLineDelemiterTest/test" + i + ".txt"));
-					InputStream s= new ByteArrayInputStream(input.getBytes());
-					file.create(s, true, null);
+					try (InputStream s= new ByteArrayInputStream(input.getBytes())) {
+						file.create(s, true, null);
+					}
 					files[i++]= file;
 				}
 				FileBufferOperationRunner runner= new FileBufferOperationRunner(FileBuffers.getTextFileBufferManager(), null);

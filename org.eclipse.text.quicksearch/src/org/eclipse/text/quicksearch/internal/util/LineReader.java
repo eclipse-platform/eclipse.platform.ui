@@ -25,7 +25,7 @@ import java.io.Reader;
  *
  * @author Kris De Volder
  */
-public class LineReader {
+public class LineReader implements AutoCloseable{
 
 	private static final int EXPECTED_LINE_LENGTH = 160;
 	public static final int DEFAULT_MAX_LINE_LENGTH = 1000;
@@ -66,6 +66,7 @@ public class LineReader {
 	/**
 	 * Close the underlying stream. Does nothing if already closed.
 	 */
+	@Override
 	public void close() {
 		BufferedReader toClose = null;
 		synchronized (input) {

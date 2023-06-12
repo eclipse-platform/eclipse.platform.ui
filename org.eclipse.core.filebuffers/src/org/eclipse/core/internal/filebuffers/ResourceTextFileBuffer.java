@@ -13,11 +13,9 @@
  *******************************************************************************/
 package org.eclipse.core.internal.filebuffers;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.SequenceInputStream;
 import java.nio.ByteBuffer;
@@ -490,60 +488,32 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	 * @exception CoreException if the given stream can not be read
 	 */
 	private void setDocumentContent(IDocument document, IFile file, String encoding) throws CoreException {
-		InputStream contentStream= file.getContents();
-		Reader in= null;
-		try {
-
-			if (encoding == null)
-				encoding= fManager.getDefaultEncoding();
-
-			/*
-			 * XXX:
-			 * This is a workaround for a corresponding bug in Java readers and writer,
-			 * see http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
-			 */
-			if (fBOM != null && StandardCharsets.UTF_8.name().equals(encoding)) {
-				int n= 0;
-				do {
-					int bytes= contentStream.read(new byte[IContentDescription.BOM_UTF_8.length]);
-					if (bytes == -1)
-						throw new IOException();
-					n += bytes;
-				} while (n < IContentDescription.BOM_UTF_8.length);
+		if (encoding == null) {
+			encoding= fManager.getDefaultEncoding();
+		}
+		try (InputStream contentStream= file.getContents()) {
+			boolean skipUTF8BOM= fBOM != null && StandardCharsets.UTF_8.name().equals(encoding);
+			if (skipUTF8BOM) {
+				byte[] bom= contentStream.readNBytes(IContentDescription.BOM_UTF_8.length);
+				if (bom.length != IContentDescription.BOM_UTF_8.length) {
+					throw new IOException("UTF-8 BOM could not be read"); //$NON-NLS-1$
+				}
 			}
 
-			in= new BufferedReader(new InputStreamReader(contentStream, encoding), BUFFER_SIZE);
-			StringBuilder buffer= new StringBuilder(BUFFER_SIZE);
-			char[] readBuffer= new char[READER_CHUNK_SIZE];
-			int n= in.read(readBuffer);
 			try {
-				while (n > 0) {
-					buffer.append(readBuffer, 0, n);
-					n= in.read(readBuffer);
+				String content= new String(contentStream.readAllBytes(), encoding);
+				if (document instanceof IDocumentExtension4) {
+					((IDocumentExtension4) document).set(content, fFile.getModificationStamp());
+				} else {
+					document.set(content);
 				}
 			} catch (OutOfMemoryError e) {
-				// give the JVM a hint that it can free the big buffer right away
-				buffer= null;
 				throw new IOException(NLS.bind(FileBuffersMessages.ResourceTextFileBuffer_oom_on_file_read, file.getLocationURI()), e);
 			}
-
-			if (document instanceof IDocumentExtension4)
-				((IDocumentExtension4)document).set(buffer.toString(), fFile.getModificationStamp());
-			else
-				document.set(buffer.toString());
-
 		} catch (IOException x) {
 			String message= (x.getMessage() != null ? x.getMessage() : ""); //$NON-NLS-1$
 			IStatus s= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, message, x);
 			throw new CoreException(s);
-		} finally {
-			try {
-				if (in != null)
-					in.close();
-				else
-					contentStream.close();
-			} catch (IOException x) {
-			}
 		}
 	}
 }

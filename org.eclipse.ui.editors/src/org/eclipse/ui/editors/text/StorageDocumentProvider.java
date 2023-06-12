@@ -13,10 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.text;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
 
 import org.osgi.framework.Bundle;
@@ -132,36 +130,23 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	 * @since 2.0
 	 */
 	protected void setDocumentContent(IDocument document, InputStream contentStream, String encoding) throws CoreException {
-
-		Reader in= null;
-
+		// impl like org.eclipse.core.internal.filebuffers.ResourceTextFileBuffer.setDocumentContent(IDocument, IFile, String)
+		if (encoding == null) {
+			encoding= getDefaultEncoding();
+		}
 		try {
-
-			if (encoding == null)
-				encoding= getDefaultEncoding();
-
-			in= new BufferedReader(new InputStreamReader(contentStream, encoding), DEFAULT_FILE_SIZE);
-			StringBuilder buffer= new StringBuilder(DEFAULT_FILE_SIZE);
-			char[] readBuffer= new char[2048];
-			int n= in.read(readBuffer);
-			while (n > 0) {
-				buffer.append(readBuffer, 0, n);
-				n= in.read(readBuffer);
-			}
-
-			document.set(buffer.toString());
-
+			String content= new String(contentStream.readAllBytes(), encoding);
+			document.set(content);
 		} catch (IOException x) {
 			String message= (x.getMessage() != null ? x.getMessage() : ""); //$NON-NLS-1$
 			IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, message, x);
 			throw new CoreException(s);
 		} finally {
 			try {
-				if (in != null)
-					in.close();
-				else
-					contentStream.close();
+				// undocumented implementation detail kept for historic reasons (for example PDE relies on it):
+				contentStream.close();
 			} catch (IOException x) {
+				// ignore
 			}
 		}
 	}
