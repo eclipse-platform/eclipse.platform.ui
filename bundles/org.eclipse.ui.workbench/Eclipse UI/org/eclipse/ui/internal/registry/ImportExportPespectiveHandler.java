@@ -234,33 +234,19 @@ public class ImportExportPespectiveHandler {
 	private String perspToString(MPerspective persp) throws IOException {
 		Resource resource = new E4XMIResourceFactory().createResource(null);
 		resource.getContents().add((EObject) persp);
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		try {
+		try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
 			Map<String, Object> options = new HashMap<>();
 			options.put(E4XMIResource.OPTION_FILTER_PERSIST_STATE, Boolean.TRUE);
 			resource.save(output, options);
-		} finally {
-			try {
-				output.close();
-			} catch (IOException e) {
-				logger.error(e, "Cannot close output stream"); //$NON-NLS-1$
-			}
+			resource.getContents().clear();
+			return new String(output.toByteArray(), ASCII_ENCODING);
 		}
-		resource.getContents().clear();
-		return new String(output.toByteArray(), ASCII_ENCODING);
 	}
 
 	private MPerspective perspFromString(String perspAsString) throws IOException {
 		Resource resource = new E4XMIResourceFactory().createResource(null);
-		InputStream input = new ByteArrayInputStream(perspAsString.getBytes(ASCII_ENCODING));
-		try {
+		try (InputStream input = new ByteArrayInputStream(perspAsString.getBytes(ASCII_ENCODING))) {
 			resource.load(input, null);
-		} finally {
-			try {
-				input.close();
-			} catch (IOException e) {
-				logger.error(e, "Cannot close input stream"); //$NON-NLS-1$
-			}
 		}
 		MPerspective perspective = (MPerspective) resource.getContents().get(0);
 		resource.getContents().clear();

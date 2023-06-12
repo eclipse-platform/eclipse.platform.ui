@@ -694,23 +694,12 @@ public class E4Application implements IApplication {
 			return;
 		}
 
-		OutputStream output = null;
-		try {
-			String versionLine = WORKSPACE_VERSION_KEY + '=' + WORKSPACE_VERSION_VALUE;
-
-			output = new FileOutputStream(versionFile);
+		String versionLine = WORKSPACE_VERSION_KEY + '=' + WORKSPACE_VERSION_VALUE;
+		try (OutputStream output = new FileOutputStream(versionFile)) {
 			output.write(versionLine.getBytes(StandardCharsets.UTF_8));
 		} catch (IOException e) {
 			Logger logger = new WorkbenchLogger(PLUGIN_ID);
 			logger.error(e);
-		} finally {
-			try {
-				if (output != null) {
-					output.close();
-				}
-			} catch (IOException e) {
-				// do nothing
-			}
 		}
 	}
 

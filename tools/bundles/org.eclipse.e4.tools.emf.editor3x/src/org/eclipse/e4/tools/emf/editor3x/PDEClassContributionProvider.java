@@ -128,10 +128,7 @@ public class PDEClassContributionProvider implements IClassContributionProvider 
 					final IFile f = project.getFile("/META-INF/MANIFEST.MF"); //$NON-NLS-1$
 
 					if (f != null && f.exists()) {
-						BufferedReader r = null;
-						try {
-							final InputStream s = f.getContents();
-							r = new BufferedReader(new InputStreamReader(s));
+						try (BufferedReader r = new BufferedReader(new InputStreamReader(f.getContents()))) {
 							String line;
 							while ((line = r.readLine()) != null) {
 								if (line.startsWith("Bundle-SymbolicName:")) { //$NON-NLS-1$
@@ -153,15 +150,6 @@ public class PDEClassContributionProvider implements IClassContributionProvider 
 						} catch (final IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
-						} finally {
-							if (r != null) {
-								try {
-									r.close();
-								} catch (final IOException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
-							}
 						}
 					}
 				}

@@ -406,22 +406,13 @@ public class NonReferencedActionPage extends WizardPage {
 	}
 
 	public void doRequireBundle(String bundle, String installLocation) {
-
 		// Get source bundle version from manifest
 		String version = null;
-		@SuppressWarnings("resource")
-		InputStream srcStream = null;
-		try {
-			Manifest manifestSource;
-			if (installLocation.endsWith(".jar")) { //$NON-NLS-1$
-				try (ZipFile zip = new ZipFile(installLocation)) {
-					srcStream = zip.getInputStream(zip.getEntry("META-INF/MANIFEST.MF")); //$NON-NLS-1$
-					manifestSource = new Manifest(srcStream);
-				}
-			} else {
-				srcStream = new BufferedInputStream(new FileInputStream(installLocation + "/META-INF/MANIFEST.MF")); //$NON-NLS-1$
-				manifestSource = new Manifest(srcStream);
-			}
+		try (ZipFile zip = installLocation.endsWith(".jar") ? new ZipFile(installLocation) : null; //$NON-NLS-1$
+				InputStream srcStream = zip != null ? zip.getInputStream(zip.getEntry("META-INF/MANIFEST.MF")) //$NON-NLS-1$
+						: new BufferedInputStream(new FileInputStream(installLocation + "/META-INF/MANIFEST.MF")) //$NON-NLS-1$
+				) {
+			Manifest manifestSource = new Manifest(srcStream);
 			version = manifestSource.getMainAttributes().getValue("Bundle-Version"); //$NON-NLS-1$
 			if (version != null) {
 				version = version.replaceFirst("\\.qualifier", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -429,17 +420,11 @@ public class NonReferencedActionPage extends WizardPage {
 		} catch (final Exception e) {
 			e.printStackTrace();
 			return;
-		} finally {
-			try {
-				srcStream.close();
-			} catch (final Exception e) {
-			}
 		}
 
 		final IFile fileManifest = project.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
-		Manifest manifest;
 		try {
-			manifest = new Manifest(fileManifest.getContents());
+			Manifest manifest = new Manifest(fileManifest.getContents());
 			String value = manifest.getMainAttributes().getValue("Require-Bundle"); //$NON-NLS-1$
 			if (value == null) {
 				manifest.getMainAttributes().putValue("Require-Bundle", bundle); //$NON-NLS-1$

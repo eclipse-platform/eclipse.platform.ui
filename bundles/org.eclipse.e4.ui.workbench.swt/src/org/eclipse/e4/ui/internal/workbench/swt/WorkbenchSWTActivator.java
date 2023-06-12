@@ -219,22 +219,12 @@ public class WorkbenchSWTActivator implements BundleActivator, DebugOptionsListe
 			return;
 		}
 
-		InputStream is = null;
-		try {
-			is = dsURL.openStream();
+		try (InputStream is = dsURL.openStream()) {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
 			dialogSettings.load(reader);
 		} catch (IOException e) {
 			// load failed so ensure we have an empty settings
 			dialogSettings = new DialogSettings("Workbench"); //$NON-NLS-1$
-		} finally {
-			try {
-				if (is != null) {
-					is.close();
-				}
-			} catch (IOException e) {
-				// do nothing
-			}
 		}
 	}
 

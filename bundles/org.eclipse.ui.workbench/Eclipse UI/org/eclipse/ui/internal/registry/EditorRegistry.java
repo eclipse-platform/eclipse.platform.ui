@@ -20,6 +20,7 @@ package org.eclipse.ui.internal.registry;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -694,18 +695,9 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 			return false;
 		}
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		Reader reader = null;
-		FileInputStream stream = null;
-		try {
-			// Get the editors defined in the preferences store
-			String xmlString = store.getString(IPreferenceConstants.EDITORS);
-			if (xmlString == null || xmlString.isEmpty()) {
-				stream = new FileInputStream(
-						workbenchStatePath.append(IWorkbenchConstants.EDITOR_FILE_NAME).toOSString());
-				reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
-			} else {
-				reader = new StringReader(xmlString);
-			}
+		// Get the editors defined in the preferences store
+		String xmlString = store.getString(IPreferenceConstants.EDITORS);
+		try (Reader reader = createReader(xmlString, workbenchStatePath, IWorkbenchConstants.EDITOR_FILE_NAME)) {
 			XMLMemento memento = XMLMemento.createReadRoot(reader);
 			// Get the editors and validate each one
 			for (IMemento childMemento : memento.getChildren(IWorkbenchConstants.TAG_DESCRIPTOR)) {
@@ -756,17 +748,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 			ErrorDialog.openError((Shell) null, WorkbenchMessages.EditorRegistry_errorTitle,
 					WorkbenchMessages.EditorRegistry_errorMessage, e.getStatus());
 			return false;
-		} finally {
-			try {
-				if (reader != null) {
-					reader.close();
-				} else if (stream != null)
-					stream.close();
-			} catch (IOException ex) {
-				WorkbenchPlugin.log("Error reading editors: Could not close steam", ex); //$NON-NLS-1$
-			}
 		}
-
 		return true;
 	}
 
@@ -903,18 +885,10 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 			return false;
 		}
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		Reader reader = null;
-		FileInputStream stream = null;
-		try {
-			// Get the resource types
-			String xmlString = store.getString(IPreferenceConstants.RESOURCES);
-			if (xmlString == null || xmlString.isEmpty()) {
-				stream = new FileInputStream(
-						workbenchStatePath.append(IWorkbenchConstants.RESOURCE_TYPE_FILE_NAME).toOSString());
-				reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
-			} else {
-				reader = new StringReader(xmlString);
-			}
+		// Get the resource types
+		String xmlString = store.getString(IPreferenceConstants.RESOURCES);
+
+		try (Reader reader = createReader(xmlString, workbenchStatePath, IWorkbenchConstants.RESOURCE_TYPE_FILE_NAME)) {
 			// Read the defined resources into the table
 			readResources(editorTable, reader);
 		} catch (IOException e) {
@@ -925,19 +899,20 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 			ErrorDialog.openError((Shell) null, WorkbenchMessages.EditorRegistry_errorTitle,
 					WorkbenchMessages.EditorRegistry_errorMessage, e.getStatus());
 			return false;
-		} finally {
-			try {
-				if (reader != null) {
-					reader.close();
-				} else if (stream != null) {
-					stream.close();
-				}
-			} catch (IOException ex) {
-				WorkbenchPlugin.log("Error reading resources: Could not close steam", ex); //$NON-NLS-1$
-			}
 		}
 		return true;
 
+	}
+
+	private Reader createReader(String xmlString, IPath workbenchStatePath, String fileName)
+			throws FileNotFoundException {
+		if (xmlString == null || xmlString.isEmpty()) {
+			return new BufferedReader(new InputStreamReader(
+					new FileInputStream(
+							workbenchStatePath.append(fileName).toOSString()),
+					StandardCharsets.UTF_8));
+		}
+		return new StringReader(xmlString);
 	}
 
 	/**
