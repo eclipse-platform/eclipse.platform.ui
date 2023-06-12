@@ -21,6 +21,7 @@ import static org.junit.Assert.fail;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.BooleanSupplier;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -248,6 +249,25 @@ public class NavigatorTestBase {
 		_project.findMember(TestContentProvider.MODEL_FILE_PATH).touch(null);
 		// Let build run to load the model objects
 		DisplayHelper.sleep(50);
+	}
+
+	/**
+	 * Wait for up to 1 minute for a condition to be met.
+	 *
+	 * @param description A description of the condition (for debugging purposes).
+	 * @param condition   The condition to be met.
+	 */
+	protected void waitForCondition(String description, BooleanSupplier condition) {
+		for (int i = 1; i <= 1200; i++) {
+
+			if (condition.getAsBoolean()) {
+				System.out.println("The condition '" + description + "' was met in " + (i * 50) + " ms or less");
+				return;
+			}
+			DisplayHelper.sleep(50);
+		}
+
+		fail("The condition '" + description + "' was never met");
 	}
 
 	protected void showNavigator() {

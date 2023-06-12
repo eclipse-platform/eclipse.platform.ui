@@ -52,8 +52,7 @@ public class PipelineChainTest extends NavigatorTestBase {
 				TEST_CONTENT_PIPELINE + ".F",
 				TEST_CONTENT_PIPELINE + ".G"
 		};
-		_contentService.bindExtensions(EXTENSIONS, false);
-		_contentService.getActivationService().activateExtensions(EXTENSIONS, true);
+		activateAndWait(EXTENSIONS);
 	}
 
 	private void _initContentWithLabel() {
@@ -68,8 +67,17 @@ public class PipelineChainTest extends NavigatorTestBase {
 				TEST_CONTENT_PIPELINE + ".G",
 				TEST_CONTENT_PIPELINE + ".label"
 		};
-		_contentService.bindExtensions(EXTENSIONS, false);
-		_contentService.getActivationService().activateExtensions(EXTENSIONS, true);
+		activateAndWait(EXTENSIONS);
+	}
+
+	private void activateAndWait(String[] extensionIds) {
+		_contentService.bindExtensions(extensionIds, false);
+		_contentService.getActivationService().activateExtensions(extensionIds, true);
+
+		for (String extensionId : extensionIds) {
+			waitForCondition("Wait for content pipelines",
+					() -> _contentService.getActivationService().isNavigatorExtensionActive(extensionId));
+		}
 	}
 
 	@Test
