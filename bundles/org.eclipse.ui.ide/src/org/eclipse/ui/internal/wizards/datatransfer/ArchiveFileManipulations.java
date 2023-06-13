@@ -43,19 +43,9 @@ public class ArchiveFileManipulations {
 			return false;
 		}
 
-		TarFile tarFile = null;
-		try {
-			tarFile = new TarFile(fileName);
+		try (TarFile tarFile = new TarFile(fileName)) {
 		} catch (TarException | IOException ioException) {
 			return false;
-		} finally {
-			if (tarFile != null) {
-				try {
-					tarFile.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			}
 		}
 
 		return true;

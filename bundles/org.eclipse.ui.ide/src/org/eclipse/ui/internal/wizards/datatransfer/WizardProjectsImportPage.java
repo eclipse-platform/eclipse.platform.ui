@@ -994,6 +994,18 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 		updateProjectsStatus();
 	}
 
+	@Override
+	public void dispose() {
+		super.dispose();
+		if (structureProvider != null) {
+			try {
+				structureProvider.close();
+			} catch (Exception e) {
+				// ignored
+			}
+		}
+	}
+
 	private void updateProjectsStatus() {
 		projectsList.refresh(true);
 		ProjectRecord[] projects = getProjectRecords();

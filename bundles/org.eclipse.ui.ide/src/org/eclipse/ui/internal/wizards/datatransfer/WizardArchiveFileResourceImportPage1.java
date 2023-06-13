@@ -125,17 +125,22 @@ public class WizardArchiveFileResourceImportPage1 extends
 
 	private boolean validateSourceFile(String fileName) {
 		if(ArchiveFileManipulations.isTarFile(fileName)) {
-			TarFile tarFile = getSpecifiedTarSourceFile(fileName);
-			if (tarFile != null) {
-				ArchiveFileManipulations.closeTarFile(tarFile, getShell());
-				return true;
+			try (TarFile tarFile = getSpecifiedTarSourceFile(fileName)) {
+				if (tarFile != null) {
+					return true;
+				}
+			} catch (IOException closeException) {
+				// ignore
 			}
 			return false;
 		}
-		ZipFile zipFile = getSpecifiedZipSourceFile(fileName);
-		if(zipFile != null) {
-			ArchiveFileManipulations.closeZipFile(zipFile, getShell());
-			return true;
+		try (ZipFile zipFile = getSpecifiedZipSourceFile(fileName)) {
+			if (zipFile != null) {
+				ArchiveFileManipulations.closeZipFile(zipFile, getShell());
+				return true;
+			}
+		} catch (IOException closeException) {
+			// ignore
 		}
 		return false;
 	}
@@ -154,12 +159,15 @@ public class WizardArchiveFileResourceImportPage1 extends
 	}
 
 	private boolean ensureTarSourceIsValid() {
-		TarFile specifiedFile = getSpecifiedTarSourceFile();
-		if( specifiedFile == null ) {
-			setErrorMessage(DataTransferMessages.TarImport_badFormat);
+		try (TarFile specifiedFile = getSpecifiedTarSourceFile()) {
+			if (specifiedFile == null) {
+				setErrorMessage(DataTransferMessages.TarImport_badFormat);
+				return false;
+			}
+			return true;
+		} catch (IOException e) {
 			return false;
 		}
-		return ArchiveFileManipulations.closeTarFile(specifiedFile, getShell());
 	}
 
 	/**
@@ -246,6 +254,18 @@ public class WizardArchiveFileResourceImportPage1 extends
 
 		structureProvider = new ZipLeveledStructureProvider(sourceFile);
 		return selectFiles(structureProvider.getRoot(), structureProvider);
+	}
+
+	@Override
+	public void dispose() {
+		super.dispose();
+		if (structureProvider != null) {
+			try {
+				structureProvider.close();
+			} catch (Exception e) {
+				// ignored
+			}
+		}
 	}
 
 	/**
@@ -366,6 +386,25 @@ public class WizardArchiveFileResourceImportPage1 extends
 	 */
 	@Override
 	protected boolean importResources(List fileSystemObjects) {
+		try (ILeveledImportStructureProvider importStructureProvider = extracted()) {
+			if (importStructureProvider == null) {
+				return false;
+			}
+
+			ImportOperation operation = new ImportOperation(getContainerFullPath(), importStructureProvider.getRoot(),
+					importStructureProvider, this, fileSystemObjects);
+
+			operation.setContext(getShell());
+			if (!executeImportOperation(operation)) {
+				return false;
+			}
+			return true;
+		} catch (Exception closeExcption) {
+			return false;
+		}
+	}
+
+	private ILeveledImportStructureProvider extracted() {
 		ILeveledImportStructureProvider importStructureProvider = null;
 		if (ArchiveFileManipulations.isTarFile(sourceNameField.getText())) {
 			if( ensureTarSourceIsValid()) {
@@ -376,22 +415,7 @@ public class WizardArchiveFileResourceImportPage1 extends
 			ZipFile zipFile = getSpecifiedZipSourceFile();
 			importStructureProvider = new ZipLeveledStructureProvider(zipFile);
 		}
-
-		if (importStructureProvider == null) {
-			return false;
-		}
-
-		ImportOperation operation = new ImportOperation(getContainerFullPath(),
-				importStructureProvider.getRoot(), importStructureProvider, this,
-				fileSystemObjects);
-
-		operation.setContext(getShell());
-		if (!executeImportOperation(operation)) {
-			return false;
-		}
-
-		ArchiveFileManipulations.closeStructureProvider(importStructureProvider, getShell());
-		return true;
+		return importStructureProvider;
 	}
 
 	/**

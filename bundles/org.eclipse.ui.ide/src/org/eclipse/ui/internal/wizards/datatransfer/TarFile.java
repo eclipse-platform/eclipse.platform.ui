@@ -30,7 +30,7 @@ import java.util.zip.GZIPInputStream;
  *
  * @since 3.1
  */
-public class TarFile {
+public class TarFile implements AutoCloseable {
 	private File file;
 	private TarInputStream entryEnumerationStream;
 	private TarEntry curEntry;
@@ -72,11 +72,17 @@ public class TarFile {
 	 *
 	 * @throws IOException if the file cannot be successfully closed
 	 */
+	@Override
 	public void close() throws IOException {
-		if (entryEnumerationStream != null)
-			entryEnumerationStream.close();
-		if (internalEntryStream != null)
-			internalEntryStream.close();
+		try {
+			if (entryEnumerationStream != null) {
+				entryEnumerationStream.close();
+			}
+		} finally {
+			if (internalEntryStream != null) {
+				internalEntryStream.close();
+			}
+		}
 	}
 
 	/**
@@ -155,10 +161,5 @@ public class TarFile {
 	 */
 	public String getName() {
 		return file.getPath();
-	}
-
-	@Override
-	protected void finalize() throws Throwable {
-		close();
 	}
 }
