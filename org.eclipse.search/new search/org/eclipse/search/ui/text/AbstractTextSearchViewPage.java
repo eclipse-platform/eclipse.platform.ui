@@ -335,13 +335,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	}
 
 	private int countBits(int layoutFlags) {
-		int bitCount = 0;
-		for (int i = 0; i < 32; i++) {
-			if (layoutFlags % 2 == 1)
-				bitCount++;
-			layoutFlags >>= 1;
-		}
-		return bitCount;
+		return Integer.bitCount(layoutFlags);
 	}
 
 	private boolean supportsTreeLayout() {
