@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.IResource;
@@ -83,17 +84,7 @@ public class SmartImportWizard extends Wizard implements IImportWizard {
 		public void run(IProgressMonitor monitor) throws InvocationTargetException, OperationCanceledException {
 			monitor.beginTask(NLS.bind(DataTransferMessages.SmartImportWizardPage_expandingArchive, archive.getName(), destination.getName()),
 					1);
-			TarFile tarFile = null;
-			ZipFile zipFile = null;
-			ILeveledImportStructureProvider importStructureProvider = null;
-			try {
-				if (ArchiveFileManipulations.isTarFile(archive.getAbsolutePath())) {
-					tarFile = new TarFile(archive);
-					importStructureProvider = new TarLeveledStructureProvider(tarFile);
-				} else if (ArchiveFileManipulations.isZipFile(archive.getAbsolutePath())) {
-					zipFile = new ZipFile(archive);
-					importStructureProvider = new ZipLeveledStructureProvider(zipFile);
-				}
+			try (ILeveledImportStructureProvider importStructureProvider = createImportStructureProvider()) {
 				LinkedList<Object> toProcess = new LinkedList<>();
 				toProcess.add(importStructureProvider.getRoot());
 				while (!toProcess.isEmpty()) {
@@ -128,21 +119,18 @@ public class SmartImportWizard extends Wizard implements IImportWizard {
 				monitor.done();
 			} catch (Exception ex) {
 				throw new InvocationTargetException(ex);
-			} finally {
-				if (importStructureProvider != null) {
-					importStructureProvider.closeArchive();
-				}
-				if (tarFile != null)
-					try {
-						tarFile.close();
-					} catch (IOException ex) {
-					}
-				if (zipFile != null)
-					try {
-						zipFile.close();
-					} catch (IOException ex) {
-					}
 			}
+		}
+
+		private ILeveledImportStructureProvider createImportStructureProvider()
+				throws TarException, IOException, ZipException {
+			ILeveledImportStructureProvider importStructureProvider = null;
+			if (ArchiveFileManipulations.isTarFile(archive.getAbsolutePath())) {
+				importStructureProvider = new TarLeveledStructureProvider(new TarFile(archive));
+			} else if (ArchiveFileManipulations.isZipFile(archive.getAbsolutePath())) {
+				importStructureProvider = new ZipLeveledStructureProvider(new ZipFile(archive));
+			}
+			return importStructureProvider;
 		}
 	}
 

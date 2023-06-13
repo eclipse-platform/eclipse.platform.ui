@@ -207,6 +207,11 @@ public class ZipLeveledStructureProvider implements
 		return true;
 	}
 
+	@Override
+	public void close() throws Exception {
+		closeArchive();
+	}
+
 	/**
 	 * Initializes this object's children table based on the contents of the
 	 * specified source file.
