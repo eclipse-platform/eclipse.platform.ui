@@ -113,22 +113,4 @@ public abstract class DateConversionSupport {
 	protected int numFormatters() {
 		return formatters.length+NUM_VIRTUAL_FORMATTERS;
 	}
-
-	/**
-	 * Returns the date format for the provided <code>index</code>.
-	 * <p>
-	 * This is for testing purposes only and should not be a part of the API if
-	 * this class was to be exposed.
-	 * </p>
-	 *
-	 * @param index
-	 * @return date format
-	 */
-	protected DateFormat getDateFormat(int index) {
-		if (index < 0 || index >= formatters.length) {
-			throw new IllegalArgumentException("'index' [" + index + "] is out of bounds.");  //$NON-NLS-1$//$NON-NLS-2$
-		}
-
-		return formatters[index];
-	}
 }
