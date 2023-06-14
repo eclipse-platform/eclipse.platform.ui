@@ -128,7 +128,7 @@ public class AnimationManager {
 
 	private IJobProgressManagerListener getProgressListener() {
 		return new IJobProgressManagerListener() {
-			Set<Job> jobs = Collections.synchronizedSet(new HashSet<Job>());
+			Set<Job> jobs = Collections.synchronizedSet(new HashSet<>());
 
 			@Override
 			public void addJob(JobInfo info) {
