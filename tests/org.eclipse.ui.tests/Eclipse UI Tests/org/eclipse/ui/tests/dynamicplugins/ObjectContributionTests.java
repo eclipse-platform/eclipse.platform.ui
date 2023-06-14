@@ -27,7 +27,6 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.IObjectActionContributor;
 import org.eclipse.ui.internal.ObjectActionContributorManager;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.PopupMenuExtender;
@@ -151,17 +150,17 @@ public class ObjectContributionTests extends DynamicTestCase {
 
 		};
 
-		manager.contributeObjectActions(part, menu, provider, new HashSet<IObjectActionContributor>());
+		manager.contributeObjectActions(part, menu, provider, new HashSet<>());
 		assertNull(menu.find(OBJECT_ACTION_ID));
 		menu.removeAll();
 		getBundle();
 
-		manager.contributeObjectActions(part, menu, provider, new HashSet<IObjectActionContributor>());
+		manager.contributeObjectActions(part, menu, provider, new HashSet<>());
 		assertNotNull(menu.find(OBJECT_ACTION_ID));
 		menu.removeAll();
 		removeBundle();
 
-		manager.contributeObjectActions(part, menu, provider, new HashSet<IObjectActionContributor>());
+		manager.contributeObjectActions(part, menu, provider, new HashSet<>());
 		assertNull(menu.find(OBJECT_ACTION_ID));
 		menu.removeAll();
 	}

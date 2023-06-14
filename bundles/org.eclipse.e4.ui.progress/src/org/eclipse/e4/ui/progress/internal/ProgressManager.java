@@ -77,7 +77,7 @@ public class ProgressManager extends ProgressProvider {
 	private static ProgressManager singleton;
 
 	final private Map<Job, JobInfo> jobs = Collections
-			.synchronizedMap(new HashMap<Job, JobInfo>());
+			.synchronizedMap(new HashMap<>());
 
 	final Map<Job, JobMonitor> runnableMonitors = new HashMap<>();
 
