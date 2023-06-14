@@ -16,7 +16,6 @@ package org.eclipse.e4.tools.emf.editor3x;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import org.eclipse.core.resources.IFile;
@@ -26,6 +25,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider;
 import org.eclipse.e4.tools.emf.ui.common.ResourceSearchScope;
+import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.ContributionData;
+import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.ContributionResultHandler;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
@@ -49,7 +50,7 @@ public class PDEClassContributionProvider implements IClassContributionProvider 
 	public void findContribution(final Filter filter, final ContributionResultHandler handler) {
 		boolean followReferences = true;
 		if (filter.getSearchScope().contains(ResourceSearchScope.PROJECT)
-			&& !filter.getSearchScope().contains(ResourceSearchScope.REFERENCES)) {
+				&& !filter.getSearchScope().contains(ResourceSearchScope.REFERENCES)) {
 			followReferences = false;
 		}
 
@@ -66,8 +67,8 @@ public class PDEClassContributionProvider implements IClassContributionProvider 
 		} else {
 			// filter.project may be null in the live editor
 			scope = filter.project != null ? PDEJavaHelper
-				.getSearchScope(filter.project) : SearchEngine
-				.createWorkspaceScope();
+					.getSearchScope(filter.project) : SearchEngine
+					.createWorkspaceScope();
 		}
 		char[] packageName = null;
 		char[] typeName = null;
@@ -138,7 +139,7 @@ public class PDEClassContributionProvider implements IClassContributionProvider 
 										end = line.length();
 									}
 									final ContributionData data = new ContributionData(line.substring(start + 1, end)
-										.trim(), content, "Java", null); //$NON-NLS-1$
+											.trim(), content, "Java", null); //$NON-NLS-1$
 									handler.result(data);
 									break;
 								}
@@ -163,14 +164,14 @@ public class PDEClassContributionProvider implements IClassContributionProvider 
 
 		try {
 			searchEngine.searchAllTypeNames(
-				packageName,
-				SearchPattern.R_PATTERN_MATCH,
-				typeName,
-				SearchPattern.R_PATTERN_MATCH | SearchPattern.R_CAMELCASE_MATCH,
-				IJavaSearchConstants.CLASS,
-				scope,
-				req,
-				IJavaSearchConstants.WAIT_UNTIL_READY_TO_SEARCH, null);
+					packageName,
+					SearchPattern.R_PATTERN_MATCH,
+					typeName,
+					SearchPattern.R_PATTERN_MATCH | SearchPattern.R_CAMELCASE_MATCH,
+					IJavaSearchConstants.CLASS,
+					scope,
+					req,
+					IJavaSearchConstants.WAIT_UNTIL_READY_TO_SEARCH, null);
 		} catch (final JavaModelException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
