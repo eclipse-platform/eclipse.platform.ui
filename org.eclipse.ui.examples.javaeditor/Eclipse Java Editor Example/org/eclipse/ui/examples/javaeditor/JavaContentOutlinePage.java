@@ -76,7 +76,7 @@ public class JavaContentOutlinePage extends ContentOutlinePage {
 		protected void parse(IDocument document) {
 
 			int lines= document.getNumberOfLines();
-			int increment= Math.max(Math.round(lines / 10), 10);
+			int increment= Math.max(lines / 10, 10);
 
 			for (int line= 0; line < lines; line += increment) {
 
