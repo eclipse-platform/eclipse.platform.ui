@@ -21,7 +21,8 @@ import static org.junit.Assert.assertTrue;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
-import java.text.SimpleDateFormat;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import org.eclipse.core.runtime.IStatus;
@@ -36,7 +37,7 @@ import org.junit.Test;
  * JUnit test for the {@link DefaultUiFreezeEventLogger}.
  */
 public class DefaultLoggerTests {
-	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss.SSS");
+	private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("HH:mm:ss.SSS").withZone(ZoneOffset.systemDefault());
 	private static final String RUNTIME_ID = "org.eclipse.core.runtime";
 	private static final long TIME = 120000000;
 	private static final long DURATION = 500;
@@ -69,7 +70,7 @@ public class DefaultLoggerTests {
 	@Test
 	public void testLogEvent() {
 		UiFreezeEvent event = createFreezeEvent();
-		String expectedTime = dateFormat.format(new Date(TIME));
+		String expectedTime = dateFormat.format(new Date(TIME).toInstant());
 		String expectedHeader =
 				String.format("UI freeze of %.2gs at %s", DURATION / 1000.0, expectedTime);
 		String expectedEventMessage = String.format("Sample at %s (+%.3fs)", expectedTime, 0.000);

@@ -17,7 +17,9 @@ package org.eclipse.ui.internal.monitoring;
 
 import java.lang.management.LockInfo;
 import java.lang.management.ThreadInfo;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import org.eclipse.core.runtime.IStatus;
@@ -34,7 +36,7 @@ import org.eclipse.ui.monitoring.UiFreezeEvent;
  * Writes {@link UiFreezeEvent}s to the Eclipse error log.
  */
 public class DefaultUiFreezeEventLogger implements IUiFreezeEventLogger {
-	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss.SSS"); //$NON-NLS-1$
+	private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("HH:mm:ss.SSS").withZone(ZoneId.systemDefault()); //$NON-NLS-1$
 	private final long longEventErrorThresholdMillis;
 
 	private static class StackTrace extends Throwable {
@@ -69,7 +71,7 @@ public class DefaultUiFreezeEventLogger implements IUiFreezeEventLogger {
 	@Override
 	public void log(UiFreezeEvent event) {
 		long lastTimestamp = event.getStartTimestamp();
-		String startTime = dateFormat.format(new Date(lastTimestamp));
+		String startTime = dateFormat.format(new Date(lastTimestamp).toInstant());
 
 		String template = event.isStillRunning()
 				? Messages.DefaultUiFreezeEventLogger_ui_freeze_ongoing_header_2
@@ -102,7 +104,7 @@ public class DefaultUiFreezeEventLogger implements IUiFreezeEventLogger {
 			Throwable stackTrace = new StackTrace(threads[0].getStackTrace());
 			String traceText = NLS.bind(
 					Messages.DefaultUiFreezeEventLogger_sample_header_2,
-					dateFormat.format(sample.getTimestamp()),
+					dateFormat.format(Instant.ofEpochMilli(sample.getTimestamp())),
 					String.format("%.3f", deltaInSeconds)); //$NON-NLS-1$
 			MultiStatus traceStatus = new SeverityMultiStatus(IStatus.INFO,
 					PreferenceConstants.PLUGIN_ID,

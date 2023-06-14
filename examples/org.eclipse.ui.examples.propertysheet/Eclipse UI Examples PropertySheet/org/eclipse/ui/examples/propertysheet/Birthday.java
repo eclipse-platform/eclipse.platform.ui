@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.examples.propertysheet;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -57,8 +57,8 @@ public class Birthday implements IPropertySource {
 	private static final Integer YEAR_DEFAULT = Integer.valueOf(2000);
 
 	//static date formater
-	private static final DateFormat formatter = new SimpleDateFormat(
-			"EEEE, MMMM d, yyyy"); //$NON-NLS-1$
+	private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(
+			"EEEE, MMMM d, yyyy").withZone(ZoneId.systemDefault()); //$NON-NLS-1$
 
 	static private class DayLabelProvider extends LabelProvider {
 		@Override
@@ -282,6 +282,6 @@ public class Birthday implements IPropertySource {
 	public String toString() {
 		Date bday = (new GregorianCalendar(getYear().intValue(), getMonth()
 				.intValue() - 1, getDay().intValue())).getTime();
-		return formatter.format(bday);
+		return formatter.format(bday.toInstant());
 	}
 }

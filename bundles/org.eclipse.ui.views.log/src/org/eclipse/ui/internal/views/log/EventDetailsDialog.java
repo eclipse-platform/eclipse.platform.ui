@@ -17,7 +17,11 @@
 package org.eclipse.ui.internal.views.log;
 
 import java.io.*;
-import java.text.*;
+import java.text.Collator;
+import java.text.MessageFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.IAdaptable;
@@ -92,8 +96,10 @@ public class EventDetailsDialog extends TrayDialog {
 	private Point dialogSize;
 	private int[] sashWeights;
 
-	private DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT);
-	private DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss.SSS"); //$NON-NLS-1$
+	private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
+			.withZone(ZoneId.systemDefault());
+	private static final DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm:ss.SSS") //$NON-NLS-1$
+			.withZone(ZoneId.systemDefault());
 
 	/**
 	 *
@@ -356,8 +362,8 @@ public class EventDetailsDialog extends TrayDialog {
 			LogEntry logEntry = (LogEntry) entry;
 
 			String strDate = MessageFormat.format("{0}, {1}", //$NON-NLS-1$
-					dateFormat.format(logEntry.getDate()), //
-					timeFormat.format(logEntry.getDate()));
+					dateFormat.format(logEntry.getDate().toInstant()), //
+					timeFormat.format(logEntry.getDate().toInstant()));
 			dateLabel.setText(strDate);
 			plugInIdLabel.setText(logEntry.getPluginId());
 			severityImageLabel.setImage(labelProvider.getColumnImage(entry, 0));
