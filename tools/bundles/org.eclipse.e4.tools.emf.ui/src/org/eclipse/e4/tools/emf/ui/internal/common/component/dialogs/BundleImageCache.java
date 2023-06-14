@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 TwelveTone LLC and others.
+ * Copyright (c) 2014, 2023 TwelveTone LLC and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -42,8 +42,8 @@ public class BundleImageCache {
 
 	private final Display display;
 	private final ClassLoader classloader;
-	ArrayList<Image> images;
-	static private Image imgPlaceholder;
+	private final ArrayList<Image> images;
+	private static Image imgPlaceholder;
 	private final IEclipseContext context;
 
 	public BundleImageCache(Display display, ClassLoader classloader) {
@@ -107,20 +107,17 @@ public class BundleImageCache {
 		return imgPlaceholder;
 	}
 
-	@Override
-	protected void finalize() throws Throwable {
-		if (imgPlaceholder != null && imgPlaceholder.isDisposed() == false) {
-			imgPlaceholder.dispose();
-		}
-	}
-
 	public void dispose() {
 		for (final Iterator<Image> it = images.iterator(); it.hasNext();) {
 			final Image image = it.next();
-			if (image.isDisposed() == false) {
+			if (!image.isDisposed()) {
 				image.dispose();
 			}
 			it.remove();
+		}
+		if (imgPlaceholder != null && !imgPlaceholder.isDisposed()) {
+			imgPlaceholder.dispose();
+			imgPlaceholder = null;
 		}
 	}
 
