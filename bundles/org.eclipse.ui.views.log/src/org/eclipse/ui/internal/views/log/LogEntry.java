@@ -22,6 +22,7 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import org.eclipse.core.runtime.IStatus;
 
@@ -245,10 +246,17 @@ public class LogEntry extends AbstractEntry {
 				}
 			}
 		}
-		Date date = Date.from(Instant.from(GREGORIAN_SDF.parse(dateBuffer.toString())));
-		if (date != null) {
-			fDate = date;
-			fDateString = LOCAL_SDF.format(fDate.toInstant());
+		String stringToParse = dateBuffer.toString();
+		try {
+			Date date = Date.from(Instant.from(GREGORIAN_SDF.parse(stringToParse)));
+			if (date != null) {
+				fDate = date;
+				fDateString = LOCAL_SDF.format(fDate.toInstant());
+			}
+		} catch (DateTimeParseException e) {
+			ParseException parseException = new ParseException(e.getMessage(), e.getErrorIndex());
+			parseException.addSuppressed(e);
+			throw parseException;
 		}
 	}
 
