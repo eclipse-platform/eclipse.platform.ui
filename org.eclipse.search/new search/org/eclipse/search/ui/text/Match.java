@@ -40,7 +40,7 @@ public class Match {
 
 	private static final int IS_FILTERED= 1 << 2;
 
-	private Object fElement;
+	private final Object fElement;
 	private int fOffset;
 	private int fLength;
 	private int fFlags;
@@ -165,5 +165,12 @@ public class Match {
 	 */
 	public boolean isFiltered() {
 		return (fFlags & IS_FILTERED) != 0;
+	}
+
+	/** for debug only **/
+	@Override
+	public String toString() {
+		return "offset=" + getOffset() + " length=" + getLength() + " isFiltered=" + isFiltered() + " element=" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				+ getElement();
 	}
 }

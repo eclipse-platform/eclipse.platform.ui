@@ -95,13 +95,14 @@ public class PositionTrackerTest {
 			IDocument doc= fb.getDocument();
 
 			for (Match matche : matches) {
+				assertNotNull("null match for file: " + file, matche);
 				Position currentPosition = InternalSearchUI.getInstance().getPositionTracker().getCurrentPosition(matche);
-				assertNotNull(currentPosition);
+				assertNotNull("null position for match: " + matche, currentPosition);
 				doc.replace(currentPosition.offset + 1, 0, "Test");
 			}
 			for (Match matche : matches) {
 				Position currentPosition = InternalSearchUI.getInstance().getPositionTracker().getCurrentPosition(matche);
-				assertNotNull(currentPosition);
+				assertNotNull("null position for match: " + matche, currentPosition);
 				String text= doc.get(currentPosition.offset, currentPosition.length);
 				StringBuilder buf= new StringBuilder();
 				buf.append(text.charAt(0));
