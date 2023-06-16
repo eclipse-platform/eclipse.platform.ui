@@ -1,35 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.core.databinding" version="2">
-    <resource path="META-INF/MANIFEST.MF">
-        <filter comment="Planned api deletion" id="923795461">
-            <message_arguments>
-                <message_argument value="1.12.0"/>
-                <message_argument value="1.11.200"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Planned API deletion" id="926941240">
-            <message_arguments>
-                <message_argument value="1.12.0"/>
-                <message_argument value="1.11.200"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.core.databinding.conversion.NumberToStringConverter">
-        <filter comment="Planned API deletion" id="305324134">
-            <message_arguments>
-                <message_argument value="org.eclipse.core.databinding.conversion.NumberToStringConverter"/>
-                <message_argument value="org.eclipse.core.databinding_1.12.0"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.core.databinding.conversion.StringToNumberConverter">
-        <filter comment="Planned API deletion" id="305324134">
-            <message_arguments>
-                <message_argument value="org.eclipse.core.databinding.conversion.StringToNumberConverter"/>
-                <message_argument value="org.eclipse.core.databinding_1.12.0"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/core/databinding/conversion/Converter.java" type="org.eclipse.core.databinding.conversion.Converter">
         <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576725006">
             <message_arguments>
