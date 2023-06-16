@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 BestSolution.at and others.
+ * Copyright (c) 2010, 2023 BestSolution.at and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -25,8 +25,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider;
 import org.eclipse.e4.tools.emf.ui.common.ResourceSearchScope;
-import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.ContributionData;
-import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.ContributionResultHandler;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
