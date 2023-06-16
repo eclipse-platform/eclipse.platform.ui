@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2018 IBM Corporation and others.
+ * Copyright (c) 2009, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -223,6 +223,11 @@ public class IndentFoldingStrategy implements IReconcilingStrategy, IReconciling
 			int tabSize = 1;
 			int minimumRangeSize = 1;
 			try {
+				var thisDocument = document;
+				if (thisDocument == null) {
+					// Exit as soon as possible if uninstalled
+					return;
+				}
 
 				// Today we recompute annotation from the whole document each
 				// time.
@@ -231,7 +236,7 @@ public class IndentFoldingStrategy implements IReconcilingStrategy, IReconciling
 				// int offset = dirtyRegion.getOffset();
 				// int length = dirtyRegion.getLength();
 				// int startLine = 0; //document.getLineOfOffset(offset);
-				int endLine = document.getNumberOfLines() - 1; // startLine +
+				int endLine = thisDocument.getNumberOfLines() - 1; // startLine +
 																// document.getNumberOfLines(offset,
 																// length) - 1;
 
@@ -242,11 +247,11 @@ public class IndentFoldingStrategy implements IReconcilingStrategy, IReconciling
 				int lineEmptyCount = 0;
 				Integer lastLineForKeyword = null;
 				int line = endLine;
-				for (line = endLine; line >= 0; line--) {
-					int lineOffset = document.getLineOffset(line);
-					String delim = document.getLineDelimiter(line);
-					int lineLength = document.getLineLength(line) - (delim != null ? delim.length() : 0);
-					String lineContent = document.get(lineOffset, lineLength);
+				for (line = endLine; line >= 0 && this.document != null; line--) {
+					int lineOffset = thisDocument.getLineOffset(line);
+					String delim = thisDocument.getLineDelimiter(line);
+					int lineLength = thisDocument.getLineLength(line) - (delim != null ? delim.length() : 0);
+					String lineContent = thisDocument.get(lineOffset, lineLength);
 
 					LineState state = getLineState(lineContent, lastLineForKeyword);
 					switch (state) {
