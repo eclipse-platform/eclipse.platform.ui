@@ -66,10 +66,10 @@ public class ZipSlipTests extends UITestCase {
 	}
 
 	@Test
-	public void testZipLeveledStructureProvider() throws ZipException, IOException {
+	public void testZipLeveledStructureProvider() throws Exception {
 		IPath path = getLocalPath(new Path(ZIPSLIP_FILE));
-		try (ZipFile zipFile = new ZipFile(path.toFile())) {
-			ZipLeveledStructureProvider zipLeveledStructureProvider = new ZipLeveledStructureProvider(zipFile);
+		try (ZipFile zipFile = new ZipFile(path.toFile());
+				ZipLeveledStructureProvider zipLeveledStructureProvider = new ZipLeveledStructureProvider(zipFile)) {
 			List<?> children = zipLeveledStructureProvider.getChildren(zipLeveledStructureProvider.getRoot());
 			Assert.assertEquals(1, children.size());
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
