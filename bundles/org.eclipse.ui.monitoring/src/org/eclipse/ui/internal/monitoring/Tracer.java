@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014 Google Inc.
+ * Copyright (C) 2014, 2023 Google Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,7 +21,6 @@ import java.io.StringWriter;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
 import org.eclipse.core.runtime.Platform;
 
@@ -33,7 +32,6 @@ import org.eclipse.core.runtime.Platform;
  */
 public class Tracer {
 	private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSS").withZone(ZoneId.systemDefault()); //$NON-NLS-1$
-	private final Date date = new Date();
 	private final String prefix;
 	private static final PrintStream out = System.out;
 
