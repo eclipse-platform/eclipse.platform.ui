@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -29,8 +29,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnmappableCharacterException;
 import java.nio.charset.UnsupportedCharsetException;
 
-import org.eclipse.osgi.util.NLS;
-
+import org.eclipse.core.filebuffers.IFileBufferStatusCodes;
+import org.eclipse.core.filebuffers.IPersistableAnnotationModel;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.manipulation.ContainerCreator;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -41,21 +45,13 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResourceStatus;
-
-import org.eclipse.core.filebuffers.IFileBufferStatusCodes;
-import org.eclipse.core.filebuffers.IPersistableAnnotationModel;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.manipulation.ContainerCreator;
-
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.osgi.util.NLS;
 
 
 /**
@@ -83,21 +79,13 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	}
 
 	/**
-	 * Reader chunk size.
-	 */
-	static final private int READER_CHUNK_SIZE= 2048;
-	/**
-	 * Buffer size.
-	 */
-	static final private int BUFFER_SIZE= 8 * READER_CHUNK_SIZE;
-	/**
 	 * Qualified name for the encoding key.
 	 */
-	static final private QualifiedName ENCODING_KEY= new QualifiedName(FileBuffersPlugin.PLUGIN_ID, "encoding");  //$NON-NLS-1$
+	private static final QualifiedName ENCODING_KEY= new QualifiedName(FileBuffersPlugin.PLUGIN_ID, "encoding"); //$NON-NLS-1$
 	/**
 	 * Constant for representing the error status. This is considered a value object.
 	 */
-	static final private IStatus STATUS_ERROR= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.FileBuffer_status_error, null);
+	private static final IStatus STATUS_ERROR= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.FileBuffer_status_error, null);
 
 	/**
 	 * Constant denoting an empty set of properties
@@ -355,14 +343,13 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			fFile.setContents(stream, overwrite, true, monitor);
 			// set synchronization stamp to know whether the file synchronizer must become active
 
-			if (fDocument instanceof IDocumentExtension4) {
-				fSynchronizationStamp= ((IDocumentExtension4)fDocument).getModificationStamp();
+			if (fDocument instanceof IDocumentExtension4 ext4) {
+				fSynchronizationStamp= ext4.getModificationStamp();
 				fFile.revertModificationStamp(fSynchronizationStamp);
 			} else
 				fSynchronizationStamp= fFile.getModificationStamp();
 
-			if (fAnnotationModel instanceof IPersistableAnnotationModel) {
-				IPersistableAnnotationModel persistableModel= (IPersistableAnnotationModel) fAnnotationModel;
+			if (fAnnotationModel instanceof IPersistableAnnotationModel persistableModel) {
 				persistableModel.commit(fDocument);
 			}
 
@@ -502,8 +489,8 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 
 			try {
 				String content= new String(contentStream.readAllBytes(), encoding);
-				if (document instanceof IDocumentExtension4) {
-					((IDocumentExtension4) document).set(content, fFile.getModificationStamp());
+				if (document instanceof IDocumentExtension4 ext4) {
+					ext4.set(content, fFile.getModificationStamp());
 				} else {
 					document.set(content);
 				}
