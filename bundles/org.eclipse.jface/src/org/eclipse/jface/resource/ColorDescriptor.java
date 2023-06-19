@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -24,7 +24,7 @@ import org.eclipse.swt.graphics.RGB;
  *
  * @since 3.1
  */
-public abstract class ColorDescriptor extends DeviceResourceDescriptor {
+public abstract class ColorDescriptor extends DeviceResourceDescriptor<Color> {
 
 	/**
 	 * Creates a ColorDescriptor from an existing Color, given the Device associated

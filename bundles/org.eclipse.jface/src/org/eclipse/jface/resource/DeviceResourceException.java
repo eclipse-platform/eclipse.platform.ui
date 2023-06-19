@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -35,7 +35,7 @@ public class DeviceResourceException extends RuntimeException {
 	 * @param missingResource the failed resource
 	 * @param cause cause of the exception (or null if none)
 	 */
-	public DeviceResourceException(DeviceResourceDescriptor missingResource, Throwable cause) {
+	public DeviceResourceException(DeviceResourceDescriptor<?> missingResource, Throwable cause) {
 		super("Unable to create resource " + missingResource); //$NON-NLS-1$
 		// don't pass the cause to super, to allow compilation against JCL Foundation (bug 80059)
 		this.cause = cause;
@@ -47,7 +47,7 @@ public class DeviceResourceException extends RuntimeException {
 	 *
 	 * @param missingResource the failed resource
 	 */
-	public DeviceResourceException(DeviceResourceDescriptor missingResource) {
+	public DeviceResourceException(DeviceResourceDescriptor<?> missingResource) {
 		this(missingResource, null);
 	}
 

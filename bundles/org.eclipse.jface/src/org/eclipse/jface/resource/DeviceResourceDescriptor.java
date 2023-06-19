@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Hannes Wellmann - Parameterize DeviceResourceDescriptor with the described resource type
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
@@ -25,11 +26,13 @@ import org.eclipse.swt.graphics.Device;
  * two equal descriptors at hand, e.g. decorating an identical object.
  * </p>
  *
+ * @param <R> The resource's type described by this descriptor
+ *
  * @see org.eclipse.jface.resource.ResourceManager
  *
  * @since 3.1
  */
-public abstract class DeviceResourceDescriptor {
+public abstract class DeviceResourceDescriptor<R> {
 	private final boolean shouldBeCached;
 
 	/**

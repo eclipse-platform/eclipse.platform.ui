@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Display;
  *
  * @since 3.1
  */
-public abstract class FontDescriptor extends DeviceResourceDescriptor {
+public abstract class FontDescriptor extends DeviceResourceDescriptor<Font> {
 
 	/**
 	 * Creates a FontDescriptor that describes an existing font. The resulting

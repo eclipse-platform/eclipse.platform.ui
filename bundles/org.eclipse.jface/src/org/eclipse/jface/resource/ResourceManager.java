@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Hannes Wellmann - Parameterize DeviceResourceDescriptor with the described resource type
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
@@ -84,19 +85,13 @@ public abstract class ResourceManager {
 	 * this method.
 	 * </p>
 	 *
-	 * <p>
-	 * Callers may safely downcast the result to the resource type associated with
-	 * the descriptor. For example, when given an ImageDescriptor, the return value
-	 * of this method will always be an Image.
-	 * </p>
-	 *
 	 * @since 3.1
 	 *
 	 * @param descriptor descriptor for the resource to allocate
 	 * @return the newly allocated resource (not null)
 	 * @throws DeviceResourceException if unable to allocate the resource
 	 */
-	public abstract Object create(DeviceResourceDescriptor descriptor);
+	public abstract <R> R create(DeviceResourceDescriptor<R> descriptor);
 
 	/**
 	 * Deallocates a resource previously allocated by {@link #create(DeviceResourceDescriptor)}.
@@ -108,7 +103,7 @@ public abstract class ResourceManager {
 	 *
 	 * @param descriptor identifier for the resource
 	 */
-	public abstract void destroy(DeviceResourceDescriptor descriptor);
+	public abstract <R> void destroy(DeviceResourceDescriptor<R> descriptor);
 
 	/**
 	 * Returns a previously-allocated resource or allocates a new one if none exists
@@ -123,12 +118,6 @@ public abstract class ResourceManager {
 	 * other code that shares them. For example, never call
 	 * {@link org.eclipse.swt.graphics.Resource#dispose()} on anything returned from
 	 * this method.
-	 * </p>
-	 *
-	 * <p>
-	 * Callers may safely downcast the result to the resource type associated with
-	 * the descriptor. For example, when given an ImageDescriptor, the return value
-	 * of this method may be downcast to Image.
 	 * </p>
 	 *
 	 * <p>
@@ -151,8 +140,8 @@ public abstract class ResourceManager {
 	 *
 	 * @since 3.3
 	 */
-	public final Object get(DeviceResourceDescriptor descriptor) {
-		Object cached = find(descriptor);
+	public final <R> R get(DeviceResourceDescriptor<R> descriptor) {
+		R cached = find(descriptor);
 		return cached != null ? cached : create(descriptor);
 	}
 
@@ -171,14 +160,16 @@ public abstract class ResourceManager {
 	 * @since 3.1
 	 *
 	 * @param descriptor descriptor for the image to create
-	 * @return the Image described by this descriptor (possibly shared by other equivalent
-	 * ImageDescriptors)
+	 * @return the Image described by this descriptor (possibly shared by other
+	 *         equivalent ImageDescriptors)
 	 * @throws DeviceResourceException if unable to allocate the Image
+	 * @deprecated use {@link #create(DeviceResourceDescriptor)} instead
 	 */
+	@Deprecated(since = "3.31")
 	public final Image createImage(ImageDescriptor descriptor) {
 		// Assertion added to help diagnose client bugs.  See bug #83711 and bug #90454.
 		Assert.isNotNull(descriptor);
-		return (Image) create(descriptor);
+		return create(descriptor);
 	}
 
 	/**
@@ -198,7 +189,7 @@ public abstract class ResourceManager {
 		}
 
 		try {
-			return (Image) create(descriptor);
+			return create(descriptor);
 		} catch (DeviceResourceException | SWTException e) {
 			Policy.getLog().log(Status.warning("The image could not be loaded: " + descriptor, e)); //$NON-NLS-1$
 			return getDefaultImage();
@@ -222,7 +213,9 @@ public abstract class ResourceManager {
 	 * @since 3.1
 	 *
 	 * @param descriptor identifier for the image to dispose
+	 * @deprecated use {@link #destroy(DeviceResourceDescriptor)} instead
 	 */
+	@Deprecated(since = "3.31")
 	public final void destroyImage(ImageDescriptor descriptor) {
 		destroy(descriptor);
 	}
@@ -238,9 +231,11 @@ public abstract class ResourceManager {
 	 * @param descriptor descriptor for the color to create
 	 * @return the Color described by the given ColorDescriptor (not null)
 	 * @throws DeviceResourceException if unable to create the color
+	 * @deprecated use {@link #create(DeviceResourceDescriptor)} instead
 	 */
+	@Deprecated(since = "3.31")
 	public final Color createColor(ColorDescriptor descriptor) {
-		return (Color)create(descriptor);
+		return create(descriptor);
 	}
 
 	/**
@@ -256,7 +251,7 @@ public abstract class ResourceManager {
 	 * @throws DeviceResourceException if unable to create the color
 	 */
 	public final Color createColor(RGB descriptor) {
-		return createColor(new RGBColorDescriptor(descriptor));
+		return create(new RGBColorDescriptor(descriptor));
 	}
 
 	/**
@@ -267,7 +262,7 @@ public abstract class ResourceManager {
 	 * @param descriptor RGB value of the color to dispose
 	 */
 	public final void destroyColor(RGB descriptor) {
-		destroyColor(new RGBColorDescriptor(descriptor));
+		destroy(new RGBColorDescriptor(descriptor));
 	}
 
 	/**
@@ -277,7 +272,9 @@ public abstract class ResourceManager {
 	 * @since 3.1
 	 *
 	 * @param descriptor identifier for the color to dispose
+	 * @deprecated use {@link #destroy(DeviceResourceDescriptor)} instead
 	 */
+	@Deprecated(since = "3.31")
 	public final void destroyColor(ColorDescriptor descriptor) {
 		destroy(descriptor);
 	}
@@ -293,9 +290,11 @@ public abstract class ResourceManager {
 	 * @param descriptor description of the font to create
 	 * @return the Font described by the given descriptor
 	 * @throws DeviceResourceException if unable to create the font
+	 * @deprecated use {@link #create(DeviceResourceDescriptor)} instead
 	 */
+	@Deprecated(since = "3.31")
 	public final Font createFont(FontDescriptor descriptor) {
-		return (Font)create(descriptor);
+		return create(descriptor);
 	}
 
 	/**
@@ -304,7 +303,9 @@ public abstract class ResourceManager {
 	 * @since 3.1
 	 *
 	 * @param descriptor description of the font to destroy
+	 * @deprecated use {@link #destroy(DeviceResourceDescriptor)} instead
 	 */
+	@Deprecated(since = "3.31")
 	public final void destroyFont(FontDescriptor descriptor) {
 		destroy(descriptor);
 	}
@@ -353,7 +354,7 @@ public abstract class ResourceManager {
 	 * @param descriptor descriptor to find
 	 * @return a previously allocated resource for the given descriptor or null if none.
 	 */
-	public abstract Object find(DeviceResourceDescriptor descriptor);
+	public abstract <R> R find(DeviceResourceDescriptor<R> descriptor);
 
 	/**
 	 * Causes the <code>run()</code> method of the runnable to be invoked just
