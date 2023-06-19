@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -51,12 +51,13 @@ public final class DeviceResourceManager extends AbstractResourceManager {
 	}
 
 	@Override
-	protected Object allocate(DeviceResourceDescriptor descriptor) throws DeviceResourceException {
-		return descriptor.createResource(device);
+	@SuppressWarnings("unchecked")
+	protected <R> R allocate(DeviceResourceDescriptor<R> descriptor) throws DeviceResourceException {
+		return (R) descriptor.createResource(device);
 	}
 
 	@Override
-	protected void deallocate(Object resource, DeviceResourceDescriptor descriptor) {
+	protected <R> void deallocate(Object resource, DeviceResourceDescriptor<R> descriptor) {
 		descriptor.destroyResource(resource);
 	}
 

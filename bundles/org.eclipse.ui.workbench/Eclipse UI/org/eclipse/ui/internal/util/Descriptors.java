@@ -102,10 +102,10 @@ public final class Descriptors {
 		}
 
 		final Method method;
-		DeviceResourceDescriptor oldDescriptor;
+		DeviceResourceDescriptor<?> oldDescriptor;
 		final String id;
 
-		public void invoke(Widget toCall, DeviceResourceDescriptor newDescriptor) {
+		public void invoke(Widget toCall, DeviceResourceDescriptor<?> newDescriptor) {
 			if (newDescriptor == oldDescriptor) {
 				return;
 			}
@@ -272,7 +272,7 @@ public final class Descriptors {
 		return result;
 	}
 
-	private static void callMethod(Widget toCall, String methodName, DeviceResourceDescriptor descriptor,
+	private static void callMethod(Widget toCall, String methodName, DeviceResourceDescriptor<?> descriptor,
 			Class<?> resourceType) {
 		ResourceMethod method;
 		try {

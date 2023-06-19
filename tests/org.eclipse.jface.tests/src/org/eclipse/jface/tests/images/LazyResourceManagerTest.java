@@ -368,7 +368,7 @@ public class LazyResourceManagerTest extends TestCase {
 		ImageDescriptor nullDescriptor = null;
 
 		// Test with "test" resources manager
-		AtomicReference<DeviceResourceDescriptor> expected = (AtomicReference<DeviceResourceDescriptor>) mgr
+		AtomicReference<DeviceResourceDescriptor> expected = (AtomicReference<DeviceResourceDescriptor>) (Object) mgr
 				.create(nullDescriptor);
 		assertAlife(expected, mgr, tst, nullDescriptor);
 		mgr.destroy(nullDescriptor);
