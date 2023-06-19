@@ -25,7 +25,6 @@ import org.junit.Test;
 
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -63,7 +62,7 @@ public class ConvertLineDelemiterTest {
 				int i= 0;
 				for (String inputDelim : DELIMS) {
 					String input= testFile.apply(inputDelim);
-					IFile file= ResourcesPlugin.getWorkspace().getRoot().getFile(new Path("/ConvertLineDelemiterTest/test" + i + ".txt"));
+					IFile file= ResourcesPlugin.getWorkspace().getRoot().getFile(IPath.fromOSString("/ConvertLineDelemiterTest/test" + i + ".txt"));
 					try (InputStream s= new ByteArrayInputStream(input.getBytes())) {
 						file.create(s, true, null);
 					}

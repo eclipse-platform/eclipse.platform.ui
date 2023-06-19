@@ -17,7 +17,7 @@ import org.osgi.framework.Bundle;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -84,7 +84,7 @@ class SorterDescriptor {
 		if (imageName == null)
 			return null;
 		Bundle bundle = Platform.getBundle(fElement.getContributor().getName());
-		return SearchPluginImages.createImageDescriptor(bundle, new Path(imageName), true);
+		return SearchPluginImages.createImageDescriptor(bundle, IPath.fromOSString(imageName), true);
 	}
 
 	/**

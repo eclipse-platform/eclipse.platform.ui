@@ -23,7 +23,7 @@ import org.junit.rules.TemporaryFolder;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -68,7 +68,7 @@ public class DocumentProviderRegistryTest {
 	@Test
 	public void testFindByExtensionNonWorkspace() throws Exception {
 		File external = tmp.newFile("external.testfile");
-		IFileStore store = EFS.getLocalFileSystem().getStore(new Path(external.getCanonicalPath()));
+		IFileStore store = EFS.getLocalFileSystem().getStore(IPath.fromOSString(external.getCanonicalPath()));
 		IEditorInput editorInput = new FileStoreEditorInput(store);
 		IDocumentProvider provider = DocumentProviderRegistry.getDefault().getDocumentProvider(editorInput);
 		assertEquals("Unexpected document provider found : " + provider.getClass().getName(),

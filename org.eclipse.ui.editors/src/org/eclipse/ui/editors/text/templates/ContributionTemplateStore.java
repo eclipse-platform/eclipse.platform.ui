@@ -27,7 +27,7 @@ import org.osgi.framework.Bundle;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.text.templates.TemplatePersistenceData;
@@ -130,12 +130,12 @@ public class ContributionTemplateStore extends TemplateStore {
 		String file= element.getAttribute(FILE);
 		if (file != null) {
 			Bundle plugin = Platform.getBundle(element.getContributor().getName());
-			URL url= FileLocator.find(plugin, Path.fromOSString(file), null);
+			URL url= FileLocator.find(plugin, IPath.fromOSString(file), null);
 			if (url != null) {
 				ResourceBundle bundle= null;
 				String translations= element.getAttribute(TRANSLATIONS);
 				if (translations != null) {
-					URL bundleURL= FileLocator.find(plugin, Path.fromOSString(translations), null);
+					URL bundleURL= FileLocator.find(plugin, IPath.fromOSString(translations), null);
 					if (bundleURL != null) {
 						try (InputStream bundleStream= bundleURL.openStream()) {
 							bundle= new PropertyResourceBundle(bundleStream);

@@ -16,7 +16,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.text.quicksearch.internal.core.pathmatch.ResourceMatcher;
 import org.eclipse.text.quicksearch.internal.core.pathmatch.ResourceMatchers;
 import org.junit.Test;
@@ -62,7 +62,7 @@ public class ResourceMatcherTest {
 	}
 
 	private void assertMatch(boolean expectedMatch, String patterns, String path) {
-		assertTrue(new Path(path).isAbsolute());
+		assertTrue(IPath.fromOSString(path).isAbsolute());
 		ResourceMatcher matcher = ResourceMatchers.commaSeparatedPaths(patterns);
 		assertEquals("Wrong match with pattern: '" + patterns + "'", expectedMatch, matcher.matches(new MockResource(path)));
 

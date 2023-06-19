@@ -19,7 +19,6 @@ import org.junit.After;
 import org.osgi.framework.Bundle;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.core.resources.IFile;
@@ -48,10 +47,10 @@ public class FileBuffersForLinkedFiles extends FileBufferFunctions {
 
 	@Override
 	protected IPath createPath(IProject project) throws Exception {
-		File sourceFile= FileTool.getFileInPlugin(FileBuffersTestPlugin.getDefault(), new Path("testResources/LinkedFileTarget"));
-		fExternalFile= FileTool.createTempFileInPlugin(FileBuffersTestPlugin.getDefault(), new Path("externalResources/LinkedFileTarget"));
+		File sourceFile= FileTool.getFileInPlugin(FileBuffersTestPlugin.getDefault(), IPath.fromOSString("testResources/LinkedFileTarget"));
+		fExternalFile= FileTool.createTempFileInPlugin(FileBuffersTestPlugin.getDefault(), IPath.fromOSString("externalResources/LinkedFileTarget"));
 		FileTool.copy(sourceFile, fExternalFile);
-		IFile file= ResourceHelper.createLinkedFile(project, new Path("LinkedFile"), fExternalFile);
+		IFile file= ResourceHelper.createLinkedFile(project, IPath.fromOSString("LinkedFile"), fExternalFile);
 		return file.getFullPath();
 	}
 
@@ -82,7 +81,7 @@ public class FileBuffersForLinkedFiles extends FileBufferFunctions {
 	protected IPath moveUnderlyingFile() throws Exception {
 		IFile file= FileBuffers.getWorkspaceFileAtLocation(getPath());
 		ResourceHelper.createFolder("project/folderA");
-		IPath path= new Path("/project/folderA/MovedLinkedFile");
+		IPath path= IPath.fromOSString("/project/folderA/MovedLinkedFile");
 		file.move(path, true, false, null);
 
 		file= FileBuffers.getWorkspaceFileAtLocation(path);

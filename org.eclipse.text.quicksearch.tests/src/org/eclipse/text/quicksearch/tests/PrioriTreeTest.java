@@ -14,7 +14,7 @@ import static org.eclipse.text.quicksearch.internal.core.priority.PriorityFuncti
 import static org.eclipse.text.quicksearch.internal.core.priority.PriorityFunction.PRIORITY_IGNORE;
 import static org.junit.Assert.assertEquals;
 
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.text.quicksearch.internal.core.priority.PrioriTree;
 import org.junit.Before;
 import org.junit.Test;
@@ -157,7 +157,7 @@ public class PrioriTreeTest {
 	}
 
 	private void setPriority(String pathStr, double pri) {
-		tree.setPriority(new Path(pathStr), pri);
+		tree.setPriority(IPath.fromOSString(pathStr), pri);
 	}
 
 	private void checkPriority(double expected, String pathStr) {

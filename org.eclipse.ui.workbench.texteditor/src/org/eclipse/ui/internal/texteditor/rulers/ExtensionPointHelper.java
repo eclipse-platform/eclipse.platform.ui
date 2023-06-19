@@ -23,9 +23,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
@@ -121,7 +121,7 @@ public final class ExtensionPointHelper {
 		if (bundle == null)
 			return dflt;
 
-		Path path= new Path(value);
+		IPath path = IPath.fromOSString(value);
 		return FileLocator.find(bundle, path, null);
 	}
 

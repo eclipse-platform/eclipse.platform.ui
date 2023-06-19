@@ -26,7 +26,6 @@ import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.core.resources.IFile;
@@ -78,7 +77,7 @@ public class FileStoreFileBuffersForWorkspaceFiles extends FileBufferFunctions {
 	protected IPath moveUnderlyingFile() throws Exception {
 		IFile file= FileBuffers.getWorkspaceFileAtLocation(getPath());
 		ResourceHelper.createFolder("project/folderA/folderB/folderC");
-		IPath path= new Path("/project/folderA/folderB/folderC/MovedWorkspaceFile");
+		IPath path= IPath.fromOSString("/project/folderA/folderB/folderC/MovedWorkspaceFile");
 		file.move(path, true, false, null);
 
 		file= FileBuffers.getWorkspaceFileAtLocation(path);

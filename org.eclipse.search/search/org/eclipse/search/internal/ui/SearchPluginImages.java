@@ -21,7 +21,6 @@ import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -36,7 +35,7 @@ public class SearchPluginImages {
 	// The plugin registry
 	private final static ImageRegistry PLUGIN_REGISTRY= SearchPlugin.getDefault().getImageRegistry();
 
-	private static final IPath ICONS_PATH= new Path("$nl$/icons/full"); //$NON-NLS-1$
+	private static final IPath ICONS_PATH = IPath.fromOSString("$nl$/icons/full"); //$NON-NLS-1$
 
 	public static final String T_OBJ= "obj16/"; //$NON-NLS-1$
 	public static final String T_WIZBAN= "wizban/"; //$NON-NLS-1$

@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 
@@ -128,27 +127,27 @@ public class ResourceHelper {
 
 	public static IFile createLinkedFile(IContainer container, IPath linkPath, File linkedFileTarget) throws CoreException {
 		IFile iFile= container.getFile(linkPath);
-		iFile.createLink(new Path(linkedFileTarget.getAbsolutePath()), IResource.ALLOW_MISSING_LOCAL, NULL_MONITOR);
+		iFile.createLink(IPath.fromOSString(linkedFileTarget.getAbsolutePath()), IResource.ALLOW_MISSING_LOCAL, NULL_MONITOR);
 		return iFile;
 	}
 
 	public static IFile createLinkedFile(IContainer container, IPath linkPath, Plugin plugin, IPath linkedFileTargetPath) throws CoreException {
 		File file= FileTool.getFileInPlugin(plugin, linkedFileTargetPath);
 		IFile iFile= container.getFile(linkPath);
-		iFile.createLink(new Path(file.getAbsolutePath()), IResource.ALLOW_MISSING_LOCAL, NULL_MONITOR);
+		iFile.createLink(IPath.fromOSString(file.getAbsolutePath()), IResource.ALLOW_MISSING_LOCAL, NULL_MONITOR);
 		return iFile;
 	}
 
 	public static IFolder createLinkedFolder(IContainer container, IPath linkPath, File linkedFolderTarget) throws CoreException {
 		IFolder folder= container.getFolder(linkPath);
-		folder.createLink(new Path(linkedFolderTarget.getAbsolutePath()), IResource.ALLOW_MISSING_LOCAL, NULL_MONITOR);
+		folder.createLink(IPath.fromOSString(linkedFolderTarget.getAbsolutePath()), IResource.ALLOW_MISSING_LOCAL, NULL_MONITOR);
 		return folder;
 	}
 
 	public static IFolder createLinkedFolder(IContainer container, IPath linkPath, Plugin plugin, IPath linkedFolderTargetPath) throws CoreException {
 		File file= FileTool.getFileInPlugin(plugin, linkedFolderTargetPath);
 		IFolder iFolder= container.getFolder(linkPath);
-		iFolder.createLink(new Path(file.getAbsolutePath()), IResource.ALLOW_MISSING_LOCAL, NULL_MONITOR);
+		iFolder.createLink(IPath.fromOSString(file.getAbsolutePath()), IResource.ALLOW_MISSING_LOCAL, NULL_MONITOR);
 		return iFolder;
 	}
 
@@ -158,7 +157,7 @@ public class ResourceHelper {
 
 		IProjectDescription desc= workspace.newProjectDescription(projectName);
 		File file= FileTool.getFileInPlugin(plugin, linkPath);
-		IPath projectLocation= new Path(file.getAbsolutePath());
+		IPath projectLocation= IPath.fromOSString(file.getAbsolutePath());
 		if (Platform.getLocation().equals(projectLocation))
 			projectLocation= null;
 		desc.setLocation(projectLocation);
@@ -172,7 +171,7 @@ public class ResourceHelper {
 
 	public static IProject createJUnitSourceProject(String projectName) throws CoreException, ZipException, IOException {
 		IProject project= ResourceHelper.createProject(projectName);
-		ZipFile zip= new ZipFile(FileTool.getFileInPlugin(SearchTestPlugin.getDefault(), new Path("testresources/junit37-noUI-src.zip"))); //$NON-NLS-1$
+		ZipFile zip= new ZipFile(FileTool.getFileInPlugin(SearchTestPlugin.getDefault(), IPath.fromOSString("testresources/junit37-noUI-src.zip"))); //$NON-NLS-1$
 		FileTool.unzip(zip, project.getLocation().toFile());
 		project.refreshLocal(IResource.DEPTH_INFINITE, null);
 		return project;

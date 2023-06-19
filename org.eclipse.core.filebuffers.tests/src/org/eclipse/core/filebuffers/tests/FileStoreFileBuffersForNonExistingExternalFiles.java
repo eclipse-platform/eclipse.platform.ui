@@ -21,7 +21,6 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
 import org.eclipse.core.resources.IProject;
 
@@ -45,7 +44,7 @@ public class FileStoreFileBuffersForNonExistingExternalFiles extends FileStoreFi
 	protected IPath createPath(IProject project) throws Exception {
 		IPath path= FileBuffersTestPlugin.getDefault().getStateLocation();
 		path= path.append("NonExistingExternalFile");
-		return new Path(path.toFile().getAbsolutePath());
+		return IPath.fromOSString(path.toFile().getAbsolutePath());
 	}
 
 	/*

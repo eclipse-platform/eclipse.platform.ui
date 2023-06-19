@@ -32,7 +32,6 @@ import org.eclipse.core.filesystem.IFileStore;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -71,12 +70,12 @@ public class FileBufferCreation {
 	}
 
 	private IPath createLinkedFile(String linkedFileName, String linkedFileTarget) throws CoreException {
-		IFile linkedFile= ResourceHelper.createLinkedFile(fProject, new Path(linkedFileName), FileBuffersTestPlugin.getDefault(), new Path(linkedFileTarget));
+		IFile linkedFile= ResourceHelper.createLinkedFile(fProject, IPath.fromOSString(linkedFileName), FileBuffersTestPlugin.getDefault(), IPath.fromOSString(linkedFileTarget));
 		return linkedFile.getFullPath();
 	}
 
 	private IPath createLinkedFolder(String linkedFolderName, String linkedFolderTarget) throws CoreException {
-		IFolder linkedFolder= ResourceHelper.createLinkedFolder(fProject, new Path(linkedFolderName), FileBuffersTestPlugin.getDefault(), new Path(linkedFolderTarget));
+		IFolder linkedFolder= ResourceHelper.createLinkedFolder(fProject, IPath.fromOSString(linkedFolderName), FileBuffersTestPlugin.getDefault(), IPath.fromOSString(linkedFolderTarget));
 		return linkedFolder.getFullPath();
 	}
 
@@ -281,9 +280,9 @@ public class FileBufferCreation {
 	 */
 	@Test
 	public void test5() throws Exception {
-		File externalFile= FileTool.getFileInPlugin(FileBuffersTestPlugin.getDefault(), new Path("testResources/ExternalFile"));
+		File externalFile= FileTool.getFileInPlugin(FileBuffersTestPlugin.getDefault(), IPath.fromOSString("testResources/ExternalFile"));
 		assertNotNull(externalFile);
-		IPath path= new Path(externalFile.getAbsolutePath());
+		IPath path= IPath.fromOSString(externalFile.getAbsolutePath());
 
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		manager.connect(path, LocationKind.NORMALIZE, null);
@@ -309,9 +308,9 @@ public class FileBufferCreation {
 		IPath path1= createLinkedFile("file1", "testResources/ExternalFile");
 		assertNotNull(path1);
 
-		File externalFile= FileTool.getFileInPlugin(FileBuffersTestPlugin.getDefault(), new Path("testResources/ExternalFile"));
+		File externalFile= FileTool.getFileInPlugin(FileBuffersTestPlugin.getDefault(), IPath.fromOSString("testResources/ExternalFile"));
 		assertNotNull(externalFile);
-		IPath path2= new Path(externalFile.getAbsolutePath());
+		IPath path2= IPath.fromOSString(externalFile.getAbsolutePath());
 
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		manager.connect(path1, LocationKind.NORMALIZE, null);
@@ -543,9 +542,9 @@ public class FileBufferCreation {
 	 */
 	@Test
 	public void test5_location() throws Exception {
-		File externalFile= FileTool.getFileInPlugin(FileBuffersTestPlugin.getDefault(), new Path("testResources/ExternalFile"));
+		File externalFile= FileTool.getFileInPlugin(FileBuffersTestPlugin.getDefault(), IPath.fromOSString("testResources/ExternalFile"));
 		assertNotNull(externalFile);
-		IPath path= new Path(externalFile.getAbsolutePath());
+		IPath path= IPath.fromOSString(externalFile.getAbsolutePath());
 
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		manager.connect(path, LocationKind.LOCATION, null);

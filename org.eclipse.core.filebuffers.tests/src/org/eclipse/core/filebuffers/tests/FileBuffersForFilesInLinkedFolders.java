@@ -28,7 +28,6 @@ import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.core.resources.IFile;
@@ -63,12 +62,12 @@ public class FileBuffersForFilesInLinkedFolders extends FileBufferFunctions {
 
 	@Override
 	protected IPath createPath(IProject project) throws Exception {
-		File sourceFile= FileTool.getFileInPlugin(FileBuffersTestPlugin.getDefault(), new Path("testResources/linkedFolderTarget/FileInLinkedFolder"));
-		fExternalFile= FileTool.createTempFileInPlugin(FileBuffersTestPlugin.getDefault(), new Path("externalResources/linkedFolderTarget/FileInLinkedFolder"));
+		File sourceFile= FileTool.getFileInPlugin(FileBuffersTestPlugin.getDefault(), IPath.fromOSString("testResources/linkedFolderTarget/FileInLinkedFolder"));
+		fExternalFile= FileTool.createTempFileInPlugin(FileBuffersTestPlugin.getDefault(), IPath.fromOSString("externalResources/linkedFolderTarget/FileInLinkedFolder"));
 		FileTool.copy(sourceFile, fExternalFile);
 
-		IFolder folder= ResourceHelper.createLinkedFolder(project, new Path("LinkedFolder"), fExternalFile.getParentFile());
-		IFile file= folder.getFile(new Path("FileInLinkedFolder"));
+		IFolder folder= ResourceHelper.createLinkedFolder(project, IPath.fromOSString("LinkedFolder"), fExternalFile.getParentFile());
+		IFile file= folder.getFile(IPath.fromOSString("FileInLinkedFolder"));
 		return file.getFullPath();
 	}
 
@@ -99,7 +98,7 @@ public class FileBuffersForFilesInLinkedFolders extends FileBufferFunctions {
 	protected IPath moveUnderlyingFile() throws Exception {
 		IFile file= FileBuffers.getWorkspaceFileAtLocation(getPath());
 		ResourceHelper.createFolder("project/folderA");
-		IPath path= new Path("/project/folderA/MovedLinkedFile");
+		IPath path= IPath.fromOSString("/project/folderA/MovedLinkedFile");
 		file.move(path, true, false, null);
 
 		file= FileBuffers.getWorkspaceFileAtLocation(path);

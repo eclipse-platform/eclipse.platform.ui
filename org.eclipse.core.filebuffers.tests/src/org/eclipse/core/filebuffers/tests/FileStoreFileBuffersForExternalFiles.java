@@ -23,7 +23,6 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
 import org.eclipse.core.resources.IProject;
 
@@ -46,10 +45,10 @@ public class FileStoreFileBuffersForExternalFiles extends FileStoreFileBufferFun
 
 	@Override
 	protected IPath createPath(IProject project) throws Exception {
-		File sourceFile= FileTool.getFileInPlugin(FileBuffersTestPlugin.getDefault(), new Path("testResources/ExternalFile"));
-		File externalFile= FileTool.createTempFileInPlugin(FileBuffersTestPlugin.getDefault(), new Path("externalResources/ExternalFile"));
+		File sourceFile= FileTool.getFileInPlugin(FileBuffersTestPlugin.getDefault(), IPath.fromOSString("testResources/ExternalFile"));
+		File externalFile= FileTool.createTempFileInPlugin(FileBuffersTestPlugin.getDefault(), IPath.fromOSString("externalResources/ExternalFile"));
 		FileTool.copy(sourceFile, externalFile);
-		return new Path(externalFile.getAbsolutePath());
+		return IPath.fromOSString(externalFile.getAbsolutePath());
 	}
 
 	@Override

@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 
@@ -130,7 +129,7 @@ public class ContainerCreator {
 	}
 
 	private IFolder createFolderHandle(IContainer container, String folderName) {
-		return container.getFolder(new Path(folderName));
+		return container.getFolder(IPath.fromOSString(folderName));
 	}
 
 	private IProject createProject(IProject projectHandle, IProgressMonitor monitor) throws CoreException {

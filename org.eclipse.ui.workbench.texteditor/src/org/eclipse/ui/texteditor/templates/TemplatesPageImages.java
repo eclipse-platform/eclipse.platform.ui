@@ -20,7 +20,7 @@ import org.osgi.framework.Bundle;
 import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -113,7 +113,7 @@ class TemplatesPageImages {
 		Bundle bundle= Platform.getBundle(TextEditorPlugin.PLUGIN_ID);
 		URL url= null;
 		if (bundle != null) {
-			url= FileLocator.find(bundle, new Path(path), null);
+			url = FileLocator.find(bundle, IPath.fromOSString(path), null);
 			desc= ImageDescriptor.createFromURL(url);
 		}
 		fgImageRegistry.put(key, desc);

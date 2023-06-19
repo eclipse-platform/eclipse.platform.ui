@@ -18,7 +18,6 @@ import org.eclipse.core.filesystem.IFileStore;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -84,7 +83,7 @@ public class NonExistingFileEditorInput implements IEditorInput, ILocationProvid
 	public IPath getPath(Object element) {
 		if (element instanceof NonExistingFileEditorInput) {
 			NonExistingFileEditorInput input= (NonExistingFileEditorInput)element;
-			return new Path(input.fFileStore.toURI().getPath());
+			return IPath.fromOSString(input.fFileStore.toURI().getPath());
 		}
 		return null;
 	}

@@ -31,30 +31,34 @@ import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnmappableCharacterException;
 import java.nio.charset.UnsupportedCharsetException;
 
-import org.eclipse.core.filebuffers.IFileBufferStatusCodes;
-import org.eclipse.core.filebuffers.IPersistableAnnotationModel;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.LocationKind;
+import org.eclipse.osgi.util.NLS;
+
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.resources.IResourceStatus;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
+
+import org.eclipse.core.resources.IResourceStatus;
+
+import org.eclipse.core.filebuffers.IFileBufferStatusCodes;
+import org.eclipse.core.filebuffers.IPersistableAnnotationModel;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.LocationKind;
+
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.source.IAnnotationModel;
-import org.eclipse.osgi.util.NLS;
 
 /**
  * @since 3.3 (previously available as JavaTextFileBuffer since 3.3)
@@ -543,8 +547,9 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 	 */
 	private IPath getLocationOrName() {
 		IPath path= getLocation();
-		if (path == null)
-			path= new Path(fFileStore.getName());
+		if (path == null) {
+			path= IPath.fromOSString(fFileStore.getName());
+		}
 		return path;
 	}
 }

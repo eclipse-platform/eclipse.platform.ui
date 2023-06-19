@@ -19,7 +19,7 @@ import org.junit.Before;
 
 import org.eclipse.core.internal.filebuffers.ResourceTextFileBufferManager;
 
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -39,9 +39,9 @@ public class ResourceTextFileManagerDocCreationTests extends AbstractFileBufferD
 
 	@Override
 	protected void assertDocumentContent(String expectedContent, String fullPath, LocationKind locKind) {
-		assertEquals(expectedContent, fManager.createEmptyDocument(new Path(fullPath), locKind).get());
+		assertEquals(expectedContent, fManager.createEmptyDocument(IPath.fromOSString(fullPath), locKind).get());
 		if (locKind == LocationKind.IFILE) {
-			IFile file= ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(fullPath));
+			IFile file= ResourcesPlugin.getWorkspace().getRoot().getFile(IPath.fromOSString(fullPath));
 			assertEquals(expectedContent, ((ResourceTextFileBufferManager)fManager).createEmptyDocument(file).get());
 		}
 	}

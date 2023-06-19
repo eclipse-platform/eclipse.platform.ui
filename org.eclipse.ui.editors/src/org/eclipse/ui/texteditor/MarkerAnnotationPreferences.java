@@ -25,7 +25,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.core.resources.IMarker;
@@ -532,7 +532,7 @@ public class MarkerAnnotationPreferences {
 		if (bundle == null)
 			return null;
 
-		URL url= FileLocator.find(bundle, new Path(iconPath), null);
+		URL url= FileLocator.find(bundle, IPath.fromOSString(iconPath), null);
 		if (url != null)
 			return ImageDescriptor.createFromURL(url);
 

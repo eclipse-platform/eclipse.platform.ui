@@ -38,7 +38,6 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
@@ -1283,7 +1282,7 @@ public abstract class FileBufferFunctions {
 	 */
 	@Test
 	public void testGetFileStoreAnnotationModel() throws Exception {
-		IFileStore fileStore= EFS.getNullFileSystem().getStore(new Path("/dev/null"));
+		IFileStore fileStore= EFS.getNullFileSystem().getStore(IPath.fromOSString("/dev/null"));
 		assertNotNull(fileStore);
 		fManager.connectFileStore(fileStore, null);
 		try {

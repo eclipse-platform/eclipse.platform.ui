@@ -21,7 +21,7 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.core.filebuffers.IDocumentSetupParticipantExtension;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
@@ -122,7 +122,7 @@ public abstract class AbstractFileBufferDocCreationTests {
 	private void assertParticipantsInvoked(String path, Class<?>[] expectedDSPsArray) {
 		LocationKind[] lks= getSupportLocationKinds();
 		for (LocationKind lk : lks) {
-			IDocument document = fManager.createEmptyDocument(new Path(path), lk);
+			IDocument document= fManager.createEmptyDocument(IPath.fromOSString(path), lk);
 			String content= document.get();
 			Set<String> expectedDSPs= new HashSet<>(Arrays.asList(toString(expectedDSPsArray)));
 			Set<String> actualDSPs= new HashSet<>(Arrays.asList(content.split("\n")));
@@ -133,7 +133,7 @@ public abstract class AbstractFileBufferDocCreationTests {
 	abstract protected LocationKind[] getSupportLocationKinds();
 
 	protected void assertDocumentContent(String expectedContent, String path, LocationKind locKind) {
-		assertEquals(expectedContent, fManager.createEmptyDocument(new Path(path), locKind).get());
+		assertEquals(expectedContent, fManager.createEmptyDocument(IPath.fromOSString(path), locKind).get());
 	}
 
 	private static String[] toString(Class<?>[] clss) {
