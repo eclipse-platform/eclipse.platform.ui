@@ -58,7 +58,6 @@ public class AnnotationCodeMining extends LineHeaderCodeMining {
 	}
 
 	@Override
-	@SuppressWarnings("null")
 	public Point draw(GC gc, StyledText textWidget, Color color, int x, int y) {
 		final int width= 16;
 		annotationAccess.paint(this.annotation, gc, textWidget, new Rectangle(x, y, width, 16));

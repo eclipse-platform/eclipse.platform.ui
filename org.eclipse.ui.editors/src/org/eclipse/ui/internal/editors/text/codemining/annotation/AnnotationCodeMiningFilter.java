@@ -25,13 +25,16 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+
+import org.eclipse.core.resources.IMarker;
+
 import org.eclipse.jface.text.quickassist.IQuickFixableAnnotation;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationAccessExtension;
 import org.eclipse.jface.text.source.IAnnotationPresentation;
+
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 
 /**
@@ -188,7 +191,6 @@ public class AnnotationCodeMiningFilter {
 	 * Assures annotations are distinct by line and text. Required, as sometimes the same message is
 	 * shown at the same place from different annotations.
 	 */
-	@SuppressWarnings("null")
 	private Stream<Annotation> distinct(Locator locator, Stream<Annotation> anns) {
 		return anns
 				.filter(distinctByKey(a -> {
@@ -222,7 +224,6 @@ public class AnnotationCodeMiningFilter {
 		return annotationAccess.isSubtype(a.getType(), "org.eclipse.ui.workbench.texteditor.error"); //$NON-NLS-1$
 	}
 
-	@SuppressWarnings("null")
 	public static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {
 		Map<Object, Boolean> seen= new LinkedHashMap<>();
 		return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;

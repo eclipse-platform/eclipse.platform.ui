@@ -22,13 +22,20 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
+
+import org.eclipse.swt.events.MouseEvent;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
+
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
@@ -48,11 +55,10 @@ import org.eclipse.jface.text.source.IAnnotationModelListenerExtension;
 import org.eclipse.jface.text.source.ISourceViewerExtension2;
 import org.eclipse.jface.text.source.ISourceViewerExtension3;
 import org.eclipse.jface.text.source.ISourceViewerExtension5;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.ui.editors.text.EditorsUI;
+
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+
+import org.eclipse.ui.editors.text.EditorsUI;
 
 /**
  * Shows <i>info</i>, <i>warning</i>, and <i>error</i> Annotations as line header code minings.
@@ -119,7 +125,7 @@ public class AnnotationCodeMiningProvider extends AbstractCodeMiningProvider
 		}
 
 		@Override
-		public void modelChanged(@SuppressWarnings("null") AnnotationModelEvent event) {
+		public void modelChanged(AnnotationModelEvent event) {
 			if (viewer == null) {
 				return;
 			}
@@ -149,7 +155,6 @@ public class AnnotationCodeMiningProvider extends AbstractCodeMiningProvider
 	private @Nullable IAnnotationAccessExtension annotationAccess= null;
 
 	@Override
-	@SuppressWarnings("null")
 	public CompletableFuture<List<? extends ICodeMining>> provideCodeMinings(ITextViewer viewer, IProgressMonitor monitor) {
 		if (!(viewer instanceof ISourceViewerExtension5)) {
 			throw new IllegalArgumentException("Cannot attach to TextViewer without code mining support"); //$NON-NLS-1$
@@ -262,7 +267,6 @@ public class AnnotationCodeMiningProvider extends AbstractCodeMiningProvider
 	}
 
 	private List<AbstractCodeMining> createCodeMinings(Stream<Annotation> annotations, IProgressMonitor monitor) {
-		@SuppressWarnings("null")
 		final Stream<AbstractCodeMining> result= annotations
 				.filter(m -> !monitor.isCanceled())
 				.map(this::createCodeMining)
