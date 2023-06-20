@@ -440,12 +440,12 @@ public class IndentFoldingStrategy implements IReconcilingStrategy, IReconciling
 			List<FoldingAnnotation> deletions) {
 		if (existingAnnotation instanceof FoldingAnnotation) {
 			FoldingAnnotation foldingAnnotation = (FoldingAnnotation) existingAnnotation;
+			Position oldPos = projectionAnnotationModel.getPosition(foldingAnnotation);
 
 			// if a new position can be calculated then update the position of
 			// the annotation,
 			// else the annotation needs to be deleted
-			if (newPos != null && newPos.length > 0 && projectionAnnotationModel != null) {
-				Position oldPos = projectionAnnotationModel.getPosition(foldingAnnotation);
+			if (oldPos != null && newPos != null && newPos.length > 0 && projectionAnnotationModel != null) {
 				// only update the position if we have to
 				if (!newPos.equals(oldPos)) {
 					oldPos.setOffset(newPos.offset);
