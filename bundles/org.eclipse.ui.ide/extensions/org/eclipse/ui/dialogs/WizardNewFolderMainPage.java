@@ -20,6 +20,7 @@ package org.eclipse.ui.dialogs;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.Iterator;
+import java.util.Optional;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
@@ -50,6 +51,8 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ResourceLocator;
+import org.eclipse.jface.viewers.DecorationOverlayIcon;
+import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
@@ -76,7 +79,6 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.dialogs.CreateLinkedResourceGroup;
 import org.eclipse.ui.internal.ide.dialogs.ResourceFilterEditDialog;
-import org.eclipse.ui.internal.ide.misc.OverlayIcon;
 import org.eclipse.ui.internal.ide.misc.ResourceAndContainerGroup;
 
 /**
@@ -496,21 +498,15 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 			ImageDescriptor folderDescriptor = PlatformUI.getWorkbench().getSharedImages()
 					.getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
 
-			ImageDescriptor[][] linkedResourceOverlayMap = new ImageDescriptor[4][1];
-			linkedResourceOverlayMap[1] = new ImageDescriptor[] { ResourceLocator
-					.imageDescriptorFromBundle(IDEWorkbenchPlugin.IDE_WORKBENCH, "$nl$/icons/full/ovr16/link_ovr.png") //$NON-NLS-1$
-					.orElse(null) };
+			Optional<ImageDescriptor> linkOverlay = ResourceLocator
+					.imageDescriptorFromBundle(WizardNewFolderMainPage.class, "$nl$/icons/full/ovr16/link_ovr.png"); //$NON-NLS-1$
+			CompositeImageDescriptor linkedFolderDescriptor = new DecorationOverlayIcon(folderDescriptor,
+					linkOverlay.orElse(null), IDecoration.BOTTOM_RIGHT);
 
-			CompositeImageDescriptor linkedFolderDescriptor = new OverlayIcon(folderDescriptor,
-					linkedResourceOverlayMap, new Point(16, 16));
-
-			ImageDescriptor[][] virtualFolderOverlayMap = new ImageDescriptor[4][1];
-			virtualFolderOverlayMap[1] = new ImageDescriptor[] { ResourceLocator
-					.imageDescriptorFromBundle(IDEWorkbenchPlugin.IDE_WORKBENCH, "$nl$/icons/full/ovr16/virt_ovr.png") //$NON-NLS-1$
-					.orElse(null) };
-
-			CompositeImageDescriptor virtualFolderDescriptor = new OverlayIcon(folderDescriptor,
-					virtualFolderOverlayMap, new Point(16, 16));
+			Optional<ImageDescriptor> virtualOverlay = ResourceLocator
+					.imageDescriptorFromBundle(WizardNewFolderMainPage.class, "$nl$/icons/full/ovr16/virt_ovr.png"); //$NON-NLS-1$
+			CompositeImageDescriptor virtualFolderDescriptor = new DecorationOverlayIcon(folderDescriptor,
+					virtualOverlay.orElse(null), IDecoration.BOTTOM_RIGHT);
 
 			folderImage = folderDescriptor.createImage();
 			useDefaultLocation = new Button(advancedComposite, SWT.RADIO);

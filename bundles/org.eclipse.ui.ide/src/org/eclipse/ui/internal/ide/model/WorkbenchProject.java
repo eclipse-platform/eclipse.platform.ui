@@ -19,12 +19,12 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.Point;
+import org.eclipse.jface.viewers.DecorationOverlayIcon;
+import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.ui.IProjectActionFilter;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.misc.OverlayIcon;
 
 /**
  * An IWorkbenchAdapter that represents IProject.
@@ -60,9 +60,7 @@ public class WorkbenchProject extends WorkbenchResource implements IProjectActio
 							.getNatureImage(imageKey);
 					if (natureImage != null) {
 						ImageDescriptor baseImage = IDEInternalWorkbenchImages.getImageDescriptor(baseKey);
-						overlayImage = new OverlayIcon(baseImage,
-								new ImageDescriptor[][] { { natureImage } },
-								new Point(16, 16));
+						overlayImage = new DecorationOverlayIcon(baseImage, natureImage, IDecoration.TOP_RIGHT);
 						imageCache.put(imageKey, overlayImage);
 						return overlayImage;
 					}
