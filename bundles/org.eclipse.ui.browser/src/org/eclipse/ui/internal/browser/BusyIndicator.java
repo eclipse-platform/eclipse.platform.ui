@@ -29,7 +29,9 @@ public class BusyIndicator extends Canvas {
 	protected Image[] images = new Image[13];
 	protected Image image;
 
+	/** synchronized access **/
 	protected Thread busyThread;
+	/** synchronized access **/
 	protected boolean stop;
 
 	private static final String URL_BUSY = "$nl$/icons/obj16/busy/"; //$NON-NLS-1$
@@ -110,7 +112,7 @@ public class BusyIndicator extends Canvas {
 	}
 
 	@Override
-	public void dispose() {
+	public synchronized void dispose() {
 		stop = true;
 		busyThread = null;
 		super.dispose();
@@ -128,7 +130,7 @@ public class BusyIndicator extends Canvas {
 	 *
 	 * @return boolean
 	 */
-	public boolean isBusy() {
+	public synchronized boolean isBusy() {
 		return (busyThread != null);
 	}
 
