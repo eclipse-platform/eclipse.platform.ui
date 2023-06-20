@@ -119,10 +119,7 @@ public final class ResourceLocator {
 	 */
 	public static Optional<ImageDescriptor> imageDescriptorFromBundle(String bundleSymbolicName, String imageFilePath) {
 		Optional<URL> locate = locate(bundleSymbolicName, imageFilePath);
-		if (locate.isPresent()) {
-			return Optional.of(ImageDescriptor.createFromURL(locate.get()));
-		}
-		return Optional.empty();
+		return locate.map(ImageDescriptor::createFromURL);
 	}
 
 	/**
@@ -148,10 +145,7 @@ public final class ResourceLocator {
 	 */
 	public static Optional<ImageDescriptor> imageDescriptorFromBundle(Class<?> classFromBundle, String imageFilePath) {
 		Optional<URL> locate = locate(classFromBundle, imageFilePath);
-		if (locate.isPresent()) {
-			return Optional.of(ImageDescriptor.createFromURL(locate.get()));
-		}
-		return Optional.empty();
+		return locate.map(ImageDescriptor::createFromURL);
 	}
 
 }
