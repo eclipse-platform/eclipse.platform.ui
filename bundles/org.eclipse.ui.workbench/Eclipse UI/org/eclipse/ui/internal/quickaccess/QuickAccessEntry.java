@@ -129,7 +129,7 @@ public class QuickAccessEntry {
 		if (imageDescriptor == null) {
 			return null;
 		}
-		Image image = (Image) resourceManager.find(imageDescriptor);
+		Image image = resourceManager.find(imageDescriptor);
 		if (image == null) {
 			try {
 				image = resourceManager.createImage(imageDescriptor);

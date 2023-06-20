@@ -46,7 +46,7 @@ public class WorkingSetLabelProvider extends LabelProvider {
 		IWorkingSet workingSet = (IWorkingSet) object;
 		ImageDescriptor imageDescriptor = workingSet.getImageDescriptor();
 
-		return imageDescriptor == null ? null : (Image) images.get(imageDescriptor);
+		return imageDescriptor == null ? null : images.get(imageDescriptor);
 	}
 
 	@Override
