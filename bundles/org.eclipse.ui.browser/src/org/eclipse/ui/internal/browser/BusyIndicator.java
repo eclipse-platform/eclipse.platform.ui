@@ -92,12 +92,7 @@ public class BusyIndicator extends Canvas {
 						}
 					}
 					if (busyThread == null)
-						Display.getDefault().syncExec(new Thread() {
-							@Override
-							public void run() {
-								setImage(images[0]);
-							}
-						});
+						Display.getDefault().syncExec(() -> setImage(images[0]));
 				} catch (Exception e) {
 					Trace.trace(Trace.WARNING, "Busy error", e); //$NON-NLS-1$
 				}
