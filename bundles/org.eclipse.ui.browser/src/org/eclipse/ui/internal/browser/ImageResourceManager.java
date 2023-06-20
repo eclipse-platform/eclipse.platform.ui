@@ -55,7 +55,7 @@ class ImageResourceManager {
 	 * @return the image
 	 */
 	Image getImage(ImageDescriptor descriptor) {
-		return (Image) manager.get(descriptor);
+		return manager.get(descriptor);
 	}
 }
 

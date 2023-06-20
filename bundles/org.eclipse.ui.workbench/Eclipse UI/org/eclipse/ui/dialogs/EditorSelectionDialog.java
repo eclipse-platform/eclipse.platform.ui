@@ -42,7 +42,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
@@ -279,7 +278,7 @@ public class EditorSelectionDialog extends Dialog {
 			return TextProcessor.process(d.getLabel(), "."); //$NON-NLS-1$
 		}, element -> {
 			IEditorDescriptor d = (IEditorDescriptor) element;
-			return (Image) resourceManager.get(d.getImageDescriptor());
+			return resourceManager.get(d.getImageDescriptor());
 		}));
 
 		browseExternalEditorsButton = new Button(contents, SWT.PUSH);
