@@ -746,7 +746,8 @@ public class StackRenderer extends LazyStackRenderer {
 	}
 
 	private void setOnboardingControlSize(CTabFolder tabFolder, Composite onBoarding, Label onBoardingImage) {
-		if (onBoarding == null || onBoarding.isDisposed() || tabFolder == null || tabFolder.isDisposed()) {
+		if (onBoarding == null || onBoarding.isDisposed() || tabFolder == null || tabFolder.isDisposed()
+				|| onBoardingImage == null || onBoardingImage.isDisposed()) {
 			return;
 		}
 		boolean showComposite = tabFolder.getItemCount() == 0;
