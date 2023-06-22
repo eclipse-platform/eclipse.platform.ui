@@ -26,6 +26,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
@@ -42,6 +44,7 @@ import org.eclipse.ui.tests.navigator.m12.model.ResourceWrapper;
  */
 public class TestPipelineProvider extends ResourceWrapperContentProvider {
 
+	private static final ILog LOGGER = Platform.getLog(TestPipelineProvider.class);
 	public static final Map ELEMENTS = new HashMap(),
 	CHILDREN = new HashMap(),
 	ADDS = new HashMap(),
@@ -49,6 +52,7 @@ public class TestPipelineProvider extends ResourceWrapperContentProvider {
 	UPDATES = new HashMap();
 
 	private String _id;
+
 
 	@Override
 	public void getPipelinedChildren(Object aParent, Set theCurrentChildren) {
@@ -221,16 +225,18 @@ public class TestPipelineProvider extends ResourceWrapperContentProvider {
 		return "??? unknown";
 	}
 
-	/**
-	 *
-	 */
 	public static void reset() {
-		ELEMENTS.clear();
-		CHILDREN.clear();
-		ADDS.clear();
-		REMOVES.clear();
-		UPDATES.clear();
+		LOGGER.info("Clearing all maps!");
+		logAndClear(ELEMENTS);
+		logAndClear(CHILDREN);
+		logAndClear(ADDS);
+		logAndClear(REMOVES);
+		logAndClear(UPDATES);
+	}
 
+	private static void logAndClear(Map m) {
+		LOGGER.info("Clearing " + mapName(m) + " (it had " + m.size() + " entries)");
+		m.clear();
 	}
 
 }
