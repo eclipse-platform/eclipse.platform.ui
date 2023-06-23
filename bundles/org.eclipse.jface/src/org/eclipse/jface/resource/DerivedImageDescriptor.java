@@ -66,13 +66,7 @@ final class DerivedImageDescriptor extends ImageDescriptor {
 
 	@Override
 	public boolean equals(Object arg0) {
-		if (arg0 instanceof DerivedImageDescriptor) {
-			DerivedImageDescriptor desc = (DerivedImageDescriptor)arg0;
-
-			return desc.original.equals(original) && flags == desc.flags;
-		}
-
-		return false;
+		return arg0 instanceof DerivedImageDescriptor desc && desc.original.equals(original) && flags == desc.flags;
 	}
 
 	/**

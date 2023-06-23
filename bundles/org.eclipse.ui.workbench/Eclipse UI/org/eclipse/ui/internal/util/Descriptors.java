@@ -101,9 +101,9 @@ public final class Descriptors {
 			this.id = id;
 		}
 
-		Method method;
+		final Method method;
 		DeviceResourceDescriptor oldDescriptor;
-		String id;
+		final String id;
 
 		public void invoke(Widget toCall, DeviceResourceDescriptor newDescriptor) {
 			if (newDescriptor == oldDescriptor) {

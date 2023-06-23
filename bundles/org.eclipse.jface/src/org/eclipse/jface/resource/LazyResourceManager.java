@@ -83,20 +83,13 @@ public class LazyResourceManager extends ResourceManager {
 		return parent.getDefaultImage();
 	}
 
-	private static Integer createOrIncrease(@SuppressWarnings("unused") DeviceResourceDescriptor key, Integer refs) {
-		return Integer.valueOf(refs == null ? 1 : refs.intValue() + 1);
-	}
-
-	private static Integer decreaseOrRemove(@SuppressWarnings("unused") DeviceResourceDescriptor key, Integer refs) {
-		return refs.intValue() == 1 ? null : Integer.valueOf(refs.intValue() - 1);
-
-	}
 	@Override
 	public Object create(DeviceResourceDescriptor descriptor) {
 		if (!shouldBeCached(descriptor)) {
 			return parent.create(descriptor);
 		}
-		int updatedRefs = refCount.compute(descriptor, LazyResourceManager::createOrIncrease).intValue();
+		@SuppressWarnings("boxing")
+		int updatedRefs = refCount.compute(descriptor, (k, refs) -> refs == null ? 1 : refs + 1);
 		if (updatedRefs == 1) {
 			ResourceManager cached = unreferenced.remove(descriptor);
 			if (cached == null) {
@@ -115,7 +108,8 @@ public class LazyResourceManager extends ResourceManager {
 			parent.destroy(descriptor);
 			return;
 		}
-		Integer refsLeft = refCount.computeIfPresent(descriptor, LazyResourceManager::decreaseOrRemove);
+		@SuppressWarnings("boxing")
+		Integer refsLeft = refCount.computeIfPresent(descriptor, (k, refs) -> refs == 1 ? null : (refs - 1));
 		if (refsLeft == null) {
 			// defer destroy:
 			ResourceManager old = unreferenced.put(descriptor, parent);

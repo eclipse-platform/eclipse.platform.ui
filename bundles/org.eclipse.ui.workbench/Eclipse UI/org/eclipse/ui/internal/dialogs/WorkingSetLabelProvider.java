@@ -24,7 +24,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IWorkingSet;
 
 public class WorkingSetLabelProvider extends LabelProvider {
-	private ResourceManager images;
+	private final ResourceManager images;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -46,11 +46,7 @@ public class WorkingSetLabelProvider extends LabelProvider {
 		IWorkingSet workingSet = (IWorkingSet) object;
 		ImageDescriptor imageDescriptor = workingSet.getImageDescriptor();
 
-		if (imageDescriptor == null) {
-			return null;
-		}
-
-		return (Image) images.get(imageDescriptor);
+		return imageDescriptor == null ? null : (Image) images.get(imageDescriptor);
 	}
 
 	@Override

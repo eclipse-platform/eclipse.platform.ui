@@ -24,12 +24,12 @@ import org.eclipse.swt.graphics.RGB;
  */
 class RGBColorDescriptor extends ColorDescriptor {
 
-	private RGB color;
+	private final RGB color;
 
 	/**
 	 * Color being copied, or null if none
 	 */
-	private Color originalColor = null;
+	private final Color originalColor;
 
 	/**
 	 * Creates a new RGBColorDescriptor given some RGB values
@@ -38,6 +38,7 @@ class RGBColorDescriptor extends ColorDescriptor {
 	 */
 	public RGBColorDescriptor(RGB color) {
 		this.color = color;
+		this.originalColor = null;
 	}
 
 	/**
@@ -48,19 +49,14 @@ class RGBColorDescriptor extends ColorDescriptor {
 	 * @param originalColor a color to describe
 	 */
 	public RGBColorDescriptor(Color originalColor) {
-		this(originalColor.getRGB());
+		this.color = originalColor.getRGB();
 		this.originalColor = originalColor;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof RGBColorDescriptor) {
-			RGBColorDescriptor other = (RGBColorDescriptor) obj;
-
-			return other.color.equals(color) && other.originalColor == originalColor;
-		}
-
-		return false;
+		return obj instanceof RGBColorDescriptor other //
+				&& other.color.equals(color) && other.originalColor == originalColor;
 	}
 
 	@Override
@@ -72,13 +68,10 @@ class RGBColorDescriptor extends ColorDescriptor {
 	public Color createColor(Device device) {
 		// If this descriptor is wrapping an existing color, then we can return the original color
 		// if this is the same device.
-		if (originalColor != null) {
+		if (originalColor != null && originalColor.getDevice() == device) {
 			// If we're allocating on the same device as the original color, return the original.
-			if (originalColor.getDevice() == device) {
-				return originalColor;
-			}
+			return originalColor;
 		}
-
 		return new Color(device, color);
 	}
 }

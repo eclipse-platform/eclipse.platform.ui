@@ -13,9 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map.Entry;
+import java.util.Map;
 
 /**
  * Abstract implementation of ResourceManager. Maintains reference counts for all previously
@@ -30,13 +29,13 @@ abstract class AbstractResourceManager extends ResourceManager {
 	/**
 	 * Map of ResourceDescriptor onto RefCount. (null when empty)
 	 */
-	private HashMap<DeviceResourceDescriptor, RefCount> map = null;
+	private Map<DeviceResourceDescriptor, RefCount> map = null;
 
 	/**
 	 * Holds a reference count for a previously-allocated resource
 	 */
 	private static class RefCount {
-		Object resource;
+		final Object resource;
 		int count = 1;
 
 		RefCount(Object resource) {
@@ -131,16 +130,7 @@ abstract class AbstractResourceManager extends ResourceManager {
 		if (map == null) {
 			return;
 		}
-
-		Collection<Entry<DeviceResourceDescriptor, RefCount>> entries = map.entrySet();
-
-		for (Entry<DeviceResourceDescriptor, RefCount> next : entries) {
-			Object key = next.getKey();
-			RefCount val = next.getValue();
-
-			deallocate(val.resource, (DeviceResourceDescriptor)key);
-		}
-
+		map.forEach((key, val) -> deallocate(val.resource, key));
 		map = null;
 	}
 
@@ -150,8 +140,9 @@ abstract class AbstractResourceManager extends ResourceManager {
 			return null;
 		}
 		RefCount refCount = map.get(descriptor);
-		if (refCount == null)
+		if (refCount == null) {
 			return null;
+		}
 		return refCount.resource;
 	}
 }
