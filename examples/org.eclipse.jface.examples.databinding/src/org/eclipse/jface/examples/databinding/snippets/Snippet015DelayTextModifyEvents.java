@@ -79,7 +79,7 @@ public class Snippet015DelayTextModifyEvents {
 		// you are done with it)
 		ResourceManager resourceManager = new LocalResourceManager(JFaceResources.getResources());
 		final Font shellFont = shell.getFont();
-		final Font italicFont = resourceManager.createFont(FontDescriptor.createFrom(shellFont).setStyle(SWT.ITALIC));
+		final Font italicFont = resourceManager.create(FontDescriptor.createFrom(shellFont).setStyle(SWT.ITALIC));
 
 		IObservableValue<Boolean> stale1 = Observables.observeStale(delayed1);
 		IObservableValue<Boolean> stale2 = Observables.observeStale(delayed2);

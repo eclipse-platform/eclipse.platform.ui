@@ -30,8 +30,9 @@ import org.eclipse.swt.graphics.Image;
 
 import junit.framework.TestCase;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class LazyResourceManagerTest extends TestCase {
-	private static class CachableTestDescriptor extends DeviceResourceDescriptor {
+	private static class CachableTestDescriptor extends DeviceResourceDescriptor<Object> {
 		CachableTestDescriptor() {
 			super(true);
 		}
@@ -46,7 +47,7 @@ public class LazyResourceManagerTest extends TestCase {
 		}
 	}
 
-	private static class UncachableTestDescriptor extends DeviceResourceDescriptor {
+	private static class UncachableTestDescriptor extends DeviceResourceDescriptor<Object> {
 		UncachableTestDescriptor() {
 			super(false);
 		}
@@ -200,7 +201,6 @@ public class LazyResourceManagerTest extends TestCase {
 	/**
 	 * Creates multiple resources for 2 Descriptors. Only 1 of them can be cached
 	 **/
-	@SuppressWarnings("unchecked")
 	public void testLazyResourceManagerRefCounting() {
 		TestResourceManager tst = new TestResourceManager();
 		LazyResourceManager mgr = new LazyResourceManager(1, tst);
@@ -361,7 +361,6 @@ public class LazyResourceManagerTest extends TestCase {
 		assertCached(expected2, mgr, tst, descriptor2); // 2 still cached, because recently used
 	}
 
-	@SuppressWarnings("unchecked")
 	public void testNullDescriptor() {
 		TestResourceManager tst = new TestResourceManager();
 		LazyResourceManager mgr = new LazyResourceManager(2, tst);

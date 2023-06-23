@@ -743,7 +743,7 @@ public abstract class QuickAccessContents {
 		table = new Table(tableComposite, SWT.SINGLE | SWT.FULL_SELECTION);
 		textLayout = new TextLayout(table.getDisplay());
 		textLayout.setOrientation(defaultOrientation);
-		Font boldFont = resourceManager.createFont(FontDescriptor.createFrom(table.getFont()).setStyle(SWT.BOLD));
+		Font boldFont = resourceManager.create(FontDescriptor.createFrom(table.getFont()).setStyle(SWT.BOLD));
 		textLayout.setFont(table.getFont());
 		textLayout.setText(QuickAccessMessages.QuickAccess_AvailableCategories);
 		int maxProviderWidth = (textLayout.getBounds().width);

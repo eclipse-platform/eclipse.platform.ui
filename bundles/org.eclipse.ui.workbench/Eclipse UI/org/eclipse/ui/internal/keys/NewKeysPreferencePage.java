@@ -406,7 +406,7 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 					return null;
 				}
 				try {
-					return localResourceManager.createImage(imageDescriptor);
+					return localResourceManager.create(imageDescriptor);
 				} catch (final DeviceResourceException e) {
 					final String message = "Problem retrieving image for a command '" //$NON-NLS-1$
 							+ commandId + '\'';

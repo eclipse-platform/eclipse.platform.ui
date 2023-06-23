@@ -77,7 +77,7 @@ public class CyclePageHandler extends FilteredTableBaseHandler {
 				if (lrm == null) {
 					lrm = new LocalResourceManager(JFaceResources.getResources());
 				}
-				item.setImage(lrm.createImage(imageDescriptor));
+				item.setImage(lrm.create(imageDescriptor));
 			}
 			item.putData(K_PAGE, viewPage);
 			String name = pageSwitcher.getName(viewPage);

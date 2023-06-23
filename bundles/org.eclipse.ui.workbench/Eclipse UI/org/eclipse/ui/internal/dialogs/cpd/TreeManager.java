@@ -268,7 +268,7 @@ public class TreeManager {
 				if (imageDescriptor == null) {
 					return null;
 				}
-				image = resourceManager.createImage(imageDescriptor);
+				image = resourceManager.create(imageDescriptor);
 			}
 			return image;
 		}

@@ -96,7 +96,7 @@ public abstract class IntroPart extends EventManager implements IIntroPart, IExe
 	 */
 	@Override
 	public void dispose() {
-		imageDescriptor.ifPresent(JFaceResources.getResources()::destroyImage);
+		imageDescriptor.ifPresent(JFaceResources.getResources()::destroy);
 		titleImage = null;
 		// Clear out the property change listeners as we
 		// should not be notifying anyone after the part

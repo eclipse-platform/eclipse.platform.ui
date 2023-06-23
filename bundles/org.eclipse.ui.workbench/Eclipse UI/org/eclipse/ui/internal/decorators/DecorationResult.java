@@ -88,7 +88,7 @@ public class DecorationResult {
 		Rectangle bounds = image.getBounds();
 		Point size = new Point(bounds.width, bounds.height);
 		DecorationOverlayIcon icon = new DecorationOverlayIcon(image, descriptors, size);
-		return manager.createImage(icon);
+		return manager.create(icon);
 	}
 
 	/**

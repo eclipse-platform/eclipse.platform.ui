@@ -333,7 +333,7 @@ public class ImageRegistry {
 		if (table != null) {
 			for (Entry entry : table.values()) {
 				if (entry.image != null) {
-					manager.destroyImage(entry.descriptor);
+					manager.destroy(entry.descriptor);
 				}
 			}
 			table = null;

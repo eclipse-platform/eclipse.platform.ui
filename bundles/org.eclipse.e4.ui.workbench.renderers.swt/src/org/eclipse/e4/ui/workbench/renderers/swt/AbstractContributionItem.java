@@ -148,10 +148,10 @@ public abstract class AbstractContributionItem extends ContributionItem {
 			ImageDescriptor iconDescriptor = resUtils.imageDescriptorFromURI(URI.createURI(iconURI));
 			if (iconDescriptor != null) {
 				try {
-					image = resourceManager.createImage(iconDescriptor);
+					image = resourceManager.create(iconDescriptor);
 				} catch (DeviceResourceException e) {
 					iconDescriptor = ImageDescriptor.getMissingImageDescriptor();
-					image = resourceManager.createImage(iconDescriptor);
+					image = resourceManager.create(iconDescriptor);
 					// as we replaced the failed icon, log the message once.
 					if (Policy.DEBUG_MENUS) {
 						WorkbenchSWTActivator.trace(Policy.DEBUG_MENUS_FLAG, "failed to create image " + iconURI, e); //$NON-NLS-1$

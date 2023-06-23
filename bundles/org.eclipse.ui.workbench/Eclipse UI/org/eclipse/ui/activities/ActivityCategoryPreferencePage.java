@@ -143,7 +143,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage
 					if (decorate && isLocked(category) && lockDescriptor.isPresent()) {
 						descriptor = new DecorationOverlayIcon(descriptor, lockDescriptor.get(), IDecoration.TOP_RIGHT);
 					}
-					return manager.createImage(descriptor);
+					return manager.create(descriptor);
 				} catch (DeviceResourceException e) {
 					WorkbenchPlugin.log(e);
 				}

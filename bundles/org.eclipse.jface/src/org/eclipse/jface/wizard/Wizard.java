@@ -207,7 +207,7 @@ public abstract class Wizard implements IWizard, IShellProvider {
 		}
 		// dispose of image
 		if (defaultImage != null) {
-			JFaceResources.getResources().destroyImage(defaultImageDescriptor);
+			JFaceResources.getResources().destroy(defaultImageDescriptor);
 			defaultImage = null;
 		}
 	}

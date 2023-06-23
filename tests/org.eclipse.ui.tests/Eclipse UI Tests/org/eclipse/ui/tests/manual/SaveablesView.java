@@ -100,7 +100,7 @@ public class SaveablesView extends ViewPart {
 		public Image getImage(Object obj) {
 			ImageDescriptor descriptor = ((Saveable) obj)
 					.getImageDescriptor();
-			return resourceManager.createImage(descriptor);
+			return resourceManager.create(descriptor);
 		}
 	}
 

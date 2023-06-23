@@ -330,7 +330,7 @@ public class ResourceInfoPage extends PropertyPage {
 			Bundle bundle = FrameworkUtil.getBundle(getClass());
 			URL goToFolderUrl = FileLocator.find(bundle, IPath.fromOSString("icons/full/obj16/goto_input.png"), //$NON-NLS-1$
 					null);
-			goToLocationButton.setImage(resourceManager.createImage(ImageDescriptor.createFromURL(goToFolderUrl)));
+			goToLocationButton.setImage(resourceManager.create(ImageDescriptor.createFromURL(goToFolderUrl)));
 			goToLocationButton.setToolTipText(LOCATION_BUTTON_TOOLTIP);
 			goToLocationButton.addSelectionListener(new SelectionAdapter() {
 

@@ -274,7 +274,7 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 
 			if (image != null) {
 				LocalResourceManager localManager = new LocalResourceManager(JFaceResources.getResources());
-				menuItem.setImage(localManager.createImage(image));
+				menuItem.setImage(localManager.create(image));
 				disposeOldImages();
 				imageManager = localManager;
 			}
@@ -889,7 +889,7 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 				}
 			} else if (IAction.IMAGE.equals(property) && image != null) {
 				LocalResourceManager localManager = new LocalResourceManager(JFaceResources.getResources());
-				menu.getParentItem().setImage(localManager.createImage(image));
+				menu.getParentItem().setImage(localManager.create(image));
 				disposeOldImages();
 				imageManager = localManager;
 			}

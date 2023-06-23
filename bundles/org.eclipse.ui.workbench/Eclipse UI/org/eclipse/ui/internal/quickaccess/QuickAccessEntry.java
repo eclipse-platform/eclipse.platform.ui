@@ -132,7 +132,7 @@ public class QuickAccessEntry {
 		Image image = resourceManager.find(imageDescriptor);
 		if (image == null) {
 			try {
-				image = resourceManager.createImage(imageDescriptor);
+				image = resourceManager.create(imageDescriptor);
 			} catch (DeviceResourceException e) {
 				WorkbenchPlugin.log(e);
 			}

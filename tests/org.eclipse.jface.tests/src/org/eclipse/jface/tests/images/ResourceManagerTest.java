@@ -41,7 +41,7 @@ import junit.framework.TestCase;
  */
 public class ResourceManagerTest extends TestCase {
 
-	private DeviceResourceDescriptor[] descriptors;
+	private DeviceResourceDescriptor<?>[] descriptors;
 	private Image testImage;
 	private Image testImage2;
 	private Color testColor;
@@ -54,11 +54,11 @@ public class ResourceManagerTest extends TestCase {
 		return ResourceLocator.imageDescriptorFromBundle("org.eclipse.jface.tests", path).orElse(null);
 	}
 
-	private static final class TestDescriptor extends DeviceResourceDescriptor {
-		DeviceResourceDescriptor toWrap;
+	private static final class TestDescriptor<R> extends DeviceResourceDescriptor<R> {
+		DeviceResourceDescriptor<R> toWrap;
 		public static int refCount = 0;
 
-		public TestDescriptor(DeviceResourceDescriptor toWrap) {
+		public TestDescriptor(DeviceResourceDescriptor<R> toWrap) {
 			this.toWrap = toWrap;
 		}
 
@@ -77,9 +77,7 @@ public class ResourceManagerTest extends TestCase {
 
 		@Override
 		public boolean equals(Object arg0) {
-			if (arg0 instanceof TestDescriptor description) {
-				TestDescriptor td = description;
-
+			if (arg0 instanceof TestDescriptor td) {
 				return td.toWrap.equals(toWrap);
 			}
 
@@ -107,33 +105,34 @@ public class ResourceManagerTest extends TestCase {
 		// If you modify this array, be sure to adjust numDupes as well. Note that some
 		// tests index the array directly, so it is a good idea to always add to this
 		// array rather than remove from it.
-		descriptors = new DeviceResourceDescriptor[] { new TestDescriptor(getImage("icons/anything.gif")),
-				new TestDescriptor(getImage("icons/anything.gif")), new TestDescriptor(getImage("icons/binary_co.gif")),
-				new TestDescriptor(getImage("icons/binary_co.gif")),
-				new TestDescriptor(getImage("icons/mockeditorpart1.gif")),
+		descriptors = new DeviceResourceDescriptor[] { new TestDescriptor<>(getImage("icons/anything.gif")),
+				new TestDescriptor<>(getImage("icons/anything.gif")),
+				new TestDescriptor<>(getImage("icons/binary_co.gif")),
+				new TestDescriptor<>(getImage("icons/binary_co.gif")),
+				new TestDescriptor<>(getImage("icons/mockeditorpart1.gif")),
 
-				new TestDescriptor(getImage("icons/view.gif")), // 5
-				new TestDescriptor(ImageDescriptor.createFromImage(testImage2)),
-				new TestDescriptor(ImageDescriptor.createFromImage(testImage)),
-				new TestDescriptor(ImageDescriptor.createFromImage(testImage)),
-				new TestDescriptor(ImageDescriptor.createFromImage(testImage)),
+				new TestDescriptor<>(getImage("icons/view.gif")), // 5
+				new TestDescriptor<>(ImageDescriptor.createFromImage(testImage2)),
+				new TestDescriptor<>(ImageDescriptor.createFromImage(testImage)),
+				new TestDescriptor<>(ImageDescriptor.createFromImage(testImage)),
+				new TestDescriptor<>(ImageDescriptor.createFromImage(testImage)),
 
-				new TestDescriptor(ImageDescriptor.createFromImage(testImage)), // 10
-				new TestDescriptor(ImageDescriptor.createFromImage(testImage2)),
-				new TestDescriptor(ColorDescriptor.createFrom(new RGB(10, 200, 54))),
-				new TestDescriptor(ColorDescriptor.createFrom(new RGB(10, 200, 54))),
-				new TestDescriptor(ColorDescriptor.createFrom(new RGB(200, 220, 54))),
+				new TestDescriptor<>(ImageDescriptor.createFromImage(testImage)), // 10
+				new TestDescriptor<>(ImageDescriptor.createFromImage(testImage2)),
+				new TestDescriptor<>(ColorDescriptor.createFrom(new RGB(10, 200, 54))),
+				new TestDescriptor<>(ColorDescriptor.createFrom(new RGB(10, 200, 54))),
+				new TestDescriptor<>(ColorDescriptor.createFrom(new RGB(200, 220, 54))),
 
-				new TestDescriptor(ColorDescriptor.createFrom(testColor)), // 15
-				new TestDescriptor(ColorDescriptor.createFrom(testColor)),
-				new TestDescriptor(ColorDescriptor.createFrom(testColor2)),
-				new TestDescriptor(ColorDescriptor.createFrom(testColor)),
-				new TestDescriptor(ColorDescriptor.createFrom(testColor)),
+				new TestDescriptor<>(ColorDescriptor.createFrom(testColor)), // 15
+				new TestDescriptor<>(ColorDescriptor.createFrom(testColor)),
+				new TestDescriptor<>(ColorDescriptor.createFrom(testColor2)),
+				new TestDescriptor<>(ColorDescriptor.createFrom(testColor)),
+				new TestDescriptor<>(ColorDescriptor.createFrom(testColor)),
 
-				new TestDescriptor(ColorDescriptor.createFrom(testColor2)), // 20
-				new TestDescriptor(ImageDescriptor.createFromImageDataProvider(new MyImageDataProvider("1"))),
-				new TestDescriptor(ImageDescriptor.createFromImageDataProvider(new MyImageDataProvider("1"))),
-				new TestDescriptor(ImageDescriptor.createFromImageDataProvider(new MyImageDataProvider("2"))),
+				new TestDescriptor<>(ColorDescriptor.createFrom(testColor2)), // 20
+				new TestDescriptor<>(ImageDescriptor.createFromImageDataProvider(new MyImageDataProvider("1"))),
+				new TestDescriptor<>(ImageDescriptor.createFromImageDataProvider(new MyImageDataProvider("1"))),
+				new TestDescriptor<>(ImageDescriptor.createFromImageDataProvider(new MyImageDataProvider("2"))),
 
 		};
 
@@ -170,7 +169,7 @@ public class ResourceManagerTest extends TestCase {
 		Object[] resources = new Object[descriptors.length];
 
 		for (int i = 0; i < descriptors.length; i++) {
-			DeviceResourceDescriptor next = descriptors[i];
+			DeviceResourceDescriptor<?> next = descriptors[i];
 
 			Object resource = next.createResource(display);
 			// Ensure that this resource was allocated correctly
@@ -186,7 +185,7 @@ public class ResourceManagerTest extends TestCase {
 
 		// Deallocate resources directly using the descriptors
 		for (int i = 0; i < descriptors.length; i++) {
-			DeviceResourceDescriptor next = descriptors[i];
+			DeviceResourceDescriptor<?> next = descriptors[i];
 
 			next.destroyResource(resources[i]);
 		}
@@ -198,7 +197,7 @@ public class ResourceManagerTest extends TestCase {
 		Object[] resources = new Object[descriptors.length];
 
 		for (int i = 0; i < descriptors.length; i++) {
-			DeviceResourceDescriptor next = descriptors[i];
+			DeviceResourceDescriptor<?> next = descriptors[i];
 
 			Object resource = globalResourceManager.create(next);
 			// Ensure that this resource was allocated correctly
@@ -217,7 +216,7 @@ public class ResourceManagerTest extends TestCase {
 				TestDescriptor.refCount);
 
 		// Deallocate resources directly using the descriptors
-		for (DeviceResourceDescriptor next : descriptors) {
+		for (DeviceResourceDescriptor<?> next : descriptors) {
 			globalResourceManager.destroy(next);
 		}
 	}
@@ -295,7 +294,7 @@ public class ResourceManagerTest extends TestCase {
 	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=135088
 	 */
 	public void testResourceManagerFind() throws Exception {
-		DeviceResourceDescriptor descriptor = descriptors[0];
+		DeviceResourceDescriptor<?> descriptor = descriptors[0];
 		Object resource = globalResourceManager.find(descriptor);
 		assertNull("Resource should be null since it is not allocated", resource);
 		resource = globalResourceManager.create(descriptor);
