@@ -24,13 +24,13 @@ import org.eclipse.swt.graphics.ImageDataProvider;
  */
 class ImageDataImageDescriptor extends ImageDescriptor {
 
-	private ImageDataProvider dataProvider;
+	private final ImageDataProvider dataProvider;
 
 	/**
 	 * Original image being described, or null if this image is described
 	 * completely using its ImageData
 	 */
-	private Image originalImage = null;
+	private final Image originalImage;
 
 	/**
 	 * Creates an image descriptor, given an image and the device it was created on.
@@ -38,7 +38,7 @@ class ImageDataImageDescriptor extends ImageDescriptor {
 	 * @param originalImage
 	 */
 	ImageDataImageDescriptor(Image originalImage) {
-		this(originalImage::getImageData);
+		this.dataProvider = originalImage::getImageData;
 		this.originalImage = originalImage;
 	}
 
@@ -60,6 +60,7 @@ class ImageDataImageDescriptor extends ImageDescriptor {
 	 */
 	ImageDataImageDescriptor(ImageDataProvider provider) {
 		dataProvider = provider;
+		originalImage = null;
 	}
 
 	@Override
@@ -67,23 +68,18 @@ class ImageDataImageDescriptor extends ImageDescriptor {
 
 		// If this descriptor is based on an existing image, then we can return the original image
 		// if this is the same device.
-		if (originalImage != null) {
+		if (originalImage != null && originalImage.getDevice() == device) {
 			// If we're allocating on the same device as the original image, return the original.
-			if (originalImage.getDevice() == device) {
-				return originalImage;
-			}
+			return originalImage;
 		}
-
 		return super.createResource(device);
 	}
 
 	@Override
 	public void destroyResource(Object previouslyCreatedObject) {
-		if (previouslyCreatedObject == originalImage) {
-			return;
+		if (previouslyCreatedObject != originalImage) {
+			super.destroyResource(previouslyCreatedObject);
 		}
-
-		super.destroyResource(previouslyCreatedObject);
 	}
 
 	@Override
@@ -101,20 +97,16 @@ class ImageDataImageDescriptor extends ImageDescriptor {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof ImageDataImageDescriptor)) {
+		if (!(obj instanceof ImageDataImageDescriptor imgWrap)) {
 			return false;
 		}
-
-		ImageDataImageDescriptor imgWrap = (ImageDataImageDescriptor) obj;
-
 		//Intentionally using == instead of equals() as Image.hashCode() changes
 		//when the image is disposed and so leaks may occur with equals()
 
 		if (originalImage != null) {
 			return imgWrap.originalImage == originalImage;
 		}
-
-		return (imgWrap.originalImage == null && dataProvider.equals(imgWrap.dataProvider));
+		return imgWrap.originalImage == null && dataProvider.equals(imgWrap.dataProvider);
 	}
 
 }

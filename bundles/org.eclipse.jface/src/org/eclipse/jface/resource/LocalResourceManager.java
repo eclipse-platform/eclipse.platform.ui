@@ -67,15 +67,12 @@ public final class LocalResourceManager extends AbstractResourceManager {
 	}
 
 	@Override
-	protected Object allocate(DeviceResourceDescriptor descriptor)
-			throws DeviceResourceException {
+	protected Object allocate(DeviceResourceDescriptor descriptor) throws DeviceResourceException {
 		return parentRegistry.create(descriptor);
 	}
 
 	@Override
-	protected void deallocate(Object resource,
-			DeviceResourceDescriptor descriptor) {
-
+	protected void deallocate(Object resource, DeviceResourceDescriptor descriptor) {
 		parentRegistry.destroy(descriptor);
 	}
 

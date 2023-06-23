@@ -33,7 +33,7 @@ import org.eclipse.swt.graphics.Image;
  */
 public final class DeviceResourceManager extends AbstractResourceManager {
 
-	private Device device;
+	private final Device device;
 	private Image missingImage;
 
 	@Override
