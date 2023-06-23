@@ -119,9 +119,9 @@ public class LabelProviderWrapper extends ViewerComparator implements ITableLabe
 
 				// Create an image from the job's icon property or family
 				if (property instanceof ImageDescriptor) {
-					return manager.createImage((ImageDescriptor) property);
+					return manager.create((ImageDescriptor) property);
 				} else if (property instanceof URL) {
-					return manager.createImage(ImageDescriptor.createFromURL((URL) property));
+					return manager.create(ImageDescriptor.createFromURL((URL) property));
 				} else {
 					// Let the progress manager handle the resource management
 					return ProgressManager.getInstance().getIconFor(job);

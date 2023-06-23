@@ -855,10 +855,10 @@ public class CommandContributionItem extends ContributionItem {
 			MenuItem item = (MenuItem) widget;
 			LocalResourceManager m = new LocalResourceManager(JFaceResources.getResources());
 			try {
-				item.setImage(icon == null ? null : m.createImage(icon));
+				item.setImage(icon == null ? null : m.create(icon));
 			} catch (DeviceResourceException e) {
 				icon = ImageDescriptor.getMissingImageDescriptor();
-				item.setImage(m.createImage(icon));
+				item.setImage(m.create(icon));
 				// as we replaced the failed icon, log the message once.
 				StatusManager.getManager()
 						.handle(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, "Failed to load image", e)); //$NON-NLS-1$
@@ -868,9 +868,9 @@ public class CommandContributionItem extends ContributionItem {
 		} else if (widget instanceof ToolItem) {
 			ToolItem item = (ToolItem) widget;
 			LocalResourceManager m = new LocalResourceManager(JFaceResources.getResources());
-			item.setDisabledImage(disabledIcon == null ? null : m.createImage(disabledIcon));
-			item.setHotImage(hoverIcon == null ? null : m.createImage(hoverIcon));
-			item.setImage(icon == null ? null : m.createImage(icon));
+			item.setDisabledImage(disabledIcon == null ? null : m.create(disabledIcon));
+			item.setHotImage(hoverIcon == null ? null : m.create(hoverIcon));
+			item.setImage(icon == null ? null : m.create(icon));
 			disposeOldImages();
 			localResourceManager = m;
 		}

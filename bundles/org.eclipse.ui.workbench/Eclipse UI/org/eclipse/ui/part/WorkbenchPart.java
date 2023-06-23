@@ -105,7 +105,7 @@ public abstract class WorkbenchPart extends EventManager
 	public void dispose() {
 		imageDescriptor.ifPresent(d -> {
 			if (Display.getCurrent() != null) {
-				JFaceResources.getResources().destroyImage(d);
+				JFaceResources.getResources().destroy(d);
 			} // otherwise Device already destroyed => ignore
 		});
 		titleImage = null;
@@ -300,7 +300,7 @@ public abstract class WorkbenchPart extends EventManager
 		}
 		this.titleImage = titleImage;
 		firePropertyChange(IWorkbenchPart.PROP_TITLE);
-		imageDescriptor.ifPresent(JFaceResources.getResources()::destroyImage);
+		imageDescriptor.ifPresent(JFaceResources.getResources()::destroy);
 		imageDescriptor = Optional.empty();
 	}
 

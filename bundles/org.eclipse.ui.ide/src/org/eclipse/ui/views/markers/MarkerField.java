@@ -101,7 +101,7 @@ public abstract class MarkerField {
 					}
 				}
 				if (descriptors[IDecoration.TOP_RIGHT] != null || descriptors[IDecoration.BOTTOM_RIGHT] != null)
-					image = getImageManager().createImage(new DecorationOverlayIcon(image, descriptors));
+					image = getImageManager().create(new DecorationOverlayIcon(image, descriptors));
 			}
 		}
 		return image;

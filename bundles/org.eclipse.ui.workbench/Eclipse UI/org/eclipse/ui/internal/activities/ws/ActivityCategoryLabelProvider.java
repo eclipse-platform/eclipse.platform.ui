@@ -49,7 +49,7 @@ public class ActivityCategoryLabelProvider extends LabelProvider {
 		try {
 			ImageDescriptor descriptor = getDescriptor(element);
 			if (descriptor != null) {
-				return manager.createImage(descriptor);
+				return manager.create(descriptor);
 			}
 		} catch (DeviceResourceException e) {
 			// ignore

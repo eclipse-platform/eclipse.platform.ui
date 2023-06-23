@@ -137,7 +137,7 @@ public class ComponentLabelProvider extends BaseLabelProvider implements IStyled
 	@Override
 	public Font getFont(Object element) {
 		if (element instanceof VirtualEntry) {
-			return resourceManager.createFont(italicFontDescriptor);
+			return resourceManager.create(italicFontDescriptor);
 		}
 		return null;
 	}
