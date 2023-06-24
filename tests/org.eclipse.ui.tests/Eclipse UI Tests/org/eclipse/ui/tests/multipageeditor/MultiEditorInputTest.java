@@ -18,7 +18,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MultiEditorInput;
@@ -40,9 +40,9 @@ public class MultiEditorInputTest {
 		String eb = "dummy.editor.id.B";
 		String ec = "dummy.editor.id.C";
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IEditorInput ia = new FileEditorInput(root.getFile(new Path("/DummyProject/FileA")));
-		IEditorInput ib = new FileEditorInput(root.getFile(new Path("/DummyProject/FileB")));
-		IEditorInput ic = new FileEditorInput(root.getFile(new Path("/DummyProject/FileC")));
+		IEditorInput ia = new FileEditorInput(root.getFile(IPath.fromOSString("/DummyProject/FileA")));
+		IEditorInput ib = new FileEditorInput(root.getFile(IPath.fromOSString("/DummyProject/FileB")));
+		IEditorInput ic = new FileEditorInput(root.getFile(IPath.fromOSString("/DummyProject/FileC")));
 		MultiEditorInput a = new MultiEditorInput(new String[] { ea }, new IEditorInput[] { ia });
 		MultiEditorInput a2 = new MultiEditorInput(new String[] { ea }, new IEditorInput[] { ia });
 		MultiEditorInput b = new MultiEditorInput(new String[] { eb }, new IEditorInput[] { ib });

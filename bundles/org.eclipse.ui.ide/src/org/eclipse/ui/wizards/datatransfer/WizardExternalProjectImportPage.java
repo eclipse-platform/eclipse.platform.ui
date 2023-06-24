@@ -26,7 +26,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -218,7 +217,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
 	 */
 	public IPath getLocationPath() {
 
-		return new Path(getProjectLocationFieldValue());
+		return IPath.fromOSString(getProjectLocationFieldValue());
 	}
 
 	/**
@@ -286,7 +285,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
 		} else {
 			File path = new File(dirName);
 			if (path.exists()) {
-				dialog.setFilterPath(new Path(dirName).toOSString());
+				dialog.setFilterPath(IPath.fromOSString(dirName).toOSString());
 			}
 		}
 
@@ -314,7 +313,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
 			return false;
 		}
 
-		IPath path = new Path(""); //$NON-NLS-1$
+		IPath path = IPath.fromOSString(""); //$NON-NLS-1$
 		if (!path.isValidPath(locationFieldContents)) {
 			setErrorMessage(DataTransferMessages.WizardExternalProjectImportPage_locationError);
 			return false;
@@ -360,7 +359,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
 			return;
 		}
 
-		IPath path = new Path(projectFile.getPath());
+		IPath path = IPath.fromOSString(projectFile.getPath());
 
 		IProjectDescription newDescription = null;
 

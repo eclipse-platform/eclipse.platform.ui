@@ -33,7 +33,6 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
@@ -226,7 +225,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 	private static final int SIGNING_ID = MORE_ID + 1;
 	private static final int COLUMNS_ID = MORE_ID + 2;
 
-	private static final IPath baseNLPath = new Path("$nl$"); //$NON-NLS-1$
+	private static final IPath baseNLPath = IPath.fromOSString("$nl$"); //$NON-NLS-1$
 
 	private static final String PLUGININFO = "about.html"; //$NON-NLS-1$
 

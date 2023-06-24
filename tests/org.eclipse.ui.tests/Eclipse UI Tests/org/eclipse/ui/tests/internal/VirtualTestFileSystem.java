@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.provider.FileSystem;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * Based on org.eclipse.debug.tests.launching.DebugFileSystem
@@ -32,7 +32,7 @@ public class VirtualTestFileSystem extends FileSystem {
 		system = this;
 		// create root of the file system
 		try {
-			setContents(new URI(SCHEME, Path.ROOT.toString(), null), DIRECTORY_BYTES); // $NON-NLS-1$
+			setContents(new URI(SCHEME, IPath.ROOT.toString(), null), DIRECTORY_BYTES); // $NON-NLS-1$
 		} catch (URISyntaxException e) {
 		}
 	}

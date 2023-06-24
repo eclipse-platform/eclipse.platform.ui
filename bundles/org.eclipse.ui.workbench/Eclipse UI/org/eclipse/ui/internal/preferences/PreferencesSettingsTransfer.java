@@ -19,7 +19,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.PlatformUI;
@@ -80,10 +79,10 @@ public class PreferencesSettingsTransfer extends WorkbenchSettingsTransfer {
 	}
 
 	private IPath getNewPath(IPath newWorkspaceRoot) {
-		return newWorkspaceRoot.append(new Path(".metadata/.plugins/org.eclipse.core.runtime/.settings")); //$NON-NLS-1$
+		return newWorkspaceRoot.append(IPath.fromOSString(".metadata/.plugins/org.eclipse.core.runtime/.settings")); //$NON-NLS-1$
 	}
 
 	private IPath getOldPath() {
-		return Platform.getLocation().append(new Path(".metadata/.plugins/org.eclipse.core.runtime/.settings")); //$NON-NLS-1$
+		return Platform.getLocation().append(IPath.fromOSString(".metadata/.plugins/org.eclipse.core.runtime/.settings")); //$NON-NLS-1$
 	}
 }

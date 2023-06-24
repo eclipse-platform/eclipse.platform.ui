@@ -21,7 +21,6 @@ import java.util.List;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.equinox.bidi.StructuredTextTypeHandlerFactory;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.util.BidiUtils;
@@ -307,7 +306,7 @@ public class ContainerSelectionGroup extends Composite {
 				return null;
 			}
 			// The user may not have made this absolute so do it for them
-			return (new Path(TextProcessor.deprocess(pathName))).makeAbsolute();
+			return (IPath.fromOSString(TextProcessor.deprocess(pathName))).makeAbsolute();
 
 		}
 		if (selectedContainer == null)

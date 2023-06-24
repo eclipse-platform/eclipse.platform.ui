@@ -23,8 +23,8 @@ import java.util.zip.CheckedInputStream;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IBundleGroup;
 import org.eclipse.core.runtime.IBundleGroupProvider;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProduct;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.internal.BundleGroupProperties;
@@ -141,7 +141,7 @@ public final class AboutInfo {
 		}
 
 		URL url = bundleGroupProperties.getFeatureImageUrl();
-		return url == null ? null : new Path(url.getPath()).lastSegment();
+		return url == null ? null : IPath.fromOSString(url.getPath()).lastSegment();
 	}
 
 	/**

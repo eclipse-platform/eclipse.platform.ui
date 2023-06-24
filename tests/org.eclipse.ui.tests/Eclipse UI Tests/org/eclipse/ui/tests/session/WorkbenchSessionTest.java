@@ -21,7 +21,6 @@ import java.util.Map.Entry;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.tests.harness.FileSystemHelper;
 import org.eclipse.core.tests.session.SessionTestSuite;
 import org.eclipse.core.tests.session.Setup;
@@ -142,7 +141,7 @@ public class WorkbenchSessionTest extends SessionTestSuite {
 			throw new IllegalArgumentException();
 		}
 
-		IPath path = new Path(fullPathString.getPath());
+		IPath path = IPath.fromOSString(fullPathString.getPath());
 
 		File origin = path.toFile();
 		if (!origin.exists()) {

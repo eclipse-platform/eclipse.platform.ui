@@ -24,7 +24,7 @@ import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -481,7 +481,7 @@ public class JFaceResources {
 
 		imageRegistry.put(key, ImageDescriptor.createFromURLSupplier(false, () -> {
 			if (bundle != null) {
-				URL url = FileLocator.find((Bundle) bundle, new Path(path), null);
+				URL url = FileLocator.find((Bundle) bundle, IPath.fromOSString(path), null);
 				if (url != null) {
 					return url;
 				}

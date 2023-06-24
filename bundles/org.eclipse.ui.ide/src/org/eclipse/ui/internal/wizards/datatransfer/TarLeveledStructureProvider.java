@@ -26,7 +26,6 @@ import java.util.Map;
 
 import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
@@ -94,7 +93,7 @@ public class TarLeveledStructureProvider implements
 	 * Creates a new tar file entry with the specified name.
 	 */
 	protected void createFile(TarEntry entry) {
-		IPath pathname = new Path(entry.getName());
+		IPath pathname = IPath.fromOSString(entry.getName());
 		TarEntry parent;
 		if (pathname.segmentCount() == 1) {
 			parent = root;
@@ -151,7 +150,7 @@ public class TarLeveledStructureProvider implements
 			return ((TarEntry) element).getName();
 		}
 
-		return stripPath(new Path(((TarEntry) element).getName()).lastSegment());
+		return stripPath(IPath.fromOSString(((TarEntry) element).getName()).lastSegment());
 	}
 
 	/**
@@ -201,7 +200,7 @@ public class TarLeveledStructureProvider implements
 		Enumeration entries = tarFile.entries();
 		while (entries.hasMoreElements()) {
 			TarEntry entry = (TarEntry) entries.nextElement();
-			IPath path = new Path(entry.getName()).addTrailingSeparator();
+			IPath path = IPath.fromOSString(entry.getName()).addTrailingSeparator();
 
 			if (entry.getFileType() == TarEntry.DIRECTORY) {
 				createContainer(path);

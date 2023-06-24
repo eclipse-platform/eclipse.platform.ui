@@ -28,7 +28,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -407,7 +406,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 			IPathVariableManager pathVariableManager2 = currentResource.getPathVariableManager();
 			String[] variables = pathVariableManager2.getPathVariableNames();
 			String internalFormat = pathVariableManager2.convertFromUserEditableFormat(variableValue, operationMode == EDIT_LINK_LOCATION);
-			URI uri = URIUtil.toURI(Path.fromOSString(internalFormat));
+			URI uri = URIUtil.toURI(IPath.fromOSString(internalFormat));
 			URI resolvedURI = pathVariableManager2.resolveURI(uri);
 			String resolveValue = URIUtil.toPath(resolvedURI).toOSString();
 			// Delete intermediate variables that might have been created as
@@ -470,7 +469,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 		dialog.setFilterPath(filterPath);
 		String res = dialog.open();
 		if (res != null) {
-			variableValue = new Path(res).makeAbsolute().toOSString();
+			variableValue = IPath.fromOSString(res).makeAbsolute().toOSString();
 			variableValueField.setText(variableValue);
 		}
 	}
@@ -485,7 +484,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 		dialog.setFilterPath(filterPath);
 		String res = dialog.open();
 		if (res != null) {
-			variableValue = new Path(res).makeAbsolute().toOSString();
+			variableValue = IPath.fromOSString(res).makeAbsolute().toOSString();
 			variableValueField.setText(variableValue);
 		}
 	}
@@ -498,7 +497,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 			String[] variableNames = (String[]) dialog.getResult();
 			if (variableNames != null && variableNames.length == 1) {
 				String newValue = variableNames[0];
-				IPath path = Path.fromOSString(newValue);
+				IPath path = IPath.fromOSString(newValue);
 				if (operationMode != EDIT_LINK_LOCATION && currentResource != null && !path.isAbsolute() && path.segmentCount() > 0) {
 					path = buildVariableMacro(path);
 					newValue = path.toOSString();
@@ -512,7 +511,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 	private IPath buildVariableMacro(IPath relativeSrcValue) {
 		String variable = relativeSrcValue.segment(0);
 		variable = "${" + variable + "}";  //$NON-NLS-1$//$NON-NLS-2$
-		return Path.fromOSString(variable).append(relativeSrcValue.removeFirstSegments(1));
+		return IPath.fromOSString(variable).append(relativeSrcValue.removeFirstSegments(1));
 	}
 
 	/**
@@ -618,7 +617,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 			// contain macros such as "${foo}\etc"
 			allowFinish = true;
 			String resolvedValue = getVariableResolvedValue();
-			IPath resolvedPath = Path.fromOSString(resolvedValue);
+			IPath resolvedPath = IPath.fromOSString(resolvedValue);
 			if (!IDEResourceInfoUtils.exists(resolvedPath.toOSString())) {
 				// the path does not exist (warning)
 				message = IDEWorkbenchMessages.PathVariableDialog_pathDoesNotExistMessage;
@@ -636,11 +635,11 @@ public class PathVariableDialog extends TitleAreaDialog {
 						message = IDEWorkbenchMessages.PathVariableDialog_variableValueIsWrongTypeFile;
 				}
 			}
-		} else if (!Path.EMPTY.isValidPath(variableValue)) {
+		} else if (!IPath.EMPTY.isValidPath(variableValue)) {
 			// the variable value is an invalid path
 			message = IDEWorkbenchMessages.PathVariableDialog_variableValueInvalidMessage;
 			newValidationStatus = IMessageProvider.ERROR;
-		} else if (!new Path(variableValue).isAbsolute()) {
+		} else if (!IPath.fromOSString(variableValue).isAbsolute()) {
 			// the variable value is a relative path
 			message = IDEWorkbenchMessages.PathVariableDialog_pathIsRelativeMessage;
 			newValidationStatus = IMessageProvider.ERROR;

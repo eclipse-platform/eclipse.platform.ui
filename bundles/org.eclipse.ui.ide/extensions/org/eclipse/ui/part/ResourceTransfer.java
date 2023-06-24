@@ -23,7 +23,7 @@ import java.io.IOException;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.util.Util;
 import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.TransferData;
@@ -202,9 +202,9 @@ public class ResourceTransfer extends ByteArrayTransfer {
 		String path = dataIn.readUTF();
 		switch (type) {
 		case IResource.FOLDER:
-			return workspace.getRoot().getFolder(new Path(path));
+			return workspace.getRoot().getFolder(IPath.fromOSString(path));
 		case IResource.FILE:
-			return workspace.getRoot().getFile(new Path(path));
+			return workspace.getRoot().getFile(IPath.fromOSString(path));
 		case IResource.PROJECT:
 			return workspace.getRoot().getProject(path);
 		}

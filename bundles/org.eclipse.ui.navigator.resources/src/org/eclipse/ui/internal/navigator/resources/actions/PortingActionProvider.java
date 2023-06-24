@@ -20,7 +20,7 @@ import java.util.Collections;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -131,7 +131,7 @@ public class PortingActionProvider extends CommonActionProvider {
 	 */
 	protected ImageDescriptor getImageDescriptor(String relativePath) {
 		String iconPath = "icons/full/"; //$NON-NLS-1$
-		URL url = FileLocator.find(WorkbenchNavigatorPlugin.getDefault().getBundle(), new Path(iconPath + relativePath),
+		URL url = FileLocator.find(WorkbenchNavigatorPlugin.getDefault().getBundle(), IPath.fromOSString(iconPath + relativePath),
 				Collections.<String, String> emptyMap());
 		if (url == null) {
 			return ImageDescriptor.getMissingImageDescriptor();

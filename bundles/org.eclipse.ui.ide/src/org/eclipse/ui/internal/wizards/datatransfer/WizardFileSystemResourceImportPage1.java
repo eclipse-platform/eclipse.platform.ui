@@ -31,7 +31,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.equinox.bidi.StructuredTextTypeHandlerFactory;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -778,7 +777,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 	 *	removed so that java treats it as a proper directory
 	 */
 	private String getSourceDirectoryName(String sourceName) {
-		IPath result = new Path(sourceName.trim());
+		IPath result = IPath.fromOSString(sourceName.trim());
 
 		if (result.getDevice() != null && result.segmentCount() == 0) {
 			result = result.addTrailingSeparator();
@@ -885,7 +884,8 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 			File file = getSourceDirectory();
 			if (file != null && target != null) {
 				relativePathVariableGroup.setupVariableContent();
-				String preferedVariable = RelativePathVariableGroup.getPreferredVariable(new IPath[] {Path.fromOSString(file.getAbsolutePath())}, (IContainer) target);
+				String preferedVariable = RelativePathVariableGroup.getPreferredVariable(
+						new IPath[] { IPath.fromOSString(file.getAbsolutePath()) }, (IContainer) target);
 				if (preferedVariable != null)
 					relativePathVariableGroup.selectVariable(preferedVariable);
 			}
@@ -946,7 +946,8 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 			if (path != null && relativePathVariableGroup != null) {
 				IResource target = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
 				if (target != null) {
-					String variable = RelativePathVariableGroup.getPreferredVariable(new IPath[] {Path.fromOSString(sourceDirectory.getAbsolutePath())}, (IContainer) target);
+					String variable = RelativePathVariableGroup.getPreferredVariable(
+							new IPath[] { IPath.fromOSString(sourceDirectory.getAbsolutePath()) }, (IContainer) target);
 					if (variable != null)
 						relativePathVariableGroup.selectVariable(variable);
 				}
@@ -1241,7 +1242,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 			return false;
 		}
 
-		if (sourceConflictsWithDestination(new Path(sourceDirectory.getPath()))) {
+		if (sourceConflictsWithDestination(IPath.fromOSString(sourceDirectory.getPath()))) {
 			setMessage(null);
 			setErrorMessage(getSourceConflictMessage());
 			enableButtonGroup(false);

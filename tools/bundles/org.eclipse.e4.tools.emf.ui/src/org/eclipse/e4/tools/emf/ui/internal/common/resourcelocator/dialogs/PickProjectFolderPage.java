@@ -17,7 +17,6 @@ package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.BundleImageCache;
 import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages;
@@ -120,7 +119,7 @@ public class PickProjectFolderPage extends WizardPage {
 			}
 			setPageComplete(viewer.getSelection().isEmpty() == false);
 
-			path = new Path((String) context.get("srcPath")); //$NON-NLS-1$
+			path = IPath.fromOSString((String) context.get("srcPath")); //$NON-NLS-1$
 			label2.setText(path.lastSegment());
 			label3.setText(Messages.ProjectFolderPickerDialog_sourceResourceDirectory);
 			lblResourcePath.setText(path.removeLastSegments(1).toOSString());

@@ -21,7 +21,7 @@ import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * Expression to check whether a given container contains a folder under the
@@ -65,7 +65,7 @@ public class HasFolderExpression extends Expression {
 			return EvaluationResult.valueOf( new File((File)root, this.path).isDirectory() );
 		}
 		IContainer container = Adapters.adapt(root, IContainer.class);
-		return EvaluationResult.valueOf(container.getFolder(new Path(this.path)).exists());
+		return EvaluationResult.valueOf(container.getFolder(IPath.fromOSString(this.path)).exists());
 	}
 
 }

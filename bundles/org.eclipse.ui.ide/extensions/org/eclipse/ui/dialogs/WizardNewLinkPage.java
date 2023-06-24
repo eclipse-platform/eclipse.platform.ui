@@ -24,7 +24,6 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -319,7 +318,7 @@ public class WizardNewLinkPage extends WizardPage {
 			setErrorMessage(IDEWorkbenchMessages.WizardNewLinkPage_linkTargetEmpty);
 			valid = false;
 		} else {
-			IPath path = new Path("");//$NON-NLS-1$
+			IPath path = IPath.fromOSString("");//$NON-NLS-1$
 			if (path.isValidPath(linkTargetName) == false) {
 				setErrorMessage(IDEWorkbenchMessages.WizardNewLinkPage_linkTargetInvalid);
 				valid = false;
@@ -348,7 +347,7 @@ public class WizardNewLinkPage extends WizardPage {
 					setErrorMessage(IDEWorkbenchMessages.WizardNewLinkPage_linkTargetNonExistent);
 					valid = false;
 				} else {
-					IStatus locationStatus = workspace.validateLinkLocation(container, new Path(linkTargetName));
+					IStatus locationStatus = workspace.validateLinkLocation(container, IPath.fromOSString(linkTargetName));
 
 					if (locationStatus.isOK() == false) {
 						setErrorMessage(IDEWorkbenchMessages.WizardNewLinkPage_linkTargetLocationInvalid);

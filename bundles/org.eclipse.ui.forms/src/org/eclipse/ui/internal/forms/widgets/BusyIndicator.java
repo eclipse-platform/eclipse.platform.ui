@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -164,7 +164,7 @@ public final class BusyIndicator extends Canvas {
 
 	private ImageDescriptor createImageDescriptor(String relativePath) {
 		Bundle bundle = FrameworkUtil.getBundle(this.getClass());
-		URL url = FileLocator.find(bundle, new Path(relativePath),null);
+		URL url = FileLocator.find(bundle, IPath.fromOSString(relativePath),null);
 		if (url == null) return null;
 		try {
 			url = FileLocator.resolve(url);

@@ -21,7 +21,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
@@ -129,7 +129,7 @@ public class EditorAreaDropAdapter extends DropTargetAdapter {
 				event.currentDataType)) {
 			Assert.isTrue(event.data instanceof String[]);
 			for (String path : (String[]) event.data) {
-				IFileStore fileStore = EFS.getLocalFileSystem().getStore(new Path(path));
+				IFileStore fileStore = EFS.getLocalFileSystem().getStore(IPath.fromOSString(path));
 				try {
 					IDE.openEditorOnFileStore(page, fileStore);
 				} catch (PartInitException e) {

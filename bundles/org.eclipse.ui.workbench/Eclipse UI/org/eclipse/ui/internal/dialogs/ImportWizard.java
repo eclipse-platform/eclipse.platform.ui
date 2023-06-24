@@ -15,7 +15,7 @@
 package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardNode;
 import org.eclipse.jface.wizard.Wizard;
@@ -85,7 +85,7 @@ public class ImportWizard extends Wizard {
 		// wizards will be in the "other" category.
 		IWizardCategory root = WorkbenchPlugin.getDefault().getImportWizardRegistry().getRootCategory();
 		WizardCollectionElement otherCategory = (WizardCollectionElement) root
-				.findCategory(new Path(WizardsRegistryReader.UNCATEGORIZED_WIZARD_CATEGORY));
+				.findCategory(IPath.fromOSString(WizardsRegistryReader.UNCATEGORIZED_WIZARD_CATEGORY));
 		if (otherCategory == null) {
 			return new AdaptableList();
 		}

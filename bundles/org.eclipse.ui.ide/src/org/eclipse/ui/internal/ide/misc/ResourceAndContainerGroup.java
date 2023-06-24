@@ -22,7 +22,6 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.equinox.bidi.StructuredTextTypeHandlerFactory;
 import org.eclipse.jface.util.BidiUtils;
 import org.eclipse.osgi.util.NLS;
@@ -556,7 +555,7 @@ public class ResourceAndContainerGroup implements Listener {
 			return false;
 		}
 
-		if (!Path.ROOT.isValidPath(resourceName)) {
+		if (!IPath.ROOT.isValidPath(resourceName)) {
 			problemType = PROBLEM_NAME_INVALID;
 			problemMessage = NLS.bind(
 					IDEWorkbenchMessages.ResourceGroup_invalidFilename,

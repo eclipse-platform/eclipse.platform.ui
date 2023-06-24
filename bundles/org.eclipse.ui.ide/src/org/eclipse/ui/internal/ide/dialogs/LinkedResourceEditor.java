@@ -35,7 +35,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.dialogs.Dialog;
@@ -665,9 +664,9 @@ public class LinkedResourceEditor {
 	}
 
 	private IPath convertToProperCase(IPath path) {
-		if (Platform.getOS().equals(Platform.OS_WIN32))
-			return Path.fromPortableString(path.toPortableString()
-					.toLowerCase());
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			return IPath.fromPortableString(path.toPortableString().toLowerCase());
+		}
 		return path;
 	}
 
@@ -715,7 +714,7 @@ public class LinkedResourceEditor {
 			int variable = -1;
 			for (int i = 0; i < variables.length; i++) {
 				IPath resolvePath = URIUtil.toPath(res.getPathVariableManager().resolveURI(
-						URIUtil.toURI(Path.fromOSString(variables[i]))));
+						URIUtil.toURI(IPath.fromOSString(variables[i]))));
 				if (resolvePath
 						.isPrefixOf(convertToProperCase(location))) {
 					int count = location
@@ -727,7 +726,7 @@ public class LinkedResourceEditor {
 				}
 			}
 			if (variable != -1) {
-				IPath newLocation = Path.fromOSString(variables[variable])
+				IPath newLocation = IPath.fromOSString(variables[variable])
 						.append(location.removeFirstSegments(maxCount));
 				try {
 					setLinkLocation(res, newLocation);
@@ -793,8 +792,8 @@ public class LinkedResourceEditor {
 					IPath location = res.getLocation();
 					int commonCount = location
 							.matchingFirstSegments(commonPath);
-					IPath newLocation = Path.fromOSString(variableName).append(
-							location.removeFirstSegments(commonCount));
+					IPath newLocation = IPath.fromOSString(variableName)
+							.append(location.removeFirstSegments(commonCount));
 					try {
 						setLinkLocation(res, newLocation);
 						report
@@ -845,8 +844,7 @@ public class LinkedResourceEditor {
 			}
 			IPath location = res.getLocation();
 			int commonCount = location.matchingFirstSegments(commonPath);
-			IPath newLocation = Path.fromOSString(variableName).append(
-					location.removeFirstSegments(commonCount));
+			IPath newLocation = IPath.fromOSString(variableName).append(location.removeFirstSegments(commonCount));
 			try {
 				setLinkLocation(res, newLocation);
 				report
@@ -914,7 +912,7 @@ public class LinkedResourceEditor {
 		if (dialog.open() == Window.CANCEL) {
 			return;
 		}
-		location = Path.fromOSString(dialog.getVariableValue());
+		location = IPath.fromOSString(dialog.getVariableValue());
 		try {
 			setLinkLocation(resource, location);
 		} catch (Exception e) {

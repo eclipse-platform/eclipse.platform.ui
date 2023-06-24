@@ -21,7 +21,6 @@ import java.util.Optional;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
@@ -55,7 +54,7 @@ public final class ResourceLocator {
 		// Caveat: The resulting URL may contain $nl$ etc., which is not
 		// directly supported by PlatformURLConnection and needs to go through
 		// FileLocator#find(URL), see bug 250432.
-		IPath uriPath = new Path("/plugin").append(bundleSymbolicName).append(filePath); //$NON-NLS-1$
+		IPath uriPath = IPath.fromOSString("/plugin").append(bundleSymbolicName).append(filePath); //$NON-NLS-1$
 		URL url;
 		try {
 			URI uri = new URI("platform", null, uriPath.toString(), null); //$NON-NLS-1$
@@ -93,7 +92,7 @@ public final class ResourceLocator {
 	 *         {@link Optional#empty()}.
 	 */
 	public static Optional<URL> locate(Class<?> classFromBundle, String filePath) {
-		return Optional.ofNullable(FileLocator.find(FrameworkUtil.getBundle(classFromBundle), new Path(filePath)));
+		return Optional.ofNullable(FileLocator.find(FrameworkUtil.getBundle(classFromBundle), IPath.fromOSString(filePath)));
 	}
 
 	/**

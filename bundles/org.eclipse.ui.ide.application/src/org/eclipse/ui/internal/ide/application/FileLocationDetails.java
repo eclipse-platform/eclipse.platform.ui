@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 
 /**
@@ -57,7 +57,7 @@ public class FileLocationDetails {
 	}
 
 	// vars are package protected for access from DelayedEventsProcessor
-	Path path;
+	IPath path;
 	IFileStore fileStore;
 	IFileInfo fileInfo;
 
@@ -124,7 +124,7 @@ public class FileLocationDetails {
 	/** Return details if {@code path} exists */
 	private static FileLocationDetails checkLocation(String path, int line, int column) {
 		FileLocationDetails spec = new FileLocationDetails();
-		spec.path = new Path(path);
+		spec.path = IPath.fromOSString(path);
 		spec.fileStore = EFS.getLocalFileSystem().getStore(spec.path);
 		spec.fileInfo = spec.fileStore.fetchInfo();
 		spec.line = line;

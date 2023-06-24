@@ -16,10 +16,10 @@ package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator;
 
 import java.io.FileOutputStream;
 import java.util.jar.Manifest;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
 /**
  * Converts the given install location into a bundle.
@@ -36,7 +36,7 @@ public class BundleConverter {
 	 * @throws Exception
 	 */
 	public static String convertProjectToBundle(String installLocation, IWorkspace workspace) throws Exception {
-		IPath project = Path.fromOSString(installLocation);
+		IPath project = IPath.fromOSString(installLocation);
 		if (project.toFile().isDirectory() == false) {
 			throw new Exception(Messages.BundleConverter_installLocationNotADirectory);
 		}
@@ -52,7 +52,7 @@ public class BundleConverter {
 		}
 		Manifest manifest = new Manifest();
 		// TODO prompt for names
-		IPath path = Path.fromOSString(installLocation);
+		IPath path = IPath.fromOSString(installLocation);
 		String bundleId = path.lastSegment();
 		String bundleName = path.lastSegment();
 		manifest.getMainAttributes().putValue("Manifest-Version", "1.0"); //$NON-NLS-1$ //$NON-NLS-2$

@@ -48,7 +48,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -1485,7 +1484,7 @@ public class CopyFilesAndFoldersOperation {
 									sourceResource.getName());
 				}
 				// is the source a parent of the destination?
-				if (new Path(sourceLocation.toString()).isPrefixOf(new Path(
+				if (IPath.fromOSString(sourceLocation.toString()).isPrefixOf(IPath.fromOSString(
 						destinationLocation.toString()))) {
 					return IDEWorkbenchMessages.CopyFilesAndFoldersOperation_destinationDescendentError;
 				}

@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dnd;
 
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -58,7 +58,7 @@ public class DragTestSuite extends AutoTestSuite {
 	}
 
 	public DragTestSuite() {
-		super(Platform.find(TestPlugin.getDefault().getBundle(), new Path("data/dragtests.xml")));
+		super(Platform.find(TestPlugin.getDefault().getBundle(), IPath.fromOSString("data/dragtests.xml")));
 
 		String resNav = IPageLayout.ID_PROJECT_EXPLORER;
 		String probView = IPageLayout.ID_PROBLEM_VIEW;

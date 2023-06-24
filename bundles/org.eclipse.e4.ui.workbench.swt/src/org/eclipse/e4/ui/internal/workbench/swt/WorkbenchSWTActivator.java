@@ -41,7 +41,6 @@ import java.util.Hashtable;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.osgi.service.datalocation.Location;
@@ -214,7 +213,7 @@ public class WorkbenchSWTActivator implements BundleActivator, DebugOptionsListe
 
 		// otherwise look for bundle specific dialog settings
 		Bundle bundle = context.getBundle();
-		URL dsURL = FileLocator.find(bundle, new Path(FN_DIALOG_SETTINGS), null);
+		URL dsURL = FileLocator.find(bundle, IPath.fromOSString(FN_DIALOG_SETTINGS), null);
 		if (dsURL == null) {
 			return;
 		}

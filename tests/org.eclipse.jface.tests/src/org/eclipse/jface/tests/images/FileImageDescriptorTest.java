@@ -28,7 +28,7 @@ import java.util.Enumeration;
 
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -71,7 +71,7 @@ public class FileImageDescriptorTest extends TestCase {
 		while (bundleEntries.hasMoreElements()) {
 			ImageDescriptor descriptor;
 			String localImagePath = bundleEntries.nextElement();
-			URL[] files = FileLocator.findEntries(bundle, new Path(localImagePath));
+			URL[] files = FileLocator.findEntries(bundle, IPath.fromOSString(localImagePath));
 
 			for (URL file : files) {
 
@@ -204,13 +204,13 @@ public class FileImageDescriptorTest extends TestCase {
 				fileNameProvider2nd);
 		String imagePath100 = fileNameProvider.getImagePath(100);
 		assertNotNull("FileImageDescriptor's ImageFileNameProvider does not return the 100% path", imagePath100);
-		assertEquals(Path.fromOSString(imagePath100).lastSegment(), "rectangular-57x16.png");
+		assertEquals(IPath.fromOSString(imagePath100).lastSegment(), "rectangular-57x16.png");
 		String imagePath200 = fileNameProvider.getImagePath(200);
 		assertNotNull("FileImageDescriptor's ImageFileNameProvider does not return the 200% path", imagePath200);
-		assertEquals(Path.fromOSString(imagePath200).lastSegment(), "rectangular-114x32.png");
+		assertEquals(IPath.fromOSString(imagePath200).lastSegment(), "rectangular-114x32.png");
 		String imagePath150 = fileNameProvider.getImagePath(150);
 		assertNotNull("FileImageDescriptor's ImageFileNameProvider does not return the 150% path", imagePath150);
-		assertEquals(Path.fromOSString(imagePath150).lastSegment(), "rectangular-86x24.png");
+		assertEquals(IPath.fromOSString(imagePath150).lastSegment(), "rectangular-86x24.png");
 		String imagePath250 = fileNameProvider.getImagePath(250);
 		assertNull("FileImageDescriptor's ImageFileNameProvider does return a 250% path", imagePath250);
 	}
@@ -222,10 +222,10 @@ public class FileImageDescriptorTest extends TestCase {
 		assertNotNull("FileImageDescriptor does not adapt to ImageFileNameProvider", fileNameProvider);
 		String imagePath100 = fileNameProvider.getImagePath(100);
 		assertNotNull("FileImageDescriptor's ImageFileNameProvider does not return the 100% path", imagePath100);
-		assertEquals(Path.fromOSString(imagePath100).lastSegment(), "zoomIn.png");
+		assertEquals(IPath.fromOSString(imagePath100).lastSegment(), "zoomIn.png");
 		String imagePath200 = fileNameProvider.getImagePath(200);
 		assertNotNull("FileImageDescriptor's ImageFileNameProvider does not return the @2x path", imagePath200);
-		assertEquals(Path.fromOSString(imagePath200).lastSegment(), "zoomIn@2x.png");
+		assertEquals(IPath.fromOSString(imagePath200).lastSegment(), "zoomIn@2x.png");
 		String imagePath150 = fileNameProvider.getImagePath(150);
 		assertNull("FileImageDescriptor's ImageFileNameProvider does return a @1.5x path", imagePath150);
 	}

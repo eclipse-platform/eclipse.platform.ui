@@ -27,7 +27,6 @@ import java.util.Optional;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
@@ -187,7 +186,7 @@ public final class DialogSettingsProvider implements IDialogSettingsProvider {
 	}
 
 	private static Optional<IDialogSettings> loadDefaultDialogSettingsFromBundle(Bundle bundle) {
-		URL dsURL = FileLocator.find(bundle, new Path(FN_DIALOG_SETTINGS));
+		URL dsURL = FileLocator.find(bundle, IPath.fromOSString(FN_DIALOG_SETTINGS));
 		IDialogSettings dialogSettings = null;
 		if (dsURL == null) {
 			// no bundle defaults

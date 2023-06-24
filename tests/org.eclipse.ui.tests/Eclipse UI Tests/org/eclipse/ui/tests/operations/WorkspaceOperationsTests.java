@@ -49,7 +49,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.tests.harness.FileSystemHelper;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.undo.AbstractWorkspaceOperation;
@@ -1072,7 +1071,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 	public void testProjectRenameUndoRedo() throws ExecutionException,
 			CoreException {
 		MoveResourcesOperation op = new MoveResourcesOperation(testProject,
-				new Path(TEST_NEWPROJECT_NAME), "testProjectRename");
+				IPath.fromOSString(TEST_NEWPROJECT_NAME), "testProjectRename");
 		ProjectSnapshot snap = new ProjectSnapshot(testProject);
 		execute(op);
 		IProject renamedProject = getWorkspaceRoot().getProject(
@@ -1202,7 +1201,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		undo();
 		assertFalse("Folder deletion failed", folder.exists());
 		// Ensure all created parents are gone, too
-		IPath path = new Path(TEST_NEWNESTEDFOLDER_NAME);
+		IPath path = IPath.fromOSString(TEST_NEWNESTEDFOLDER_NAME);
 		path.removeLastSegments(path.segmentCount() - 1);
 		IFolder parent = getWorkspaceRoot().getFolder(
 				testProject.getFullPath().append(path));
@@ -1229,7 +1228,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		undo();
 		assertFalse("Folder deletion failed", folder.exists());
 		// Ensure all created parents are gone, too
-		IPath path = new Path(TEST_NEWNESTEDFOLDER_NAME);
+		IPath path = IPath.fromOSString(TEST_NEWNESTEDFOLDER_NAME);
 		path.removeLastSegments(path.segmentCount() - 1);
 		IFolder parent = getWorkspaceRoot().getFolder(
 				testFolder.getFullPath().append(path));
@@ -1303,7 +1302,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		undo();
 		assertFalse("Folder deletion failed", folder.exists());
 		// Ensure all created parents are gone, too
-		IPath path = new Path(TEST_NEWNESTEDFOLDER_NAME);
+		IPath path = IPath.fromOSString(TEST_NEWNESTEDFOLDER_NAME);
 		path.removeLastSegments(path.segmentCount() - 1);
 		IFolder parent = getWorkspaceRoot().getFolder(
 				testProject.getFullPath().append(path));
@@ -1596,7 +1595,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		undo();
 		assertFalse("File deletion failed", file.exists());
 		// Ensure all created parents are gone, too
-		IPath path = new Path(TEST_NEWNESTEDFILE_NAME);
+		IPath path = IPath.fromOSString(TEST_NEWNESTEDFILE_NAME);
 		path.removeLastSegments(path.segmentCount() - 1);
 		IFolder parent = getWorkspaceRoot().getFolder(
 				testProject.getFullPath().append(path));
@@ -1626,7 +1625,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		undo();
 		assertFalse("File deletion failed", file.exists());
 		// Ensure all created parents are gone, too
-		IPath path = new Path(TEST_NEWNESTEDFILE_NAME);
+		IPath path = IPath.fromOSString(TEST_NEWNESTEDFILE_NAME);
 		path.removeLastSegments(path.segmentCount() - 1);
 		IFolder parent = getWorkspaceRoot().getFolder(
 				testSubFolder.getFullPath().append(path));
@@ -1682,7 +1681,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		undo();
 		assertFalse("File deletion failed", file.exists());
 		// Ensure all created parents are gone, too
-		IPath path = new Path(TEST_NEWNESTEDFILE_NAME);
+		IPath path = IPath.fromOSString(TEST_NEWNESTEDFILE_NAME);
 		path.removeLastSegments(path.segmentCount() - 1);
 		IFolder parent = getWorkspaceRoot().getFolder(
 				testProject.getFullPath().append(path));

@@ -21,7 +21,7 @@ import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.osgi.framework.Bundle;
 
@@ -48,7 +48,7 @@ public abstract class BrandingProperties {
 			}
 		} catch (MalformedURLException e) {
 			if (definingBundle != null) {
-				URL bundlePath = FileLocator.find(definingBundle, new Path(value));
+				URL bundlePath = FileLocator.find(definingBundle, IPath.fromOSString(value));
 				return Optional.of(bundlePath);
 			}
 		}

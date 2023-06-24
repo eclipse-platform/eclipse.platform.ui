@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.osgi.util.NLS;
@@ -41,7 +40,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * </p>
  *
  * <pre>
- * ContainerGenerator gen = new ContainerGenerator(new Path("/A/B"));
+ * ContainerGenerator gen = new ContainerGenerator(IPath.fromOSString("/A/B"));
  * IContainer res = null;
  * try {
  * 	res = gen.getContainer(monitor); // creates project A and folder B if required
@@ -99,7 +98,7 @@ public class ContainerGenerator {
 	 * @return the new folder resource handle
 	 */
 	private IFolder createFolderHandle(IContainer container, String folderName) {
-		return container.getFolder(new Path(folderName));
+		return container.getFolder(IPath.fromOSString(folderName));
 	}
 
 	/**

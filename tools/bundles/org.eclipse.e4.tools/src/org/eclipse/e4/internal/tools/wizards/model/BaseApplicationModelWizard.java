@@ -26,9 +26,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.internal.tools.Messages;
 import org.eclipse.emf.common.util.URI;
@@ -214,13 +214,13 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 		final String containerName = page.getContainerName();
 		final String fileName = page.getFileName();
 		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		final IResource resource = root.findMember(new Path(containerName));
+		final IResource resource = root.findMember(IPath.fromOSString(containerName));
 		if (!resource.exists() || !(resource instanceof IContainer)) {
 			throwCoreException("Container \"" + containerName //$NON-NLS-1$
 					+ "\" does not exist."); //$NON-NLS-1$
 		}
 		final IContainer container = (IContainer) resource;
-		return container.getFile(new Path(fileName));
+		return container.getFile(IPath.fromOSString(fileName));
 	}
 
 	private void throwCoreException(String message) throws CoreException {

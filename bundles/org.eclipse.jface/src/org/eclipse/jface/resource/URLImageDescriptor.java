@@ -25,8 +25,8 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.internal.InternalPolicy;
 import org.eclipse.jface.util.Policy;
@@ -258,7 +258,7 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 		try {
 			if (!InternalPolicy.OSGI_AVAILABLE) {
 				if (FILE_PROTOCOL.equalsIgnoreCase(url.getProtocol()))
-					return new Path(url.getFile()).toOSString();
+					return IPath.fromOSString(url.getFile()).toOSString();
 				return null;
 			}
 
@@ -268,7 +268,7 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 			}
 			URL locatedURL = FileLocator.toFileURL(url);
 			if (FILE_PROTOCOL.equalsIgnoreCase(locatedURL.getProtocol()))
-				return new Path(locatedURL.getPath()).toOSString();
+				return IPath.fromOSString(locatedURL.getPath()).toOSString();
 			return null;
 		} catch (IOException e) {
 			if (logIOException) {

@@ -20,7 +20,6 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
@@ -88,7 +87,7 @@ public class ExamplesPlugin extends AbstractUIPlugin {
 	private void registerImage(ImageRegistry registry, String key,
 			String fileName) {
 		try {
-			IPath path = new Path("icons/" + fileName);
+			IPath path = IPath.fromOSString("icons/" + fileName);
 			URL url = FileLocator.find(getBundle(), path, null);
 			if (url!=null) {
 				ImageDescriptor desc = ImageDescriptor.createFromURL(url);

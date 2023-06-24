@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -264,7 +263,7 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 				IDEWorkbenchMessages.ChooseWorkspaceWithSettingsDialog_ProblemsTransferTitle,
 				null);
 
-		IPath path = new Path(getWorkspaceLocation());
+		IPath path = IPath.fromOSString(getWorkspaceLocation());
 		String[] selectionIDs = new String[selectedSettings.size()];
 		int index = 0;
 

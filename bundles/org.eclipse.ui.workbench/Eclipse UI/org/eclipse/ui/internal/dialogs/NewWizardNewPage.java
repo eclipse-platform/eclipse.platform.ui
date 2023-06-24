@@ -20,7 +20,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -468,7 +468,7 @@ class NewWizardNewPage implements ISelectionChangedListener {
 
 		if (wizardCategories != null) {
 			for (String expandedCategoryPath : expandedCategoryPaths) {
-				IWizardCategory category = wizardCategories.findCategory(new Path(expandedCategoryPath));
+				IWizardCategory category = wizardCategories.findCategory(IPath.fromOSString(expandedCategoryPath));
 				if (category != null) {
 					categoriesToExpand.add(category);
 				}
@@ -551,7 +551,7 @@ class NewWizardNewPage implements ISelectionChangedListener {
 			return;
 		}
 
-		Object selected = wizardCategories.findCategory(new Path(selectedId));
+		Object selected = wizardCategories.findCategory(IPath.fromOSString(selectedId));
 
 		if (selected == null) {
 			selected = wizardCategories.findWizard(selectedId);

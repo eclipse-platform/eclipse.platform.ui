@@ -28,8 +28,8 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.internal.InternalPolicy;
 import org.eclipse.jface.util.Policy;
@@ -287,7 +287,7 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable {
 	 */
 	String getFilePath(String name, boolean logIOException) {
 		if (location == null)
-			return new Path(name).toOSString();
+			return IPath.fromOSString(name).toOSString();
 
 		URL resource = location.getResource(name);
 
@@ -295,9 +295,9 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable {
 			return null;
 		try {
 			if (!InternalPolicy.OSGI_AVAILABLE) {// Stand-alone case
-				return new Path(resource.getFile()).toOSString();
+				return IPath.fromOSString(resource.getFile()).toOSString();
 			}
-			return new Path(FileLocator.toFileURL(resource).getPath()).toOSString();
+			return IPath.fromOSString(FileLocator.toFileURL(resource).getPath()).toOSString();
 		} catch (IOException e) {
 			if (logIOException) {
 				Policy.logException(e);

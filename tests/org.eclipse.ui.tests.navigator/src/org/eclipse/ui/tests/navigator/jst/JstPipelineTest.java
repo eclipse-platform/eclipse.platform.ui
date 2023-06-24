@@ -25,7 +25,7 @@ import java.util.function.Predicate;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
@@ -85,7 +85,7 @@ public class JstPipelineTest extends NavigatorTestBase {
 		IProject adaptedProject = ((IAdaptable) rootItems[_projectInd].getData()).getAdapter(IProject.class);
 		assertEquals(_project, adaptedProject);
 
-		IFolder sourceFolder = _project.getFolder(new Path("src"));
+		IFolder sourceFolder = _project.getFolder(IPath.fromOSString("src"));
 		_viewer.add(_project, sourceFolder);
 
 		TreeItem[] projectChildren = rootItems[_projectInd].getItems();

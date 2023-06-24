@@ -40,7 +40,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -201,7 +200,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 						String resourceName = resourceGroup.getResource();
 						if (resourceName.length() > 0) {
 							try {
-								return ((IContainer) resource).getFolder(Path.fromOSString(resourceName));
+								return ((IContainer) resource).getFolder(IPath.fromOSString(resourceName));
 							} catch (IllegalArgumentException e) {
 								// continue below.
 							}

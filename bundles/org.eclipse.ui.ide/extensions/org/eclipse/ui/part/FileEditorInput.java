@@ -22,7 +22,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -191,7 +190,7 @@ public class FileEditorInput extends PlatformObject implements IFileEditorInput,
 				localFile = store.toLocalFile(EFS.CACHE, null);
 			if (localFile == null)
 				throw new IllegalArgumentException();
-			return Path.fromOSString(localFile.getAbsolutePath());
+			return IPath.fromOSString(localFile.getAbsolutePath());
 		} catch (CoreException e) {
 			//this can only happen if the file system is not available for this scheme
 			IDEWorkbenchPlugin.log(

@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.ui.ide.dialogs.UIResourceFilterDescription;
 import org.eclipse.ui.ide.undo.ResourceDescription;
@@ -113,8 +112,7 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 						.getProject(currentSegment));
 				currentContainerDescription = firstCreatedParent;
 			} else {
-				IFolder folderHandle = currentContainer.getFolder(new Path(
-						currentSegment));
+				IFolder folderHandle = currentContainer.getFolder(IPath.fromOSString(currentSegment));
 				ContainerDescription currentFolder;
 				currentFolder = new FolderDescription(folderHandle, usingVirtualFolder);
 				currentContainer = folderHandle;

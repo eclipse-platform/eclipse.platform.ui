@@ -35,8 +35,8 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.tests.harness.FileSystemHelper;
 import org.eclipse.ui.tests.TestPlugin;
@@ -115,7 +115,8 @@ public class ImportTestUtils {
 	 */
 	static String copyDataLocation(String dataLocation) throws IOException {
 		TestPlugin plugin = TestPlugin.getDefault();
-		File origin = FileTool.getFileInPlugin(plugin, new Path("/" + WS_DATA_PREFIX + "/" + dataLocation + ".zip"));
+		File origin = FileTool.getFileInPlugin(plugin,
+				IPath.fromOSString("/" + WS_DATA_PREFIX + "/" + dataLocation + ".zip"));
 		ZipFile zFile = new ZipFile(origin);
 		File destination = new File(FileSystemHelper.getRandomLocation(FileSystemHelper.getTempDir()).toOSString());
 		FileTool.unzip(zFile, destination);
@@ -124,7 +125,8 @@ public class ImportTestUtils {
 
 	static String copyZipLocation(String sourceZipLocation, String targetZipName) throws IOException {
 		TestPlugin plugin = TestPlugin.getDefault();
-		File origin = FileTool.getFileInPlugin(plugin, new Path(WS_DATA_PREFIX + "/" + sourceZipLocation + ".zip"));
+		File origin = FileTool.getFileInPlugin(plugin,
+				IPath.fromOSString(WS_DATA_PREFIX + "/" + sourceZipLocation + ".zip"));
 		File destination = new File(FileSystemHelper.getRandomLocation(FileSystemHelper.getTempDir()).toOSString()
 				+ File.separator + targetZipName + ".zip");
 		FileTool.copy(origin, destination);

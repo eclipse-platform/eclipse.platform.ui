@@ -38,7 +38,6 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
 import org.eclipse.e4.ui.css.core.dom.ChildVisibilityAwareElement;
 import org.eclipse.e4.ui.css.core.dom.ExtendedCSSRule;
@@ -206,7 +205,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 			if (importRule.getHref().startsWith("platform")) {
 				url = FileLocator.resolve(new URL(importRule.getHref()));
 			} else {
-				Path p = new Path(source.getURI());
+				IPath p = IPath.fromOSString(source.getURI());
 				IPath trim = p.removeLastSegments(1);
 				boolean isArchive = source.getURI().contains(ARCHIVE_IDENTIFIER);
 				url = FileLocator

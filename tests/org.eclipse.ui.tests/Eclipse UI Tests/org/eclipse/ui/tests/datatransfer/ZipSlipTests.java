@@ -24,7 +24,6 @@ import java.util.zip.ZipFile;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.internal.wizards.datatransfer.ZipLeveledStructureProvider;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
@@ -46,7 +45,7 @@ public class ZipSlipTests extends UITestCase {
 
 	@Test
 	public void testZipFileStructureProvider() throws ZipException, IOException {
-		IPath path = getLocalPath(new Path(ZIPSLIP_FILE));
+		IPath path = getLocalPath(IPath.fromOSString(ZIPSLIP_FILE));
 		try (ZipFile zipFile = new ZipFile(path.toFile())) {
 			ZipFileStructureProvider zipfileStructureProvider = new ZipFileStructureProvider(zipFile);
 			List<?> children = zipfileStructureProvider.getChildren(zipfileStructureProvider.getRoot());
@@ -67,7 +66,7 @@ public class ZipSlipTests extends UITestCase {
 
 	@Test
 	public void testZipLeveledStructureProvider() throws Exception {
-		IPath path = getLocalPath(new Path(ZIPSLIP_FILE));
+		IPath path = getLocalPath(IPath.fromOSString(ZIPSLIP_FILE));
 		try (ZipFile zipFile = new ZipFile(path.toFile());
 				ZipLeveledStructureProvider zipLeveledStructureProvider = new ZipLeveledStructureProvider(zipFile)) {
 			List<?> children = zipLeveledStructureProvider.getChildren(zipLeveledStructureProvider.getRoot());
@@ -94,6 +93,6 @@ public class ZipSlipTests extends UITestCase {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return new Path(url.getPath());
+		return IPath.fromOSString(url.getPath());
 	}
 }

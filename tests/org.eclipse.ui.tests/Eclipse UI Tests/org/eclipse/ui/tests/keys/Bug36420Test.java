@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.Preferences;
@@ -91,7 +91,7 @@ public class Bug36420Test {
 		}
 
 		// Attempt to import the key binding.
-		Preferences.importPreferences(new Path(file.getAbsolutePath()));
+		Preferences.importPreferences(IPath.fromOSString(file.getAbsolutePath()));
 		/*
 		 * END SECTION
 		 */

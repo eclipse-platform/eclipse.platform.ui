@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.internal.wizards.datatransfer.TarFile;
 import org.eclipse.ui.internal.wizards.datatransfer.TarLeveledStructureProvider;
@@ -107,9 +106,9 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
 		localDirectory = zipFileName;
 
 		zipFileURL = FileLocator.toFileURL(FileLocator.find(TestPlugin.getDefault().getBundle(),
-				new Path(DATA_PATH_PREFIX).append(zipFileName + ".zip"), null));
+				IPath.fromOSString(DATA_PATH_PREFIX).append(zipFileName + ".zip"), null));
 		tarFileURL = FileLocator.toFileURL(FileLocator.find(TestPlugin.getDefault().getBundle(),
-				new Path(DATA_PATH_PREFIX).append(zipFileName + ".tar"), null));
+				IPath.fromOSString(DATA_PATH_PREFIX).append(zipFileName + ".tar"), null));
 	}
 
 	@Test
@@ -126,7 +125,7 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
 			entries.add(zipEntries.nextElement());
 		}
 		ImportOperation operation = new ImportOperation(
-				new Path(zipFileURL.getPath()), structureProvider.getRoot(),
+				IPath.fromOSString(zipFileURL.getPath()), structureProvider.getRoot(),
 				structureProvider, this, entries);
 
 		closeZipFile(zipFile);
@@ -145,8 +144,8 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
 			while (tarEntries.hasMoreElements()) {
 				entries.add(tarEntries.nextElement());
 			}
-			ImportOperation operation = new ImportOperation(new Path(tarFileURL.getPath()), structureProvider.getRoot(),
-					structureProvider, this, entries);
+			ImportOperation operation = new ImportOperation(IPath.fromOSString(tarFileURL.getPath()),
+					structureProvider.getRoot(), structureProvider, this, entries);
 
 			assertTrue(operation.getStatus().getCode() == IStatus.OK);
 		}
@@ -168,7 +167,7 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
 			}
 		}
 		ImportOperation operation = new ImportOperation(
-				new Path(project.getName()), structureProvider.getRoot(),
+				IPath.fromOSString(project.getName()), structureProvider.getRoot(),
 				structureProvider, this, entries);
 
 		openTestWindow().run(true, true, operation);
@@ -190,8 +189,8 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
 			while (tarEntries.hasMoreElements()) {
 				entries.add(tarEntries.nextElement());
 			}
-			ImportOperation operation = new ImportOperation(new Path(project.getName()), structureProvider.getRoot(),
-					structureProvider, this, entries);
+			ImportOperation operation = new ImportOperation(IPath.fromOSString(project.getName()),
+					structureProvider.getRoot(), structureProvider, this, entries);
 
 			openTestWindow().run(true, true, operation);
 		}
@@ -211,8 +210,8 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
 			while (tarEntries.hasMoreElements()) {
 				entries.add(tarEntries.nextElement());
 			}
-			ImportOperation operation = new ImportOperation(new Path(project.getName()), structureProvider.getRoot(),
-					structureProvider, this, entries);
+			ImportOperation operation = new ImportOperation(IPath.fromOSString(project.getName()),
+					structureProvider.getRoot(), structureProvider, this, entries);
 
 			openTestWindow().run(true, true, operation);
 			operation.setOverwriteResources(true);
@@ -237,7 +236,7 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
 			}
 		}
 		ImportOperation operation = new ImportOperation(
-				new Path(project.getName()), structureProvider.getRoot(),
+				IPath.fromOSString(project.getName()), structureProvider.getRoot(),
 				structureProvider, this, entries);
 
 		openTestWindow().run(true, true, operation);
@@ -263,7 +262,7 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
 			}
 		}
 		ImportOperation operation = new ImportOperation(
-				new Path(project.getName()), structureProvider.getRoot(),
+				IPath.fromOSString(project.getName()), structureProvider.getRoot(),
 				structureProvider, this, entries);
 
 		openTestWindow().run(true, true, operation);
@@ -285,8 +284,8 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
 			while (tarEntries.hasMoreElements()) {
 				entries.add(tarEntries.nextElement());
 			}
-			ImportOperation operation = new ImportOperation(new Path(project.getName()), structureProvider.getRoot(),
-					structureProvider, this, entries);
+			ImportOperation operation = new ImportOperation(IPath.fromOSString(project.getName()),
+					structureProvider.getRoot(), structureProvider, this, entries);
 
 			openTestWindow().run(true, true, operation);
 		}
@@ -302,7 +301,7 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
 	 */
 	private void verifyFiles(int folderCount, boolean hasRootMembers) {
 		try {
-			IPath path = new Path(localDirectory);
+			IPath path = IPath.fromOSString(localDirectory);
 			IResource targetFolder = project.findMember(path.makeRelative());
 
 			assertTrue("Import failed", targetFolder instanceof IContainer);

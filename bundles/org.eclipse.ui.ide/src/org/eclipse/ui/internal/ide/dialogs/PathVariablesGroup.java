@@ -33,7 +33,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -211,7 +210,7 @@ public class PathVariablesGroup {
 		// otherwise, adds the new variable (or updates an existing one) in the
 		// temporary collection of currently defined variables
 		String newVariableName = dialog.getVariableName();
-		IPath newVariableValue = new Path(dialog.getVariableValue());
+		IPath newVariableValue = IPath.fromOSString(dialog.getVariableValue());
 		tempPathVariables.put(newVariableName, newVariableValue);
 
 		// the UI must be updated
@@ -451,7 +450,7 @@ public class PathVariablesGroup {
 		tempPathVariables.remove(variableName);
 
 		String newVariableName = dialog.getVariableName();
-		IPath newVariableValue = new Path(dialog.getVariableValue());
+		IPath newVariableValue = IPath.fromOSString(dialog.getVariableValue());
 
 		// and add it again (maybe with a different name)
 		tempPathVariables.put(newVariableName, newVariableValue);

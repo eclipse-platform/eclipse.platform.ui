@@ -41,7 +41,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
@@ -210,7 +209,7 @@ public class SmartImportJob extends Job {
 						leafToRootProjects.put(directoryToImport, newProject);
 						loopMonitor.worked(1);
 					} catch (CouldNotImportProjectException ex) {
-						Path path = new Path(directoryToImport.getAbsolutePath());
+						IPath path = IPath.fromOSString(directoryToImport.getAbsolutePath());
 						if (listener != null) {
 							listener.errorHappened(path, ex);
 						}
@@ -410,7 +409,7 @@ public class SmartImportJob extends Job {
 		Set<IPath> excludedPaths = new HashSet<>();
 		if (this.excludedDirectories != null) {
 			for (File excludedDirectory : this.excludedDirectories) {
-				excludedPaths.add(new Path(excludedDirectory.getAbsolutePath()));
+				excludedPaths.add(IPath.fromOSString(excludedDirectory.getAbsolutePath()));
 			}
 		}
 		container.refreshLocal(IResource.DEPTH_INFINITE, progressMonitor);
@@ -584,7 +583,7 @@ public class SmartImportJob extends Job {
 		IProjectDescription desc = null;
 		File expectedProjectDescriptionFile = new File(directory, IProjectDescription.DESCRIPTION_FILE_NAME);
 		if (expectedProjectDescriptionFile.exists()) {
-			desc = ResourcesPlugin.getWorkspace().loadProjectDescription(new Path(expectedProjectDescriptionFile.getAbsolutePath()));
+			desc = ResourcesPlugin.getWorkspace().loadProjectDescription(IPath.fromOSString(expectedProjectDescriptionFile.getAbsolutePath()));
 			String expectedName = desc.getName();
 			IProject projectWithSameName = this.workspaceRoot.getProject(expectedName);
 			if (projectWithSameName.exists()) {
@@ -599,7 +598,7 @@ public class SmartImportJob extends Job {
 			String projectName = generateNewProjectName(directory, this.workspaceRoot);
 			desc = ResourcesPlugin.getWorkspace().newProjectDescription(projectName);
 		}
-		desc.setLocation(new Path(directory.getAbsolutePath()));
+		desc.setLocation(IPath.fromOSString(directory.getAbsolutePath()));
 		IProject res = this.workspaceRoot.getProject(desc.getName());
 		res.create(desc, progressMonitor);
 		PlatformUI.getWorkbench().getWorkingSetManager().addToWorkingSets(res, this.workingSets);

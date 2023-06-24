@@ -25,7 +25,6 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.util.BidiUtils;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -224,7 +223,7 @@ public class WizardNewProjectCreationPage extends WizardPage {
 	 * @return the project location path or its anticipated initial value.
 	 */
 	public IPath getLocationPath() {
-		return new Path(locationArea.getProjectLocation());
+		return IPath.fromOSString(locationArea.getProjectLocation());
 	}
 
 	/**

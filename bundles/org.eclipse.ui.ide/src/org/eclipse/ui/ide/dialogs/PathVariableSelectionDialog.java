@@ -21,7 +21,6 @@ import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.window.Window;
@@ -181,12 +180,12 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
 	 */
 	private void setExtensionResult(
 			PathVariablesGroup.PathVariableElement variable, IFileStore extensionFile) {
-		IPath extensionPath = new Path(extensionFile.toString());
+		IPath extensionPath = IPath.fromOSString(extensionFile.toString());
 		IPath selectionPath = variable.path;
 		if (currentResource != null)
 			selectionPath = URIUtil.toPath(currentResource.getPathVariableManager().resolveURI(URIUtil.toURI(selectionPath)));
 		int matchCount = extensionPath.matchingFirstSegments(selectionPath);
-		IPath resultPath = new Path(variable.name);
+		IPath resultPath = IPath.fromOSString(variable.name);
 
 		extensionPath = extensionPath.removeFirstSegments(matchCount);
 		resultPath = resultPath.append(extensionPath);

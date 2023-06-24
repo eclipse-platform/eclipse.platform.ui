@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -708,7 +707,7 @@ public class LogView extends ViewPart implements LogListener {
 			return;
 		}
 
-		File file = new Path(path).toFile();
+		File file = IPath.fromOSString(path).toFile();
 		if (file.exists()) {
 			handleImportPath(path);
 		} else {
@@ -760,7 +759,7 @@ public class LogView extends ViewPart implements LogListener {
 		if (path != null) {
 			if (path.indexOf('.') == -1 && !path.endsWith(".log")) //$NON-NLS-1$
 				path += ".log"; //$NON-NLS-1$
-			File outputFile = new Path(path).toFile();
+			File outputFile = IPath.fromOSString(path).toFile();
 			fDirectory = outputFile.getParent();
 			if (outputFile.exists()) {
 				String message = NLS.bind(Messages.LogView_confirmOverwrite_message, outputFile.toString());

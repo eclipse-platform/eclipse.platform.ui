@@ -20,7 +20,6 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPersistableElement;
@@ -49,7 +48,7 @@ public class FileEditorInputTest extends UITestCase {
 	@SuppressWarnings("unlikely-arg-type")
 	public void testBug72337() {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IPath path = new Path("/foo/bar.txt");
+		IPath path = IPath.fromOSString("/foo/bar.txt");
 		IFile fileA = workspace.getRoot().getFile(path);
 		FileEditorInput inputA1 = new FileEditorInput(fileA);
 		OtherFileEditorInput inputA2 = new OtherFileEditorInput(fileA);
