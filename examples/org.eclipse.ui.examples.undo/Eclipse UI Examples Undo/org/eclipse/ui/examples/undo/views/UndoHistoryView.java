@@ -25,6 +25,7 @@ import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.core.commands.operations.OperationHistoryFactory;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -75,13 +76,13 @@ public class UndoHistoryView extends ViewPart implements
 		ISelectionChangedListener {
 	private TableViewer viewer;
 
-	private Action filterAction;
+	private IAction filterAction;
 
-	private Action doubleClickAction;
+	private IAction doubleClickAction;
 
-	private Action selectiveUndoAction;
+	private IAction selectiveUndoAction;
 
-	private Action refreshListAction;
+	private IAction refreshListAction;
 
 	private IOperationHistory history = OperationHistoryFactory
 			.getOperationHistory();
@@ -331,67 +332,55 @@ public class UndoHistoryView extends ViewPart implements
 	 * Create the actions for the view.
 	 */
 	private void makeActions() {
-		filterAction = new Action() {
-			@Override
-			public void run() {
-				IUndoContext context = selectContext();
-				if (fContext != context && context != null) {
-					setContext(context);
-				}
+		filterAction = Action.create(() -> {
+			IUndoContext context = selectContext();
+			if (fContext != context && context != null) {
+				setContext(context);
 			}
-		};
+		});
 		filterAction.setText(UndoExampleMessages.UndoHistoryView_FilterText);
 		filterAction.setToolTipText(UndoExampleMessages.UndoHistoryView_FilterToolTipText);
 		filterAction.setImageDescriptor(PlatformUI.getWorkbench()
 				.getSharedImages().getImageDescriptor(
 						ISharedImages.IMG_OBJS_INFO_TSK));
 
-		selectiveUndoAction = new Action() {
-			@Override
-			public void run() {
-				IUndoableOperation operation = (IUndoableOperation) viewer.getStructuredSelection().getFirstElement();
-				if (operation.canUndo()) {
-					try {
-						history.undoOperation(operation, null, undoAction);
-					} catch (ExecutionException e) {
-						showMessage(UndoExampleMessages.UndoHistoryView_OperationException);
-					}
-				} else {
-					showMessage(UndoExampleMessages.UndoHistoryView_OperationInvalid);
+		selectiveUndoAction = Action.create(() -> {
+			IUndoableOperation operation = (IUndoableOperation) viewer.getStructuredSelection().getFirstElement();
+			if (operation.canUndo()) {
+				try {
+					history.undoOperation(operation, null, undoAction);
+				} catch (ExecutionException e) {
+					showMessage(UndoExampleMessages.UndoHistoryView_OperationException);
 				}
+			} else {
+				showMessage(UndoExampleMessages.UndoHistoryView_OperationInvalid);
 			}
-		};
+		});
 		selectiveUndoAction.setText(UndoExampleMessages.UndoHistoryView_UndoSelected);
 		selectiveUndoAction.setToolTipText(UndoExampleMessages.UndoHistoryView_UndoSelectedToolTipText);
 		selectiveUndoAction.setImageDescriptor(PlatformUI.getWorkbench()
 				.getSharedImages().getImageDescriptor(
 						ISharedImages.IMG_TOOL_UNDO));
 
-		refreshListAction = new Action() {
-			@Override
-			public void run() {
-				if (!viewer.getTable().isDisposed()) {
-					viewer.refresh(true);
-				}
+		refreshListAction = Action.create(() -> {
+			if (!viewer.getTable().isDisposed()) {
+				viewer.refresh(true);
 			}
-		};
+		});
 		refreshListAction.setText(UndoExampleMessages.UndoHistoryView_RefreshList);
 		refreshListAction.setToolTipText(UndoExampleMessages.UndoHistoryView_RefreshListToolTipText);
 
-		doubleClickAction = new Action() {
-			@Override
-			public void run() {
-				IUndoableOperation operation = (IUndoableOperation) viewer.getStructuredSelection().getFirstElement();
-				StringBuilder buf = new StringBuilder(operation.getLabel());
-				buf.append("\n");
-				buf.append("Enabled=");	//$NON-NLS-1$
-				buf.append(Boolean.toString(operation.canUndo()));
-				buf.append("\n");
-				buf.append(operation.getClass().toString());
-				showMessage(buf.toString());
+		doubleClickAction = Action.create(() -> {
+			IUndoableOperation operation = (IUndoableOperation) viewer.getStructuredSelection().getFirstElement();
+			StringBuilder buf = new StringBuilder(operation.getLabel());
+			buf.append("\n");
+			buf.append("Enabled="); //$NON-NLS-1$
+			buf.append(Boolean.toString(operation.canUndo()));
+			buf.append("\n");
+			buf.append(operation.getClass().toString());
+			showMessage(buf.toString());
 
-			}
-		};
+		});
 	}
 
 	/*
