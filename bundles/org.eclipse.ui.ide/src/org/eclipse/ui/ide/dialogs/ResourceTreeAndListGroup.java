@@ -29,7 +29,6 @@ import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -659,7 +658,7 @@ public class ResourceTreeAndListGroup extends EventManager {
 		if (parentLabel == null){
 			label = ""; //$NON-NLS-1$
 		}
-		IPath parentName = new Path(label);
+		IPath parentName = IPath.fromOSString(label);
 
 		String elementText = treeLabelProvider.getText(treeElement);
 		if(elementText == null) {

@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
@@ -416,7 +415,7 @@ public class NewFolderDialog extends SelectionStatusDialog {
 			updateStatus(nameStatus);
 			return false;
 		}
-		IPath path = new Path(name);
+		IPath path = IPath.fromOSString(name);
 		if (container.getFolder(path).exists() || container.getFile(path).exists()) {
 			updateStatus(IStatus.ERROR, NLS.bind(IDEWorkbenchMessages.NewFolderDialog_alreadyExists, name));
 			return false;

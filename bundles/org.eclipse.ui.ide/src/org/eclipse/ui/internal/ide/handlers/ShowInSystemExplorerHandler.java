@@ -15,6 +15,7 @@
  ******************************************************************************/
 
 package org.eclipse.ui.internal.ide.handlers;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -26,7 +27,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.services.statusreporter.StatusReporter;
@@ -132,7 +132,7 @@ public class ShowInSystemExplorerHandler extends AbstractHandler {
 		if (parameter == null) {
 			return null;
 		}
-		IPath path = new Path(parameter);
+		IPath path = IPath.fromOSString(parameter);
 		return ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
 	}
 

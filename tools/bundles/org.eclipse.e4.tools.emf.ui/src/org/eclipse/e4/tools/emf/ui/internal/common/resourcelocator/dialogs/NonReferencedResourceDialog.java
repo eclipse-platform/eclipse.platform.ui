@@ -27,7 +27,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.ContributionData;
 import org.eclipse.e4.tools.emf.ui.common.Plugin;
@@ -304,7 +303,7 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 												contributionData.className, contributionData.sourceType,
 												contributionData.iconPath);
 										cdConverted.installLocation = installLocation;
-										cdConverted.resourceRelativePath = Path.fromOSString(contributionData.iconPath)
+										cdConverted.resourceRelativePath = IPath.fromOSString(contributionData.iconPath)
 												.removeFirstSegments(1).toOSString();
 										doRequireBundle(bundleId, installLocation);
 										result = new ContributionDataFile(cdConverted);
@@ -422,7 +421,7 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 			if (dlg.open() == IDialogConstants.OK_ID) {
 				// String filename = ((ContributionDataFile)
 				// file).getContributionData().className + ".class";
-				IPath newPath = Path.fromOSString(dlg.getValue());
+				IPath newPath = IPath.fromOSString(dlg.getValue());
 				if (newPath.isEmpty() == false) {
 					CoreUtility.createFolder(project.getFolder(newPath));
 				}

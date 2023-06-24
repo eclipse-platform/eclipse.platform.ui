@@ -22,7 +22,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -172,7 +171,7 @@ public class ProjectFolderPickerDialog extends TitleAreaDialog {
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				value = Path.fromOSString(srcPath).removeLastSegments(1).toOSString();
+				value = IPath.fromOSString(srcPath).removeLastSegments(1).toOSString();
 				ProjectFolderPickerDialog.super.okPressed();
 			}
 		});
@@ -210,7 +209,7 @@ public class ProjectFolderPickerDialog extends TitleAreaDialog {
 
 		if (srcPath != null) {
 
-			IPath path = Path.fromOSString(srcPath);
+			IPath path = IPath.fromOSString(srcPath);
 
 			Composite compPath = new Composite(ret, SWT.NONE);
 			compPath.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));

@@ -54,7 +54,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
@@ -205,11 +204,11 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 					// If we can get a description pull the name from there
 					if (stream == null) {
 						if (projectArchiveFile instanceof ZipEntry) {
-							IPath path = new Path(
+							IPath path = IPath.fromOSString(
 									((ZipEntry) projectArchiveFile).getName());
 							projectName = path.segment(path.segmentCount() - 2);
 						} else if (projectArchiveFile instanceof TarEntry) {
-							IPath path = new Path(
+							IPath path = IPath.fromOSString(
 									((TarEntry) projectArchiveFile).getName());
 							projectName = path.segment(path.segmentCount() - 2);
 						}
@@ -224,7 +223,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 
 				// If we don't have the project name try again
 				if (projectName == null) {
-					IPath path = new Path(projectSystemFile.getPath());
+					IPath path = IPath.fromOSString(projectSystemFile.getPath());
 					// if the file is in the default location, use the directory
 					// name as the project name
 					if (isDefaultLocation(path)) {
@@ -1212,7 +1211,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 		} else {
 			File path = new File(dirName);
 			if (path.exists()) {
-				dialog.setFilterPath(new Path(dirName).toOSString());
+				dialog.setFilterPath(IPath.fromOSString(dirName).toOSString());
 			}
 		}
 
@@ -1356,7 +1355,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 		if (record.description == null) {
 			// error case
 			record.description = workspace.newProjectDescription(projectName);
-			IPath locationPath = new Path(record.projectSystemFile
+			IPath locationPath = IPath.fromOSString(record.projectSystemFile
 					.getAbsolutePath());
 
 			// If it is under the root use the default location

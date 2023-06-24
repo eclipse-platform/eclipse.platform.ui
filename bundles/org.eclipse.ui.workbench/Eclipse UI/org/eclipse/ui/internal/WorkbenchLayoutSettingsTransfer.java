@@ -20,7 +20,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.internal.preferences.WorkbenchSettingsTransfer;
@@ -119,7 +118,7 @@ public class WorkbenchLayoutSettingsTransfer extends WorkbenchSettingsTransfer {
 	 */
 	@Override
 	protected IPath getNewWorkbenchStateLocation(IPath newWorkspaceRoot) {
-		return newWorkspaceRoot.append(new Path(".metadata/.plugins/org.eclipse.e4.workbench")); //$NON-NLS-1$
+		return newWorkspaceRoot.append(IPath.fromOSString(".metadata/.plugins/org.eclipse.e4.workbench")); //$NON-NLS-1$
 	}
 
 }

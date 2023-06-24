@@ -33,7 +33,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.osgi.util.NLS;
@@ -201,7 +200,7 @@ public class IDEResourceInfoUtils {
 	 *         {@link CoreException}.
 	 */
 	public static IFileStore getFileStore(String string) {
-		Path location = new Path(string);
+		IPath location = IPath.fromOSString(string);
 		//see if there is an existing resource at that location that might have a different file store
 		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(location);
 		if (file != null) {

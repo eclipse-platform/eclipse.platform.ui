@@ -22,8 +22,8 @@ import java.util.HashMap;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProduct;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.branding.IProductConstants;
 import org.osgi.framework.Bundle;
@@ -61,7 +61,7 @@ public class ProductProperties extends BrandingProperties implements IProductCon
 	private static HashMap mappingsMap = new HashMap(4);
 
 	private static String[] loadMappings(Bundle definingBundle) {
-		URL location = FileLocator.find(definingBundle, new Path(ABOUT_MAPPINGS));
+		URL location = FileLocator.find(definingBundle, IPath.fromOSString(ABOUT_MAPPINGS));
 		PropertyResourceBundle bundle = null;
 		InputStream is;
 		if (location != null) {

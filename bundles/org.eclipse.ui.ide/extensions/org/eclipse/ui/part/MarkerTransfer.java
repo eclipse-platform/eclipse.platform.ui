@@ -24,7 +24,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.TransferData;
 
@@ -79,7 +78,7 @@ public class MarkerTransfer extends ByteArrayTransfer {
 	 * @return the specified marker
 	 */
 	private IMarker findMarker(String pathString, long id) {
-		IPath path = new Path(pathString);
+		IPath path = IPath.fromOSString(pathString);
 		IResource resource = workspace.getRoot().findMember(path);
 		if (resource != null) {
 			return resource.getMarker(id);

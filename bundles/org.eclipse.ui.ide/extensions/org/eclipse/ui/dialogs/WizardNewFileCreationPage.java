@@ -42,7 +42,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -210,7 +209,7 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 					String resourceName = resourceGroup.getResource();
 					if (resourceName.length() > 0) {
 						try {
-							return ((IContainer) resource).getFile(Path.fromOSString(resourceName));
+							return ((IContainer) resource).getFile(IPath.fromOSString(resourceName));
 						} catch (IllegalArgumentException e) {
 							// continue below.
 						}
@@ -756,7 +755,7 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
 		IStatus result = null;
-		if (resourceName.isEmpty() || Path.ROOT.isValidSegment(resourceName)) { // just a file (no subfolder(s))
+		if (resourceName.isEmpty() || IPath.ROOT.isValidSegment(resourceName)) { // just a file (no subfolder(s))
 			result = workspace.validateName(resourceName, IResource.FILE);
 		} else {
 			IPath containerPath = resourceGroup.getContainerFullPath();

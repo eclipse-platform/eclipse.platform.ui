@@ -37,7 +37,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.tests.harness.FileSystemHelper;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -156,7 +155,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 	@Test
 	public void test01FindSingleZip() throws IOException {
 		URL archiveFile = FileLocator.toFileURL(FileLocator.find(TestPlugin.getDefault().getBundle(),
-				new Path(DATA_PATH_PREFIX + ARCHIVE_HELLOWORLD + ".zip"), null));
+				IPath.fromOSString(DATA_PATH_PREFIX + ARCHIVE_HELLOWORLD + ".zip"), null));
 		WizardProjectsImportPage wpip = getNewWizard();
 		Set<String> projects = Set.of("HelloWorld");
 
@@ -181,7 +180,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 	@Test
 	public void test02FindSingleTar() throws IOException {
 		URL archiveFile = FileLocator.toFileURL(FileLocator.find(TestPlugin.getDefault().getBundle(),
-				new Path(DATA_PATH_PREFIX + ARCHIVE_HELLOWORLD + ".tar"), null));
+				IPath.fromOSString(DATA_PATH_PREFIX + ARCHIVE_HELLOWORLD + ".tar"), null));
 		WizardProjectsImportPage wpip = getNewWizard();
 		Set<String> projects = Set.of("HelloWorld");
 
@@ -206,7 +205,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 	@Test
 	public void test03FindSingleDirectory() throws IOException {
 		dataLocation = ImportTestUtils.copyDataLocation(WS_DATA_LOCATION);
-		IPath wsPath = new Path(dataLocation).append("HelloWorld");
+		IPath wsPath = IPath.fromOSString(dataLocation).append("HelloWorld");
 		WizardProjectsImportPage wpip = getNewWizard();
 		Set<String> projects = Set.of("HelloWorld");
 		// We're importing a directory
@@ -226,7 +225,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 	@Test
 	public void test04DoNotShowProjectWithSameName() throws IOException, CoreException {
 		dataLocation = ImportTestUtils.copyDataLocation(WS_DATA_LOCATION);
-		IPath wsPath = new Path(dataLocation);
+		IPath wsPath = IPath.fromOSString(dataLocation);
 
 		FileUtil.createProject("HelloWorld");
 
@@ -252,7 +251,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 			FileUtil.deleteProject(workspaceProject);
 		}
 		URL archiveFile = FileLocator.toFileURL(FileLocator.find(TestPlugin.getDefault().getBundle(),
-				new Path(DATA_PATH_PREFIX + ARCHIVE_HELLOWORLD + ".zip"), null));
+				IPath.fromOSString(DATA_PATH_PREFIX + ARCHIVE_HELLOWORLD + ".zip"), null));
 		WizardProjectsImportPage wpip = getNewWizard();
 		Set<String> projects = Set.of("HelloWorld");
 
@@ -301,7 +300,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 			FileUtil.deleteProject(workspaceProject);
 		}
 		URL archiveFile = FileLocator.toFileURL(FileLocator.find(TestPlugin.getDefault().getBundle(),
-				new Path(DATA_PATH_PREFIX + ARCHIVE_FILE_WITH_EMPTY_FOLDER + ".zip"), null));
+				IPath.fromOSString(DATA_PATH_PREFIX + ARCHIVE_FILE_WITH_EMPTY_FOLDER + ".zip"), null));
 		WizardProjectsImportPage wpip = getNewWizard();
 		Set<String> projects = Set.of("A");
 
@@ -349,7 +348,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 			FileUtil.deleteProject(workspaceProject);
 		}
 		URL archiveFile = FileLocator.toFileURL(FileLocator.find(TestPlugin.getDefault().getBundle(),
-				new Path(DATA_PATH_PREFIX + ARCHIVE_HELLOWORLD + ".tar"), null));
+				IPath.fromOSString(DATA_PATH_PREFIX + ARCHIVE_HELLOWORLD + ".tar"), null));
 		WizardProjectsImportPage wpip = getNewWizard();
 		Set<String> projects = Set.of("HelloWorld");
 
@@ -396,7 +395,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 			FileUtil.deleteProject(workspaceProject);
 		}
 		URL archiveFile = FileLocator.toFileURL(FileLocator.find(TestPlugin.getDefault().getBundle(),
-				new Path(DATA_PATH_PREFIX + ARCHIVE_FILE_WITH_EMPTY_FOLDER + ".tar"), null));
+				IPath.fromOSString(DATA_PATH_PREFIX + ARCHIVE_FILE_WITH_EMPTY_FOLDER + ".tar"), null));
 		WizardProjectsImportPage wpip = getNewWizard();
 		Set<String> projects = Set.of("A");
 
@@ -444,7 +443,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 		}
 
 		dataLocation = ImportTestUtils.copyDataLocation(WS_DATA_LOCATION);
-		IPath wsPath = new Path(dataLocation).append("HelloWorld");
+		IPath wsPath = IPath.fromOSString(dataLocation).append("HelloWorld");
 		WizardProjectsImportPage wpip = getNewWizard();
 		Set<String> projects = Set.of("HelloWorld");
 
@@ -487,7 +486,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 		}
 
 		dataLocation = ImportTestUtils.copyDataLocation(WS_DATA_LOCATION);
-		IPath wsPath = new Path(dataLocation).append("HelloWorld");
+		IPath wsPath = IPath.fromOSString(dataLocation).append("HelloWorld");
 		WizardProjectsImportPage wpip = getNewWizard();
 		Set<String> projects = Set.of("HelloWorld");
 
@@ -533,7 +532,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 		}
 
 		dataLocation = ImportTestUtils.copyDataLocation(WS_DATA_LOCATION);
-		IPath wsPath = new Path(dataLocation).append("HelloWorld");
+		IPath wsPath = IPath.fromOSString(dataLocation).append("HelloWorld");
 		WizardProjectsImportPage wpip = getNewWizard();
 		Set<String> projects = Set.of("HelloWorld");
 
@@ -621,7 +620,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 			FileUtil.deleteProject(workspaceProject);
 		}
 		URL archiveFile = FileLocator.toFileURL(FileLocator.find(TestPlugin.getDefault().getBundle(),
-				new Path(DATA_PATH_PREFIX + ARCHIVE_HELLOWORLD + ".zip"), null));
+				IPath.fromOSString(DATA_PATH_PREFIX + ARCHIVE_HELLOWORLD + ".zip"), null));
 		WizardProjectsImportPage wpip = getNewWizard();
 		Set<String> projects = Set.of("HelloWorld");
 
@@ -670,7 +669,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 			FileUtil.deleteProject(element);
 		}
 		URL archiveFile2 = FileLocator.toFileURL(FileLocator.find(TestPlugin.getDefault().getBundle(),
-				new Path(DATA_PATH_PREFIX + ARCHIVE_HELLOWORLD + ".zip"), null));
+				IPath.fromOSString(DATA_PATH_PREFIX + ARCHIVE_HELLOWORLD + ".zip"), null));
 		WizardProjectsImportPage wpip2 = getNewWizard();
 		Set<String> projects2 = Set.of("HelloWorld");
 
@@ -718,7 +717,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 		}
 
 		dataLocation = ImportTestUtils.copyDataLocation(WS_NESTED_DATA_LOCATION);
-		IPath wsPath = new Path(dataLocation).append("A");
+		IPath wsPath = IPath.fromOSString(dataLocation).append("A");
 		WizardProjectsImportPage wpip = getNewWizard();
 		Set<String> projects = Set.of("A", "B", "C");
 
@@ -938,7 +937,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 		Set<String> expectedNames = Set.of("Project1", "Project2", "Project3", "Project4", "Project5");
 
 		URL projectsArchive = FileLocator.toFileURL(FileLocator.find(TestPlugin.getDefault().getBundle(),
-				new Path(DATA_PATH_PREFIX + PROJECTS_ARCHIVE + ".zip"), null));
+				IPath.fromOSString(DATA_PATH_PREFIX + PROJECTS_ARCHIVE + ".zip"), null));
 
 		List<String> projectNames = getNonConflictingProjectsFromArchive(projectsArchive);
 
@@ -971,7 +970,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 	public void test17GetProjectRecordsShouldHandleCorruptProjects() throws Exception {
 
 		URL projectsArchive = FileLocator.toFileURL(FileLocator.find(TestPlugin.getDefault().getBundle(),
-				new Path(DATA_PATH_PREFIX + CORRUPT_PROJECTS_ARCHIVE + ".zip"), null));
+				IPath.fromOSString(DATA_PATH_PREFIX + CORRUPT_PROJECTS_ARCHIVE + ".zip"), null));
 
 		WizardProjectsImportPage newWizard = spy(getNewWizard());
 		ProjectRecord[] projectRecords = getProjectsFromArchive(newWizard, projectsArchive);
@@ -994,7 +993,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 	public void test18GetProjectRecordsShouldHandleCorruptAndConflictingProjects() throws Exception {
 
 		URL projectsArchive = FileLocator.toFileURL(FileLocator.find(TestPlugin.getDefault().getBundle(),
-				new Path(DATA_PATH_PREFIX + CORRUPT_PROJECTS_ARCHIVE + ".zip"), null));
+				IPath.fromOSString(DATA_PATH_PREFIX + CORRUPT_PROJECTS_ARCHIVE + ".zip"), null));
 
 		WizardProjectsImportPage newWizard = spy(getNewWizard());
 		FileUtil.createProject("Project1");
@@ -1198,7 +1197,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 		FileUtil.createProject("HelloWorld");
 
 		URL archiveFile = FileLocator.toFileURL(FileLocator.find(TestPlugin.getDefault().getBundle(),
-				new Path(DATA_PATH_PREFIX + ARCHIVE_HELLOWORLD + ".zip"), null));
+				IPath.fromOSString(DATA_PATH_PREFIX + ARCHIVE_HELLOWORLD + ".zip"), null));
 		WizardProjectsImportPage wpip = getNewWizard();
 		// We want the other one selected as we are importing an archive file
 		wpip.getProjectFromDirectoryRadio().setSelection((false));

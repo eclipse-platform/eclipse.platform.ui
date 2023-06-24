@@ -16,7 +16,7 @@ package org.eclipse.e4.internal.tools.wizards.model;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.e4.internal.tools.Messages;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
@@ -156,7 +156,7 @@ public class NewModelFilePage extends WizardPage {
 		if (dialog.open() == Window.OK) {
 			final Object[] result = dialog.getResult();
 			if (result.length == 1) {
-				containerText.setText(((Path) result[0]).toString());
+				containerText.setText(((IPath) result[0]).toString());
 			}
 		}
 	}
@@ -167,7 +167,7 @@ public class NewModelFilePage extends WizardPage {
 
 	private void dialogChanged() {
 		final IResource container = ResourcesPlugin.getWorkspace().getRoot()
-				.findMember(new Path(getContainerName()));
+				.findMember(IPath.fromOSString(getContainerName()));
 		final String fileName = getFileName();
 
 		if (getContainerName().length() == 0) {

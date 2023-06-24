@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
@@ -71,7 +70,7 @@ public class CopyProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 	 */
 	public CopyProjectOperation(IProject project, String name, URI location,
 			String label) {
-		super(new IResource[] { project }, new Path(name), label);
+		super(new IResource[] { project }, IPath.fromOSString(name), label);
 		Assert.isLegal(project != null);
 		originalProject = project;
 		if (location != null

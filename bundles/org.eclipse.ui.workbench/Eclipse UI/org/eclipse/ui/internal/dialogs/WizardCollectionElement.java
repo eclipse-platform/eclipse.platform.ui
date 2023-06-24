@@ -22,7 +22,6 @@ import java.util.Objects;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.Viewer;
@@ -230,7 +229,7 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
 	@Override
 	public IPath getPath() {
 		if (parent == null) {
-			return new Path(""); //$NON-NLS-1$
+			return IPath.fromOSString(""); //$NON-NLS-1$
 		}
 
 		return parent.getPath().append(getId());

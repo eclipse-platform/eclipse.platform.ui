@@ -44,7 +44,6 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.content.IContentDescription;
@@ -329,7 +328,7 @@ public class ResourceInfoPage extends PropertyPage {
 			ResourceManager resourceManager = new LocalResourceManager(JFaceResources.getResources(),
 					goToLocationButton);
 			Bundle bundle = FrameworkUtil.getBundle(getClass());
-			URL goToFolderUrl = FileLocator.find(bundle, new Path("icons/full/obj16/goto_input.png"), //$NON-NLS-1$
+			URL goToFolderUrl = FileLocator.find(bundle, IPath.fromOSString("icons/full/obj16/goto_input.png"), //$NON-NLS-1$
 					null);
 			goToLocationButton.setImage(resourceManager.createImage(ImageDescriptor.createFromURL(goToFolderUrl)));
 			goToLocationButton.setToolTipText(LOCATION_BUTTON_TOOLTIP);
@@ -389,7 +388,7 @@ public class ResourceInfoPage extends PropertyPage {
 	protected void editLinkLocation() {
 		IResource resource = Adapters.adapt(getElement(), IResource.class);
 		String locationFormat = resource.getPathVariableManager().convertFromUserEditableFormat(locationValue.getText(), true);
-		IPath location = Path.fromOSString(locationFormat);
+		IPath location = IPath.fromOSString(locationFormat);
 
 		PathVariableDialog dialog = new PathVariableDialog(getShell(),
 				PathVariableDialog.EDIT_LINK_LOCATION, resource.getType(),
@@ -400,7 +399,7 @@ public class ResourceInfoPage extends PropertyPage {
 		if (dialog.open() == Window.CANCEL) {
 			return;
 		}
-		location = Path.fromOSString(dialog.getVariableValue());
+		location = IPath.fromOSString(dialog.getVariableValue());
 		newResourceLocation = location;
 		refreshLinkLocation();
 	}

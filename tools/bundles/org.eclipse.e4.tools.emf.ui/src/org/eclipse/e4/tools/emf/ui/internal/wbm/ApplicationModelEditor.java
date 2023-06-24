@@ -25,9 +25,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -108,7 +108,8 @@ public class ApplicationModelEditor extends ModelEditor {
 				return;
 			}
 
-			IResourceDelta delta = event.getDelta().findMember(new Path(resource.getURI().toPlatformString(false)));
+			IResourceDelta delta = event.getDelta()
+					.findMember(IPath.fromOSString(resource.getURI().toPlatformString(false)));
 			if (delta == null) {
 				return;
 			}

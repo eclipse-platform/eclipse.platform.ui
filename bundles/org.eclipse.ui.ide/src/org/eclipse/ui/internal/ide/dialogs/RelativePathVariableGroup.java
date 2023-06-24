@@ -23,7 +23,6 @@ import org.eclipse.core.resources.IPathVariableManager;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -345,7 +344,7 @@ public class RelativePathVariableGroup {
 			IContainer target) {
 		IPath[] paths = new IPath[names.length];
 		for (int i = 0; i < names.length; i++) {
-			paths[i] = Path.fromOSString(names[i]);
+			paths[i] = IPath.fromOSString(names[i]);
 		}
 		return getPreferredVariable(paths, target);
 	}

@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ISelection;
@@ -328,7 +328,7 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage {
 
 		if (wizardCategories != null) {
 			for (String expandedCategoryPath : expandedCategoryPaths) {
-				IWizardCategory category = wizardCategories.findCategory(new Path(expandedCategoryPath));
+				IWizardCategory category = wizardCategories.findCategory(IPath.fromOSString(expandedCategoryPath));
 				if (category != null) {
 					categoriesToExpand.add(category);
 				}
@@ -356,7 +356,7 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage {
 			return;
 		}
 
-		Object selected = wizardCategories.findCategory(new Path(selectedId));
+		Object selected = wizardCategories.findCategory(IPath.fromOSString(selectedId));
 
 		if (selected == null) {
 			selected = wizardCategories.findWizard(selectedId);

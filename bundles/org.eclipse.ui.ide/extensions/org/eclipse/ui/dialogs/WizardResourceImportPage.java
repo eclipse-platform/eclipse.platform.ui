@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.equinox.bidi.StructuredTextTypeHandlerFactory;
 import org.eclipse.jface.util.BidiUtils;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -301,10 +300,10 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
 		}
 
 		if (this.initialContainerFieldValue != null && this.initialContainerFieldValue.length() > 0) {
-			return new Path(this.initialContainerFieldValue).makeAbsolute();
+			return IPath.fromOSString(this.initialContainerFieldValue).makeAbsolute();
 		}
 
-		return Path.EMPTY;
+		return IPath.EMPTY;
 	}
 
 	/**

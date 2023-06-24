@@ -23,7 +23,6 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.equinox.bidi.StructuredTextTypeHandlerFactory;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -526,7 +525,7 @@ public class WizardFileSystemResourceExportPage1 extends
 	protected String getConflictingContainerNameFor(String targetDirectory) {
 
 		IPath rootPath = ResourcesPlugin.getWorkspace().getRoot().getLocation();
-		IPath testPath = new Path(targetDirectory);
+		IPath testPath = IPath.fromOSString(targetDirectory);
 		// cannot export into workspace root
 		if(testPath.equals(rootPath))
 			return rootPath.lastSegment();
@@ -552,7 +551,7 @@ public class WizardFileSystemResourceExportPage1 extends
 	 */
 	private String getOverlappingProjectName(String targetDirectory){
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IPath testPath = new Path(targetDirectory);
+		IPath testPath = IPath.fromOSString(targetDirectory);
 		IContainer[] containers = root.findContainersForLocation(testPath);
 		if(containers.length > 0){
 			return containers[0].getProject().getName();

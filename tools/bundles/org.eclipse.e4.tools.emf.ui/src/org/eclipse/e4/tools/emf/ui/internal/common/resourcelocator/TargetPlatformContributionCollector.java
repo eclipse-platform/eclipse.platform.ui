@@ -46,7 +46,6 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider;
@@ -238,7 +237,7 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 		// If class is in a java project, strip the source directory
 		// String path = e.path;// .replace("/", ".") + e.name;
 		// path = stripSourceDirectory(path, e.installLocation);
-		IPath ip = Path.fromOSString(e.path);
+		IPath ip = IPath.fromOSString(e.path);
 		ip = ip.addTrailingSeparator().makeRelative();
 		ip = ip.append(e.name);
 		final String className = ip.toOSString().replace(File.separatorChar, '.');
@@ -544,7 +543,7 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 					if (e.path == null) {
 						e.path = ""; //$NON-NLS-1$
 					}
-					e.relativePath = Path
+					e.relativePath = IPath
 							.fromOSString(file.getAbsolutePath().replace(e.installLocation, "")).makeRelative().toOSString(); //$NON-NLS-1$
 
 					e.bundleSymName = bundleName;

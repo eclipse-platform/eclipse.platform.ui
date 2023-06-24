@@ -28,7 +28,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.tests.harness.util.FileTool;
 
 public class ResourceTestHelper {
@@ -39,16 +39,16 @@ public class ResourceTestHelper {
 	}
 
 	public static void copy(String src, String dest) throws CoreException {
-		IFile file= getRoot().getFile(new Path(src));
-		file.copy(new Path(dest), true, null);
+		IFile file = getRoot().getFile(IPath.fromOSString(src));
+		file.copy(IPath.fromOSString(dest), true, null);
 	}
 
 	public static void delete(String file) throws CoreException {
-		getRoot().getFile(new Path(file)).delete(true, null);
+		getRoot().getFile(IPath.fromOSString(file)).delete(true, null);
 	}
 
 	public static IFile findFile(String path) {
-		return getRoot().getFile(new Path(path));
+		return getRoot().getFile(IPath.fromOSString(path));
 	}
 
 	public static IFile[] findFiles(String prefix, String suffix, int i, int n) {
@@ -62,7 +62,7 @@ public class ResourceTestHelper {
 	}
 
 	public static StringBuilder read(String src) throws IOException, CoreException {
-		return FileTool.readToBuilder(new InputStreamReader(getRoot().getFile(new Path(src)).getContents()));
+		return FileTool.readToBuilder(new InputStreamReader(getRoot().getFile(IPath.fromOSString(src)).getContents()));
 	}
 
 	public static void write(String dest, final String content) throws CoreException {
@@ -73,7 +73,7 @@ public class ResourceTestHelper {
 				return fReader.read();
 			}
 		};
-		getRoot().getFile(new Path(dest)).create(stream, true, null);
+		getRoot().getFile(IPath.fromOSString(dest)).create(stream, true, null);
 	}
 
 

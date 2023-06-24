@@ -10,5 +10,5 @@ Export-Package: org.eclipse.e4.ui.dialogs.filteredtree,
  org.eclipse.e4.ui.dialogs.textbundles;x-internal:=true,
  org.eclipse.e4.ui.internal.dialogs.about;x-internal:=true
 Require-Bundle: org.eclipse.jface;bundle-version="3.11.0",
- org.eclipse.core.runtime;bundle-version="3.18.0"
+ org.eclipse.core.runtime;bundle-version="3.27.0"
 Automatic-Module-Name: org.eclipse.e4.ui.dialogs

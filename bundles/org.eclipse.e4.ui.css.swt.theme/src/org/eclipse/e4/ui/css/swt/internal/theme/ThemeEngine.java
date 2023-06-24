@@ -38,7 +38,6 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -105,7 +104,7 @@ public class ThemeEngine implements IThemeEngine {
 		} catch (IOException e1) {
 		}
 
-		IPath path = new Path(e4CSSPath + File.separator);
+		IPath path = IPath.fromOSString(e4CSSPath + File.separator);
 		File modDir= new File(path.toFile().toURI());
 		if (!modDir.exists()) {
 			modDir.mkdirs();

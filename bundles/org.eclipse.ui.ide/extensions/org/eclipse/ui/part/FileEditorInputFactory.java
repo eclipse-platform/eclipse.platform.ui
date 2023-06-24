@@ -13,12 +13,10 @@
  *******************************************************************************/
 package org.eclipse.ui.part;
 
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.Path;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
-
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
 
@@ -61,8 +59,7 @@ public class FileEditorInputFactory implements IElementFactory {
 
 		// Get a handle to the IFile...which can be a handle
 		// to a resource that does not exist in workspace
-		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(
-				new Path(fileName));
+		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(IPath.fromOSString(fileName));
 		if (file != null) {
 			return new FileEditorInput(file);
 		}

@@ -29,7 +29,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.bidi.StructuredTextTypeHandlerFactory;
 import org.eclipse.jface.dialogs.Dialog;
@@ -287,7 +286,7 @@ public class CreateLinkedResourceGroup {
 				String value = updatableResourceName.getValue();
 				if (value == null
 						|| value.isEmpty() || value.equals(lastUpdatedValue)) {
-					IPath linkTargetPath = new Path(linkTarget);
+					IPath linkTargetPath = IPath.fromOSString(linkTarget);
 					String lastSegment = linkTargetPath.lastSegment();
 					if (lastSegment != null) {
 						lastUpdatedValue = lastSegment;
@@ -432,7 +431,7 @@ public class CreateLinkedResourceGroup {
 		//  3) A path variable relative path, ex:		VAR\foo\bar\file.txt
 		URI uri;
 		try {
-			IPath path = Path.fromOSString(linkTarget);
+			IPath path = IPath.fromOSString(linkTarget);
 			if (path != null && path.toFile().exists())
 				return URIUtil.toURI(path);
 
@@ -705,7 +704,7 @@ public class CreateLinkedResourceGroup {
 		if (configuration == null
 				|| EFS.SCHEME_FILE.equals(configuration.getScheme())) {
 			// Special handling for UNC paths. See bug 90825
-			IPath location = new Path(linkTarget);
+			IPath location = IPath.fromOSString(linkTarget);
 			if (location.isUNC()) {
 				return createStatus(
 						IStatus.WARNING,

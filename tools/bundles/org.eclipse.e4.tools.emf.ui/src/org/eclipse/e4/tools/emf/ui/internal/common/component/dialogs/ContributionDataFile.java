@@ -41,7 +41,6 @@ import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentDescription;
@@ -63,7 +62,7 @@ public class ContributionDataFile implements IFile {
 	public ContributionDataFile(ContributionData data) {
 		this.data = data;
 		if (data.iconPath != null) {
-			path = Path.fromOSString(data.iconPath);
+			path = IPath.fromOSString(data.iconPath);
 		}
 	}
 
@@ -78,9 +77,9 @@ public class ContributionDataFile implements IFile {
 	@Override
 	public IPath getProjectRelativePath() {
 		if (getContributionData().installLocation != null) {
-			return new Path(data.resourceRelativePath);
+			return IPath.fromOSString(data.resourceRelativePath);
 		}
-		return new Path(data.iconPath);
+		return IPath.fromOSString(data.iconPath);
 	}
 
 	@Override

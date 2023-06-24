@@ -30,7 +30,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
@@ -102,7 +101,7 @@ public class ZipLeveledStructureProvider implements
 	 * Creates a new file zip entry with the specified name.
 	 */
 	protected void createFile(ZipEntry entry) {
-		IPath pathname = new Path(entry.getName());
+		IPath pathname = IPath.fromOSString(entry.getName());
 		ZipEntry parent;
 		if (pathname.segmentCount() == 1) {
 			parent = root;
@@ -172,7 +171,7 @@ public class ZipLeveledStructureProvider implements
 			return ((ZipEntry) element).getName();
 		}
 
-		return stripPath(new Path(((ZipEntry) element).getName()).lastSegment());
+		return stripPath(IPath.fromOSString(((ZipEntry) element).getName()).lastSegment());
 	}
 
 	/**
@@ -219,7 +218,7 @@ public class ZipLeveledStructureProvider implements
 	protected void initialize() {
 		children = new HashMap<>(1000);
 
-		IPath zipFileDirPath = (new Path(zipFile.getName())).removeLastSegments(1);
+		IPath zipFileDirPath = IPath.fromOSString(zipFile.getName()).removeLastSegments(1);
 		String canonicalDestinationDirPath = zipFileDirPath.toString();
 		File zipDestinationDir = new File(zipFileDirPath.toString());
 
@@ -244,7 +243,7 @@ public class ZipLeveledStructureProvider implements
 					invalidEntries.add(entry.getName());
 					throw new IOException("Entry is outside of the target dir: " + entry.getName()); //$NON-NLS-1$
 				}
-				IPath path = new Path(entry.getName()).addTrailingSeparator();
+				IPath path = IPath.fromOSString(entry.getName()).addTrailingSeparator();
 
 				if (entry.isDirectory()) {
 					createContainer(path);

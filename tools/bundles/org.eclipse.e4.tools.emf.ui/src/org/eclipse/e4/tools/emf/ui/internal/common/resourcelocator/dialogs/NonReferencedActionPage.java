@@ -27,7 +27,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.ContributionData;
 import org.eclipse.e4.tools.emf.ui.common.Plugin;
@@ -310,7 +309,7 @@ public class NonReferencedActionPage extends WizardPage {
 												contributionData.className, contributionData.sourceType,
 												contributionData.iconPath);
 										cdConverted.installLocation = installLocation;
-										cdConverted.resourceRelativePath = Path.fromOSString(contributionData.iconPath)
+										cdConverted.resourceRelativePath = IPath.fromOSString(contributionData.iconPath)
 												.removeFirstSegments(1).toOSString();
 										doRequireBundle(bundleId, installLocation);
 										context.set("resolvedFile", new ContributionDataFile(cdConverted)); //$NON-NLS-1$
@@ -386,7 +385,7 @@ public class NonReferencedActionPage extends WizardPage {
 		try {
 			// String filename = ((ContributionDataFile)
 			// file).getContributionData().className + ".class";
-			IPath newPath = Path.fromOSString(path);
+			IPath newPath = IPath.fromOSString(path);
 			if (newPath.isEmpty() == false) {
 				CoreUtility.createFolder(project.getFolder(newPath));
 			}

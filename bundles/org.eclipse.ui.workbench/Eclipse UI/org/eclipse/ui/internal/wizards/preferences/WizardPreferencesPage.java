@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IPreferenceFilter;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -903,7 +903,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements Listen
 	@Override
 	public String queryOverwrite(String pathString) {
 
-		Path path = new Path(pathString);
+		IPath path = IPath.fromOSString(pathString);
 
 		String messageString;
 		// Break the message up if there is a file name and a directory

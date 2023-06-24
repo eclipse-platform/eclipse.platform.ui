@@ -13,22 +13,17 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.actions;
 
-import org.eclipse.osgi.util.NLS;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.FileDialog;
-
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
-
-import org.eclipse.core.runtime.Path;
-
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
-
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
@@ -91,7 +86,7 @@ public class OpenLocalFileAction extends Action implements IWorkbenchWindowActio
 			int numberOfFilesNotFound =  0;
 			StringBuilder notFound =  new StringBuilder();
 			for (String name : names) {
-				IFileStore fileStore =  EFS.getLocalFileSystem().getStore(new Path(filterPath));
+				IFileStore fileStore =  EFS.getLocalFileSystem().getStore(IPath.fromOSString(filterPath));
 				fileStore =  fileStore.getChild(name);
 				IFileInfo fetchInfo = fileStore.fetchInfo();
 				if (!fetchInfo.isDirectory() && fetchInfo.exists()) {

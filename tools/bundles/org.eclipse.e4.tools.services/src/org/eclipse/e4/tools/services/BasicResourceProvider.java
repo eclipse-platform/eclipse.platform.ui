@@ -5,7 +5,7 @@ import java.net.URL;
 import java.util.Map;
 
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -24,7 +24,7 @@ public abstract class BasicResourceProvider implements IResourceProviderService 
 
 	@Override
 	public Image getImage(Display display, String key) {
-		final URL url = FileLocator.find(context.getBundle(), new Path(properties.get(key)), null);
+		final URL url = FileLocator.find(context.getBundle(), IPath.fromOSString(properties.get(key)), null);
 
 		if (url != null) {
 			try (InputStream stream = url.openStream()) {
