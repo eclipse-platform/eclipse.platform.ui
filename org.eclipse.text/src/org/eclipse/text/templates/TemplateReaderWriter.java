@@ -175,7 +175,7 @@ public class TemplateReaderWriter {
 				String id= getStringValue(attributes, ID_ATTRIBUTE, null);
 				if (id != null && ids.contains(id)) {
 					String PLUGIN_ID= "org.eclipse.jface.text"; //$NON-NLS-1$
-					ILog log= Platform.getLog(Platform.getBundle(PLUGIN_ID));
+					ILog log= ILog.of(Platform.getBundle(PLUGIN_ID));
 					String message= NLS.bind(TextTemplateMessages.getString("TemplateReaderWriter.duplicate.id"), id); //$NON-NLS-1$
 					log.log(new Status(IStatus.WARNING, PLUGIN_ID, IStatus.OK, message, null));
 				} else {

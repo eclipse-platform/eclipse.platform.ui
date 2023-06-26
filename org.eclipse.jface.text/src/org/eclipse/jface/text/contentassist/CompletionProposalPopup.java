@@ -892,7 +892,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 				displayString= JFaceTextMessages.getString("CompletionProposalPopup.error_retrieving_proposal"); //$NON-NLS-1$
 
 				String PLUGIN_ID= "org.eclipse.jface.text"; //$NON-NLS-1$
-				ILog log= Platform.getLog(Platform.getBundle(PLUGIN_ID));
+				ILog log= ILog.of(Platform.getBundle(PLUGIN_ID));
 				log.log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, JFaceTextMessages.getString("CompletionProposalPopup.unexpected_error"), e)); //$NON-NLS-1$
 			}
 

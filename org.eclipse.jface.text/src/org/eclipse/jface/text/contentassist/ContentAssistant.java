@@ -61,6 +61,7 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.core.commands.IHandler;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
@@ -874,7 +875,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			String message= JFaceTextMessages.getString(fMessageKey);
 
 			IStatus status= new Status(IStatus.ERROR, PLUGIN_ID, message, exception);
-			Platform.getLog(Platform.getBundle(PLUGIN_ID)).log(status);
+			ILog.of(Platform.getBundle(PLUGIN_ID)).log(status);
 
 			fLastErrorMessage= message;
 		}

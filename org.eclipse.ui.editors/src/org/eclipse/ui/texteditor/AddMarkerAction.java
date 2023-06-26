@@ -153,7 +153,7 @@ public class AddMarkerAction extends TextEditorAction {
 			operationHistory.execute(operation, null, context);
 		} catch (ExecutionException x) {
 			Bundle bundle= Platform.getBundle(PlatformUI.PLUGIN_ID);
-			ILog log= Platform.getLog(bundle);
+			ILog log= ILog.of(bundle);
 			String msg= getString(fBundle, fPrefix + "error.dialog.message", fPrefix + "error.dialog.message"); //$NON-NLS-2$ //$NON-NLS-1$
 			log.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, msg, x));
 		}

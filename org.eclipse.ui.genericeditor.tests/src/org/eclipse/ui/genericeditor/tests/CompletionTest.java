@@ -85,7 +85,7 @@ public class CompletionTest extends AbstratGenericEditorTest {
 
 	@Test
 	public void testDefaultContentAssistBug570488() throws Exception {
-		ILog log= Platform.getLog(Platform.getBundle("org.eclipse.jface.text"));
+		ILog log= ILog.of(Platform.getBundle("org.eclipse.jface.text"));
 		TestLogListener listener= new TestLogListener();
 		log.addLogListener(listener);
 		createAndOpenFile("Bug570488.txt", "bar 'bar'");

@@ -351,7 +351,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	 */
 	private void logException(IStatus status) {
 		Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
-		ILog log= Platform.getLog(bundle);
+		ILog log= ILog.of(bundle);
 		log.log(status);
 	}
 
@@ -394,7 +394,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 			it= model.getAnnotationIterator(line.getOffset(), line.getLength() + 1, true, true);
 		} catch (BadLocationException e) {
 			Bundle bundle= Platform.getBundle(PlatformUI.PLUGIN_ID);
-			Platform.getLog(bundle).log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, e.getLocalizedMessage(), e));
+			ILog.of(bundle).log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, e.getLocalizedMessage(), e));
 
 			it= model.getAnnotationIterator();
 		}

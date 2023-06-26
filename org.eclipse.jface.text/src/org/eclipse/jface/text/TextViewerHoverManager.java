@@ -180,7 +180,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 					// Just swallow the exception if the operation was canceled
 				} catch (RuntimeException ex) {
 					String PLUGIN_ID= "org.eclipse.jface.text"; //$NON-NLS-1$
-					ILog log= Platform.getLog(Platform.getBundle(PLUGIN_ID));
+					ILog log= ILog.of(Platform.getBundle(PLUGIN_ID));
 					log.log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, "Unexpected runtime error while computing a text hover", ex)); //$NON-NLS-1$
 				} finally {
 					synchronized (fMutex) {

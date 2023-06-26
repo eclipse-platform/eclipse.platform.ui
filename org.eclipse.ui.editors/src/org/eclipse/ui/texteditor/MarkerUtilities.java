@@ -218,7 +218,7 @@ public final class MarkerUtilities {
 	 */
 	private static void handleCoreException(CoreException e) {
 		Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
-		ILog log= Platform.getLog(bundle);
+		ILog log= ILog.of(bundle);
 		log.log(e.getStatus());
 	}
 

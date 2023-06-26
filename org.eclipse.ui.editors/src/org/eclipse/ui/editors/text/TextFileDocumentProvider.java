@@ -1197,7 +1197,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	 */
 	protected void handleCoreException(CoreException exception, String message) {
 		Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
-		ILog log= Platform.getLog(bundle);
+		ILog log= ILog.of(bundle);
 		IStatus status= message != null ? new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, message, exception) : exception.getStatus();
 		log.log(status);
 	}

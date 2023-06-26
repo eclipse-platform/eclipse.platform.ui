@@ -109,7 +109,7 @@ public abstract class FileBufferFunctions {
 
 		private static final String BUNDLE_ID= "org.eclipse.core.filebuffers.tests";
 
-		ILog log= Platform.getLog(Platform.getBundle(BUNDLE_ID));
+		ILog log= ILog.of(Platform.getBundle(BUNDLE_ID));
 
 		@Override
 		protected void failed(Throwable e, Description description) {

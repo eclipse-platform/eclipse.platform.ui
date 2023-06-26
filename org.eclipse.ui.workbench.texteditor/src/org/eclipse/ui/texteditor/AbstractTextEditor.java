@@ -4911,7 +4911,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			}
 			if (status == null || status.getSeverity() != IStatus.CANCEL) {
 				Bundle bundle= Platform.getBundle(PlatformUI.PLUGIN_ID);
-				ILog log= Platform.getLog(bundle);
+				ILog log= ILog.of(bundle);
 				log.log(x.getStatus());
 
 				Shell shell= getSite().getShell();
@@ -4984,7 +4984,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 			} catch (CoreException x) {
 				Bundle bundle= Platform.getBundle(PlatformUI.PLUGIN_ID);
-				ILog log= Platform.getLog(bundle);
+				ILog log= ILog.of(bundle);
 				log.log(x.getStatus());
 			}
 		}
@@ -7174,7 +7174,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=569286
 				if (disconnectStack != null && !disconnectStackShown) {
 					Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
-					ILog log = Platform.getLog(bundle);
+					ILog log = ILog.of(bundle);
 					disconnectStack.addSuppressed(new IllegalStateException("doSave after disconnect")); //$NON-NLS-1$
 					Status status = new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, null, disconnectStack);
 					log.log(status);
@@ -7193,7 +7193,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=569286
 				if (disconnectStack != null && !disconnectStackShown) {
 					Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
-					ILog log = Platform.getLog(bundle);
+					ILog log = ILog.of(bundle);
 					disconnectStack.addSuppressed(new IllegalStateException("isDirty check after disconnect")); //$NON-NLS-1$
 					Status status = new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, disconnectStack.getMessage(),
 							disconnectStack);

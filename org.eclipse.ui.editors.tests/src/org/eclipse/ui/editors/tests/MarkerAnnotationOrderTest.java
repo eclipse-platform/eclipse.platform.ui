@@ -88,7 +88,7 @@ public class MarkerAnnotationOrderTest {
 	public void testDirectDependency() {
 		final ArrayList<IStatus> list= new ArrayList<>(2);
 		Bundle bundle= Platform.getBundle(EditorsUI.PLUGIN_ID);
-		ILog log= Platform.getLog(bundle);
+		ILog log= ILog.of(bundle);
 		log.addLogListener((status, plugin) -> list.add(status));
 
 		TestMarkerAnnotationModel t1= new TestMarkerAnnotationModel();
@@ -137,7 +137,7 @@ public class MarkerAnnotationOrderTest {
 
 	private static void log(Exception ex) {
 		String PLUGIN_ID= "org.eclipse.jface.text"; //$NON-NLS-1$
-		ILog log= Platform.getLog(Platform.getBundle(PLUGIN_ID));
+		ILog log= ILog.of(Platform.getBundle(PLUGIN_ID));
 		log.log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, ex.getMessage(), ex));
 	}
 

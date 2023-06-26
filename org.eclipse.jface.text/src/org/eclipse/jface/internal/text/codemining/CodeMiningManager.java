@@ -165,7 +165,7 @@ public class CodeMiningManager implements Runnable {
 		Bundle plugin= Platform.getBundle(PLUGIN_ID);
 		if (plugin != null) {
 			// In OSGi context, uses Platform Text log
-			ILog log= Platform.getLog(plugin);
+			ILog log= ILog.of(plugin);
 			log.log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, e.getMessage(), e));
 		} else {
 			// In java main context, print stack trace

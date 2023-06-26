@@ -2,12 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui.genericeditor.tests;singleton:=true
-Bundle-Version: 1.3.100.qualifier
+Bundle-Version: 1.3.200.qualifier
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.ui.genericeditor.tests,
  org.eclipse.ui.genericeditor.tests.contributions
-Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.6.0,4.0.0)",
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.28.0,4.0.0)",
  org.junit;bundle-version="4.12.0",
  org.eclipse.jface;bundle-version="[3.5.0,4.0.0)",
  org.eclipse.text;bundle-version="[3.5.0,4.0.0)",

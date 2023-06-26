@@ -167,7 +167,7 @@ public class CodeMiningProjectionViewerTest {
 			logError.set(status);
 		};
 		if (bundle != null && bundle.getState() == Bundle.ACTIVE) {
-			log = Platform.getLog(bundle);
+			log = ILog.of(bundle);
 			log.addLogListener(logListener);
 		}
 		try {

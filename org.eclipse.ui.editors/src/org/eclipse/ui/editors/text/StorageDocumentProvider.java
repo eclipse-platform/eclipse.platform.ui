@@ -267,7 +267,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	protected void handleCoreException(CoreException exception, String message) {
 
 		Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
-		ILog log= Platform.getLog(bundle);
+		ILog log= ILog.of(bundle);
 
 		if (message != null)
 			log.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, message, exception));

@@ -318,7 +318,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	 */
 	protected void handleCoreException(CoreException exception, String message) {
 		Bundle bundle= Platform.getBundle(PlatformUI.PLUGIN_ID);
-		ILog log= Platform.getLog(bundle);
+		ILog log= ILog.of(bundle);
 
 		if (message != null)
 			log.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, message, exception));
@@ -535,7 +535,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 			operationHistory.execute(operation, null, context);
 		} catch (ExecutionException e) {
 			Bundle bundle= Platform.getBundle(PlatformUI.PLUGIN_ID);
-			ILog log= Platform.getLog(bundle);
+			ILog log= ILog.of(bundle);
 			String msg= getString(fBundle, fPrefix + "error.dialog.message", fPrefix + "error.dialog.message"); //$NON-NLS-2$ //$NON-NLS-1$
 			log.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, msg, e));
 		}

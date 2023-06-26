@@ -129,7 +129,7 @@ public class DocumentProviderRegistry {
 		if (extensionPoint == null) {
 			String msg= NLSUtility.format(TextEditorMessages.DocumentProviderRegistry_error_extension_point_not_found, PlatformUI.PLUGIN_ID);
 			Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
-			ILog log= Platform.getLog(bundle);
+			ILog log= ILog.of(bundle);
 			log.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, msg, null));
 			return;
 		}

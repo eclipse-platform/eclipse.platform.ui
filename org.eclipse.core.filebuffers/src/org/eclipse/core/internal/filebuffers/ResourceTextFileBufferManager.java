@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
@@ -152,13 +153,13 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 						if (document.getDocumentPartitioner() != null) {
 							String message= NLSUtility.format(FileBuffersMessages.TextFileBufferManager_warning_documentSetupInstallsDefaultPartitioner, participant.getClass());
 							IStatus status= new Status(IStatus.WARNING, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, message, null);
-							Platform.getLog(ResourceTextFileBufferManager.class).log(status);
+							ILog.of(ResourceTextFileBufferManager.class).log(status);
 						}
 					}
 					@Override
 					public void handleException(Throwable t) {
 						IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.TextFileBufferManager_error_documentSetupFailed, t);
-						Platform.getLog(ResourceTextFileBufferManager.class).log(status);
+						ILog.of(ResourceTextFileBufferManager.class).log(status);
 					}
 				};
 				SafeRunner.run(runnable);
@@ -189,7 +190,7 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 				@Override
 				public void handleException(Throwable t) {
 					IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.TextFileBufferManager_error_documentFactoryFailed, t);
-					Platform.getLog(ResourceTextFileBufferManager.class).log(status);
+					ILog.of(ResourceTextFileBufferManager.class).log(status);
 				}
 			};
 			SafeRunner.run(runnable);

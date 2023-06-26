@@ -80,7 +80,7 @@ public class StatusEditorTest {
 	public void doNotThrowOnActivationInStale() throws Exception {
 		IEditorPart editor1 = openNonExistentFile(page, new URI("file:/1.txt"));
 		openNonExistentFile(page, new URI("file:/2.txt"));
-		ILog log = Platform.getLog(Platform.getBundle("org.eclipse.e4.ui.workbench"));
+		ILog log = ILog.of(Platform.getBundle("org.eclipse.e4.ui.workbench"));
 		List<String> logEvents = new ArrayList<>();
 		ILogListener listener = (status, plugin) -> logEvents.add(status.toString());
 		log.addLogListener(listener);
