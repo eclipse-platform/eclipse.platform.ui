@@ -24,6 +24,7 @@
     <module>org.eclipse.e4.ui.examples.job</module>
     <module>org.eclipse.jface.examples.databinding</module>
     <module>org.eclipse.jface.snippets</module>
+    <module>org.eclipse.jface.text.examples</module>
     <module>org.eclipse.ui.examples.adapterservice</module>
     <module>org.eclipse.ui.examples.contributions</module>
     <module>org.eclipse.ui.examples.fieldassist</module>
@@ -32,11 +33,13 @@
     <module>org.eclipse.ui.examples.markerHelp</module>
     <module>org.eclipse.ui.examples.multipageeditor</module>
     <module>org.eclipse.ui.examples.navigator</module>
+    <module>org.eclipse.ui.examples.perspective</module>
     <module>org.eclipse.ui.examples.propertysheet</module>
     <module>org.eclipse.ui.examples.readmetool</module>
     <module>org.eclipse.ui.examples.undo</module>
     <module>org.eclipse.ui.examples.uriSchemeHandler</module>
     <module>org.eclipse.ui.examples.views.properties.tabbed.article</module>
     <module>org.eclipse.ui.forms.examples</module>
+    <module>org.eclipse.ui.genericeditor.examples</module>
   </modules>
 </project>
