@@ -27,6 +27,7 @@
     <module>org.eclipse.ui.examples.adapterservice</module>
     <module>org.eclipse.ui.examples.contributions</module>
     <module>org.eclipse.ui.examples.fieldassist</module>
+    <module>org.eclipse.ui.examples.javaeditor</module>
     <module>org.eclipse.ui.examples.job</module>
     <module>org.eclipse.ui.examples.markerHelp</module>
     <module>org.eclipse.ui.examples.multipageeditor</module>
