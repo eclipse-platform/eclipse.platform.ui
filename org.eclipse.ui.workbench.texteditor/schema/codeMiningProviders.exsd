@@ -1,0 +1,174 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.ui.workbench.texteditor" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui.workbench.texteditor" id="codeMiningProviders" name="CodeMining Providers"/>
+      </appInfo>
+      <documentation>
+         This extension point is used to register codemining providers. Associating providers via this extension doesn&apos;t automatically enable code-mining, and that clients are also supposed to use a reconcilier or whatever event mechanism to invoke ISourceViewerExtension5.updateCodeMinings().
+      </documentation>
+   </annotation>
+
+   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
+
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="codeMiningProvider" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="codeMiningProvider">
+      <annotation>
+         <documentation>
+            A CodeMining provider.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="enabledWhen" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a string uniquely identifying this codemining provider
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the fully qualified class name implementing the interface &lt;code&gt;org.eclipse.jface.text.codemining.ICodeMiningProvider&lt;/code&gt;.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.jface.text.codemining.ICodeMiningProvider"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string">
+            <annotation>
+               <documentation>
+                  the display label for the codemining provider, which will show in the CodeMining UI preferences
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="enabledWhen">
+      <annotation>
+         <documentation>
+            A core Expression that controls the enabled of the given codemining provider
+         </documentation>
+      </annotation>
+      <complexType>
+         <choice minOccurs="0" maxOccurs="1">
+            <element ref="not"/>
+            <element ref="or"/>
+            <element ref="and"/>
+            <element ref="instanceof"/>
+            <element ref="test"/>
+            <element ref="systemTest"/>
+            <element ref="equals"/>
+            <element ref="count"/>
+            <element ref="with"/>
+            <element ref="resolve"/>
+            <element ref="adapt"/>
+            <element ref="iterate"/>
+            <element ref="reference"/>
+         </choice>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.10
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of a codemining provider definition:
+
+&lt;pre&gt;
+   &lt;extension
+         point=&quot;org.eclipse.ui.workbench.texteditor.codeMiningProviders&quot;&gt;
+      &lt;codeMiningProvider
+         class=&quot;org.eclipse.jdt.internal.ui.codemining.JavaReferencesCodeMiningProvider&quot;
+         id=&quot;org.eclipse.jdt.ui.codemining.references&quot;
+         label=&quot;Java References&quot;&gt;
+         &lt;enabledWhen&gt;
+            &lt;with variable=&quot;editor&quot;&gt;
+               &lt;instanceof value=&quot;org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor&quot;/&gt;
+            &lt;/with&gt;
+         &lt;/enabledWhen&gt;
+      &lt;/codeMiningProvider&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         See the org.eclipse.jface.text.codemining.ICodeMiningProvider class and the org.eclipse.ui.workbench.texteditor.codeMiningProviders extension point.
+      </documentation>
+   </annotation>
+
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2017 Angelo ZERR.&lt;br&gt;
+
+This program and the accompanying materials are made available under the terms of the Eclipse Public License 2.0 which accompanies this distribution, and is available at &lt;a href=&quot;https://www.eclipse.org/legal/epl-2.0&quot;&gt;https://www.eclipse.org/legal/epl-v20.html&lt;/a&gt;/
+
+SPDX-License-Identifier: EPL-2.0
+      </documentation>
+   </annotation>
+
+</schema>

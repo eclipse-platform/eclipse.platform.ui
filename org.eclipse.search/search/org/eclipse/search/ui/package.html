@@ -1,0 +1,52 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="IBM">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (WinNT; U) [Netscape]">
+   <title>Package-level Javadoc</title>
+</head>
+<body>
+Classes and interface required to contribute search dialog pages and search result view pages.
+
+<h2>
+Package Specification</h2>
+
+<p>The search plugin implements the <i>search dialog</i> and the <i>search result view</i>. Client can contribute search dialog pages (extension point 'org.eclipse.search.searchPages')
+and search result view pages (extension point 'org.eclipse.search.searchResultViewPages') to integrate their searches to the shared search user interface.
+
+<h3>
+Search dialog pages</h3>
+
+<p>Search dialog pages contributing to the 'searchPages' extension point must implement <code>ISearchPage</code>. A search page
+has access to its <code>ISearchPageContainer</code> to modify search
+dialog properties.
+<p>A search dialog page can additionally implement <code>IReplacePage</code> to allow the 'Replace' button to show up.
+
+<h3>
+Search result view, since 3.0</h3>
+<p>The search view that shows the search results has been redesigned for 3.0. It is recommended
+to use and to switch to the new API:
+<p>On 'OK', an implementation of a search dialog page creates a <i>search query</i>, represented by an instances of type <code>ISearchQuery</code>. The query
+can be run using API on <code>NewSearchUI</code> and will create a <code>ISearchResult</code> as result.
+<code>ISearchResultListener</code> can be added to search results and report changes as <code>SearchResultEvent</code>.
+
+<p>Clients have to contribute a search result page (<code>ISearchResultPage</code>) that can
+visualize the matches contained in the result set.
+<p>The result page has access to the view using <code>ISearchResultViewPart</code>
+
+<h3>
+Search result view, before 3.0</h3>
+
+<p>For compatibility to searches written prior to 3.0, the following APIs still exist and are functional. The old search result view is called 'classic search view' in the UI.
+<p>Before 3.0, the search result view was fully implemented by the search plugin. All search results had to be marked with <i>search markers</i> (<code>org.eclipse.core.resources.IMarker</code>, registered under 'org.eclipse.search.searchmarker')
+
+<p>The search dialog page (type <code>ISearchResultView</code>) could access the single search result view using <code>SearchUI.getSearchResultView()</code>. It showed all matches as elements of type <code>ISearchResultViewEntry</code>.
+
+
+<p><code>IGroupByKeyComputer</code>, <code>IActionGroupFactory</code>, <code>IContextMenuContributor</code> and extension point 
+'org.eclipse.search.searchResultSorters' were used to configure the search result view.
+
+
+</body>
+</html>

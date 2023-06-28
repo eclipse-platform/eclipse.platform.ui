@@ -1,0 +1,336 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.ui.editors" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui.editors" id="markerAnnotationSpecification" name="Marker Annotation Specification"/>
+      </appInfo>
+      <documentation>
+         This extension point is used to define presentation properties of markers. Extensions provided for this extension point can be accessed using &lt;samp&gt;org.eclipse.ui.texteditor.MarkerAnnotationPreferences&lt;/samp&gt;. Use &lt;samp&gt;org.eclipse.ui.texteditor.AnnotationPreferenceLookup&lt;/samp&gt; to get the annotation preference for a given annotation.
+&lt;p&gt;
+Note that an extension will only be returned from &lt;code&gt;MarkerAnnotationPreferences.getAnnotationPreferences&lt;/code&gt; (and thus included in the preference pages) if it contains the following four attributes in addition to the required &lt;code&gt;annotationType&lt;/code&gt;:
+&lt;ul&gt;
+ &lt;li&gt;&lt;code&gt;colorPreferenceKey&lt;/code&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;code&gt;colorPreferenceValue&lt;/code&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;code&gt;overviewRulerPreferenceKey&lt;/code&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;code&gt;textPreferenceKey&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/p&gt;
+&lt;p&gt;
+Annotation preference types that extend another annotation preference are allowed to overwrite attributes already defined in a parent preference specification, but these will not be accessible from the preference page.
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="specification" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="specification">
+      <complexType>
+         <attribute name="annotationType" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the annotation type
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.editors.annotationTypes/type/@name"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="colorPreferenceKey" type="string">
+            <annotation>
+               <documentation>
+                  the color preference key must be provided, otherwise this annotation type will not be included in the List returned from MarkerAnnotationPreferences.getAnnotationPreferences() and thus not show in the preferences
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="overviewRulerPreferenceKey" type="string">
+            <annotation>
+               <documentation>
+                  the overview ruler preference key must be provided, otherwise this annotation type will not be included in the List returned from MarkerAnnotationPreferences.getAnnotationPreferences() and thus not show in the preferences
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="verticalRulerPreferenceKey" type="string">
+            <annotation>
+               <documentation>
+                  the preference key for the show in vertical ruler preference.
+since: 3.0
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="textPreferenceKey" type="string">
+            <annotation>
+               <documentation>
+                  the text preference key must be provided, otherwise this annotation type will not be included in the List returned from MarkerAnnotationPreferences.getAnnotationPreferences() and thus not show in the preferences
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string">
+            <annotation>
+               <documentation>
+                  the label to be used in the UI
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="highlightPreferenceKey" type="string">
+            <annotation>
+               <documentation>
+                  the preference key for highlighting in text.
+since: 3.0
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="colorPreferenceValue" type="string">
+            <annotation>
+               <documentation>
+                  the color preference value must be provided, otherwise this annotation type will not be included in the List returned from MarkerAnnotationPreferences.getAnnotationPreferences() and thus not show in the preferences
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="presentationLayer" type="string">
+            <annotation>
+               <documentation>
+                  the default value for the layer in which the marker annotation will be drawn. Annotations are considered being located at layers and will be painted starting with layer 0 upwards. Thus an annotation at layer 5 will be drawn on top of all co-located annotations at the layers 4 - 0.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="overviewRulerPreferenceValue" type="boolean">
+            <annotation>
+               <documentation>
+                  the default value telling whether this marker annotation is shown in the overview ruler
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="verticalRulerPreferenceValue" type="boolean">
+            <annotation>
+               <documentation>
+                  the default value for showing in vertical ruler.
+since: 3.0
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="textPreferenceValue" type="boolean">
+            <annotation>
+               <documentation>
+                  the default value telling whether this marker annotation is shown in the text
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="highlightPreferenceValue" type="boolean">
+            <annotation>
+               <documentation>
+                  the default value for highlighting in text.
+since: 3.0
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="contributesToHeader" type="boolean">
+            <annotation>
+               <documentation>
+                  the default value telling whether this marker annotation contributes to the overview ruler&apos;s header summary
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="showInNextPrevDropdownToolbarActionKey" type="string">
+            <annotation>
+               <documentation>
+                  the preference key for the visibility in the next/previous drop down toolbar action.
+since: 3.0
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="showInNextPrevDropdownToolbarAction" type="boolean">
+            <annotation>
+               <documentation>
+                  the default value for the visibility in the next/previous drop down toolbar action.
+since: 3.0
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="isGoToNextNavigationTargetKey" type="string">
+            <annotation>
+               <documentation>
+                  the preference key for go to next navigation enablement.
+since: 3.0
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="isGoToNextNavigationTarget" type="boolean">
+            <annotation>
+               <documentation>
+                  the default value for go to next navigation enablement.
+since: 3.0
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="isGoToPreviousNavigationTargetKey" type="string">
+            <annotation>
+               <documentation>
+                  the preference key for go to previous navigation enablement.
+since: 3.0
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="isGoToPreviousNavigationTarget" type="boolean">
+            <annotation>
+               <documentation>
+                  the default value for go to previous navigation enablement.
+since: 3.0
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  the path to the icon to be drawn for annotations of this annotation type. This icon will not
+                  be used if a Quick Fix is available and the &quot;quickFixIcon&quot; attribute has been specified.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="quickFixIcon" type="string">
+            <annotation>
+               <documentation>
+                  the path to the quick fix icon to be drawn for annotations that have a quick fix.
+since: 3.2
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="symbolicIcon">
+            <annotation>
+               <documentation>
+                  the symbolic name of the image that should be drawn to represent annotation of this annotation type. The image is only used when there is no vertical ruler icon specified for this annotation type. Possible values are: &quot;error&quot;, &quot;warning&quot;, &quot;info&quot;, &quot;task&quot;, &quot;bookmark&quot;.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="error">
+                  </enumeration>
+                  <enumeration value="warning">
+                  </enumeration>
+                  <enumeration value="info">
+                  </enumeration>
+                  <enumeration value="task">
+                  </enumeration>
+                  <enumeration value="bookmark">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="annotationImageProvider" type="string">
+            <annotation>
+               <documentation>
+                  the optional annotation image provider that implements &lt;code&gt;org.eclipse.ui.texteditor.IAnnotationImageProvider&lt;/code&gt;
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="textStylePreferenceKey" type="string">
+            <annotation>
+               <documentation>
+                  the preference key for the text decoration property.
+since: 3.0
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="textStylePreferenceValue">
+            <annotation>
+               <documentation>
+                  the default value for the &quot;show in text&quot; decoration style.
+since: 3.0 (DASHED_BOX since 3.3, PROBLEM_UNDERLINE: since 3.4)
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="BOX">
+                  </enumeration>
+                  <enumeration value="DASHED_BOX">
+                  </enumeration>
+                  <enumeration value="IBEAM">
+                  </enumeration>
+                  <enumeration value="NONE">
+                  </enumeration>
+                  <enumeration value="PROBLEM_UNDERLINE">
+                  </enumeration>
+                  <enumeration value="SQUIGGLES">
+                  </enumeration>
+                  <enumeration value="UNDERLINE">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="includeOnPreferencePage" type="boolean" use="default" value="true">
+            <annotation>
+               <documentation>
+                  defines whether this annotation type should be configurable via the standard annotation preference page. Default is true.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0 (originally named org.eclipse.ui.workbench.texteditor.markerAnnotationSpecification)
+      </documentation>
+   </annotation>
+
+
+
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2001, 2016 IBM Corporation and others.&lt;br&gt;
+
+This program and the accompanying materials are made available under the terms of the Eclipse Public License 2.0 which accompanies this distribution, and is available at &lt;a href=&quot;https://www.eclipse.org/legal/epl-2.0&quot;&gt;https://www.eclipse.org/legal/epl-v20.html&lt;/a&gt;/
+
+SPDX-License-Identifier: EPL-2.0
+      </documentation>
+   </annotation>
+
+</schema>

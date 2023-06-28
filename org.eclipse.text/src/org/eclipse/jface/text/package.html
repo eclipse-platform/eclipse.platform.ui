@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html><head>
+  <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+  <meta content="IBM" name="Author">
+  <meta content="Mozilla/4.75 [en] (Windows NT 5.0; U) [Netscape]" name="GENERATOR"><title>text infrastructure</title></head>
+
+<body>
+<p>Provides a framework for creating and manipulating text documents.</p>
+<h2>Package Specification</h2>
+<p><code>IDocument</code> is the major text 
+  model abstraction. It provides content management, position management using 
+  position categories, document partition management, and change notification. 
+  In order to be notified about document changes, an object must implements <code>IDocumentListener 
+  </code>and must be registered with the document. <code>Position</code> 
+  updating in responds to a document change is performed by implementers of <code>IDocumentPositionUpdater</code>. 
+  Partition updating in responds to a document change is performed by implements 
+  of <code>IDocumentPartitioner</code>. In order 
+  to be notified about document partition changes, objects must implement <code>IDocumentParititoningListener</code> 
+  and must be registered with the document.</p>
+<p>The package contains default implementations for document position updaters 
+  and for documents. <code>AbstractDocument</code> 
+  uses <code>ITextStorage</code> for storing 
+  and managing its content and <code>ILineTracker</code> 
+  to maintain a line structure of its content. As defaults a gap text implementation 
+  of <code>ITextStore</code> is provided, together 
+  with a line tracker understanding the three standard line delimiters (&quot;\r&quot;, 
+  &quot;\n&quot;, &quot;\r\n&quot;) and a line tracker which can be freely configured 
+  to consider any given set of strings as valid line delimiters. </p>
+
+
+<!-- ===================================================================================================== -->
+<!-- Below is the package documentation for org.eclipse.jface.text from the org.eclipse.jface.text plug-in -->
+<!-- ===================================================================================================== -->
+
+<p><code>ITextViewer</code> defines the concept of a document based, editiable viewer. 
+  <code>ITextViewer</code> offers the following functionality: </p>
+<ul>
+<li>
+present a document</li>
+
+<li>
+event consumption (<code>IEventConsumer</code>)</li>
+
+<li>
+viewport tracking and notification (<code>IIViewportListener</code>)</li>
+
+<li>
+change notification (<code>ITextListener</code>, <code>ITextInputListener</code>)</li>
+
+<li>
+listeners (combined view/model notification, input document)</li>
+
+<li>
+standard text editing functions plus text hover support</li>
+
+<li>
+visual region support</li>
+</ul>
+
+An <code>ITextViewer</code> supports the following plug-ins
+<ul>
+<li>
+<code>IUndoManager</code> for the undo/redo mechanism</li>
+
+<li>
+<code>IDoubleClickStrategy</code> for partition type specific behavior on mouse
+double click</li>
+
+<li>
+<code>IAutoIndentStrategy</code>&nbsp; for content type specific behavior on
+inserting a line break</li>
+
+<li>
+<code>ITextHover</code> for content type specific behavior when overing over
+text</li>
+</ul>
+The package provides default implementations for all these interfaces.
+</body>
+
+</body></html>

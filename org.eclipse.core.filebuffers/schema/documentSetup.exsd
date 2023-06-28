@@ -1,0 +1,149 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.core.filebuffers">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.core.filebuffers" id="documentSetup" name="Document Setup"/>
+      </appInfo>
+      <documentation>
+         This extension point is used to customize the initialization process of a document for a text file buffer manager by this plug-in&apos;s default text file buffer manager. It allows to specify which document setup participant should be involved in the initialization process for a text file buffer created for a certain file content type, file extension, or file name.
+&lt;p&gt;
+&lt;strong&gt;Note:&lt;/strong&gt; Participants have to be aware of the existence of other participants i.e. they should always setup a document in a way that does not interfere with others. E.g., when a participant wants to install partitioning on the document, it must use the &lt;code&gt;org.eclipse.jface.text.IDocumentExtension3&lt;/code&gt; API and choose a unique partitioning id.
+As of 3.2, a warning is written to the log file if this isn&apos;t followed.
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="participant"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="participant">
+      <annotation>
+         <documentation>
+            The specification of a document setup participant. In order find all participants for a given file the attributes of each participant specification are consulted in the following sequence: contentTypeId, fileNames, extensions. If multiple participants are found, the sequence in which they are called is not specified.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the fully qualified name of the participant implementation class. This class must implement the &lt;code&gt;org.eclipse.core.filebuffers.IDocumentSetupParticipant&lt;/code&gt; interface.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.core.filebuffers.IDocumentSetupParticipant"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="extensions" type="string">
+            <annotation>
+               <documentation>
+                  a comma separated list of file extensions for which this participant should be used
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="fileNames" type="string">
+            <annotation>
+               <documentation>
+                  a comma separated list of file names for which this participant should be used
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="contentTypeId" type="string">
+            <annotation>
+               <documentation>
+                  the id of a content type as defined by the &lt;code&gt;org.eclipse.core.runtime.contentTypes&lt;/code&gt; extension point for which this participant should be used.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         &lt;pre&gt;
+   &lt;extension
+         id=&quot;JavaDocumentSetupParticipant&quot;
+         name=&quot;%javaDocumentSetupParticipant&quot;
+         point=&quot;org.eclipse.core.filebuffers.documentSetup&quot;&gt;
+      &lt;participant
+            extensions=&quot;java&quot;
+            class=&quot;org.eclipse.jdt.internal.ui.javaeditor.JavaDocumentSetupParticipant&quot;&gt;
+      &lt;/participant&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Document setup participants have to implement org.eclipse.core.filebuffers.IDocumentSetupParticipant.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2001, 2006 IBM Corporation and others.&lt;br&gt;
+
+This program and the accompanying materials are made available under the terms of the Eclipse Public License 2.0 which accompanies this distribution, and is available at &lt;a href=&quot;https://www.eclipse.org/legal/epl-2.0&quot;&gt;https://www.eclipse.org/legal/epl-v20.html&lt;/a&gt;/
+
+SPDX-License-Identifier: EPL-2.0
+      </documentation>
+   </annotation>
+
+</schema>

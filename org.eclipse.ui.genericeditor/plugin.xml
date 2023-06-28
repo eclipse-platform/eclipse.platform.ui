@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<!--
+ Copyright (c) 2016, 2017 Red Hat Inc. and others. 
+
+ This program and the accompanying materials
+ are made available under the terms of the Eclipse Public License 2.0
+ which accompanies this distribution, and is available at
+ https://www.eclipse.org/legal/epl-2.0/
+
+ SPDX-License-Identifier: EPL-2.0
+ 
+ Contributors:
+      Sopot Cela & Mickael Istria (Red Hat Inc). -initial implementation
+      Lucas Bullen (Red Hat Inc.) - Bug 508829, 521382
+      Simon Scholz <simon.scholz@vogella.com> - Bug 527830
+-->
+<plugin>
+   <extension-point id="reconcilers" name="%ExtPoint.reconciliers" schema="schema/reconcilers.exsd"/>
+   <extension-point id="presentationReconcilers" name="%ExtPoint.presentationReconciliers" schema="schema/presentationReconcilers.exsd"/>
+   <extension-point id="contentAssistProcessors" name="%ExtPoint.contentAssistProcessors" schema="schema/contentAssistProcessors.exsd"/>
+   <extension-point id="hoverProviders" name="%ExtPoint.hoverProviders" schema="schema/hoverProviders.exsd"/>
+   <extension-point id="autoEditStrategies" name="%ExtPoint.autoEditStrategies" schema="schema/autoEditStrategies.exsd"/>
+   <extension-point id="textDoubleClickStrategies" name="%ExtPoint.textDoubleClickStrategies" schema="schema/textDoubleClickStrategies.exsd"/>
+   <extension-point id="highlightReconcilers" name="%ExtPoint.highlightReconcilers" schema="schema/highlightReconcilers.exsd"/>
+   <extension-point id="foldingReconcilers" name="%ExtPoint.foldingReconcilers" schema="schema/foldingReconcilers.exsd"/>
+   <extension-point id="characterPairMatchers" name="%ExtPoint.characterPairMatchers" schema="schema/characterPairMatchers.exsd"/>
+   <extension-point id="icons" name="%ExtPoint.iconProviders" schema="schema/icons.exsd"/>
+   <extension-point id="quickAssistProcessors" name="%ExtPoint.quickAssistProcessors" schema="schema/quickAssistProcessors.exsd"/>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.eclipse.ui.internal.genericeditor.ExtensionBasedTextEditor"
+            contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
+            default="false"
+            icon="icons/full/obj16/generic_editor.png"
+            id="org.eclipse.ui.genericeditor.GenericEditor"
+            name="%genericEditor_name">
+         <contentTypeBinding
+               contentTypeId="org.eclipse.core.runtime.text">
+         </contentTypeBinding>
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            description="%findReferencesCommand_description"
+            id="org.eclipse.ui.genericeditor.findReferences"
+            name="%findReferencesCommand_name">
+      </command>
+      <command
+            id="org.eclipse.ui.genericeditor.togglehighlight"
+            name="%command.toggle.highlight.name">
+		   <state
+		         class="org.eclipse.ui.handlers.RegistryToggleState:true"
+		         id="org.eclipse.ui.commands.toggleState">
+		   </state>
+      </command>
+      <command
+            description="%gotoMatchingBracketCommand_description"
+            id="org.eclipse.ui.genericeditor.gotoMatchingBracket"
+            name="%gotoMatchingBracketCommand_name">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.contexts">
+      <context
+            description="%context_description"
+            id="org.eclipse.ui.genericeditor.genericEditorContext"
+            name="%context_name"
+            parentId="org.eclipse.ui.textEditorScope">
+      </context>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="org.eclipse.ui.edit.text.open.hyperlink"
+            contextId="org.eclipse.ui.genericeditor.genericEditorContext"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="F3">
+      </key>
+      <key
+            commandId="org.eclipse.ui.genericeditor.findReferences"
+            contextId="org.eclipse.ui.genericeditor.genericEditorContext"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M2+G">
+      </key>
+      <key
+            commandId="org.eclipse.ui.genericeditor.gotoMatchingBracket"
+            contextId="org.eclipse.ui.genericeditor.genericEditorContext"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M2+P">
+      </key>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="true"
+            locationURI="popup:#TextEditorContext?after=additions">
+         <menu
+               id="org.eclipse.ui.genericeditor.source.menu"
+               label="%menu.source.label">
+            <command
+                  commandId="org.eclipse.ui.edit.text.delete.line"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.edit.text.copyLineDown"
+                  style="push">
+            </command>
+         </menu>
+         <command
+               commandId="org.eclipse.ui.genericeditor.findReferences"
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.ui.edit.text.actionSet.presentation">
+         <command
+               commandId="org.eclipse.ui.genericeditor.togglehighlight"
+               label="%command.toggle.highlight.label"
+               style="toggle">
+            <visibleWhen>
+               <reference
+                     definitionId="org.eclipse.ui.genericeditor.GenericEditor.active">
+               </reference>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            commandId="org.eclipse.ui.genericeditor.togglehighlight">
+         <class
+               class="org.eclipse.ui.internal.genericeditor.ToggleHighlight"></class>
+      </handler>
+      <handler
+            commandId="org.eclipse.ui.genericeditor.gotoMatchingBracket">
+         <class
+               class="org.eclipse.ui.internal.genericeditor.GotoMatchingBracketHandler"></class>
+      </handler>      
+   </extension>
+   <extension
+         point="org.eclipse.ui.genericeditor.hoverProviders">
+      <hoverProvider
+         isBefore="*"
+         class="org.eclipse.ui.internal.genericeditor.markers.MarkerAnnotationHover"
+         contentType="org.eclipse.core.runtime.text"
+         id="org.eclipse.ui.genericeditor.markers.annotationsHoverProvider">
+      </hoverProvider>
+      <hoverProvider
+            isBefore="*"
+            isAfter="org.eclipse.ui.genericeditor.markers.annotationsHoverProvider"
+            class="org.eclipse.ui.internal.genericeditor.AnnotationHoverDelegate"
+            contentType="org.eclipse.core.runtime.text"
+            id="org.eclipse.ui.genericeditor.annotationsHoverProvider">
+      </hoverProvider>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commandImages">
+      <image
+            commandId="org.eclipse.ui.genericeditor.togglehighlight"
+            disabledIcon="icons/full/dtool16/mark_occurrences.png"
+            icon="icons/full/etool16/mark_occurrences.png">
+      </image>
+   </extension>
+   <extension point="org.eclipse.ui.editors.annotationTypes">
+      <type name="org.eclipse.ui.genericeditor.text"></type>
+   </extension>
+   <extension point="org.eclipse.ui.editors.markerAnnotationSpecification">
+		<specification annotationType="org.eclipse.ui.genericeditor.text"
+			label="Text Occurrence"
+			textPreferenceKey="TextOccurrenceIndication" textPreferenceValue="false"
+			highlightPreferenceKey="TextOccurrenceHighlighting"
+			highlightPreferenceValue="true" contributesToHeader="false"
+			overviewRulerPreferenceKey="TextOccurrenceIndicationInOverviewRuler"
+			overviewRulerPreferenceValue="true"
+			verticalRulerPreferenceKey="TextOccurrenceIndicationInVerticalRuler"
+			verticalRulerPreferenceValue="false" colorPreferenceKey="TextOccurrenceIndicationColor"
+			colorPreferenceValue="212,212,212" presentationLayer="4"
+			showInNextPrevDropdownToolbarAction="true"
+			textStylePreferenceKey="TextOccurrenceTextStyle"
+			textStylePreferenceValue="NONE">
+		</specification>
+   </extension>
+   <extension
+         point="org.eclipse.e4.ui.css.swt.theme">
+      <stylesheet
+            uri="resources/css/dark.css">
+         <themeid
+               refid="org.eclipse.e4.ui.css.theme.e4_dark">
+         </themeid>
+      </stylesheet>
+   </extension>
+   <extension
+         point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectorTargets">
+      <target
+            id="org.eclipse.ui.genericeditor.GenericEditor"
+            name="%ExtPoint.hyperlinkDetectorTarget">
+         <context
+               type="org.eclipse.ui.texteditor.ITextEditor">
+         </context>
+      </target>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSetPartAssociations">
+      <actionSetPartAssociation
+            targetID="org.eclipse.ui.edit.text.actionSet.presentation">
+         <part
+               id="org.eclipse.ui.genericeditor.GenericEditor">
+         </part>
+      </actionSetPartAssociation>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="org.eclipse.ui.genericeditor.GenericEditor.active">
+         <with
+               variable="activeEditorId">
+            <equals
+                  value="org.eclipse.ui.genericeditor.GenericEditor">
+            </equals>
+         </with>
+      </definition>
+   </extension>
+   <extension point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.eclipse.ui.internal.genericeditor.preferences.GenericEditorPluginPreferenceInitializer"/>
+   </extension>
+   <extension
+         point="org.eclipse.compare.contentViewers">
+      <viewer
+            class="org.eclipse.ui.internal.genericeditor.compare.CompareViewerCreator"
+            id="org.eclipse.ui.genericeditor.compareViewer">
+      </viewer>
+   </extension>
+   <extension
+         point="org.eclipse.compare.contentMergeViewers">
+      <viewer
+            class="org.eclipse.ui.internal.genericeditor.compare.CompareViewerCreator"
+            id="org.eclipse.ui.genericeditor.compareViewer">
+      </viewer>
+   </extension>
+  <extension
+         point="org.eclipse.ui.ide.editorAssociationOverride">
+      <editorAssociationOverride
+            class="org.eclipse.ui.internal.genericeditor.GenericEditorWithIconAssociationOverride"
+            id="org.eclipse.ui.internal.genericeditor.GenericEditorAssociationOverride"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.genericeditor.reconcilers">
+      <reconciler
+            class="org.eclipse.jface.text.codemining.CodeMiningReconciler"
+            contentType="org.eclipse.core.runtime.text">
+      </reconciler>
+   </extension>
+</plugin>

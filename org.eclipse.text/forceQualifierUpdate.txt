@@ -1,0 +1,3 @@
+# To force a version qualifier update add the bug here
+Bug 466364: Cannot run unit-tests anymore because classes from org.eclipse.jface.text cannot be loaded because of "signer information does not match signer information of other classes in the same package"
+Pick up new signing certificate

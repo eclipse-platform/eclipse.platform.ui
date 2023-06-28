@@ -1,0 +1,3 @@
+Bug 510796 - Comparator errors in I20170120-2000
+Bug 511251 - Comparator errors in I20170127-2200
+Bug 521182 - [compiler] method reference on null object should throw NPE at runtime (JLS compliance)

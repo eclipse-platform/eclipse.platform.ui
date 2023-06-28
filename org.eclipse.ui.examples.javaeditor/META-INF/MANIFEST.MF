@@ -1,0 +1,24 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.ui.examples.javaeditor; singleton:=true
+Bundle-Version: 3.4.100.qualifier
+Bundle-Activator: org.eclipse.ui.examples.javaeditor.JavaEditorExamplePlugin
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Export-Package: org.eclipse.ui.examples.javaeditor,
+ org.eclipse.ui.examples.javaeditor.java,
+ org.eclipse.ui.examples.javaeditor.javadoc,
+ org.eclipse.ui.examples.javaeditor.util,
+ org.eclipse.ui.examples.templateeditor.editors,
+ org.eclipse.ui.examples.templateeditor.preferences,
+ org.eclipse.ui.examples.templateeditor.template
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.ui,
+ org.eclipse.jface.text,
+ org.eclipse.ui.workbench.texteditor,
+ org.eclipse.ui.editors,
+ org.eclipse.ui.views
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Automatic-Module-Name: org.eclipse.ui.examples.javaeditor

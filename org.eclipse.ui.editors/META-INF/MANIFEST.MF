@@ -1,0 +1,32 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.ui.editors; singleton:=true
+Bundle-Version: 3.16.100.qualifier
+Bundle-Activator: org.eclipse.ui.internal.editors.text.EditorsPlugin
+Bundle-ActivationPolicy: lazy
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Export-Package: 
+ org.eclipse.ui.editors.text,
+ org.eclipse.ui.editors.text.templates,
+ org.eclipse.ui.internal.editors.quickdiff;x-internal:=true,
+ org.eclipse.ui.internal.editors.text;x-internal:=true,
+ org.eclipse.ui.internal.editors.text.codemining.annotation;x-internal:=true,
+ org.eclipse.ui.internal.texteditor;x-internal:=true,
+ org.eclipse.ui.texteditor
+Require-Bundle: 
+ org.eclipse.core.runtime;bundle-version="[3.28.0,4.0.0)",
+ org.eclipse.core.expressions;bundle-version="[3.4.0,4.0.0)",
+ org.eclipse.swt;bundle-version="[3.101.0,4.0.0)",
+ org.eclipse.ui.ide;bundle-version="[3.5.0,4.0.0)",
+ org.eclipse.ui;bundle-version="[3.5.0,4.0.0)",
+ org.eclipse.jface.text;bundle-version="[3.8.0,4.0.0)",
+ org.eclipse.ui.workbench;bundle-version="[3.117.0,4.0.0)",
+ org.eclipse.ui.workbench.texteditor;bundle-version="[3.14.0,4.0.0)",
+ org.eclipse.core.filebuffers;bundle-version="[3.5.0,4.0.0)";visibility:=reexport,
+ org.eclipse.core.resources;bundle-version="[3.5.0,4.0.0)",
+ org.eclipse.core.filesystem;bundle-version="[1.2.0,2.0.0)",
+ org.eclipse.jdt.annotation;bundle-version="2.2";resolution:=optional
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Automatic-Module-Name: org.eclipse.ui.editors
