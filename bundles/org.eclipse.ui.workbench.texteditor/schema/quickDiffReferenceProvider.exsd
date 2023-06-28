@@ -1,0 +1,157 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.ui.workbench.texteditor">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui.workbench.texteditor" id="quickdiffReferenceProvider" name="Reference Provider"/>
+      </appInfo>
+      <documentation>
+         Allows contributors to add reference providers for the quick diff display.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="referenceprovider" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="referenceprovider">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+         <documentation>
+            The definition of a reference provider for the quick diff display.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the class of the reference provider, which must implement &lt;code&gt;org.eclipse.ui.texteditor.quickdiff.IQuickDiffReferenceProvider&lt;/code&gt;
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string">
+            <annotation>
+               <documentation>
+                  the display label for the provider, which will show up in the menu that allows the user to set the quick diff reference to this provider
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A string uniquely identifying this reference provider.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="default" type="boolean">
+            <annotation>
+               <documentation>
+                  if this flag is set to &lt;code&gt;true&lt;/code&gt;, this reference provider will be installed per default the first time quick diff is enabled for a document. If multiple providers are installed with the flag set are encountered, the first one is taken.
+               </documentation>
+               <appInfo>
+                  <meta.attribute deprecated="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of a reference provider definition. It contributes a provider that uses the version of a document saved on disk as a reference.
+
+&lt;p&gt;
+&lt;pre&gt;
+ &lt;extension point=&quot;quickdiff.referenceprovider&quot;&gt;
+  &lt;referenceprovider
+   id=&quot;default&quot;
+   name=&quot;%LastSavedProvider.name&quot;
+   label=&quot;%quickdiff.referenceprovider.label&quot;
+   class=&quot;org.eclipse.ui.internal.editors.quickdiff.providers.LastSaveReferenceProvider&quot;&gt;
+  &lt;/referenceprovider&gt;
+ &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         There is no additional API for managing reference providers.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         The &lt;code&gt;org.eclipse.ui.editors&lt;/code&gt; plugin contributes &lt;code&gt;LastSaveReferenceProvider&lt;/code&gt;. See its implementation as an example.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2001, 2005 IBM Corporation and others.&lt;br&gt;
+
+This program and the accompanying materials are made available under the terms of the Eclipse Public License 2.0 which accompanies this distribution, and is available at &lt;a href=&quot;https://www.eclipse.org/legal/epl-2.0&quot;&gt;https://www.eclipse.org/legal/epl-v20.html&lt;/a&gt;/
+
+SPDX-License-Identifier: EPL-2.0
+      </documentation>
+   </annotation>
+
+</schema>

@@ -1,0 +1,25 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="IBM">
+   <meta name="GENERATOR" content="Eclipse">
+   <title>Package-level Javadoc</title>
+</head>
+<body>
+Provides support for detecting and displaying hyperlinks in <code>ISourceViewer</code>s.
+<p>
+<code>SourceViewer</code> supports hyperlinked text regions inline in the displayed text. It delegates 
+the detection and presentation of hyperlinks to <code>IHyperlinkDetector</code> and <code>IHyperlinkPresenter</code>, respectively.
+</p>
+<p>
+Override the following methods in <code>SourceViewerConfiguration</code> to customize the hyperlink behavior of a source viewer:
+</p>
+<ul>
+  <li><code>getHyperlinkDetectors()</code> to specify the set of hyperlink detectors used by the viewer</li>
+  <li><code>getHyperlinkPresenter()</code> to specify the set of hyperlink presenters used by the viewer</li>
+  <li><code>getHyperlinkStateMask()</code> to specify when hyperlinks are activated</li>
+</ul>
+
+</body>
+</html>

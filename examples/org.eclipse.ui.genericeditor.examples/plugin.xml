@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<!--
+ Copyright (c) 2016, 2017 Red Hat Inc. and others. 
+
+ This program and the accompanying materials
+ are made available under the terms of the Eclipse Public License 2.0
+ which accompanies this distribution, and is available at
+ https://www.eclipse.org/legal/epl-2.0/
+
+ SPDX-License-Identifier: EPL-2.0
+ 
+ Contributors:
+      Sopot Cela & Mickael Istria (Red Hat Inc). -initial implementation
+      Lucas Bullen (Red Hat Inc.) - Bug 508829, 521382
+      Simon Scholz <simon.scholz@vogella.com> - Bug 527834
+-->
+<plugin>
+   <extension
+         point="org.eclipse.core.contenttype.contentTypes">
+      <content-type
+            base-type="org.eclipse.core.runtime.xml"
+            file-names=".project"
+            id="dotproject"
+            name="Eclipse .project"
+            priority="high">
+      </content-type>
+   </extension>
+   <extension
+         point="org.eclipse.ui.genericeditor.contentAssistProcessors">
+      <contentAssistProcessor
+            class="org.eclipse.ui.genericeditor.examples.dotproject.NaturesAndProjectsContentAssistProcessor"
+            contentType="org.eclipse.ui.genericeditor.examples.dotproject">
+      </contentAssistProcessor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.genericeditor.hoverProviders">
+      <hoverProvider
+            class="org.eclipse.ui.genericeditor.examples.dotproject.NatureLabelHoverProvider"
+            contentType="org.eclipse.ui.genericeditor.examples.dotproject"
+            id="natureLabelHoverProvider">
+      </hoverProvider>
+   </extension>
+   <extension
+         point="org.eclipse.ui.genericeditor.presentationReconcilers">
+      <presentationReconciler
+            class="org.eclipse.ui.genericeditor.examples.dotproject.BlueTagsPresentationReconciler"
+            contentType="org.eclipse.ui.genericeditor.examples.dotproject">
+      </presentationReconciler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.genericeditor.foldingReconcilers">
+      <foldingReconciler
+            class="org.eclipse.ui.genericeditor.examples.dotproject.FoldingReconciler"
+            contentType="org.eclipse.ui.genericeditor.examples.dotproject">
+      </foldingReconciler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editorContentTypeBinding
+            contentTypeId="org.eclipse.ui.genericeditor.examples.dotproject"
+            editorId="org.eclipse.ui.genericeditor.GenericEditor">
+      </editorContentTypeBinding>
+   </extension>
+   <extension
+         point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            class="org.eclipse.ui.genericeditor.examples.dotproject.ProjectDocumentParticipant"
+            contentTypeId="org.eclipse.ui.genericeditor.examples.dotproject">
+      </participant>
+   </extension>
+   <extension
+         point="org.eclipse.ui.genericeditor.autoEditStrategies">
+      <autoEditStrategy
+            class="org.eclipse.ui.genericeditor.examples.dotproject.TagAutoEditStrategy"
+            contentType="org.eclipse.ui.genericeditor.examples.dotproject">
+      </autoEditStrategy>
+   </extension>
+   <extension
+         point="org.eclipse.ui.genericeditor.highlightReconcilers">
+      <highlightReconciler
+            class="org.eclipse.ui.genericeditor.examples.dotproject.HighlightReconciler"
+            contentType="org.eclipse.ui.genericeditor.examples.dotproject">
+      </highlightReconciler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectors">
+      <hyperlinkDetector
+            activate="true"
+            class="org.eclipse.ui.genericeditor.examples.dotproject.hyperlink.ProjectHyperlinkDetector"
+            id="org.eclipse.ui.genericeditor.examples.hyperlinkDetector"
+            name="Project Settings Hyperlink Detector"
+            targetId="org.eclipse.ui.genericeditor.GenericEditor">
+      </hyperlinkDetector>
+   </extension>
+   <extension
+        point="org.eclipse.ui.genericeditor.characterPairMatchers">
+     <characterPairMatcher
+           class="org.eclipse.ui.genericeditor.examples.dotproject.TagCharacterPairMatcher"
+           contentType="org.eclipse.ui.genericeditor.examples.dotproject">
+     </characterPairMatcher>
+  </extension>
+   <!-- ================== CodeMining support for .project ================== -->
+   <!-- 1) register CodeMining provider with extension point -->
+   <extension
+      point="org.eclipse.ui.workbench.texteditor.codeMiningProviders">
+      <codeMiningProvider
+           class="org.eclipse.ui.genericeditor.examples.dotproject.codemining.ProjectReferencesCodeMiningProvider"
+           id="org.eclipse.ui.genericeditor.examples.dotproject.codemining.references"
+           label="Project references">
+           <enabledWhen>
+           	  <with variable="editorInput">
+                 <adapt type="org.eclipse.core.resources.IFile">
+                   <test property="org.eclipse.core.resources.contentTypeId" value="org.eclipse.ui.genericeditor.examples.dotproject" />
+                 </adapt>
+           	  </with>
+           </enabledWhen>
+      </codeMiningProvider>
+   </extension>
+   <!-- 2) update CodeMining provider with a reconciler -->
+   <extension
+         point="org.eclipse.ui.genericeditor.reconcilers">
+      <reconciler
+            class="org.eclipse.jface.text.codemining.CodeMiningReconciler"
+            contentType="org.eclipse.ui.genericeditor.examples.dotproject">
+      </reconciler>
+   </extension>
+</plugin>

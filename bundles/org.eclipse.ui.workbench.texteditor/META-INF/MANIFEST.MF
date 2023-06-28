@@ -1,0 +1,34 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.ui.workbench.texteditor; singleton:=true
+Bundle-Version: 3.17.100.qualifier
+Bundle-Activator: org.eclipse.ui.internal.texteditor.TextEditorPlugin
+Bundle-ActivationPolicy: lazy
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Export-Package: 
+ org.eclipse.ui.contentassist,
+ org.eclipse.ui.internal.texteditor;texteditor=split;mandatory:=texteditor;x-friends:="org.eclipse.ui.editors",
+ org.eclipse.ui.internal.texteditor.codemining;x-internal:=true,
+ org.eclipse.ui.internal.texteditor.quickdiff;x-internal:=true,
+ org.eclipse.ui.internal.texteditor.quickdiff.compare.equivalence;x-internal:=true,
+ org.eclipse.ui.internal.texteditor.rulers;x-internal:=true,
+ org.eclipse.ui.internal.texteditor.spelling;x-internal:=true,
+ org.eclipse.ui.internal.texteditor.templates;x-internal:=true,
+ org.eclipse.ui.internal.views.minimap;x-internal:=true,
+ org.eclipse.ui.texteditor;texteditor=split;mandatory:=texteditor,
+ org.eclipse.ui.texteditor.link,
+ org.eclipse.ui.texteditor.quickdiff,
+ org.eclipse.ui.texteditor.rulers,
+ org.eclipse.ui.texteditor.spelling,
+ org.eclipse.ui.texteditor.templates
+Require-Bundle: 
+ org.eclipse.core.runtime;bundle-version="[3.28.0,4.0.0)",
+ org.eclipse.compare.core;bundle-version="[3.5.0,4.0.0)",
+ org.eclipse.core.expressions;bundle-version="[3.4.100,4.0.0)",
+ org.eclipse.jface.text;bundle-version="[3.19.0,4.0.0)",
+ org.eclipse.swt;bundle-version="[3.107.0,4.0.0)",
+ org.eclipse.ui;bundle-version="[3.5.0,4.0.0)"
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Automatic-Module-Name: org.eclipse.ui.workbench.texteditor

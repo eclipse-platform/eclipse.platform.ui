@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<plugin>
+	<extension 
+		  point="org.eclipse.ui.editors.markerUpdaters">  
+		      <updater  
+		         class="org.eclipse.ui.texteditor.BasicMarkerUpdater" 
+		         id="org.eclipse.ui.texteditor.BasicMarkerUpdaterTest1"  
+		         markerType="org.eclipse.ui.editors.test.DummyMarkerType">  
+		         <required-updater id="org.eclipse.ui.texteditor.BasicMarkerUpdaterTest2"/>  
+		      </updater>  
+		      <updater  
+				class="org.eclipse.ui.texteditor.BasicMarkerUpdater" 
+				id="org.eclipse.ui.texteditor.BasicMarkerUpdaterTest2" 
+				markerType="org.eclipse.ui.editors.test.DummyMarkerType"> 
+				<required-updater id="org.eclipse.ui.texteditor.BasicMarkerUpdaterTest1"/> 
+				<required-updater id="org.eclipse.ui.texteditor.BasicMarkerUpdaterTest3"/> 
+			  </updater> 
+			  <updater 
+				class="org.eclipse.ui.texteditor.BasicMarkerUpdater" 
+				id="org.eclipse.ui.texteditor.BasicMarkerUpdaterTest3" 
+				markerType="org.eclipse.ui.editors.test.DummyMarkerType"> 
+				<required-updater id="org.eclipse.ui.texteditor.BasicMarkerUpdaterTest4"/> 
+			  </updater> 
+			  <updater 
+				class="org.eclipse.ui.texteditor.BasicMarkerUpdater" 
+				id="org.eclipse.ui.texteditor.BasicMarkerUpdaterTest4" 
+				markerType="org.eclipse.ui.editors.test.DummyMarkerType"> 
+				<required-updater id="org.eclipse.ui.texteditor.BasicMarkerUpdaterTest1"/> 
+			  </updater> 
+		</extension>
+</plugin>

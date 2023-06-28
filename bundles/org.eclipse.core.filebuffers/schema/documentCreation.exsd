@@ -1,0 +1,157 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.core.filebuffers">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.core.filebuffers" id="documentCreation" name="Document Creation"/>
+      </appInfo>
+      <documentation>
+         This extension point is used to customize the document creation behavior of this plug-in&apos;s default text file buffer manager. It allows to specify which document factory should be used in order to create the document instance of a text file buffer created for a certain file content type, file extension, or file name.
+&lt;br&gt;
+&lt;br&gt;
+&lt;h6 class=CaptionFigColumn id=header&gt;Deprecated since 3.2: &lt;/h6&gt; This extension must no longer be used. We urge existing clients to remove their contribution:
+&lt;ul&gt;
+&lt;li&gt;the file buffer manager now provides an &lt;code&gt;ISynchronizable&lt;/code&gt; document. Clients which need a synchronized document can set a lock object. &lt;em&gt;To overwrite an existing lock object is considered bad practice and can break other clients: if the document already has a lock object set then this one should be used by the client&lt;/em&gt;.&lt;/li&gt;
+&lt;li&gt;clients which need a different &lt;code&gt;org.eclipse.jface.text.IDocument&lt;/code&gt; implementation create the corresponding document in their document provider. The custom document will wrap the document provided by the file buffer.&lt;/li&gt;
+&lt;/ul&gt;
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="factory" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="factory">
+      <annotation>
+         <documentation>
+            The specification of a document factory. In order to find a factory for a given file the attributes of each factory specification are consulted in the following sequence: contentTypeId, fileNames, extensions. If multiple, equally specific factory specifications are found for a given file it is not specified which factory is used.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified name of the factory implementation class. This class must implement the &lt;code&gt;org.eclipse.core.filebuffers.IDocumentFactory&lt;/code&gt; interface.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.core.filebuffers.IDocumentFactory"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="extensions" type="string">
+            <annotation>
+               <documentation>
+                  a comma separated list of file extensions for which this factory should be used
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="fileNames" type="string">
+            <annotation>
+               <documentation>
+                  a comma separated list of file names for which this factory should be used
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="contentTypeId" type="string">
+            <annotation>
+               <documentation>
+                  the id of a content type as defined by the &lt;code&gt;org.eclipse.core.runtime.contentTypes&lt;/code&gt; extension point for which this factory should be used
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         &lt;pre&gt;
+&lt;extension
+     id=&quot;org.eclipse.jdt.debug.ui.SnippetDocumentFactory&quot;
+     name=&quot;%snippetDocumentFactory.name&quot;
+     point=&quot;org.eclipse.core.filebuffers.documentCreation&quot;&gt;
+  &lt;factory
+        extensions=&quot;jpage&quot;
+        class=&quot;org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetDocumentFactory&quot;&gt;
+  &lt;/factory&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Document factories have to implement org.eclipse.core.filebuffers.IDocumentFactory.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2001, 2006 IBM Corporation and others.&lt;br&gt;
+
+This program and the accompanying materials are made available under the terms of the Eclipse Public License 2.0 which accompanies this distribution, and is available at &lt;a href=&quot;https://www.eclipse.org/legal/epl-2.0&quot;&gt;https://www.eclipse.org/legal/epl-v20.html&lt;/a&gt;/
+
+SPDX-License-Identifier: EPL-2.0
+      </documentation>
+   </annotation>
+
+</schema>

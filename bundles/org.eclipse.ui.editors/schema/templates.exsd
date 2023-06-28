@@ -1,0 +1,396 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.ui.editors" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui.editors" id="templates" name="Editor Template"/>
+      </appInfo>
+      <documentation>
+         Templates are snippets of text or code which help the user enter reoccurring patterns into a text editor. Templates may contain variables which are resolved in the context where the template is inserted.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name" />
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="template" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="resolver" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="contextType" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="include" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="contextTypeRegistry" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="contextType">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+         <documentation>
+            A context type defines a context within which templates are evaluated. A context type uses its resolvers to resolve a template.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  unambiguously identifies this context type. Use of a qualified name is recommended.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a subclass of &lt;code&gt;org.eclipse.jface.text.templates.TemplateContextType&lt;/code&gt;
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.text.templates.TemplateContextType"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  the display name of this context
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="registryId" type="string">
+            <annotation>
+               <documentation>
+                  the id of the context type registry where this context type is automatically registered. Since 3.5.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.editors.templates/contextTypeRegistry/@id"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="resolver">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name" icon="icon"/>
+         </appInfo>
+         <documentation>
+            A template variable resolver can resolve a template variable in a certain context.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="contextTypeId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  references the context type that this resolver is contributed to
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.editors.templates/contextType/@id"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="type" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the type of this variable resolver. This property will be set on the resolver once it gets created.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a subclass of &lt;code&gt;org.eclipse.jface.text.templates.TemplateVariableResolver&lt;/code&gt;
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.text.templates.TemplateVariableResolver"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  the description of this variable resolver. This property will be set on the resolver once it gets created.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  the display name of this resolver
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  an icon that may be displayed in the user interface
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="template">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name" icon="icon"/>
+         </appInfo>
+         <documentation>
+            A template is a snippet of code or text that will be evaluated in a given context. Variables which will be resolved in that context can be specified using the &lt;tt&gt;${variable_type}&lt;/tt&gt; notation.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="pattern"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  unambiguously identifies this template. Use of a qualified name is recommended.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="contextTypeId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  references the context type that this template is contributed to
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.editors.templates/contextType/@id"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the internationalizable name of the template which will show up in the UI, such as in template proposals
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  the description of this template
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  an icon that may be displayed in the UI for this template, for example in content assist proposals
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="autoinsert" type="boolean" use="default" value="true">
+            <annotation>
+               <documentation>
+                  &lt;code&gt;true&lt;/code&gt; (default) to make the template automatically insertable, &lt;code&gt;false&lt;/code&gt; to not allow automatic insertion. Since 3.1.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="pattern" type="string">
+      <annotation>
+         <documentation>
+            The template pattern.
+         </documentation>
+      </annotation>
+   </element>
+
+   <element name="include">
+      <annotation>
+         <documentation>
+            A collection of templates encoded as XML can be included as a whole via this element.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="file" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the XML file to import templates from. It defines at least one &amp;lt;template&amp;gt; element inside &amp;lt;templates&amp;gt;...&amp;lt;/templates&amp;gt;, with the following attributes:
+&lt;ul&gt;
+	&lt;li&gt;id - the uniqe id&lt;/li&gt;
+	&lt;li&gt;name - the name&lt;/li&gt;
+	&lt;li&gt;context - the context id&lt;/li&gt;
+	&lt;li&gt;description - the description (optional, default: &quot;&quot;)&lt;/li&gt;
+	&lt;li&gt;autoinsert (optional, default: true)&lt;/li&gt;
+	&lt;li&gt;enabled (optional, default: true)&lt;/li&gt;
+&lt;/ul&gt;
+See above template element for more details about those attributes.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="translations" type="string">
+            <annotation>
+               <documentation>
+                  an optional properties file with resources for the templates specified in &lt;tt&gt;file&lt;/tt&gt;.
+&lt;br&gt;
+&lt;em&gt;Note:&lt;/em&gt; The translation files are not treated as resource bundles and hence the file name has to be left as is i.e. do not add the  locale to the file name. The translated files must be in the &apos;nl&apos; directory i.e. if a [plugin] defines a template translations file in its plugin.xml like:
+&lt;pre&gt;
+...
+  translations=$nl$/[plugin-relative path to file]
+...
+&lt;/pre&gt;
+then the translations must go into:
+&lt;pre&gt;
+  [plugins nl fragment]/nl/[locale]/templates/[plugin-relative path to file]
+&lt;/pre&gt;
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="contextTypeRegistry">
+      <annotation>
+         <documentation>
+            Defines a registry for context types. Context types which define a &apos;registryId&apos; are automatically added to the registry which is created by &lt;code&gt;new org.eclipse.ui.editors.text.templates.ContributionContextTypeRegistry(registryId)&lt;/code&gt;. Since 3.5.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  the id of this registry
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         &lt;pre&gt;
+   &lt;extension
+         point=&quot;org.eclipse.ui.editors.templates&quot;&gt;
+      &lt;template
+         name=&quot;%ant.tasks.javac.name&quot;
+         contextTypeId=&quot;org.eclipse.ui.examples.templateeditor.antcontext&quot;
+         id=&quot;org.eclipse.ui.examples.templateeditor.templates.javac&quot;
+         description=&quot;%ant.tasks.javac.description&quot;&gt;
+          &lt;pattern&gt;
+             &lt;javac srcdir=&quot;${src}&quot;
+               destdir=&quot;${dst}&quot;
+               classpath=&quot;${classpath}&quot;
+               debug=&quot;${debug}&quot;/&gt;
+          &lt;/pattern&gt;
+      &lt;/template&gt;
+      
+      &lt;resolver
+         contextTypeId=&quot;org.eclipse.ui.examples.templateeditor.antcontext&quot;
+         type=&quot;src&quot;
+         class=&quot;org.eclipse.ui.examples.templateeditor.editors.AntVariableResolver&quot;&gt;
+      &lt;/resolver&gt;
+      
+      &lt;resolver
+         contextTypeId=&quot;org.eclipse.ui.examples.templateeditor.antcontext&quot;
+         type=&quot;dst&quot;
+         class=&quot;org.eclipse.ui.examples.templateeditor.editors.AntVariableResolver&quot;&gt;
+      &lt;/resolver&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         See the &lt;code&gt;org.eclipse.jface.text.templates&lt;/code&gt; package in the &lt;tt&gt;org.eclipse.text&lt;/tt&gt; plug-in for the relevant API.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         See the &lt;code&gt;org.eclipse.jface.text.templates&lt;/code&gt; package in the &lt;tt&gt;org.eclipse.text&lt;/tt&gt; plug-in for the relevant classes.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2001, 2010 IBM Corporation and others.&lt;br&gt;
+
+This program and the accompanying materials are made available under the terms of the Eclipse Public License 2.0 which accompanies this distribution, and is available at &lt;a href=&quot;https://www.eclipse.org/legal/epl-2.0&quot;&gt;https://www.eclipse.org/legal/epl-v20.html&lt;/a&gt;/
+
+SPDX-License-Identifier: EPL-2.0
+      </documentation>
+   </annotation>
+
+</schema>

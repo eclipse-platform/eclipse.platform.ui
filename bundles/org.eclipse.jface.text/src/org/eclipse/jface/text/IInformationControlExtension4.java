@@ -1,0 +1,38 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.jface.text;
+
+
+/**
+ * Extension interface for {@link org.eclipse.jface.text.IInformationControl}.
+ * Adds API which allows to set this information control's status field text.
+ *
+ * @see org.eclipse.jface.text.IInformationControl
+ * @since 3.3
+ */
+public interface IInformationControlExtension4 {
+
+	/**
+	 * Sets the text of the status field.
+	 * <p>
+	 * The implementor can specify whether the new text affects an
+	 * already visible information control.
+	 * </p>
+	 *
+	 * @param statusFieldText the text to be used in the optional status field
+	 *                         or <code>null</code> if the status field should be hidden
+	 * @since 3.2
+	 */
+	public void setStatusText(String statusFieldText);
+}

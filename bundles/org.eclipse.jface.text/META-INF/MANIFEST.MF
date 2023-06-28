@@ -1,0 +1,42 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.jface.text
+Bundle-Version: 3.24.100.qualifier
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Export-Package: 
+ org.eclipse.jface.contentassist,
+ org.eclipse.jface.contentassist.images,
+ org.eclipse.jface.internal.text;x-internal:=true,
+ org.eclipse.jface.internal.text.codemining;x-internal:=true,
+ org.eclipse.jface.internal.text.html;x-friends:="org.eclipse.ant.ui, org.eclipse.jdt.ui, org.eclipse.ltk.ui.refactoring, org.eclipse.pde.ui, org.eclipse.ui.editors, org.eclipse.xtext.ui",
+ org.eclipse.jface.internal.text.link.contentassist;x-internal:=true,
+ org.eclipse.jface.internal.text.revisions;x-internal:=true,
+ org.eclipse.jface.internal.text.source;x-internal:=true,
+ org.eclipse.jface.text,
+ org.eclipse.jface.text.codemining,
+ org.eclipse.jface.text.contentassist,
+ org.eclipse.jface.text.formatter,
+ org.eclipse.jface.text.hyperlink,
+ org.eclipse.jface.text.information,
+ org.eclipse.jface.text.link,
+ org.eclipse.jface.text.presentation,
+ org.eclipse.jface.text.quickassist,
+ org.eclipse.jface.text.reconciler,
+ org.eclipse.jface.text.revisions,
+ org.eclipse.jface.text.rules,
+ org.eclipse.jface.text.source,
+ org.eclipse.jface.text.source.inlined,
+ org.eclipse.jface.text.source.projection,
+ org.eclipse.jface.text.source.projection.images,
+ org.eclipse.jface.text.templates,
+ org.eclipse.jface.text.templates.persistence
+Require-Bundle: 
+ org.eclipse.core.runtime;bundle-version="[3.28.0,4.0.0)",
+ org.eclipse.text;bundle-version="[3.8.0,4.0.0)";visibility:=reexport,
+ org.eclipse.swt;bundle-version="[3.117.0,4.0.0)",
+ org.eclipse.jface;bundle-version="[3.19.0,4.0.0)"
+Import-Package: com.ibm.icu.text
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Automatic-Module-Name: org.eclipse.jface.text

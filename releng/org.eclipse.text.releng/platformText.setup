@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<setup:Project
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:git="http://www.eclipse.org/oomph/setup/git/1.0"
+    xmlns:predicates="http://www.eclipse.org/oomph/predicates/1.0"
+    xmlns:setup="http://www.eclipse.org/oomph/setup/1.0"
+    xmlns:setup.targlets="http://www.eclipse.org/oomph/setup/targlets/1.0"
+    xmlns:setup.workingsets="http://www.eclipse.org/oomph/setup/workingsets/1.0"
+    xmlns:workingsets="http://www.eclipse.org/oomph/workingsets/1.0"
+    xsi:schemaLocation="http://www.eclipse.org/oomph/setup/git/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Git.ecore http://www.eclipse.org/oomph/predicates/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Predicates.ecore http://www.eclipse.org/oomph/setup/targlets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupTarglets.ecore http://www.eclipse.org/oomph/setup/workingsets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupWorkingSets.ecore http://www.eclipse.org/oomph/workingsets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/WorkingSets.ecore"
+    name="text"
+    label="Text">
+  <setupTask
+      xsi:type="setup:EclipseIniTask"
+      option="-Doomph.redirection.platform.text"
+      value="=https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.text/master/org.eclipse.text.releng/platformText.setup->${github.clone.platform.text.location|uri}/org.eclipse.text.releng/platformText.setup"
+      vm="true"/>
+  <setupTask
+      xsi:type="git:GitCloneTask"
+      id="github.clone.platform.text"
+      remoteURI="eclipse-platform/eclipse.platform.text"
+      pushURI="">
+    <annotation
+        source="http://www.eclipse.org/oomph/setup/InducedChoices">
+      <detail
+          key="inherit">
+        <value>github.remoteURIs</value>
+      </detail>
+      <detail
+          key="label">
+        <value>Platform Text Github Repository</value>
+      </detail>
+      <detail
+          key="target">
+        <value>remoteURI</value>
+      </detail>
+    </annotation>
+    <description>Platform Text</description>
+  </setupTask>
+  <setupTask
+      xsi:type="setup.targlets:TargletTask">
+    <targlet
+        name="Platform Text"
+        activeRepositoryList="${eclipse.target.platform}">
+      <requirement
+          name="*"/>
+      <sourceLocator
+          rootFolder="${github.clone.platform.text.location}"
+          locateNestedProjects="true">
+        <predicate
+            xsi:type="predicates:NotPredicate">
+          <operand
+              xsi:type="predicates:AndPredicate">
+            <operand
+                xsi:type="predicates:NamePredicate"
+                pattern="eclipse\.platform\.text"/>
+          </operand>
+        </predicate>
+      </sourceLocator>
+    </targlet>
+  </setupTask>
+  <setupTask
+      xsi:type="setup.workingsets:WorkingSetTask"
+      id="text.workingsets">
+    <workingSet
+        name="Platform Text">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.text"/>
+        <operand
+            xsi:type="workingsets:ExclusionPredicate"
+            excludedWorkingSet="//'text.workingsets'/@workingSets[name='Platform%20Text%20Examples'] //'text.workingsets'/@workingSets[name='Platform%20Text%20Tests']"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Platform Text Tests">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.text"/>
+        <operand
+            xsi:type="predicates:NamePredicate"
+            pattern=".*\.tests.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Platform Text Examples">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.text"/>
+        <operand
+            xsi:type="predicates:NamePredicate"
+            pattern=".*\.examples.*"/>
+      </predicate>
+    </workingSet>
+  </setupTask>
+  <stream name="master"
+      label="Master"/>
+  <logicalProjectContainer
+      xsi:type="setup:Project"
+      href="index:/org.eclipse.setup#//@projectCatalogs[name='org.eclipse']/@projects[name='platform']"/>
+  <description>The Platform Text support</description>
+</setup:Project>

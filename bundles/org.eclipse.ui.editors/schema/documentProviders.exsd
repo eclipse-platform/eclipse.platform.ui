@@ -1,0 +1,153 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.ui.editors">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui.editors" id="documentProviders" name="Document Providers"/>
+      </appInfo>
+      <documentation>
+         This extension point is used to define mappings between file types and document providers or between types of editor inputs and document providers that can be used by editors. Document providers must implement the interface &lt;samp&gt;org.eclipse.ui.texteditor.IDocumentProvider&lt;/samp&gt;. Editor inputs must be instance of &lt;samp&gt;org.eclipse.ui.IEditorInput&lt;/samp&gt;.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="provider" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="provider">
+      <complexType>
+         <attribute name="extensions" type="string">
+            <annotation>
+               <documentation>
+                  a comma separated  list of file extensions
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="inputTypes" type="string">
+            <annotation>
+               <documentation>
+                  a comma separated list of qualified editor input class names
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the qualified name of the document provider class
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the unique id of this provider
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0 (originally named org.eclipse.ui.documentProviders)
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         &lt;pre&gt;
+&lt;extension point=&quot;org.eclipse.ui.editors.documentProviders&quot;&gt; 
+    &lt;provider 
+        extensions=&quot;jav&quot; 
+        class=&quot;org.eclipse.ui.examples.javaeditor.JavaDocumentProvider&quot; 
+        id=&quot;org.eclipse.ui.examples.javaeditor.JavaDocumentProvider&quot;&gt; 
+    &lt;/provider&gt; 
+&lt;/extension&gt; 
+&lt;/pre&gt;
+&lt;p&gt;
+This example registers &lt;samp&gt;org.eclipse.ui.examples.javaeditor.JavaDocumentProvider&lt;/samp&gt; as the default provider for files with the extension &quot;.jav&quot;. 
+&lt;/p&gt;
+&lt;p&gt;
+&lt;pre&gt;
+&lt;extension point=&quot;org.eclipse.ui.editors.documentProviders&quot;&gt; 
+    &lt;provider 
+        inputTypes=&quot;org.eclipse.ui.IStorageEditorInput&quot; 
+        class=&quot;org.eclipse.ui.editors.text.FileDocumentProvider&quot; 
+        id=&quot;org.eclipse.ui.editors.text.FileDocumentProvider&quot;&gt; 
+    &lt;/provider&gt; 
+&lt;/extension&gt; 
+&lt;/pre&gt;
+&lt;/p&gt;
+This example registers &lt;samp&gt;org.eclipse.ui.editors.text.FileDocumentProvider&lt;/samp&gt; as the default provider for all editor inputs that are &lt;samp&gt;instance of org.eclipse.ui.IStorageEditorInput&lt;/samp&gt;.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Document providers registered for a file extension have precedence over those registered for input types. Document providers must implement the interface &lt;samp&gt;org.eclipse.ui.texteditor.IDocumentProvider&lt;/samp&gt;. Editor inputs must be instance of &lt;samp&gt;org.eclipse.ui.IEditorInput&lt;/samp&gt;.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2001, 2009 IBM Corporation and others.&lt;br&gt;
+
+This program and the accompanying materials are made available under the terms of the Eclipse Public License 2.0 which accompanies this distribution, and is available at &lt;a href=&quot;https://www.eclipse.org/legal/epl-2.0&quot;&gt;https://www.eclipse.org/legal/epl-v20.html&lt;/a&gt;/
+
+SPDX-License-Identifier: EPL-2.0
+      </documentation>
+   </annotation>
+
+</schema>

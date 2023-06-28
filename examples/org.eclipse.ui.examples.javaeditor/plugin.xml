@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+<!-- =========================================================================== -->
+<!-- Java Editor Example                                                         -->
+<!-- =========================================================================== -->
+
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="%javaEditorName"
+            icon="icons/obj16/java.png"
+            extensions="jav"
+            contributorClass="org.eclipse.ui.examples.javaeditor.JavaActionContributor"
+            class="org.eclipse.ui.examples.javaeditor.JavaEditor"
+            id="org.eclipse.ui.JavaEditor">
+      </editor>
+   </extension>
+
+   <extension
+         id="ExampleJavaDocumentSetupParticipant"
+         name="%documentSetupParticipantName"
+         point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            extensions="jav"
+            class="org.eclipse.ui.examples.javaeditor.JavaDocumentSetupParticipant">
+      </participant>
+   </extension>
+
+<!-- =========================================================================== -->
+<!-- Template Editor Example                                                     -->
+<!-- =========================================================================== -->
+
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="%xml.editor.name"
+            icon="icons/sample.png"
+            extensions="xml"
+            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            class="org.eclipse.ui.examples.templateeditor.editors.TemplateEditor"
+            id="org.eclipse.ui.examples.templateeditor.editors.TemplateEditor">
+      </editor>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="%xml.editor.preferencePage.label"
+            class="org.eclipse.ui.examples.templateeditor.preferences.TemplatesPreferencePage"
+            id="org.eclipse.ui.examples.templateeditor.preferencepage">
+      </page>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.editors.templates">
+      <contextType
+            name="%xml.contextType.name"
+            class="org.eclipse.ui.examples.templateeditor.template.XMLContextType"
+            id="org.eclipse.ui.examples.templateeditor.xml">
+      </contextType>
+      <template
+            name="%ant.tasks.copy.name"
+            icon="icons/template.png"
+            description="%ant.tasks.copy.description"
+            contextTypeId="org.eclipse.ui.examples.templateeditor.xml"
+            id="org.eclipse.ui.examples.templateeditor.ant.copy">
+         <pattern>&lt;copy todir=&quot;${dst}&quot;&gt;
+	&lt;fileset dir=&quot;${src}&quot;/&gt;
+&lt;/copy&gt;</pattern>
+      </template>
+      <resolver
+            name="%ant.resolvers.src"
+            type="src"
+            icon="icons/resolver.png"
+            description="%ant.resolvers.src.description"
+            contextTypeId="org.eclipse.ui.examples.templateeditor.xml"
+            class="org.eclipse.ui.examples.templateeditor.template.AntVariableResolver">
+      </resolver>
+      <resolver
+            name="%ant.resolvers.dst"
+            type="dst"
+            icon="icons/resolver.png"
+            description="%ant.resolvers.dst.description"
+            contextTypeId="org.eclipse.ui.examples.templateeditor.xml"
+            class="org.eclipse.ui.examples.templateeditor.template.AntVariableResolver">
+      </resolver>
+      <include
+      		file="templates/ant.xml"
+      		translations="$nl$/templates/ant.properties">
+      </include>
+   </extension>
+
+</plugin>

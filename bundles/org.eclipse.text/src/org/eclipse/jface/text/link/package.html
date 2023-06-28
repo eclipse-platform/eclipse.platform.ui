@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+  <meta content="text/html; charset=iso-8859-1"
+ http-equiv="Content-Type">
+  <meta content="IBM" name="Author">
+  <meta content="Mozilla/4.75 [en] (Windows NT 5.0; U) [Netscape]"
+ name="GENERATOR">
+  <title>Linked Position Infrastructure</title>
+</head>
+<body>
+Application programming interfaces for interaction
+with the Eclipse text editor's linked position support.
+<h2>Linked Position Infrastructure</h2>
+<h3>package <code>org.eclipse.jface.text.link</code></h3>
+The Linked Position Infrastructure lets one set up a mode in an editor
+in which regions in a document (or several documents) are <em>linked</em>,
+i.e. editions
+of one linked position will be reflected in the others.
+<h4>Classes</h4>
+<ul>
+  <li><code>LinkedPositionGroup</code>: a set of linked positions. Add
+positions to a group using the <code>addPosition</code> method. See <code>LinkedPosition</code> and <code>ProposalPosition</code> 
+for a position type that lets one attach <code>ICompletionProposal</code>s to
+be shown when the position is hit.</li>
+  <li><code>LinkedModeModel</code>: umbrellas several <code>LinkedPositionGroup</code>s,
+e.g. in a template that has several groups of linked positions. Handles
+the forwarding of updates received via an <code>IDocumentListener</code>. Add <code>LinkedPositionGroup</code>s
+to
+an model using the <code>addGroup</code> method. Existence of a <code>LinkedModeModel </code>can be
+tested by one of the static methods.<br>
+  </li>
+
+
+<!-- ========================================================================================================== -->
+<!-- Below is the package documentation for org.eclipse.jface.text.link from the org.eclipse.jface.text plug-in -->
+<!-- ========================================================================================================== -->
+  
+  <li><code>LinkedModeUI</code>: The UI for linked mode (for one
+model, to be precise). Monitors key etc. activity, monitors exit
+conditions, creates a painter etc. <br>
+Properties:
+    <ul>
+      <li><b>cycling mode</b> (whether to jump to the first position
+after the last): either of <code>CYCLE_ALWAYS</code>, <code>CYCLE_NEVER</code>
+and <code>CYCLE_WHEN_NO_PARENT</code> (default).</li>
+      <li><b>exit position</b>: where to jump upon leaving the linked
+mode (e.g. using Enter, or Tab from the last position when not
+cycling). Set <code>isTabStop</code> to <code>true</code> if tabbing
+should stop over when cycling.</li>
+      <li><span style="font-weight: bold;">position listener</span>:
+extending classes may register a position listener which will get
+notified whenever
+the focus position changes. An example is <code>org.eclipse.ui.texteditor.link.EditorLinkedModeUI.EditorHistoryUpdater</code>
+which will store the edit location in the editor navigation history.</li>
+    </ul>
+  </li>
+
+</ul>
+<h4>Example</h4>
+<pre>
+	IDocument doc1, doc2;
+	ITextViewer viewer1, viewer2;
+
+	/* create groups - this step is independent of the linked mode */
+	LinkedPositionGroup group1= new LinkedPositionGroup();
+	group1.addPosition(new LinkedPosition(doc1, 3, 4));
+	group1.addPosition(new LinkedPosition(doc1, 7, 8));
+
+	LinkedPositionGroup group2= new LinkedPositionGroup();
+	group2.addPosition(new LinkedPosition(doc1, 15, 25));
+	group2.addPosition(new LinkedPosition(doc2, 0, 10));
+
+	/* set up linked mode */
+	LinkedModeModel model= new LinkedModeModel();
+	model.addGroup(group1);
+	model.addGroup(group2);
+	model.forceInstall();
+
+	/* create UI */
+	LinkedModeUI ui= new LinkedModeUI(model, new ITextViewer[] { viewer1, viewer2 });
+	ui.enter();
+</pre>
+</body>
+</html>

@@ -1,0 +1,242 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2000, 2005. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="stylesheet" href="../../../book.css" charset="ISO-8859-1" type="text/css">
+
+   <title>Desktop - Java Editor Example</title>
+</head>
+<body>
+
+<h2>
+<b>Example - Java Editor</b></h2>
+
+<h3>
+Introduction</h3>
+The Java Editor example demonstrates the standard features available for
+custom text editors.&nbsp; It also shows how&nbsp; to register an editor
+for a file extension (in this case .jav) and how to define a custom Document
+provider for use by that editor. This example is only for demonstration
+purposes. Java editing support is provided by the&nbsp; Eclipse Java Tooling.
+<p>
+The code for this example is in the <code>org.eclipse.ui.examples.javaeditor</code> plug-in.
+To explore the code it is recommended to import that plug-in into your workspace.
+</p>
+
+<h3>
+<b>Features demonstrated in the example editor</b></h3>
+
+<ul>
+<li>
+syntax highlighting</li>
+
+<li>
+content type sensitive content assist (Javadoc and Java code)</li>
+
+<li>
+communication between content outliner and editor, i.e. content outliner
+selection feeds the highlight range of the editor</li>
+
+<li>
+two different presentation modes</li>
+
+<ul>
+<li>
+&nbsp;marking the highlight range using a visual range indicator</li>
+
+<li>
+confining the editor to show only text within the highlight range (e.g.
+show a single method of a Java class)</li>
+</ul>
+
+<li>
+marker handling</li>
+
+<li>
+document sharing</li>
+</ul>
+
+<h3>
+Features not demonstrated</h3>
+
+<ul>
+<li>
+content formatting</li>
+
+<li>
+dynamic reconciling of content outline page</li>
+</ul>
+
+<h3>
+Running the example Java editor</h3>
+
+<ol>
+<li>
+Create a project</li>
+
+<li>
+Create a file with the file extension ".jav" in the newly created project.
+The Java example editor opens automatically.</li>
+
+<li>
+Insert Java code. The Java code is dynamically colored. The example editor
+presents the following language elements in different colors: multi-line
+comments, single line comments, Java language reserved words, string and
+character constants, regular Java code, as well as multi-line comments
+following the Javadoc guidelines. Inside those Javadoc comments, Javadoc
+keywords (green) and HTML tags (gray) are differently colored.</li>
+
+<li>
+Open a new Java multi-line comment by inserting "/*" outside a Java comment.
+All the text between the inserted "/*" and the first occurrence of "*/"
+or the end of the text changes its color to red. Append another "*". The
+red range changes color to black as the regular multi-line comment now
+is considered containing Javadoc. Invoke code assist using CTRL-SPACE.
+The function of content assist is to support the user in writing code.
+So on invocation, content assist should list all possible valid completions
+at the invocation location. Inside Javadoc, the example editor always proposes
+all Javadoc keywords.</li>
+
+<li>
+Outside a Java comment invoke content tip using CTRL+SHIFT+SPACE. Five
+proposals are listed. Select one and press ENTER. A small floating red
+window appears above the current line displaying the selected proposal.
+Content tips are used to let the user express her intention
+(e.g. entering a method call), and then to present contextual information which
+guides the user in doing so. In the example editor, the proposal is considered
+valid five characters around the initial invocation location. While the
+content tip is visible, invoke content assist using CTRL+SPACE. 
+Content
+assist invoked in this situation should help the user to accomplish her
+stated intention, which is still visible in the content tip. Inside regular Java code,
+the example editor always proposes all Java keywords.</li>
+
+<li>
+Save the Java code. Saving updates the content outliner. The content outliner
+contains ten entries each of them representing one of ten equally sized
+segments of the Java code in the editor. This style of content outline
+has been chosen to show that the semantics of highlight ranges can arbitrarily
+be defined. (See next steps.)</li>
+
+<li>
+Select one of the entries in the content outliner. The corresponding lines
+are marked with a blue bar in the editor's left vertical ruler.</li>
+
+<li>
+Now switch to the segmented presentation mode of the Java editor. For that
+make sure that the editor has the focus and press that button in the desktop's
+toolbar whose hover help says "Enable/Disable segmented source viewer".&nbsp;
+This functionality is used for single method views and similar functionality.</li>
+
+<li>
+Select a different entry in the content outliner. Now the editor only shows
+the selected segment. By deselecting the entry in the content outliner,
+the complete Java code is shown again.</li>
+
+<li>
+Select an entry in the content outliner, select a fraction of the visible
+text, and add a task for the selection. The task shows up in the task list.
+Modify the visible code. In the task list, select the previously created
+task and press the "Go to file" button. The task is selected in the visible
+area, correctly taking the previously applied modifications into account.</li>
+
+<li>
+Select another entry in the content outliner. Reveal the previously added
+task from the task list. The editor's highlight range is automatically
+enlarged to enclose the range of the revealed task.</li>
+
+<li>
+Open a new workspace. In the new workspace, open a Java editor for the
+same file as in the original workspace. Modify the editor content. Switch
+back to the original workspace. The editor shows the changes made in the
+other workspace. The two editors showing the same file are linked.</li>
+</ol>
+
+<h3>
+Principles for creating custom text editors</h3>
+The following steps are usually necessary do develop a custom text editor.
+<ol>
+<li>
+Create a document provider. A document provider (see IDocumentProvider)
+produces and manages documents (see IDocument) containing a textual representation
+of editor input elements. It is important to decide how the translation
+between element and textual representation should be performed and whether the document
+provider should be shared between multiple editors or not. See the class
+FileDocumentProvider in the Java example editor.</li>
+
+<li>
+Create a document partitioner. A document partitioner (see IDocumentPartitioner)
+divides a document into disjoint regions. The partitioner assigns each
+region one content type out of a set of content types predefined by the
+partitioner. On each document change the document's partitioning must be
+updated. See the class JavaPartitioner in the Java example editor. The
+JavaPartitioner determines regions of types "multi-line comments", "Javadoc
+comments", and "everything else". It must be ensured that the document provider
+is set on each document produced by the document provider.</li>
+
+<li>
+Determine which of the source viewer plug-ins should be provided. Among
+other supported plug-ins are auto indent strategies, double click strategies,
+content formatter, and text presentation reconciler. The subsequent description
+will be restricted to the text presentation reconciler (see IPresentationReconciler).
+In the Java example editor, the text presentation reconciler is utilized
+to implement syntax highlighting.</li>
+
+<li>
+Create for all source viewer plug-ins the appropriate extensions for each
+supported content type. As seen above, the document partitioner defines
+the supported content types. The default implementation of IPresentationReconciler
+supports IPresentationDamagers and IPresentationRepairers as extensions.
+Those extensions are considered to be specific for a particular content
+type. Thus, for a custom editor, the user must first select a subset of
+the supported content types. Regions of a type in the selected
+subset will, e.g., be syntax highlighted. For each of those types the extensions
+must be implemented. See JavaDamagerRepairer and JavaDocDamagerRepairer
+in the example editor.</li>
+
+<li>
+Build a source viewer configuration using the previously created plug-ins
+and extensions. See JavaSourceViewerConfiguration in the example editor.</li>
+
+<li>
+Customize the class TextEditor or AbstractTextEditor with the developed
+document partitioner and source viewer configuration. Add or replace actions
+and adapt the construction of the editor's context menu. In the actual
+version, this customization must be done in a subclass. See JavaEditor
+in the example editor.</li>
+
+<li>
+Set up an appropriate action bar contributor who contributes editor-related
+actions to the desktop's toolbar and menus. See JavaActionContributor in
+the example editor.</li>
+
+<li>
+Extend the XML configuration file of the editor's plug-in, so that the editor
+registers at the predefined editor extension point for a specific set of
+file extensions. Also set up the action bar contributor in the XML file.
+See plugin.xml of this example.</li>
+</ol>
+
+<h3>
+Code organization of the example</h3>
+The Java editor example code is organized in four packages:
+<ul>
+<li>
+<code>org.eclipse.ui.examples.javaeditor</code> contains all the editor specific
+classes.</li>
+
+<li>
+<code>org.eclipse.ui.examples.javaeditor.java</code> contains all Java specific
+source viewer plug-ins such as the JavaDamagerRepairer as well as the Java
+specific document partitioner.</li>
+
+<li>
+<code>org.eclipse.ui.examples.javaeditor.javadoc </code>contains all Javadoc
+specific source viewer plug-ins such as the JavaDocDamagerRepairer.</li>
+
+<br><code>org.eclipse.ui.examples.javaeditor.util</code> contains convenience
+classes shared by the three other packages.</ul>
+</body>
+</html>

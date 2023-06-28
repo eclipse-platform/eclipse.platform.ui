@@ -1,0 +1,158 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.ui.genericeditor" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="org.eclipse.ui.genericeditor" id="autoEditStrategies" name="Auto edit strategies"/>
+      </appinfo>
+      <documentation>
+         This extension point is used to contribute auto edit strategies for a given content type.
+      </documentation>
+   </annotation>
+
+   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="autoEditStrategy"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="autoEditStrategy">
+      <complexType>
+         <sequence>
+            <element ref="enabledWhen" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The fully qualified class name implementing the interface &lt;code&gt;org.eclipse.jface.text.IAutoEditStrategy&lt;/code&gt;
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.jface.text.IAutoEditStrategy"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="contentType" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The target content-type for this extension. Content-types are defined as extension to the org.eclipse.core.contenttype.contentTypes extension point.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.core.contenttype.contentTypes/content-type/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="enabledWhen">
+      <annotation>
+         <documentation>
+            A core Expression that controls the enabled of the given auto edit strategies. The viewer, editor, and editor input are registered in the evaluation context as variable:
+
+ * &lt;with variable=&quot;viewer&quot;/&gt; : use it if your expression requires the viewer.
+ * &lt;with variable=&quot;document&quot;/&gt; : use it if your expression requires the document.
+ * &lt;with variable=&quot;editor&quot;/&gt; : use it if your expression requires the editor (deprecated, not always set).
+ * &lt;with variable=&quot;editorInput&quot;/&gt; :  use it if your expression requires the editor input (deprecated, not always set).
+         </documentation>
+      </annotation>
+      <complexType>
+         <choice minOccurs="0" maxOccurs="1">
+            <element ref="not"/>
+            <element ref="or"/>
+            <element ref="and"/>
+            <element ref="instanceof"/>
+            <element ref="test"/>
+            <element ref="systemTest"/>
+            <element ref="equals"/>
+            <element ref="count"/>
+            <element ref="with"/>
+            <element ref="resolve"/>
+            <element ref="adapt"/>
+            <element ref="iterate"/>
+            <element ref="reference"/>
+         </choice>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         1.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         This is an example of a strategy being registered for a target definition file type:
+
+&lt;pre&gt;
+&lt;extension point=&quot;org.eclipse.ui.genericeditor.autoEditStrategies&quot;&gt;
+   &lt;autoEditStrategy
+       class=&quot;org.eclipse.ui.genericeditor.examples.TargetDefinitionAutoEditStrategy&quot;
+       contentType=&quot;org.eclipse.pde.targetFile&quot;&gt;
+      &lt;enabledWhen&gt;
+         &lt;with variable=&quot;editor&quot;&gt;
+            &lt;test property=&quot;org.eclipse.ui.genericeditor.examples.TargetDefinitionPropertyTester&quot;&gt;
+            &lt;/test&gt;
+         &lt;/with&gt;
+      &lt;/enabledWhen&gt;
+   &lt;/autoEditStrategy&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+
+
+   <annotation>
+      <appinfo>
+         <meta.section type="copyright"/>
+      </appinfo>
+      <documentation>
+         Copyright (c) 2017 Rogue Wave Software Inc. and others
+
+This program and the accompanying materials are made available under the terms of the Eclipse Public License 2.0 which accompanies this distribution, and is available at &lt;a href=&quot;https://www.eclipse.org/legal/epl-2.0&quot;&gt;https://www.eclipse.org/legal/epl-v20.html&lt;/a&gt;/
+
+SPDX-License-Identifier: EPL-2.0
+      </documentation>
+   </annotation>
+
+</schema>
