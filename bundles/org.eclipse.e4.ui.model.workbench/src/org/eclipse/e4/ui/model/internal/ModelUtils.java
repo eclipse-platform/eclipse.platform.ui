@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.ui.MContext;
@@ -126,7 +126,7 @@ public class ModelUtils {
 								index = tmpIndex + 1;
 							}
 						} else {
-							Platform.getLog(ModelUtils.class)
+							ILog.of(ModelUtils.class)
 							.warn(MessageFormat.format("Could not find element with Id ''{0}'' in ''{1}''",
 									elementId, container.getElementId()));
 						}
@@ -237,6 +237,6 @@ public class ModelUtils {
 		String warning = MessageFormat.format(
 				"Position ''{0}'' defined in ''{1}'' is no not a valid list position. Valid list positions are {2}",
 				positionInList, container.getElementId(), values);
-		Platform.getLog(ModelUtils.class).warn(warning);
+		ILog.of(ModelUtils.class).warn(warning);
 	}
 }

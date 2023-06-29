@@ -18,6 +18,7 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.WeakHashMap;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.ui.workbench.UIEvents.UILifeCycle;
 import org.eclipse.jface.dialogs.IDialogSettingsProvider;
@@ -56,7 +57,7 @@ public final class DialogSettingsProviderService {
 				if (event.getTopic().equals(UILifeCycle.APP_SHUTDOWN_STARTED)) {
 					if (!fSaved) {
 						if (Platform.inDebugMode()) {
-							Platform.getLog(ctx.getBundle()).info("Saving dialog settings"); //$NON-NLS-1$
+							ILog.of(ctx.getBundle()).info("Saving dialog settings"); //$NON-NLS-1$
 						}
 						fTrackedBundles.forEach((bundle, service) -> service.saveDialogSettings());
 						fSaved = true;

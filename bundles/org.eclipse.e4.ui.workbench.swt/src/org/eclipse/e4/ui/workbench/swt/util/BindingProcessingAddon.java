@@ -28,7 +28,7 @@ import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -198,7 +198,7 @@ public class BindingProcessingAddon {
 		}
 
 		if (cmdModel == null) {
-			Platform.getLog(getClass()).error("binding with no command: " + binding); //$NON-NLS-1$
+			ILog.of(getClass()).error("binding with no command: " + binding); //$NON-NLS-1$
 			return null;
 		}
 		Map<String, Object> parameters = null;
@@ -268,7 +268,7 @@ public class BindingProcessingAddon {
 		final Context bindingContext = contextManager.getContext(bt.getBindingContext().getElementId());
 		BindingTable table = bindingTables.getTable(bindingContext.getId());
 		if (table == null) {
-			Platform.getLog(getClass()).error("Trying to create \'" + binding //$NON-NLS-1$
+			ILog.of(getClass()).error("Trying to create \'" + binding //$NON-NLS-1$
 					+ "\' without binding table " + bindingContext.getId()); //$NON-NLS-1$
 			return;
 		}

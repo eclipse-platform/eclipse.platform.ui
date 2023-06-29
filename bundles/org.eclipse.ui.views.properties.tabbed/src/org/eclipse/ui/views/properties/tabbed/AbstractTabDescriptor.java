@@ -18,8 +18,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.graphics.Image;
 import org.osgi.framework.Bundle;
@@ -53,7 +53,7 @@ public abstract class AbstractTabDescriptor implements ITabDescriptor,
 			IStatus status = new Status(IStatus.ERROR,
 					bundle.getSymbolicName(), 666, exception
 					.getMessage(), exception);
-			Platform.getLog(bundle).log(status);
+			ILog.of(bundle).log(status);
 		}
 		return null;
 	}

@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
@@ -1152,7 +1153,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		} catch (BackingStoreException e) {
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR,
 					CommonNavigatorMessages.NavigatorContentService_problemSavingPreferences, e);
-			Platform.getLog(NavigatorContentService.class).log(status);
+			ILog.of(NavigatorContentService.class).log(status);
 		}
 	}
 

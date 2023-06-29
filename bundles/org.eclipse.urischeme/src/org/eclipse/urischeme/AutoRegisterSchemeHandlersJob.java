@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.stream.Collectors;
 
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -100,7 +101,7 @@ public class AutoRegisterSchemeHandlersJob extends Job {
 			preferenceNode.flush();
 			alreadyTriggered = true;
 		} catch (Exception e) {
-			Platform.getLog(getClass()).error(e.getMessage(), e);
+			ILog.of(getClass()).error(e.getMessage(), e);
 		}
 		return Status.OK_STATUS;
 	}

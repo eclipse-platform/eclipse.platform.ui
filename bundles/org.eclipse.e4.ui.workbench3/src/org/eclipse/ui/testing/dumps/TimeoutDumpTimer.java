@@ -352,7 +352,7 @@ public class TimeoutDumpTimer extends TimerTask {
 	}
 
 	private static void log(IStatus warningStatus) {
-		ILog log = Platform.getLog(Platform.getBundle(PLUGIN_ID));
+		ILog log = ILog.of(Platform.getBundle(PLUGIN_ID));
 		log.log(warningStatus);
 	}
 

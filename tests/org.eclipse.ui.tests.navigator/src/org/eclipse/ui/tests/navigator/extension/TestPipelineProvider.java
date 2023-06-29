@@ -27,7 +27,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
@@ -44,7 +43,7 @@ import org.eclipse.ui.tests.navigator.m12.model.ResourceWrapper;
  */
 public class TestPipelineProvider extends ResourceWrapperContentProvider {
 
-	private static final ILog LOGGER = Platform.getLog(TestPipelineProvider.class);
+	private static final ILog LOGGER = ILog.of(TestPipelineProvider.class);
 	public static final Map ELEMENTS = new HashMap(),
 	CHILDREN = new HashMap(),
 	ADDS = new HashMap(),
