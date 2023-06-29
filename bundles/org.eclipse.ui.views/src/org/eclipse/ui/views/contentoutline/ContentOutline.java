@@ -16,6 +16,7 @@
 package org.eclipse.ui.views.contentoutline;
 
 import org.eclipse.core.runtime.Adapters;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -141,7 +142,7 @@ public class ContentOutline extends PageBookView implements ISelectionProvider, 
 				page.createControl(getPageBook());
 			} catch (Exception e) {
 				String message = "Failed to create outline control for " + page.getClass(); //$NON-NLS-1$
-				Platform.getLog(Platform.getBundle(VIEWS_PLUGIN_ID))
+				ILog.of(Platform.getBundle(VIEWS_PLUGIN_ID))
 						.log(new Status(IStatus.ERROR, VIEWS_PLUGIN_ID, IStatus.OK, message, e));
 				page.dispose();
 				return null;

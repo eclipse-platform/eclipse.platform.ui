@@ -16,8 +16,8 @@ package org.eclipse.e4.ui.progress.internal;
 
 import java.util.Arrays;
 
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
@@ -115,7 +115,7 @@ public class ProgressManagerUtil {
 	 */
 	static void logException(Throwable exception) {
 		IStatus status = Status.error(exception.getMessage() == null ? "" : exception.getMessage(), exception); //$NON-NLS-1$
-		Platform.getLog(ProgressManagerUtil.class).log(status);
+		ILog.of(ProgressManagerUtil.class).log(status);
 	}
 
 	// /**

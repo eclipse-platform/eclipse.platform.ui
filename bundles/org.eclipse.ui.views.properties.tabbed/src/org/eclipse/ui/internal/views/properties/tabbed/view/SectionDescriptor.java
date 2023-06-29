@@ -20,8 +20,8 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.IFilter;
 import org.eclipse.ui.internal.views.properties.tabbed.TabbedPropertyViewStatusCodes;
@@ -122,7 +122,7 @@ public class SectionDescriptor extends AbstractSectionDescriptor {
 		IStatus status = new Status(IStatus.ERROR, pluginId,
 				TabbedPropertyViewStatusCodes.SECTION_ERROR, message, exception);
 		Bundle bundle = FrameworkUtil.getBundle(SectionDescriptor.class);
-		Platform.getLog(bundle).log(status);
+		ILog.of(bundle).log(status);
 	}
 
 	@Override

@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -125,7 +126,7 @@ public class PerspectiveExtensionReader extends RegistryReader {
 					break;
 				}
 				if (!result) {
-					Platform.getLog(getClass()).error("Unable to process attribute: " + //$NON-NLS-1$
+					ILog.of(getClass()).error("Unable to process attribute: " + //$NON-NLS-1$
 							attribute + " in perspective extension: " + //$NON-NLS-1$
 							element.getDeclaringExtension().getUniqueIdentifier());
 				}
@@ -168,7 +169,7 @@ public class PerspectiveExtensionReader extends RegistryReader {
 					break;
 				}
 				if (!result) {
-					Platform.getLog(getClass()).error("Unable to process element: " + //$NON-NLS-1$
+					ILog.of(getClass()).error("Unable to process element: " + //$NON-NLS-1$
 							type + " in perspective extension: " + //$NON-NLS-1$
 							element.getDeclaringExtension().getUniqueIdentifier());
 				}

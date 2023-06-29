@@ -14,6 +14,7 @@
 package org.eclipse.e4.ui.css.swt.properties.custom;
 
 import java.lang.reflect.Constructor;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.helpers.URI;
@@ -40,7 +41,7 @@ public class CSSPropertyTabRendererSWTHandler extends AbstractCSSPropertySWTHand
 				URI uri = URI.createURI(rendURL);
 				Bundle bundle = Platform.getBundle(uri.authority());
 				if (bundle == null) {
-					Platform.getLog(getClass()).error("Failed to get bundle for: " + rendURL); //$NON-NLS-1$
+					ILog.of(getClass()).error("Failed to get bundle for: " + rendURL); //$NON-NLS-1$
 				} else if (uri.segmentCount() > 1) {
 					//TODO: handle this case?
 				} else {
@@ -64,7 +65,7 @@ public class CSSPropertyTabRendererSWTHandler extends AbstractCSSPropertySWTHand
 					} catch (ClassNotFoundException e) {
 						String message = "Unable to load class '" + clazz + "' from bundle '" //$NON-NLS-1$ //$NON-NLS-2$
 								+ bundle.getBundleId() + "'"; //$NON-NLS-1$
-						Platform.getLog(getClass()).error(message);
+						ILog.of(getClass()).error(message);
 					}
 				}
 			} else {

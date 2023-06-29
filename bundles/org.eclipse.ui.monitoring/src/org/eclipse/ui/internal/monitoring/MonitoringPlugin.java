@@ -29,7 +29,7 @@ import org.eclipse.ui.monitoring.PreferenceConstants;
  */
 public class MonitoringPlugin {
 
-	private static ILog logger = Platform.getLog(MonitoringPlugin.class);
+	private static ILog logger = ILog.of(MonitoringPlugin.class);
 	private static IPreferenceStore store;
 
 	public static void logError(String message, Throwable e) {

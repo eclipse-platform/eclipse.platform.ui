@@ -29,7 +29,7 @@ import org.osgi.service.component.annotations.Component;
 public class ThemeEngineManager implements IThemeManager {
 	private static final String KEY = "org.eclipse.e4.ui.css.swt.theme";
 
-	private static ILog LOG = Platform.getLog(Platform.getBundle(KEY));
+	private static ILog LOG = ILog.of(Platform.getBundle(KEY));
 
 	@Override
 	public IThemeEngine getEngineForDisplay(Display display) {
