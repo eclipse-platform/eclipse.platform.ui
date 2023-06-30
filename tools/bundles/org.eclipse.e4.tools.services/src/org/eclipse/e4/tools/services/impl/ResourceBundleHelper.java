@@ -42,6 +42,7 @@ public class ResourceBundleHelper {
 	 * <p>
 	 * If the value for this system property is set to an empty String the default search order for ResourceBundles is
 	 * used:
+	 * </p>
 	 * <ul>
 	 * <li>bn + Ls + "_" + Cs + "_" + Vs</li>
 	 * <li>bn + Ls + "_" + Cs</li>
@@ -51,11 +52,13 @@ public class ResourceBundleHelper {
 	 * <li>bn + Ld</li>
 	 * <li>bn</li>
 	 * </ul>
+	 * <p>
 	 * Where bn is this bundle's localization basename, Ls, Cs and Vs are the specified locale (language, country,
 	 * variant) and Ld, Cd and Vd are the default locale (language, country, variant).
 	 * </p>
 	 * <p>
 	 * If Ls equals the value of <code>equinox.root.locale</code> then the following search order is used:
+	 * </p>
 	 * <ul>
 	 * <li>bn + Ls + "_" + Cs + "_" + Vs</li>
 	 * <li>bn + Ls + "_" + Cs</li>
@@ -66,7 +69,6 @@ public class ResourceBundleHelper {
 	 * <li>bn + Ld</li>
 	 * <li>bn</li>
 	 * </ul>
-	 * </p>
 	 * If <code>equinox.root.locale=en</code> and en_XX or en is asked for then this allows the root file to be used
 	 * instead of
 	 * falling back to the default locale.
@@ -128,6 +130,7 @@ public class ResourceBundleHelper {
 	 * <p>
 	 * If the value for this system property is set to an empty String the default search order for ResourceBundles is
 	 * used:
+	 * </p>
 	 * <ul>
 	 * <li>bn + Ls + "_" + Cs + "_" + Vs</li>
 	 * <li>bn + Ls + "_" + Cs</li>
@@ -139,9 +142,9 @@ public class ResourceBundleHelper {
 	 * </ul>
 	 * Where bn is this bundle's localization basename, Ls, Cs and Vs are the specified locale (language, country,
 	 * variant) and Ld, Cd and Vd are the default locale (language, country, variant).
-	 * </p>
 	 * <p>
 	 * If Ls equals the value of <code>equinox.root.locale</code> then the following search order is used:
+	 * </p>
 	 * <ul>
 	 * <li>bn + Ls + "_" + Cs + "_" + Vs</li>
 	 * <li>bn + Ls + "_" + Cs</li>
@@ -152,7 +155,6 @@ public class ResourceBundleHelper {
 	 * <li>bn + Ld</li>
 	 * <li>bn</li>
 	 * </ul>
-	 * </p>
 	 * If <code>equinox.root.locale=en</code> and en_XX or en is asked for then this allows the root file to be used
 	 * instead of
 	 * falling back to the default locale.
@@ -178,6 +180,7 @@ public class ResourceBundleHelper {
 	 * <p>
 	 * If the value for this system property is set to an empty String the default search order for ResourceBundles is
 	 * used:
+	 * </p>
 	 * <ul>
 	 * <li>bn + Ls + "_" + Cs + "_" + Vs</li>
 	 * <li>bn + Ls + "_" + Cs</li>
@@ -189,9 +192,9 @@ public class ResourceBundleHelper {
 	 * </ul>
 	 * Where bn is this bundle's localization basename, Ls, Cs and Vs are the specified locale (language, country,
 	 * variant) and Ld, Cd and Vd are the default locale (language, country, variant).
-	 * </p>
 	 * <p>
 	 * If Ls equals the value of <code>equinox.root.locale</code> then the following search order is used:
+	 * </p>
 	 * <ul>
 	 * <li>bn + Ls + "_" + Cs + "_" + Vs</li>
 	 * <li>bn + Ls + "_" + Cs</li>
@@ -202,7 +205,6 @@ public class ResourceBundleHelper {
 	 * <li>bn + Ld</li>
 	 * <li>bn</li>
 	 * </ul>
-	 * </p>
 	 * If <code>equinox.root.locale=en</code> and en_XX or en is asked for then this allows the root file to be used
 	 * instead of
 	 * falling back to the default locale.
