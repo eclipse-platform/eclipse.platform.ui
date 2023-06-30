@@ -4,3 +4,4 @@ Bug 511251 - Comparator errors in I20170127-2200
 Bug 521182 - [compiler] method reference on null object should throw NPE at runtime (JLS compliance)
 Build issues on 2020-05-27
 Bug 575106 - Comparator error in 20210729-0050
+https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1184

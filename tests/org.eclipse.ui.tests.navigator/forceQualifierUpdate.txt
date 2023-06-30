@@ -6,3 +6,4 @@ Bug 472126 - Unusual comparator error in I-build and M-build
 Bug 472126 - Unusual comparator error in I-build and M-build
 Bug 479158 - ui.tests.navigator shows up in comparator "errors"
 Bug 534597 - Unanticipated comparator errors in I20180511-2000
+https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1184

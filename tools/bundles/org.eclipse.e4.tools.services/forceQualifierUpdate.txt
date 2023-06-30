@@ -3,3 +3,4 @@ Bug 403237 - o.e.e4.tools cannot be build with "mvn clean install"
 Bug 463856 - Trouble doing an I-build of org.eclipse.e4.core.tools.feature
 Bug 509973 - Comparator errors in I20170105-0320
 Bug 534597 - Unanticipated comparator errors in I20180511-2000
+https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1184
