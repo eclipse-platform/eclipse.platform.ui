@@ -72,7 +72,6 @@ public class ReconcilerRegistry {
 	 *
 	 * @param sourceViewer         the source viewer we're hooking completion to.
 	 * @param editor               the text editor
-	 * @param textViewerLifecycles the list of text viewer lifecycle to fill
 	 * @param contentTypes         the content types of the document we're editing.
 	 * @return the list of {@link IReconciler} contributed for at least one of the
 	 *         content types, sorted by most generic content type to most specific.
@@ -92,7 +91,6 @@ public class ReconcilerRegistry {
 	 *
 	 * @param sourceViewer         the source viewer we're hooking completion to.
 	 * @param editor               the text editor
-	 * @param textViewerLifecycles the list of text viewer lifecycle to fill
 	 * @param contentTypes         the content types of the document we're editing.
 	 * @return the list of highlight {@link IReconciler}s contributed for at least
 	 *         one of the content types, sorted by most generic content type to most
@@ -113,7 +111,6 @@ public class ReconcilerRegistry {
 	 *
 	 * @param sourceViewer         the source viewer we're hooking completion to.
 	 * @param editor               the text editor
-	 * @param textViewerLifecycles the list of text viewer lifecycle to fill
 	 * @param contentTypes         the content types of the document we're editing.
 	 * @return the list of folding {@link IReconciler}s contributed for at least one
 	 *         of the content types, sorted by most generic content type to most

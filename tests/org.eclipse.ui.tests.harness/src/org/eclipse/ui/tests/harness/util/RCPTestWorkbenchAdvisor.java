@@ -72,11 +72,7 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 	}
 
 	/**
-	 *
 	 * Enables the RCP application to runwithout a workbench window
-	 *
-	 * @param runWithoutWindow
-	 *
 	 */
 	public RCPTestWorkbenchAdvisor(boolean windowlessApp) {
 		this.windowlessApp = windowlessApp;

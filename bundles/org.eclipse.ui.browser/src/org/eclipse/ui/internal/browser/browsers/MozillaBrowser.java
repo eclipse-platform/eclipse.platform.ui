@@ -46,7 +46,6 @@ public class MozillaBrowser extends AbstractWebBrowser {
 	 * Constructor
 	 *
 	 * @param executable executable filename to launch
-	 * @param executableName name of the program to display when error occurs
 	 */
 	public MozillaBrowser(String id, String executable, String parameters) {
 		super(id);

@@ -33,10 +33,7 @@ import org.eclipse.ui.forms.widgets.*;
  * Preferences - Java - Code Generation - Code and Comments
  */
 public class FreeFormPage extends FormPage {
-	/**
-	 * @param id
-	 * @param title
-	 */
+
 	public FreeFormPage(FormEditor editor) {
 		super(editor, "first", "First Page");
 	}

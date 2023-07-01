@@ -38,9 +38,6 @@ public class WorkbenchOperationHistoryTests extends UITestCase {
 
 	IUndoableOperation op1, op2, op3, op4, op5, op6;
 
-	/**
-	 * @param testName
-	 */
 	public WorkbenchOperationHistoryTests() {
 		super(WorkbenchOperationHistoryTests.class.getSimpleName());
 	}
