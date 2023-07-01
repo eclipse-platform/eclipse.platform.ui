@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Red Hat Inc. and others.
+ * Copyright (c) 2017, 2023 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -72,8 +72,8 @@ public class CompositeInformationControl extends AbstractInformationControl impl
 		for (Entry<ITextHover, Object> entry : inputs.entrySet()) {
 			AbstractInformationControl informationControl = controls.get(entry.getKey());
 			if (informationControl != null) {
-				if (informationControl instanceof IInformationControlExtension2) {
-					((IInformationControlExtension2) informationControl).setInput(entry.getValue());
+				if (informationControl instanceof IInformationControlExtension2 ext2) {
+					ext2.setInput(entry.getValue());
 				} else {
 					String information = entry.getValue().toString();
 					if (!information.isEmpty()) {
@@ -134,16 +134,14 @@ public class CompositeInformationControl extends AbstractInformationControl impl
 			return null;
 		} else if (controls.size() == 1) {
 			IInformationControl control = controls.values().iterator().next();
-			if (control instanceof IInformationControlExtension5) {
-				return ((IInformationControlExtension5) control).getInformationPresenterControlCreator();
+			if (control instanceof IInformationControlExtension5 ext5) {
+				return ext5.getInformationPresenterControlCreator();
 			}
 		} else {
 			LinkedHashMap<ITextHover, IInformationControlCreator> presenterCreators = new LinkedHashMap<>();
 			boolean allNull = true;
 			for (Entry<ITextHover, AbstractInformationControl> hover : this.controls.entrySet()) {
-				IInformationControlCreator creator = null;
-				if (hover.getValue() instanceof IInformationControlExtension5)
-					creator = ((IInformationControlExtension5) hover.getValue())
+				IInformationControlCreator creator = hover.getValue()
 							.getInformationPresenterControlCreator();
 				if (creator == null) {
 					creator = this.creators.get(hover.getKey());
