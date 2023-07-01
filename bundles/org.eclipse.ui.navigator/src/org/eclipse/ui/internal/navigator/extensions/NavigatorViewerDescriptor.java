@@ -29,7 +29,6 @@ import org.eclipse.ui.navigator.NavigatorActionService;
 
 /**
  * Encapsulates the <code>org.eclipse.ui.navigator.viewer</code> extension.
- * <p>
  *
  * @since 3.2
  */

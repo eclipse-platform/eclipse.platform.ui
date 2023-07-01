@@ -65,7 +65,7 @@ public abstract class AbstractFileBuffer implements IFileBuffer, IStateValidatio
 	 * This implementation is always empty.
 	 * <p>
 	 * Subclasses may extend but must call <code>super.dispose()</code>.
-	 * <p>
+	 * </p>
 	 *
 	 * @since 3.1
 	 */
