@@ -102,9 +102,6 @@ public class EditMask {
 	/**
 	 * Creates an instance that wraps around a text widget and manages its<br>
 	 * formatting.
-	 *
-	 * @param text
-	 * @param editMask
 	 */
 	public EditMask(Text text) {
 		this.text = text;

@@ -126,8 +126,6 @@ public class CSSSWTFontHelper {
 	/**
 	 * Get CSS2FontProperties from Font of JComponent and store
 	 * CSS2FontProperties instance into ClientProperty of JComponent.
-	 *
-	 * @param component
 	 */
 	public static Font getFont(CSS2FontProperties fontProperties,
 			Control control) {

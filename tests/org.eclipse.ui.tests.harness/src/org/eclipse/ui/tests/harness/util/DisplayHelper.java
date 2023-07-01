@@ -261,7 +261,7 @@ public abstract class DisplayHelper {
 	 * happened.
 	 *
 	 * @param display   the display
-	 * @param timeout   timeout in milliseconds
+	 * @param timeoutMs   timeout in milliseconds
 	 * @param condition condition to check, must not be null
 	 * @since 1.6
 	 */

@@ -75,7 +75,7 @@ public class ContextPage extends Page {
 	/**
 	 * Sets the message to the given string.
 	 *
-	 * @param message
+	 * @param msg
 	 *            the message text
 	 */
 	public void setMessage(String msg) {

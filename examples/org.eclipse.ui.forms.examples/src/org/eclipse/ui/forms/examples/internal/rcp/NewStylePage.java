@@ -69,10 +69,6 @@ public class NewStylePage extends FormPage {
 	private static final String[] MESSAGE_NAMES = { "text", "info", "warning",
 			"error" };
 
-	/**
-	 * @param id
-	 * @param title
-	 */
 	public NewStylePage(FormEditor editor) {
 		super(editor, "newStyle", "New Style");
 	}

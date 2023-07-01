@@ -33,10 +33,8 @@ public class PageWithSubPages extends FormPage {
 		String text;
 		public TextSection(String text) {this.text = text;}
 	}
-	/**
-	 * @param id
-	 * @param title
-	 */
+	
+
 	public PageWithSubPages(FormEditor editor) {
 		super(editor, "composite", "Composite Page");
 	}

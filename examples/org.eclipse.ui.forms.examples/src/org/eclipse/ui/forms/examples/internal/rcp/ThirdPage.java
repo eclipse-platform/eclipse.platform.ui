@@ -26,10 +26,7 @@ import org.eclipse.ui.forms.widgets.*;
  * Preferences - Java - Code Generation - Code and Comments
  */
 public class ThirdPage extends FormPage {
-	/**
-	 * @param id
-	 * @param title
-	 */
+	
 	public ThirdPage(FormEditor editor) {
 		super(editor, "third", "Flow Page");
 	}

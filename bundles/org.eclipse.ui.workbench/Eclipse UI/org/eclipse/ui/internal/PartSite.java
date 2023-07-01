@@ -167,7 +167,6 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 *
 	 * @param ref  the part reference
 	 * @param part the part
-	 * @param page the page it belongs to
 	 */
 	public PartSite(MPart model, IWorkbenchPart part, IWorkbenchPartReference ref, IConfigurationElement element) {
 		this.model = model;
