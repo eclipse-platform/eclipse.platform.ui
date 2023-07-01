@@ -33,8 +33,6 @@ public interface CSSBorderProperties {
 
 	/**
 	 * Set  border-color value.
-	 *
-	 * @return
 	 */
 	public void setColor(CSSPrimitiveValue color);
 
@@ -47,8 +45,6 @@ public interface CSSBorderProperties {
 
 	/**
 	 * Set border-width value.
-	 *
-	 * @return
 	 */
 	public void setWidth(int width);
 
@@ -61,8 +57,6 @@ public interface CSSBorderProperties {
 
 	/**
 	 * Set border-style value.
-	 *
-	 * @return
 	 */
 	public void setStyle(String style);
 

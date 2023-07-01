@@ -298,7 +298,6 @@ public class BrowserViewer extends Composite {
 	 *
 	 * @param url
 	 *            the URL to be loaded
-	 * @return true if the operation was successful and false otherwise.
 	 * @exception IllegalArgumentException
 	 *                <ul>
 	 *                <li>ERROR_NULL_ARGUMENT - if the url is null</li>

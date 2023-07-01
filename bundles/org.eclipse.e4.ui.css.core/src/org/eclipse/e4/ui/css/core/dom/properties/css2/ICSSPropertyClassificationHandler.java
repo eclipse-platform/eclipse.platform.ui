@@ -32,7 +32,6 @@ public interface ICSSPropertyClassificationHandler extends ICSSPropertyHandler {
 	 * @param value
 	 * @param pseudo
 	 * @param engine
-	 * @return
 	 * @throws Exception
 	 */
 	public void applyCSSPropertyClear(Object element, CSSValue value,
@@ -47,7 +46,6 @@ public interface ICSSPropertyClassificationHandler extends ICSSPropertyHandler {
 	 * @param value
 	 * @param pseudo
 	 * @param engine
-	 * @return
 	 * @throws Exception
 	 */
 	public void applyCSSPropertyCursor(Object element, CSSValue value,
