@@ -24,10 +24,6 @@ public class EditorDragSource extends TestDragSource {
 
 	boolean wholeFolder;
 
-	/**
-	 * @param editor
-	 * @param wholeFolder
-	 */
 	public EditorDragSource(int editorIdx, boolean wholeFolder) {
 		super();
 		this.editorIdx = editorIdx;

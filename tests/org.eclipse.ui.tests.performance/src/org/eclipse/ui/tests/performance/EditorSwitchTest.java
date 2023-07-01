@@ -43,9 +43,6 @@ public class EditorSwitchTest extends BasicPerformanceTest {
 
 	/**
 	 * Constructor.
-	 *
-	 * @param testName
-	 *            Test's name.
 	 */
 	public EditorSwitchTest(String extension1, String extension2) {
 		super("testEditorSwitch:" + extension1 + "," + extension2);

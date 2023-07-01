@@ -59,9 +59,6 @@ public class FastTreeTest extends TreeAddTest {
 
 	/**
 	 * Run the test for one of the fast insertions.
-	 *
-	 * @param count
-	 * @throws CoreException
 	 */
 	@Override
 	protected void doTestAdd(final int increment, final int total,final boolean preSort)

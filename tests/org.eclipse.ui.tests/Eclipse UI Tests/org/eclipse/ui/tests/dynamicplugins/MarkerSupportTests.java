@@ -43,9 +43,6 @@ public class MarkerSupportTests extends DynamicTestCase {
 
 	static final String PROBLEM_MARKER = "org.eclipse.core.resources.problemmarker";
 
-	/**
-	 * @param testName
-	 */
 	public MarkerSupportTests() {
 		super(MarkerSupportTests.class.getSimpleName());
 	}

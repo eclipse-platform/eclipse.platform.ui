@@ -43,9 +43,6 @@ public class MarkersViewColumnSizeTest extends UITestCase {
 		super(MarkersViewColumnSizeTest.class.getSimpleName());
 	}
 
-	/**
-	 * @param testName
-	 */
 	public MarkersViewColumnSizeTest(String name) {
 		super(name);
 	}

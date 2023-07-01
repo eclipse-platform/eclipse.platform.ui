@@ -46,7 +46,7 @@ public class EmptyPerspective implements IPerspectiveFactory {
 	/**
 	 * Sets the descriptor for the perspective last opened using this factory.
 	 *
-	 * @param persp the descriptor for the perspective last opened using this factory, or <code>null</code>
+	 * @param perspId the descriptor for the perspective last opened using this factory, or <code>null</code>
 	 */
 	public static void setLastPerspective(String perspId) {
 		LastPerspective = perspId;

@@ -361,7 +361,7 @@ public final class CellData {
 	 * Arranges the given control within the given rectangle using the criteria
 	 * described by this CellData.
 	 *
-	 * @param control
+	 * @param cache
 	 * @param cellBounds
 	 * @since 3.0
 	 */
