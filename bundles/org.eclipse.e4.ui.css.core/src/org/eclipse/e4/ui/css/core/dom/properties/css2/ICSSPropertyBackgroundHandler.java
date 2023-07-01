@@ -46,7 +46,6 @@ public interface ICSSPropertyBackgroundHandler extends ICSSPropertyHandler {
 	 * @param value
 	 * @param pseudo
 	 * @param engine
-	 * @return
 	 * @throws Exception
 	 */
 	public void applyCSSPropertyBackgroundAttachment(Object element,
@@ -60,7 +59,6 @@ public interface ICSSPropertyBackgroundHandler extends ICSSPropertyHandler {
 	 * @param value
 	 * @param pseudo
 	 * @param engine
-	 * @return
 	 * @throws Exception
 	 */
 	public void applyCSSPropertyBackgroundColor(Object element, CSSValue value,
@@ -73,7 +71,6 @@ public interface ICSSPropertyBackgroundHandler extends ICSSPropertyHandler {
 	 * @param value
 	 * @param pseudo
 	 * @param engine
-	 * @return
 	 * @throws Exception
 	 */
 	public void applyCSSPropertyBackgroundImage(Object element, CSSValue value,
@@ -88,7 +85,6 @@ public interface ICSSPropertyBackgroundHandler extends ICSSPropertyHandler {
 	 * @param value
 	 * @param pseudo
 	 * @param engine
-	 * @return
 	 * @throws Exception
 	 */
 	public void applyCSSPropertyBackgroundPosition(Object element,
@@ -102,7 +98,6 @@ public interface ICSSPropertyBackgroundHandler extends ICSSPropertyHandler {
 	 * @param value
 	 * @param pseudo
 	 * @param engine
-	 * @return
 	 * @throws Exception
 	 */
 	public void applyCSSPropertyBackgroundRepeat(Object element,

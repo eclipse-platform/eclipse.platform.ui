@@ -47,7 +47,6 @@ public interface ICSSPropertyFontHandler extends ICSSPropertyHandler {
 	 * @param value
 	 * @param pseudo
 	 * @param engine
-	 * @return
 	 * @throws Exception
 	 */
 	void applyCSSPropertyFontFamily(Object element, CSSValue value,
@@ -60,7 +59,6 @@ public interface ICSSPropertyFontHandler extends ICSSPropertyHandler {
 	 * @param value
 	 * @param pseudo
 	 * @param engine
-	 * @return
 	 * @throws Exception
 	 */
 	void applyCSSPropertyFontSize(Object element, CSSValue value,
@@ -74,7 +72,6 @@ public interface ICSSPropertyFontHandler extends ICSSPropertyHandler {
 	 * @param value
 	 * @param pseudo
 	 * @param engine
-	 * @return
 	 * @throws Exception
 	 */
 	void applyCSSPropertyFontSizeAdjust(Object element, CSSValue value,
@@ -87,7 +84,6 @@ public interface ICSSPropertyFontHandler extends ICSSPropertyHandler {
 	 * @param value
 	 * @param pseudo
 	 * @param engine
-	 * @return
 	 * @throws Exception
 	 */
 	void applyCSSPropertyFontStretch(Object element, CSSValue value,
@@ -100,7 +96,6 @@ public interface ICSSPropertyFontHandler extends ICSSPropertyHandler {
 	 * @param value
 	 * @param pseudo
 	 * @param engine
-	 * @return
 	 * @throws Exception
 	 */
 	void applyCSSPropertyFontStyle(Object element, CSSValue value,
@@ -113,7 +108,6 @@ public interface ICSSPropertyFontHandler extends ICSSPropertyHandler {
 	 * @param value
 	 * @param pseudo
 	 * @param engine
-	 * @return
 	 * @throws Exception
 	 */
 	void applyCSSPropertyFontVariant(Object element, CSSValue value,
@@ -126,7 +120,6 @@ public interface ICSSPropertyFontHandler extends ICSSPropertyHandler {
 	 * @param value
 	 * @param pseudo
 	 * @param engine
-	 * @return
 	 * @throws Exception
 	 */
 	void applyCSSPropertyFontWeight(Object element, CSSValue value,
