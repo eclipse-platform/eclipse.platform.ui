@@ -120,10 +120,6 @@ public interface CSSEngine {
 
 	/**
 	 * Parse CSSValue from InputStream stream.
-	 *
-	 * @param reader
-	 * @return
-	 * @throws IOException
 	 */
 	CSSValue parsePropertyValue(InputStream stream) throws IOException;
 
@@ -185,11 +181,6 @@ public interface CSSEngine {
 
 	/**
 	 * Check if the <code>selector</code> matches the object <code>node</code>.
-	 *
-	 * @param selector
-	 * @param element
-	 * @param pseudo
-	 * @return
 	 */
 	boolean matches(Selector selector, Object node, String pseudo);
 
@@ -252,11 +243,6 @@ public interface CSSEngine {
 
 	/**
 	 * Parse and apply style declaration from InputSource source.
-	 *
-	 * @param node
-	 * @param source
-	 * @return
-	 * @throws IOException
 	 */
 	CSSStyleDeclaration parseAndApplyStyleDeclaration(Object node, InputSource sourcee) throws IOException;
 
@@ -367,11 +353,6 @@ public interface CSSEngine {
 	/**
 	 * Retrieve String of {@link CSSValue} of the CSS <code>property</code> of
 	 * the <code>node</code>.
-	 *
-	 * @param widget
-	 * @param property
-	 * @param pseudo
-	 * @return
 	 */
 	String retrieveCSSProperty(Object node, String property, String pseudo);
 
@@ -393,9 +374,6 @@ public interface CSSEngine {
 	/**
 	 * Get default {@link CSSStyleDeclaration} of the <code>node</code> for
 	 * pseudo element <code>pseudoE</code> which can be null.
-	 *
-	 * @param element
-	 * @return
 	 */
 	CSSStyleDeclaration getDefaultStyleDeclaration(Object node, String pseudoE);
 
