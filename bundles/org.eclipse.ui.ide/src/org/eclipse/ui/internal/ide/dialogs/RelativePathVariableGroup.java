@@ -52,24 +52,13 @@ public class RelativePathVariableGroup {
 	private String label;
 
 	public interface IModel {
-		/**
-		 * @return
-		 */
 		IResource getResource();
 
-		/**
-		 * @param object
-		 */
 		void setVariable(String string);
 
-		/**
-		 * @return
-		 */
 		String getVariable();
 	}
-	/**
-	 *
-	 */
+	
 	public RelativePathVariableGroup(IModel content) {
 		this.content = content;
 	}

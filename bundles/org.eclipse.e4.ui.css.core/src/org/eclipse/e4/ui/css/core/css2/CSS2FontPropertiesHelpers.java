@@ -36,9 +36,6 @@ public class CSS2FontPropertiesHelpers {
 
 	/**
 	 * Get {@link CSS2FontProperties} from {@link CSSElementContext} context.
-	 *
-	 * @param control
-	 * @return
 	 */
 	public static CSS2FontProperties getCSS2FontProperties(CSSElementContext context) {
 		// Search into Data of context if CSS2FontProperties exist.

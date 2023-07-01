@@ -74,9 +74,6 @@ public class ProgressRegion {
 	 *
 	 * @param parent
 	 *            The parent widget of the composite.
-	 * @param window
-	 *            The WorkbenchWindow this is in.
-	 * @return Control
 	 */
 	@PostConstruct
 	public Control createContents(Composite parent) {

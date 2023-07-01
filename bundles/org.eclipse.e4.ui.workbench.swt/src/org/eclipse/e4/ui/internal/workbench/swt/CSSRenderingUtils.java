@@ -218,11 +218,6 @@ public class CSSRenderingUtils {
 		return styleDeclarations.getPropertyCSSValue(attributeName);
 	}
 
-	/**
-	 * @param string
-	 * @param string2
-	 * @return
-	 */
 	public Image createImage(Control styleControl, String classId,
 			String attName, Integer[] frameInts) {
 		Image image = null;

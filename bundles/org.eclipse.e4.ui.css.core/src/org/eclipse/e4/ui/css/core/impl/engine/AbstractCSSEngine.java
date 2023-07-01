@@ -822,7 +822,6 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	/**
 	 * Return the set of property names and handlers for the provided node.
 	 *
-	 * @param node
 	 * @return the property names and handlers
 	 */
 	@Override

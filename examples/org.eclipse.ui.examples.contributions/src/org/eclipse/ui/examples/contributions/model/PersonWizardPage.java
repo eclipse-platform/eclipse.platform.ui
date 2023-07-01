@@ -39,9 +39,6 @@ public class PersonWizardPage extends WizardPage implements Listener {
 	private Text givennameText;
 	private Text idText;
 
-	/**
-	 * @param pageName
-	 */
 	public PersonWizardPage(IServiceLocator locator) {
 		super("personWizardPage"); //$NON-NLS-1$
 		this.locator = locator;

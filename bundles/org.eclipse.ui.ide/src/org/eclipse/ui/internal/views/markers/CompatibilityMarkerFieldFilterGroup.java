@@ -30,9 +30,6 @@ public class CompatibilityMarkerFieldFilterGroup extends MarkerFieldFilterGroup 
 
 	/**
 	 * Create a new instance of the receiver based on the ProblemFilter.
-	 *
-	 * @param filter
-	 * @param cachedMarkerBuilder
 	 */
 	public CompatibilityMarkerFieldFilterGroup(ProblemFilter filter,
 			MarkerContentGenerator generator) {

@@ -29,10 +29,6 @@ public class CSSBorderPropertiesHelpers {
 	/**
 	 * Update the <code>property of</code> <code>borderProperties</code> instance
 	 * with the <code>value</code>.
-	 *
-	 * @param border
-	 * @param property
-	 * @param value
 	 */
 	public static void updateCSSProperty(CSSBorderProperties borderProperties, String property, CSSValue value) {
 		switch (property) {

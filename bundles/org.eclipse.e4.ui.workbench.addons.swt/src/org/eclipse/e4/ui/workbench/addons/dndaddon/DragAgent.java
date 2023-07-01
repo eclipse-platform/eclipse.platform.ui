@@ -80,9 +80,6 @@ abstract class DragAgent {
 
 	/**
 	 * Start a drag operation on the given element.
-	 *
-	 * @param element
-	 *            The element to drag
 	 */
 	public void dragStart(DnDInfo info) {
 		// cache a placeholder where the element started (NOTE: this also prevents the parent from

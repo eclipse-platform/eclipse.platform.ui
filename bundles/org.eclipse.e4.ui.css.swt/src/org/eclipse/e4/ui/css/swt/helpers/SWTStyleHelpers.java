@@ -28,9 +28,6 @@ public class SWTStyleHelpers {
 	/**
 	 * Return SWT style constant from {@link Widget} <code>widget</code> as
 	 * String. Each SWT style are separate with space character.
-	 *
-	 * @param style
-	 * @return
 	 */
 	public static String getSWTWidgetStyleAsString(Widget widget) {
 		if (widget.isDisposed()) {
@@ -44,7 +41,6 @@ public class SWTStyleHelpers {
 	 * are separate with <code>separator</code> String.
 	 *
 	 * @param style
-	 * @return
 	 */
 	public static String getSWTWidgetStyleAsString(int style, String separator) {
 		if (style == 0) {

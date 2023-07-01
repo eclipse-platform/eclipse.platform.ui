@@ -91,7 +91,6 @@ public class TimeoutDumpTimer extends TimerTask {
 	 *
 	 * @param timeoutArg      the value of the -timeout argument from the command
 	 *                        line
-	 * @param outputDirectory where screenshots end up
 	 */
 	public static void startTimeoutDumpTimer(String timeoutArg) {
 		startTimeoutDumpTimer(timeoutArg, null);

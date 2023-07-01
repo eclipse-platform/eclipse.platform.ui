@@ -86,11 +86,6 @@ public class ShowViewDialog extends Dialog implements
 
 	/**
 	 * Constructs a new ShowViewDialog.
-	 *
-	 * @param window
-	 *            the workbench window
-	 * @param viewReg
-	 *            the view registry
 	 */
 	public ShowViewDialog(Shell shell, MApplication application,
 			IEclipseContext context) {

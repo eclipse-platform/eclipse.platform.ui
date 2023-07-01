@@ -51,9 +51,6 @@ public class CSSSWTFontHelper {
 	 * Get CSS2FontProperties from Control stored into Data of Control. If
 	 * CSS2FontProperties doesn't exist, create it from Font of Control and
 	 * store it into Data of Control.
-	 *
-	 * @param control
-	 * @return
 	 */
 	public static CSS2FontProperties getCSS2FontProperties(Widget widget,
 			Font font, CSSElementContext context) {
@@ -104,7 +101,6 @@ public class CSSSWTFontHelper {
 	 * Build CSS2FontProperties from SWT Font.
 	 *
 	 * @param font
-	 * @return
 	 */
 	public static CSS2FontProperties getCSS2FontProperties(Font font) {
 		// Create CSS Font Properties
@@ -132,7 +128,6 @@ public class CSSSWTFontHelper {
 	 * CSS2FontProperties instance into ClientProperty of JComponent.
 	 *
 	 * @param component
-	 * @return
 	 */
 	public static Font getFont(CSS2FontProperties fontProperties,
 			Control control) {
@@ -151,7 +146,6 @@ public class CSSSWTFontHelper {
 	 *
 	 * @param fontProperties
 	 * @param oldFontData
-	 * @return
 	 */
 	public static FontData getFontData(CSS2FontProperties fontProperties, FontData oldFontData) {
 		FontData newFontData = new FontData();
@@ -234,7 +228,6 @@ public class CSSSWTFontHelper {
 	 *
 	 * @param fontProperties
 	 * @param fontData
-	 * @return
 	 */
 	public static int getSWTStyle(CSS2FontProperties fontProperties,
 			FontData fontData) {
@@ -271,7 +264,6 @@ public class CSSSWTFontHelper {
 	 * Return CSS Value font-family from the widget's font, if it has a font
 	 *
 	 * @param widget
-	 * @return
 	 */
 	public static String getFontFamily(Widget widget) {
 		return getFontFamily(getFont(widget));
@@ -281,7 +273,6 @@ public class CSSSWTFontHelper {
 	 * Return CSS Value font-family from SWT Font
 	 *
 	 * @param font
-	 * @return
 	 */
 	public static String getFontFamily(Font font) {
 		FontData fontData = getFirstFontData(font);
@@ -300,7 +291,6 @@ public class CSSSWTFontHelper {
 	 * Return CSS Value font-size the widget's font, if it has a font
 	 *
 	 * @param widget
-	 * @return
 	 */
 	public static String getFontSize(Widget widget) {
 		return getFontSize(getFont(widget));
@@ -310,7 +300,6 @@ public class CSSSWTFontHelper {
 	 * Return CSS Value font-size from SWT Font
 	 *
 	 * @param font
-	 * @return
 	 */
 	public static String getFontSize(Font font) {
 		FontData fontData = getFirstFontData(font);
@@ -328,7 +317,6 @@ public class CSSSWTFontHelper {
 	 * Return CSS Value font-style from the widget's font, if it has a font
 	 *
 	 * @param widget
-	 * @return
 	 */
 	public static String getFontStyle(Widget widget) {
 		return getFontStyle(getFont(widget));
@@ -338,7 +326,6 @@ public class CSSSWTFontHelper {
 	 * Return CSS Value font-style from SWT Font
 	 *
 	 * @param font
-	 * @return
 	 */
 	public static String getFontStyle(Font font) {
 		FontData fontData = getFirstFontData(font);
@@ -360,9 +347,6 @@ public class CSSSWTFontHelper {
 
 	/**
 	 * Return CSS Value font-weight from the widget's font, if it has a font
-	 *
-	 * @param widget
-	 * @return
 	 */
 	public static String getFontWeight(Widget widget) {
 		return getFontWeight(getFont(widget));
@@ -370,9 +354,6 @@ public class CSSSWTFontHelper {
 
 	/**
 	 * Return CSS Value font-weight from Control Font
-	 *
-	 * @param font
-	 * @return
 	 */
 	public static String getFontWeight(Font font) {
 		FontData fontData = getFirstFontData(font);
@@ -394,9 +375,6 @@ public class CSSSWTFontHelper {
 
 	/**
 	 * Return CSS Value font-family from Control Font
-	 *
-	 * @param control
-	 * @return
 	 */
 	public static String getFontComposite(Control control) {
 		return getFontComposite(control.getFont());
@@ -404,9 +382,6 @@ public class CSSSWTFontHelper {
 
 	/**
 	 * Return CSS Value font-family from SWT Font
-	 *
-	 * @param font
-	 * @return
 	 */
 	public static String getFontComposite(Font font) {
 		FontData fontData = getFirstFontData(font);
@@ -434,9 +409,6 @@ public class CSSSWTFontHelper {
 
 	/**
 	 * Return first FontData from Control Font.
-	 *
-	 * @param control
-	 * @return
 	 */
 	public static FontData getFirstFontData(Control control) {
 		Font font = control.getFont();
@@ -449,9 +421,6 @@ public class CSSSWTFontHelper {
 	/**
 	 *
 	 * Return first FontData from SWT Font.
-	 *
-	 * @param font
-	 * @return
 	 */
 	public static FontData getFirstFontData(Font font) {
 		FontData[] fontDatas = !font.isDisposed() ? font.getFontData() : null;

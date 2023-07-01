@@ -119,7 +119,7 @@ public class WidgetElement extends ElementAdapter implements NodeList {
 	/**
 	 * Convenience method for setting the CSS engine responsible for a display.
 	 *
-	 * @param widget
+	 * @param display
 	 *            SWT display which is styled by an engine
 	 * @param engine
 	 *            Engine to be associated with the display
