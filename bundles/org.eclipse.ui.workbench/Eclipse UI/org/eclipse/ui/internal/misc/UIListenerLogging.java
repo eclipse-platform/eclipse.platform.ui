@@ -153,9 +153,6 @@ public class UIListenerLogging {
 
 	/**
 	 * Log a partListener event fired from the workbench window
-	 *
-	 * @param page
-	 * @param eventId
 	 */
 	public static final void logPartListenerEvent(String sourceType, Object source, IWorkbenchPart part,
 			String eventId) {
@@ -167,9 +164,6 @@ public class UIListenerLogging {
 
 	/**
 	 * Log a partListener2 event fired from the workbench window
-	 *
-	 * @param page
-	 * @param eventId
 	 */
 	public static final void logPartListener2Event(String sourceType, Object source, IWorkbenchPartReference part,
 			String eventId) {
@@ -181,9 +175,6 @@ public class UIListenerLogging {
 
 	/**
 	 * Log an event fired from the workbench page
-	 *
-	 * @param page
-	 * @param eventId
 	 */
 	public static final void logPartListenerEvent(IWorkbenchPage page, IWorkbenchPart part, String eventId) {
 		if (isEnabled(PAGE_PARTLISTENER_EVENTS)) {
@@ -194,9 +185,6 @@ public class UIListenerLogging {
 
 	/**
 	 * Log an event fired from the workbench page
-	 *
-	 * @param page
-	 * @param eventId
 	 */
 	public static final void logPartListener2Event(IWorkbenchPage page, IWorkbenchPartReference part, String eventId) {
 		if (isEnabled(PAGE_PARTLISTENER2_EVENTS)) {
@@ -207,9 +195,6 @@ public class UIListenerLogging {
 
 	/**
 	 * Log an event fired from the workbench page
-	 *
-	 * @param page
-	 * @param eventId
 	 */
 	public static final void logPagePropertyChanged(IWorkbenchPage page, String changeId, Object oldValue,
 			Object newValue) {

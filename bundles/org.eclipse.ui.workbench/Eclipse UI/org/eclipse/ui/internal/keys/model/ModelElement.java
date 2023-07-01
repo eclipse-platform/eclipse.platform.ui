@@ -108,7 +108,7 @@ public class ModelElement {
 	}
 
 	/**
-	 * @param context The context to set.
+	 * @param o The context to set.
 	 */
 	public void setModelObject(Object o) {
 		Object old = this.modelObject;

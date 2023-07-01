@@ -369,11 +369,8 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	/**
 	 * Creates a new instance of the class.
 	 *
-	 * @param window.getShell()
-	 *           shell to parent the dialog on
-	 * @param multi
-	 *           indicates whether dialog allows to select more than one
-	 *           position in its list of items
+	 * @param window
+	 *           to parent the dialog on
 	 */
 	public QuickSearchDialog(IWorkbenchWindow window) {
 		super(window.getShell());

@@ -275,7 +275,7 @@ public abstract class DynamicTestCase extends UITestCase implements
 	/**
 	 * Set whether the bundle REMOVED event has been recieved.
 	 *
-	 * @param added
+	 * @param removed
 	 *            whether the bundle REMOVED event has been recieved
 	 */
 	protected final void setRemovedEventPropagated(boolean removed) {

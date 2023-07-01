@@ -137,10 +137,6 @@ public final class ContextPersistence extends RegistryPersistence {
 
 	/**
 	 * Reads all of the contexts from the registry,
-	 *
-	 * @param contextManager The context manager which should be populated with the
-	 *                       values from the registry; must not be
-	 *                       <code>null</code>.
 	 */
 	@Override
 	protected void read() {

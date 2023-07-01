@@ -66,7 +66,7 @@ public class Row {
 	/**
 	 * Creates a growing row.
 	 *
-	 * @param sizeRatio          determines the size of this row with respect to
+	 * @param size               determines the size of this row with respect to
 	 *                           other growing rows (for example, a row with size =
 	 *                           3 will be 3x as large as a row with size = 1)
 	 * @param largerThanChildren true iff the preferred size of this row should take

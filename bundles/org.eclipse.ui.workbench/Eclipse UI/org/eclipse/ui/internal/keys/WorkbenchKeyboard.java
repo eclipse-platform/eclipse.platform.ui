@@ -31,10 +31,6 @@ public class WorkbenchKeyboard {
 	static class KeyDownFilter implements Listener {
 		private KeyBindingDispatcher.KeyDownFilter delegate;
 
-		/**
-		 * @param event
-		 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-		 */
 		@Override
 		public void handleEvent(Event event) {
 			delegate.handleEvent(event);
@@ -97,10 +93,6 @@ public class WorkbenchKeyboard {
 		delegate = kbd;
 	}
 
-	/**
-	 * @param ctrlShiftT
-	 * @return
-	 */
 	public static List<KeyStroke> generatePossibleKeyStrokes(Event event) {
 		return KeyBindingDispatcher.generatePossibleKeyStrokes(event);
 	}

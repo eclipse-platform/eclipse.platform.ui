@@ -30,8 +30,6 @@ public class DynamicTestsElementSectionFilter implements IFilter {
 	/**
 	 * Determine if the filter applies to the provided color.
 	 *
-	 * @param element
-	 *            the element.
 	 * @return true if the filter applies to the provided color.
 	 */
 	protected boolean appliesToColor(DynamicTestsColor color) {
@@ -42,8 +40,6 @@ public class DynamicTestsElementSectionFilter implements IFilter {
 	/**
 	 * Determine if the filter applies to the provided shape.
 	 *
-	 * @param element
-	 *            the element.
 	 * @return true if the filter applies to the provided shape.
 	 */
 	protected boolean appliesToShape(DynamicTestsShape shape) {

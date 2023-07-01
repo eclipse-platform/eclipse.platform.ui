@@ -45,9 +45,6 @@ public class ObjectContributionTests extends DynamicTestCase {
 	private static final String OBJECT_ACTION_ID = "org.eclipse.newOC1";
 	private static final String VIEWER_ACTION_ID = "org.eclipse.newOC2";
 
-	/**
-	 * @param testName
-	 */
 	public ObjectContributionTests() {
 		super(ObjectContributionTests.class.getSimpleName());
 	}

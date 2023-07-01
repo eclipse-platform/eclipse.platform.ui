@@ -36,8 +36,6 @@ public interface IOverrideTestsItem {
 	 *
 	 * @param parent
 	 *            the parent composite for the item.
-	 * @param factory
-	 *            the factory to create widgets for the item.
 	 */
 	public void createControls(Composite parent);
 

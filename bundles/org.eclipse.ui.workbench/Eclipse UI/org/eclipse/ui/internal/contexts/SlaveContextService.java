@@ -223,8 +223,6 @@ public class SlaveContextService implements IContextService {
 	/**
 	 * Activate the context with respect to this slave service.
 	 *
-	 * @param contextId  the context id
-	 * @param expression the expression to use
 	 * @return the activated context
 	 */
 	protected IContextActivation doActivateContext(IContextActivation activation) {

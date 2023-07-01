@@ -116,11 +116,6 @@ public class ProgressReportingTest extends BasicPerformanceTest {
 
 	/**
 	 * Ends an asynchronous test
-	 *
-	 * @param ignored
-	 *            Parameter that will be ignored. The test can pass the result
-	 *            of a computation here to prevent the compiler from optimizing
-	 *            it out.
 	 */
 	public void endAsyncTest() {
 		isDone = true;

@@ -65,9 +65,6 @@ public class SizePropertySource
 
 	/**
 	 * Fire a property change event.
-	 *
-	 * @param propName
-	 *            the name of the property change.
 	 */
 	protected void firePropertyChanged() {
 		Control ctl = element.getControl();

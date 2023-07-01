@@ -52,9 +52,6 @@ public class SampleView {
 
 	/**
 	 * Create the sample view.
-	 *
-	 * @param parent
-	 * @param selectionService
 	 */
 	@Inject
 	public SampleView(Composite parent, final IEclipseContext outputContext,

@@ -36,7 +36,6 @@ public class ExceptionDecoratorTestCase extends DecoratorEnablementTestCase {
 
 	/**
 	 * Constructor for DecoratorTestCase.
-	 * @param testName
 	 */
 	public ExceptionDecoratorTestCase() {
 		super(ExceptionDecoratorTestCase.class.getSimpleName());

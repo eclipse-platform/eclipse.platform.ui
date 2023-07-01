@@ -27,9 +27,7 @@ import org.eclipse.ui.dialogs.PatternFilter;
  */
 public class WizardPatternFilter extends PatternFilter {
 	/**
-	 * Create a new instance of a WizardPatternFilter
-	 *
-	 * @param isMatchItem
+	 * Create a new instance of a WizardPatternFilter.
 	 */
 	public WizardPatternFilter() {
 		super();

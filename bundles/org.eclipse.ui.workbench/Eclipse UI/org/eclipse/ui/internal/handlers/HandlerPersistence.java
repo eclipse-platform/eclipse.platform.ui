@@ -152,10 +152,6 @@ public final class HandlerPersistence extends RegistryPersistence {
 
 	/**
 	 * Reads all of the handlers from the registry
-	 *
-	 * @param handlerService The handler service which should be populated with the
-	 *                       values from the registry; must not be
-	 *                       <code>null</code>.
 	 */
 	@Override
 	protected void read() {

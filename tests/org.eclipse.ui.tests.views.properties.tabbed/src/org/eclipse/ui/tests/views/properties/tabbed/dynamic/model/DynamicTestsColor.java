@@ -59,7 +59,7 @@ public class DynamicTestsColor {
 	}
 
 	/**
-	 * @param color
+	 * @param aColor
 	 *            the color to set
 	 */
 	public void setColor(String aColor) {
