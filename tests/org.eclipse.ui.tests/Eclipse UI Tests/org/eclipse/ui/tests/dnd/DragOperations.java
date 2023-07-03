@@ -38,7 +38,7 @@ public class DragOperations {
 	 * This method should eventually replace the original one once the Workbench has been updated
 	 * to handle Views and Editors without distincton.
 	 *
-	 * @param editor
+	 * @param part
 	 * @param target
 	 * @param wholeFolder
 	 */
@@ -90,8 +90,7 @@ public class DragOperations {
 
 	/**
 	 * @param page
-	 * @param i
-	 * @return
+	 * @param side
 	 */
 	public static Point getPointInEditorArea(WorkbenchPage page, int side) {
 //        return DragOperations.getPoint(DragUtil.getDisplayBounds(page

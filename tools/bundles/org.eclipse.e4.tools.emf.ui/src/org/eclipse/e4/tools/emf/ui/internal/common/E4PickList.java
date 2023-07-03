@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 TwelveTone LLC and others.
+ * Copyright (c) 2014, 2023 TwelveTone LLC and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -78,9 +78,9 @@ public class E4PickList extends AbstractPickList {
 	TableViewerFocusCellManager focusCellMgr;
 
 	public static class Struct {
-		final public String label;
-		final public EClass eClass;
-		final public boolean separator;
+		public final String label;
+		public final EClass eClass;
+		public final boolean separator;
 
 		public Struct(String label, EClass eClass, boolean separator) {
 			this.label = label;
@@ -134,11 +134,9 @@ public class E4PickList extends AbstractPickList {
 		viewer.setLabelProvider(observableLabelProvider);
 
 		viewer.addOpenListener(event -> {
-			if (event.getSelection() instanceof IStructuredSelection) {
-				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+			if (event.getSelection() instanceof IStructuredSelection selection) {
 				ModelEditor editor = componentEditor.getEditor();
-				if (selection.getFirstElement() instanceof EObject && editor != null) {
-					EObject selected = (EObject) selection.getFirstElement();
+				if (selection.getFirstElement() instanceof EObject selected && editor != null) {
 					editor.gotoEObject(ModelEditor.TAB_FORM, selected);
 				}
 			}
@@ -155,10 +153,6 @@ public class E4PickList extends AbstractPickList {
 
 	/**
 	 * Used for StringToString maps
-	 *
-	 * @param obj
-	 * @param container
-	 * @param i
 	 */
 	protected void tryEObjectMove(Object obj, EObject container, int delta) {
 		final List<?> l = (List<?>) container.eGet(feature);
@@ -177,7 +171,7 @@ public class E4PickList extends AbstractPickList {
 	@Override
 	protected void addPressed() {
 		if (!picker.getSelection().isEmpty()) {
-			final Struct struct = (Struct) ((IStructuredSelection) picker.getSelection()).getFirstElement();
+			final Struct struct = (Struct) picker.getStructuredSelection().getFirstElement();
 			final EClass eClass = struct.eClass;
 			_handleAdd(eClass, struct.separator);
 		}
@@ -198,8 +192,7 @@ public class E4PickList extends AbstractPickList {
 	}
 
 	protected void setElementId(Object element) {
-		if (componentEditor.getEditor().isAutoCreateElementId() && element instanceof MApplicationElement) {
-			final MApplicationElement el = (MApplicationElement) element;
+		if (componentEditor.getEditor().isAutoCreateElementId() && element instanceof MApplicationElement el) {
 			if (el.getElementId() == null || el.getElementId().trim().length() == 0) {
 				el.setElementId(Util.getDefaultElementId(
 						((EObject) componentEditor.getMaster().getValue()).eResource(), el, componentEditor.getEditor()
@@ -254,7 +247,7 @@ public class E4PickList extends AbstractPickList {
 	@Override
 	protected void moveDownPressed() {
 		if (!viewer.getSelection().isEmpty()) {
-			final IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+			final IStructuredSelection s = viewer.getStructuredSelection();
 			if (s.size() == 1) {
 				final Object obj = s.getFirstElement();
 				final Object container = componentEditor.getMaster().getValue();
@@ -290,7 +283,7 @@ public class E4PickList extends AbstractPickList {
 	@Override
 	protected void removePressed() {
 		if (!viewer.getSelection().isEmpty()) {
-			final List<?> keybinding = ((IStructuredSelection) viewer.getSelection()).toList();
+			final List<?> keybinding = viewer.getStructuredSelection().toList();
 			final Command cmd = RemoveCommand.create(componentEditor.getEditingDomain(), componentEditor.getMaster()
 					.getValue(), feature, keybinding);
 			if (cmd.canExecute()) {

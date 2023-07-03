@@ -409,19 +409,13 @@ public class StringMatcher {
 
 	/**
 	 *
-	 * @return boolean
 	 * @param text
 	 *            a String to match
-	 * @param start
+	 * @param tStart
 	 *            int that indicates the starting index of match, inclusive
-	 * @param end
-	 *            </code> int that indicates the ending index of match,
-	 *            exclusive
 	 * @param p
 	 *            String, String, a simple regular expression that may contain
 	 *            '?'
-	 * @param ignoreCase
-	 *            boolean indicating wether code>p</code> is case sensitive
 	 */
 	protected boolean regExpRegionMatches(String text, int tStart, String p, int pStart, int plen) {
 		while (plen-- > 0) {
