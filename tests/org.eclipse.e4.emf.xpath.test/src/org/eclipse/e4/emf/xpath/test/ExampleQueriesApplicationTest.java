@@ -13,10 +13,13 @@
  ******************************************************************************/
 package org.eclipse.e4.emf.xpath.test;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.eclipse.e4.emf.xpath.EcoreXPathContextFactory;
+import org.eclipse.e4.emf.xpath.JavaXPathFactory;
 import org.eclipse.e4.emf.xpath.XPathContext;
 import org.eclipse.e4.emf.xpath.XPathContextFactory;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResourceFactory;
@@ -41,6 +44,7 @@ public class ExampleQueriesApplicationTest {
 
 	private ResourceSet resourceSet;
 	private XPathContext xpathContext;
+	private XPathContext xpathContext2;
 	private Resource resource;
 
 	@SuppressWarnings("restriction")
@@ -63,7 +67,10 @@ public class ExampleQueriesApplicationTest {
 		URI uri = URI.createPlatformPluginURI("/org.eclipse.e4.emf.xpath.test/model/Application.e4xmi", true);
 		resource = resourceSet.getResource(uri, true);
 		XPathContextFactory<EObject> f = EcoreXPathContextFactory.newInstance();
-		xpathContext = f.newContext(resource.getContents().get(0));
+		EObject root = resource.getContents().get(0);
+		xpathContext = f.newContext(root);
+		XPathContextFactory<EObject> jf = JavaXPathFactory.newInstance();
+		xpathContext2 = jf.newContext(root);
 	}
 
 	@After
@@ -76,8 +83,10 @@ public class ExampleQueriesApplicationTest {
 	@Test
 	public void testAccessingTheApplication() {
 		Object application = xpathContext.getValue("/");
-		assertNotNull(application);
-		assertTrue(application instanceof MApplication);
+		assertThat(application, instanceOf(MApplication.class));
+
+		Object application2 = xpathContext2.getValue("/");
+		assertThat(application2, instanceOf(MApplication.class));
 	}
 
 	@Test
@@ -94,6 +103,9 @@ public class ExampleQueriesApplicationTest {
 	public void testAccessingAllMenus() {
 		Object menuEntries = xpathContext.getValue("//mainMenu/children");
 		assertNotNull(menuEntries);
+
+		Object menuEntries2 = xpathContext2.getValue("//mainMenu/children");
+		assertNotNull(menuEntries2);
 	}
 
 
