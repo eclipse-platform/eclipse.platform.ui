@@ -13,7 +13,7 @@
  ******************************************************************************/
 package org.eclipse.e4.emf.xpath;
 
-import org.eclipse.e4.emf.internal.xpath.JXPathContextFactoryImpl;
+import org.eclipse.e4.emf.xpath.internal.java.JavaXPathContextFactoryImpl;
 
 /**
  * Factory responsible to create an XPath-Context
@@ -46,6 +46,6 @@ public abstract class XPathContextFactory<T> {
 	 * @return Create a new XPath-Factory
 	 */
 	public static <T> XPathContextFactory<T> newInstance() {
-		return new JXPathContextFactoryImpl<>();
+		return new JavaXPathContextFactoryImpl<>();
 	}
 }

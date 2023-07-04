@@ -25,10 +25,10 @@ import static org.junit.Assert.assertTrue;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.jxpath.JXPathNotFoundException;
 import org.eclipse.e4.emf.xpath.EcoreXPathContextFactory;
 import org.eclipse.e4.emf.xpath.XPathContext;
 import org.eclipse.e4.emf.xpath.XPathContextFactory;
+import org.eclipse.e4.emf.xpath.XPathNotFoundException;
 import org.eclipse.e4.emf.xpath.test.model.xpathtest.ExtendedNode;
 import org.eclipse.e4.emf.xpath.test.model.xpathtest.Menu;
 import org.eclipse.e4.emf.xpath.test.model.xpathtest.Node;
@@ -85,7 +85,7 @@ public class ExampleQueriesTestCase {
 		application = xpathContext.getValue(".");
 		assertThat(application).isInstanceOf(Root.class);
 
-		assertThrows(JXPathNotFoundException.class, () -> xpathContext.getValue(".[@id='nixda']"));
+		assertThrows(XPathNotFoundException.class, () -> xpathContext.getValue(".[@id='nixda']"));
 		assertFalse(xpathContext.iterate(".[@id='nixda']").hasNext());
 
 		application = xpathContext.getValue(".[@id='root']");
@@ -123,7 +123,7 @@ public class ExampleQueriesTestCase {
 
 		List<Menu> list = xpathContext.stream("//.[@id='menu.1']", Menu.class).toList();
 		// EMF model has a loop in it, it just goes back to the top
-		assertEquals(26, list.size());
+		assertEquals(1, list.size());
 	}
 
 	@Test
@@ -136,5 +136,8 @@ public class ExampleQueriesTestCase {
 		List<Node> dotList = nestedXpathContext.stream(".", Node.class).toList();
 		assertEquals(1, dotList.size());
 		assertSame(firstElement, dotList.get(0));
+
+		List<Node> followingSiblingsList = nestedXpathContext.stream("following-sibling::*", Node.class).toList();
+		assertEquals(eContents.subList(1, eContents.size()), followingSiblingsList);
 	}
 }
