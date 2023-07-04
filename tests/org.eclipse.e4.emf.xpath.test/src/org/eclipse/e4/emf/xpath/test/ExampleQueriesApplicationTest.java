@@ -14,6 +14,7 @@
 package org.eclipse.e4.emf.xpath.test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.eclipse.e4.emf.xpath.EcoreXPathContextFactory;
@@ -85,12 +86,17 @@ public class ExampleQueriesApplicationTest {
 
 		MMenu mMenu = xpathContext.getValue("//mainMenu", MMenu.class);
 		assertNotNull(mMenu);
+
+		Object menu2 = xpathContext.getValue("/children/mainMenu");
+		assertThat(menu2).isInstanceOf(MMenu.class);
 	}
 
 	@Test
 	public void testAccessingAllMenus() {
 		Object menuEntries = xpathContext.getValue("//mainMenu/children");
 		assertNotNull(menuEntries);
+		assertThat(menuEntries).isInstanceOf(MMenu.class);
+		assertEquals("File", ((MMenu) menuEntries).getLabel());
 	}
 
 }
