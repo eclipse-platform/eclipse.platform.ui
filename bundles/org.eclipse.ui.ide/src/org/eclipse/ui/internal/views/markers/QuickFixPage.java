@@ -256,8 +256,14 @@ public class QuickFixPage extends WizardPage {
 
 		resolutionsList
 				.addSelectionChangedListener(event -> {
-					markersTable.refresh();
-					setPageComplete(markersTable.getCheckedElements().length > 0);
+					Control tableControl = markersTable.getControl();
+					tableControl.setRedraw(false);
+					try {
+						markersTable.refresh();
+						setPageComplete(markersTable.getCheckedElements().length > 0);
+					} finally {
+						tableControl.setRedraw(true);
+					}
 				});
 	}
 
