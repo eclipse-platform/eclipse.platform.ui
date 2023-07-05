@@ -26,7 +26,6 @@ import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
-import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -42,7 +41,7 @@ import org.eclipse.swt.widgets.Shell;
  * @author christoph
  *
  */
-public class GenericEditorContentAssistant extends ContentAssistant {
+public class GenericEditorContentAssistant extends ContentAssistant implements IContentAssistantLookAndFeelProperties {
 	private static final DefaultContentAssistProcessor DEFAULT_CONTENT_ASSIST_PROCESSOR = new DefaultContentAssistProcessor();
 	private ContentTypeRelatedExtensionTracker<IContentAssistProcessor> contentAssistProcessorTracker;
 	private Set<IContentType> types;
@@ -69,12 +68,6 @@ public class GenericEditorContentAssistant extends ContentAssistant {
 		this.processors = Objects.requireNonNullElseGet(processors, () -> Collections.emptyList());
 		this.types = types;
 
-		setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_BELOW);
-		setProposalPopupOrientation(IContentAssistant.PROPOSAL_REMOVE);
-		setAutoActivationDelay(10);
-		enableColoredLabels(true);
-		enableAutoActivation(true);
-		enableAutoActivateCompletionOnType(true);
 		setInformationControlCreator(new AbstractReusableInformationControlCreator() {
 			@Override
 			protected IInformationControl doCreateInformationControl(Shell parent) {

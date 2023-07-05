@@ -187,6 +187,12 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		Set<IContentType> types = getContentTypes(sourceViewer.getDocument());
 		contentAssistant = new GenericEditorContentAssistant(contentAssistProcessorTracker,
 				registry.getContentAssistProcessors(sourceViewer, editor, types), types);
+
+		ContentAssistantLookAndFeelRegistry lookAndFeelRegistry = GenericEditorPlugin.getDefault()
+				.getContentAssistantLookAndFeelRegistry();
+		lookAndFeelRegistry.getContentAssistantLookAndFeel(types)
+				.forEach(lookAndFeel -> lookAndFeel.applyTo(contentAssistant));
+
 		if (this.document != null) {
 			associateTokenContentTypes(this.document);
 		}
@@ -275,7 +281,7 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		}
 		// add default reconciler:
 		reconcilers.add(new DefaultFoldingReconciler());
-		
+
 		reconcilingStrategies.addAll(foldingReconcilingStrategies);
 
 		if (!reconcilingStrategies.isEmpty()) {

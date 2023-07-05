@@ -34,6 +34,13 @@
       </contentAssistProcessor>
    </extension>
    <extension
+         point="org.eclipse.ui.genericeditor.contentAssistantLookAndFeel">
+      <contentAssistantLookAndFeel
+            class="org.eclipse.ui.genericeditor.examples.dotproject.ContentAssistantLookAndFeel"
+            contentType="org.eclipse.ui.genericeditor.examples.dotproject">
+      </contentAssistantLookAndFeel>
+   </extension>
+   <extension
          point="org.eclipse.ui.genericeditor.hoverProviders">
       <hoverProvider
             class="org.eclipse.ui.genericeditor.examples.dotproject.NatureLabelHoverProvider"

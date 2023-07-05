@@ -1,0 +1,136 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.ui.genericeditor" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="org.eclipse.ui.genericeditor" id="contentAssistantLookAndFeel" name="%ExtPoint.contentAssistantLookAndFeel"/>
+      </appinfo>
+      <documentation>
+         This extension point is used to contribute to the content assistant look and feel for a given content type.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="contentAssistantLookAndFeel"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="contentAssistantLookAndFeel">
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The fully qualified class name implementing the interface &lt;code&gt;org.eclipse.ui.internal.genericeditor.IContentAssistantLookAndFeel&lt;/code&gt;
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.ui.internal.genericeditor.IContentAssistantLookAndFeel"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="contentType" type="string">
+            <annotation>
+               <documentation>
+                  The target content-type for this extension. Content-types are defined as extension to the org.eclipse.core.contenttype.contentTypes extension point. If no content type is given, the extension is applied to all content types.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.core.contenttype.contentTypes/content-type/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         1.3
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         This is an example of a default look and feel being registered for the content assistant, and a look and feel being registered for a target definition file type:
+
+&lt;pre&gt;
+&lt;extension point=&quot;org.eclipse.ui.genericeditor.contentAssistantLookAndFeel&quot;&gt;
+   &lt;contentAssistantLookAndFeel
+       class=&quot;org.eclipse.ui.genericeditor.examples.DefaultContentAssistantLookAndFeel&quot;&gt;
+   &lt;/contentAssistantLookAndFeel&gt;
+   &lt;contentAssistantLookAndFeel
+       class=&quot;org.eclipse.ui.genericeditor.examples.TargetDefinitionContentAssistantLookAndFeel&quot;
+       contentType=&quot;org.eclipse.pde.targetFile&quot;&gt;
+   &lt;/contentAssistantLookAndFeel&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="apiinfo"/>
+      </appinfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="implementation"/>
+      </appinfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="copyright"/>
+      </appinfo>
+      <documentation>
+         Copyright (c) 2023 Avaloq Group AG (http://www.avaloq.com) and others
+
+This program and the accompanying materials are made available under the terms of the Eclipse Public License 2.0 which accompanies this distribution, and is available at &lt;a href=&quot;https://www.eclipse.org/legal/epl-2.0&quot;&gt;https://www.eclipse.org/legal/epl-v20.html&lt;/a&gt;/
+
+SPDX-License-Identifier: EPL-2.0
+      </documentation>
+   </annotation>
+
+</schema>

@@ -45,6 +45,7 @@ public class GenericEditorPlugin extends AbstractUIPlugin {
 
 	private TextHoverRegistry textHoversRegistry;
 	private ContentAssistProcessorRegistry contentAssistProcessorsRegistry;
+	private ContentAssistantLookAndFeelRegistry contentAssistantLookAndFeelRegistry;
 	private QuickAssistProcessorRegistry quickAssistProcessorRegistry;
 	private ReconcilerRegistry reconcilierRegistry;
 	private PresentationReconcilerRegistry presentationReconcilierRegistry;
@@ -105,6 +106,19 @@ public class GenericEditorPlugin extends AbstractUIPlugin {
 			this.contentAssistProcessorsRegistry = new ContentAssistProcessorRegistry();
 		}
 		return this.contentAssistProcessorsRegistry;
+	}
+
+	/**
+	 * @return the registry allowing to access contributed
+	 *         {@link ContentAssistantLookAndFeel}s.
+	 * 
+	 * @since 1.3
+	 */
+	public synchronized ContentAssistantLookAndFeelRegistry getContentAssistantLookAndFeelRegistry() {
+		if (this.contentAssistantLookAndFeelRegistry == null) {
+			this.contentAssistantLookAndFeelRegistry = new ContentAssistantLookAndFeelRegistry();
+		}
+		return contentAssistantLookAndFeelRegistry;
 	}
 
 	/**

@@ -27,6 +27,7 @@
    <extension-point id="characterPairMatchers" name="%ExtPoint.characterPairMatchers" schema="schema/characterPairMatchers.exsd"/>
    <extension-point id="icons" name="%ExtPoint.iconProviders" schema="schema/icons.exsd"/>
    <extension-point id="quickAssistProcessors" name="%ExtPoint.quickAssistProcessors" schema="schema/quickAssistProcessors.exsd"/>
+   <extension-point id="contentAssistantLookAndFeel" name="%ExtPoint.contentAssistantLookAndFeel" schema="schema/contentAssistantLookAndFeel.exsd"/>
    <extension
          point="org.eclipse.ui.editors">
       <editor
