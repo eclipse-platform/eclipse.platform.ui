@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.ui.examples.markerHelp;singleton:=true
 Bundle-Version: 3.2.0
-Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide;bundle-version="3.15.0"

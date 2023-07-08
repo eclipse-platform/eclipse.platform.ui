@@ -1,6 +1,5 @@
 Manifest-Version: 1.0
 Bundle-ActivationPolicy: lazy
-Bundle-ClassPath: .
 Bundle-Localization: plugin
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
