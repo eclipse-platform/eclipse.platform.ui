@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jface.action;
 
+import java.util.function.Consumer;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.widgets.Control;
@@ -60,6 +62,92 @@ public abstract class Action extends AbstractAction {
 	private static final Boolean VAL_TOGGLE_BTN_OFF = Boolean.FALSE;
 
 	private static final Boolean VAL_TOGGLE_BTN_ON = Boolean.TRUE;
+
+	/**
+	 * Returns an {@code Action} that runs the given runnable when the action runs.
+	 *
+	 * @param runnable the runnable to run
+	 * @return an action that runs the given runnable
+	 * @since 3.31
+	 */
+	public static IAction create(Runnable runnable) {
+		return create(null, runnable);
+	}
+
+	/**
+	 * Returns an {@code Action} that runs the given runnable when the action runs.
+	 *
+	 * @param text     the string used as the text for the action, or
+	 *                 <code>null</code> if there is no text
+	 * @param runnable the runnable to run
+	 * @return an action that runs the given runnable
+	 * @since 3.31
+	 */
+	public static IAction create(String text, Runnable runnable) {
+		return create(text, null, runnable);
+	}
+
+	/**
+	 * Returns an {@code Action} that runs the given runnable when the action runs.
+	 *
+	 * @param text     the string used as the text for the action, or
+	 *                 <code>null</code> if there is no text
+	 * @param image    the action's image, or <code>null</code> if there is no image
+	 * @param runnable the runnable to run
+	 * @return an action that runs the given runnable
+	 * @since 3.31
+	 */
+	public static IAction create(String text, ImageDescriptor image, Runnable runnable) {
+		return new Action(text, image) {
+			@Override
+			public void run() {
+				runnable.run();
+			}
+		};
+	}
+
+	/**
+	 * Returns an {@code Action} that runs the given runnable when the action runs.
+	 *
+	 * @param runnable the runnable to run and accepts the causing event
+	 * @return an action that runs the given runnable
+	 * @since 3.31
+	 */
+	public static IAction create(Consumer<Event> runnable) {
+		return create(null, runnable);
+	}
+
+	/**
+	 * Returns an {@code Action} that runs the given runnable when the action runs.
+	 *
+	 * @param text     the string used as the text for the action, or
+	 *                 <code>null</code> if there is no text
+	 * @param runnable the runnable to run and accepts the causing event
+	 * @return an action that runs the given runnable
+	 * @since 3.31
+	 */
+	public static IAction create(String text, Consumer<Event> runnable) {
+		return create(text, null, runnable);
+	}
+
+	/**
+	 * Returns an {@code Action} that runs the given runnable when the action runs.
+	 *
+	 * @param text     the string used as the text for the action, or
+	 *                 <code>null</code> if there is no text
+	 * @param image    the action's image, or <code>null</code> if there is no image
+	 * @param runnable the runnable to run and accepts the causing event
+	 * @return an action that runs the given runnable
+	 * @since 3.31
+	 */
+	public static IAction create(String text, ImageDescriptor image, Consumer<Event> runnable) {
+		return new Action(text, image) {
+			@Override
+			public void runWithEvent(Event event) {
+				runnable.accept(event);
+			}
+		};
+	}
 
 	/**
 	 * Converts an accelerator key code to a string representation.

@@ -15,6 +15,7 @@
 package org.eclipse.ui.internal.progress;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
@@ -45,9 +46,9 @@ public class ProgressView extends ViewPart {
 
 	DetailedProgressViewer viewer;
 
-	Action cancelAction;
+	IAction cancelAction;
 
-	Action clearAllAction;
+	IAction clearAllAction;
 
 	private IPartListener2 partListener;
 
@@ -224,25 +225,15 @@ public class ProgressView extends ViewPart {
 	 * Create the cancel action for the receiver.
 	 */
 	private void createCancelAction() {
-		cancelAction = new Action(ProgressMessages.ProgressView_CancelAction) {
-			@Override
-			public void run() {
-				viewer.cancelSelection();
-			}
-		};
-
+		cancelAction = Action.create(ProgressMessages.ProgressView_CancelAction, () -> viewer.cancelSelection());
 	}
 
 	/**
 	 * Create the clear all action for the receiver.
 	 */
 	private void createClearAllAction() {
-		clearAllAction = new Action(ProgressMessages.ProgressView_ClearAllAction) {
-			@Override
-			public void run() {
-				FinishedJobs.getInstance().clearAll();
-			}
-		};
+		clearAllAction = Action.create(ProgressMessages.ProgressView_ClearAllAction,
+				() -> FinishedJobs.getInstance().clearAll());
 		clearAllAction.setToolTipText(ProgressMessages.NewProgressView_RemoveAllJobsToolTip);
 		ImageDescriptor id = WorkbenchImages.getWorkbenchImageDescriptor("/elcl16/progress_remall.png"); //$NON-NLS-1$
 		if (id != null) {
