@@ -2,8 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui; singleton:=true
-Bundle-Version: 3.203.100.qualifier
-Bundle-ClassPath: .
+Bundle-Version: 3.203.200.qualifier
 Bundle-Activator: org.eclipse.ui.internal.UIPlugin
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %Plugin.providerName
