@@ -18,11 +18,13 @@ import java.util.Hashtable;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -387,7 +389,6 @@ public class FormHeading extends Canvas {
 		private IMessage[] messages;
 		private Hyperlink messageHyperlink;
 		private ListenerList<IHyperlinkListener> listeners;
-		private Color fg;
 		private int fontHeight = -1;
 		private int fontBaselineHeight = -1;
 
@@ -571,24 +572,29 @@ public class FormHeading extends Canvas {
 		}
 
 		public void setForeground(Color fg) {
-			this.fg = fg;
 			updateForeground();
 		}
 
 		private void updateForeground() {
 			Color theFg;
+			String cssClassName = null;
+			ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
 
 			switch (messageType) {
 			case IMessageProvider.ERROR:
-				theFg = getDisplay().getSystemColor(SWT.COLOR_RED);
+				theFg = colorRegistry.get("org.eclipse.ui.workbench.FORM_HEADING_ERROR_COLOR"); //$NON-NLS-1$
+				cssClassName = "MPartFormHeaderCLabelError"; //$NON-NLS-1$
 				break;
 			case IMessageProvider.WARNING:
-				theFg = getDisplay().getSystemColor(SWT.COLOR_DARK_YELLOW);
+				theFg = colorRegistry.get("org.eclipse.ui.workbench.FORM_HEADING_WARNING_COLOR"); //$NON-NLS-1$
+				cssClassName = "MPartFormHeaderCLabelWarning"; //$NON-NLS-1$
 				break;
 			default:
-				theFg = fg;
+				theFg = colorRegistry.get("org.eclipse.ui.workbench.FORM_HEADING_INFO_COLOR"); //$NON-NLS-1$
+				cssClassName = "MPartFormHeaderCLabelInfo"; //$NON-NLS-1$
 			}
 			getMessageControl().setForeground(theFg);
+			WidgetElement.setCSSClass(getMessageControl(), cssClassName);
 		}
 	}
 
