@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.wizard.IWizard;
@@ -89,20 +90,20 @@ public abstract class UIWorkingSetWizardsAuto extends UITestCase {
 		}
 	}
 
-	private void deleteResources() {
-		try {
-			if (p1 != null) {
-				FileUtil.deleteProject(p1);
-			}
-			if (p2 != null) {
-				FileUtil.deleteProject(p2);
-			}
+	private void deleteResources() throws CoreException {
+		ResourcesPlugin.getWorkspace().run(__ -> {
+			deleteProject(p1);
+			deleteProject(p2);
+		}, null);
+	}
 
+	private void deleteProject(IProject project) {
+		try {
+			FileUtil.deleteProject(project);
 		} catch (CoreException e) {
 			TestPlugin.getDefault().getLog().log(e.getStatus());
 			throw createAssertionError(e);
 		}
-
 	}
 
 	private AssertionError createAssertionError(CoreException originalException) {
