@@ -708,14 +708,13 @@ public final class RefactoringHistoryManager {
 		}
 		final Document result= transformer.getResult();
 		writeNode(stream, result);
-			}
+	}
 
 	private static void writeNode(final OutputStream stream, Document document) {
-		OutputStreamWriter outputStreamWriter= new OutputStreamWriter(stream, Charset.forName("UTF-8")); //$NON-NLS-1$
-		@SuppressWarnings("resource")
-		DOMWriter writer= new DOMWriter(outputStreamWriter);
-		writer.printDocument(document);
-		writer.flush();
+		try (DOMWriter writer= new DOMWriter(new OutputStreamWriter(stream, Charset.forName("UTF-8")))){ //$NON-NLS-1$
+			writer.printDocument(document);
+			writer.flush();
+		}
 	}
 
 	/** The cached session descriptor, or <code>null</code> */
@@ -1188,24 +1187,17 @@ public final class RefactoringHistoryManager {
 	 *             if an error occurs while adding the history entry
 	 */
 	private void writeHistoryEntry(final IFileStore file, final Document document, final IProgressMonitor monitor, final String task) throws CoreException {
-		OutputStream output= null;
-		try {
-			monitor.beginTask(task, 2);
-				file.getParent().mkdir(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-				output= new BufferedOutputStream(file.openOutputStream(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)));
+		monitor.beginTask(task, 2);
+		file.getParent().mkdir(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+		try (OutputStream output= new BufferedOutputStream(file.openOutputStream(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)))) {
 			writeNode(output, document);
-				} finally {
-					fCachedDocument= null;
-					fCachedPath= null;
-					fCachedDescriptor= null;
-					fCachedStore= null;
-				if (output != null) {
-					try {
-						output.close();
-					} catch (IOException exception) {
-						// Do nothing
-					}
-				}
+		} catch (IOException exception) {
+			// Do nothing
+		} finally {
+			fCachedDocument= null;
+			fCachedPath= null;
+			fCachedDescriptor= null;
+			fCachedStore= null;
 			monitor.done();
 		}
 	}

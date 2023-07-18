@@ -58,29 +58,13 @@ public final class RefactoringHistoryMerger implements IStorageMerger {
 
 	@Override
 	public IStatus merge(final OutputStream output, final String encoding, final IStorage ancestor, final IStorage target, final IStorage other, final IProgressMonitor monitor) throws CoreException {
-		InputStream targetStream= null;
-		InputStream sourceStream= null;
-		try {
-			targetStream= target.getContents();
-			sourceStream= target.getContents();
+		try (InputStream targetStream= target.getContents();
+				InputStream sourceStream= target.getContents()) {
 			performMerge(output, targetStream, sourceStream);
 		} catch (CoreException exception) {
 			return new Status(IStatus.ERROR, RefactoringUIPlugin.getPluginId(), 1, RefactoringUIMessages.RefactoringHistoryMerger_error_auto_merge, exception);
-		} finally {
-			if (targetStream != null) {
-				try {
-					targetStream.close();
-				} catch (IOException exception) {
-					// Do nothing
-				}
-			}
-			if (sourceStream != null) {
-				try {
-					sourceStream.close();
-				} catch (IOException exception) {
-					// Do nothing
-				}
-			}
+		} catch (IOException exception) {
+			// Do nothing
 		}
 		return Status.OK_STATUS;
 	}

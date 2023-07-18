@@ -175,9 +175,7 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 			setPageComplete(false);
 			return;
 		}
-		InputStream stream= null;
-		try {
-			stream= new BufferedInputStream(new FileInputStream(file));
+		try (InputStream stream= new BufferedInputStream(new FileInputStream(file))) {
 			fWizard.setRefactoringHistory(RefactoringCore.getHistoryService().readRefactoringHistory(stream, RefactoringDescriptor.NONE));
 		} catch (IOException exception) {
 			setErrorMessage(ScriptingMessages.ApplyRefactoringScriptWizardPage_error_cannot_read);
@@ -187,14 +185,6 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 			setErrorMessage(ScriptingMessages.ApplyRefactoringScriptWizardPage_invalid_format);
 			setPageComplete(false);
 			return;
-		} finally {
-			if (stream != null) {
-				try {
-					stream.close();
-				} catch (IOException exception) {
-					// Do nothing
-				}
-			}
 		}
 	}
 

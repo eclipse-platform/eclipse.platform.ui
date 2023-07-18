@@ -137,9 +137,7 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 				final MessageDialog message= new MessageDialog(getShell(), getShell().getText(), null, Messages.format(ScriptingMessages.CreateRefactoringScriptWizard_overwrite_query, new String[] { ScriptingMessages.CreateRefactoringScriptWizard_merge_button, ScriptingMessages.CreateRefactoringScriptWizard_overwrite_button}), MessageDialog.QUESTION, new String[] { ScriptingMessages.CreateRefactoringScriptWizard_merge_button, ScriptingMessages.CreateRefactoringScriptWizard_overwrite_button, IDialogConstants.CANCEL_LABEL}, 0);
 				final int result= message.open();
 				if (result == 0) {
-					InputStream stream= null;
-					try {
-						stream= new BufferedInputStream(new FileInputStream(file));
+					try (InputStream stream= new BufferedInputStream(new FileInputStream(file))) {
 						final RefactoringDescriptorProxy[] existing= RefactoringCore.getHistoryService().readRefactoringHistory(stream, RefactoringDescriptor.NONE).getDescriptors();
 						final Set<RefactoringDescriptorProxy> set= new HashSet<>(Arrays.asList(existing));
 						set.addAll(Arrays.asList(fRefactoringDescriptors));
@@ -151,25 +149,19 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 					} catch (CoreException exception) {
 						handleCoreException(exception);
 						return false;
-					} finally {
-						if (stream != null) {
-							try {
-								stream.close();
-							} catch (IOException exception) {
-								// Do nothing
-							}
-						}
+					} catch (IOException closeException) {
+						// Do nothing
 					}
 				} else if (result == 2)
 					return false;
 			}
-			OutputStream stream= null;
 			try {
 				File parentFile= file.getParentFile();
 				if (parentFile != null)
 					parentFile.mkdirs();
-				stream= new BufferedOutputStream(new FileOutputStream(file));
-				writeRefactoringDescriptorProxies(writable, stream);
+				try (OutputStream stream= new BufferedOutputStream(new FileOutputStream(file))) {
+					writeRefactoringDescriptorProxies(writable, stream);
+				}
 				return true;
 			} catch (CoreException exception) {
 				handleCoreException(exception);
@@ -177,14 +169,8 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 			} catch (FileNotFoundException exception) {
 				MessageDialog.openError(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, exception.getLocalizedMessage());
 				return false;
-			} finally {
-				if (stream != null) {
-					try {
-						stream.close();
-					} catch (IOException exception) {
-						// Do nothing
-					}
-				}
+			} catch (IOException closeException) {
+				// Do nothing
 			}
 		} else if (fUseClipboard) {
 			try {
