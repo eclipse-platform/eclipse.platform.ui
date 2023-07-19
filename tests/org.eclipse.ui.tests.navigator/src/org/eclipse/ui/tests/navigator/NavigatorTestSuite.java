@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2018 IBM Corporation and others.
+ * Copyright (c) 2005, 2018, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,12 +14,14 @@
  *     Thibault Le Ouay <thibaultleouay@gmail.com> - Bug 457870
  *     C. Sean Young <csyoung@google.com> - Bug 436645
  *     Dawid Pakuła <zulus@w3des.net> - Bug 536785
+ *     Nikifor Fedorov (ArSysOp) - Import more than one project at once (eclipse.platform#226)
  *
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
 
 import org.eclipse.ui.tests.navigator.cdt.CdtTest;
 import org.eclipse.ui.tests.navigator.jst.JstPipelineTest;
+import org.eclipse.ui.tests.navigator.resources.FoldersAsProjectsContributionTest;
 import org.eclipse.ui.tests.navigator.resources.NestedResourcesTests;
 import org.eclipse.ui.tests.navigator.resources.PathComparatorTest;
 import org.junit.runner.RunWith;
@@ -33,7 +35,7 @@ import org.junit.runners.Suite.SuiteClasses;
 		LabelProviderTest.class, SorterTest.class, ViewerTest.class, CdtTest.class, M12Tests.class,
 		FirstClassM1Tests.class, LinkHelperTest.class, ShowInTest.class, ResourceTransferTest.class,
 		EvaluationCacheTest.class,
-		NestedResourcesTests.class, PathComparatorTest.class
+		NestedResourcesTests.class, PathComparatorTest.class, FoldersAsProjectsContributionTest.class
 		// DnDTest.class, // DnDTest.testSetDragOperation() fails
 		// PerformanceTest.class // Does not pass on all platforms see bug 264449
 })
