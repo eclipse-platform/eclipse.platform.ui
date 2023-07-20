@@ -19,7 +19,6 @@ package org.eclipse.jface.tests.internal.databinding.swt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
@@ -32,14 +31,11 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @since 3.2
@@ -216,8 +212,13 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 		Text c2 = new Text(shell, SWT.NONE);
 		c2.setText("2");
 		shell.pack();
+		shell.setVisible(true);
 
-		waitShellActivate(() -> shell.open(), shell);
+		processDisplayQueue();
+		System.out.println("active shell (2): " + shell.getDisplay().getActiveShell());
+
+		shell.forceActive();
+		System.out.println("active shell (3): " + shell.getDisplay().getActiveShell());
 
 		assertTrue(c1.setFocus());
 		Control focus = shell.getDisplay().getFocusControl();
@@ -229,12 +230,13 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 
 		assertTrue(c2.setFocus());
 
-		processEvents();
+		processDisplayQueue();
 		focus = shell.getDisplay().getFocusControl();
 		System.out.println("focus control (2): " + focus + ", c2? " + (focus == c2));
 		System.out.println("active shell (5): " + shell.getDisplay().getActiveShell());
 
 		System.out.println("Value (should be true): " + value.getValue());
+		Screenshots.takeScreenshot(getClass(), getClass().getSimpleName(), System.out);
 
 		assertTrue(value.getValue());
 
@@ -243,67 +245,8 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 		assertTrue(tracker.event.diff.getNewValue());
 	}
 
-	// copied from SwtTestUtil
-	public final static boolean isCocoa = SWT.getPlatform().startsWith("cocoa");
-
-	// copied from SwtTestUtil
-	public static void processEvents() {
-		Display display = Display.getCurrent();
-		if (display != null && !display.isDisposed()) {
-			while (display.readAndDispatch()) {
-			}
-		}
-	}
-
-	// copied from SwtTestUtil
-	public static boolean waitEvent(Runnable trigger, Control control, int swtEvent, int timeoutMsec) {
-		AtomicBoolean eventReceived = new AtomicBoolean(false);
-		Listener listener = event -> {
-			eventReceived.set(true);
-		};
-
-		control.addListener(swtEvent, listener);
-		try {
-			if (trigger != null)
-				trigger.run();
-
-			long start = System.currentTimeMillis();
-			while (!eventReceived.get()) {
-				if (System.currentTimeMillis() - start > timeoutMsec) return false;
-				processEvents();
-			}
-		} finally {
-			control.removeListener(swtEvent, listener);
-		}
-
-		return true;
-	}
-
-	// copied from SwtTestUtil
-	public void waitShellActivate(Runnable trigger, Shell shell) {
-		final int timeout = 1000;
-
-		Runnable trigger2 = () -> {
-			if (isCocoa) {
-				// Issue #731: if another app gains focus during entire JUnit session,
-				// newly opened Shells do not activate. The workaround is to activate
-				// explicitly.
-				shell.forceActive();
-			}
-
-			trigger.run();
-		};
-
-		// Issue #726: On GTK, 'Display.getActiveShell()' reports incorrect Shell.
-		// The workaround is to wait until 'SWT.Activate' is received.
-		if (waitEvent(trigger2, shell, SWT.Activate, timeout)) return;
-
-		// Something went wrong? Get more info to diagnose
-		if (shell == shell.getDisplay().getActiveShell()) {
-			fail("SWT.Activate was not received but Shell is (incorrectly?) reported active");
-		} else {
-			Screenshots.takeScreenshot(getClass(), getClass().getSimpleName(), System.out);
-			fail("Shell did not activate, Shell=<" + shell.getDisplay().getActiveShell() + "> is active");
+	private void processDisplayQueue() {
+		while (Display.getCurrent().readAndDispatch()) {
 		}
 	}
 }
