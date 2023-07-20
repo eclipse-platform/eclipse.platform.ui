@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import org.junit.Test;
 
@@ -83,6 +84,7 @@ public class FoldingTest extends AbstratGenericEditorTest {
 		DisplayHelper.waitForCondition(editor.getSite().getShell().getDisplay(), 5000, () -> {
 			Position[] actualPositions = getAnnotationsFromAnnotationModel().stream() //
 					.map(getProjectionAnnotationModel()::getPosition) //
+					.filter(Objects::nonNull)
 					.sorted(Comparator.comparingInt(Position::getOffset))
 					.toArray(Position[]::new);
 			return Arrays.deepEquals(actualPositions, expectedPositions);
