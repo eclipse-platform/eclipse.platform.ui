@@ -14,8 +14,8 @@
 
 package org.eclipse.e4.tools.emf.ui.internal.common.component.tabs;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -25,6 +25,7 @@ import org.w3c.dom.Element;
  * @author Steven Spungin
  *
  */
+@SuppressWarnings("restriction")
 public class DocUtil {
 
 	public static Element createChild(Element parent, String name) {
@@ -34,7 +35,7 @@ public class DocUtil {
 	}
 
 	public static Document createDocument(String name) throws ParserConfigurationException {
-		Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+		Document doc = org.eclipse.core.internal.runtime.XmlProcessorFactory.newDocumentWithErrorOnDOCTYPE();
 		doc.appendChild(doc.createElement(name));
 		return doc;
 	}

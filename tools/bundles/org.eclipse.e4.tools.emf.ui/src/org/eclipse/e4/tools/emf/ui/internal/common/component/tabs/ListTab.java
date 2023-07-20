@@ -29,7 +29,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -250,8 +249,9 @@ public class ListTab implements IViewEObjects {
 		final String xml = pref.get("list-tab-xml", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (E.notEmpty(xml)) {
 			try {
-				final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-						.parse(new InputSource(new StringReader(xml)));
+				@SuppressWarnings("restriction")
+				final Document doc = org.eclipse.core.internal.runtime.XmlProcessorFactory
+						.parseWithErrorOnDOCTYPE(new InputSource(new StringReader(xml)));
 				final XPath xpath = XPathFactory.newInstance().newXPath();
 				NodeList list;
 				if (restoreColumns) {
@@ -323,7 +323,9 @@ public class ListTab implements IViewEObjects {
 
 	// @Refactor
 	static private String docToString(Document doc) throws TransformerException {
-		final TransformerFactory tf = TransformerFactory.newInstance();
+		@SuppressWarnings("restriction")
+		final TransformerFactory tf = org.eclipse.core.internal.runtime.XmlProcessorFactory
+				.createTransformerFactoryWithErrorOnDOCTYPE();
 		final Transformer transformer = tf.newTransformer();
 		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes"); //$NON-NLS-1$
 		final StringWriter writer = new StringWriter();
