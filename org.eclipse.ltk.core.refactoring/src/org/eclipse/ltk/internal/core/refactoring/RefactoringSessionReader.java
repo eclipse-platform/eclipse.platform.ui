@@ -136,7 +136,7 @@ public final class RefactoringSessionReader extends DefaultHandler {
 		fSessionFound= false;
 		try {
 			source.setSystemId("/"); //$NON-NLS-1$
-			createParser(SAXParserFactory.newInstance()).parse(source, this);
+			createParser(XmlProcessorFactoryLtk.createSAXFactoryWithErrorOnDOCTYPE()).parse(source, this);
 			if (!fSessionFound)
 				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, RefactoringCoreMessages.RefactoringSessionReader_no_session, null));
 			if (fRefactoringDescriptors != null) {

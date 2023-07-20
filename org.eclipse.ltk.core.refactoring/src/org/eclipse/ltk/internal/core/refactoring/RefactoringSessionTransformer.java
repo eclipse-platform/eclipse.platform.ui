@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -135,7 +134,7 @@ public final class RefactoringSessionTransformer {
 		Assert.isTrue(flags >= RefactoringDescriptor.NONE);
 		try {
 			if (fDocument == null)
-				fDocument= DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+				fDocument= XmlProcessorFactoryLtk.createDocumentBuilderFactoryWithErrorOnDOCTYPE().newDocumentBuilder().newDocument();
 		} catch (ParserConfigurationException | FactoryConfigurationError exception) {
 			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.REFACTORING_HISTORY_IO_ERROR, exception.getLocalizedMessage(), null));
 		}
@@ -200,7 +199,7 @@ public final class RefactoringSessionTransformer {
 	public void beginSession(final String comment, final String version) throws CoreException {
 		if (fDocument == null) {
 			try {
-				fDocument= DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+				fDocument= XmlProcessorFactoryLtk.createDocumentBuilderFactoryWithErrorOnDOCTYPE().newDocumentBuilder().newDocument();
 				fSession= fDocument.createElement(IRefactoringSerializationConstants.ELEMENT_SESSION);
 				fSessionArguments= new ArrayList<>(2);
 				Attr attribute= fDocument.createAttribute(IRefactoringSerializationConstants.ATTRIBUTE_VERSION);

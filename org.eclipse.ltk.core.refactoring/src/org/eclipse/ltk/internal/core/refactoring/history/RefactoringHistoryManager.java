@@ -39,7 +39,6 @@ import java.util.Set;
 import java.util.TimeZone;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.InputSource;
@@ -84,6 +83,7 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringSessionReader;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringSessionTransformer;
+import org.eclipse.ltk.internal.core.refactoring.XmlProcessorFactoryLtk;
 
 /**
  * Manager for persistable refactoring histories.
@@ -865,7 +865,7 @@ public final class RefactoringHistoryManager {
 	private Document getCachedDocument(final IPath path, final InputStream input) throws SAXException, IOException, ParserConfigurationException {
 		if (path.equals(fCachedPath) && fCachedDocument != null)
 			return fCachedDocument;
-		DocumentBuilder parser= DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		DocumentBuilder parser= XmlProcessorFactoryLtk.createDocumentBuilderFactoryWithErrorOnDOCTYPE().newDocumentBuilder();
 		parser.setErrorHandler(new DefaultHandler());
 		final Document document= parser.parse(new InputSource(input));
 		fCachedDocument= document;
