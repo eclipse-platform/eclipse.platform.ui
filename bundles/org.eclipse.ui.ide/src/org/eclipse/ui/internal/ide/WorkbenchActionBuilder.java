@@ -151,10 +151,6 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 	private IWorkbenchAction forwardHistoryAction;
 
 	// generic retarget actions
-	private IWorkbenchAction undoAction;
-
-	private IWorkbenchAction redoAction;
-
 	private IWorkbenchAction quitAction;
 
 	private IWorkbenchAction goIntoAction;
@@ -409,8 +405,8 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 		coolBar.add(new GroupMarker(IIDEActionConstants.GROUP_EDIT));
 		IToolBarManager editToolBar = actionBarConfigurer.createToolBarManager();
 		editToolBar.add(new Separator(IWorkbenchActionConstants.EDIT_GROUP));
-		editToolBar.add(undoAction);
-		editToolBar.add(redoAction);
+		editToolBar.add(getUndoItem());
+		editToolBar.add(getRedoItem());
 
 		// Add to the cool bar manager
 		coolBar.add(actionBarConfigurer.createToolBarContributionItem(editToolBar,
@@ -541,8 +537,8 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 		MenuManager menu = new MenuManager(IDEWorkbenchMessages.Workbench_edit, IWorkbenchActionConstants.M_EDIT);
 		menu.add(new GroupMarker(IWorkbenchActionConstants.EDIT_START));
 
-		menu.add(undoAction);
-		menu.add(redoAction);
+		menu.add(getUndoItem());
+		menu.add(getRedoItem());
 		menu.add(new GroupMarker(IWorkbenchActionConstants.UNDO_EXT));
 		menu.add(new Separator());
 
@@ -888,8 +884,6 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 		quickAccessAction = null;
 		backwardHistoryAction = null;
 		forwardHistoryAction = null;
-		undoAction = null;
-		redoAction = null;
 		quitAction = null;
 		goIntoAction = null;
 		backAction = null;
@@ -1012,13 +1006,6 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 		newWindowAction = ActionFactory.OPEN_NEW_WINDOW.create(getWindow());
 		newWindowAction.setText(IDEWorkbenchMessages.Workbench_openNewWindow);
 		register(newWindowAction);
-
-		undoAction = ActionFactory.UNDO.create(window);
-		register(undoAction);
-
-		redoAction = ActionFactory.REDO.create(window);
-		register(redoAction);
-
 
 		closeAction = ActionFactory.CLOSE.create(window);
 		register(closeAction);
@@ -1433,6 +1420,17 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 		return ContributionItemFactory.PIN_EDITOR.create(window);
 	}
 
+	private IContributionItem getUndoItem() {
+		return getItem(ActionFactory.UNDO.getId(), ActionFactory.UNDO.getCommandId(), ISharedImages.IMG_TOOL_UNDO,
+				ISharedImages.IMG_TOOL_UNDO_DISABLED, WorkbenchMessages.Workbench_undo,
+				WorkbenchMessages.Workbench_undoToolTip);
+	}
+
+	private IContributionItem getRedoItem() {
+		return getItem(ActionFactory.REDO.getId(), ActionFactory.REDO.getCommandId(), ISharedImages.IMG_TOOL_REDO,
+				ISharedImages.IMG_TOOL_REDO_DISABLED, WorkbenchMessages.Workbench_redo,
+				WorkbenchMessages.Workbench_redoToolTip);
+	}
 	private IContributionItem getCutItem() {
 		return getItem(ActionFactory.CUT.getId(), ActionFactory.CUT.getCommandId(), ISharedImages.IMG_TOOL_CUT,
 				ISharedImages.IMG_TOOL_CUT_DISABLED, WorkbenchMessages.Workbench_cut,
