@@ -27,6 +27,7 @@ import org.eclipse.e4.ui.tests.application.StartupTestSuite;
 import org.eclipse.e4.ui.tests.application.UIEventTypesTest;
 import org.eclipse.e4.ui.tests.workbench.AreaRendererTest;
 import org.eclipse.e4.ui.tests.workbench.Bug308317Test;
+import org.eclipse.e4.ui.tests.workbench.CompositePartClosingTest;
 import org.eclipse.e4.ui.tests.workbench.ContextTest;
 import org.eclipse.e4.ui.tests.workbench.ContributionsAnalyzerTest;
 import org.eclipse.e4.ui.tests.workbench.ExtensionsSortTests;
@@ -102,7 +103,8 @@ import org.junit.runners.Suite;
 		E4ResourceTest.class,
 		AreaRendererTest.class,
 		SWTPartRendererTest.class,
-		ModelServiceImplTest.class
+		ModelServiceImplTest.class,
+		CompositePartClosingTest.class
 })
 public class UIAllTests {
 }
