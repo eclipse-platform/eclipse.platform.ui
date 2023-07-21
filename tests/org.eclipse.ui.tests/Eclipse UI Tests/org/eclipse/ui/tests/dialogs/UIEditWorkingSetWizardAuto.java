@@ -41,66 +41,64 @@ import org.junit.runners.JUnit4;
  * wizard page texts.
  */
 @RunWith(JUnit4.class)
-public class UIEditWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
-	IWorkingSetPage fDefaultEditPage;
+public class UIEditWorkingSetWizardAuto extends UIWorkingSetWizardsAuto<WorkingSetEditWizard> {
 
 	public UIEditWorkingSetWizardAuto() {
 		super(UIEditWorkingSetWizardAuto.class.getSimpleName());
 	}
 
 	@Override
-	protected void doSetUp() throws Exception {
-		WorkingSetRegistry registry = WorkbenchPlugin.getDefault()
-				.getWorkingSetRegistry();
-		fDefaultEditPage = registry.getDefaultWorkingSetPage();
-		fWizard = new WorkingSetEditWizard(fDefaultEditPage);
-		super.doSetUp();
+	protected WorkingSetEditWizard createWizardToTest() {
+		return new WorkingSetEditWizard(getDefaultEditPage());
+	}
+
+	private IWorkingSetPage getDefaultEditPage() {
+		WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
+		return registry.getDefaultWorkingSetPage();
 	}
 
 	@Test
 	public void testEditPage() throws Throwable {
-		IWizardPage page = fWizardDialog.getCurrentPage();
+		IWizardPage page = getWizardDialog().getCurrentPage();
 		assertTrue(page instanceof IWorkingSetPage);
 
 		/*
 		 * Verify that correct working set edit page is displayed
 		 */
-		assertSame(page.getClass(), fDefaultEditPage.getClass());
+		assertSame(page.getClass(), getDefaultEditPage().getClass());
 		/*
 		 * Test initial page state
 		 */
 		assertFalse(page.canFlipToNextPage());
-		assertFalse(fWizard.canFinish());
+		assertFalse(getWizard().canFinish());
 		assertNull(page.getErrorMessage());
 		/*
 		 * Test page state with preset page input
 		 */
-		IWorkingSetManager workingSetManager = fWorkbench
-				.getWorkingSetManager();
-		IWorkingSet workingSet = workingSetManager.createWorkingSet(
-				WORKING_SET_NAME_1, new IAdaptable[] { p1, f2 });
-		((WorkingSetEditWizard) fWizard).setSelection(workingSet);
+		IWorkingSetManager workingSetManager = fWorkbench.getWorkingSetManager();
+		IWorkingSet workingSet = workingSetManager.createWorkingSet(WORKING_SET_NAME_1,
+				new IAdaptable[] { getProject1(), getFileInProject2() });
+		getWizard().setSelection(workingSet);
 
 		List<Widget> widgets = getWidgets((Composite) page.getControl(), Text.class);
 		Text text = (Text) widgets.get(0);
 		assertEquals(WORKING_SET_NAME_1, text.getText());
 		assertFalse(page.canFlipToNextPage());
-		assertTrue(fWizard.canFinish());
+		assertTrue(getWizard().canFinish());
 		assertNull(page.getErrorMessage());
 		widgets = getWidgets((Composite) page.getControl(), Tree.class);
 		Tree tree = (Tree) widgets.get(0);
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		assertEquals(workspace.getRoot().getProjects().length, tree
-				.getItemCount());
+		assertEquals(workspace.getRoot().getProjects().length, tree.getItemCount());
 		setTextWidgetText(WORKING_SET_NAME_2, page);
-		assertTrue(fWizard.canFinish());
+		assertTrue(getWizard().canFinish());
 
 		/*
 		 * Test page state with partial page input
 		 */
 		setTextWidgetText("", page);
 		assertFalse(page.canFlipToNextPage());
-		assertFalse(fWizard.canFinish());
+		assertFalse(getWizard().canFinish());
 		assertNotNull(page.getErrorMessage());
 
 		/*
@@ -109,17 +107,16 @@ public class UIEditWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 		setTextWidgetText(WORKING_SET_NAME_2, page);
 		checkTreeItems();
 		assertFalse(page.canFlipToNextPage());
-		assertTrue(fWizard.canFinish());
+		assertTrue(getWizard().canFinish());
 		assertNull(page.getErrorMessage());
 
-		fWizard.performFinish();
-		workingSet = ((WorkingSetEditWizard) fWizard).getSelection();
+		getWizard().performFinish();
+		workingSet = getWizard().getSelection();
 		IAdaptable[] workingSetItems = workingSet.getElements();
 		assertEquals(WORKING_SET_NAME_2, workingSet.getName());
-		assertTrue(ArrayUtil.contains(workingSetItems, p1));
-		assertTrue(ArrayUtil.contains(workingSetItems, p2));
+		assertTrue(ArrayUtil.contains(workingSetItems, getProject1()));
+		assertTrue(ArrayUtil.contains(workingSetItems, getProject2()));
 
-		DialogCheck.assertDialogTexts(fWizardDialog);
+		DialogCheck.assertDialogTexts(getWizardDialog());
 	}
 }
-
