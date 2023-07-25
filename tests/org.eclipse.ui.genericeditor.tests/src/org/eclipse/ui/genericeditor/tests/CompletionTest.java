@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.genericeditor.tests;
 
+import static org.eclipse.ui.genericeditor.tests.contributions.BarContentAssistProcessor.BAR_CONTENT_ASSIST_PROPOSAL;
+import static org.eclipse.ui.genericeditor.tests.contributions.LongRunningBarContentAssistProcessor.LONG_RUNNING_BAR_CONTENT_ASSIST_PROPOSAL;
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -65,7 +67,6 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.eclipse.jface.text.tests.util.DisplayHelper;
 
-import org.eclipse.ui.genericeditor.tests.contributions.BarContentAssistProcessor;
 import org.eclipse.ui.genericeditor.tests.contributions.EnabledPropertyTester;
 import org.eclipse.ui.genericeditor.tests.contributions.LongRunningBarContentAssistProcessor;
 
@@ -184,7 +185,7 @@ public class CompletionTest extends AbstratGenericEditorTest {
 		final TableItem initialProposalItem = completionProposalList.getItem(1);
 		final String initialProposalString = ((ICompletionProposal)initialProposalItem.getData()).getDisplayString();
 		assertThat("Unexpected initial proposal item", 
-				BarContentAssistProcessor.PROPOSAL, endsWith(initialProposalString));
+				BAR_CONTENT_ASSIST_PROPOSAL, endsWith(initialProposalString));
 		completionProposalList.setSelection(initialProposalItem);
 		// asynchronous
 		waitForProposalRelatedCondition("Proposal list did not show two items after finishing computing", completionProposalList, 
@@ -193,9 +194,9 @@ public class CompletionTest extends AbstratGenericEditorTest {
 		final TableItem firstCompletionProposalItem = completionProposalList.getItem(0);
 		final TableItem secondCompletionProposalItem = completionProposalList.getItem(1);
 		String firstCompletionProposalText = ((ICompletionProposal)firstCompletionProposalItem.getData()).getDisplayString();
-		String secondCOmpletionProposalText =  ((ICompletionProposal)secondCompletionProposalItem.getData()).getDisplayString();
-		assertThat("Unexpected first proposal item", BarContentAssistProcessor.PROPOSAL, endsWith(firstCompletionProposalText));
-		assertThat("Unexpected second proposal item", LongRunningBarContentAssistProcessor.PROPOSAL, endsWith(secondCOmpletionProposalText));
+		String secondCompletionProposalText =  ((ICompletionProposal)secondCompletionProposalItem.getData()).getDisplayString();
+		assertThat("Unexpected first proposal item", BAR_CONTENT_ASSIST_PROPOSAL, endsWith(firstCompletionProposalText));
+		assertThat("Unexpected second proposal item", LONG_RUNNING_BAR_CONTENT_ASSIST_PROPOSAL, endsWith(secondCompletionProposalText));
 		String selectedProposalString = ((ICompletionProposal)completionProposalList.getSelection()[0].getData()).getDisplayString();
 		assertEquals("Addition of completion proposal should keep selection", initialProposalString, selectedProposalString);
 	}
