@@ -21,37 +21,37 @@ public class TestEmptyContentProvider implements ITreeContentProvider {
 
 	private static final Object[] NO_CHILDREN = new Object[0];
 
-	public static boolean _throw;
+	public static Runnable _runnable;
 
 	public static void resetTest() {
-		_throw = false;
+		_runnable = null;
 	}
 
 	@Override
 	public Object[] getChildren(Object parentElement) {
-		if (_throw)
-			throw new RuntimeException("Throwing...");
+		if (_runnable != null)
+			_runnable.run();
 		return NO_CHILDREN;
 	}
 
 	@Override
 	public Object getParent(Object element) {
-		if (_throw)
-			throw new RuntimeException("Throwing...");
+		if (_runnable != null)
+			_runnable.run();
 		return null;
 	}
 
 	@Override
 	public boolean hasChildren(Object element) {
-		if (_throw)
-			throw new RuntimeException("Throwing...");
+		if (_runnable != null)
+			_runnable.run();
 		return false;
 	}
 
 	@Override
 	public Object[] getElements(Object inputElement) {
-		if (_throw)
-			throw new RuntimeException("Throwing...");
+		if (_runnable != null)
+			_runnable.run();
 		return NO_CHILDREN;
 	}
 
