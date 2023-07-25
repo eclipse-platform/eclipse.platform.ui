@@ -36,9 +36,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.jface.internal.XmlProcessorFactoryJFace;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -260,8 +260,7 @@ public class DialogSettings implements IDialogSettings {
 	public void load(Reader r) {
 		Document document = null;
 		try {
-			DocumentBuilder parser = DocumentBuilderFactory.newInstance()
-					.newDocumentBuilder();
+			DocumentBuilder parser = XmlProcessorFactoryJFace.createDocumentBuilderWithErrorOnDOCTYPE();
 			//		parser.setProcessNamespace(true);
 			document = parser.parse(new InputSource(r));
 

@@ -6,7 +6,7 @@ Bundle-Vendor: Eclipse.org
 Bundle-Version: 1.1.0.qualifier
 Automatic-Module-Name: org.eclipse.e4.tools.persistence.tests
 Bundle-RequiredExecutionEnvironment: JavaSE-17
-Require-Bundle: org.eclipse.core.runtime;bundle-version="3.24.0",
+Require-Bundle: org.eclipse.core.runtime;bundle-version="3.29.0",
  org.eclipse.ui;bundle-version="3.201.0",
  org.junit;bundle-version="4.13.2",
  org.eclipse.swt,

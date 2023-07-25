@@ -19,9 +19,7 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -52,8 +50,6 @@ public final class XMLMemento implements IMemento {
 
 	private Element element;
 
-	private static String FILE_STRING = "file"; //$NON-NLS-1$
-
 	/**
 	 * Creates a <code>Document</code> from the <code>Reader</code> and returns a
 	 * memento on the first <code>Element</code> for reading the document.
@@ -67,28 +63,6 @@ public final class XMLMemento implements IMemento {
 	 */
 	public static XMLMemento createReadRoot(Reader reader) throws WorkbenchException {
 		return createReadRoot(reader, null);
-	}
-
-	/**
-	 * Clients who need to use the "file" protocol can override this method to
-	 * return the original attribute value
-	 *
-	 * @param attributeOldValue
-	 * @return return the new attribute value after concatenating the "file"
-	 *         protocol restriction if does not exist already
-	 */
-	private static String getAttributeNewValue(Object attributeOldValue) {
-		StringBuilder strNewValue = new StringBuilder(FILE_STRING);
-		if (attributeOldValue instanceof String && ((String) attributeOldValue).length() != 0) {
-			String strOldValue = (String) attributeOldValue;
-			boolean exists = Arrays.asList(strOldValue.split(",")).stream().anyMatch(x -> x.trim().equals(FILE_STRING)); //$NON-NLS-1$
-			if (!exists) {
-				strNewValue.append(", ").append(strOldValue); //$NON-NLS-1$
-			} else {
-				strNewValue = new StringBuilder(strOldValue);
-			}
-		}
-		return strNewValue.toString();
 	}
 
 	/**
@@ -107,22 +81,10 @@ public final class XMLMemento implements IMemento {
 	public static XMLMemento createReadRoot(Reader reader, String baseDir) throws WorkbenchException {
 		String errorMessage = null;
 		Exception exception = null;
-		DocumentBuilderFactory factory = null;
-		Object attributeDTDOldValue = null;
-		Object attributeSchemaOldValue = null;
 		try {
-			factory = DocumentBuilderFactory.newInstance();
-			try {
-				attributeDTDOldValue = factory.getAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_DTD);
-				attributeSchemaOldValue = factory.getAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_SCHEMA);
-			} catch (NullPointerException | IllegalArgumentException e) {
-				// Attributes not defined
-			}
-			factory.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_DTD,
-					getAttributeNewValue(attributeDTDOldValue));
-			factory.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_SCHEMA,
-					getAttributeNewValue(attributeSchemaOldValue));
-			DocumentBuilder parser = factory.newDocumentBuilder();
+			@SuppressWarnings("restriction")
+			DocumentBuilder parser = org.eclipse.core.internal.runtime.XmlProcessorFactory
+					.createDocumentBuilderWithErrorOnDOCTYPE();
 			InputSource source = new InputSource(reader);
 			if (baseDir != null) {
 				source.setSystemId(baseDir);
@@ -162,11 +124,6 @@ public final class XMLMemento implements IMemento {
 		} catch (SAXException e) {
 			exception = e;
 			errorMessage = WorkbenchMessages.XMLMemento_formatError;
-		} finally {
-			if (factory != null) {
-				factory.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_DTD, attributeDTDOldValue);
-				factory.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_SCHEMA, attributeSchemaOldValue);
-			}
 		}
 
 		String problemText = null;
@@ -188,14 +145,13 @@ public final class XMLMemento implements IMemento {
 	 *                      type
 	 */
 	public static XMLMemento createWriteRoot(String type) throws DOMException {
-		Document document;
 		try {
-			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+			@SuppressWarnings("restriction")
+			Document document = org.eclipse.core.internal.runtime.XmlProcessorFactory.newDocumentWithErrorOnDOCTYPE();
 			Element element = document.createElement(type);
 			document.appendChild(element);
 			return new XMLMemento(document, element);
 		} catch (ParserConfigurationException e) {
-//            throw new Error(e);
 			throw new Error(e.getMessage());
 		}
 	}

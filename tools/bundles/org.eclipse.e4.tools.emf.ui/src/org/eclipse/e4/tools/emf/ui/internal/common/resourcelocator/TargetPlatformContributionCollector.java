@@ -36,11 +36,11 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
+import org.eclipse.core.internal.runtime.XmlProcessorFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IPath;
@@ -85,6 +85,7 @@ import org.w3c.dom.NodeList;
  * @author Steven Spungin
  *
  */
+@SuppressWarnings("restriction")
 public abstract class TargetPlatformContributionCollector extends ClassContributionCollector {
 
 	CopyOnWriteArrayList<Entry> cacheEntry = new CopyOnWriteArrayList<>();
@@ -588,8 +589,8 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 			ret = new ArrayList<>();
 			outputDirectories.put(installLocation, ret);
 			try {
-				final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-						.parse(new File(installLocation + File.separator + ".classpath")); //$NON-NLS-1$
+				File file = new File(installLocation + File.separator + ".classpath"); //$NON-NLS-1$
+				final Document doc = XmlProcessorFactory.parseWithErrorOnDOCTYPE(file);
 				final XPath xp = XPathFactory.newInstance().newXPath();
 				final NodeList list = (NodeList) xp.evaluate(
 						"//classpathentry[@kind='output']/@path", doc, XPathConstants.NODESET); //$NON-NLS-1$
