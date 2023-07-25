@@ -14,6 +14,8 @@
 package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.dialogs.DialogSettings;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.swt.widgets.Shell;
@@ -22,6 +24,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.osgi.framework.Bundle;
 
 /**
  * Prefence dialog for the workbench including the ability to load/save
@@ -139,6 +143,13 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 			return null;
 		}
 		return node;
+	}
+
+	@Override
+	protected IDialogSettings getDialogBoundsSettings() {
+		Bundle bundle = WorkbenchPlugin.getDefault().getBundle();
+		IDialogSettings settings = PlatformUI.getDialogSettingsProvider(bundle).getDialogSettings();
+		return DialogSettings.getOrCreateSection(settings, getClass().getSimpleName());
 	}
 
 }
