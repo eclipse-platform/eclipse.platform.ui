@@ -171,8 +171,7 @@ public class CompletionTest extends AbstratGenericEditorTest {
 				return completionProposalList.getItemCount() == 2;
 			}
 		}.waitForCondition(completionProposalList.getDisplay(), 200));
-		final TableItem computingItem = completionProposalList.getItem(0);
-		assertTrue("Missing computing info entry", computingItem.getText().contains("Computing")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue("Missing computing info entry", isComputingInfoEntry(completionProposalList.getItem(0)));
 		TableItem completionProposalItem = completionProposalList.getItem(1);
 		final ICompletionProposal selectedProposal = (ICompletionProposal)completionProposalItem.getData();
 		assertTrue("Incorrect proposal content", BarContentAssistProcessor.PROPOSAL.endsWith(selectedProposal .getDisplayString()));
@@ -181,7 +180,7 @@ public class CompletionTest extends AbstratGenericEditorTest {
 		new DisplayHelper() {
 			@Override
 			protected boolean condition() {
-				return completionProposalList.getItem(0) != computingItem && completionProposalList.getItemCount() == 2;
+				return !isComputingInfoEntry(completionProposalList.getItem(0)) && completionProposalList.getItemCount() == 2;
 			}
 		}.waitForCondition(completionProposalList.getDisplay(), LongRunningBarContentAssistProcessor.DELAY + 200);
 		completionProposalItem = completionProposalList.getItem(0);
@@ -189,6 +188,10 @@ public class CompletionTest extends AbstratGenericEditorTest {
 		TableItem otherProposalItem = completionProposalList.getItem(1);
 		assertTrue("Proposal content seems incorrect", LongRunningBarContentAssistProcessor.PROPOSAL.endsWith(((ICompletionProposal)otherProposalItem.getData()).getDisplayString()));
 		assertEquals("Addition of completion proposal should keep selection", selectedProposal, completionProposalList.getSelection()[0].getData());
+	}
+	
+	private static boolean isComputingInfoEntry(TableItem item) {
+		return item.getText().contains("Computing");
 	}
 
 	public static Shell findNewShell(Set<Shell> beforeShells, Display display, boolean expectShell) {
@@ -215,8 +218,7 @@ public class CompletionTest extends AbstratGenericEditorTest {
 			}
 		}.waitForCondition(completionShell.getDisplay(), 200);
 		assertEquals(2, completionProposalList.getItemCount());
-		final TableItem computingItem = completionProposalList.getItem(0);
-		assertTrue("Missing computing info entry", computingItem.getText().contains("Computing")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue("Missing computing info entry", isComputingInfoEntry(completionProposalList.getItem(0)));
 		// Some processors are long running, moving cursor can cause freeze (bug 521484)
 		// asynchronous
 		long timestamp = System.currentTimeMillis();
