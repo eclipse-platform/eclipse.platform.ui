@@ -15,6 +15,7 @@
 package org.eclipse.ui.genericeditor.tests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -103,7 +104,8 @@ public class TestQuickAssist extends AbstratGenericEditorTest {
 		action.update();
 		final Set<Shell> beforeShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
 		action.run();
-		Shell shell= CompletionTest.findNewShell(beforeShells, editor.getSite().getShell().getDisplay(), true);
+		Shell shell= CompletionTest.findNewShell(beforeShells, editor.getSite().getShell().getDisplay());
+		assertNotNull("Shell is expected to open for quick assist", shell);
 		waitAndDispatch(100);
 		return shell;
 	}

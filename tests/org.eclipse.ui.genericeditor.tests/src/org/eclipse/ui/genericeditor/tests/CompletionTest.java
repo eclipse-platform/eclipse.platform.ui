@@ -83,8 +83,8 @@ public class CompletionTest extends AbstratGenericEditorTest {
 	@Test
 	public void testCompletion() throws Exception {
 		editor.selectAndReveal(3, 0);
-		this.completionShell= openConentAssist();
-		final Table completionProposalList = findCompletionSelectionControl(completionShell);
+		Shell shell = openContentAssistWithLongRunningProposalComputation();
+		final Table completionProposalList = findCompletionSelectionControl(shell);
 		checkCompletionContent(completionProposalList);
 		// TODO find a way to actually trigger completion and verify result against Editor content
 		// Assert.assertEquals("Completion didn't complete", "bars are good for a beer.", ((StyledText)editor.getAdapter(Control.class)).getText());
@@ -96,7 +96,7 @@ public class CompletionTest extends AbstratGenericEditorTest {
 		TestLogListener listener= new TestLogListener();
 		log.addLogListener(listener);
 		createAndOpenFile("Bug570488.txt", "bar 'bar'");
-		openConentAssist(false);
+		assertNull("No shell is expected to open", openContentAssist());
 		DisplayHelper.driveEventQueue(Display.getCurrent());
 		assertFalse("There are errors in the log", listener.messages.stream().anyMatch(s -> s.matches(IStatus.ERROR)));
 		log.removeLogListener(listener);
@@ -113,8 +113,8 @@ public class CompletionTest extends AbstratGenericEditorTest {
 				new Hashtable<>(Collections.singletonMap("contentType", "org.eclipse.ui.genericeditor.tests.content-type")));
 		DisplayHelper.driveEventQueue(Display.getCurrent());
 		editor.selectAndReveal(3, 0);
-		this.completionShell= openConentAssist();
-		final Table completionProposalList= findCompletionSelectionControl(completionShell);
+		Shell shell = openContentAssistWithLongRunningProposalComputation();
+		final Table completionProposalList = findCompletionSelectionControl(shell);
 		checkCompletionContent(completionProposalList);
 		assertTrue("Service was not called!", service.called);
 		registration.unregister();
@@ -124,48 +124,57 @@ public class CompletionTest extends AbstratGenericEditorTest {
 	public void testCompletionUsingViewerSelection() throws Exception {
 		editor.getDocumentProvider().getDocument(editor.getEditorInput()).set("abc");
 		editor.selectAndReveal(0, 3);
-		this.completionShell= openConentAssist();
-		final Table completionProposalList = findCompletionSelectionControl(completionShell);
-		waitForProposalRelatedCondition("Proposal list did not contain expected item: ABC", completionProposalList,
+		final Shell shell = openContentAssist();
+		assertNotNull("Shell is expected to open for completion proposals", shell);
+		final Table completionProposalList = findCompletionSelectionControl(shell);
+		waitForProposalRelatedCondition("Proposal list did not contain expected item 'ABC'", completionProposalList,
 				() -> Arrays.stream(completionProposalList.getItems()).map(TableItem::getText).anyMatch("ABC"::equals), 5_000);
 	}
 	
-	private static void waitForProposalRelatedCondition(String errorMessage, Table completionProposalList, BooleanSupplier condition, int timeoutInMsec) {
-		assertTrue(errorMessage, new DisplayHelper() {
+	private static void waitForProposalRelatedCondition(String expectedListContentDescription, Table completionProposalList, BooleanSupplier condition, int timeoutInMsec) {
+		boolean result = new DisplayHelper() {
 			@Override
 			protected boolean condition() {
 				assertFalse("Completion proposal list was unexpectedly disposed", completionProposalList.isDisposed());
 				return condition.getAsBoolean();
 			}
-		}.waitForCondition(completionProposalList.getDisplay(), timeoutInMsec));
+		}.waitForCondition(completionProposalList.getDisplay(), timeoutInMsec);
+		assertTrue(expectedListContentDescription + " but contained: " + Arrays.toString(completionProposalList.getItems()), result); 
 	}
 	
 	@Test
 	public void testEnabledWhenCompletion() throws Exception {
-		// Confirm that when disabled, a completion shell is present
+		// Confirm that when disabled, a completion shell is not present
 		EnabledPropertyTester.setEnabled(false);
 		createAndOpenFile("enabledWhen.txt", "bar 'bar'");
 		editor.selectAndReveal(3, 0);
-		assertNull("A new shell was found", openConentAssist(false));
+		assertNull("No shell is expected to open", openContentAssist());
 		cleanFileAndEditor();
 
 		// Confirm that when enabled, a completion shell is present
 		EnabledPropertyTester.setEnabled(true);
 		createAndOpenFile("enabledWhen.txt", "bar 'bar'");
-		editor.selectAndReveal(3, 0);		
-		assertNotNull(openConentAssist());
+		editor.selectAndReveal(3, 0);
+		assertNotNull("Shell is expected to open for completion proposals", openContentAssist());
 	}
 
-	private Shell openConentAssist() {
-		return openConentAssist(true);
+	private Shell openContentAssistWithLongRunningProposalComputation() {
+		LongRunningBarContentAssistProcessor.enable();
+		Shell shell = openContentAssist();
+		assertNotNull("Shell is expected to open for completion proposals", shell);
+		return shell;
 	}
-	private Shell openConentAssist(boolean expectShell) {
+	
+	private Shell openContentAssist() {
 		ContentAssistAction action = (ContentAssistAction) editor.getAction(ITextEditorActionConstants.CONTENT_ASSIST);
 		action.update();
 		final Set<Shell> beforeShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
 		action.run(); //opens shell
-		Shell shell= findNewShell(beforeShells, editor.getSite().getShell().getDisplay(),expectShell);
+		Shell shell = findNewShell(beforeShells, editor.getSite().getShell().getDisplay());
 		waitAndDispatch(100); // can dispose shell when focus lost during debugging
+		if (shell != null) {
+			this.completionShell = shell;
+		}
 		return shell;
 	}
 
@@ -178,19 +187,19 @@ public class CompletionTest extends AbstratGenericEditorTest {
 	 */
 	private void checkCompletionContent(final Table completionProposalList) {
 		// should be instantaneous, but happens to go asynchronous on CI so let's allow a wait
-		waitForProposalRelatedCondition("Proposal list did not show two initial items", completionProposalList, 
+		waitForProposalRelatedCondition("Proposal list should show two initial items", completionProposalList, 
 				() -> completionProposalList.getItemCount() == 2, 200);
 		assertTrue("Missing computing info entry", isComputingInfoEntry(completionProposalList.getItem(0)));
-		assertTrue("Missing computing info entry in proposal list", isComputingInfoEntry(completionProposalList.getItem(0)));
 		final TableItem initialProposalItem = completionProposalList.getItem(1);
 		final String initialProposalString = ((ICompletionProposal)initialProposalItem.getData()).getDisplayString();
 		assertThat("Unexpected initial proposal item", 
 				BAR_CONTENT_ASSIST_PROPOSAL, endsWith(initialProposalString));
 		completionProposalList.setSelection(initialProposalItem);
+
+		LongRunningBarContentAssistProcessor.finish();
 		// asynchronous
-		waitForProposalRelatedCondition("Proposal list did not show two items after finishing computing", completionProposalList, 
-				() -> !isComputingInfoEntry(completionProposalList.getItem(0)) && completionProposalList.getItemCount() == 2,
-				LongRunningBarContentAssistProcessor.DELAY + 200);
+		waitForProposalRelatedCondition("Proposal list should contain two items", completionProposalList, 
+				() -> !isComputingInfoEntry(completionProposalList.getItem(0)) && completionProposalList.getItemCount() == 2, 5000);
 		final TableItem firstCompletionProposalItem = completionProposalList.getItem(0);
 		final TableItem secondCompletionProposalItem = completionProposalList.getItem(1);
 		String firstCompletionProposalText = ((ICompletionProposal)firstCompletionProposalItem.getData()).getDisplayString();
@@ -205,24 +214,23 @@ public class CompletionTest extends AbstratGenericEditorTest {
 		return item.getText().contains("Computing");
 	}
 
-	public static Shell findNewShell(Set<Shell> beforeShells, Display display, boolean expectShell) {
+	public static Shell findNewShell(Set<Shell> beforeShells, Display display) {
 		Shell[] afterShells = Arrays.stream(display.getShells())
 				.filter(Shell::isVisible)
 				.filter(shell -> !beforeShells.contains(shell))
 				.toArray(Shell[]::new);
-		if (expectShell) {
-			assertEquals("No new shell found", 1, afterShells.length);
-		}
+		assertTrue("More than one new shell was found", afterShells.length <= 1);
 		return afterShells.length > 0 ? afterShells[0] : null;
 	}
 
 	@Test
 	public void testCompletionFreeze_bug521484() throws Exception {
 		editor.selectAndReveal(3, 0);
-		this.completionShell=openConentAssist();
-		final Table completionProposalList = findCompletionSelectionControl(this.completionShell);
+		final Shell shell = openContentAssistWithLongRunningProposalComputation();
+		assertNotNull("Shell is expected to open for completion proposals", shell);
+		final Table completionProposalList = findCompletionSelectionControl(shell);
 		// should be instantaneous, but happens to go asynchronous on CI so let's allow a wait
-		waitForProposalRelatedCondition("Proposal list did not show two items", completionProposalList, 
+		waitForProposalRelatedCondition("Proposal list should show two items", completionProposalList, 
 				() -> completionProposalList.getItemCount() == 2, 200);
 		assertTrue("Missing computing info entry", isComputingInfoEntry(completionProposalList.getItem(0)));
 		// Some processors are long running, moving cursor can cause freeze (bug 521484)
@@ -231,18 +239,24 @@ public class CompletionTest extends AbstratGenericEditorTest {
 		emulatePressLeftArrowKey();
 		DisplayHelper.sleep(editor.getSite().getShell().getDisplay(), 200); //give time to process events
 		long processingDuration = System.currentTimeMillis() - timestamp;
-		assertTrue("UI Thread frozen for " + processingDuration + "ms", processingDuration < LongRunningBarContentAssistProcessor.DELAY);
+		assertTrue("UI Thread frozen for " + processingDuration + "ms", processingDuration < LongRunningBarContentAssistProcessor.TIMEOUT_MSEC);
 	}
 
 	@Test
 	public void testMoveCaretBackUsesAllProcessors_bug522255() throws Exception {
-		testCompletion();
+		editor.selectAndReveal(3, 0);
+		Shell shell = openContentAssistWithLongRunningProposalComputation();
+		final Table completionProposalList = findCompletionSelectionControl(shell);
+		checkCompletionContent(completionProposalList);
+		LongRunningBarContentAssistProcessor.enable();
 		emulatePressLeftArrowKey();
 		final Set<Shell> beforeShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
 		DisplayHelper.sleep(editor.getSite().getShell().getDisplay(), 200);
-		this.completionShell= findNewShell(beforeShells, editor.getSite().getShell().getDisplay(), true);
-		final Table completionProposalList = findCompletionSelectionControl(this.completionShell);
-		checkCompletionContent(completionProposalList);
+		assertTrue("Completion proposal shell should be disposed after moving the cusor", shell.isDisposed());
+		this.completionShell = findNewShell(beforeShells, editor.getSite().getShell().getDisplay());
+		assertNotNull("Shell is expected to open for completion proposals", completionShell);
+		final Table newCompletionProposalList = findCompletionSelectionControl(completionShell);
+		checkCompletionContent(newCompletionProposalList);
 	}
 
 	private void emulatePressLeftArrowKey() {
@@ -276,6 +290,11 @@ public class CompletionTest extends AbstratGenericEditorTest {
 		if (this.completionShell != null && !completionShell.isDisposed()) {
 			completionShell.close();
 		}
+	}
+	
+	@After
+	public void stopLongRunningCompletionProposalProcessor() {
+		LongRunningBarContentAssistProcessor.finish();
 	}
 
 	private static final class TestLogListener implements ILogListener {
