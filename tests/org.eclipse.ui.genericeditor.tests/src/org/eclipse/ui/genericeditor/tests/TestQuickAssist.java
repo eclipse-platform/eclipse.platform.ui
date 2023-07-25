@@ -17,6 +17,7 @@ package org.eclipse.ui.genericeditor.tests;
 import static org.eclipse.ui.tests.harness.util.DisplayHelper.runEventLoop;
 import static org.eclipse.ui.tests.harness.util.DisplayHelper.waitForCondition;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
@@ -102,21 +103,22 @@ public class TestQuickAssist extends AbstratGenericEditorTest {
 		editor.selectAndReveal(3, 0);
 		TextOperationAction action = (TextOperationAction) editor.getAction(ITextEditorActionConstants.QUICK_ASSIST);
 		action.update();
-		final Set<Shell> beforeShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
+		final Set<Shell> beforeShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells())
+				.filter(Shell::isVisible).collect(Collectors.toSet());
 		action.run();
-		Shell shell= CompletionTest.findNewShell(beforeShells, editor.getSite().getShell().getDisplay(), true);
-		runEventLoop(PlatformUI.getWorkbench().getDisplay(),100);
+		Shell shell= CompletionTest.findNewShell(beforeShells, editor.getSite().getShell().getDisplay());
+		assertNotNull(shell, "Shell is expected to open for quick assist");
+		runEventLoop(PlatformUI.getWorkbench().getDisplay(), 100);
 		return shell;
 	}
 
 	/**
 	 * Checks that a mock quick assist proposal comes up
-	 * 
+	 *
 	 * @param completionProposalList the quick assist proposal list
 	 * @param proposals expected proposals
 	 */
 	private void checkCompletionContent(final Table completionProposalList, String[] proposals) {
-		// should be instantaneous, but happens to go asynchronous on CI so let's allow a wait
 		waitForCondition(completionProposalList.getDisplay(), 200,
 				() -> completionProposalList.getItemCount() >= proposals.length);
 		assertEquals(proposals.length, completionProposalList.getItemCount());
@@ -125,7 +127,6 @@ public class TestQuickAssist extends AbstratGenericEditorTest {
 			assertTrue(existing.contains(proposal), "Missing quick assist proposal '" + proposal + "', found " + existing); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
-
 
 	@AfterEach
 	public void closeShell() {
