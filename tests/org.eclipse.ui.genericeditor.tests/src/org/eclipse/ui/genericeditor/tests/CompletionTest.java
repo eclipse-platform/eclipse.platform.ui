@@ -231,11 +231,10 @@ public class CompletionTest extends AbstratGenericEditorTest {
 		testCompletion();
 		emulatePressLeftArrowKey();
 		final Set<Shell> beforeShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
-		DisplayHelper.sleep(editor.getSite().getShell().getDisplay(), LongRunningBarContentAssistProcessor.DELAY + 500); // adding delay is a workaround for bug521484, use only 100ms without the bug
+		DisplayHelper.sleep(editor.getSite().getShell().getDisplay(), 200);
 		this.completionShell= findNewShell(beforeShells, editor.getSite().getShell().getDisplay(), true);
 		final Table completionProposalList = findCompletionSelectionControl(this.completionShell);
-		assertEquals("Missing proposals from a Processor", 2, completionProposalList.getItemCount()); // replace with line below when #5214894 is done
-		// checkCompletionContent(completionProposalList); // use this instead of assert above when #521484 is done
+		checkCompletionContent(completionProposalList);
 	}
 
 	private void emulatePressLeftArrowKey() {
