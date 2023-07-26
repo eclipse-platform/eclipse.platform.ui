@@ -20,6 +20,8 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 
+import org.eclipse.core.runtime.jobs.Job;
+
 import org.eclipse.core.resources.IFile;
 
 import org.eclipse.core.filebuffers.FileBuffers;
@@ -92,6 +94,7 @@ public class PositionTrackerTest {
 		try {
 			SearchTestPlugin.openTextEditor(SearchPlugin.getActivePage(), file);
 			ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);
+			Job.getJobManager().beginRule(file, null);
 			IDocument doc= fb.getDocument();
 
 			for (Match matche : matches) {
@@ -110,6 +113,7 @@ public class PositionTrackerTest {
 				assertEquals(buf.toString(), ((FileSearchQuery) result.getQuery()).getSearchString());
 			}
 		} finally {
+			Job.getJobManager().endRule(file);
 			SearchPlugin.getActivePage().closeAllEditors(false);
 		}
 }
@@ -123,6 +127,7 @@ public class PositionTrackerTest {
 		try {
 			SearchTestPlugin.openTextEditor(SearchPlugin.getActivePage(), file);
 			ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);
+			Job.getJobManager().beginRule(file, null);
 			IDocument doc= fb.getDocument();
 			doc.replace(0, 0, "Test");
 
@@ -133,6 +138,7 @@ public class PositionTrackerTest {
 
 			}
 		} finally {
+			Job.getJobManager().endRule(file);
 			SearchPlugin.getActivePage().closeAllEditors(false);
 		}
 	}
