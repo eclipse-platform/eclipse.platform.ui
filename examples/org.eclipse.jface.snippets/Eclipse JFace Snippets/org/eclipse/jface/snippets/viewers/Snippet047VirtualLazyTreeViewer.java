@@ -16,8 +16,6 @@
 
 package org.eclipse.jface.snippets.viewers;
 
-import java.util.Random;
-
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ILazyTreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -53,7 +51,7 @@ public class Snippet047VirtualLazyTreeViewer {
 
 		@Override
 		public void updateChildCount(Object element, int currentChildCount) {
-			System.out.println(element + " " + ((Node) element).getChildCount());
+//			System.out.println(element + " " + ((Node) element).getChildCount());
 			fViewer.setChildCount(element, ((Node) element).getChildCount());
 		}
 
@@ -76,6 +74,8 @@ public class Snippet047VirtualLazyTreeViewer {
 		private int fCounter;
 
 		private Node fParent;
+
+		private int level = 1;
 
 		public Node(int counter, int childCount, Node parent) {
 			fCounter = counter;
@@ -102,8 +102,16 @@ public class Snippet047VirtualLazyTreeViewer {
 			if (getChildren()[index] != null) {
 				return getChildren()[index];
 			}
-
-			Node leafNode = new Node(index, getRandomChildCount(), this);
+			int nextLevel = level + 1;
+			int nextChildCount;
+			if (getParent() != null && getParent().fChildCount <= 1) {
+				nextChildCount = 0;
+			} else {
+				int randomChildCount = getRandomChildCount(index);
+				nextChildCount = randomChildCount / nextLevel;
+			}
+			Node leafNode = new Node(index, nextChildCount, this);
+			leafNode.level = nextLevel;
 			getChildren()[index] = leafNode;
 			fViewer.update(leafNode.getParent(), null);
 			if (leafNode.getParent().getParent() == null) {
@@ -132,7 +140,7 @@ public class Snippet047VirtualLazyTreeViewer {
 		fViewer.setLabelProvider(new LabelProvider());
 		fViewer.setContentProvider(new MyContentProvider());
 		fViewer.setUseHashlookup(true);
-		Node root = new Node(0, getRandomChildCount(), null);
+		Node root = new Node(0, 100, null);
 		fViewer.setInput(root);
 		fViewer.getTree().setLayoutData(GridDataFactory.fillDefaults().create());
 		fViewer.setChildCount(root, root.getChildCount());
@@ -158,7 +166,12 @@ public class Snippet047VirtualLazyTreeViewer {
 		display.dispose();
 	}
 
-	public static int getRandomChildCount() {
-		return new Random().nextInt(1000) + 100;
+	static final int maxChildCount = 20_000;
+
+	public static int getRandomChildCount(int index) {
+		if (index % 10 == 0) {
+			return maxChildCount;
+		}
+		return 10;
 	}
 }
