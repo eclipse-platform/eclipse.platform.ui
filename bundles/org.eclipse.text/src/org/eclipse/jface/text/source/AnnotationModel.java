@@ -640,13 +640,25 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			fDocumentChanged= false;
 
 			ArrayList<Annotation> deleted= new ArrayList<>();
-			Iterator<Annotation> e= getAnnotationMap().keySetIterator();
 			IAnnotationMap annotations= getAnnotationMap();
-			while (e.hasNext()) {
-				Annotation a= e.next();
-				Position p= annotations.get(a);
-				if (p == null || p.isDeleted())
-					deleted.add(a);
+			Object mapLock = annotations.getLockObject();
+			
+			if (mapLock == null) {
+				Iterator<Annotation> e= annotations.keySetIterator();
+				while (e.hasNext()) {
+					Annotation a= e.next();
+					Position p= annotations.get(a);
+					if (p == null || p.isDeleted())
+						deleted.add(a);
+				}
+			} else {
+				synchronized (mapLock) {
+					annotations.forEach((a, p) -> {
+						if (p == null || p.isDeleted()) {
+							deleted.add(a);
+						}
+					});
+				}
 			}
 
 			if (fireModelChanged && forkNotification) {
