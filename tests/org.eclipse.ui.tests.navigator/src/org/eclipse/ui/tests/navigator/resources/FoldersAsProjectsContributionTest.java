@@ -15,6 +15,7 @@ package org.eclipse.ui.tests.navigator.resources;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,9 +23,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionItem;
@@ -37,77 +43,153 @@ import org.eclipse.ui.internal.navigator.resources.actions.FoldersAsProjectsActi
 import org.eclipse.ui.internal.navigator.resources.actions.OpenFolderAsProjectAction;
 import org.eclipse.ui.internal.navigator.resources.actions.SelectProjectForFolderAction;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 public final class FoldersAsProjectsContributionTest {
 
-	private final IMenuManager manager = new MenuManager();
-	private final ProjectsStructure workspace = new ProjectsStructure.Imported();
-
-	@Before
-	public void prepare() throws CoreException {
-		manager.add(new GroupMarker(ICommonMenuConstants.GROUP_OPEN));
-		manager.add(new GroupMarker(ICommonMenuConstants.GROUP_PORT));
-		workspace.create("outer", "inner1", "inner2");
-	}
-
 	@Test
 	public void notAFolder() {
 		String notAFolder = "Some string";
+		IMenuManager manager = menuManager();
 		provider(new StructuredSelection(notAFolder)).fillContextMenu(manager);
 		assertFalse("SelectProjectForFolderAction contributions were added on not an adaptable-to-IFolder selection",
-				contributionAdded(SelectProjectForFolderAction.class));
+				contributionAdded(manager, SelectProjectForFolderAction.class));
 		assertFalse("OpenFolderAsProjectAction contributions were added on not an adaptable-to-IFolder selection",
-				contributionAdded(OpenFolderAsProjectAction.class));
+				contributionAdded(manager, OpenFolderAsProjectAction.class));
 	}
 
 	@Test
 	public void noDescription() {
 		IFolder justAFolder = ResourcesPlugin.getWorkspace().getRoot().getFolder(new Path("some/folder"));
+		IMenuManager manager = menuManager();
 		provider(new StructuredSelection(justAFolder)).fillContextMenu(manager);
 		assertFalse("SelectProjectForFolderAction contributions were added on an IFolder without project description",
-				contributionAdded(SelectProjectForFolderAction.class));
+				contributionAdded(manager, SelectProjectForFolderAction.class));
 		assertFalse("OpenFolderAsProjectAction contributions were added on an IFolder without project description",
-				contributionAdded(OpenFolderAsProjectAction.class));
+				contributionAdded(manager, OpenFolderAsProjectAction.class));
 	}
 
 	@Test
-	public void alreadyAdded() throws CoreException {
-		provider(new StructuredSelection(projectTree())).fillContextMenu(manager);
-		assertTrue(NLS.bind("A SelectProjectForFolderAction contribution was not added. Contribution List is: {0}",
-				contributionsList()), contributionAdded(SelectProjectForFolderAction.class));
+	public void alreadyAdded() {
+		IProject outer = handle("foldersasprojects.alreadyAdded.outer");
+		IProject inner1 = handle("foldersasprojects.alreadyAdded.inner1");
+		IProject inner2 = handle("foldersasprojects.alreadyAdded.inner2");
+		List<IProject> projects = Arrays.asList(outer, inner1, inner2);
+		ISchedulingRule rule = new AffectedProjectsSchedulingRule(projects);
+		try {
+			Job.getJobManager().beginRule(rule, null);
+			createProject(null, outer);
+			createProject(outer, inner1);
+			createProject(outer, inner2);
+		} catch (CoreException e) {
+			fail(NLS.bind("Required projects can not be created due to: {0}", e.getMessage()));
+		} finally {
+			Job.getJobManager().endRule(rule);
+		}
+
+		try {
+			IMenuManager manager = menuManager();
+			provider(new StructuredSelection(projectTree("alreadyAdded"))).fillContextMenu(manager);
+			assertTrue(
+					NLS.bind("A SelectProjectForFolderAction contribution was not added. Contribution List is: {0}",
+							contributionsList(manager)),
+					contributionAdded(manager, SelectProjectForFolderAction.class));
+		} finally {
+			projects.forEach(handle -> {
+				try {
+					handle.delete(true, new NullProgressMonitor());
+				} catch (CoreException e) {
+					// Ignore
+				}
+			});
+		}
 	}
 
 	@Test
-	public void notYetImported() throws CoreException {
-		workspace.deleteLeavingContents("inner1");
-		workspace.deleteLeavingContents("inner2");
-		provider(new StructuredSelection(projectTree())).fillContextMenu(manager);
-		assertTrue(NLS.bind("A OpenFolderAsProjectAction contribution was not added. Contribution List is: {0}",
-				contributionsList()), contributionAdded(OpenFolderAsProjectAction.class));
+	public void notYetImported() {
+		IProject outer = handle("foldersasprojects.notYetImported.outer");
+		IProject inner1 = handle("foldersasprojects.notYetImported.inner1");
+		IProject inner2 = handle("foldersasprojects.notYetImported.inner2");
+		List<IProject> projects = Arrays.asList(outer, inner1, inner2);
+		ISchedulingRule rule = new AffectedProjectsSchedulingRule(projects);
+		Job.getJobManager().beginRule(rule, null);
+		try {
+			createProject(null, outer);
+			createProject(outer, inner1);
+			createProject(outer, inner2);
+			inner1.delete(false, true, new NullProgressMonitor());
+			inner2.delete(false, true, new NullProgressMonitor());
+		} catch (CoreException e) {
+			fail(NLS.bind("Required projects can not be created due to: {0}", e.getMessage()));
+		} finally {
+			Job.getJobManager().endRule(rule);
+		}
+		try {
+			IMenuManager manager = menuManager();
+			provider(new StructuredSelection(projectTree("notYetImported"))).fillContextMenu(manager);
+			assertTrue(NLS.bind("A OpenFolderAsProjectAction contribution was not added. Contribution List is: {0}",
+					contributionsList(manager)), contributionAdded(manager, OpenFolderAsProjectAction.class));
+		} finally {
+			projects.forEach(handle -> {
+				try {
+					handle.delete(true, new NullProgressMonitor());
+				} catch (CoreException e) {
+					// Ignore
+				}
+			});
+		}
 	}
 
 	@Test
-	public void ambiguity() throws CoreException {
-		workspace.deleteLeavingContents("inner1");
-		provider(new StructuredSelection(projectTree())).fillContextMenu(manager);
-		assertFalse(
-				"There were both imported and not-imported projects in selection, but SelectProjectForFolderAction contributions were added",
-				contributionAdded(SelectProjectForFolderAction.class));
-		assertFalse(
-				"There were both imported and not-imported projects in selection, but OpenFolderAsProjectAction contributions were added",
-				contributionAdded(OpenFolderAsProjectAction.class));
+	public void ambiguity() {
+		IProject outer = handle("foldersasprojects.ambiguity.outer");
+		IProject inner1 = handle("foldersasprojects.ambiguity.inner1");
+		IProject inner2 = handle("foldersasprojects.ambiguity.inner2");
+		List<IProject> projects = Arrays.asList(outer, inner1, inner2);
+		ISchedulingRule rule = new AffectedProjectsSchedulingRule(projects);
+		try {
+			Job.getJobManager().beginRule(rule, null);
+			createProject(null, outer);
+			createProject(outer, inner1);
+			createProject(outer, inner2);
+			inner1.delete(false, true, new NullProgressMonitor());
+		} catch (CoreException e) {
+			fail(NLS.bind("Required projects can not be created due to: {0}", e.getMessage()));
+		} finally {
+			Job.getJobManager().endRule(rule);
+		}
+		try {
+			IMenuManager manager = menuManager();
+			provider(new StructuredSelection(projectTree("ambiguity"))).fillContextMenu(manager);
+			assertFalse(
+					"There were both imported and not-imported projects in selection, but SelectProjectForFolderAction contributions were added",
+					contributionAdded(manager, SelectProjectForFolderAction.class));
+			assertFalse(
+					"There were both imported and not-imported projects in selection, but OpenFolderAsProjectAction contributions were added",
+					contributionAdded(manager, OpenFolderAsProjectAction.class));
+		} finally {
+			projects.forEach(handle -> {
+				try {
+					handle.delete(true, new NullProgressMonitor());
+				} catch (CoreException e) {
+					// Ignore
+				}
+			});
+		}
 	}
 
-	@After
-	public void clean() throws CoreException {
-		manager.removeAll();
-		workspace.clear();
+	private IProject handle(String name) {
+		return ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 	}
 
-	private boolean contributionAdded(Class<?> action) {
+	private IMenuManager menuManager() {
+		IMenuManager menuManager = new MenuManager();
+		menuManager.add(new GroupMarker(ICommonMenuConstants.GROUP_OPEN));
+		menuManager.add(new GroupMarker(ICommonMenuConstants.GROUP_PORT));
+		return menuManager;
+	}
+
+	private boolean contributionAdded(IMenuManager manager, Class<?> action) {
 		return Stream.of(manager.getItems()) //
 				.filter(ActionContributionItem.class::isInstance) //
 				.map(ActionContributionItem.class::cast) //
@@ -122,15 +204,27 @@ public final class FoldersAsProjectsContributionTest {
 		return provider;
 	}
 
-	private List<IFolder> projectTree() throws CoreException {
-		return Arrays.asList( //
-				ResourcesPlugin.getWorkspace().getRoot().getProject("outer").getFolder("inner1"), //
-				ResourcesPlugin.getWorkspace().getRoot().getProject("outer").getFolder("inner2"));
+	private List<IFolder> projectTree(String prefix) {
+		String outer = String.format("foldersasprojects.%s.outer", prefix);
+		String inner1 = String.format("foldersasprojects.%s.inner1", prefix);
+		String inner2 = String.format("foldersasprojects.%s.inner2", prefix);
+		return Arrays.asList(handle(outer).getFolder(inner1), handle(outer).getFolder(inner2));
 	}
 
-	private String contributionsList() {
-		return Stream.of(manager.getItems()).map(IContributionItem::getClass).map(Class::getName)
+	private String contributionsList(IMenuManager manager) {
+		return Stream.of(manager.getItems()) //
+				.map(IContributionItem::getClass) //
+				.map(Class::getName) //
 				.collect(Collectors.joining(","));
+	}
+
+	private void createProject(IProject parent, IProject actual) throws CoreException {
+		IProjectDescription description = ResourcesPlugin.getWorkspace().newProjectDescription(actual.getName());
+		if (parent != null) {
+			description.setLocation(parent.getLocation().append(actual.getName()));
+		}
+		actual.create(description, new NullProgressMonitor());
+		actual.open(new NullProgressMonitor());
 	}
 
 }
