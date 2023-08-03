@@ -16,15 +16,11 @@ package org.eclipse.ui.texteditor;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.core.resources.IMarker;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
-
-import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 
 
 /**
@@ -99,11 +95,7 @@ public final class BasicMarkerUpdater implements IMarkerUpdater {
 		}
 
 		if (!attributeChanges.isEmpty()) {
-			try {
-				marker.setAttributes(attributeChanges);
-			} catch (CoreException e) {
-				EditorsPlugin.log(e);
-			}
+			MarkerUtilities.changeAttributes(marker, attributeChanges);
 		}
 
 		return true;
