@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.Assert;
 
@@ -639,11 +640,12 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		if (fDocumentChanged) {
 			fDocumentChanged= false;
 
-			ArrayList<Annotation> deleted= new ArrayList<>();
+			List<Annotation> deleted;
 			IAnnotationMap annotations= getAnnotationMap();
 			Object mapLock = annotations.getLockObject();
 			
 			if (mapLock == null) {
+				deleted= new ArrayList<>();
 				Iterator<Annotation> e= annotations.keySetIterator();
 				while (e.hasNext()) {
 					Annotation a= e.next();
@@ -653,11 +655,13 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 				}
 			} else {
 				synchronized (mapLock) {
-					annotations.forEach((a, p) -> {
-						if (p == null || p.isDeleted()) {
-							deleted.add(a);
-						}
-					});
+					deleted= annotations.entrySet().parallelStream().unordered() //
+							.filter(e -> {
+								Position p= e.getValue();
+								return p == null || p.isDeleted;
+							})
+							.map(e -> e.getKey())
+							.collect(Collectors.toList());
 				}
 			}
 
