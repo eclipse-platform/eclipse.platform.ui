@@ -17,6 +17,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,9 +47,14 @@ import org.eclipse.ui.internal.navigator.resources.actions.FoldersAsProjectsActi
 import org.eclipse.ui.internal.navigator.resources.actions.OpenFolderAsProjectAction;
 import org.eclipse.ui.internal.navigator.resources.actions.SelectProjectForFolderAction;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 public final class FoldersAsProjectsContributionTest {
+
+	@Rule
+	public final TemporaryFolder folder = new TemporaryFolder();
 
 	@Test
 	public void notAFolder() {
@@ -78,10 +87,11 @@ public final class FoldersAsProjectsContributionTest {
 		ISchedulingRule rule = new AffectedProjectsSchedulingRule(projects);
 		try {
 			Job.getJobManager().beginRule(rule, null);
-			createProject(null, outer);
-			createProject(outer, inner1);
-			createProject(outer, inner2);
-		} catch (CoreException e) {
+			File root = folder.newFolder(outer.getName());
+			createProject(root, outer);
+			createProject(new Path(root.getAbsolutePath()).append(inner1.getName()).toFile(), inner1);
+			createProject(new Path(root.getAbsolutePath()).append(inner2.getName()).toFile(), inner2);
+		} catch (CoreException | IOException e) {
 			fail(NLS.bind("Required projects can not be created due to: {0}", e.getMessage()));
 		} finally {
 			Job.getJobManager().endRule(rule);
@@ -89,19 +99,17 @@ public final class FoldersAsProjectsContributionTest {
 
 		try {
 			IMenuManager manager = menuManager();
+			assertTrue("Project description for inner1 does not exist",
+					outer.getFolder(inner1.getName()).getFile(IProjectDescription.DESCRIPTION_FILE_NAME).exists());
+			assertTrue("Project description for inner2 does not exist",
+					outer.getFolder(inner2.getName()).getFile(IProjectDescription.DESCRIPTION_FILE_NAME).exists());
 			provider(new StructuredSelection(projectTree("alreadyAdded"))).fillContextMenu(manager);
 			assertTrue(
 					NLS.bind("A SelectProjectForFolderAction contribution was not added. Contribution List is: {0}",
 							contributionsList(manager)),
 					contributionAdded(manager, SelectProjectForFolderAction.class));
 		} finally {
-			projects.forEach(handle -> {
-				try {
-					handle.delete(true, new NullProgressMonitor());
-				} catch (CoreException e) {
-					// Ignore
-				}
-			});
+			clear(projects);
 		}
 	}
 
@@ -112,31 +120,30 @@ public final class FoldersAsProjectsContributionTest {
 		IProject inner2 = handle("foldersasprojects.notYetImported.inner2");
 		List<IProject> projects = Arrays.asList(outer, inner1, inner2);
 		ISchedulingRule rule = new AffectedProjectsSchedulingRule(projects);
-		Job.getJobManager().beginRule(rule, null);
 		try {
-			createProject(null, outer);
-			createProject(outer, inner1);
-			createProject(outer, inner2);
+			Job.getJobManager().beginRule(rule, null);
+			File root = folder.newFolder(outer.getName());
+			createProject(root, outer);
+			createProject(new Path(root.getAbsolutePath()).append(inner1.getName()).toFile(), inner1);
+			createProject(new Path(root.getAbsolutePath()).append(inner2.getName()).toFile(), inner2);
 			inner1.delete(false, true, new NullProgressMonitor());
 			inner2.delete(false, true, new NullProgressMonitor());
-		} catch (CoreException e) {
+		} catch (CoreException | IOException e) {
 			fail(NLS.bind("Required projects can not be created due to: {0}", e.getMessage()));
 		} finally {
 			Job.getJobManager().endRule(rule);
 		}
 		try {
 			IMenuManager manager = menuManager();
+			assertTrue("Project description for inner1 does not exist",
+					outer.getFolder(inner1.getName()).getFile(IProjectDescription.DESCRIPTION_FILE_NAME).exists());
+			assertTrue("Project description for inner2 does not exist",
+					outer.getFolder(inner2.getName()).getFile(IProjectDescription.DESCRIPTION_FILE_NAME).exists());
 			provider(new StructuredSelection(projectTree("notYetImported"))).fillContextMenu(manager);
 			assertTrue(NLS.bind("A OpenFolderAsProjectAction contribution was not added. Contribution List is: {0}",
 					contributionsList(manager)), contributionAdded(manager, OpenFolderAsProjectAction.class));
 		} finally {
-			projects.forEach(handle -> {
-				try {
-					handle.delete(true, new NullProgressMonitor());
-				} catch (CoreException e) {
-					// Ignore
-				}
-			});
+			clear(projects);
 		}
 	}
 
@@ -149,11 +156,12 @@ public final class FoldersAsProjectsContributionTest {
 		ISchedulingRule rule = new AffectedProjectsSchedulingRule(projects);
 		try {
 			Job.getJobManager().beginRule(rule, null);
-			createProject(null, outer);
-			createProject(outer, inner1);
-			createProject(outer, inner2);
+			File root = folder.newFolder(outer.getName());
+			createProject(root, outer);
+			createProject(new Path(root.getAbsolutePath()).append(inner1.getName()).toFile(), inner1);
+			createProject(new Path(root.getAbsolutePath()).append(inner2.getName()).toFile(), inner2);
 			inner1.delete(false, true, new NullProgressMonitor());
-		} catch (CoreException e) {
+		} catch (CoreException | IOException e) {
 			fail(NLS.bind("Required projects can not be created due to: {0}", e.getMessage()));
 		} finally {
 			Job.getJobManager().endRule(rule);
@@ -168,14 +176,18 @@ public final class FoldersAsProjectsContributionTest {
 					"There were both imported and not-imported projects in selection, but OpenFolderAsProjectAction contributions were added",
 					contributionAdded(manager, OpenFolderAsProjectAction.class));
 		} finally {
-			projects.forEach(handle -> {
-				try {
-					handle.delete(true, new NullProgressMonitor());
-				} catch (CoreException e) {
-					// Ignore
-				}
-			});
+			clear(projects);
 		}
+	}
+
+	private void clear(List<IProject> projects) {
+		projects.forEach(handle -> {
+			try {
+				handle.delete(true, new NullProgressMonitor());
+			} catch (CoreException e) {
+				// Ignore
+			}
+		});
 	}
 
 	private IProject handle(String name) {
@@ -218,13 +230,22 @@ public final class FoldersAsProjectsContributionTest {
 				.collect(Collectors.joining(","));
 	}
 
-	private void createProject(IProject parent, IProject actual) throws CoreException {
+	private void createProject(File location, IProject actual) throws CoreException {
 		IProjectDescription description = ResourcesPlugin.getWorkspace().newProjectDescription(actual.getName());
-		if (parent != null) {
-			description.setLocation(parent.getLocation().append(actual.getName()));
-		}
+		description.setLocation(new Path(location.getAbsolutePath()));
 		actual.create(description, new NullProgressMonitor());
 		actual.open(new NullProgressMonitor());
+		java.nio.file.Path persisted = Paths
+				.get(actual.getFile(IProjectDescription.DESCRIPTION_FILE_NAME).getLocationURI());
+		if (!persisted.toFile().exists()) {
+			// If project description does not exist after creation (for whatever reason),
+			// create it explicitly with empty content
+			try {
+				Files.createFile(persisted);
+			} catch (IOException e) {
+				fail(String.format("Can't explicitly create project description due to: %s", e.getMessage()));
+			}
+		}
 	}
 
 }
