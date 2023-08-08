@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -80,9 +81,9 @@ public final class FoldersAsProjectsContributionTest {
 
 	@Test
 	public void alreadyAdded() {
-		IProject outer = handle("foldersasprojects.alreadyAdded.outer");
-		IProject inner1 = handle("foldersasprojects.alreadyAdded.inner1");
-		IProject inner2 = handle("foldersasprojects.alreadyAdded.inner2");
+		IProject outer = ResourcesPlugin.getWorkspace().getRoot().getProject("foldersasprojects.alreadyAdded.outer");
+		IProject inner1 = ResourcesPlugin.getWorkspace().getRoot().getProject("foldersasprojects.alreadyAdded.inner1");
+		IProject inner2 = ResourcesPlugin.getWorkspace().getRoot().getProject("foldersasprojects.alreadyAdded.inner2");
 		List<IProject> projects = Arrays.asList(outer, inner1, inner2);
 		ISchedulingRule rule = new AffectedProjectsSchedulingRule(projects);
 		try {
@@ -99,11 +100,10 @@ public final class FoldersAsProjectsContributionTest {
 
 		try {
 			IMenuManager manager = menuManager();
-			assertTrue("Project description for inner1 does not exist",
-					outer.getFolder(inner1.getName()).getFile(IProjectDescription.DESCRIPTION_FILE_NAME).exists());
-			assertTrue("Project description for inner2 does not exist",
-					outer.getFolder(inner2.getName()).getFile(IProjectDescription.DESCRIPTION_FILE_NAME).exists());
-			provider(new StructuredSelection(projectTree("alreadyAdded"))).fillContextMenu(manager);
+			ensureDescriptionsExist(outer, inner1, inner2);
+			provider(new StructuredSelection(
+					Arrays.asList(outer.getFolder(inner1.getName()), outer.getFolder(inner2.getName()))))
+							.fillContextMenu(manager);
 			assertTrue(
 					NLS.bind("A SelectProjectForFolderAction contribution was not added. Contribution List is: {0}",
 							contributionsList(manager)),
@@ -115,9 +115,11 @@ public final class FoldersAsProjectsContributionTest {
 
 	@Test
 	public void notYetImported() {
-		IProject outer = handle("foldersasprojects.notYetImported.outer");
-		IProject inner1 = handle("foldersasprojects.notYetImported.inner1");
-		IProject inner2 = handle("foldersasprojects.notYetImported.inner2");
+		IProject outer = ResourcesPlugin.getWorkspace().getRoot().getProject("foldersasprojects.notYetImported.outer");
+		IProject inner1 = ResourcesPlugin.getWorkspace().getRoot()
+				.getProject("foldersasprojects.notYetImported.inner1");
+		IProject inner2 = ResourcesPlugin.getWorkspace().getRoot()
+				.getProject("foldersasprojects.notYetImported.inner2");
 		List<IProject> projects = Arrays.asList(outer, inner1, inner2);
 		ISchedulingRule rule = new AffectedProjectsSchedulingRule(projects);
 		try {
@@ -135,11 +137,10 @@ public final class FoldersAsProjectsContributionTest {
 		}
 		try {
 			IMenuManager manager = menuManager();
-			assertTrue("Project description for inner1 does not exist",
-					outer.getFolder(inner1.getName()).getFile(IProjectDescription.DESCRIPTION_FILE_NAME).exists());
-			assertTrue("Project description for inner2 does not exist",
-					outer.getFolder(inner2.getName()).getFile(IProjectDescription.DESCRIPTION_FILE_NAME).exists());
-			provider(new StructuredSelection(projectTree("notYetImported"))).fillContextMenu(manager);
+			ensureDescriptionsExist(outer, inner1, inner2);
+			provider(new StructuredSelection(
+					Arrays.asList(outer.getFolder(inner1.getName()), outer.getFolder(inner2.getName()))))
+							.fillContextMenu(manager);
 			assertTrue(NLS.bind("A OpenFolderAsProjectAction contribution was not added. Contribution List is: {0}",
 					contributionsList(manager)), contributionAdded(manager, OpenFolderAsProjectAction.class));
 		} finally {
@@ -149,9 +150,9 @@ public final class FoldersAsProjectsContributionTest {
 
 	@Test
 	public void ambiguity() {
-		IProject outer = handle("foldersasprojects.ambiguity.outer");
-		IProject inner1 = handle("foldersasprojects.ambiguity.inner1");
-		IProject inner2 = handle("foldersasprojects.ambiguity.inner2");
+		IProject outer = ResourcesPlugin.getWorkspace().getRoot().getProject("foldersasprojects.ambiguity.outer");
+		IProject inner1 = ResourcesPlugin.getWorkspace().getRoot().getProject("foldersasprojects.ambiguity.inner1");
+		IProject inner2 = ResourcesPlugin.getWorkspace().getRoot().getProject("foldersasprojects.ambiguity.inner2");
 		List<IProject> projects = Arrays.asList(outer, inner1, inner2);
 		ISchedulingRule rule = new AffectedProjectsSchedulingRule(projects);
 		try {
@@ -168,7 +169,9 @@ public final class FoldersAsProjectsContributionTest {
 		}
 		try {
 			IMenuManager manager = menuManager();
-			provider(new StructuredSelection(projectTree("ambiguity"))).fillContextMenu(manager);
+			provider(new StructuredSelection(
+					Arrays.asList(outer.getFolder(inner1.getName()), outer.getFolder(inner2.getName()))))
+							.fillContextMenu(manager);
 			assertFalse(
 					"There were both imported and not-imported projects in selection, but SelectProjectForFolderAction contributions were added",
 					contributionAdded(manager, SelectProjectForFolderAction.class));
@@ -188,10 +191,6 @@ public final class FoldersAsProjectsContributionTest {
 				// Ignore
 			}
 		});
-	}
-
-	private IProject handle(String name) {
-		return ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 	}
 
 	private IMenuManager menuManager() {
@@ -216,13 +215,6 @@ public final class FoldersAsProjectsContributionTest {
 		return provider;
 	}
 
-	private List<IFolder> projectTree(String prefix) {
-		String outer = String.format("foldersasprojects.%s.outer", prefix);
-		String inner1 = String.format("foldersasprojects.%s.inner1", prefix);
-		String inner2 = String.format("foldersasprojects.%s.inner2", prefix);
-		return Arrays.asList(handle(outer).getFolder(inner1), handle(outer).getFolder(inner2));
-	}
-
 	private String contributionsList(IMenuManager manager) {
 		return Stream.of(manager.getItems()) //
 				.map(IContributionItem::getClass) //
@@ -235,17 +227,27 @@ public final class FoldersAsProjectsContributionTest {
 		description.setLocation(new Path(location.getAbsolutePath()));
 		actual.create(description, new NullProgressMonitor());
 		actual.open(new NullProgressMonitor());
-		java.nio.file.Path persisted = Paths
-				.get(actual.getFile(IProjectDescription.DESCRIPTION_FILE_NAME).getLocationURI());
-		if (!persisted.toFile().exists()) {
-			// If project description does not exist after creation (for whatever reason),
-			// create it explicitly with empty content
-			try {
-				Files.createFile(persisted);
-			} catch (IOException e) {
-				fail(String.format("Can't explicitly create project description due to: %s", e.getMessage()));
-			}
+	}
+
+	private void ensureDescriptionsExist(IProject outer, IProject inner1, IProject inner2) {
+		ensureFileExists(outer.getFolder(inner1.getName()).getFile(IProjectDescription.DESCRIPTION_FILE_NAME),
+				inner1.getName());
+		ensureFileExists(outer.getFolder(inner2.getName()).getFile(IProjectDescription.DESCRIPTION_FILE_NAME),
+				inner2.getName());
+	}
+
+	private void ensureFileExists(IFile description, String name) {
+		if (description.exists()) {
+			return;
 		}
+		// If project description does not exist after creation (for whatever reason),
+		// create it explicitly with empty content
+		try {
+			Files.createFile(Paths.get(description.getLocationURI()));
+		} catch (IOException e) {
+			fail(String.format("Can't explicitly create project description due to: %s", e.getMessage()));
+		}
+		assertTrue(String.format("Project description for %s does not exist", name), description.exists());
 	}
 
 }
