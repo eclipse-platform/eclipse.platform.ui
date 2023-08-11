@@ -310,6 +310,26 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		assertEquals("Same element added to parent twice.", 3, tree.getItems().length);
 	}
 
+	public void testContains() {
+		// some random element.
+		assertFalse("element must not be available on the viewer", fTreeViewer.contains(fRootElement, ""));
+
+		// first child of root.
+		assertTrue("element must be available on the viewer",
+				fTreeViewer.contains(fRootElement, fRootElement.getFirstChild()));
+
+		// last child of the root
+		assertTrue("element must be available on the viewer",
+				fTreeViewer.contains(fRootElement, fRootElement.getLastChild()));
+		// child of first element is not expanded
+		assertFalse("element must not be available on the viewer",
+				fTreeViewer.contains(fRootElement.getFirstChild(), fRootElement.getFirstChild().getFirstChild()));
+		fTreeViewer.expandAll();
+		// child of first element when expanded.
+		assertTrue("element must be available on the viewer",
+				fTreeViewer.contains(fRootElement.getFirstChild(), fRootElement.getFirstChild().getFirstChild()));
+	}
+
 	@Override
 	public void tearDown() {
 		super.tearDown();

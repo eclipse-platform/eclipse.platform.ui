@@ -191,4 +191,16 @@ public class TableViewerTest extends StructuredItemViewerTest {
 
 	}
 
+	public void testContains() {
+		TableViewer tViewer = (TableViewer) fViewer;
+		// some random element.
+		assertFalse("element must not be available on the viewer", tViewer.contains(""));
+
+		// first child of root.
+		assertTrue("element must be available on the viewer", tViewer.contains(fRootElement.getFirstChild()));
+
+		// last child of the root
+		assertTrue("element must be available on the viewer", tViewer.contains(fRootElement.getLastChild()));
+	}
+
 }
