@@ -14,6 +14,7 @@
 package org.eclipse.jface.viewers.internal;
 
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
@@ -46,6 +47,10 @@ public class ExpandableNode {
 	private final int startOffSet;
 	private final int limit;
 	/**
+	 * This is a dummy object placed as a value for each unique item.
+	 */
+	private static Object VALUE = new Object();
+	/**
 	 * These elements are added into expandable node. will be rendered in the next
 	 * iterations.
 	 */
@@ -56,6 +61,12 @@ public class ExpandableNode {
 	private final int start;
 
 	private final StructuredViewer viewer;
+
+	/**
+	 * This maintains all the unique children of the parent node. It is needed for
+	 * supporting adding new elements.
+	 */
+	private final IdentityHashMap<Object, Object> uniqueElementsMap;
 
 	/**
 	 * @param children    non null list of children
@@ -73,6 +84,7 @@ public class ExpandableNode {
 		this.limit = limit;
 		this.viewer = viewer;
 		this.addedElements = new ArrayList<>();
+		this.uniqueElementsMap = new IdentityHashMap<>();
 	}
 
 	/**
@@ -165,6 +177,28 @@ public class ExpandableNode {
 	 * @param element
 	 */
 	public void addElement(Object element) {
+		initializeUniqueMap();
+		uniqueElementsMap.put(element, VALUE);
 		addedElements.add(element);
+	}
+
+	private void initializeUniqueMap() {
+		if (uniqueElementsMap.isEmpty()) {
+			// add all the existing elements.
+			for (Object element : orginalArray) {
+				uniqueElementsMap.put(element, VALUE);
+			}
+		}
+	}
+
+	/**
+	 * Returns true if the given element is present in the all elements.
+	 *
+	 * @param element
+	 * @return returns if it finds in all the elements.
+	 */
+	public boolean contains(Object element) {
+		initializeUniqueMap();
+		return uniqueElementsMap.containsKey(element);
 	}
 }

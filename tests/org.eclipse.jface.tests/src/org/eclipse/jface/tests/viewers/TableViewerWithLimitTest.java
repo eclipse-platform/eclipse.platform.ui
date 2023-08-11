@@ -277,6 +277,19 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 
 	}
 
+	public void testContains() {
+		// some random element.
+		assertFalse("element must not be available on the viewer", tableViewer.contains(""));
+
+		// first child of root.
+		assertTrue("element must be available on the viewer", tableViewer.contains(rootModel.get(0)));
+
+		// last child of the root. It should be true even if it shows limited items.
+		assertTrue("element must be available on the viewer",
+				tableViewer.contains(rootModel.get(rootModel.size() - 1)));
+
+	}
+
 	private static class TestContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object inputElement) {

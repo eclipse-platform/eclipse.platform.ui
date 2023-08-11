@@ -1545,7 +1545,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			// do not notify client listeners for this item.
 			return;
 		}
-		
+
 		// handle case where an earlier selection listener disposed the control.
 		Control control = getControl();
 		if (control != null && !control.isDisposed()) {
@@ -3373,6 +3373,41 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			return false;
 		}
 		return items[items.length - 1].getData() instanceof ExpandableNode;
+	}
+
+	/**
+	 * Returns true if the element is present in the viewer. If the viewer has
+	 * incremental display set then the element is searched inside expandable node
+	 * also. i.e. it searches inside the remaining elements to be populated.
+	 *
+	 * @param parent  model element which corresponds to any visible widget on the
+	 *                viewer
+	 * @param element model element
+	 * @return if given model element is contained in the viewer
+	 * @since 3.31
+	 */
+	public boolean contains(Object parent, Object element) {
+		if (findItem(element) != null) {
+			return true;
+		}
+
+		if (getItemsLimit() <= 0) {
+			return false;
+		}
+
+		Widget parentWideget = findItem(parent);
+		if (parentWideget == null) {
+			return false;
+		}
+
+		Item[] items = getChildren(parentWideget);
+		if (items.length == 0) {
+			return false;
+		}
+		if (items[items.length - 1].getData() instanceof ExpandableNode node) {
+			return node.contains(element);
+		}
+		return false;
 	}
 
 }

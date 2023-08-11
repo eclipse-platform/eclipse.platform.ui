@@ -1502,4 +1502,28 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 */
 	protected abstract void doSelect(int[] indices);
 
+	/**
+	 * Returns true if the element is present in the viewer. If the viewer has
+	 * incremental display set then the element is searched inside expandable node
+	 * also. i.e. it searches inside the remaining elements to be populated.
+	 *
+	 * @param element model element
+	 * @return if given model element is contained in the viewer
+	 * @since 3.31
+	 */
+	public boolean contains(Object element) {
+		if (findItem(element) != null) {
+			return true;
+		}
+
+		if (getItemsLimit() <= 0) {
+			return false;
+		}
+
+		if (getLastElement() instanceof ExpandableNode node) {
+			return node.contains(element);
+		}
+		return false;
+	}
+
 }

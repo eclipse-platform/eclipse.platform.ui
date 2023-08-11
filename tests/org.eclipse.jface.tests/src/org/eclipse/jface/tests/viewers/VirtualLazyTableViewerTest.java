@@ -165,4 +165,11 @@ public class VirtualLazyTableViewerTest extends VirtualTableViewerTest {
 		// based on the assumption that all items
 		// are created.
 	}
+
+	@Override
+	public void testContains() {
+		// This test is no use here as it is
+		// based on the assumption that all items
+		// are created.
+	}
 }
