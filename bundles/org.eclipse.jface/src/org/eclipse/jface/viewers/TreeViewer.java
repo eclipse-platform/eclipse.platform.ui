@@ -1148,20 +1148,28 @@ public class TreeViewer extends AbstractTreeViewer {
 			return;
 		}
 
-		Widget parent = getParentItem(item);
-		if (parent == null) {
-			parent = getControl();
-		}
-		// destroy widget
-		disassociate(item);
-		item.dispose();
+		boolean oldBusy = isBusy();
+		Tree tree = getTree();
+		try {
+			setBusy(true);
+			tree.setRedraw(false);
 
-		// create children on parent
-		for (Object element : children) {
-			createTreeItem(parent, element, -1);
-		}
+			Widget parent = getParentItem(item);
+			if (parent == null) {
+				parent = getControl();
+			}
 
-		if (children.length > 0) {
+			// update widget
+			updateItem(item, children[0]);
+			updatePlus(item, children[0]);
+
+			if (children.length > 1) {
+				// create children on parent
+				for (int i = 1; i < children.length; i++) {
+					createTreeItem(parent, children[i], -1);
+				}
+			}
+
 			// If we've expanded but still have not reached the limit
 			// select new expandable node, so user can click through
 			// to the end
@@ -1171,11 +1179,14 @@ public class TreeViewer extends AbstractTreeViewer {
 			} else {
 				// reset the selection. client's selection listener should not be triggered.
 				// there was only one selection on Expandable Node.
-				Item[] curSel = this.getTree().getSelection();
+				Item[] curSel = tree.getSelection();
 				if (curSel.length == 1) {
-					this.getTree().deselect((TreeItem) curSel[0]);
+					tree.deselect((TreeItem) curSel[0]);
 				}
 			}
+		} finally {
+			tree.setRedraw(true);
+			setBusy(oldBusy);
 		}
 	}
 
