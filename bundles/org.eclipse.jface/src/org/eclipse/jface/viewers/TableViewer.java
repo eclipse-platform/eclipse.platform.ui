@@ -468,32 +468,43 @@ public class TableViewer extends AbstractTableViewer {
 		if (!(data instanceof ExpandableNode expNode)) {
 			return;
 		}
+		boolean oldBusy = isBusy();
+		Table table = getTable();
+		try {
+			setBusy(true);
+			table.setRedraw(false);
 
-		Object[] sortedChildren = expNode.getRemainingElements();
-		Object[] nextChildren = applyItemsLimit(data, sortedChildren);
-		disassociate(item);
-		int index = doIndexOf(item);
-		// will also call item.dispose()
-		doRemove(new int[] { index });
+			Object[] sortedChildren = expNode.getRemainingElements();
+			Object[] nextChildren = applyItemsLimit(data, sortedChildren);
 
-		if (nextChildren.length > 0) {
-			// create remaining elements
-			for (Object nextChild : nextChildren) {
-				createItem(nextChild, -1);
-			}
-			// If we've expanded but still have not reached the limit
-			// select new expandable node, so user can click through
-			// to the end
-			if (getLastElement() instanceof ExpandableNode node) {
-				setSelection(new StructuredSelection(node), true);
-			} else {
-				// reset the selection. client's selection listener should not be triggered.
-				// there was only one selection on Expandable Node.
-				int[] curSel = this.getTable().getSelectionIndices();
-				if (curSel.length == 1) {
-					this.getTable().deselect(curSel[0]);
+			if (nextChildren.length > 0) {
+				// update the expandable node with first item.
+				doUpdateItem(item, nextChildren[0], true);
+				// create remaining elements
+				if (nextChildren.length > 1) {
+					// current index is updated so start creating from next index.
+					int index = doIndexOf(item) + 1;
+					for (int i = 1; i < nextChildren.length; i++) {
+						createItem(nextChildren[i], index++);
+					}
+				}
+				// If we've expanded but still have not reached the limit
+				// select new expandable node, so user can click through
+				// to the end
+				if (getLastElement() instanceof ExpandableNode node) {
+					setSelection(new StructuredSelection(node), true);
+				} else {
+					// reset the selection. client's selection listener should not be triggered.
+					// there was only one selection on Expandable Node.
+					int[] curSel = table.getSelectionIndices();
+					if (curSel.length == 1) {
+						table.deselect(curSel[0]);
+					}
 				}
 			}
+		} finally {
+			setBusy(oldBusy);
+			table.setRedraw(true);
 		}
 	}
 
