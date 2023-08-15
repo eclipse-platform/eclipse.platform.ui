@@ -49,10 +49,11 @@ class MarkerViewerContentProvider implements ITreeContentProvider {
 
 	@Override
 	public Object[] getChildren(Object parentElement) {
-		MarkerSupportItem[] children = ((MarkerSupportItem) parentElement)
-				.getChildren();
-
-		return getLimitedChildren(children);
+		if (parentElement instanceof MarkerSupportItem markerItem) {
+			MarkerSupportItem[] children = markerItem.getChildren();
+			return getLimitedChildren(children);
+		}
+		return new Object[0];
 	}
 
 	@Override
@@ -93,6 +94,6 @@ class MarkerViewerContentProvider implements ITreeContentProvider {
 
 	@Override
 	public boolean hasChildren(Object element) {
-		return ((MarkerSupportItem) element).getChildren().length > 0;
+		return element instanceof MarkerSupportItem markerItem ? markerItem.getChildren().length > 0 : false;
 	}
 }
