@@ -583,9 +583,10 @@ public class ExtendedMarkersView extends ViewPart {
 	IMarker[] getOpenableMarkers() {
 		HashSet<IMarker> result = new HashSet<>();
 		for (Object o : viewer.getStructuredSelection()) {
-			MarkerSupportItem next = (MarkerSupportItem) o;
-			if (next.isConcrete()) {
-				result.add(((MarkerEntry) next).getMarker());
+			if (o instanceof MarkerSupportItem next) {
+				if (next.isConcrete()) {
+					result.add(((MarkerEntry) next).getMarker());
+				}
 			}
 		}
 		if (result.isEmpty()) {
@@ -1395,9 +1396,10 @@ public class ExtendedMarkersView extends ViewPart {
 			Iterator<?> elements = newSelection.iterator();
 			Collection<MarkerSupportItem> result = new ArrayList<>();
 			while (elements.hasNext()) {
-				MarkerSupportItem next = (MarkerSupportItem) elements.next();
-				if (next.isConcrete()) {
-					result.add(next);
+				if (elements.next() instanceof MarkerSupportItem next) {
+					if (next.isConcrete()) {
+						result.add(next);
+					}
 				}
 			}
 			MarkerEntry[] entries = new MarkerEntry[result.size()];
