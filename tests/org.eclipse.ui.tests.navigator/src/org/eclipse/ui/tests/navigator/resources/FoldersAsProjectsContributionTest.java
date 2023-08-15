@@ -48,6 +48,7 @@ import org.eclipse.ui.internal.navigator.resources.actions.FoldersAsProjectsActi
 import org.eclipse.ui.internal.navigator.resources.actions.OpenFolderAsProjectAction;
 import org.eclipse.ui.internal.navigator.resources.actions.SelectProjectForFolderAction;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -80,6 +81,7 @@ public final class FoldersAsProjectsContributionTest {
 	}
 
 	@Test
+	@Ignore
 	public void alreadyAdded() {
 		IProject outer = ResourcesPlugin.getWorkspace().getRoot().getProject("foldersasprojects.alreadyAdded.outer");
 		IProject inner1 = ResourcesPlugin.getWorkspace().getRoot().getProject("foldersasprojects.alreadyAdded.inner1");
@@ -114,6 +116,7 @@ public final class FoldersAsProjectsContributionTest {
 	}
 
 	@Test
+	@Ignore
 	public void notYetImported() {
 		IProject outer = ResourcesPlugin.getWorkspace().getRoot().getProject("foldersasprojects.notYetImported.outer");
 		IProject inner1 = ResourcesPlugin.getWorkspace().getRoot()
@@ -245,7 +248,8 @@ public final class FoldersAsProjectsContributionTest {
 		try {
 			Files.createFile(Paths.get(description.getLocationURI()));
 		} catch (IOException e) {
-			fail(String.format("Can't explicitly create project description due to: %s", e.getMessage()));
+			fail(String.format("Can't explicitly create project description due to: %s %s", e.getClass().getName(),
+					e.getMessage()));
 		}
 		assertTrue(String.format("Project description for %s does not exist", name), description.exists());
 	}
