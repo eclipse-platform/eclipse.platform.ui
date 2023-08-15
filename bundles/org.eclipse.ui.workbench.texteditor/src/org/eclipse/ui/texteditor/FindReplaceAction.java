@@ -99,7 +99,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 		 * @since 3.3
 		 */
 		public FindReplaceDialogStub(Shell shell) {
-			fDialog= new FindReplaceDialog(shell);
+			fDialog = new FindReplaceDialog(shell);
 			fDialog.create();
 			fDialog.getShell().addDisposeListener(this);
 		}
@@ -314,10 +314,16 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 		update();
 	}
 
-	@Override
-	public void run() {
-		if (fTarget == null)
-			return;
+	final static boolean MW_NEW_FIND_REPLACE = true; // TODO replace with a preference
+
+	private InlineFindReplaceComponent inlineDialog;
+
+	/**
+	 * Implement the "old" style of find and replace, using an external Shell
+	 *
+	 * @since 3.18
+	 */
+	public void showFindReplaceModal() {
 
 		final FindReplaceDialog dialog;
 		final boolean isEditable;
@@ -352,10 +358,33 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 		dialog.open();
 	}
 
+	/**
+	 * @since 3.18
+	 */
+	public void showInlineSearchReplace() {
+		if (fWorkbenchPart instanceof StatusTextEditor searchableTextEditor) {
+			System.out.println("Hello World");
+			inlineDialog = new InlineFindReplaceComponent();
+			inlineDialog.createDialog(searchableTextEditor.getInlineToolbarParent());
+			searchableTextEditor.updatePartControl(searchableTextEditor.getEditorInput());
+		}
+	}
+
+	@Override
+	public void run() {
+		if (fTarget == null)
+			return;
+
+		if (MW_NEW_FIND_REPLACE) {
+			showInlineSearchReplace();
+		} else {
+			showFindReplaceModal();
+		}
+	}
+
 	@Override
 	public void update() {
-
-		if(fShell == null){
+		if (fShell == null || MW_NEW_FIND_REPLACE) {
 			if (fWorkbenchPart == null && fWorkbenchWindow != null)
 				fWorkbenchPart= fWorkbenchWindow.getPartService().getActivePart();
 

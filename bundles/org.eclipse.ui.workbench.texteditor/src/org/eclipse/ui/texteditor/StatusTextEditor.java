@@ -18,6 +18,8 @@ package org.eclipse.ui.texteditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -40,7 +42,11 @@ public class StatusTextEditor extends AbstractTextEditor {
 	/** The layout used to manage the regular and the status page */
 	private StackLayout fStackLayout;
 	/** The root composite for the regular page */
-	private Composite fDefaultComposite;
+	private Composite fPageComposite;
+	/** Composite for the Editor */
+	private Composite fEditorComposite;
+	/** Composite for the Inline Toolbar */
+	private Composite fSearchReplaceComposite;
 	/** The status page */
 	private Control fStatusControl;
 	/** {@link #setFocus()} is still running */
@@ -48,6 +54,24 @@ public class StatusTextEditor extends AbstractTextEditor {
 
 	// No .options for plugin yet
 	private static final boolean DEBUG = false;
+
+
+	/**
+	 * @deprecated Needs to be reconsidered
+	 * @return the inline-toolbar composite
+	 * @since 3.18
+	 */
+	@Deprecated
+	public Composite getInlineToolbarParent() { // MW -> @HeikoKlare: Bad style, I would prefer a solution where this
+												// function takes in an abstraction of - for example - IInlineToolbar
+												// and calls
+												// createControls(fInlineToolbar) on it. We need to define how
+												// generalized this implementation should become. Returning the Full
+												// inline toolbar composite is not helping in keeping things abstract.
+												// We also should think about wether we want StatusTextEditor to perform
+												// this task or wether we want to outsource this into a superclass
+		return fSearchReplaceComposite;
+	}
 
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor.createPartControl(Composite)
@@ -59,9 +83,25 @@ public class StatusTextEditor extends AbstractTextEditor {
 		fStackLayout= new StackLayout();
 		fParent.setLayout(fStackLayout);
 
-		fDefaultComposite= new Composite(fParent, SWT.NONE);
-		fDefaultComposite.setLayout(new FillLayout());
-		super.createPartControl(fDefaultComposite);
+		fPageComposite = new Composite(fParent, SWT.NONE);
+		fPageComposite.setLayout(new GridLayout(1, true));
+
+		fEditorComposite = new Composite(fPageComposite, SWT.NONE);
+		fEditorComposite.setLayout(new FillLayout());
+		GridData pageCompositeLayoutData = new GridData();
+		pageCompositeLayoutData.grabExcessHorizontalSpace = true;
+		pageCompositeLayoutData.grabExcessVerticalSpace = true;
+		pageCompositeLayoutData.horizontalAlignment = GridData.FILL;
+		pageCompositeLayoutData.verticalAlignment = GridData.FILL;
+		fEditorComposite.setLayoutData(pageCompositeLayoutData);
+		super.createPartControl(fEditorComposite);
+
+		fSearchReplaceComposite = new Composite(fPageComposite, SWT.NONE);
+		fSearchReplaceComposite.setLayout(new FillLayout());
+		GridData srGridData = new GridData();
+		srGridData.horizontalAlignment = GridData.FILL;
+		srGridData.verticalAlignment = GridData.FILL;
+		fSearchReplaceComposite.setLayoutData(srGridData);
 
 		updatePartControl(getEditorInput());
 	}
@@ -97,7 +137,7 @@ public class StatusTextEditor extends AbstractTextEditor {
 				IDocumentProviderExtension extension= (IDocumentProviderExtension) getDocumentProvider();
 				IStatus status= extension.getStatus(input);
 				if (!isErrorStatus(status)) {
-					front= fDefaultComposite;
+					front = fPageComposite;
 				} else {
 					fStatusControl= createStatusControl(fParent, status);
 					trace(where, "status control created", fStatusControl); //$NON-NLS-1$
@@ -118,6 +158,7 @@ public class StatusTextEditor extends AbstractTextEditor {
 			fParent.setFocus();
 		}
 		trace(where, "END", fStatusControl); //$NON-NLS-1$
+		fPageComposite.layout();
 	}
 
 	private boolean containsFocus(Control control) {
