@@ -322,6 +322,7 @@ public class ViewerItemsLimitTest extends UITestCase {
 		// change the viewer limit
 		setNewViewerLimit(VIEW_LIMIT_DOUBLE);
 		processBackgroundUpdates(100);
+		commonViewer.expandAll();
 		processEventsUntil(() -> getFirstItem(commonViewer).getItems().length > VIEW_LIMIT_DOUBLE, 30_000);
 
 		firstItem = getFirstItem(commonViewer);
@@ -340,7 +341,7 @@ public class ViewerItemsLimitTest extends UITestCase {
 
 		// job may take some time to create marker.
 		processBackgroundUpdates(100);
-
+		commonViewer.expandAll();
 		firstItem = getFirstItem(commonViewer);
 		assertEquals("all the items must be visible with limit more than input", numberOfMarkers,
 				firstItem.getItems().length);
