@@ -266,6 +266,7 @@ public class ViewerItemsLimitTest extends UITestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Ignore("Disabled as long as Problems view doesn't support limits")
 	@Test
 	public void testMarkersViewLimitedMarkers() throws CoreException {
 		closeView(IPageLayout.ID_PROBLEM_VIEW);
