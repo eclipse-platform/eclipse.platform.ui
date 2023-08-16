@@ -12,13 +12,16 @@ import org.eclipse.swt.widgets.Text;
  * The widget for Inline finding and replacing of strings. Will be instantiated
  * and injected into the Text editor.
  *
+ * The widget automatically retargets when switching editors. // TODO The widget
+ * will automatically hook itself up into any editor that implements
+ * IInlineToolable // TODO The widget uses the same internal logic as the "find
+ * replace" dialog // TODO The widget will by default perform a "search all"
+ *
  * @since 3.18
  */
 public class InlineFindReplaceComponent { // MW -> @HeikoKlare I'm not sure wether and what I should extend from
+	boolean currentlyActive = false;
 
-	// MW -> @HeikoKlare It might make sense to implement this as a singleton: I
-	// always want to have one single Inline Finder, which is then moved across
-	// editors as they come into and leave focus
 	Composite container;
 	Composite spacer;
 	Composite searchOptions;
