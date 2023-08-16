@@ -51,6 +51,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.OpenStrategy;
+import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IOpenListener;
@@ -84,6 +85,7 @@ import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.views.WorkbenchViewerSetup;
 
 import org.eclipse.ui.texteditor.IUpdate;
 
@@ -731,7 +733,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			fCollapseAllAction.setViewer(viewer);
 			fExpandAllAction.setViewer(viewer);
 		}
-
+		WorkbenchViewerSetup.setupViewer((ColumnViewer) fViewer);
 		fCopyToClipboardAction.setViewer(fViewer);
 		fSelectAllAction.setViewer(fViewer);
 

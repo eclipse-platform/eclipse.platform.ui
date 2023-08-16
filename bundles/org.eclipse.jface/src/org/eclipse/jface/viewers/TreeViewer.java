@@ -1203,4 +1203,18 @@ public class TreeViewer extends AbstractTreeViewer {
 		}
 		return items[length - 1].getData();
 	}
+
+	@Override
+	public void setExpandedState(Object elementOrTreePath, boolean expanded) {
+		// Special behavior for ExpandableNode. Expand the it if it's widget is found
+		// otherwise do not expand it.
+		if (isExpandableNode(elementOrTreePath)) {
+			Widget expItem = findItem(elementOrTreePath);
+			if (expItem != null) {
+				handleExpandableNodeClicked(expItem);
+			}
+			return;
+		}
+		super.setExpandedState(elementOrTreePath, expanded);
+	}
 }
