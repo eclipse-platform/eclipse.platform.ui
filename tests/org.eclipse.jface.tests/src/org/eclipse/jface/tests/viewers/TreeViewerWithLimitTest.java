@@ -327,11 +327,6 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		public TestTreeViewer(Composite parent) {
 			super(parent);
 		}
-
-		@Override
-		public boolean isExpandableNode(Object element) {
-			return super.isExpandableNode(element);
-		}
 	}
 
 }

@@ -329,11 +329,6 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		public TestTableViewer(Composite parent) {
 			super(parent);
 		}
-
-		@Override
-		public boolean isExpandableNode(Object element) {
-			return super.isExpandableNode(element);
-		}
 	}
 
 }

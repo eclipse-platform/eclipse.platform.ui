@@ -126,8 +126,8 @@ public class WorkbenchPreferenceInitializer extends AbstractPreferenceInitialize
 
 		node.putInt(IWorkbenchPreferenceConstants.DISPOSE_CLOSED_BROWSER_HOVER_TIMEOUT, -1);
 
-		// Don't show more than 10.000 child elements per parent by default
-		node.putInt(IWorkbenchPreferenceConstants.LARGE_VIEW_LIMIT, 1000);
+		// Disable viewer limit configuration until more testing and stabilization.
+		node.putInt(IWorkbenchPreferenceConstants.LARGE_VIEW_LIMIT, 0);
 
 		node.put(IWorkbenchPreferenceConstants.RESOURCE_RENAME_MODE,
 				IWorkbenchPreferenceConstants.RESOURCE_RENAME_MODE_INLINE);
