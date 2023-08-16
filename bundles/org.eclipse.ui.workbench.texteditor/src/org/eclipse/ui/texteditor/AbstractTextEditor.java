@@ -2276,6 +2276,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	/** The width of the vertical ruler. */
 	protected static final int VERTICAL_RULER_WIDTH= 12;
 
+	/*
+	 * The colors of AbstractTextEditor can be configured by the "Text Editors"
+	 * preferences. This color configuration will be changed by theming. This means
+	 * no need for CSS basecolors here.
+	 */
+	private static final String DISABLE_CSS = "org.eclipse.e4.ui.css.disabled"; //$NON-NLS-1$
+
 	/**
 	 * The complete mapping between action definition IDs used by eclipse and StyledText actions.
 	 *
@@ -3365,6 +3372,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		int styles= SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION;
 		fSourceViewer= createSourceViewer(parent, fVerticalRuler, styles);
+
+		fSourceViewer.getTextWidget().setData(DISABLE_CSS, Boolean.TRUE);
 
 		if (fConfiguration == null)
 			fConfiguration= new SourceViewerConfiguration();
