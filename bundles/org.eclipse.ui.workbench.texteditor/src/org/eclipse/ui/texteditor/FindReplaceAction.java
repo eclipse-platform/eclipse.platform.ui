@@ -263,6 +263,8 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 		super(bundle, prefix);
 		Assert.isLegal(workbenchPart != null);
 		fWorkbenchPart= workbenchPart;
+		fTarget = fWorkbenchPart.getAdapter(IFindReplaceTarget.class);
+		inlineDialog = new InlineFindReplaceComponent(fTarget, fWorkbenchPart);
 		update();
 	}
 
@@ -358,15 +360,13 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 		dialog.open();
 	}
 
+
 	/**
 	 * @since 3.18
 	 */
 	public void showInlineSearchReplace() {
 		if (fWorkbenchPart instanceof StatusTextEditor searchableTextEditor) {
-			System.out.println("Hello World");
-			inlineDialog = new InlineFindReplaceComponent();
-			inlineDialog.createDialog(searchableTextEditor.getInlineToolbarParent());
-			searchableTextEditor.updatePartControl(searchableTextEditor.getEditorInput());
+			inlineDialog.toggleActive();
 		}
 	}
 

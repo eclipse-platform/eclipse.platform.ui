@@ -150,7 +150,8 @@ class FindReplaceDialog extends Dialog {
 						offset= offset + fIncrementalBaseLocation.y;
 
 					fNeedsInitialFindBeforeReplace= false;
-					findAndSelect(offset, "", isForwardSearch(), isCaseSensitiveSearch(), isWholeWordSearch(), isRegExSearchAvailableAndChecked()); //$NON-NLS-1$
+					updateFindReplacerSettings();
+					fFindReplacer.findAndSelect(offset, "");
 				} else {
 					performSearch(false, false, isForwardSearch());
 				}
@@ -159,6 +160,8 @@ class FindReplaceDialog extends Dialog {
 			updateButtonState(!isIncrementalSearch());
 		}
 	}
+
+	FindReplacer fFindReplacer;
 
 	/** The size of the dialogs search history. */
 	private static final int HISTORY_SIZE= 15;
@@ -262,6 +265,7 @@ class FindReplaceDialog extends Dialog {
 
 		setShellStyle(getShellStyle() ^ SWT.APPLICATION_MODAL | SWT.MODELESS);
 		setBlockOnOpen(false);
+		fFindReplacer = new FindReplacer(fTarget);
 	}
 
 	@Override
@@ -875,7 +879,8 @@ class FindReplaceDialog extends Dialog {
 	private int findIndex(String findString, int startPosition, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean regExSearch, boolean beep) {
 
 		if (forwardSearch) {
-			int index= findAndSelect(startPosition, findString, true, caseSensitive, wholeWord, regExSearch);
+			int index = fFindReplacer.findAndSelect(startPosition, findString, true, caseSensitive, wholeWord,
+					regExSearch);
 			if (index == -1) {
 
 				if (beep && okToUse(getShell()))
@@ -883,14 +888,15 @@ class FindReplaceDialog extends Dialog {
 
 				if (wrapSearch) {
 					statusMessage(EditorMessages.FindReplace_Status_wrapped_label);
-					index= findAndSelect(-1, findString, true, caseSensitive, wholeWord, regExSearch);
+					index = fFindReplacer.findAndSelect(-1, findString, true, caseSensitive, wholeWord, regExSearch);
 				}
 			}
 			return index;
 		}
 
 		// backward
-		int index= startPosition == 0 ? -1 : findAndSelect(startPosition - 1, findString, false, caseSensitive, wholeWord, regExSearch);
+		int index = startPosition == 0 ? -1
+				: fFindReplacer.findAndSelect(startPosition - 1, findString);
 		if (index == -1) {
 
 			if (beep && okToUse(getShell()))
@@ -898,30 +904,10 @@ class FindReplaceDialog extends Dialog {
 
 			if (wrapSearch) {
 				statusMessage(EditorMessages.FindReplace_Status_wrapped_label);
-				index= findAndSelect(-1, findString, false, caseSensitive, wholeWord, regExSearch);
+				index = fFindReplacer.findAndSelect(-1, findString, false, caseSensitive, wholeWord, regExSearch);
 			}
 		}
 		return index;
-	}
-
-	/**
-	 * Searches for a string starting at the given offset and using the specified search
-	 * directives. If a string has been found it is selected and its start offset is
-	 * returned.
-	 *
-	 * @param offset the offset at which searching starts
-	 * @param findString the string which should be found
-	 * @param forwardSearch the direction of the search
-	 * @param caseSensitive <code>true</code> performs a case sensitive search, <code>false</code> an insensitive search
-	 * @param wholeWord if <code>true</code> only occurrences are reported in which the findString stands as a word by itself
-	 * @param regExSearch if <code>true</code> findString represents a regular expression
-	 * @return the position of the specified string, or -1 if the string has not been found
-	 * @since 3.0
-	 */
-	private int findAndSelect(int offset, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, boolean regExSearch) {
-		if (fTarget instanceof IFindReplaceTargetExtension3)
-			return ((IFindReplaceTargetExtension3)fTarget).findAndSelect(offset, findString, forwardSearch, caseSensitive, wholeWord, regExSearch);
-		return fTarget.findAndSelect(offset, findString, forwardSearch, caseSensitive, wholeWord);
 	}
 
 	/**
@@ -948,41 +934,48 @@ class FindReplaceDialog extends Dialog {
 	}
 
 	/**
-	 * Returns whether the specified search string can be found using the given options.
+	 * Returns whether the specified search string can be found using the given
+	 * options.
 	 *
-	 * @param findString the string to search for
+	 * @param findString    the string to search for
 	 * @param forwardSearch the direction of the search
 	 * @param caseSensitive should the search be case sensitive
-	 * @param wrapSearch should the search wrap to the start/end if arrived at the end/start
-	 * @param wholeWord does the search string represent a complete word
-	 * @param incremental is this an incremental search
-	 * @param regExSearch if <code>true</code> findString represents a regular expression
-	 * @param beep if <code>true</code> beeps when search does not find a match or needs to wrap
-	 * @return <code>true</code> if the search string can be found using the given options
+	 * @param wrapSearch    should the search wrap to the start/end if arrived at
+	 *                      the end/start
+	 * @param wholeWord     does the search string represent a complete word
+	 * @param incremental   is this an incremental search
+	 * @param regExSearch   if <code>true</code> findString represents a regular
+	 *                      expression
+	 * @param beep          if <code>true</code> beeps when search does not find a
+	 *                      match or needs to wrap
+	 * @return <code>true</code> if the search string can be found using the given
+	 *         options
 	 *
 	 * @since 3.0
 	 */
-	private boolean findNext(String findString, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean incremental, boolean regExSearch, boolean beep) {
+	private boolean findNext(String findString, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch,
+			boolean wholeWord, boolean incremental, boolean regExSearch, boolean beep) {
 
 		if (fTarget == null)
 			return false;
 
-		Point r= null;
+		Point r = null;
 		if (incremental)
-			r= fIncrementalBaseLocation;
+			r = fIncrementalBaseLocation;
 		else
-			r= fTarget.getSelection();
+			r = fTarget.getSelection();
 
-		int findReplacePosition= r.x;
+		int findReplacePosition = r.x;
 		if (forwardSearch && !fNeedsInitialFindBeforeReplace || !forwardSearch && fNeedsInitialFindBeforeReplace)
 			findReplacePosition += r.y;
 
-		fNeedsInitialFindBeforeReplace= false;
+		fNeedsInitialFindBeforeReplace = false;
 
-		int index= findIndex(findString, findReplacePosition, forwardSearch, caseSensitive, wrapSearch, wholeWord, regExSearch, beep);
+		int index = findIndex(findString, findReplacePosition, forwardSearch, caseSensitive, wrapSearch, wholeWord,
+				regExSearch, beep);
 
 		if (index == -1) {
-			String msg= NLSUtility.format(EditorMessages.FindReplace_Status_noMatchWithValue_label, findString);
+			String msg = NLSUtility.format(EditorMessages.FindReplace_Status_noMatchWithValue_label, findString);
 			statusMessage(false, EditorMessages.FindReplace_Status_noMatch_label, msg);
 			return false;
 		}
@@ -1584,7 +1577,8 @@ class FindReplaceDialog extends Dialog {
 		try {
 			int index= 0;
 			while (index != -1) {
-				index = findAndSelect(findReplacePosition, findString, true, caseSensitive, wholeWord, regExSearch);
+				index = fFindReplacer.findAndSelect(findReplacePosition, findString, true, caseSensitive, wholeWord,
+						regExSearch);
 				if (index != -1) { // substring not contained from current position
 					Point selection= replaceSelection(replaceString, regExSearch);
 					replaceCount++;
@@ -1610,7 +1604,7 @@ class FindReplaceDialog extends Dialog {
 		List<Region> selectedRegions = new ArrayList<>();
 		int index = 0;
 		do {
-			index = findAndSelect(position, findString, true, caseSensitive, wholeWord, regExSearch);
+			index = fFindReplacer.findAndSelect(position, findString, true, caseSensitive, wholeWord, regExSearch);
 			if (index != -1) { // substring not contained from current position
 				Point selection = fTarget.getSelection();
 				selectedRegions.add(new Region(selection.x, selection.y));
@@ -1975,5 +1969,11 @@ class FindReplaceDialog extends Dialog {
 		history.toArray(names);
 		settings.put(sectionName, names);
 
+	}
+
+	private void updateFindReplacerSettings() {
+		fFindReplacer.setCaseSensitive(isCaseSensitiveSearch());
+		fFindReplacer.setWholeWord(isWholeWordSearch());
+		fFindReplacer.setRegExSearch(isIncrementalSearch() && isRegExSearchAvailableAndChecked());
 	}
 }
