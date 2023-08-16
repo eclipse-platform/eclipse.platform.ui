@@ -84,7 +84,6 @@ import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.progress.UIJob;
-import org.eclipse.ui.views.WorkbenchViewerSetup;
 
 import org.eclipse.ui.texteditor.IUpdate;
 
@@ -725,12 +724,10 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			TableViewer viewer = createTableViewer(parent);
 			fViewer = viewer;
 			configureTableViewer(viewer);
-			WorkbenchViewerSetup.setupViewer(viewer);
 		} else if ((layout & FLAG_LAYOUT_TREE) != 0) {
 			TreeViewer viewer = createTreeViewer(parent);
 			fViewer = viewer;
 			configureTreeViewer(viewer);
-			WorkbenchViewerSetup.setupViewer(viewer);
 			fCollapseAllAction.setViewer(viewer);
 			fExpandAllAction.setViewer(viewer);
 		}
