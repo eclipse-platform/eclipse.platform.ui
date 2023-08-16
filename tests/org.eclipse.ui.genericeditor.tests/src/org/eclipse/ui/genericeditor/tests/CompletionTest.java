@@ -23,6 +23,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeFalse;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,6 +60,8 @@ import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 
+import org.eclipse.jface.util.Util;
+
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -82,6 +85,7 @@ public class CompletionTest extends AbstratGenericEditorTest {
 
 	@Test
 	public void testCompletion() throws Exception {
+		assumeFalse("test fails on Mac, see https://github.com/eclipse-platform/eclipse.platform.ui/issues/906", Util.isMac());
 		editor.selectAndReveal(3, 0);
 		this.completionShell= openConentAssist();
 		final Table completionProposalList = findCompletionSelectionControl(completionShell);
@@ -104,6 +108,7 @@ public class CompletionTest extends AbstratGenericEditorTest {
 
 	@Test
 	public void testCompletionService() throws Exception {
+		assumeFalse("test fails on Mac, see https://github.com/eclipse-platform/eclipse.platform.ui/issues/906", Util.isMac());
 		Bundle bundle= FrameworkUtil.getBundle(CompletionTest.class);
 		assertNotNull(bundle);
 		BundleContext bundleContext= bundle.getBundleContext();
@@ -122,6 +127,7 @@ public class CompletionTest extends AbstratGenericEditorTest {
 
 	@Test
 	public void testCompletionUsingViewerSelection() throws Exception {
+		assumeFalse("test fails on Mac, see https://github.com/eclipse-platform/eclipse.platform.ui/issues/906", Util.isMac());
 		editor.getDocumentProvider().getDocument(editor.getEditorInput()).set("abc");
 		editor.selectAndReveal(0, 3);
 		this.completionShell= openConentAssist();
@@ -218,6 +224,7 @@ public class CompletionTest extends AbstratGenericEditorTest {
 
 	@Test
 	public void testCompletionFreeze_bug521484() throws Exception {
+		assumeFalse("test fails on Mac, see https://github.com/eclipse-platform/eclipse.platform.ui/issues/906", Util.isMac());
 		editor.selectAndReveal(3, 0);
 		this.completionShell=openConentAssist();
 		final Table completionProposalList = findCompletionSelectionControl(this.completionShell);
@@ -236,6 +243,7 @@ public class CompletionTest extends AbstratGenericEditorTest {
 
 	@Test
 	public void testMoveCaretBackUsesAllProcessors_bug522255() throws Exception {
+		assumeFalse("test fails on Mac, see https://github.com/eclipse-platform/eclipse.platform.ui/issues/906", Util.isMac());
 		testCompletion();
 		emulatePressLeftArrowKey();
 		final Set<Shell> beforeShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
