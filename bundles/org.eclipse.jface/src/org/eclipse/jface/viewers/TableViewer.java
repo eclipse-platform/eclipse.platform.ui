@@ -478,15 +478,13 @@ public class TableViewer extends AbstractTableViewer {
 			Object[] nextChildren = applyItemsLimit(data, sortedChildren);
 
 			if (nextChildren.length > 0) {
-				// update the expandable node with first item.
-				doUpdateItem(item, nextChildren[0], true);
-				// create remaining elements
-				if (nextChildren.length > 1) {
-					// current index is updated so start creating from next index.
-					int index = doIndexOf(item) + 1;
-					for (int i = 1; i < nextChildren.length; i++) {
-						createItem(nextChildren[i], index++);
-					}
+				disassociate(item);
+				int index = doIndexOf(item);
+				// will also call item.dispose()
+				doRemove(new int[] { index });
+
+				for (int i = 0; i < nextChildren.length; i++) {
+					createItem(nextChildren[i], index++);
 				}
 				// If we've expanded but still have not reached the limit
 				// select new expandable node, so user can click through

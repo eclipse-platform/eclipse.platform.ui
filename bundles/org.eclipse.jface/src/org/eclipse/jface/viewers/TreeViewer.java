@@ -1159,15 +1159,13 @@ public class TreeViewer extends AbstractTreeViewer {
 				parent = getControl();
 			}
 
-			// update widget
-			updateItem(item, children[0]);
-			updatePlus(item, children[0]);
+			// destroy widget
+			disassociate(item);
+			item.dispose();
 
-			if (children.length > 1) {
-				// create children on parent
-				for (int i = 1; i < children.length; i++) {
-					createTreeItem(parent, children[i], -1);
-				}
+			// create children on parent
+			for (Object element : children) {
+				createTreeItem(parent, element, -1);
 			}
 
 			// If we've expanded but still have not reached the limit
