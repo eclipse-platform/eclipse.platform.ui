@@ -19,8 +19,9 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 public class LongRunningBarContentAssistProcessor extends BarContentAssistProcessor {
 
 	public static final String LONG_RUNNING_BAR_CONTENT_ASSIST_PROPOSAL = "bars are also good for soft drink cocktails.";
-	public static final int DELAY = 2000;
-
+	public static final int TIMEOUT_MSEC = 10_000;
+	private static boolean running = false;
+	
 	public LongRunningBarContentAssistProcessor() {
 		super(LONG_RUNNING_BAR_CONTENT_ASSIST_PROPOSAL);
 	}
@@ -28,11 +29,22 @@ public class LongRunningBarContentAssistProcessor extends BarContentAssistProces
 	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
 		try {
-			Thread.sleep(DELAY);
+			long startExecutionTime = System.currentTimeMillis();
+			while (running && (System.currentTimeMillis() - startExecutionTime) < TIMEOUT_MSEC) {
+				Thread.sleep(20);
+			}
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// Just finish on unexpected interrupt
 		}
 		return super.computeCompletionProposals(viewer, offset);
 	}
+	
+	public static void enable() {
+		running = true;
+	}
+	
+	public static void finish() {
+		running = false;
+	}
+	
 }
