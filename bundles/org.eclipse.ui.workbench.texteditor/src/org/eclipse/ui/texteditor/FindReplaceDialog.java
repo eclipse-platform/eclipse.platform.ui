@@ -1208,8 +1208,10 @@ class FindReplaceDialog extends Dialog {
 	}
 
 	/**
-	 * Retrieves and returns the option search direction from the appropriate check box.
-	 * @return <code>true</code> if searching forward
+	 * Retrieves and returns the option search direction from the appropriate check
+	 * box.
+	 *
+	 * @return <code>true</code> if searching d
 	 */
 	private boolean isForwardSearch() {
 		if (okToUse(fForwardRadioButton)) {

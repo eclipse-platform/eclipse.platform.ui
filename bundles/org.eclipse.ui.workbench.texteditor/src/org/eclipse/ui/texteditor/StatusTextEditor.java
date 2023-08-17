@@ -97,7 +97,7 @@ public class StatusTextEditor extends AbstractTextEditor {
 		super.createPartControl(fEditorComposite);
 
 		fSearchReplaceComposite = new Composite(fPageComposite, SWT.NONE);
-		fSearchReplaceComposite.setLayout(new FillLayout());
+		fSearchReplaceComposite.setLayout(new GridLayout(1, false));
 		GridData srGridData = new GridData();
 		srGridData.horizontalAlignment = GridData.FILL;
 		srGridData.verticalAlignment = GridData.FILL;
