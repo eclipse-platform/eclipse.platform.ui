@@ -27,6 +27,7 @@ public class BaseLimitBasedViewerTest extends ViewerTestCase {
 
 	List<DataModel> rootModel;
 	protected static final int VIEWER_LIMIT = 4;
+	protected static final int DEFAULT_ELEMENTS_COUNT = 40;
 
 	public BaseLimitBasedViewerTest(String name) {
 		super(name);
@@ -37,16 +38,16 @@ public class BaseLimitBasedViewerTest extends ViewerTestCase {
 		return null;
 	}
 
-	protected static List<DataModel> createModel() {
+	protected static List<DataModel> createModel(final int maxCount) {
 		List<DataModel> rootModel = new ArrayList<>();
-		for (int i = 0; i < 40; i++) {
+		for (int i = 0; i < maxCount; i++) {
 			if (i % 2 == 0) {
 				DataModel rootLevel = new DataModel(Integer.valueOf(i));
-				for (int j = 0; j < 40; j++) {
+				for (int j = 0; j < maxCount; j++) {
 					if (j % 2 == 0) {
 						DataModel level1 = new DataModel(Integer.valueOf(j));
 						level1.parent = rootLevel;
-						for (int k = 0; k < 40; k++) {
+						for (int k = 0; k < maxCount; k++) {
 							if (k % 2 == 0) {
 								DataModel level2 = new DataModel(Integer.valueOf(k));
 								level2.parent = level1;
