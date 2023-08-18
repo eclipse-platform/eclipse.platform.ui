@@ -242,12 +242,23 @@ public class ViewerItemsLimitTest extends UITestCase {
 		if (nextBlock > realInputSize) {
 			nextBlock = realInputSize;
 		}
-		String expLabel = JFaceResources.format("ExpandableNode.defaultLabel", currentLimit + 1, nextBlock,
-				realInputSize);
-
-		assertEquals("Incorrect text for expand node", expLabel, lastItem.getText().trim());
+		String expLabel = calculateExpandableLabel(lastItem.getData(), realInputSize);
 		ExpandableNode node = (ExpandableNode) lastItem.getData();
 		assertEquals(expLabel, node.getLabel());
+	}
+
+	@SuppressWarnings("boxing")
+	private String calculateExpandableLabel(Object data, int realInputSize) {
+		ExpandableNode node = (ExpandableNode) data;
+		int remaining = realInputSize - node.getOffset();
+		String expectedLabel;
+		if (remaining > node.getLimit()) {
+			expectedLabel = JFaceResources.format("ExpandableNode.defaultLabel", node.getLimit(), remaining); //$NON-NLS-1$
+		} else {
+			String suffix = remaining == 1 ? "" : "s"; //$NON-NLS-1$
+			expectedLabel = JFaceResources.format("ExpandableNode.showRemaining", remaining, suffix); //$NON-NLS-1$
+		}
+		return expectedLabel;
 	}
 
 	private void setNewViewerLimit(int viewerLimit) {

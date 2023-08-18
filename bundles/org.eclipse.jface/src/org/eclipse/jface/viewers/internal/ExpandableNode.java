@@ -99,6 +99,13 @@ public class ExpandableNode {
 	}
 
 	/**
+	 * @return limit value
+	 */
+	public int getLimit() {
+		return limit;
+	}
+
+	/**
 	 * This method returns those children of the current node which are supposed to
 	 * be not created / shown yet in the viewer.
 	 *
@@ -157,15 +164,21 @@ public class ExpandableNode {
 	/**
 	 * {@return label shown for the node in the viewer}
 	 */
+	@SuppressWarnings("boxing")
 	public String getLabel() {
-		Integer start = Integer.valueOf(this.start + 1);
-		Integer length = Integer.valueOf(orginalArray.length + addedElements.size());
-		int next = this.start + this.limit;
-		if (next > orginalArray.length + addedElements.size()) {
-			next = orginalArray.length + addedElements.size();
+		int all = orginalArray.length + addedElements.size();
+		int remaining = all - start;
+		String label;
+		if (remaining > limit) {
+			if (remaining == limit + 1) {
+				String suffix = remaining == 1 ? "" : "s"; //$NON-NLS-1$ //$NON-NLS-2$
+				return JFaceResources.format("ExpandableNode.showRemaining", remaining, suffix); //$NON-NLS-1$ ;
+			}
+			label = JFaceResources.format("ExpandableNode.defaultLabel", limit, remaining); //$NON-NLS-1$
+		} else {
+			String suffix = remaining == 1 ? "" : "s"; //$NON-NLS-1$ //$NON-NLS-2$
+			label = JFaceResources.format("ExpandableNode.showRemaining", remaining, suffix); //$NON-NLS-1$
 		}
-		Integer nextBlock = Integer.valueOf(next);
-		String label = JFaceResources.format("ExpandableNode.defaultLabel", start, nextBlock, length); //$NON-NLS-1$
 		return label;
 	}
 

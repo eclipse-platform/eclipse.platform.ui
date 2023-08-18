@@ -872,7 +872,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 		// limit the number of items to be created. sorted always gets the remaining
 		// elements to be created.
 		final int itemsLimit = getItemsLimit();
-		if (itemsLimit <= 0 || sorted.length <= itemsLimit) {
+		if (itemsLimit <= 0 || sorted.length <= itemsLimit || sorted.length == itemsLimit + 1) {
 			return sorted;
 		}
 
@@ -958,6 +958,12 @@ public abstract class ColumnViewer extends StructuredViewer {
 		// there can any number of elements in the model. but viewer was showing
 		// ExpandableNode. Then return the same length.
 		if (visibleChildren[visibleItemsLength - 1].getData() instanceof ExpandableNode) {
+			if (sortedAll.length == visibleItemsLength) {
+				// model returns now exact the visible number of elements (note, last visible is
+				// expandable node): just return all without expandable node
+				return sortedAll;
+			}
+
 			// Now we need exactly previously visible length.
 			Object[] subArray = new Object[visibleItemsLength];
 			System.arraycopy(sortedAll, 0, subArray, 0, visibleItemsLength - 1);

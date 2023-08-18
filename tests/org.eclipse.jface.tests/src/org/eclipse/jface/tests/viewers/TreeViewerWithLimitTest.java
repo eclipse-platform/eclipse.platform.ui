@@ -180,10 +180,14 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 	}
 
 	public void testRemoveItem() {
+		processEvents();
+		treeViewer.expandAll();
+		processEvents();
 		DataModel firstEle = rootModel.remove(0);
 		TreeItem firstItem = treeViewer.getTree().getItem(0);
 		assertEquals("element contains unexpected data", firstEle, firstItem.getData());
 		treeViewer.remove(firstEle);
+		processEvents();
 		firstEle = rootModel.get(0);
 		firstItem = treeViewer.getTree().getItem(0);
 		assertEquals("element contains unexpected data", firstEle, firstItem.getData());
@@ -243,7 +247,7 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		treeViewer.setInput(rootModel);
 		processEvents();
 		assertEquals("there must be only one item", 1, treeViewer.getTree().getItems().length);
-		treeViewer.setInput(createModel());
+		treeViewer.setInput(createModel(DEFAULT_ELEMENTS_COUNT));
 		processEvents();
 		assertLimitedItems();
 	}
@@ -279,7 +283,7 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 
 	@Override
 	protected void setInput() {
-		rootModel = createModel();
+		rootModel = createModel(DEFAULT_ELEMENTS_COUNT);
 		treeViewer.setInput(rootModel);
 	}
 
