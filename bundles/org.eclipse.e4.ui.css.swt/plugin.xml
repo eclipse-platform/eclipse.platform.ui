@@ -352,6 +352,14 @@
       <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
             composite="false"
+            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyTabFullTextHandler">
+         <property-name
+               name="swt-tab-full-text">
+         </property-name>
+      </handler>
+      <handler
+            adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
+            composite="false"
             handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertySingleSWTHandler">
          <property-name
                name="swt-single">
@@ -371,6 +379,14 @@
             handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyUnselectedImageVisibleSWTHandler">
          <property-name
                name="swt-unselected-image-visible">
+         </property-name>
+      </handler>
+      <handler
+            adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
+            composite="false"
+            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertySelectedImageVisibleSWTHandler">
+         <property-name
+               name="swt-selected-image-visible">
          </property-name>
       </handler>
       <handler
