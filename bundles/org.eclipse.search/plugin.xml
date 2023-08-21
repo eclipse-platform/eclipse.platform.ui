@@ -11,7 +11,6 @@
 	<extension-point name="%searchPages" id="searchPages" schema="schema/searchPages.exsd"/>
 	<extension-point name="%searchResultSorters" id="searchResultSorters" schema="schema/searchResultSorters.exsd"/>
   	<extension-point name="%searchResultViewPages" id="searchResultViewPages" schema="schema/searchResultViewPages.exsd"/>
-    <extension-point name="%textSearchEngine" id="textSearchEngine" schema="schema/textSearchEngine.exsd"/>
     <extension-point name="%textSearchQueryProvider" id="textSearchQueryProvider" schema="schema/textSearchQueryProvider.exsd"/>
 	
 	
@@ -390,5 +389,11 @@
             %match_highlight.description
          </description>
       </colorDefinition>
+   </extension>
+   <extension
+         point="org.eclipse.search.core.dirtyFileSearchParticipant">
+      <dirtyFileSearchParticipant
+            class="org.eclipse.search.internal.ui.text.DirtyFileSearchParticipant">
+      </dirtyFileSearchParticipant>
    </extension>
 </plugin>

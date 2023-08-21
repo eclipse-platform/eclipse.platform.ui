@@ -53,7 +53,7 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 	public static final String DEFAULT_PERSPECTIVE= "org.eclipse.search.defaultPerspective"; //$NON-NLS-1$
 	private static final String NO_DEFAULT_PERSPECTIVE= "org.eclipse.search.defaultPerspective.none"; //$NON-NLS-1$
 	public static final String BRING_VIEW_TO_FRONT= "org.eclipse.search.bringToFront"; //$NON-NLS-1$
-	public static final String TEXT_SEARCH_ENGINE = "org.eclipse.search.textSearchEngine"; //$NON-NLS-1$
+	public static final String TEXT_SEARCH_ENGINE = TextSearchEngineRegistry.PREFERENCE_ENGINE_KEY;
 	public static final String TEXT_SEARCH_QUERY_PROVIDER = "org.eclipse.search.textSearchQueryProvider"; //$NON-NLS-1$
 	public static final String LIMIT_HISTORY= "org.eclipse.search.limitHistory"; //$NON-NLS-1$
 

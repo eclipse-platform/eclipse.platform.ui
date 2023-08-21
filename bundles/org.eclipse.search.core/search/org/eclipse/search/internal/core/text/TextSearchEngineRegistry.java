@@ -15,20 +15,23 @@
 package org.eclipse.search.internal.core.text;
 
 import java.util.ArrayList;
+import java.util.Objects;
+
+import org.osgi.service.prefs.BackingStoreException;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
-
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import org.eclipse.search.core.text.TextSearchEngine;
-import org.eclipse.search.internal.ui.SearchMessages;
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.SearchPreferencePage;
+import org.eclipse.search.internal.core.SearchCoreMessages;
+import org.eclipse.search.internal.core.SearchCorePlugin;
 
 
 public class TextSearchEngineRegistry {
+	public static final String PREFERENCE_ENGINE_KEY = "org.eclipse.search.textSearchEngine";
 
 	private static final String EXTENSION_POINT_ID= "org.eclipse.search.textSearchEngine"; //$NON-NLS-1$
 	private static final String ENGINE_NODE_NAME= "textSearchEngine"; //$NON-NLS-1$
@@ -46,14 +49,14 @@ public class TextSearchEngineRegistry {
 
 	public TextSearchEngine getPreferred() {
 		String preferredId= getPreferredEngineID();
-		if (!preferredId.equals(fPreferredEngineId)) {
+		if (!Objects.equals(preferredId, fPreferredEngineId) || fPreferredEngine == null) {
 			updateEngine(preferredId);
 		}
 		return fPreferredEngine;
 	}
 
 	private void updateEngine(String preferredId) {
-		if (!preferredId.isEmpty()) { // empty string: default engine
+		if (preferredId != null && !preferredId.isEmpty()) {
 			TextSearchEngine engine= createFromExtension(preferredId);
 			if (engine != null) {
 				fPreferredEngineId= preferredId;
@@ -63,25 +66,38 @@ public class TextSearchEngineRegistry {
 			// creation failed, clear preference
 			setPreferredEngineID(""); // set to default //$NON-NLS-1$
 		}
+		// empty string: default engine
 		fPreferredEngineId= ""; //$NON-NLS-1$
 		fPreferredEngine= TextSearchEngine.createDefault();
 	}
 
 	private String getPreferredEngineID() {
-		IPreferenceStore prefs= SearchPlugin.getDefault().getPreferenceStore();
-		String preferedEngine= prefs.getString(SearchPreferencePage.TEXT_SEARCH_ENGINE);
+		String pluginId = getPreferencePluginId();
+		String preferedEngine = Platform.getPreferencesService().get(PREFERENCE_ENGINE_KEY, null,
+				new IEclipsePreferences[] { InstanceScope.INSTANCE.getNode(pluginId) });
 		return preferedEngine;
 	}
 
 	private void setPreferredEngineID(String id) {
-		IPreferenceStore prefs= SearchPlugin.getDefault().getPreferenceStore();
-		prefs.setValue(SearchPreferencePage.TEXT_SEARCH_ENGINE, id);
+		String pluginId = getPreferencePluginId();
+		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(pluginId);
+		preferences.put(PREFERENCE_ENGINE_KEY, id);
+		try {
+			// forces the application to save the preferences
+			preferences.flush();
+		} catch (BackingStoreException e) {
+			e.printStackTrace();
+		}
+	}
+
+	protected String getPreferencePluginId() {
+		return "org.eclipse.search";
 	}
 
 	private TextSearchEngine createFromExtension(final String id) {
 		final TextSearchEngine[] res= new TextSearchEngine[] { null };
 
-		SafeRunnable safe= new SafeRunnable() {
+		ISafeRunnable safe = new ISafeRunnable() {
 			@Override
 			public void run() throws Exception {
 				IConfigurationElement[] extensions= Platform.getExtensionRegistry().getConfigurationElementsFor(EXTENSION_POINT_ID);
@@ -94,16 +110,20 @@ public class TextSearchEngineRegistry {
 			}
 			@Override
 			public void handleException(Throwable e) {
-				SearchPlugin.log(e);
+				SearchCorePlugin.log(e);
 			}
 		};
-		SafeRunnable.run(safe);
+		try {
+			safe.run();
+		} catch (Exception | LinkageError e) {
+			safe.handleException(e);
+		}
 		return res[0];
 	}
 
 	public String[][] getAvailableEngines() {
 		ArrayList<String[]> res= new ArrayList<>();
-		res.add(new String[] { SearchMessages.TextSearchEngineRegistry_defaulttextsearch_label, "" }); //$NON-NLS-1$
+		res.add(new String[] { SearchCoreMessages.TextSearchEngineRegistry_defaulttextsearch_label, "" }); //$NON-NLS-1$
 
 		IConfigurationElement[] extensions= Platform.getExtensionRegistry().getConfigurationElementsFor(EXTENSION_POINT_ID);
 		for (IConfigurationElement engine : extensions) {

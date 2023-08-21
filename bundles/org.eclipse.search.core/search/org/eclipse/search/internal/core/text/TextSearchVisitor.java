@@ -19,9 +19,9 @@ import java.io.CharConversionException;
 import java.io.IOException;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,25 +57,12 @@ import org.eclipse.core.filebuffers.LocationKind;
 
 import org.eclipse.jface.text.IDocument;
 
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.ui.texteditor.ITextEditor;
-
 import org.eclipse.search.core.text.TextSearchMatchAccess;
 import org.eclipse.search.core.text.TextSearchRequestor;
 import org.eclipse.search.core.text.TextSearchScope;
+import org.eclipse.search.internal.core.SearchCoreMessages;
+import org.eclipse.search.internal.core.SearchCorePlugin;
 import org.eclipse.search.internal.core.text.FileCharSequenceProvider.FileCharSequenceException;
-import org.eclipse.search.internal.ui.Messages;
-import org.eclipse.search.internal.ui.SearchMessages;
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.ui.NewSearchUI;
 
 /**
  * The visitor that does the actual work.
@@ -177,7 +164,8 @@ public class TextSearchVisitor {
 		@Override
 		protected IStatus run(IProgressMonitor inner) {
 			MultiStatus multiStatus=
-					new MultiStatus(NewSearchUI.PLUGIN_ID, IStatus.OK, SearchMessages.TextSearchEngine_statusMessage, null);
+					new MultiStatus(SearchCorePlugin.PLUGIN_ID, IStatus.OK,
+							SearchCoreMessages.TextSearchEngine_statusMessage, null);
 			SubMonitor subMonitor = SubMonitor.convert(inner, fileBatches.size() / jobCount); // approximate
 			this.fileCharSequenceProvider= new FileCharSequenceProvider();
 			List<IFile> sameFiles;
@@ -248,32 +236,32 @@ public class TextSearchVisitor {
 					try {
 						fileCharSequenceProvider.releaseCharSequence(charsequence);
 					} catch (IOException e) {
-						SearchPlugin.log(e);
+						SearchCorePlugin.log(e);
 					}
 				}
 			} catch (UnsupportedCharsetException e) {
 				String[] args= { getCharSetName(file), file.getFullPath().makeRelative().toString()};
-				String message= Messages.format(SearchMessages.TextSearchVisitor_unsupportedcharset, args);
-				return new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, message, e);
+				String message = MessageFormat.format(SearchCoreMessages.TextSearchVisitor_unsupportedcharset, args);
+				return new Status(IStatus.ERROR, SearchCorePlugin.PLUGIN_ID, IStatus.ERROR, message, e);
 			} catch (IllegalCharsetNameException e) {
 				String[] args= { getCharSetName(file), file.getFullPath().makeRelative().toString()};
-				String message= Messages.format(SearchMessages.TextSearchVisitor_illegalcharset, args);
-				return new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, message, e);
+				String message = MessageFormat.format(SearchCoreMessages.TextSearchVisitor_illegalcharset, args);
+				return new Status(IStatus.ERROR, SearchCorePlugin.PLUGIN_ID, IStatus.ERROR, message, e);
 			} catch (IOException e) {
 				String[] args= { getExceptionMessage(e), file.getFullPath().makeRelative().toString()};
-				String message= Messages.format(SearchMessages.TextSearchVisitor_error, args);
-				return new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, message, e);
+				String message = MessageFormat.format(SearchCoreMessages.TextSearchVisitor_error, args);
+				return new Status(IStatus.ERROR, SearchCorePlugin.PLUGIN_ID, IStatus.ERROR, message, e);
 			} catch (CoreException e) {
 				if (fIsLightweightAutoRefresh && IResourceStatus.RESOURCE_NOT_FOUND == e.getStatus().getCode()) {
 					return monitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
 				}
 				String[] args= { getExceptionMessage(e), file.getFullPath().makeRelative().toString() };
-				String message= Messages.format(SearchMessages.TextSearchVisitor_error, args);
-				return new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, message, e);
+				String message = MessageFormat.format(SearchCoreMessages.TextSearchVisitor_error, args);
+				return new Status(IStatus.ERROR, SearchCorePlugin.PLUGIN_ID, IStatus.ERROR, message, e);
 			} catch (StackOverflowError e) {
 				fFatalError= true;
-				String message= SearchMessages.TextSearchVisitor_patterntoocomplex0;
-				return new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, message, e);
+				String message= SearchCoreMessages.TextSearchVisitor_patterntoocomplex0;
+				return new Status(IStatus.ERROR, SearchCorePlugin.PLUGIN_ID, IStatus.ERROR, message, e);
 			} finally {
 				synchronized (fLock) {
 					fCurrentFile= file;
@@ -307,10 +295,13 @@ public class TextSearchVisitor {
 	private volatile boolean fFatalError; // If true, terminates the search.
 
 	private volatile boolean fIsLightweightAutoRefresh;
+	private IDirtyFileSearchParticipant fDirtyDiscovery;
 
-	public TextSearchVisitor(TextSearchRequestor collector, Pattern searchPattern) {
+	public TextSearchVisitor(TextSearchRequestor collector, Pattern searchPattern, IDirtyFileSearchParticipant dirtyDiscovery) {
 		fCollector= collector;
-		fStatus= new MultiStatus(NewSearchUI.PLUGIN_ID, IStatus.OK, SearchMessages.TextSearchEngine_statusMessage, null);
+		fDirtyDiscovery = dirtyDiscovery;
+		fStatus = new MultiStatus(SearchCorePlugin.PLUGIN_ID, IStatus.OK,
+				SearchCoreMessages.TextSearchEngine_statusMessage, null);
 
 		fSearchPattern= searchPattern;
 
@@ -334,15 +325,15 @@ public class TextSearchVisitor {
 
 		try {
 			String taskName= fSearchPattern.pattern().isEmpty()
-					? SearchMessages.TextSearchVisitor_filesearch_task_label
+					? SearchCoreMessages.TextSearchVisitor_filesearch_task_label
 					: ""; //$NON-NLS-1$
 			try {
 				fCollector.beginReporting();
 				if (fProgressMonitor.isCanceled()) {
-					throw new OperationCanceledException(SearchMessages.TextSearchVisitor_canceled);
+					throw new OperationCanceledException(SearchCoreMessages.TextSearchVisitor_canceled);
 				}
 
-				Map<IFile, IDocument> documentsInEditors= PlatformUI.isWorkbenchRunning() ? evalNonFileBufferDocuments() : Collections.emptyMap();
+				Map<IFile, IDocument> documentsInEditors = findDirtyFiles();
 
 				// group files with same content together:
 				Map<String, List<IFile>> localFilesByLocation = new LinkedHashMap<>();
@@ -395,7 +386,8 @@ public class TextSearchVisitor {
 						String fileName = file.getName();
 						Object[] args = { fileName, Integer.valueOf(numberOfScannedFiles),
 								Integer.valueOf(numberOfFilesToScan) };
-						fProgressMonitor.subTask(Messages.format(SearchMessages.TextSearchVisitor_scanning, args));
+						fProgressMonitor
+								.subTask(MessageFormat.format(SearchCoreMessages.TextSearchVisitor_scanning, args));
 						int steps = numberOfScannedFiles - lastNumberOfScannedFiles;
 						fProgressMonitor.worked(steps);
 						lastNumberOfScannedFiles += steps;
@@ -409,13 +401,13 @@ public class TextSearchVisitor {
 				// canceled anyway:
 				jobGroup.join(0, null);
 				if (fProgressMonitor.isCanceled()) {
-					throw new OperationCanceledException(SearchMessages.TextSearchVisitor_canceled);
+					throw new OperationCanceledException(SearchCoreMessages.TextSearchVisitor_canceled);
 				}
 
 				fStatus.addAll(jobGroup.getResult());
 				return fStatus;
 			} catch (InterruptedException e) {
-				throw new OperationCanceledException(SearchMessages.TextSearchVisitor_canceled);
+				throw new OperationCanceledException(SearchCoreMessages.TextSearchVisitor_canceled);
 			} finally {
 				fileBatches.clear();
 			}
@@ -424,60 +416,23 @@ public class TextSearchVisitor {
 			fCollector.endReporting();
 			if (TRACING) {
 				Object[] args= { Integer.valueOf(fNumberOfScannedFiles), Integer.valueOf(jobCount), Integer.valueOf(NUMBER_OF_LOGICAL_THREADS), Long.valueOf(System.currentTimeMillis() - startTime) };
-				System.out.println(Messages.format(
+				System.out.println(MessageFormat.format(
 						"[TextSearch] Search duration for {0} files in {1} jobs using {2} threads: {3}ms", args)); //$NON-NLS-1$
 			}
 		}
 	}
 
+	private Map<IFile, IDocument> findDirtyFiles() {
+		if (fDirtyDiscovery != null) {
+			Map<IFile, IDocument> ret = fDirtyDiscovery.findDirtyFiles();
+			if (ret != null)
+				return ret;
+		}
+		return Collections.emptyMap();
+	}
+
 	public IStatus search(TextSearchScope scope, IProgressMonitor monitor) {
 		return search(scope.evaluateFilesInScope(fStatus), monitor);
-	}
-
-	/**
-	 * Returns a map from IFile to IDocument for all open, dirty editors. After creation this map
-	 * is not modified, so returning a non-synchronized map is ok.
-	 *
-	 * @return a map from IFile to IDocument for all open, dirty editors
-	 */
-	private Map<IFile, IDocument> evalNonFileBufferDocuments() {
-		Map<IFile, IDocument> result= new HashMap<>();
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
-		for (IWorkbenchWindow window : windows) {
-			IWorkbenchPage[] pages= window.getPages();
-			for (IWorkbenchPage page : pages) {
-				IEditorReference[] editorRefs= page.getEditorReferences();
-				for (IEditorReference editorRef : editorRefs) {
-					IEditorPart ep= editorRef.getEditor(false);
-					if (ep instanceof ITextEditor && ep.isDirty()) { // only dirty editors
-						evaluateTextEditor(result, ep);
-					}
-				}
-			}
-		}
-		return result;
-	}
-
-	private void evaluateTextEditor(Map<IFile, IDocument> result, IEditorPart ep) {
-		IEditorInput input= ep.getEditorInput();
-		if (input instanceof IFileEditorInput) {
-			IFile file= ((IFileEditorInput) input).getFile();
-			if (!result.containsKey(file)) { // take the first editor found
-				ITextFileBufferManager bufferManager= FileBuffers.getTextFileBufferManager();
-				ITextFileBuffer textFileBuffer= bufferManager.getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);
-				if (textFileBuffer != null) {
-					// file buffer has precedence
-					result.put(file, textFileBuffer.getDocument());
-				} else {
-					// use document provider
-					IDocument document= ((ITextEditor) ep).getDocumentProvider().getDocument(input);
-					if (document != null) {
-						result.put(file, document);
-					}
-				}
-			}
-		}
 	}
 
 	private boolean hasBinaryContent(CharSequence seq, IFile file) throws CoreException {

@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 
-import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.internal.core.SearchCoreMessages;
 
 /**
  *
@@ -128,7 +128,7 @@ public class PatternConstructor {
 
 						} else if (ch1 == 'R') {
 							if (inCharGroup > 0 || inBraces > 0) {
-								String msg= SearchMessages.PatternConstructor_error_line_delim_position;
+								String msg= SearchCoreMessages.PatternConstructor_error_line_delim_position;
 								throw new PatternSyntaxException(msg, findString, i);
 							}
 							buf.append("(?>\\r\\n?|\\n)"); //$NON-NLS-1$
@@ -420,7 +420,7 @@ public class PatternConstructor {
 						interpretRetainCase(buf, (char)(ch1 ^ 64));
 						i++;
 					} else {
-						String msg= SearchMessages.PatternConstructor_error_escape_sequence;
+						String msg= SearchCoreMessages.PatternConstructor_error_escape_sequence;
 						throw new PatternSyntaxException(msg, replaceText, i);
 					}
 					break;
@@ -433,13 +433,13 @@ public class PatternConstructor {
 							if (parsedInt < 0)
 								throw new NumberFormatException();
 						} catch (NumberFormatException e) {
-							String msg= SearchMessages.PatternConstructor_error_hex_escape_sequence;
+							String msg= SearchCoreMessages.PatternConstructor_error_hex_escape_sequence;
 							throw new PatternSyntaxException(msg, replaceText, i);
 						}
 						interpretRetainCase(buf, (char) parsedInt);
 						i+= 2;
 					} else {
-						String msg= SearchMessages.PatternConstructor_error_hex_escape_sequence;
+						String msg= SearchCoreMessages.PatternConstructor_error_hex_escape_sequence;
 						throw new PatternSyntaxException(msg, replaceText, i);
 					}
 					break;
@@ -452,13 +452,13 @@ public class PatternConstructor {
 							if (parsedInt < 0)
 								throw new NumberFormatException();
 						} catch (NumberFormatException e) {
-							String msg= SearchMessages.PatternConstructor_error_unicode_escape_sequence;
+							String msg= SearchCoreMessages.PatternConstructor_error_unicode_escape_sequence;
 							throw new PatternSyntaxException(msg, replaceText, i);
 						}
 						interpretRetainCase(buf, (char) parsedInt);
 						i+= 4;
 					} else {
-						String msg= SearchMessages.PatternConstructor_error_unicode_escape_sequence;
+						String msg= SearchCoreMessages.PatternConstructor_error_unicode_escape_sequence;
 						throw new PatternSyntaxException(msg, replaceText, i);
 					}
 					break;
