@@ -62,6 +62,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -106,6 +108,9 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	private boolean highContrastMode;
 
 	private Button themingEnabled;
+
+	private Button hideIcons;
+	private Button showFullText;
 
 	@Override
 	protected Control createContents(Composite parent) {
@@ -178,6 +183,53 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		createUseRoundTabs(comp);
 		createColoredLabelsPref(comp);
 		createEnableMruPref(comp);
+		createShowFullText(comp);
+		createHideIcons(comp);
+		createDependency(showFullText, hideIcons);
+	}
+
+	protected void createShowFullText(Composite composite) {
+		IEclipsePreferences prefs = getSwtRendererPreferences();
+		boolean actualValue = prefs.getBoolean(CTabRendering.SHOW_FULL_TEXT, CTabRendering.SHOW_FULL_TEXT_DEFAULT);
+		createLabel(composite, ""); //$NON-NLS-1$
+		createLabel(composite, "Tab icons and titles in view areas:"); //$NON-NLS-1$
+		showFullText = createCheckButton(composite, "Always show full titles", //$NON-NLS-1$
+				actualValue);
+	}
+
+	protected void createHideIcons(Composite composite) {
+		IEclipsePreferences prefs = getSwtRendererPreferences();
+		boolean actualValue = prefs.getBoolean(CTabRendering.HIDE_ICONS, CTabRendering.HIDE_ICONS_DEFAULT);
+		hideIcons = createCheckButton(composite, "Hide icons", actualValue); //$NON-NLS-1$
+	}
+
+	/**
+	 * @param showFullText
+	 * @param hideIcons
+	 */
+	private void createDependency(Button parent, Button dependent) {
+		GridData gridData = new GridData();
+		gridData.horizontalIndent = 20;
+		dependent.setLayoutData(gridData);
+
+		boolean parentState = parent.getSelection();
+		dependent.setEnabled(parentState);
+
+		SelectionListener listener = new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				boolean state = parent.getSelection();
+				dependent.setEnabled(state);
+
+				if (state == false)
+					dependent.setSelection(state);
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		};
+		parent.addSelectionListener(listener);
 	}
 
 	private List<ITheme> getCSSThemes(boolean highContrastMode) {
@@ -274,6 +326,10 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		prefs.putBoolean(PartRenderingEngine.ENABLED_THEME_KEY, themingEnabled.getSelection());
 
 		prefs.putBoolean(CTabRendering.USE_ROUND_TABS, useRoundTabs.getSelection());
+
+		prefs.putBoolean(CTabRendering.HIDE_ICONS, hideIcons.getSelection());
+
+		prefs.putBoolean(CTabRendering.SHOW_FULL_TEXT, showFullText.getSelection());
 		try {
 			prefs.flush();
 		} catch (BackingStoreException e) {
@@ -350,6 +406,8 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		useColoredLabels.setSelection(apiStore.getDefaultBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS));
 
 		useRoundTabs.setSelection(CTabRendering.USE_ROUND_TABS_DEFAULT);
+		hideIcons.setSelection(CTabRendering.HIDE_ICONS_DEFAULT);
+		showFullText.setSelection(CTabRendering.SHOW_FULL_TEXT_DEFAULT);
 		enableMru.setSelection(getDefaultMRUValue());
 		super.performDefaults();
 	}

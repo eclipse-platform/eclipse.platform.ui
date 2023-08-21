@@ -18,15 +18,19 @@
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.Optional;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.ui.internal.css.swt.ICTabRendering;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolderRenderer;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -54,6 +58,34 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 	 * Default value for "use round tabs" preference
 	 */
 	public static final boolean USE_ROUND_TABS_DEFAULT = false;
+	/**
+	 * A named preference for setting CTabFolder's to be rendered without icons
+	 * <p>
+	 * The default value for this preference is: <code>false</code> (render
+	 * CTabFolder's with icons)
+	 * </p>
+	 */
+	public static final String HIDE_ICONS = "HIDE_ICONS"; //$NON-NLS-1$
+
+	/**
+	 * Default value for "hide icons" preference
+	 */
+	public static final boolean HIDE_ICONS_DEFAULT = false;
+	/**
+	 * A named preference for setting CTabFolder's to show full text
+	 * <p>
+	 * The default value for this preference is: <code>false</code> (render
+	 * CTabFolder's without full text)
+	 * </p>
+	 */
+	public static final String SHOW_FULL_TEXT = "SHOW_FULL_TEXT"; //$NON-NLS-1$
+
+	/**
+	 * Default value for "hide icons" preference
+	 */
+	public static final boolean SHOW_FULL_TEXT_DEFAULT = false;
+
+	private static int MIN_VIEW_CHARS = 1;
 
 	// Constants for circle drawing
 	static enum CirclePart {
@@ -1264,13 +1296,79 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 
 	@Override
 	public void preferenceChange(PreferenceChangeEvent event) {
-		if (!USE_ROUND_TABS.equals(event.getKey())) {
+		if (event.getKey().equals(USE_ROUND_TABS)) {
+			cornerRadiusPreferenceChanged();
+		} else if (event.getKey().equals(HIDE_ICONS)) {
+			hideIcons();
+		} else if (event.getKey().equals(SHOW_FULL_TEXT)) {
+			showFullText();
+		} else {
 			return;
 		}
-		cornerRadiusPreferenceChanged();
+	}
+
+	private void showFullText() {
+		boolean showFullText = getShowFullTextPreference();
+		if (!isPartOfEditorStack()) {
+			if (showFullText == true) {
+				Optional<Integer> max = Arrays.stream(parent.getItems()).map(CTabItem::getText).map(String::length)
+						.max(Integer::compare);
+				parent.setMinimumCharacters(max.orElseGet(() -> 9999));
+			} else {
+				parent.setMinimumCharacters(MIN_VIEW_CHARS);
+			}
+		}
+	}
+
+	private void hideIcons() {
+		boolean hideIcons = getHideIconsPreference();
+		if (!isPartOfEditorStack()) {
+			parent.setSelectedImageVisible(!hideIcons);
+			parent.setUnselectedImageVisible(!hideIcons);
+			parent.redraw();
+		}
 	}
 
 	private IEclipsePreferences getSwtRendererPreferences() {
 		return InstanceScope.INSTANCE.getNode("org.eclipse.e4.ui.workbench.renderers.swt"); //$NON-NLS-1$
 	}
+
+	private boolean isPartOfEditorStack() {
+		MUIElement element = (MUIElement) parent.getData("modelElement"); //$NON-NLS-1$
+		if (element != null && element.getTags().contains("EditorStack")) { //$NON-NLS-1$
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	protected boolean showSelectedTabImage(Image image) {
+		if (!isPartOfEditorStack()) {
+			boolean hideIcons = getHideIconsPreference();
+			return image != null && !image.isDisposed() && !hideIcons;
+		}
+		return super.showSelectedTabImage(image);
+	}
+
+	@Override
+	protected boolean showUnselectedTabImage(Image image) {
+		if (!isPartOfEditorStack()) {
+			boolean hideIcons = getHideIconsPreference();
+			return image != null && !image.isDisposed() && !hideIcons;
+		}
+		return super.showUnselectedTabImage(image);
+	}
+
+	private boolean getHideIconsPreference() {
+		IEclipsePreferences preferences = getSwtRendererPreferences();
+		boolean hideIcons = preferences.getBoolean(HIDE_ICONS, HIDE_ICONS_DEFAULT);
+		return hideIcons;
+	}
+
+	private boolean getShowFullTextPreference() {
+		IEclipsePreferences preferences = getSwtRendererPreferences();
+		boolean showFullText = preferences.getBoolean(SHOW_FULL_TEXT, SHOW_FULL_TEXT_DEFAULT);
+		return showFullText;
+	}
+
 }
