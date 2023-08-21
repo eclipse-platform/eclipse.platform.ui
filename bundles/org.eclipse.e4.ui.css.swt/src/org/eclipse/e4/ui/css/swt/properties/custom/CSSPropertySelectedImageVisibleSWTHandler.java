@@ -24,11 +24,11 @@ AbstractCSSPropertySWTHandler {
 	@Override
 	public void applyCSSProperty(Control control, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		boolean isUnselectedImage = (Boolean) engine.convert(value,
+		boolean isSelectedImage = (Boolean) engine.convert(value,
 				Boolean.class, null);
 		if (control instanceof CTabFolder) {
 			CTabFolder folder = (CTabFolder) control;
-			folder.setSelectedImageVisible(isUnselectedImage);
+			folder.setSelectedImageVisible(isSelectedImage);
 		}
 	}
 
@@ -39,7 +39,6 @@ AbstractCSSPropertySWTHandler {
 			CTabFolder folder = (CTabFolder) control;
 			return Boolean.toString(folder.getSelectedImageVisible());
 		}
-
 		return null;
 	}
 
