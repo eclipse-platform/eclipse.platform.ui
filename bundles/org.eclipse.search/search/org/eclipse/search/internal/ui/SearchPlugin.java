@@ -45,6 +45,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
+import org.eclipse.search.internal.core.SearchCorePlugin;
 import org.eclipse.search.internal.core.text.TextSearchEngineRegistry;
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
 import org.eclipse.search.ui.IContextMenuConstants;
@@ -91,14 +92,12 @@ public class SearchPlugin extends AbstractUIPlugin {
 
 	private List<SearchPageDescriptor> fPageDescriptors;
 	private List<SorterDescriptor> fSorterDescriptors;
-	private TextSearchEngineRegistry fTextSearchEngineRegistry;
 	private TextSearchQueryProviderRegistry fTextSearchQueryProviderRegistry;
 
 	public SearchPlugin() {
 		super();
 		Assert.isTrue(fgSearchPlugin == null);
 		fgSearchPlugin= this;
-		fTextSearchEngineRegistry= null;
 		fTextSearchQueryProviderRegistry= null;
 	}
 
@@ -268,10 +267,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 
 
 	public TextSearchEngineRegistry getTextSearchEngineRegistry() {
-		if (fTextSearchEngineRegistry == null) {
-			fTextSearchEngineRegistry= new TextSearchEngineRegistry();
-		}
-		return fTextSearchEngineRegistry;
+		return SearchCorePlugin.getDefault().getTextSearchEngineRegistry();
 	}
 
 	public TextSearchQueryProviderRegistry getTextSearchQueryProviderRegistry() {

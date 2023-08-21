@@ -21,9 +21,10 @@ import org.eclipse.core.runtime.IStatus;
 
 import org.eclipse.core.resources.IFile;
 
+import org.eclipse.search.internal.core.SearchCorePlugin;
+import org.eclipse.search.internal.core.text.DirtyFileProvider;
 import org.eclipse.search.internal.core.text.PatternConstructor;
 import org.eclipse.search.internal.core.text.TextSearchVisitor;
-import org.eclipse.search.internal.ui.SearchPlugin;
 
 
 /**
@@ -44,7 +45,7 @@ public abstract class TextSearchEngine {
 	 * @return the created {@link TextSearchEngine}.
 	 */
 	public static TextSearchEngine create() {
-		return SearchPlugin.getDefault().getTextSearchEngineRegistry().getPreferred();
+		return SearchCorePlugin.getDefault().getTextSearchEngineRegistry().getPreferred();
 	}
 
 	/**
@@ -54,15 +55,16 @@ public abstract class TextSearchEngine {
 	 * @return an instance of the default text search engine {@link TextSearchEngine}.
 	 */
 	public static TextSearchEngine createDefault() {
+		DirtyFileProvider discovery = SearchCorePlugin.getDefault().getDirtyFileDiscovery();
 		return new TextSearchEngine() {
 			@Override
 			public IStatus search(TextSearchScope scope, TextSearchRequestor requestor, Pattern searchPattern, IProgressMonitor monitor) {
-				return new TextSearchVisitor(requestor, searchPattern).search(scope, monitor);
+				return new TextSearchVisitor(requestor, searchPattern, discovery).search(scope, monitor);
 			}
 
 			@Override
 			public IStatus search(IFile[] scope, TextSearchRequestor requestor, Pattern searchPattern, IProgressMonitor monitor) {
-				 return new TextSearchVisitor(requestor, searchPattern).search(scope, monitor);
+				return new TextSearchVisitor(requestor, searchPattern, discovery).search(scope, monitor);
 			}
 		};
 	}
