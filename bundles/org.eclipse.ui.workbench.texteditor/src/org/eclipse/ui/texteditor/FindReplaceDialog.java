@@ -1693,6 +1693,7 @@ class FindReplaceDialog extends Dialog {
 			fWholeWordCheckBox.setEnabled(isWord(str) && !isRegExSearchAvailableAndChecked());
 
 			fFindNextButton.setEnabled(enable && findString);
+			fSelectAllButton.setEnabled(enable && findString && fTarget instanceof IFindReplaceTargetExtension4);
 			fReplaceSelectionButton.setEnabled(!disableReplace && enable && isEditable() && selection && (!fNeedsInitialFindBeforeReplace || !isRegExSearchAvailableAndChecked()));
 			fReplaceFindButton.setEnabled(!disableReplace && enable && isEditable() && findString && selection && (!fNeedsInitialFindBeforeReplace || !isRegExSearchAvailableAndChecked()));
 			fReplaceAllButton.setEnabled(enable && isEditable() && findString);
@@ -1834,12 +1835,8 @@ class FindReplaceDialog extends Dialog {
 				fGiveFocusToFindField= true;
 			}
 			initIncrementalBaseLocation();
-			updateButtonState();
 		}
-
-		if (okToUse(fSelectAllButton)) {
-			fSelectAllButton.setEnabled(fTarget instanceof IFindReplaceTargetExtension4);
-		}
+		updateButtonState();
 
 		setContentAssistsEnablement(isRegExSearchAvailableAndChecked());
 	}
