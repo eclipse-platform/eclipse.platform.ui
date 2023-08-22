@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -158,7 +159,24 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		groupComposite.setLayoutData(gd);
 
 		largeViewLimit = new IntegerFieldEditor(IWorkbenchPreferenceConstants.LARGE_VIEW_LIMIT,
-				WorkbenchMessages.WorkbenchPreference_largeViewLimit, groupComposite);
+				WorkbenchMessages.WorkbenchPreference_largeViewLimit, groupComposite) {
+
+			@Override
+			protected Text createTextWidget(Composite parent) {
+				Text w = super.createTextWidget(parent);
+				w.setToolTipText(WorkbenchMessages.WorkbenchPreference_largeViewLimitTooltip);
+				return w;
+			}
+
+			@Override
+			public Label getLabelControl(Composite parent) {
+				Label label = super.getLabelControl(parent);
+				if (label != null) {
+					label.setToolTipText(WorkbenchMessages.WorkbenchPreference_largeViewLimitTooltip);
+				}
+				return label;
+			}
+		};
 
 		largeViewLimit.setPreferenceStore(getPreferenceStore());
 		largeViewLimit.setPage(this);

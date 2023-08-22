@@ -731,6 +731,7 @@ public class WorkbenchMessages extends NLS {
 	public static String WorkbenchPreference_workbenchSaveInterval;
 	public static String WorkbenchPreference_workbenchSaveIntervalError;
 	public static String WorkbenchPreference_largeViewLimit;
+	public static String WorkbenchPreference_largeViewLimitTooltip;
 	public static String WorkbenchPreference_largeViewLimitError;
 	public static String WorkbenchEditorsAction_label;
 	public static String WorkbookEditorsAction_label;
