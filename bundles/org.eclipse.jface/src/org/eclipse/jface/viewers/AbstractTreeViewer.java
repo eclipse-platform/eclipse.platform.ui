@@ -1541,7 +1541,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	protected void handleDoubleSelect(SelectionEvent event) {
 		// expand ExpandableNode for default selection.
 		if (event.item != null && event.item.getData() instanceof ExpandableNode node) {
-			handleExpandableNodeClicked(event.item);
+			handleExpandableNodeClicked(event.item, true);
 			// do not notify client listeners for this item.
 			return;
 		}

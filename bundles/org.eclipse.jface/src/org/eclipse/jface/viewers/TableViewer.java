@@ -22,10 +22,15 @@ package org.eclipse.jface.viewers;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.internal.ExpandableNode;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
@@ -77,6 +82,16 @@ public class TableViewer extends AbstractTableViewer {
 	 * The cached row which is reused all over
 	 */
 	private TableViewerRow cachedRow;
+
+	/**
+	 * listen to tree resize and expand expandable node once it is visible.
+	 */
+	private ControlListener controlListener = null;
+
+	/**
+	 * listen to scroll bar selection and expand expandable node once it is visible.
+	 */
+	private Listener vScrollListener = null;
 
 	/**
 	 * Creates a table viewer on a newly-created table control under the given
@@ -458,51 +473,150 @@ public class TableViewer extends AbstractTableViewer {
 	}
 
 	@Override
-	void handleExpandableNodeClicked(Widget w) {
-		if (!(w instanceof Item item)) {
-			return;
-		}
+	void handleExpandableNodeClicked(Widget w, boolean setSelection) {
+		BusyIndicator.showWhile(table.getDisplay(), () -> {
 
-		Object data = item.getData();
+			if (!(w instanceof Item item)) {
+				return;
+			}
 
-		if (!(data instanceof ExpandableNode expNode)) {
-			return;
-		}
-		boolean oldBusy = isBusy();
-		Table table = getTable();
-		try {
-			setBusy(true);
-			table.setRedraw(false);
+			Object data = item.getData();
 
-			Object[] sortedChildren = expNode.getRemainingElements();
-			Object[] nextChildren = applyItemsLimit(data, sortedChildren);
+			if (!(data instanceof ExpandableNode expNode)) {
+				return;
+			}
+			boolean oldBusy = isBusy();
+			Table table = getTable();
+			try {
+				setBusy(true);
+				table.setRedraw(false);
 
-			if (nextChildren.length > 0) {
-				disassociate(item);
-				int index = doIndexOf(item);
-				// will also call item.dispose()
-				doRemove(new int[] { index });
+				Object[] sortedChildren = expNode.getRemainingElements();
+				Object[] nextChildren = applyItemsLimit(data, sortedChildren);
 
-				for (int i = 0; i < nextChildren.length; i++) {
-					createItem(nextChildren[i], index++);
-				}
-				// If we've expanded but still have not reached the limit
-				// select new expandable node, so user can click through
-				// to the end
-				if (getLastElement() instanceof ExpandableNode node) {
-					setSelection(new StructuredSelection(node), true);
-				} else {
-					// reset the selection. client's selection listener should not be triggered.
-					// there was only one selection on Expandable Node.
-					int[] curSel = table.getSelectionIndices();
-					if (curSel.length == 1) {
-						table.deselect(curSel[0]);
+				if (nextChildren.length > 0) {
+					disassociate(item);
+					int index = doIndexOf(item);
+					// will also call item.dispose()
+					doRemove(new int[] { index });
+
+					for (int i = 0; i < nextChildren.length; i++) {
+						createItem(nextChildren[i], index++);
+					}
+
+					if (!setSelection) {
+						return;
+					}
+
+					// If we've expanded but still have not reached the limit
+					// select new expandable node, so user can click through
+					// to the end
+					if (getLastElement() instanceof ExpandableNode node) {
+						setSelection(new StructuredSelection(node), true);
+					} else {
+						// reset the selection. client's selection listener should not be triggered.
+						// there was only one selection on Expandable Node.
+						int[] curSel = table.getSelectionIndices();
+						if (curSel.length == 1) {
+							table.deselect(curSel[0]);
+						}
 					}
 				}
+			} finally {
+				setBusy(oldBusy);
+				table.setRedraw(true);
 			}
-		} finally {
-			setBusy(oldBusy);
-			table.setRedraw(true);
+
+		});
+	}
+
+	@Override
+	public void setDisplayIncrementally(int incrementSize) {
+		super.setDisplayIncrementally(incrementSize);
+
+		if (isBusy()) {
+			return;
+		}
+
+		// trying to reset the viewer limit.
+		if (incrementSize <= 0) {
+			if (controlListener != null) {
+				table.removeControlListener(controlListener);
+				controlListener = null;
+			}
+			if (vScrollListener != null) {
+				ScrollBar vScrol = table.getVerticalBar();
+				if (vScrol != null) {
+					vScrol.removeListener(SWT.Selection, vScrollListener);
+					vScrollListener = null;
+				}
+			}
+			return;
+		}
+
+		// trying to set/change viewer limit.
+		if (controlListener == null) {
+			controlListener = new ControlListener() {
+				@Override
+				public void controlResized(ControlEvent e) {
+					if (table.getItemCount() > 0) {
+						TableItem lastItem = table.getItems()[table.getItemCount() - 1];
+						if (isExpandableNode(lastItem.getData())) {
+							int treeHeight = table.getBounds().height;
+							int itemsHeight = lastItem.getBounds().height * table.getItemCount();
+							int origHeight = itemsHeight;
+							// there are few items shown than tree height.
+							while (itemsHeight < treeHeight) {
+								// expand last node.
+								handleExpandableNodeClicked(lastItem, false);
+								// check if if have no more expandable node.
+								lastItem = table.getItems()[table.getItemCount() - 1];
+								if (!isExpandableNode(lastItem.getData())) {
+									break;
+								}
+								// each expansion should increase the height by original height.
+								itemsHeight = itemsHeight + origHeight;
+							}
+						}
+					}
+				}
+
+				@Override
+				public void controlMoved(ControlEvent e) {
+				}
+			};
+			// listen to tree resizes.
+			table.addControlListener(controlListener);
+		}
+
+		if (vScrollListener == null) {
+			// listen to vertical scroll bar selection
+			ScrollBar vScrol = table.getVerticalBar();
+			if (vScrol != null) {
+				vScrollListener = event -> {
+					// A series events from drag triggers multiple expansions. This results in
+					// behavior of Virtual viewer.
+					// Entire drag ends with single selection and if the Expandable node is visible
+					// we can expand.
+					if (event.detail == 1) {
+						return;
+					}
+					if (table.getItemCount() > 0) {
+						TableItem lastItem = table.getItems()[table.getItemCount() - 1];
+						if (isExpandableNode(lastItem.getData())) {
+							int treeHeight = table.getBounds().height;
+							int startOfLast = lastItem.getBounds().y;
+							// last element became visible.
+							if (startOfLast < treeHeight) {
+								handleExpandableNodeClicked(lastItem, false);
+							}
+						}
+					}
+
+				};
+				vScrol.addListener(SWT.Selection, vScrollListener);
+			}
+
 		}
 	}
 
