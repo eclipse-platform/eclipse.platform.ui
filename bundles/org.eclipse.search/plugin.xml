@@ -390,10 +390,4 @@
          </description>
       </colorDefinition>
    </extension>
-   <extension
-         point="org.eclipse.search.core.dirtyFileSearchParticipant">
-      <dirtyFileSearchParticipant
-            class="org.eclipse.search.internal.ui.text.DirtyFileSearchParticipant">
-      </dirtyFileSearchParticipant>
-   </extension>
 </plugin>

@@ -7,8 +7,6 @@
 <plugin>
 
 	<!-- Search extension point definitions -->
-	
     <extension-point name="%textSearchEngine" id="textSearchEngine" schema="schema/textSearchEngine.exsd"/>
-    <extension-point name="%dirtyFileSearchParticipant" id="dirtyFileSearchParticipant" schema="schema/dirtyFileSearchParticipant.exsd"/>
 
 </plugin>
