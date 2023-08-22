@@ -14,7 +14,6 @@
 
 package org.eclipse.ui.texteditor;
 
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.layout.FillLayout;
@@ -27,15 +26,17 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 
+import org.eclipse.jface.text.IFindReplaceTargetExtension5;
+
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PlatformUI;
 
-
 /**
  * Capable of handling input elements that have an associated status with them.
+ *
  * @since 2.0
  */
-public class StatusTextEditor extends AbstractTextEditor {
+public class StatusTextEditor extends AbstractTextEditor implements IFindReplaceTargetExtension5 {
 
 	/** The root composite of this editor */
 	private Composite fParent;
@@ -55,7 +56,6 @@ public class StatusTextEditor extends AbstractTextEditor {
 	// No .options for plugin yet
 	private static final boolean DEBUG = false;
 
-
 	/**
 	 * @deprecated Needs to be reconsidered
 	 * @return the inline-toolbar composite
@@ -74,19 +74,29 @@ public class StatusTextEditor extends AbstractTextEditor {
 	}
 
 	/*
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor.createPartControl(Composite)
+	 * @see
+	 * org.eclipse.ui.texteditor.AbstractTextEditor.createPartControl(Composite)
 	 */
 	@Override
 	public void createPartControl(Composite parent) {
 
-		fParent= new Composite(parent, SWT.NONE);
-		fStackLayout= new StackLayout();
+		// TODO: Somewhere, I am creating ugly spaces at the border of the Text Editor.
+		// I am not sure how to remove them. Investigation required!
+		fParent = new Composite(parent, SWT.NONE);
+		fStackLayout = new StackLayout();
 		fParent.setLayout(fStackLayout);
 
 		fPageComposite = new Composite(fParent, SWT.NONE);
-		fPageComposite.setLayout(new GridLayout(1, true));
+		GridLayout fPageCompositeLayout = new GridLayout(1, true);
+		fPageCompositeLayout.marginBottom = 0;
+		fPageCompositeLayout.verticalSpacing = 0;
+		fPageCompositeLayout.horizontalSpacing = 0;
+		fPageComposite.setLayout(fPageCompositeLayout);
 
 		fEditorComposite = new Composite(fPageComposite, SWT.NONE);
+		FillLayout editorCompositeLayout = new FillLayout();
+		editorCompositeLayout.marginHeight = 0;
+		editorCompositeLayout.marginWidth = 0;
 		fEditorComposite.setLayout(new FillLayout());
 		GridData pageCompositeLayoutData = new GridData();
 		pageCompositeLayoutData.grabExcessHorizontalSpace = true;
@@ -96,19 +106,12 @@ public class StatusTextEditor extends AbstractTextEditor {
 		fEditorComposite.setLayoutData(pageCompositeLayoutData);
 		super.createPartControl(fEditorComposite);
 
-		fSearchReplaceComposite = new Composite(fPageComposite, SWT.NONE);
-		fSearchReplaceComposite.setLayout(new GridLayout(1, false));
-		GridData srGridData = new GridData();
-		srGridData.horizontalAlignment = GridData.FILL;
-		srGridData.verticalAlignment = GridData.FILL;
-		fSearchReplaceComposite.setLayoutData(srGridData);
-
 		updatePartControl(getEditorInput());
 	}
 
 	/**
-	 * Checks if the status of the given input is OK. If not the
-	 * status control is shown rather than the default control.
+	 * Checks if the status of the given input is OK. If not the status control is
+	 * shown rather than the default control.
 	 *
 	 * @param input the input whose status is checked
 	 */
@@ -120,34 +123,34 @@ public class StatusTextEditor extends AbstractTextEditor {
 			trace(where, "START", fStatusControl); //$NON-NLS-1$
 		}
 
-		boolean restoreFocus= false;
+		boolean restoreFocus = false;
 
 		if (fStatusControl != null) {
 			if (!fStatusControl.isDisposed()) {
-				restoreFocus= containsFocus(fStatusControl);
+				restoreFocus = containsFocus(fStatusControl);
 			}
 			fStatusControl.dispose();
 			trace(where, "status control disposed", fStatusControl); //$NON-NLS-1$
-			fStatusControl= null;
+			fStatusControl = null;
 		}
 
-		Control front= null;
+		Control front = null;
 		if (fParent != null && input != null) {
 			if (getDocumentProvider() instanceof IDocumentProviderExtension) {
-				IDocumentProviderExtension extension= (IDocumentProviderExtension) getDocumentProvider();
-				IStatus status= extension.getStatus(input);
+				IDocumentProviderExtension extension = (IDocumentProviderExtension) getDocumentProvider();
+				IStatus status = extension.getStatus(input);
 				if (!isErrorStatus(status)) {
 					front = fPageComposite;
 				} else {
-					fStatusControl= createStatusControl(fParent, status);
+					fStatusControl = createStatusControl(fParent, status);
 					trace(where, "status control created", fStatusControl); //$NON-NLS-1$
-					front= fStatusControl;
+					front = fStatusControl;
 				}
 			}
 		}
 
 		if (fStackLayout.topControl != front) {
-			fStackLayout.topControl= front;
+			fStackLayout.topControl = front;
 			if (front != null) {
 				front.requestLayout();
 			}
@@ -162,11 +165,11 @@ public class StatusTextEditor extends AbstractTextEditor {
 	}
 
 	private boolean containsFocus(Control control) {
-		Control focusControl= control.getDisplay().getFocusControl();
+		Control focusControl = control.getDisplay().getFocusControl();
 		if (focusControl != null) {
-			focusControl= focusControl.getParent();
+			focusControl = focusControl.getParent();
 			while (focusControl != fParent && focusControl != null && !(focusControl instanceof Shell)) {
-				focusControl= focusControl.getParent();
+				focusControl = focusControl.getParent();
 			}
 		}
 		return focusControl == fParent;
@@ -183,8 +186,10 @@ public class StatusTextEditor extends AbstractTextEditor {
 		setFocusIsRunning = true;
 
 		if (fStatusControl != null && !fStatusControl.isDisposed()) {
-			/* even if the control does not really take focus, we still have to set it
-			 * to fulfill the contract and to make e.g. Ctrl+PageUp/Down work. */
+			/*
+			 * even if the control does not really take focus, we still have to set it to
+			 * fulfill the contract and to make e.g. Ctrl+PageUp/Down work.
+			 */
 			fStatusControl.setFocus();
 		} else {
 			super.setFocus();
@@ -201,8 +206,8 @@ public class StatusTextEditor extends AbstractTextEditor {
 			return false;
 
 		if (getDocumentProvider() instanceof IDocumentProviderExtension) {
-			IDocumentProviderExtension extension= (IDocumentProviderExtension)getDocumentProvider();
-			IStatus status= extension.getStatus(getEditorInput());
+			IDocumentProviderExtension extension = (IDocumentProviderExtension) getDocumentProvider();
+			IStatus status = extension.getStatus(getEditorInput());
 			return !isErrorStatus(status) && status.getSeverity() != IStatus.CANCEL;
 		}
 
@@ -213,7 +218,8 @@ public class StatusTextEditor extends AbstractTextEditor {
 	 * Returns whether the given status indicates an error. Subclasses may override.
 	 *
 	 * @param status the status to be checked
-	 * @return <code>true</code> if the status indicates an error, <code>false</code> otherwise\
+	 * @return <code>true</code> if the status indicates an error,
+	 *         <code>false</code> otherwise\
 	 * @since 3.0
 	 */
 	protected boolean isErrorStatus(IStatus status) {
@@ -221,8 +227,8 @@ public class StatusTextEditor extends AbstractTextEditor {
 	}
 
 	/**
-	 * Creates the status control for the given status.
-	 * May be overridden by subclasses.
+	 * Creates the status control for the given status. May be overridden by
+	 * subclasses.
 	 *
 	 * @param parent the parent control
 	 * @param status the status
@@ -243,7 +249,7 @@ public class StatusTextEditor extends AbstractTextEditor {
 	 */
 	@Deprecated
 	private Control createInfoForm(Composite parent, IStatus status) {
-		InfoForm infoForm= new InfoForm(parent);
+		InfoForm infoForm = new InfoForm(parent);
 		infoForm.setHeaderText(getStatusHeader(status));
 		infoForm.setBannerText(getStatusBanner(status));
 		infoForm.setInfo(getStatusMessage(status));
@@ -282,12 +288,12 @@ public class StatusTextEditor extends AbstractTextEditor {
 
 	@Override
 	protected void updateStatusField(String category) {
-		IDocumentProvider provider= getDocumentProvider();
+		IDocumentProvider provider = getDocumentProvider();
 		if (provider instanceof IDocumentProviderExtension) {
-			IDocumentProviderExtension extension= (IDocumentProviderExtension) provider;
-			IStatus status= extension.getStatus(getEditorInput());
+			IDocumentProviderExtension extension = (IDocumentProviderExtension) provider;
+			IStatus status = extension.getStatus(getEditorInput());
 			if (isErrorStatus(status)) {
-				IStatusField field= getStatusField(category);
+				IStatusField field = getStatusField(category);
 				if (field != null) {
 					field.setText(fErrorLabel);
 					return;
@@ -355,5 +361,28 @@ public class StatusTextEditor extends AbstractTextEditor {
 			id = System.identityHashCode(o) + (o.isDisposed() ? "<disposed!>" : ""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		System.out.println(where + " |" + id + "| " + what); //$NON-NLS-1$//$NON-NLS-2$
+	}
+
+	@Override
+	public Composite beginInlineSession() {
+		fSearchReplaceComposite = new Composite(fPageComposite, SWT.NONE);
+		fSearchReplaceComposite.setLayout(new GridLayout(1, false));
+		GridData srGridData = new GridData();
+		srGridData.horizontalAlignment = GridData.FILL;
+		srGridData.verticalAlignment = GridData.FILL;
+		fSearchReplaceComposite.setLayoutData(srGridData);
+
+		return fSearchReplaceComposite;
+	}
+
+	@Override
+	public void updateLayout() {
+		updatePartControl();
+	}
+
+	@Override
+	public void endInlineSession() {
+		fSearchReplaceComposite.dispose();
+		fSearchReplaceComposite = null;
 	}
 }

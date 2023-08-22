@@ -265,7 +265,7 @@ class FindReplaceDialog extends Dialog {
 
 		setShellStyle(getShellStyle() ^ SWT.APPLICATION_MODAL | SWT.MODELESS);
 		setBlockOnOpen(false);
-		fFindReplacer = new FindReplacer(fTarget);
+		fFindReplacer = new FindReplacer(getShell(), fTarget);
 	}
 
 	@Override
@@ -879,8 +879,7 @@ class FindReplaceDialog extends Dialog {
 	private int findIndex(String findString, int startPosition, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean regExSearch, boolean beep) {
 
 		if (forwardSearch) {
-			int index = fFindReplacer.findAndSelect(startPosition, findString, true, caseSensitive, wholeWord,
-					regExSearch);
+			int index = fFindReplacer.findAndSelect(startPosition, findString);
 			if (index == -1) {
 
 				if (beep && okToUse(getShell()))
@@ -888,7 +887,7 @@ class FindReplaceDialog extends Dialog {
 
 				if (wrapSearch) {
 					statusMessage(EditorMessages.FindReplace_Status_wrapped_label);
-					index = fFindReplacer.findAndSelect(-1, findString, true, caseSensitive, wholeWord, regExSearch);
+					index = fFindReplacer.findAndSelect(-1, findString);
 				}
 			}
 			return index;
@@ -904,7 +903,7 @@ class FindReplaceDialog extends Dialog {
 
 			if (wrapSearch) {
 				statusMessage(EditorMessages.FindReplace_Status_wrapped_label);
-				index = fFindReplacer.findAndSelect(-1, findString, false, caseSensitive, wholeWord, regExSearch);
+				index = fFindReplacer.findAndSelect(-1, findString);
 			}
 		}
 		return index;
@@ -1606,7 +1605,7 @@ class FindReplaceDialog extends Dialog {
 		List<Region> selectedRegions = new ArrayList<>();
 		int index = 0;
 		do {
-			index = fFindReplacer.findAndSelect(position, findString, true, caseSensitive, wholeWord, regExSearch);
+			index = fFindReplacer.findAndSelect(position, findString);
 			if (index != -1) { // substring not contained from current position
 				Point selection = fTarget.getSelection();
 				selectedRegions.add(new Region(selection.x, selection.y));

@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.jface.text.IFindReplaceTarget;
+import org.eclipse.jface.text.IFindReplaceTargetExtension5;
 
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -51,6 +52,8 @@ public class InlineFindReplaceComponent { // MW -> @HeikoKlare I'm not sure weth
 	Button findAllButton;
 	Button searchUpButton;
 	Button searchDownButton;
+	Button wholeWordSearchButton;
+	Button caseSensitiveSearchButton;
 	Button regexSearchButton;
 	Button openReplaceButton;
 	Label searchLabel;
@@ -72,7 +75,7 @@ public class InlineFindReplaceComponent { // MW -> @HeikoKlare I'm not sure weth
 								// Eventually, these references will need to be cast into an interface
 		if (currentlyActive) {
 			if (targetPart != null) {
-				createDialog(((StatusTextEditor) targetPart).getInlineToolbarParent());
+				createDialog();
 			}
 		} else {
 			if (dialogCreated) {
@@ -93,7 +96,10 @@ public class InlineFindReplaceComponent { // MW -> @HeikoKlare I'm not sure weth
 		regexSearchButton.dispose();
 
 		dialogCreated = false;
-		((StatusTextEditor) targetPart).updatePartControl(((StatusTextEditor) targetPart).getEditorInput());
+		if (targetPart instanceof IFindReplaceTargetExtension5 tp) {
+			tp.endInlineSession();
+			tp.updateLayout();
+		}
 	}
 
 	public void hideReplace() {
@@ -104,10 +110,11 @@ public class InlineFindReplaceComponent { // MW -> @HeikoKlare I'm not sure weth
 		((StatusTextEditor) targetPart).updatePartControl(((StatusTextEditor) targetPart).getEditorInput());
 	}
 
-	public void createDialog(Composite parent) { // MW -> @HeikoKlare we need to rethink how the dialog is built if we
-													// want to generalize this in the future
+	public void createDialog() { // MW -> @HeikoKlare we need to rethink how the dialog is built if we
+									// want to generalize this in the future
 		// TODO clean up this mess
-		container = new Composite(parent, SWT.NONE);
+		if (targetPart instanceof IFindReplaceTargetExtension5 tp)
+			container = tp.beginInlineSession();
 		container.setLayout(new GridLayout(3, false));
 		GridData findContainerGD = new GridData();
 		findContainerGD.grabExcessHorizontalSpace = true;
@@ -121,7 +128,7 @@ public class InlineFindReplaceComponent { // MW -> @HeikoKlare I'm not sure weth
 		searchContainerGD.horizontalAlignment = GridData.FILL;
 		searchContainerGD.verticalAlignment = GridData.FILL;
 		searchContainer.setLayoutData(searchContainerGD);
-		searchContainer.setLayout(new GridLayout(6, false));
+		searchContainer.setLayout(new GridLayout(8, false));
 		searchBar = new Text(searchContainer, SWT.SINGLE);
 		searchLabel = new Label(searchContainer, SWT.NONE);
 		searchLabel.setText(" ");
@@ -135,6 +142,7 @@ public class InlineFindReplaceComponent { // MW -> @HeikoKlare I'm not sure weth
 		searchBar.selectAll();
 		searchUpButton = new Button(searchContainer, SWT.TOGGLE);
 		searchUpButton.setText(" ⬆️ "); //$NON-NLS-1$
+		searchUpButton.setToolTipText("Search backward");
 		searchUpButton.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -153,6 +161,7 @@ public class InlineFindReplaceComponent { // MW -> @HeikoKlare I'm not sure weth
 		searchDownButton = new Button(searchContainer, SWT.TOGGLE);
 		searchDownButton.setSelection(true); // by default, search down
 		searchDownButton.setText(" ⬇️ "); //$NON-NLS-1$
+		searchDownButton.setToolTipText("Search forward");
 		searchDownButton.addSelectionListener(new SelectionListener() {
 
 			@Override
@@ -169,8 +178,41 @@ public class InlineFindReplaceComponent { // MW -> @HeikoKlare I'm not sure weth
 
 			}
 		});
+		wholeWordSearchButton = new Button(searchContainer, SWT.TOGGLE);
+		wholeWordSearchButton.setText(" ♊️ ");
+		wholeWordSearchButton.setToolTipText("Only find in whole words");
+		wholeWordSearchButton.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				findReplacer.setWholeWord(wholeWordSearchButton.getSelection());
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+		caseSensitiveSearchButton = new Button(searchContainer, SWT.TOGGLE);
+		caseSensitiveSearchButton.setText(" 🔠 ");
+		caseSensitiveSearchButton.setToolTipText("Match case");
+		caseSensitiveSearchButton.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				findReplacer.setCaseSensitive(caseSensitiveSearchButton.getSelection());
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+		});
 		regexSearchButton = new Button(searchContainer, SWT.TOGGLE);
 		regexSearchButton.setText(" ⚙️ "); //$NON-NLS-1$
+		regexSearchButton.setToolTipText("Search for a regular expression"); //$NON-NLS-1$
 		regexSearchButton.addSelectionListener(new SelectionListener() {
 
 			@Override
@@ -236,7 +278,7 @@ public class InlineFindReplaceComponent { // MW -> @HeikoKlare I'm not sure weth
 		searchBar.setMessage(" 🔎 Find"); //$NON-NLS-1$
 
 		container.layout();
-		parent.layout();
+		((IFindReplaceTargetExtension5) targetPart).updateLayout();
 
 		((StatusTextEditor) targetPart).updatePartControl(((StatusTextEditor) targetPart).getEditorInput());
 		dialogCreated = true;

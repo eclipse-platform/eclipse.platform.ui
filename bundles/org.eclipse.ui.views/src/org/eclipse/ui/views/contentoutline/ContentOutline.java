@@ -20,6 +20,8 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.text.IFindReplaceTarget;
+import org.eclipse.jface.text.IFindReplaceTargetExtension5;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -77,7 +79,8 @@ import org.eclipse.ui.part.PageBookView;
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class ContentOutline extends PageBookView implements ISelectionProvider, ISelectionChangedListener {
+public class ContentOutline extends PageBookView
+		implements ISelectionProvider, ISelectionChangedListener, IFindReplaceTarget, IFindReplaceTargetExtension5 {
 
 	/**
 	 * The plugin prefix.
@@ -238,5 +241,54 @@ public class ContentOutline extends PageBookView implements ISelectionProvider, 
 			pageSite.setSelectionProvider((IContentOutlinePage) pageRec.page);
 		}
 		super.showPageRec(pageRec);
+	}
+
+	@Override
+	public boolean canPerformFind() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public int findAndSelect(int widgetOffset, String findString, boolean searchForward, boolean caseSensitive,
+			boolean wholeWord) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public String getSelectionText() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isEditable() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void replaceSelection(String text) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public Composite beginInlineSession() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void updateLayout() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void endInlineSession() {
+		// TODO Auto-generated method stub
+
 	}
 }

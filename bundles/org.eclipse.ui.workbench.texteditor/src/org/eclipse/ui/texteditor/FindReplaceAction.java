@@ -26,6 +26,7 @@ import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.jface.dialogs.PageChangedEvent;
 
 import org.eclipse.jface.text.IFindReplaceTarget;
+import org.eclipse.jface.text.IFindReplaceTargetExtension5;
 
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPartService;
@@ -364,9 +365,11 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 	/**
 	 * @since 3.18
 	 */
-	public void showInlineSearchReplace() {
-		if (fWorkbenchPart instanceof StatusTextEditor searchableTextEditor) {
+	public void showInlineSearchReplaceIfPossible() {
+		if (fWorkbenchPart instanceof IFindReplaceTargetExtension5) {
 			inlineDialog.toggleActive();
+		} else {
+			showFindReplaceModal();
 		}
 	}
 
@@ -376,7 +379,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 			return;
 
 		if (MW_NEW_FIND_REPLACE) {
-			showInlineSearchReplace();
+			showInlineSearchReplaceIfPossible();
 		} else {
 			showFindReplaceModal();
 		}
