@@ -1089,7 +1089,13 @@
             id="org.eclipse.ui.ide.markers.copyMarkerResourceQualifiedName"
             name="%command.copyMarkerResourceQualifiedName.name"
             defaultHandler="org.eclipse.ui.internal.views.markers.CopyMarkerResourceQualifiedNameHandler">            
-      </command>          
+      </command>
+      <command
+            defaultHandler="org.eclipse.ui.internal.views.markers.MarkerViewFindHandler"
+            description="Finds a string inside of the markers, using the inline search"
+            id="org.eclipse.ui.ide.findinmarkers"
+            name="Find in Markers">
+      </command>
    </extension>
 
    <extension
@@ -1249,6 +1255,12 @@
             platform="carbon"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="CTRL+M1+F">
+      </key>
+      <key
+            commandId="org.eclipse.ui.ide.findinmarkers"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="CTRL+F">
       </key>
    </extension>
 

@@ -363,6 +363,9 @@ public class StatusTextEditor extends AbstractTextEditor implements IFindReplace
 		System.out.println(where + " |" + id + "| " + what); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
+	/**
+	 * @since 3.17
+	 */
 	@Override
 	public Composite beginInlineSession() {
 		fSearchReplaceComposite = new Composite(fPageComposite, SWT.NONE);
@@ -375,11 +378,17 @@ public class StatusTextEditor extends AbstractTextEditor implements IFindReplace
 		return fSearchReplaceComposite;
 	}
 
+	/**
+	 * @since 3.17
+	 */
 	@Override
 	public void updateLayout() {
 		updatePartControl();
 	}
 
+	/**
+	 * @since 3.17
+	 */
 	@Override
 	public void endInlineSession() {
 		fSearchReplaceComposite.dispose();

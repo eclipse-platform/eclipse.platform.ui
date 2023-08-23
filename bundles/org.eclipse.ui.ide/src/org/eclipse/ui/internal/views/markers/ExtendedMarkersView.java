@@ -42,6 +42,8 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.text.IFindReplaceTarget;
+import org.eclipse.jface.text.IFindReplaceTargetExtension5;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.EditingSupport;
@@ -74,7 +76,10 @@ import org.eclipse.swt.events.TreeAdapter;
 import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -133,7 +138,7 @@ import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
  * @since 3.4
  *
  */
-public class ExtendedMarkersView extends ViewPart {
+public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget, IFindReplaceTargetExtension5 {
 
 	/**
 	 * The Markers View Update Job Family
@@ -162,6 +167,8 @@ public class ExtendedMarkersView extends ViewPart {
 
 	private UIUpdateJob uiUpdateJob;
 
+	private Composite parentComposite;
+	private Composite findComposite;
 	private MarkersTreeViewer viewer;
 
 	private Action filterAction;
@@ -419,7 +426,14 @@ public class ExtendedMarkersView extends ViewPart {
 	@Override
 	public void createPartControl(Composite parent) {
 
-		createViewer(parent);
+		parentComposite = new Composite(parent, SWT.NULL);
+		GridLayout parentCompositeLayout = new GridLayout(1, true);
+		parentCompositeLayout.marginBottom = 0;
+		parentCompositeLayout.verticalSpacing = 0;
+		parentCompositeLayout.horizontalSpacing = 0;
+		parentComposite.setLayout(parentCompositeLayout);
+
+		createViewer(parentComposite);
 
 		addDoubleClickListener();
 
@@ -1750,5 +1764,69 @@ public class ExtendedMarkersView extends ViewPart {
 			return adapter.cast(viewer);
 		}
 		return super.getAdapter(adapter);
+	}
+
+	/**
+	 * <-- for finding -->
+	 */
+
+	@Override
+	public Composite beginInlineSession() {
+		findComposite = new Composite(parentComposite, SWT.NULL);
+		findComposite.setLayout(new GridLayout(1, false));
+		GridData findCompositeGD = new GridData();
+		findCompositeGD.horizontalAlignment = GridData.FILL;
+		findCompositeGD.verticalAlignment = GridData.FILL;
+		findComposite.setLayoutData(findCompositeGD);
+
+		return findComposite;
+	}
+
+	@Override
+	public void updateLayout() {
+		parentComposite.update();
+	}
+
+	@Override
+	public void endInlineSession() {
+		findComposite.dispose();
+		findComposite = null;;
+	}
+
+	@Override
+	public boolean canPerformFind() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public int findAndSelect(int widgetOffset, String findString, boolean searchForward, boolean caseSensitive,
+			boolean wholeWord) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public Point getSelection() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getSelectionText() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isEditable() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void replaceSelection(String text) {
+		// TODO Auto-generated method stub
+
 	}
 }

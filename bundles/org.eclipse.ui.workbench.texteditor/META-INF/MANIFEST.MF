@@ -29,6 +29,7 @@ Require-Bundle:
  org.eclipse.core.expressions;bundle-version="[3.4.100,4.0.0)",
  org.eclipse.jface.text;bundle-version="[3.19.0,4.0.0)",
  org.eclipse.swt;bundle-version="[3.107.0,4.0.0)",
- org.eclipse.ui;bundle-version="[3.5.0,4.0.0)"
+ org.eclipse.ui;bundle-version="[3.5.0,4.0.0)",
+ org.eclipse.text
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: org.eclipse.ui.workbench.texteditor
