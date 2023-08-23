@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -87,8 +88,8 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 			tableViewer.add(element);
 			processEvents();
 			TableItem[] items = table.getItems();
-			Object last = items[items.length - 1].getData();
-			assertFalse("Last item shouln't be expandable: " + last, tableViewer.isExpandableNode(last));
+			TableItem last = items[items.length - 1];
+			assertFalse("Last item shouln't be expandable: " + last, ColumnViewer.isExpandableNode(last));
 		}
 
 		DataModel element = new DataModel(Integer.valueOf(rootModel.size() + 1));
@@ -133,8 +134,8 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 			if (rootModel.size() > VIEWER_LIMIT + 1) {
 				assertLimitedItems(items);
 			} else {
-				Object last = items[items.length - 1].getData();
-				assertFalse("Last item shouln't be expandable: " + last, tableViewer.isExpandableNode(last));
+				TableItem last = items[items.length - 1];
+				assertFalse("Last item shouln't be expandable: " + last, ColumnViewer.isExpandableNode(last));
 			}
 		}
 
@@ -149,10 +150,9 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		Item[] itemsBefore = table.getItems();
 		assertEquals("There are more/less items rendered than viewer limit", VIEWER_LIMIT * 2 + 1, itemsBefore.length);
 		Item item = itemsBefore[itemsBefore.length - 1];
-		Object data = item.getData();
-		assertTrue("Last node must be an Expandable Node", tableViewer.isExpandableNode(data));
+		assertTrue("Last node must be an Expandable Node", ColumnViewer.isExpandableNode(item));
 
-		String expected = calculateExpandableLabel(data);
+		String expected = calculateExpandableLabel(item.getData());
 		assertEquals("Expandable node has an incorrect text", expected, item.getText());
 
 		// click until all expandable nodes are expanded.
@@ -188,7 +188,7 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 	private void clickUntilAllExpandableNodes(Table table) {
 		TableItem lastItem = table.getItems()[table.getItems().length - 1];
 		processEvents();
-		while (tableViewer.isExpandableNode(lastItem.getData())) {
+		while (ColumnViewer.isExpandableNode(lastItem)) {
 			clickTableItem(table, lastItem);
 			processEvents();
 			lastItem = table.getItems()[table.getItems().length - 1];
@@ -219,9 +219,7 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		tableViewer.setSelection(new StructuredSelection(toSelect));
 		processEvents();
 		ISelection selection = tableViewer.getSelection();
-		assertTrue("Selection must not be empty", selection instanceof IStructuredSelection);
-		Object selEle = ((IStructuredSelection) selection).getFirstElement();
-		assertTrue("Selection must be ExpandableNode", tableViewer.isExpandableNode(selEle));
+		assertTrue("Selecting unvisible item must select none", selection.isEmpty());
 
 		// select an element which is visible
 		toSelect = rootModel.get(VIEWER_LIMIT / 2);
@@ -229,7 +227,7 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		processEvents();
 		selection = tableViewer.getSelection();
 		assertTrue("Selection must not be empty", selection instanceof IStructuredSelection);
-		selEle = ((IStructuredSelection) selection).getFirstElement();
+		Object selEle = ((IStructuredSelection) selection).getFirstElement();
 		assertEquals("selection must be desired element which is visible", toSelect, selEle);
 
 		// select something not present in model.
@@ -260,10 +258,9 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 	private void assertLimitedItems(TableItem[] itemsBefore) {
 		assertEquals("There are more/less items rendered than viewer limit", VIEWER_LIMIT + 1, itemsBefore.length);
 		TableItem tableItem = itemsBefore[itemsBefore.length - 1];
-		Object data = tableItem.getData();
-		assertTrue("Last node must be an Expandable Node", tableViewer.isExpandableNode(data));
+		assertTrue("Last node must be an Expandable Node", ColumnViewer.isExpandableNode(tableItem));
 
-		String expectedLabel = calculateExpandableLabel(data);
+		String expectedLabel = calculateExpandableLabel(tableItem.getData());
 		assertEquals("Expandable node has an incorrect text", expectedLabel, tableItem.getText());
 	}
 

@@ -1063,13 +1063,14 @@ public abstract class ColumnViewer extends StructuredViewer {
 	 * it will remain the same. Please do not use this API without consulting with
 	 * the API development team.
 	 * </p>
+	 * This code must run in the UI Thread.
 	 *
-	 * @param element model object representing a special "expandable" node
-	 * @return return if it is an instance of ExpandableNode
+	 * @param item widget item
+	 * @return return if the item is the expansion placeholder
 	 * @since 3.31
 	 */
-	public final boolean isExpandableNode(Object element) {
-		return element instanceof ExpandableNode;
+	public static final boolean isExpandableNode(Item item) {
+		return item.getData() instanceof ExpandableNode;
 
 	}
 }

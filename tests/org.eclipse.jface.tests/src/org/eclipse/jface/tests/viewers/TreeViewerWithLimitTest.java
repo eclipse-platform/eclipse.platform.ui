@@ -17,13 +17,13 @@ package org.eclipse.jface.tests.viewers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.internal.ExpandableNode;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
 
@@ -40,16 +40,14 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		assertSetSelection(firstEle);
 
 		DataModel invisible = rootModel.get(rootModel.size() - VIEWER_LIMIT);
-		assertSetSelectionExpNode(invisible);
+		assertSelectInvisibleNodeSelectsNone(invisible);
 	}
 
-	private void assertSetSelectionExpNode(DataModel invisible) {
+	private void assertSelectInvisibleNodeSelectsNone(DataModel invisible) {
 		treeViewer.setSelection(new StructuredSelection(invisible), true);
 		processEvents();
 		IStructuredSelection selection = treeViewer.getStructuredSelection();
-		assertFalse("Selection must not be empty", selection.isEmpty());
-		Object firstElement = selection.getFirstElement();
-		assertTrue("Selection must be expandable node: " + firstElement, treeViewer.isExpandableNode(firstElement));
+		assertTrue(selection.isEmpty());
 	}
 
 	private void assertSetSelection(DataModel firstEle) {
@@ -71,17 +69,7 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		// now try to reveal non expanded item. it should not reveal anything because in
 		// case of limit based tree we don't create an item if it hidden.
 		DataModel inVisible = firstEle.children.get(2).children.get(VIEWER_LIMIT + 2);
-		assertSetSelectionExpNode(inVisible);
-		ExpandableNode selected = (ExpandableNode) treeViewer.getStructuredSelection().getFirstElement();
-		Object[] remaining = selected.getRemainingElements();
-		boolean found = false;
-		for (Object object : remaining) {
-			if (object == inVisible) {
-				found = true;
-				break;
-			}
-		}
-		assertTrue("item to select must be inside expandable node", found);
+		assertSelectInvisibleNodeSelectsNone(inVisible);
 	}
 
 	public void testCollapseAll() {
@@ -115,19 +103,17 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		}
 	}
 
-	private TreeItem[] assertLimitedItems(TreeItem treeItem) {
+	private static TreeItem[] assertLimitedItems(TreeItem treeItem) {
 		TreeItem[] items = treeItem.getItems();
 		assertEquals("There should be only limited items", VIEWER_LIMIT + 1, items.length);
-		Object data = items[VIEWER_LIMIT].getData();
-		assertTrue("last item must be expandable node", treeViewer.isExpandableNode(data));
+		assertTrue("last item must be expandable node", ColumnViewer.isExpandableNode(items[VIEWER_LIMIT]));
 		return items;
 	}
 
 	private TreeItem[] assertLimitedItems() {
 		TreeItem[] rootLevelItems = treeViewer.getTree().getItems();
 		assertEquals("There should be only limited items", VIEWER_LIMIT + 1, rootLevelItems.length);
-		Object data = rootLevelItems[VIEWER_LIMIT].getData();
-		assertTrue("last item must be expandable node", treeViewer.isExpandableNode(data));
+		assertTrue("last item must be expandable node", ColumnViewer.isExpandableNode(rootLevelItems[VIEWER_LIMIT]));
 		return rootLevelItems;
 	}
 

@@ -964,31 +964,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 				if (count < indices.length) {
 					System.arraycopy(indices, 0, indices = new int[count], 0, count);
 				}
-
-				// item to select may be hidden inside expandable node.
-				if (getItemsLimit() > 0 && indices.length < list.size()
-						&& getLastElement() instanceof ExpandableNode expNode) {
-
-					// extract only non found items already.
-					List<Object> notFoundItems = new ArrayList<Object>(list);
-					for (int index : indices) {
-						notFoundItems.remove(doGetItem(index).getData());
-					}
-
-					Object[] remEles = expNode.getRemainingElements();
-					OuterLoop : for (Object searchItem : notFoundItems) {
-						for (Object remEle : remEles) {
-							if (equals(remEle, searchItem)) {
-								int[] placeHolder = new int[indices.length + 1];
-								System.arraycopy(indices, 0, placeHolder, 0, indices.length);
-								placeHolder[placeHolder.length - 1] = items.length - 1;
-								indices = placeHolder;
-								break OuterLoop;
-							}
-						}
-					}
-				}
-
+				// invisible items (part of expandable node, or filtered) are ignored
 				doSelect(indices);
 			}
 		}

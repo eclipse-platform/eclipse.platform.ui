@@ -24,7 +24,6 @@ package org.eclipse.jface.viewers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -2644,40 +2643,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 				}
 			}
 		}
-
-		// there can be some items inside expandable node and not populated yet. In this
-		// case try to find the item to select inside all the visible expandable nodes.
-		if (newSelection.size() < v.size() && getItemsLimit() > 0) {
-			// make out still not found items
-			List<Object> notFound = new ArrayList<>();
-			for (Object toSelect : v) {
-				boolean bFound = false;
-				for (Item found : newSelection) {
-					if (equals(toSelect, found.getData())) {
-						bFound = true;
-						break;
-					}
-				}
-				if (!bFound) {
-					notFound.add(toSelect);
-				}
-			}
-
-			// find out all visible expandable nodes
-			Collection<ExpandableNode> expandItems = getExpandableNodes();
-
-			// search for still missing items inside expandable nodes
-			for (Object nFound : notFound) {
-				for (ExpandableNode expNode : expandItems) {
-					if (findElementInExpandableNode(expNode, nFound)) {
-						Widget w = findItem(expNode);
-						if (w instanceof Item item) {
-							newSelection.add(item);
-						}
-					}
-				}
-			}
-		}
+		// invisible items (part of expandable node, or filtered) are ignored
 
 		setSelection(newSelection);
 
@@ -2692,16 +2658,6 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 				showItem(newSelection.get(i));
 			}
 		}
-	}
-
-	private boolean findElementInExpandableNode(ExpandableNode expNode, Object toFind) {
-		Object[] remEles = getFilteredChildren(expNode);
-		for (Object element : remEles) {
-			if (equals(element, toFind)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/**
