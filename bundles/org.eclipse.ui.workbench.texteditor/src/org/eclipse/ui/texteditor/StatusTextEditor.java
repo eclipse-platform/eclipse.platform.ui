@@ -16,6 +16,7 @@ package org.eclipse.ui.texteditor;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -26,6 +27,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 
+import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension5;
 
 import org.eclipse.ui.IEditorInput;
@@ -36,7 +38,7 @@ import org.eclipse.ui.PlatformUI;
  *
  * @since 2.0
  */
-public class StatusTextEditor extends AbstractTextEditor implements IFindReplaceTargetExtension5 {
+public class StatusTextEditor extends AbstractTextEditor implements IFindReplaceTarget, IFindReplaceTargetExtension5 {
 
 	/** The root composite of this editor */
 	private Composite fParent;
@@ -393,5 +395,36 @@ public class StatusTextEditor extends AbstractTextEditor implements IFindReplace
 	public void endInlineSession() {
 		fSearchReplaceComposite.dispose();
 		fSearchReplaceComposite = null;
+	}
+
+	@Override
+	public boolean canPerformFind() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public int findAndSelect(int widgetOffset, String findString, boolean searchForward, boolean caseSensitive,
+			boolean wholeWord) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public Point getSelection() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getSelectionText() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void replaceSelection(String text) {
+		// TODO Auto-generated method stub
+
 	}
 }

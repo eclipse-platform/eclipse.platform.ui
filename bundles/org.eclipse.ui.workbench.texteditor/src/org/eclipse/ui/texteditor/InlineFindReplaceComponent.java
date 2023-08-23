@@ -107,7 +107,7 @@ public class InlineFindReplaceComponent { // MW -> @HeikoKlare I'm not sure weth
 		replaceContainer.dispose();
 		replaceOptions.dispose();
 		replaceBar.dispose();
-		((StatusTextEditor) targetPart).updatePartControl(((StatusTextEditor) targetPart).getEditorInput());
+		((IFindReplaceTargetExtension5) targetPart).updateLayout();
 	}
 
 	public void createDialog() { // MW -> @HeikoKlare we need to rethink how the dialog is built if we
@@ -115,7 +115,7 @@ public class InlineFindReplaceComponent { // MW -> @HeikoKlare I'm not sure weth
 		// TODO clean up this mess
 		if (targetPart instanceof IFindReplaceTargetExtension5 tp)
 			container = tp.beginInlineSession();
-		container.setLayout(new GridLayout(3, false));
+		container.setLayout(new GridLayout(1, false));
 		GridData findContainerGD = new GridData();
 		findContainerGD.grabExcessHorizontalSpace = true;
 		findContainerGD.horizontalAlignment = GridData.FILL;
@@ -225,25 +225,27 @@ public class InlineFindReplaceComponent { // MW -> @HeikoKlare I'm not sure weth
 				// TODO Auto-generated method stub
 			}
 		});
-		openReplaceButton = new Button(searchContainer, SWT.TOGGLE);
-		openReplaceButton.setText(" 🔄 "); //$NON-NLS-1$
-		openReplaceButton.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				System.out.println(openReplaceButton.getSelection());
-				if (openReplaceButton.getSelection()) {
-					createReplaceDialog();
-				} else {
-					hideReplace();
+
+		if (target.isEditable()) {
+			openReplaceButton = new Button(searchContainer, SWT.TOGGLE);
+			openReplaceButton.setText(" 🔄 "); //$NON-NLS-1$
+			openReplaceButton.addSelectionListener(new SelectionListener() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if (openReplaceButton.getSelection()) {
+						createReplaceDialog();
+					} else {
+						hideReplace();
+					}
 				}
-			}
 
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
+				@Override
+				public void widgetDefaultSelected(SelectionEvent e) {
+					// TODO Auto-generated method stub
 
-			}
-		});
+				}
+			});
+		}
 
 		// Problem: shift+8 ("(") will not be typed into the search Bar since it is
 		// already a bound key. We need to override this behaviour FIXME
@@ -260,6 +262,7 @@ public class InlineFindReplaceComponent { // MW -> @HeikoKlare I'm not sure weth
 		searchBar.addModifyListener(new ModifyListener() { // MW -> @HeikoKlare we need to revisit this!
 			@Override
 			public void modifyText(ModifyEvent e) {
+				timer.cancel();
 				timer.schedule(new TimerTask() {
 					@Override
 					public void run() {
@@ -279,25 +282,34 @@ public class InlineFindReplaceComponent { // MW -> @HeikoKlare I'm not sure weth
 
 		container.layout();
 		((IFindReplaceTargetExtension5) targetPart).updateLayout();
-
-		((StatusTextEditor) targetPart).updatePartControl(((StatusTextEditor) targetPart).getEditorInput());
 		dialogCreated = true;
 
 	}
 
 	public void createReplaceDialog() {
-		Composite parent = ((StatusTextEditor) targetPart).getInlineToolbarParent();
-		replaceContainer = new Composite(parent, SWT.NONE);
-		replaceContainer.setLayout(new GridLayout(2, false));
+		Composite parent = container;
+		replaceContainer = new Composite(parent, SWT.BORDER);
+		replaceContainer.setLayout(new GridLayout(3, false));
 		GridData replaceContainerLayoutData = new GridData();
 		replaceContainerLayoutData.grabExcessHorizontalSpace = true;
 		replaceContainerLayoutData.horizontalAlignment = SWT.FILL;
 		replaceContainer.setLayoutData(replaceContainerLayoutData);
 
+		replaceBarContainer = new Composite(replaceContainer, SWT.NONE);
+		GridData replaceBarData = new GridData(SWT.FILL);
+		replaceBarData.grabExcessHorizontalSpace = true;
+		replaceBarData.horizontalAlignment = SWT.FILL;
+		replaceBarContainer.setLayoutData(replaceBarData);
+		replaceBarContainer.setLayout(new FillLayout());
+		replaceBarContainer.setBackground(new Color(255, 0, 0));
+		replaceBar = new Text(replaceBarContainer, SWT.SINGLE);
+		replaceBar.setMessage(" 🔄 Replace"); //$NON-NLS-1$
+
 		replaceOptions = new Composite(replaceContainer, SWT.NONE);
 		replaceOptions.setLayout(new GridLayout(3, false));
 		replaceButton = new Button(replaceOptions, SWT.PUSH);
-		replaceButton.setText("Replace"); //$NON-NLS-1$
+		replaceButton.setText(" 🔂 "); //$NON-NLS-1$
+		replaceButton.setToolTipText("Replace");
 		replaceButton.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -309,7 +321,8 @@ public class InlineFindReplaceComponent { // MW -> @HeikoKlare I'm not sure weth
 			}
 		});
 		replaceAllButton = new Button(replaceOptions, SWT.PUSH);
-		replaceAllButton.setText("Replace All"); //$NON-NLS-1$
+		replaceAllButton.setText(" 🔁 "); //$NON-NLS-1$
+		replaceAllButton.setToolTipText("Replace All");
 		replaceAllButton.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -322,17 +335,7 @@ public class InlineFindReplaceComponent { // MW -> @HeikoKlare I'm not sure weth
 
 			}
 		});
-
-		replaceBarContainer = new Composite(replaceContainer, SWT.NONE);
-		GridData replaceBarData = new GridData(SWT.FILL);
-		replaceBarData.grabExcessHorizontalSpace = true;
-		replaceBarData.horizontalAlignment = SWT.FILL;
-		replaceBarContainer.setLayoutData(replaceBarData);
-		replaceBarContainer.setLayout(new FillLayout());
-		replaceBarContainer.setBackground(new Color(255, 0, 0));
-		replaceBar = new Text(replaceBarContainer, SWT.SINGLE | SWT.BORDER);
-		replaceBar.setMessage(" 🔄 Replace"); //$NON-NLS-1$
-		((StatusTextEditor) targetPart).updatePartControl(((StatusTextEditor) targetPart).getEditorInput());
+		((IFindReplaceTargetExtension5) targetPart).updateLayout();
 	}
 
 	public void toggleActive() {

@@ -115,6 +115,8 @@ import org.eclipse.ui.part.MarkerTransfer;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.eclipse.ui.texteditor.EditorMessages;
+import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.views.WorkbenchViewerSetup;
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerItem;
@@ -168,11 +170,12 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 	private UIUpdateJob uiUpdateJob;
 
 	private Composite parentComposite;
+	private Composite viewerComposite;
 	private Composite findComposite;
 	private MarkersTreeViewer viewer;
 
 	private Action filterAction;
-
+	private FindReplaceAction findReplaceAction;
 
 	/**
 	 * Tells whether the tree has been painted.
@@ -381,6 +384,7 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 		}
 	}
 
+
 	/**
 	 *
 	 * @param markerField
@@ -433,7 +437,16 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 		parentCompositeLayout.horizontalSpacing = 0;
 		parentComposite.setLayout(parentCompositeLayout);
 
-		createViewer(parentComposite);
+		viewerComposite = new Composite(parentComposite, SWT.NULL);
+		GridData viewerCompositeGD = new GridData();
+		viewerCompositeGD.grabExcessHorizontalSpace = true;
+		viewerCompositeGD.grabExcessVerticalSpace = true;
+		viewerCompositeGD.horizontalAlignment = GridData.FILL;
+		viewerCompositeGD.verticalAlignment = GridData.FILL;
+		viewerComposite.setLayout(new FillLayout());
+		viewerComposite.setLayoutData(viewerCompositeGD);
+
+		createViewer(viewerComposite);
 
 		addDoubleClickListener();
 
@@ -1497,6 +1510,8 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 	private void initToolBar() {
 		IActionBars bars = getViewSite().getActionBars();
 		IToolBarManager tm = bars.getToolBarManager();
+		setFindReplaceAction(
+				new FindReplaceAction(EditorMessages.getBundleForConstructedKeys(), "MarkersView.Find.", this)); //$NON-NLS-1$
 		createFilterAction();
 		tm.add(new Separator("FilterGroup")); //$NON-NLS-1$
 		tm.add(filterAction);
@@ -1784,6 +1799,9 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 
 	@Override
 	public void updateLayout() {
+		// TODO not sure which one of these three does what I want to do
+		parentComposite.layout();
+		parentComposite.redraw();
 		parentComposite.update();
 	}
 
@@ -1828,5 +1846,20 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 	public void replaceSelection(String text) {
 		// TODO Auto-generated method stub
 
+	}
+
+	/**
+	 * @return Returns the findReplaceAction.
+	 */
+	public FindReplaceAction getFindReplaceAction() {
+		return findReplaceAction;
+	}
+
+
+	/**
+	 * @param findReplaceAction The findReplaceAction to set.
+	 */
+	public void setFindReplaceAction(FindReplaceAction findReplaceAction) {
+		this.findReplaceAction = findReplaceAction;
 	}
 }

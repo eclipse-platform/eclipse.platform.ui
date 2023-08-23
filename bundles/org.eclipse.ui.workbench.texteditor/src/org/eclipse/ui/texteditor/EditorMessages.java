@@ -21,8 +21,11 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * Helper class to get NLSed messages.
+ *
+ * @since 3.18
  */
-final class EditorMessages extends NLS {
+// TODO: I changed the visibility to public - need to change back - MW
+public final class EditorMessages extends NLS {
 
 	private static final String BUNDLE_FOR_CONSTRUCTED_KEYS= "org.eclipse.ui.texteditor.ConstructedEditorMessages";//$NON-NLS-1$
 	private static ResourceBundle fgBundleForConstructedKeys= ResourceBundle.getBundle(BUNDLE_FOR_CONSTRUCTED_KEYS);
