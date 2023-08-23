@@ -144,6 +144,7 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 
 	/**
 	 * The Markers View Update Job Family
+	 *
 	 * @since 3.6
 	 */
 	public final Object MARKERSVIEW_UPDATE_JOB_FAMILY = new Object();
@@ -179,9 +180,10 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 
 	/**
 	 * Tells whether the tree has been painted.
+	 *
 	 * @since 3.7
 	 */
-	private boolean treePainted= false;
+	private boolean treePainted = false;
 
 	private ISelectionListener pageSelectionListener;
 	private IPartListener2 partListener;
@@ -193,20 +195,17 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 
 	private RedoActionHandler redoAction;
 
-	private boolean isViewVisible= true;
-
+	private boolean isViewVisible = true;
 
 	/**
 	 * Return a new instance of the receiver.
 	 *
-	 * @param contentGeneratorId
-	 *            the id of the generator to load.
+	 * @param contentGeneratorId the id of the generator to load.
 	 */
 	public ExtendedMarkersView(String contentGeneratorId) {
 		super();
 		defaultGeneratorIds = new String[] { contentGeneratorId };
 	}
-
 
 	/**
 	 * Add all concrete {@link MarkerSupportItem} elements associated with the
@@ -215,8 +214,7 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 	 * @param markerItem
 	 * @param allMarkers
 	 */
-	private void addAllConcreteItems(MarkerSupportItem markerItem,
-			Collection<MarkerSupportItem> allMarkers) {
+	private void addAllConcreteItems(MarkerSupportItem markerItem, Collection<MarkerSupportItem> allMarkers) {
 		if (markerItem.isConcrete()) {
 			allMarkers.add(markerItem);
 			return;
@@ -243,8 +241,7 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 	 * Add all of the markers in markerItem recursively.
 	 *
 	 * @param markerItem
-	 * @param allMarkers
-	 *            {@link Collection} of {@link IMarker}
+	 * @param allMarkers {@link Collection} of {@link IMarker}
 	 */
 	private void addMarkers(MarkerSupportItem markerItem, Collection<IMarker> allMarkers) {
 		if (markerItem.getMarker() != null)
@@ -265,8 +262,8 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 	private void createViewer(Composite parent) {
 		parent.setLayout(new FillLayout());
 
-		viewer = new MarkersTreeViewer(new Tree(parent, SWT.H_SCROLL
-				/*| SWT.VIRTUAL */| SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION));
+		viewer = new MarkersTreeViewer(
+				new Tree(parent, SWT.H_SCROLL/* | SWT.VIRTUAL */ | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION));
 		WorkbenchViewerSetup.setupViewer(viewer);
 		viewer.getTree().setLinesVisible(true);
 		viewer.setUseHashlookup(true);
@@ -280,7 +277,7 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 		viewer.getTree().addPaintListener(new PaintListener() {
 			@Override
 			public void paintControl(PaintEvent e) {
-				treePainted= true;
+				treePainted = true;
 				viewer.getTree().removePaintListener(this);
 			}
 		});
@@ -289,8 +286,7 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 	/**
 	 * Create the columns for the receiver.
 	 *
-	 * @param currentColumns
-	 *            the columns to refresh
+	 * @param currentColumns the columns to refresh
 	 * @param widths
 	 */
 	private void createColumns(TreeColumn[] currentColumns, int[] widths) {
@@ -316,8 +312,7 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 			// Show the help in the first column
 			column.setLabelProvider(new MarkerColumnLabelProvider(markerField));
 			column.getColumn().setText(markerField.getColumnHeaderText());
-			column.getColumn().setToolTipText(
-					markerField.getColumnTooltipText());
+			column.getColumn().setToolTipText(markerField.getColumnTooltipText());
 			column.getColumn().setImage(markerField.getColumnHeaderImage());
 
 			EditingSupport support = markerField.getEditingSupport(viewer);
@@ -328,24 +323,23 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 				updateDirectionIndicator(column.getColumn(), markerField);
 
 			IMemento columnWidths = null;
-			if (memento != null){
+			if (memento != null) {
 				columnWidths = memento.getChild(TAG_COLUMN_WIDTHS);
 			}
 
-			//adjust the column width
+			// adjust the column width
 			int columnWidth = i < widths.length ? widths[i] : -1;
 			columnWidth = getFieldWidth(markerField, columnWidth, false);
 			if (columnWidths != null) {
 				// save it
 				columnWidths.putInteger(
-						markerField.getConfigurationElement().getAttribute(
-						MarkerSupportInternalUtilities.ATTRIBUTE_ID), columnWidth);
+						markerField.getConfigurationElement().getAttribute(MarkerSupportInternalUtilities.ATTRIBUTE_ID),
+						columnWidth);
 			}
 			// Take trim into account if we are using the default value, but not
 			// if it is restored.
 			if (columnWidth < 0)
-				layout.addColumnData(new ColumnPixelData(markerField
-						.getDefaultColumnWidth(tree), true, true));
+				layout.addColumnData(new ColumnPixelData(markerField.getDefaultColumnWidth(tree), true, true));
 			else
 				layout.addColumnData(new ColumnPixelData(columnWidth, true));
 		}
@@ -384,7 +378,6 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 		}
 	}
 
-
 	/**
 	 *
 	 * @param markerField
@@ -396,7 +389,7 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 		Tree tree = getViewer().getTree();
 
 		if (considerUIWidths) {
-			TreeColumn[] columns= tree.getColumns();
+			TreeColumn[] columns = tree.getColumns();
 			for (TreeColumn column : columns) {
 				if (markerField.equals(column.getData(MARKER_FIELD))) {
 					return column.getWidth();
@@ -407,9 +400,8 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 		if (preferredWidth < 0 && memento != null) {
 			IMemento columnWidths = memento.getChild(TAG_COLUMN_WIDTHS);
 			if (columnWidths != null) {
-				Integer value = columnWidths.getInteger(markerField
-						.getConfigurationElement().getAttribute(
-								MarkerSupportInternalUtilities.ATTRIBUTE_ID));
+				Integer value = columnWidths.getInteger(markerField.getConfigurationElement()
+						.getAttribute(MarkerSupportInternalUtilities.ATTRIBUTE_ID));
 				// Make sure we get a useful value
 				if (value != null && value.intValue() >= 0)
 					preferredWidth = value.intValue();
@@ -468,14 +460,13 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 
 		getSite().setSelectionProvider(viewer);
 
-		IUndoContext undoContext= getUndoContext();
-		undoAction= new UndoActionHandler(getSite(), undoContext);
+		IUndoContext undoContext = getUndoContext();
+		undoAction = new UndoActionHandler(getSite(), undoContext);
 		undoAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_UNDO);
-		redoAction= new RedoActionHandler(getSite(), undoContext);
+		redoAction = new RedoActionHandler(getSite(), undoContext);
 		redoAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_REDO);
 		getViewSite().getActionBars().setGlobalActionHandler(ActionFactory.UNDO.getId(), undoAction);
 		getViewSite().getActionBars().setGlobalActionHandler(ActionFactory.REDO.getId(), redoAction);
-
 
 		startView();
 
@@ -486,7 +477,7 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 	 */
 	private void startView() {
 		viewer.setInput(builder.getMarkers());
-		//always use a clone for Thread safety
+		// always use a clone for Thread safety
 		IContentProvider contentProvider = viewer.getContentProvider();
 		Markers clone = createViewerInputClone();
 		if (clone == null) {
@@ -497,17 +488,19 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 	}
 
 	/**
-	 * Attaches an {@link IDoubleClickListener} to expand items that are not openable
+	 * Attaches an {@link IDoubleClickListener} to expand items that are not
+	 * openable
+	 *
 	 * @since 3.8
 	 */
 	private void addDoubleClickListener() {
 		viewer.addDoubleClickListener(event -> {
 			ISelection selection = event.getSelection();
-			if(selection instanceof ITreeSelection) {
+			if (selection instanceof ITreeSelection) {
 				ITreeSelection ss = (ITreeSelection) selection;
-				if(ss.size() == 1) {
+				if (ss.size() == 1) {
 					Object obj = ss.getFirstElement();
-					if(viewer.isExpandable(obj)) {
+					if (viewer.isExpandable(obj)) {
 						viewer.setExpandedState(obj, !viewer.getExpandedState(obj));
 					}
 				}
@@ -535,8 +528,8 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 	private void addSelectionListener() {
 		viewer.addSelectionChangedListener(event -> {
 			ISelection selection = event.getSelection();
-			if (selection instanceof IStructuredSelection){
-				updateStatusLine((IStructuredSelection)selection);
+			if (selection instanceof IStructuredSelection) {
+				updateStatusLine((IStructuredSelection) selection);
 			}
 		});
 	}
@@ -604,7 +597,8 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 	/**
 	 * Returns the complete list of selected {@link IMarker}s from the view.
 	 *
-	 * @return the complete list of selected {@link IMarker}s or an empty array, never <code>null</code>
+	 * @return the complete list of selected {@link IMarker}s or an empty array,
+	 *         never <code>null</code>
 	 * @since 3.8
 	 */
 	IMarker[] getOpenableMarkers() {
@@ -658,7 +652,7 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 	 * @return MarkerSupportItem[]
 	 */
 	MarkerSupportItem[] getAllConcreteItems() {
-		MarkerSupportItem[] elements =getActiveViewerInputClone().getElements();
+		MarkerSupportItem[] elements = getActiveViewerInputClone().getElements();
 		Collection<MarkerSupportItem> allMarkers = new ArrayList<>();
 		for (MarkerSupportItem element : elements) {
 			addAllConcreteItems(element, allMarkers);
@@ -683,7 +677,7 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 	 * @return IMarker[]
 	 */
 	IMarker[] getAllMarkers() {
-		MarkerSupportItem[] elements =getActiveViewerInputClone().getElements();
+		MarkerSupportItem[] elements = getActiveViewerInputClone().getElements();
 		Collection<IMarker> allMarkers = new ArrayList<>();
 		for (MarkerSupportItem element : elements) {
 			addMarkers(element, allMarkers);
@@ -715,7 +709,7 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 				IMemento expanded = this.memento.getChild(TAG_EXPANDED);
 				if (expanded != null) {
 					IMemento[] mementoCategories = expanded.getChildren(TAG_CATEGORY);
-					MarkerCategory[] markerCategories =getActiveViewerInputClone().getCategories();
+					MarkerCategory[] markerCategories = getActiveViewerInputClone().getCategories();
 					if (markerCategories != null) {
 						for (MarkerCategory markerCategorie : markerCategories) {
 							for (IMemento mementoCategorie : mementoCategories) {
@@ -769,9 +763,8 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 	 * @return String
 	 */
 	private String getFieldId(TreeColumn treeColumn) {
-		return ((MarkerField) treeColumn.getData(MARKER_FIELD))
-				.getConfigurationElement().getAttribute(
-						MarkerSupportInternalUtilities.ATTRIBUTE_ID);
+		return ((MarkerField) treeColumn.getData(MARKER_FIELD)).getConfigurationElement()
+				.getAttribute(MarkerSupportInternalUtilities.ATTRIBUTE_ID);
 	}
 
 	/**
@@ -798,8 +791,7 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 			public void widgetSelected(SelectionEvent e) {
 
 				final TreeColumn column = (TreeColumn) e.widget;
-				final MarkerField field = (MarkerField) column
-						.getData(MARKER_FIELD);
+				final MarkerField field = (MarkerField) column.getData(MARKER_FIELD);
 				setPrimarySortField(field, column);
 			}
 		};
@@ -877,8 +869,8 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 			}
 
 			/**
-			 * @return true if the builder noticed that marker updates were made
-			 *         but UI is not updated yet
+			 * @return true if the builder noticed that marker updates were made but UI is
+			 *         not updated yet
 			 */
 			private boolean hasPendingChanges() {
 				boolean[] changeFlags = builder.readChangeFlags();
@@ -935,8 +927,8 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 	 * Get the status message for the title and status line.
 	 *
 	 * @param markers the markers for which to get the status message
-	 * @param counts an array of {@link Integer} where index indicates
-	 *            [errors,warnings,infos,others]
+	 * @param counts  an array of {@link Integer} where index indicates
+	 *                [errors,warnings,infos,others]
 	 * @return String
 	 */
 	private String getStatusMessage(Markers markers, Integer[] counts) {
@@ -957,7 +949,7 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 				}
 				filteredCount += childCount;
 			}
-		} else if(markerLimitsEnabled) {
+		} else if (markerLimitsEnabled) {
 			filteredCount = markerLimit;
 		} else {
 			filteredCount = -1;
@@ -972,9 +964,8 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 			}
 			return status;
 		}
-		String message= MessageFormat.format(
-				MarkerMessages.errorsAndWarningsSummaryBreakdown,
-				counts[0], counts[1], /* combine infos and others */ counts[2] + counts[3]);
+		String message = MessageFormat.format(MarkerMessages.errorsAndWarningsSummaryBreakdown, counts[0], counts[1],
+				/* combine infos and others */ counts[2] + counts[3]);
 		if (filteredCount < 0 || filteredCount >= totalCount) {
 			return message;
 		}
@@ -990,20 +981,24 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 	Markers getViewerInput() {
 		return (Markers) viewer.getInput();
 	}
+
 	/**
 	 * Return the active clone currently in use by UI.
 	 *
 	 * @return Object
 	 */
 	Markers getActiveViewerInputClone() {
-		/*The ideal place to hold the reference for the
-		 clone is the view,as it is a for-ui-only clone*/
+		/*
+		 * The ideal place to hold the reference for the clone is the view,as it is a
+		 * for-ui-only clone
+		 */
 		return builder.getClonedMarkers();
 	}
 
 	/**
-	 * Return a new clone to use in UI.Can return
-	 * null if markers are changing or building.
+	 * Return a new clone to use in UI.Can return null if markers are changing or
+	 * building.
+	 *
 	 * @see CachedMarkerBuilder#createMarkersClone()
 	 *
 	 *
@@ -1032,16 +1027,14 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 		}
 
 		if (generatorDescriptor == null && defaultGeneratorIds.length > 0) {
-			generatorDescriptor = MarkerSupportRegistry.getInstance()
-					.getContentGenDescriptor(defaultGeneratorIds[0]);
+			generatorDescriptor = MarkerSupportRegistry.getInstance().getContentGenDescriptor(defaultGeneratorIds[0]);
 			if (generatorDescriptor == null) {
 				logInvalidGenerator(defaultGeneratorIds[0]);
 			}
 		}
 
 		if (generatorDescriptor == null) {
-			generatorDescriptor = MarkerSupportRegistry.getInstance()
-					.getDefaultContentGenDescriptor();
+			generatorDescriptor = MarkerSupportRegistry.getInstance().getDefaultContentGenDescriptor();
 		}
 
 		builder = new CachedMarkerBuilder(this);
@@ -1053,11 +1046,9 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 
 		// Add in the markers view actions
 
-		menuService.populateContributionManager((ContributionManager) site
-				.getActionBars().getMenuManager(), "menu:" //$NON-NLS-1$
+		menuService.populateContributionManager((ContributionManager) site.getActionBars().getMenuManager(), "menu:" //$NON-NLS-1$
 				+ MarkerSupportRegistry.MARKERS_ID);
-		menuService.populateContributionManager((ContributionManager) site
-				.getActionBars().getToolBarManager(),
+		menuService.populateContributionManager((ContributionManager) site.getActionBars().getToolBarManager(),
 				"toolbar:" + MarkerSupportRegistry.MARKERS_ID); //$NON-NLS-1$
 
 		builder.restoreState(m);
@@ -1156,8 +1147,7 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 	 * @param id
 	 */
 	void logInvalidGenerator(String id) {
-		StatusManager.getManager().handle(
-				new Status(IStatus.WARNING, IDEWorkbenchPlugin.IDE_WORKBENCH,
+		StatusManager.getManager().handle(new Status(IStatus.WARNING, IDEWorkbenchPlugin.IDE_WORKBENCH,
 						NLS.bind("Invalid markerContentGenerator {0} ", //$NON-NLS-1$
 								id)));
 	}
@@ -1166,8 +1156,8 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 	 * Open the filters dialog for the receiver.
 	 */
 	void openFiltersDialog() {
-		FiltersConfigurationDialog dialog = new FiltersConfigurationDialog(
-				getSite().getWorkbenchWindow().getShell(), generator);
+		FiltersConfigurationDialog dialog = new FiltersConfigurationDialog(getSite().getWorkbenchWindow().getShell(),
+				generator);
 		if (dialog.open() == Window.OK) {
 			generator.updateFilters(dialog.getFilters(), dialog.andFilters());
 		}
@@ -1216,7 +1206,7 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 	 */
 	void reexpandCategories() {
 		if (!getCategoriesToExpand().isEmpty() && builder.isShowingHierarchy()) {
-			MarkerItem[] items =getActiveViewerInputClone().getElements();
+			MarkerItem[] items = getActiveViewerInputClone().getElements();
 			IContentProvider provider = viewer.getContentProvider();
 			for (int i = 0; i < items.length; i++) {
 				String name = ((MarkerCategory) items[i]).getName();
@@ -1233,8 +1223,8 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 	}
 
 	/**
-	 * Register the context menu for the receiver so that commands may be added
-	 * to it.
+	 * Register the context menu for the receiver so that commands may be added to
+	 * it.
 	 */
 	private void registerContextMenu() {
 		MenuManager contextMenu = new MenuManager();
@@ -1278,16 +1268,16 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 		int[] positions = viewer.getTree().getColumnOrder();
 		for (int i = 0; i < fields.length; i++) {
 			TreeColumn column = viewer.getTree().getColumn(i);
-			MarkerField markerField= (MarkerField)column.getData(MARKER_FIELD);
+			MarkerField markerField = (MarkerField) column.getData(MARKER_FIELD);
 
 			/*
 			 * Workaround for TeeColumn.getWidth() returning 0 in some cases, see
 			 * https://bugs.eclipse.org/341865 for details.
 			 */
-			int width= getFieldWidth(markerField, -1, treePainted);
+			int width = getFieldWidth(markerField, -1, treePainted);
 
 			columnEntry.putInteger(getFieldId(column), width);
-			fields[positions[i]]= markerField;
+			fields[positions[i]] = markerField;
 		}
 		if (generator != null) {
 			generator.saveState(m, fields);
@@ -1330,10 +1320,8 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 				return;
 			}
 		}
-		StatusManager.getManager().handle(
-				StatusUtil.newStatus(IStatus.WARNING,
-						"Sorting by non visible field " //$NON-NLS-1$
-								+ field.getName(), null));
+		StatusManager.getManager().handle(StatusUtil.newStatus(IStatus.WARNING, "Sorting by non visible field " //$NON-NLS-1$
+				+ field.getName(), null));
 	}
 
 	/**
@@ -1360,8 +1348,7 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 		List<MarkerItem> newSelection = new ArrayList<>(structuredSelection.size());
 		for (Object next : structuredSelection) {
 			if (next instanceof IMarker) {
-				MarkerItem marker = builder.getMarkers().getMarkerItem(
-						(IMarker) next);
+				MarkerItem marker = builder.getMarkers().getMarkerItem((IMarker) next);
 				if (marker != null) {
 					newSelection.add(marker);
 				}
@@ -1477,7 +1464,7 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 	 * Updates this view's title image.
 	 *
 	 * @param counts an array of {@link Integer} where index indicates
-	 *            [errors,warnings,infos,others]
+	 *               [errors,warnings,infos,others]
 	 * @since 3.7
 	 */
 	void updateTitleImage(Integer[] counts) {
@@ -1488,8 +1475,7 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 	 */
 	private void initDragAndDrop() {
 		int operations = DND.DROP_COPY;
-		Transfer[] transferTypes = new Transfer[] {
-				MarkerTransfer.getInstance(), TextTransfer.getInstance() };
+		Transfer[] transferTypes = new Transfer[] { MarkerTransfer.getInstance(), TextTransfer.getInstance() };
 		DragSourceListener listener = new DragSourceAdapter() {
 			@Override
 			public void dragSetData(DragSourceEvent event) {
@@ -1518,8 +1504,8 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 	}
 
 	/**
-	 * The user is attempting to drag marker data. Add the appropriate data to
-	 * the event depending on the transfer type.
+	 * The user is attempting to drag marker data. Add the appropriate data to the
+	 * event depending on the transfer type.
 	 */
 	private void performDragSetData(DragSourceEvent event) {
 		if (MarkerTransfer.getInstance().isSupportedType(event.dataType)) {
@@ -1546,10 +1532,10 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 	/**
 	 * @param visible
 	 */
-	void setVisibleFields(Collection<MarkerField> visible,int[] widths) {
+	void setVisibleFields(Collection<MarkerField> visible, int[] widths) {
 		generator.setVisibleFields(visible);
-		//viewer.setSelection(new StructuredSelection());
-		//viewer.removeAndClearAll();
+		// viewer.setSelection(new StructuredSelection());
+		// viewer.removeAndClearAll();
 		createColumns(viewer.getTree().getColumns(), widths);
 		scheduleUpdate(0L);
 	}
@@ -1562,8 +1548,7 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 	}
 
 	/**
-	 * The method should not be called directly, see
-	 * {@link MarkerUpdateScheduler}
+	 * The method should not be called directly, see {@link MarkerUpdateScheduler}
 	 *
 	 * Cancel a scheduled delay
 	 */
@@ -1576,8 +1561,7 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 	}
 
 	/**
-	 * The method should not be called directly, see
-	 * {@link MarkerUpdateScheduler}
+	 * The method should not be called directly, see {@link MarkerUpdateScheduler}
 	 *
 	 * @param delay
 	 * @return UIUpdateJob
@@ -1592,8 +1576,7 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 				// uiUpdateJob.setPriority(Job.SHORT);
 				uiUpdateJob.setSystem(true);
 			}
-			IWorkbenchSiteProgressService progressService = builder
-					.getProgressService();
+			IWorkbenchSiteProgressService progressService = builder.getProgressService();
 			if (progressService != null) {
 				progressService.schedule(uiUpdateJob, delay);
 			} else {
@@ -1613,23 +1596,24 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 		}
 		return -1;
 	}
+
 	/**
 	 * @return true if the UI isUpdating
 	 *
 	 */
 	boolean isUIUpdating() {
-		return uiUpdateJob!=null?uiUpdateJob.isUpdating():false;
+		return uiUpdateJob != null ? uiUpdateJob.isUpdating() : false;
 	}
 
 	/**
-	 * Return the next secondary id that has not been opened for a primary id of
-	 * a part.
+	 * Return the next secondary id that has not been opened for a primary id of a
+	 * part.
 	 *
 	 * @return part
 	 */
 	static String newSecondaryID(IViewPart part) {
-		while (part.getSite().getPage().findViewReference(
-				part.getSite().getId(), String.valueOf(instanceCount)) != null) {
+		while (part.getSite().getPage().findViewReference(part.getSite().getId(),
+				String.valueOf(instanceCount)) != null) {
 			instanceCount++;
 		}
 
@@ -1740,9 +1724,9 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 	}
 
 	/**
-	 * Return the undo context associated with operations performed in this view. By default, return
-	 * the workspace undo context. Subclasses should override if a more specific undo context should
-	 * be used.
+	 * Return the undo context associated with operations performed in this view. By
+	 * default, return the workspace undo context. Subclasses should override if a
+	 * more specific undo context should be used.
 	 *
 	 * @since 3.7
 	 */
@@ -1758,16 +1742,19 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 	 */
 	protected String getDeleteOperationName(IMarker[] markers) {
 		Assert.isLegal(markers.length > 0);
-		return markers.length == 1 ? MarkerMessages.deleteMarker_operationName : MarkerMessages.deleteMarkers_operationName;
+		return markers.length == 1 ? MarkerMessages.deleteMarker_operationName
+				: MarkerMessages.deleteMarkers_operationName;
 	}
 
 	/**
 	 * Tells whether this view is visible.
 	 * <p>
-	 * See bug 401632 why we can't use {@link IWorkbenchPage#isPartVisible(IWorkbenchPart)}.
+	 * See bug 401632 why we can't use
+	 * {@link IWorkbenchPage#isPartVisible(IWorkbenchPart)}.
 	 * </p>
 	 *
-	 * @return <code>true</code> if this view is visible, <code>false</code> otherwise
+	 * @return <code>true</code> if this view is visible, <code>false</code>
+	 *         otherwise
 	 */
 	boolean isVisible() {
 		return isViewVisible;
@@ -1808,7 +1795,8 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 	@Override
 	public void endInlineSession() {
 		findComposite.dispose();
-		findComposite = null;;
+		findComposite = null;
+		;
 	}
 
 	@Override
@@ -1820,14 +1808,34 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 	@Override
 	public int findAndSelect(int widgetOffset, String findString, boolean searchForward, boolean caseSensitive,
 			boolean wholeWord) {
-		// TODO Auto-generated method stub
-		return 0;
+		IMarker[] markers = getAllMarkers();
+		int foundIndex = 0;
+
+		widgetOffset = 0;
+
+		try {
+			for (int searchIndex = widgetOffset; searchIndex < markers.length; searchIndex++) {
+				String markerMessage = (String) markers[searchIndex].getAttribute("message"); //$NON-NLS-1$
+				if (markerMessage.contains(findString)) {
+					foundIndex = searchIndex;
+					break;
+				}
+			}
+		} catch (Exception e) {
+
+		}
+
+		viewer.setSelection(new StructuredSelection(new Object[] { markers[foundIndex] }), true);
+
+
+		return foundIndex;
 	}
 
 	@Override
 	public Point getSelection() {
-		// TODO Auto-generated method stub
-		return null;
+		IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+
+		return new Point(selection.getFirstElement().hashCode(), 0);
 	}
 
 	@Override
@@ -1854,7 +1862,6 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 	public FindReplaceAction getFindReplaceAction() {
 		return findReplaceAction;
 	}
-
 
 	/**
 	 * @param findReplaceAction The findReplaceAction to set.

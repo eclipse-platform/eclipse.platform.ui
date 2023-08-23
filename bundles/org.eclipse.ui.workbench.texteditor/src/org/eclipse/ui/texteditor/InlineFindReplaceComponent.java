@@ -10,12 +10,11 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -60,7 +59,6 @@ public class InlineFindReplaceComponent { // MW -> @HeikoKlare I'm not sure weth
 
 	Composite replaceContainer;
 	Composite replaceOptions;
-	Composite replaceBarContainer;
 	Text replaceBar;
 	Button replaceButton;
 	Button replaceAllButton;
@@ -85,8 +83,11 @@ public class InlineFindReplaceComponent { // MW -> @HeikoKlare I'm not sure weth
 	}
 
 	public void hideDialog() {
-		if (openReplaceButton.getSelection()) {
-			hideReplace();
+		if (openReplaceButton != null) {
+			if (openReplaceButton.getSelection()) {
+				hideReplace();
+			}
+			openReplaceButton.dispose();
 		}
 		container.setLayoutData(null);
 		container.dispose();
@@ -103,11 +104,20 @@ public class InlineFindReplaceComponent { // MW -> @HeikoKlare I'm not sure weth
 	}
 
 	public void hideReplace() {
+		setNormalTablist();
 		replaceContainer.setLayout(null);
 		replaceContainer.dispose();
 		replaceOptions.dispose();
 		replaceBar.dispose();
 		((IFindReplaceTargetExtension5) targetPart).updateLayout();
+	}
+
+	private void setNormalTablist() {
+		searchContainer.setTabList(new Control[] { searchBar });
+	}
+
+	private void setReplaceTablist() {
+		replaceContainer.setTabList(new Control[] { replaceBar });
 	}
 
 	public void createDialog() { // MW -> @HeikoKlare we need to rethink how the dialog is built if we
@@ -259,10 +269,10 @@ public class InlineFindReplaceComponent { // MW -> @HeikoKlare I'm not sure weth
 				}
 			}
 		});
-		searchBar.addModifyListener(new ModifyListener() { // MW -> @HeikoKlare we need to revisit this!
+		searchBar.addModifyListener(new ModifyListener() { // MW -> @HeikoKlare we need to revisit this - this is very
+															// buggy!
 			@Override
 			public void modifyText(ModifyEvent e) {
-				timer.cancel();
 				timer.schedule(new TimerTask() {
 					@Override
 					public void run() {
@@ -280,6 +290,7 @@ public class InlineFindReplaceComponent { // MW -> @HeikoKlare I'm not sure weth
 		});
 		searchBar.setMessage(" 🔎 Find"); //$NON-NLS-1$
 
+		setNormalTablist();
 		container.layout();
 		((IFindReplaceTargetExtension5) targetPart).updateLayout();
 		dialogCreated = true;
@@ -295,14 +306,11 @@ public class InlineFindReplaceComponent { // MW -> @HeikoKlare I'm not sure weth
 		replaceContainerLayoutData.horizontalAlignment = SWT.FILL;
 		replaceContainer.setLayoutData(replaceContainerLayoutData);
 
-		replaceBarContainer = new Composite(replaceContainer, SWT.NONE);
-		GridData replaceBarData = new GridData(SWT.FILL);
+		replaceBar = new Text(replaceContainer, SWT.SINGLE);
+		GridData replaceBarData = new GridData();
 		replaceBarData.grabExcessHorizontalSpace = true;
 		replaceBarData.horizontalAlignment = SWT.FILL;
-		replaceBarContainer.setLayoutData(replaceBarData);
-		replaceBarContainer.setLayout(new FillLayout());
-		replaceBarContainer.setBackground(new Color(255, 0, 0));
-		replaceBar = new Text(replaceBarContainer, SWT.SINGLE);
+		replaceBar.setLayoutData(replaceBarData);
 		replaceBar.setMessage(" 🔄 Replace"); //$NON-NLS-1$
 
 		replaceOptions = new Composite(replaceContainer, SWT.NONE);
@@ -335,6 +343,9 @@ public class InlineFindReplaceComponent { // MW -> @HeikoKlare I'm not sure weth
 
 			}
 		});
+		replaceBar.forceFocus();
+
+		setReplaceTablist();
 		((IFindReplaceTargetExtension5) targetPart).updateLayout();
 	}
 
