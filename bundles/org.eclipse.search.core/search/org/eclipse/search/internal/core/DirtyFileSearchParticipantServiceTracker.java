@@ -29,25 +29,25 @@ import org.eclipse.core.resources.IFile;
 
 import org.eclipse.jface.text.IDocument;
 
-import org.eclipse.search.internal.core.text.IDirtyFileSearchParticipant;
+import org.eclipse.search.internal.core.text.DirtyFileProvider;
 
 public class DirtyFileSearchParticipantServiceTracker
-		extends ServiceTracker<IDirtyFileSearchParticipant, IDirtyFileSearchParticipant> {
+		extends ServiceTracker<DirtyFileProvider, DirtyFileProvider> {
 
 	private static final String PROPERTY_WEIGHT = "weight"; //$NON-NLS-1$
 	public DirtyFileSearchParticipantServiceTracker(BundleContext context)
 			throws InvalidSyntaxException {
 		super(context, context.createFilter(MessageFormat.format("(&(objectClass={0}))", //$NON-NLS-1$
-				IDirtyFileSearchParticipant.class.getCanonicalName())), null);
+				DirtyFileProvider.class.getCanonicalName())), null);
 	}
 
-	public IDirtyFileSearchParticipant checkedGetService() {
-		ServiceReference<IDirtyFileSearchParticipant>[] allRefs = getServiceReferences();
-		List<ServiceReference<IDirtyFileSearchParticipant>> l = Arrays.asList(allRefs);
-		Collections.sort(l, new Comparator<ServiceReference<IDirtyFileSearchParticipant>>() {
+	public DirtyFileProvider checkedGetService() {
+		ServiceReference<DirtyFileProvider>[] allRefs = getServiceReferences();
+		List<ServiceReference<DirtyFileProvider>> l = Arrays.asList(allRefs);
+		Collections.sort(l, new Comparator<ServiceReference<DirtyFileProvider>>() {
 			@Override
-			public int compare(ServiceReference<IDirtyFileSearchParticipant> o1,
-					ServiceReference<IDirtyFileSearchParticipant> o2) {
+			public int compare(ServiceReference<DirtyFileProvider> o1,
+					ServiceReference<DirtyFileProvider> o2) {
 				Object o1Weight = o1.getProperty(PROPERTY_WEIGHT);
 				Object o2Weight = o2.getProperty(PROPERTY_WEIGHT);
 				int o1Val = o1Weight == null ? 0 : o1Weight instanceof Integer ? ((Integer) o1Weight).intValue() : 0;
@@ -58,9 +58,9 @@ public class DirtyFileSearchParticipantServiceTracker
 		if (l.size() > 0) {
 			return getService(l.get(0));
 		}
-		return new IDirtyFileSearchParticipant() {
+		return new DirtyFileProvider() {
 			@Override
-			public Map<IFile, IDocument> findDirtyFiles() {
+			public Map<IFile, IDocument> dirtyFiles() {
 				return Collections.EMPTY_MAP;
 			}
 		};

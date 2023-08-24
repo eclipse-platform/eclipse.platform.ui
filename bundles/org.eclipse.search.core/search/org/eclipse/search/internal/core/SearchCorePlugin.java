@@ -7,7 +7,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 
-import org.eclipse.search.internal.core.text.IDirtyFileSearchParticipant;
+import org.eclipse.search.internal.core.text.DirtyFileProvider;
 import org.eclipse.search.internal.core.text.TextSearchEngineRegistry;
 
 public class SearchCorePlugin extends Plugin {
@@ -21,7 +21,7 @@ public class SearchCorePlugin extends Plugin {
 	private static SearchCorePlugin fgSearchPlugin;
 
 	private TextSearchEngineRegistry fTextSearchEngineRegistry;
-	private IDirtyFileSearchParticipant fDirtyFileSearchParticipant;
+	private DirtyFileProvider fDirtyFileSearchParticipant;
 	private DirtyFileSearchParticipantServiceTracker fDirtyFileSearchParticipantTracker;
 
 	/**
@@ -55,7 +55,7 @@ public class SearchCorePlugin extends Plugin {
 		return fTextSearchEngineRegistry;
 	}
 
-	public IDirtyFileSearchParticipant getDirtyFileDiscovery() {
+	public DirtyFileProvider getDirtyFileDiscovery() {
 		if (fDirtyFileSearchParticipant == null) {
 			this.fDirtyFileSearchParticipantTracker.open();
 			fDirtyFileSearchParticipant = this.fDirtyFileSearchParticipantTracker.checkedGetService();

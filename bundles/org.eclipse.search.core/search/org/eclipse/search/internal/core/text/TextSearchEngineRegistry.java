@@ -31,7 +31,8 @@ import org.eclipse.search.internal.core.SearchCorePlugin;
 
 
 public class TextSearchEngineRegistry {
-	public static final String PREFERENCE_ENGINE_KEY = "org.eclipse.search.textSearchEngine";
+	private static final String DEFAULT_PREFERENCE_NODE_ID = "org.eclipse.search"; //$NON-NLS-1$
+	public static final String PREFERENCE_ENGINE_KEY = "org.eclipse.search.textSearchEngine"; //$NON-NLS-1$
 
 	private static final String EXTENSION_POINT_ID= "org.eclipse.search.textSearchEngine"; //$NON-NLS-1$
 	private static final String ENGINE_NODE_NAME= "textSearchEngine"; //$NON-NLS-1$
@@ -41,10 +42,19 @@ public class TextSearchEngineRegistry {
 
 	private TextSearchEngine fPreferredEngine;
 	private String fPreferredEngineId;
+	private String fgPreferenceNodeId;
 
 	public TextSearchEngineRegistry() {
 		fPreferredEngineId= null; // only null when not initialized
 		fPreferredEngine= null;
+	}
+
+	public void setPreferenceNodeId(String id) {
+		fgPreferenceNodeId = id;
+	}
+
+	protected String getPreferenceNodeId() {
+		return fgPreferenceNodeId == null ? DEFAULT_PREFERENCE_NODE_ID : fgPreferenceNodeId; // $NON-NLS-1$
 	}
 
 	public TextSearchEngine getPreferred() {
@@ -72,14 +82,14 @@ public class TextSearchEngineRegistry {
 	}
 
 	private String getPreferredEngineID() {
-		String pluginId = getPreferencePluginId();
+		String nodeId = getPreferenceNodeId();
 		String preferedEngine = Platform.getPreferencesService().get(PREFERENCE_ENGINE_KEY, null,
-				new IEclipsePreferences[] { InstanceScope.INSTANCE.getNode(pluginId) });
+				new IEclipsePreferences[] { InstanceScope.INSTANCE.getNode(nodeId) });
 		return preferedEngine;
 	}
 
 	private void setPreferredEngineID(String id) {
-		String pluginId = getPreferencePluginId();
+		String pluginId = getPreferenceNodeId();
 		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(pluginId);
 		preferences.put(PREFERENCE_ENGINE_KEY, id);
 		try {
@@ -88,10 +98,6 @@ public class TextSearchEngineRegistry {
 		} catch (BackingStoreException e) {
 			e.printStackTrace();
 		}
-	}
-
-	protected String getPreferencePluginId() {
-		return "org.eclipse.search";
 	}
 
 	private TextSearchEngine createFromExtension(final String id) {

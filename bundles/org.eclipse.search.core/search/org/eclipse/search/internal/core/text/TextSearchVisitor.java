@@ -295,9 +295,9 @@ public class TextSearchVisitor {
 	private volatile boolean fFatalError; // If true, terminates the search.
 
 	private volatile boolean fIsLightweightAutoRefresh;
-	private IDirtyFileSearchParticipant fDirtyDiscovery;
+	private DirtyFileProvider fDirtyDiscovery;
 
-	public TextSearchVisitor(TextSearchRequestor collector, Pattern searchPattern, IDirtyFileSearchParticipant dirtyDiscovery) {
+	public TextSearchVisitor(TextSearchRequestor collector, Pattern searchPattern, DirtyFileProvider dirtyDiscovery) {
 		fCollector= collector;
 		fDirtyDiscovery = dirtyDiscovery;
 		fStatus = new MultiStatus(SearchCorePlugin.PLUGIN_ID, IStatus.OK,
@@ -424,7 +424,7 @@ public class TextSearchVisitor {
 
 	private Map<IFile, IDocument> findDirtyFiles() {
 		if (fDirtyDiscovery != null) {
-			Map<IFile, IDocument> ret = fDirtyDiscovery.findDirtyFiles();
+			Map<IFile, IDocument> ret = fDirtyDiscovery.dirtyFiles();
 			if (ret != null)
 				return ret;
 		}
