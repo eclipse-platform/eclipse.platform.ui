@@ -47,7 +47,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import org.eclipse.search.internal.core.SearchCorePlugin;
 import org.eclipse.search.internal.core.text.TextSearchEngineRegistry;
-import org.eclipse.search.internal.ui.text.DirtyFileSearchParticipant;
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.NewSearchUI;
@@ -100,7 +99,6 @@ public class SearchPlugin extends AbstractUIPlugin {
 		Assert.isTrue(fgSearchPlugin == null);
 		fgSearchPlugin= this;
 		fTextSearchQueryProviderRegistry= null;
-		SearchCorePlugin.getDefault().setDirtyFileDiscovery(new DirtyFileSearchParticipant());
 	}
 
 	/**

@@ -1,18 +1,11 @@
 package org.eclipse.search.internal.core;
 
-import java.util.Collections;
-import java.util.Map;
-
 import org.osgi.framework.BundleContext;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.core.resources.IFile;
-
-import org.eclipse.jface.text.IDocument;
 
 import org.eclipse.search.internal.core.text.IDirtyFileSearchParticipant;
 import org.eclipse.search.internal.core.text.TextSearchEngineRegistry;
@@ -29,6 +22,7 @@ public class SearchCorePlugin extends Plugin {
 
 	private TextSearchEngineRegistry fTextSearchEngineRegistry;
 	private IDirtyFileSearchParticipant fDirtyFileSearchParticipant;
+	private DirtyFileSearchParticipantServiceTracker fDirtyFileSearchParticipantTracker;
 
 	/**
 	 * @return Returns the search plugin instance.
@@ -46,7 +40,7 @@ public class SearchCorePlugin extends Plugin {
 
 	@Override
 	public void start(BundleContext context) throws Exception {
-		// do nothing
+		this.fDirtyFileSearchParticipantTracker = new DirtyFileSearchParticipantServiceTracker(context);
 	}
 
 	@Override
@@ -61,18 +55,10 @@ public class SearchCorePlugin extends Plugin {
 		return fTextSearchEngineRegistry;
 	}
 
-	public void setDirtyFileDiscovery(IDirtyFileSearchParticipant participant) {
-		this.fDirtyFileSearchParticipant = participant;
-	}
 	public IDirtyFileSearchParticipant getDirtyFileDiscovery() {
 		if (fDirtyFileSearchParticipant == null) {
-			return new IDirtyFileSearchParticipant() {
-				@Override
-				public Map<IFile, IDocument> findDirtyFiles() {
-					// TODO Auto-generated method stub
-					return Collections.EMPTY_MAP;
-				}
-			};
+			this.fDirtyFileSearchParticipantTracker.open();
+			fDirtyFileSearchParticipant = this.fDirtyFileSearchParticipantTracker.checkedGetService();
 		}
 		return fDirtyFileSearchParticipant;
 	}
