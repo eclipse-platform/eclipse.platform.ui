@@ -43,20 +43,23 @@ public class DirtyFileSearchParticipantServiceTracker
 
 	public DirtyFileProvider checkedGetService() {
 		ServiceReference<DirtyFileProvider>[] allRefs = getServiceReferences();
-		List<ServiceReference<DirtyFileProvider>> l = Arrays.asList(allRefs);
-		Collections.sort(l, new Comparator<ServiceReference<DirtyFileProvider>>() {
-			@Override
-			public int compare(ServiceReference<DirtyFileProvider> o1,
-					ServiceReference<DirtyFileProvider> o2) {
-				Object o1Weight = o1.getProperty(PROPERTY_WEIGHT);
-				Object o2Weight = o2.getProperty(PROPERTY_WEIGHT);
-				int o1Val = o1Weight == null ? 0 : o1Weight instanceof Integer ? ((Integer) o1Weight).intValue() : 0;
-				int o2Val = o2Weight == null ? 0 : o2Weight instanceof Integer ? ((Integer) o2Weight).intValue() : 0;
-				return o2Val - o1Val;
+		if (allRefs != null && allRefs.length > 0) {
+			List<ServiceReference<DirtyFileProvider>> l = Arrays.asList(allRefs);
+			Collections.sort(l, new Comparator<ServiceReference<DirtyFileProvider>>() {
+				@Override
+				public int compare(ServiceReference<DirtyFileProvider> o1, ServiceReference<DirtyFileProvider> o2) {
+					Object o1Weight = o1.getProperty(PROPERTY_WEIGHT);
+					Object o2Weight = o2.getProperty(PROPERTY_WEIGHT);
+					int o1Val = o1Weight == null ? 0
+							: o1Weight instanceof Integer ? ((Integer) o1Weight).intValue() : 0;
+					int o2Val = o2Weight == null ? 0
+							: o2Weight instanceof Integer ? ((Integer) o2Weight).intValue() : 0;
+					return o2Val - o1Val;
+				}
+			});
+			if (l.size() > 0) {
+				return getService(l.get(0));
 			}
-		});
-		if (l.size() > 0) {
-			return getService(l.get(0));
 		}
 		return new DirtyFileProvider() {
 			@Override
