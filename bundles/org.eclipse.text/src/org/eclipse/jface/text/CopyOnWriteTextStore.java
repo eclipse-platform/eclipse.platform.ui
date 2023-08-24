@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jface.text;
 
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 import org.eclipse.core.runtime.Assert;
 
 
@@ -105,6 +107,8 @@ public class CopyOnWriteTextStore implements ITextStore {
 	/** A modifiable <code>ITextStore</code> instance */
 	private final ITextStore fModifiableTextStore;
 
+	private final ReentrantReadWriteLock lock;
+
 	/**
 	 * Creates an empty text store. The given text store will be used upon first modification
 	 * attempt.
@@ -116,37 +120,63 @@ public class CopyOnWriteTextStore implements ITextStore {
 		Assert.isNotNull(modifiableTextStore);
 		fTextStore= new StringTextStore();
 		fModifiableTextStore= modifiableTextStore;
+		lock = new ReentrantReadWriteLock();
 	}
 
 	@Override
 	public char get(int offset) {
-		return fTextStore.get(offset);
+		lock.readLock().lock();
+		try {
+			return fTextStore.get(offset);
+		} finally {
+			lock.readLock().unlock();
+		}
 	}
 
 	@Override
 	public String get(int offset, int length) {
-		return fTextStore.get(offset, length);
+		lock.readLock().lock();
+		try {
+			return fTextStore.get(offset, length);
+		} finally {
+			lock.readLock().unlock();
+		}
 	}
 
 	@Override
 	public int getLength() {
-		return fTextStore.getLength();
+		lock.readLock().lock();
+		try {
+			return fTextStore.getLength();
+		} finally {
+			lock.readLock().unlock();
+		}
 	}
 
 	@Override
 	public void replace(int offset, int length, String text) {
-		if (fTextStore != fModifiableTextStore) {
-			String content= fTextStore.get(0, fTextStore.getLength());
-			fTextStore= fModifiableTextStore;
-			fTextStore.set(content);
+		lock.writeLock().lock();
+		try {
+			if (fTextStore != fModifiableTextStore) {
+				String content= fTextStore.get(0, fTextStore.getLength());
+				fTextStore= fModifiableTextStore;
+				fTextStore.set(content);
+			}
+			fTextStore.replace(offset, length, text);
+		} finally {
+			lock.writeLock().unlock();
 		}
-		fTextStore.replace(offset, length, text);
 	}
 
 	@Override
 	public void set(String text) {
-		fTextStore= new StringTextStore(text);
-		fModifiableTextStore.set(""); //$NON-NLS-1$
+		lock.writeLock().lock();
+		try {
+			fTextStore= new StringTextStore(text);
+			fModifiableTextStore.set(""); //$NON-NLS-1$
+		} finally {
+			lock.writeLock().unlock();
+		}
 	}
 
 }
