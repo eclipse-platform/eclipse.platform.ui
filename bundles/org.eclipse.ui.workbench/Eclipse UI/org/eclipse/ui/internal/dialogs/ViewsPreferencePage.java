@@ -167,6 +167,11 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 
 		createThemeIndependentComposits(comp);
 
+		// Theme dependent controls for Tab icons and titles
+		createShowFullText(comp);
+		createHideIcons(comp);
+		createDependency(showFullText, hideIcons);
+
 		if (currentTheme != null) {
 			String colorsAndFontsThemeId = getColorAndFontThemeIdByThemeId(currentTheme.getId());
 			if (colorsAndFontsThemeId != null && !currentColorsAndFontsTheme.getId().equals(colorsAndFontsThemeId)) {
@@ -183,24 +188,21 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		createUseRoundTabs(comp);
 		createColoredLabelsPref(comp);
 		createEnableMruPref(comp);
-		createShowFullText(comp);
-		createHideIcons(comp);
-		createDependency(showFullText, hideIcons);
 	}
 
 	protected void createShowFullText(Composite composite) {
 		IEclipsePreferences prefs = getSwtRendererPreferences();
 		boolean actualValue = prefs.getBoolean(CTabRendering.SHOW_FULL_TEXT, CTabRendering.SHOW_FULL_TEXT_DEFAULT);
 		createLabel(composite, ""); //$NON-NLS-1$
-		createLabel(composite, "Tab icons and titles in view areas:"); //$NON-NLS-1$
-		showFullText = createCheckButton(composite, "Always show full titles", //$NON-NLS-1$
+		createLabel(composite, WorkbenchMessages.ViewsPreference_viewTabs_icons_and_titles_label);
+		showFullText = createCheckButton(composite, WorkbenchMessages.ViewsPreference_showFullTabText,
 				actualValue);
 	}
 
 	protected void createHideIcons(Composite composite) {
 		IEclipsePreferences prefs = getSwtRendererPreferences();
 		boolean actualValue = prefs.getBoolean(CTabRendering.HIDE_ICONS, CTabRendering.HIDE_ICONS_DEFAULT);
-		hideIcons = createCheckButton(composite, "Hide icons", actualValue); //$NON-NLS-1$
+		hideIcons = createCheckButton(composite, WorkbenchMessages.ViewsPreference_hideTabIcons, actualValue);
 	}
 
 	/**
@@ -309,17 +311,19 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 
 	@Override
 	public boolean performOk() {
+		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
+		IEclipsePreferences prefs = getSwtRendererPreferences();
 		if (engine != null) {
 			ITheme theme = getSelectedTheme();
 			if (theme != null) {
 				engine.setTheme(getSelectedTheme(), !highContrastMode);
 			}
+			prefs.putBoolean(CTabRendering.HIDE_ICONS, hideIcons.getSelection());
+			prefs.putBoolean(CTabRendering.SHOW_FULL_TEXT, showFullText.getSelection());
 		}
 
-		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 		apiStore.setValue(IWorkbenchPreferenceConstants.USE_COLORED_LABELS, useColoredLabels.getSelection());
 
-		IEclipsePreferences prefs = getSwtRendererPreferences();
 		prefs.putBoolean(StackRenderer.MRU_KEY, enableMru.getSelection());
 		boolean themingEnabledChanged = prefs.getBoolean(PartRenderingEngine.ENABLED_THEME_KEY, true) != themingEnabled
 				.getSelection();
@@ -327,9 +331,6 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 
 		prefs.putBoolean(CTabRendering.USE_ROUND_TABS, useRoundTabs.getSelection());
 
-		prefs.putBoolean(CTabRendering.HIDE_ICONS, hideIcons.getSelection());
-
-		prefs.putBoolean(CTabRendering.SHOW_FULL_TEXT, showFullText.getSelection());
 		try {
 			prefs.flush();
 		} catch (BackingStoreException e) {
@@ -401,13 +402,13 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			if (engine.getActiveTheme() != null) {
 				themeIdCombo.setSelection(new StructuredSelection(engine.getActiveTheme()));
 			}
+			hideIcons.setSelection(CTabRendering.HIDE_ICONS_DEFAULT);
+			showFullText.setSelection(CTabRendering.SHOW_FULL_TEXT_DEFAULT);
 		}
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 		useColoredLabels.setSelection(apiStore.getDefaultBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS));
 
 		useRoundTabs.setSelection(CTabRendering.USE_ROUND_TABS_DEFAULT);
-		hideIcons.setSelection(CTabRendering.HIDE_ICONS_DEFAULT);
-		showFullText.setSelection(CTabRendering.SHOW_FULL_TEXT_DEFAULT);
 		enableMru.setSelection(getDefaultMRUValue());
 		super.performDefaults();
 	}

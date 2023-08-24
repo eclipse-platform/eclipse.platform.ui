@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChang
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.ui.internal.css.swt.ICTabRendering;
+import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -87,6 +88,7 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 
 	private static int MIN_VIEW_CHARS = 1;
 
+	private static final String EditorTag = "EditorStack"; //$NON-NLS-1$
 	// Constants for circle drawing
 	static enum CirclePart {
 		LEFT_TOP, LEFT_BOTTOM, RIGHT_TOP, RIGHT_BOTTOM;
@@ -171,6 +173,8 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 		parent.addDisposeListener(e -> preferences.removePreferenceChangeListener(this));
 
 		cornerRadiusPreferenceChanged();
+		showFullText();
+		hideIcons();
 	}
 
 	@Override
@@ -1310,13 +1314,14 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 	private void showFullText() {
 		boolean showFullText = getShowFullTextPreference();
 		if (!isPartOfEditorStack()) {
-			if (showFullText == true) {
+			if (showFullText) {
 				Optional<Integer> max = Arrays.stream(parent.getItems()).map(CTabItem::getText).map(String::length)
 						.max(Integer::compare);
 				parent.setMinimumCharacters(max.orElseGet(() -> 9999));
 			} else {
 				parent.setMinimumCharacters(MIN_VIEW_CHARS);
 			}
+			parent.redraw();
 		}
 	}
 
@@ -1334,29 +1339,11 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 	}
 
 	private boolean isPartOfEditorStack() {
-		MUIElement element = (MUIElement) parent.getData("modelElement"); //$NON-NLS-1$
-		if (element != null && element.getTags().contains("EditorStack")) { //$NON-NLS-1$
+		MUIElement element = (MUIElement) parent.getData(AbstractPartRenderer.OWNING_ME);
+		if (element != null && element.getTags().contains(EditorTag)) {
 			return true;
 		}
 		return false;
-	}
-
-	@Override
-	protected boolean showSelectedTabImage(Image image) {
-		if (!isPartOfEditorStack()) {
-			boolean hideIcons = getHideIconsPreference();
-			return image != null && !image.isDisposed() && !hideIcons;
-		}
-		return super.showSelectedTabImage(image);
-	}
-
-	@Override
-	protected boolean showUnselectedTabImage(Image image) {
-		if (!isPartOfEditorStack()) {
-			boolean hideIcons = getHideIconsPreference();
-			return image != null && !image.isDisposed() && !hideIcons;
-		}
-		return super.showUnselectedTabImage(image);
 	}
 
 	private boolean getHideIconsPreference() {
@@ -1370,5 +1357,4 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 		boolean showFullText = preferences.getBoolean(SHOW_FULL_TEXT, SHOW_FULL_TEXT_DEFAULT);
 		return showFullText;
 	}
-
 }

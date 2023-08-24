@@ -352,9 +352,9 @@
       <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
             composite="false"
-            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyTabFullTextHandler">
+            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyTabTextMinimumCharactersSWTHandler">
          <property-name
-               name="swt-tab-full-text">
+               name="swt-tab-text-minimum-characters">
          </property-name>
       </handler>
       <handler
