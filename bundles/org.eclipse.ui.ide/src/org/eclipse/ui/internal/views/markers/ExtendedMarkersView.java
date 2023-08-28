@@ -145,7 +145,7 @@ import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
  * @since 3.4
  *
  */
-public class ExtendedMarkersView<auto> extends ViewPart implements IFindReplaceTarget, IFindReplaceTargetExtension5 {
+public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget, IFindReplaceTargetExtension5 {
 
 	/**
 	 * The Markers View Update Job Family

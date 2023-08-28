@@ -37,6 +37,13 @@
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.pde.api.tools.apiAnalysisNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>src/org/eclipse/ui/internal/views/markers/search-feature</name>
+			<type>2</type>
+			<location>C:/Users/mwittmer/Documents/search-feature</location>
+		</link>
+	</linkedResources>
 	<filteredResources>
 		<filter>
 			<id>1676382308432</id>
