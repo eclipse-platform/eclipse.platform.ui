@@ -269,10 +269,11 @@ public class InlineFindReplaceComponent { // MW -> @HeikoKlare I'm not sure weth
 				}
 			}
 		});
-		searchBar.addModifyListener(new ModifyListener() { // MW -> @HeikoKlare we need to revisit this - this is very
-															// buggy!
+		searchBar.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
+				timer.cancel();
+				timer = new Timer();
 				timer.schedule(new TimerTask() {
 					@Override
 					public void run() {

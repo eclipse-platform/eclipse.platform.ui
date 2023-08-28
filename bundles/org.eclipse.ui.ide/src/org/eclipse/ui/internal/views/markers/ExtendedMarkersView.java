@@ -45,6 +45,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension5;
 import org.eclipse.jface.util.OpenStrategy;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.IContentProvider;
@@ -55,6 +56,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.window.Window;
@@ -137,10 +140,12 @@ import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
  * specification of the view. If this list is left out the problems
  * markerContentProvider will be used.
  *
+ * @param <auto>
+ *
  * @since 3.4
  *
  */
-public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget, IFindReplaceTargetExtension5 {
+public class ExtendedMarkersView<auto> extends ViewPart implements IFindReplaceTarget, IFindReplaceTargetExtension5 {
 
 	/**
 	 * The Markers View Update Job Family
@@ -1796,7 +1801,6 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 	public void endInlineSession() {
 		findComposite.dispose();
 		findComposite = null;
-		;
 	}
 
 	@Override
@@ -1808,34 +1812,39 @@ public class ExtendedMarkersView extends ViewPart implements IFindReplaceTarget,
 	@Override
 	public int findAndSelect(int widgetOffset, String findString, boolean searchForward, boolean caseSensitive,
 			boolean wholeWord) {
-		IMarker[] markers = getAllMarkers();
-		int foundIndex = 0;
 
-		widgetOffset = 0;
-
-		try {
-			for (int searchIndex = widgetOffset; searchIndex < markers.length; searchIndex++) {
-				String markerMessage = (String) markers[searchIndex].getAttribute("message"); //$NON-NLS-1$
-				if (markerMessage.contains(findString)) {
-					foundIndex = searchIndex;
-					break;
+		var tree = viewer.getTree();
+		var items = tree.getItems();
+		ArrayList<TreePath> selection = new ArrayList<>();
+		for (var item : items) {
+			// TODO: has children?
+			for (var child : ((MarkerViewerContentProvider) viewer.getContentProvider()).getElements(item)) {
+				MarkerSupportItem[] markerCategoryChildren = ((MarkerCategory) child).getChildren();
+				for (var markerSupportItem : markerCategoryChildren) {
+					String markerMessage = markerSupportItem.getMarker().getAttribute(IMarker.MESSAGE,
+							MarkerSupportInternalUtilities.UNKNOWN_ATRRIBTE_VALUE_STRING);
+					if (markerMessage.contains(findString)) {
+						ArrayList<Object> selectionPath = new ArrayList<>();
+						selectionPath.add(item);
+						selectionPath.add(markerSupportItem);
+						selection.add(new TreePath(selectionPath.toArray()));
+					}
 				}
+				var text = ((ColumnLabelProvider) viewer.getLabelProvider(1)).getText(child);
+				System.out.println(text);
 			}
-		} catch (Exception e) {
-
 		}
 
-		viewer.setSelection(new StructuredSelection(new Object[] { markers[foundIndex] }), true);
+		viewer.setSelection(new TreeSelection(selection.toArray(new TreePath[0])));
 
-
-		return foundIndex;
+		// very messy! TODO revisit how inline findreplace works
+		return 0;
 	}
 
 	@Override
 	public Point getSelection() {
-		IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
 
-		return new Point(selection.getFirstElement().hashCode(), 0);
+		return new Point(0, 0);
 	}
 
 	@Override
