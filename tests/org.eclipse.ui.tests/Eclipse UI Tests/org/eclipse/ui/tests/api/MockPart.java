@@ -126,6 +126,10 @@ public class MockPart extends EventManager implements IExecutableExtension {
 	 * @see IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
+		if (titleImage != null) {
+			titleImage.dispose();
+			titleImage = null;
+		}
 		callTrace.add("dispose");
 	}
 
