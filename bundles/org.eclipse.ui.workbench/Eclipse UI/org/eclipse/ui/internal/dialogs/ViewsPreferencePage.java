@@ -109,8 +109,8 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 
 	private Button themingEnabled;
 
-	private Button hideIcons;
-	private Button showFullText;
+	private Button hideIconsForViewTabs;
+	private Button showFullTextForViewTabs;
 
 	@Override
 	protected Control createContents(Composite parent) {
@@ -167,10 +167,10 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 
 		createThemeIndependentComposits(comp);
 
-		// Theme dependent controls for Tab icons and titles
-		createShowFullText(comp);
-		createHideIcons(comp);
-		createDependency(showFullText, hideIcons);
+		// Theme dependent controls for Tab icons and titles in view areas
+		createShowFullTextForViewTabs(comp);
+		createHideIconsForViewTabs(comp);
+		createDependency(showFullTextForViewTabs, hideIconsForViewTabs);
 
 		if (currentTheme != null) {
 			String colorsAndFontsThemeId = getColorAndFontThemeIdByThemeId(currentTheme.getId());
@@ -190,24 +190,27 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		createEnableMruPref(comp);
 	}
 
-	protected void createShowFullText(Composite composite) {
+	protected void createShowFullTextForViewTabs(Composite composite) {
 		IEclipsePreferences prefs = getSwtRendererPreferences();
-		boolean actualValue = prefs.getBoolean(CTabRendering.SHOW_FULL_TEXT, CTabRendering.SHOW_FULL_TEXT_DEFAULT);
+		boolean actualValue = prefs.getBoolean(CTabRendering.SHOW_FULL_TEXT_FOR_VIEW_TABS,
+				CTabRendering.SHOW_FULL_TEXT_FOR_VIEW_TABS_DEFAULT);
 		createLabel(composite, ""); //$NON-NLS-1$
 		createLabel(composite, WorkbenchMessages.ViewsPreference_viewTabs_icons_and_titles_label);
-		showFullText = createCheckButton(composite, WorkbenchMessages.ViewsPreference_showFullTabText,
+		showFullTextForViewTabs = createCheckButton(composite,
+				WorkbenchMessages.ViewsPreference_showFullTextForViewTabs, actualValue);
+	}
+
+	protected void createHideIconsForViewTabs(Composite composite) {
+		IEclipsePreferences prefs = getSwtRendererPreferences();
+		boolean actualValue = prefs.getBoolean(CTabRendering.HIDE_ICONS_FOR_VIEW_TABS,
+				CTabRendering.HIDE_ICONS_FOR_VIEW_TABS_DEFAULT);
+		hideIconsForViewTabs = createCheckButton(composite, WorkbenchMessages.ViewsPreference_hideIconsForViewTabs,
 				actualValue);
 	}
 
-	protected void createHideIcons(Composite composite) {
-		IEclipsePreferences prefs = getSwtRendererPreferences();
-		boolean actualValue = prefs.getBoolean(CTabRendering.HIDE_ICONS, CTabRendering.HIDE_ICONS_DEFAULT);
-		hideIcons = createCheckButton(composite, WorkbenchMessages.ViewsPreference_hideTabIcons, actualValue);
-	}
-
 	/**
-	 * @param showFullText
-	 * @param hideIcons
+	 * @param showFullTextForViewTabs
+	 * @param hideIconsForViewTabs
 	 */
 	private void createDependency(Button parent, Button dependent) {
 		GridData gridData = new GridData();
@@ -222,11 +225,10 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			public void widgetSelected(SelectionEvent e) {
 				boolean state = parent.getSelection();
 				dependent.setEnabled(state);
-
-				if (state == false)
+				if (!state) {
 					dependent.setSelection(state);
+				}
 			}
-
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
@@ -311,17 +313,17 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 
 	@Override
 	public boolean performOk() {
-		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 		IEclipsePreferences prefs = getSwtRendererPreferences();
 		if (engine != null) {
 			ITheme theme = getSelectedTheme();
 			if (theme != null) {
 				engine.setTheme(getSelectedTheme(), !highContrastMode);
 			}
-			prefs.putBoolean(CTabRendering.HIDE_ICONS, hideIcons.getSelection());
-			prefs.putBoolean(CTabRendering.SHOW_FULL_TEXT, showFullText.getSelection());
+			prefs.putBoolean(CTabRendering.HIDE_ICONS_FOR_VIEW_TABS, hideIconsForViewTabs.getSelection());
+			prefs.putBoolean(CTabRendering.SHOW_FULL_TEXT_FOR_VIEW_TABS, showFullTextForViewTabs.getSelection());
 		}
 
+		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 		apiStore.setValue(IWorkbenchPreferenceConstants.USE_COLORED_LABELS, useColoredLabels.getSelection());
 
 		prefs.putBoolean(StackRenderer.MRU_KEY, enableMru.getSelection());
@@ -330,7 +332,6 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		prefs.putBoolean(PartRenderingEngine.ENABLED_THEME_KEY, themingEnabled.getSelection());
 
 		prefs.putBoolean(CTabRendering.USE_ROUND_TABS, useRoundTabs.getSelection());
-
 		try {
 			prefs.flush();
 		} catch (BackingStoreException e) {
@@ -402,8 +403,8 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			if (engine.getActiveTheme() != null) {
 				themeIdCombo.setSelection(new StructuredSelection(engine.getActiveTheme()));
 			}
-			hideIcons.setSelection(CTabRendering.HIDE_ICONS_DEFAULT);
-			showFullText.setSelection(CTabRendering.SHOW_FULL_TEXT_DEFAULT);
+			hideIconsForViewTabs.setSelection(CTabRendering.HIDE_ICONS_FOR_VIEW_TABS_DEFAULT);
+			showFullTextForViewTabs.setSelection(CTabRendering.SHOW_FULL_TEXT_FOR_VIEW_TABS_DEFAULT);
 		}
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 		useColoredLabels.setSelection(apiStore.getDefaultBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS));

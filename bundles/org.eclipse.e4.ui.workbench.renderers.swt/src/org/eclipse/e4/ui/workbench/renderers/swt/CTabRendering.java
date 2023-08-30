@@ -60,35 +60,36 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 	 */
 	public static final boolean USE_ROUND_TABS_DEFAULT = false;
 	/**
-	 * A named preference for setting CTabFolder's to be rendered without icons
+	 * A named preference for setting CTabFolder's to be rendered without icons in view areas
 	 * <p>
 	 * The default value for this preference is: <code>false</code> (render
 	 * CTabFolder's with icons)
 	 * </p>
 	 */
-	public static final String HIDE_ICONS = "HIDE_ICONS"; //$NON-NLS-1$
+	public static final String HIDE_ICONS_FOR_VIEW_TABS = "HIDE_ICONS_FOR_VIEW_TABS"; //$NON-NLS-1$
 
 	/**
-	 * Default value for "hide icons" preference
+	 * Default value for "hide icons" preference for view tabs
 	 */
-	public static final boolean HIDE_ICONS_DEFAULT = false;
+	public static final boolean HIDE_ICONS_FOR_VIEW_TABS_DEFAULT = false;
 	/**
-	 * A named preference for setting CTabFolder's to show full text
+	 * A named preference for setting CTabFolder's to show full text in view areas
 	 * <p>
 	 * The default value for this preference is: <code>false</code> (render
 	 * CTabFolder's without full text)
 	 * </p>
 	 */
-	public static final String SHOW_FULL_TEXT = "SHOW_FULL_TEXT"; //$NON-NLS-1$
+	public static final String SHOW_FULL_TEXT_FOR_VIEW_TABS = "SHOW_FULL_TEXT_FOR_VIEW_TABS"; //$NON-NLS-1$
 
 	/**
-	 * Default value for "hide icons" preference
+	 * Default value for "show full text" preference for view tabs
 	 */
-	public static final boolean SHOW_FULL_TEXT_DEFAULT = false;
+	public static final boolean SHOW_FULL_TEXT_FOR_VIEW_TABS_DEFAULT = false;
 
 	private static int MIN_VIEW_CHARS = 1;
 
 	private static final String EditorTag = "EditorStack"; //$NON-NLS-1$
+
 	// Constants for circle drawing
 	static enum CirclePart {
 		LEFT_TOP, LEFT_BOTTOM, RIGHT_TOP, RIGHT_BOTTOM;
@@ -173,8 +174,8 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 		parent.addDisposeListener(e -> preferences.removePreferenceChangeListener(this));
 
 		cornerRadiusPreferenceChanged();
-		showFullText();
-		hideIcons();
+		showFullTextForViewTabsPreferenceChanged();
+		hideIconsForViewTabsPreferenceChanged();
 	}
 
 	@Override
@@ -1302,17 +1303,15 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 	public void preferenceChange(PreferenceChangeEvent event) {
 		if (event.getKey().equals(USE_ROUND_TABS)) {
 			cornerRadiusPreferenceChanged();
-		} else if (event.getKey().equals(HIDE_ICONS)) {
-			hideIcons();
-		} else if (event.getKey().equals(SHOW_FULL_TEXT)) {
-			showFullText();
-		} else {
-			return;
+		} else if (event.getKey().equals(HIDE_ICONS_FOR_VIEW_TABS)) {
+			hideIconsForViewTabsPreferenceChanged();
+		} else if (event.getKey().equals(SHOW_FULL_TEXT_FOR_VIEW_TABS)) {
+			showFullTextForViewTabsPreferenceChanged();
 		}
 	}
 
-	private void showFullText() {
-		boolean showFullText = getShowFullTextPreference();
+	private void showFullTextForViewTabsPreferenceChanged() {
+		boolean showFullText = getShowFullTextForViewTabsPreference();
 		if (!isPartOfEditorStack()) {
 			if (showFullText) {
 				Optional<Integer> max = Arrays.stream(parent.getItems()).map(CTabItem::getText).map(String::length)
@@ -1325,8 +1324,8 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 		}
 	}
 
-	private void hideIcons() {
-		boolean hideIcons = getHideIconsPreference();
+	private void hideIconsForViewTabsPreferenceChanged() {
+		boolean hideIcons = getHideIconsForViewTabsPreference();
 		if (!isPartOfEditorStack()) {
 			parent.setSelectedImageVisible(!hideIcons);
 			parent.setUnselectedImageVisible(!hideIcons);
@@ -1346,15 +1345,13 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 		return false;
 	}
 
-	private boolean getHideIconsPreference() {
+	private boolean getHideIconsForViewTabsPreference() {
 		IEclipsePreferences preferences = getSwtRendererPreferences();
-		boolean hideIcons = preferences.getBoolean(HIDE_ICONS, HIDE_ICONS_DEFAULT);
-		return hideIcons;
+		return preferences.getBoolean(HIDE_ICONS_FOR_VIEW_TABS, HIDE_ICONS_FOR_VIEW_TABS_DEFAULT);
 	}
 
-	private boolean getShowFullTextPreference() {
+	private boolean getShowFullTextForViewTabsPreference() {
 		IEclipsePreferences preferences = getSwtRendererPreferences();
-		boolean showFullText = preferences.getBoolean(SHOW_FULL_TEXT, SHOW_FULL_TEXT_DEFAULT);
-		return showFullText;
+		return preferences.getBoolean(SHOW_FULL_TEXT_FOR_VIEW_TABS, SHOW_FULL_TEXT_FOR_VIEW_TABS_DEFAULT);
 	}
 }

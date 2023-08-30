@@ -464,8 +464,8 @@ public class WorkbenchMessages extends NLS {
 	public static String ViewsPreference_enableMRU;
 	public static String ViewsPreference_useColoredLabels;
 	public static String ViewsPreference_viewTabs_icons_and_titles_label;
-	public static String ViewsPreference_showFullTabText;
-	public static String ViewsPreference_hideTabIcons;
+	public static String ViewsPreference_showFullTextForViewTabs;
+	public static String ViewsPreference_hideIconsForViewTabs;
 	public static String ToggleFullScreenMode_ActivationPopup_Description;
 	public static String ToggleFullScreenMode_ActivationPopup_Description_NoKeybinding;
 	public static String ToggleFullScreenMode_ActivationPopup_DoNotShowAgain;
