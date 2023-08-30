@@ -211,20 +211,24 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 	}
 
 	private static void drawAfterLine(LineContentAnnotation annotation, GC gc, StyledText textWidget, int widgetOffset, int length, Color color) {
-		if (gc == null) {
+		if (isDeleted(annotation)) {
 			return;
 		}
-		if (textWidget.getCharCount() == 0) {
-			annotation.draw(gc, textWidget, widgetOffset, length, color, 0, 0);
+		if (gc != null) {
+			if (textWidget.getCharCount() == 0) {
+				annotation.draw(gc, textWidget, widgetOffset, length, color, 0, 0);
+			} else {
+				int line= textWidget.getLineAtOffset(widgetOffset);
+				int lineEndOffset= (line == textWidget.getLineCount() - 1) ? //
+						textWidget.getCharCount() - 1 : //
+						textWidget.getOffsetAtLine(line + 1) - 1;
+				Rectangle bounds= textWidget.getTextBounds(lineEndOffset, lineEndOffset);
+				int lineEndX= bounds.x + bounds.width + gc.stringExtent("   ").x; //$NON-NLS-1$
+				annotation.setLocation(lineEndX, textWidget.getLinePixel(line) + textWidget.getLineVerticalIndent(line));
+				annotation.draw(gc, textWidget, widgetOffset, length, color, lineEndX, textWidget.getLinePixel(line) + textWidget.getLineVerticalIndent(line));
+			}
 		} else {
-			int line= textWidget.getLineAtOffset(widgetOffset);
-			int lineEndOffset= (line == textWidget.getLineCount() - 1) ? //
-					textWidget.getCharCount() - 1 : //
-					textWidget.getOffsetAtLine(line + 1) - 1;
-			Rectangle bounds= textWidget.getTextBounds(lineEndOffset, lineEndOffset);
-			int lineEndX= bounds.x + bounds.width + gc.stringExtent("   ").x; //$NON-NLS-1$
-			annotation.setLocation(lineEndX, textWidget.getLinePixel(line) + textWidget.getLineVerticalIndent(line));
-			annotation.draw(gc, textWidget, widgetOffset, length, color, lineEndX, textWidget.getLinePixel(line) + textWidget.getLineVerticalIndent(line));
+			textWidget.redrawRange(widgetOffset, length, true);
 		}
 	}
 
