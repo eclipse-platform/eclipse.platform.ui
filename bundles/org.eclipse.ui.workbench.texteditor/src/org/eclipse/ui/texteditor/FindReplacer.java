@@ -150,7 +150,6 @@ public class FindReplacer {
 				selectedRegions.add(new Region(selection.x, selection.y));
 				replaceCount++;
 				position = selection.x + selection.y;
-				index = -1;
 			}
 		} while (index != -1);
 		if (target instanceof IFindReplaceTargetExtension4) {
