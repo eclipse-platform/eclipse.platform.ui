@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.jface" version="2">
+    <resource path="src/org/eclipse/jface/viewers/ViewerCell.java" type="org.eclipse.jface.viewers.ViewerCell">
+        <filter comment="constants should be final" id="388100214">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.ViewerCell"/>
+                <message_argument value="ABOVE"/>
+            </message_arguments>
+        </filter>
+        <filter comment="constants should be final" id="388100214">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.ViewerCell"/>
+                <message_argument value="BELOW"/>
+            </message_arguments>
+        </filter>
+        <filter comment="constants should be final" id="388100214">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.ViewerCell"/>
+                <message_argument value="LEFT"/>
+            </message_arguments>
+        </filter>
+        <filter comment="constants should be final" id="388100214">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.ViewerCell"/>
+                <message_argument value="RIGHT"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
