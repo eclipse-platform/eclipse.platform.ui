@@ -31,7 +31,7 @@ import org.eclipse.swt.graphics.Image;
  */
 public interface IStatusLineManager extends IContributionManager {
 	/**
-	 * Returns a progress monitor which reports progress in the status line.
+	 * Creates a new progress monitor which reports progress in the status line.
 	 * Note that the returned progress monitor may only be accessed from the UI
 	 * thread.
 	 *
@@ -39,6 +39,7 @@ public interface IStatusLineManager extends IContributionManager {
 	 *
 	 *         Note: There is a delay after a beginTask message before the
 	 *         monitor is shown. This may not be appropriate for all apps.
+	 * @see IProgressMonitor
 	 */
 	public IProgressMonitor getProgressMonitor();
 
