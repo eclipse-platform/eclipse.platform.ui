@@ -977,18 +977,9 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			}
 
 			ViewerColumn columnViewer = getViewerColumn(column);
-			ViewerCell cellToUpdate = updateCell(viewerRowFromItem, column,
-					element);
-
-			// If the control is virtual, we cannot use the cached cell object. See bug 188663.
-			if (isVirtual) {
-				cellToUpdate = new ViewerCell(cellToUpdate.getViewerRow(), cellToUpdate.getColumnIndex(), element);
-			}
+			ViewerCell cellToUpdate = new ViewerCell(viewerRowFromItem, column, element);
 
 			columnViewer.refresh(cellToUpdate);
-
-			// clear cell (see bug 201280)
-			updateCell(null, 0, null);
 
 			// As it is possible for user code to run the event
 			// loop check here.

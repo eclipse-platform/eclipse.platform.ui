@@ -64,11 +64,6 @@ public abstract class ColumnViewer extends StructuredViewer {
 
 	private String[] columnProperties;
 
-	/**
-	 * The cell is a cached viewer cell used for refreshing.
-	 */
-	private ViewerCell cell = new ViewerCell(null, 0, null);
-
 	private ColumnViewerEditor viewerEditor;
 
 	private boolean busy;
@@ -305,19 +300,6 @@ public abstract class ColumnViewer extends StructuredViewer {
 		};
 		column.setLabelProvider(labelProvider, false);
 		return column;
-	}
-
-	/**
-	 * Update the cached cell object with the given row and column.
-	 *
-	 * @param rowItem
-	 * @param column
-	 * @return ViewerCell
-	 */
-	/* package */ViewerCell updateCell(ViewerRow rowItem, int column,
-			Object element) {
-		cell.update(rowItem, column, element);
-		return cell;
 	}
 
 	/**
