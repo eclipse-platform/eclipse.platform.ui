@@ -13,6 +13,7 @@ package org.eclipse.jface.text.examples.codemining;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -26,6 +27,12 @@ import org.eclipse.swt.events.MouseEvent;
 
 public class EchoAtEndOfLineCodeMiningProvider extends AbstractCodeMiningProvider {
 
+	private final AtomicReference<String> text;
+
+	public EchoAtEndOfLineCodeMiningProvider(AtomicReference<String> text) {
+		this.text = text;
+	}
+
 	@Override
 	public CompletableFuture<List<? extends ICodeMining>> provideCodeMinings(ITextViewer viewer,
 			IProgressMonitor monitor) {
@@ -37,7 +44,7 @@ public class EchoAtEndOfLineCodeMiningProvider extends AbstractCodeMiningProvide
 					res.add(new LineEndCodeMining(document, i, this) {
 						@Override
 						public String getLabel() {
-							return "End of line";
+							return text.get();
 						}
 						@Override
 						public boolean isResolved() {
