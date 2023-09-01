@@ -149,15 +149,29 @@ public class StatusLineManager extends ContributionManager implements
 				: new NullProgressMonitor();
 
 		return new IProgressMonitor() {
+			private volatile boolean taskStarted;
 
 			@Override
 			public void beginTask(String name, int totalWork) {
+				if (taskStarted) {
+					throw new IllegalStateException("beginTask must only be called once per instance"); //$NON-NLS-1$
+				}
+				taskStarted = true;
+				// According to the IProgressMonitor javadoc beginTask() must only be called
+				// once on a given progress monitor instance.
+				// However it works in this case multiple times if done() was called in between.
 				progressDelegate.beginTask(name, totalWork);
-
 			}
 
 			@Override
 			public void done() {
+				if (!taskStarted) {
+					// ignore call to done() if beginTask() was not called!
+					// Otherwise an otherwise already started delegate would be finished
+					// see https://github.com/eclipse-jdt/eclipse.jdt.ui/issues/61
+					return;
+				}
+				taskStarted = false;
 				progressDelegate.done();
 			}
 
@@ -182,6 +196,9 @@ public class StatusLineManager extends ContributionManager implements
 
 			@Override
 			public void setTaskName(String name) {
+				if (!taskStarted) {
+					throw new IllegalStateException("call to beginTask() missing"); //$NON-NLS-1$
+				}
 				progressDelegate.setTaskName(name);
 
 			}
@@ -194,6 +211,9 @@ public class StatusLineManager extends ContributionManager implements
 
 			@Override
 			public void worked(int work) {
+				if (!taskStarted) {
+					throw new IllegalStateException("call to beginTask() missing"); //$NON-NLS-1$
+				}
 				progressDelegate.worked(work);
 			}
 
