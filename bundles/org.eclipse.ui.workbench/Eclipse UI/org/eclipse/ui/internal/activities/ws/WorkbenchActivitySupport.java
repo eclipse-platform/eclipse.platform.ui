@@ -315,11 +315,13 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExt
 	}
 
 	/**
-	 * Dispose of the image registries.
+	 * Dispose of the image registries and activity manager.
 	 *
 	 * @since 3.1
 	 */
 	public void dispose() {
+		proxyActivityManager.dispose();
+		mutableActivityManager.dispose();
 		if (activityImageBindingRegistry != null) {
 			activityImageBindingRegistry.dispose();
 			PlatformUI.getWorkbench().getExtensionTracker().unregisterHandler(activityImageBindingRegistry);

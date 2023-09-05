@@ -134,6 +134,23 @@ public final class MutableActivityManager extends AbstractActivityManager
 	}
 
 	@Override
+	public void dispose() {
+		super.dispose();
+		clearExpressions();
+		activityRegistry.removeActivityRegistryListener(activityRegistryListener);
+		activitiesById.clear();
+		activityRequirementBindingsByActivityId.clear();
+		activityPatternBindingsByActivityId.clear();
+		categoriesById.clear();
+		categoryActivityBindingsByCategoryId.clear();
+		categoryDefinitionsById.clear();
+		definedActivityIds.clear();
+		definedCategoryIds.clear();
+		enabledActivityIds.clear();
+		identifiersById.clear();
+	}
+
+	@Override
 	synchronized public IActivity getActivity(String activityId) {
 		if (activityId == null) {
 			throw new NullPointerException();
@@ -596,7 +613,7 @@ public final class MutableActivityManager extends AbstractActivityManager
 	}
 
 	private IPropertyChangeListener enabledWhenListener = event -> {
-		if (addingEvaluationListener) {
+		if (addingEvaluationListener || isDisposed()) {
 			return;
 		}
 
