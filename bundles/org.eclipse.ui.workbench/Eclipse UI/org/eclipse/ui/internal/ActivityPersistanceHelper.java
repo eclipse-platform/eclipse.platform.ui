@@ -57,7 +57,7 @@ final class ActivityPersistanceHelper {
 			// state
 			loadEnabledStates(activityManagerEvent.getActivityManager().getEnabledActivityIds(), delta);
 		}
-		if (activityManagerEvent.haveEnabledActivityIdsChanged()) {
+		if (activityManagerEvent.haveEnabledNonExpressionControlledActivityIdsChanged()) {
 			saveEnabledStates();
 		}
 	};

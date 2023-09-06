@@ -527,7 +527,8 @@ public final class MutableActivityManager extends AbstractActivityManager
 
 		if (activityManagerChanged) {
 			fireActivityManagerChanged(
-					new ActivityManagerEvent(this, false, false, true, null, null, previouslyEnabledActivityIds));
+					new ActivityManagerEvent(this, false, false, true, null, null,
+							previouslyEnabledActivityIds, deltaActivityIds));
 		}
 	}
 
