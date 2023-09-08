@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2019 IBM Corporation and others.
+ * Copyright (c) 2007, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -166,6 +166,15 @@ public class ExtendedMarkersView extends ViewPart {
 
 	private Action filterAction;
 
+	/**
+	 * The user can set a custom name when opening a new view. This value has to be
+	 * persisted when closing the Eclipse. Otherwise the view would fall back to its
+	 * default name. We must only persist the part name when a custom name has been
+	 * set in order to prevent saving a translated name.
+	 *
+	 * @see OpenMarkersViewHandler
+	 */
+	private String customPartName;
 
 	/**
 	 * Tells whether the tree has been painted.
@@ -1044,7 +1053,7 @@ public class ExtendedMarkersView extends ViewPart {
 		if (m == null || m.getString(TAG_PART_NAME) == null) {
 			return;
 		}
-		setPartName(m.getString(TAG_PART_NAME));
+		initializeTitle(m.getString(TAG_PART_NAME));
 	}
 
 	/**
@@ -1084,6 +1093,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @param name
 	 */
 	void initializeTitle(String name) {
+		customPartName = name;
 		setPartName(name);
 	}
 
@@ -1234,7 +1244,9 @@ public class ExtendedMarkersView extends ViewPart {
 	@Override
 	public void saveState(IMemento m) {
 		super.saveState(m);
-		m.putString(TAG_PART_NAME, getPartName());
+		if (customPartName != null) {
+			m.putString(TAG_PART_NAME, customPartName);
+		}
 		if (generator != null) {
 			m.putString(TAG_GENERATOR, builder.getGenerator().getId());
 		}
