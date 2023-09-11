@@ -1139,11 +1139,12 @@ public class TreeViewer extends AbstractTreeViewer {
 		}
 
 		Object data = item.getData();
-		if (data == null) {
+		if (!(data instanceof ExpandableNode expNode)) {
 			return;
 		}
 
-		Object[] children = getSortedChildren(data);
+		Object[] sortedChildren = expNode.getRemainingElements();
+		Object[] children = applyItemsLimit(data, sortedChildren);
 		if (children.length == 0) {
 			return;
 		}

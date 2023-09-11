@@ -25,6 +25,7 @@ package org.eclipse.jface.viewers;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -1431,9 +1432,6 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 					return super.getRawChildren(parent);
 				}
 				IContentProvider cp = getContentProvider();
-				if (getItemsLimit() > 0 && parent instanceof ExpandableNode expNode) {
-					return expNode.getRemainingElements();
-				}
 				if (cp instanceof ITreePathContentProvider) {
 					ITreePathContentProvider tpcp = (ITreePathContentProvider) cp;
 					if (path == null) {
@@ -2686,7 +2684,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	}
 
 	private boolean findElementInExpandableNode(ExpandableNode expNode, Object toFind) {
-		Object[] remEles = getFilteredChildren(expNode);
+		Object[] remEles = expNode.getRemainingElements();
 		for (Object element : remEles) {
 			if (equals(element, toFind)) {
 				return true;
@@ -3399,6 +3397,33 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			return node.contains(element);
 		}
 		return false;
+	}
+
+	@Override
+	ISelection getUpdatedSelection(ISelection selection) {
+		if (getItemsLimit() <= 0) {
+			return selection;
+		}
+		if (!(selection instanceof TreeSelection treeSel)) {
+			return super.getUpdatedSelection(selection);
+		}
+		List<TreePath> pathsList = new ArrayList<>(Arrays.asList(treeSel.getPaths()));
+		Iterator<TreePath> itr = pathsList.iterator();
+		boolean foundExpNode = false;
+		while (itr.hasNext()) {
+			if (itr.next().getLastSegment() instanceof ExpandableNode) {
+				itr.remove();
+				foundExpNode = true;
+			}
+		}
+		if (foundExpNode) {
+			TreePath[] treePaths = new TreePath[pathsList.size()];
+			pathsList.toArray(treePaths);
+			selection = new TreeSelection(treePaths, treeSel.getElementComparer());
+			return selection;
+		}
+
+		return selection;
 	}
 
 }

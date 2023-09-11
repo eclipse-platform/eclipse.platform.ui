@@ -33,7 +33,6 @@ import org.eclipse.jface.internal.InternalPolicy;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.jface.viewers.internal.ExpandableNode;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DragSource;
 import org.eclipse.swt.dnd.DragSourceListener;
@@ -815,11 +814,6 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * @see #addPostSelectionChangedListener(ISelectionChangedListener)
 	 */
 	protected void firePostSelectionChanged(final SelectionChangedEvent event) {
-		// do not inform client listeners on ExpandableNode selection
-		if (event.getSelection() instanceof StructuredSelection sel
-				&& sel.getFirstElement() instanceof ExpandableNode) {
-			return;
-		}
 		for (ISelectionChangedListener l : postSelectionChangedListeners) {
 			SafeRunnable.run(new SafeRunnable() {
 				@Override
