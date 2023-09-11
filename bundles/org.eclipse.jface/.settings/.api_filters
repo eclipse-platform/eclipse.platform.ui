@@ -1,5 +1,39 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.jface" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="I assume an new default method still new API in public interface" id="932184123">
+            <message_arguments>
+                <message_argument value="3.32.0"/>
+                <message_argument value="3.30.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/jface/viewers/IStructuredSelection.java" type="org.eclipse.jface.viewers.IStructuredSelection">
+        <filter comment="Usually user code does not implement selections and multiple inheritance is unlikley" id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.IStructuredSelection"/>
+                <message_argument value="getFirstElementOf(Class&lt;T&gt;)"/>
+            </message_arguments>
+        </filter>
+        <filter id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.IStructuredSelection"/>
+                <message_argument value="getSingleElementOf(Class&lt;T&gt;)"/>
+            </message_arguments>
+        </filter>
+        <filter id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.IStructuredSelection"/>
+                <message_argument value="stream()"/>
+            </message_arguments>
+        </filter>
+        <filter id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.IStructuredSelection"/>
+                <message_argument value="streamOf(Class&lt;T&gt;)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/jface/viewers/ViewerCell.java" type="org.eclipse.jface.viewers.ViewerCell">
         <filter comment="constants should be final" id="388100214">
             <message_arguments>

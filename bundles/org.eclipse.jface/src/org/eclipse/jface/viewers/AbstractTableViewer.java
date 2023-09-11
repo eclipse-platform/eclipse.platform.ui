@@ -1500,7 +1500,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 *
 	 * @param element model element
 	 * @return if given model element is contained in the viewer
-	 * @since 3.31
+	 * @since 3.32
 	 */
 	public boolean contains(Object element) {
 		if (findItem(element) != null) {

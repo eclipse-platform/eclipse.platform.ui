@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -218,10 +217,8 @@ public abstract class AbstractSelectionDialog<T> extends TrayDialog {
 	 */
 	protected void setResult(ISelection selection, Class<T> target) {
 		List<T> selected = null;
-		if (selection instanceof IStructuredSelection && target != null) {
-			IStructuredSelection structured = (IStructuredSelection) selection;
-			selected = ((List<?>) structured.toList()).stream().filter(target::isInstance)
-					.map(target::cast).collect(Collectors.toList());
+		if (selection instanceof IStructuredSelection structured && target != null) {
+			selected = structured.streamOf(target).toList();
 		}
 		setResult(selected);
 	}

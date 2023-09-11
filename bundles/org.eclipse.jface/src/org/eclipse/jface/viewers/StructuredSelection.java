@@ -18,6 +18,9 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.resource.JFaceResources;
@@ -182,6 +185,18 @@ public class StructuredSelection implements IStructuredSelection {
 	}
 
 	@Override
+	public <T> Optional<T> getFirstElementOf(Class<T> type) {
+		if (elements != null) {
+			for (Object o : elements) {
+				if (type.isInstance(o)) {
+					return Optional.of(type.cast(o));
+				}
+			}
+		}
+		return Optional.empty();
+	}
+
+	@Override
 	public boolean isEmpty() {
 		return elements == null || elements.length == 0;
 	}
@@ -207,6 +222,14 @@ public class StructuredSelection implements IStructuredSelection {
 		return Arrays.asList(elements == null ? new Object[0] : elements);
 	}
 
+	@Override
+	public Stream<Object> stream() {
+		if (elements == null || elements.length == 0) {
+			return Stream.empty();
+		}
+		return Arrays.stream(elements);
+	}
+
 	/**
 	 * Internal method which returns a string representation of this
 	 * selection suitable for debug purposes only.
@@ -215,6 +238,7 @@ public class StructuredSelection implements IStructuredSelection {
 	 */
 	@Override
 	public String toString() {
-		return isEmpty() ? JFaceResources.getString("<empty_selection>") : toList().toString(); //$NON-NLS-1$
+		return isEmpty() ? JFaceResources.getString("<empty_selection>") //$NON-NLS-1$
+				: stream().map(String::valueOf).collect(Collectors.joining(", ", "[", "]")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 }
