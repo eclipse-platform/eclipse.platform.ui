@@ -17,7 +17,6 @@ package org.eclipse.jface.viewers;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.jface.viewers.internal.ExpandableNode;
 import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.widgets.Control;
@@ -145,13 +144,6 @@ public abstract class Viewer implements IInputSelectionProvider {
 	 * @see ISelectionChangedListener#selectionChanged
 	 */
 	protected void fireSelectionChanged(final SelectionChangedEvent event) {
-
-		// do not inform client listeners on ExpandableNode selection
-		if (event.getSelection() instanceof StructuredSelection sel
-				&& sel.getFirstElement() instanceof ExpandableNode) {
-			return;
-		}
-
 		for (ISelectionChangedListener l : selectionChangedListeners) {
 			SafeRunnable.run(new SafeRunnable() {
 				@Override
