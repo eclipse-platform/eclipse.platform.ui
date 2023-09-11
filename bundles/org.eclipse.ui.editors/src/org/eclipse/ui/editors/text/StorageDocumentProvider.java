@@ -134,20 +134,13 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 		if (encoding == null) {
 			encoding= getDefaultEncoding();
 		}
-		try {
+		try (contentStream) { // close content stream after read (PDE relies on it)
 			String content= new String(contentStream.readAllBytes(), encoding);
 			document.set(content);
 		} catch (IOException x) {
 			String message= (x.getMessage() != null ? x.getMessage() : ""); //$NON-NLS-1$
 			IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, message, x);
 			throw new CoreException(s);
-		} finally {
-			try {
-				// undocumented implementation detail kept for historic reasons (for example PDE relies on it):
-				contentStream.close();
-			} catch (IOException x) {
-				// ignore
-			}
 		}
 	}
 
