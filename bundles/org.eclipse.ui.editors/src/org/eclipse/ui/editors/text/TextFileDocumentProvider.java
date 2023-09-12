@@ -557,29 +557,36 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		LocationKind locationKind= null;
 
 		file= adaptable.getAdapter(IFile.class);
-		if (file != null) {
-			IPath location= file.getFullPath();
-			locationKind= LocationKind.IFILE;
-			manager.connect(location, locationKind,getProgressMonitor());
-			fileBuffer= manager.getTextFileBuffer(location, locationKind);
-		} else {
-			ILocationProvider provider= adaptable.getAdapter(ILocationProvider.class);
-			if (provider instanceof ILocationProviderExtension) {
-				URI uri= ((ILocationProviderExtension)provider).getURI(element);
-				if (ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(uri).length == 0) {
-					IFileStore fileStore= EFS.getStore(uri);
-					manager.connectFileStore(fileStore, getProgressMonitor());
-					fileBuffer= manager.getFileStoreTextFileBuffer(fileStore);
+		IProgressMonitor progressMonitor= getProgressMonitor();
+		try {
+			if (file != null) {
+				IPath location= file.getFullPath();
+				locationKind= LocationKind.IFILE;
+				manager.connect(location, locationKind, progressMonitor);
+				fileBuffer= manager.getTextFileBuffer(location, locationKind);
+			} else {
+				ILocationProvider provider= adaptable.getAdapter(ILocationProvider.class);
+				if (provider instanceof ILocationProviderExtension) {
+					URI uri= ((ILocationProviderExtension) provider).getURI(element);
+					if (ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(uri).length == 0) {
+						IFileStore fileStore= EFS.getStore(uri);
+						manager.connectFileStore(fileStore, progressMonitor);
+						fileBuffer= manager.getFileStoreTextFileBuffer(fileStore);
+					}
+				}
+				if (fileBuffer == null && provider != null) {
+					IPath location= provider.getPath(element);
+					if (location == null)
+						return null;
+					locationKind= LocationKind.NORMALIZE;
+					manager.connect(location, locationKind, progressMonitor);
+					fileBuffer= manager.getTextFileBuffer(location, locationKind);
+					file= FileBuffers.getWorkspaceFileAtLocation(location);
 				}
 			}
-			if (fileBuffer == null && provider != null) {
-				IPath location= provider.getPath(element);
-				if (location == null)
-					return null;
-				locationKind= LocationKind.NORMALIZE;
-				manager.connect(location, locationKind, getProgressMonitor());
-				fileBuffer= manager.getTextFileBuffer(location, locationKind);
-				file= FileBuffers.getWorkspaceFileAtLocation(location);
+		} finally {
+			if (progressMonitor != null) {
+				progressMonitor.done();
 			}
 		}
 
@@ -692,14 +699,19 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	 */
 	protected void disposeFileInfo(Object element, FileInfo info) {
 		IFileBufferManager manager= FileBuffers.getTextFileBufferManager();
+		IProgressMonitor progressMonitor= getProgressMonitor();
 		try {
 			info.fTextFileBuffer.releaseSynchronizationContext();
 			if (info.fTextFileBufferLocationKind != null)
-				manager.disconnect(info.fTextFileBuffer.getLocation(), info.fTextFileBufferLocationKind, getProgressMonitor());
+				manager.disconnect(info.fTextFileBuffer.getLocation(), info.fTextFileBufferLocationKind, progressMonitor);
 			else
-				manager.disconnectFileStore(info.fTextFileBuffer.getFileStore(), getProgressMonitor());
+				manager.disconnectFileStore(info.fTextFileBuffer.getFileStore(), progressMonitor);
 		} catch (CoreException x) {
 			handleCoreException(x, "FileDocumentProvider.disposeElementInfo"); //$NON-NLS-1$
+		} finally {
+			if (progressMonitor != null) {
+				progressMonitor.done();
+			}
 		}
 	}
 
@@ -747,7 +759,14 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 					return null;
 				}
 			};
-			executeOperation(operation, getProgressMonitor());
+			IProgressMonitor progressMonitor= getProgressMonitor();
+			try {
+				executeOperation(operation, progressMonitor);
+			} finally {
+				if (progressMonitor != null) {
+					progressMonitor.done();
+				}
+			}
 		} else {
 			getParentProvider().resetDocument(element);
 		}
@@ -1034,7 +1053,14 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 					return null;
 				}
 			};
-			executeOperation(operation, getProgressMonitor());
+			IProgressMonitor progressMonitor= getProgressMonitor();
+			try {
+				executeOperation(operation, progressMonitor);
+			} finally {
+				if (progressMonitor != null) {
+					progressMonitor.done();
+				}
+			}
 		} else
 			((IDocumentProviderExtension) getParentProvider()).validateState(element, computationContext);
 	}
@@ -1118,7 +1144,14 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 					return null;
 				}
 			};
-			executeOperation(operation, getProgressMonitor());
+			IProgressMonitor progressMonitor= getProgressMonitor();
+			try {
+				executeOperation(operation, progressMonitor);
+			} finally {
+				if (progressMonitor != null) {
+					progressMonitor.done();
+				}
+			}
 		} else {
 			((IDocumentProviderExtension) getParentProvider()).synchronize(element);
 		}
