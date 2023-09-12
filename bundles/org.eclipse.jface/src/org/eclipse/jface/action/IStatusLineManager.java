@@ -33,7 +33,8 @@ public interface IStatusLineManager extends IContributionManager {
 	/**
 	 * Creates a new progress monitor which reports progress in the status line.
 	 * Note that the returned progress monitor may only be accessed from the UI
-	 * thread.
+	 * thread. Reusing the monitor requires to finally call progressMonitor.done()
+	 * before using it again.
 	 *
 	 * @return the progress monitor
 	 *
