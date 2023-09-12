@@ -98,6 +98,16 @@ public interface IContentAssistProcessorExtension extends IContentAssistProcesso
 				return processor.computeCompletionProposals(viewer, offset);
 			}
 
+			@Override
+			public IContextInformation[] computeContextInformation(IContentAssistRequest request) {
+				return processor.computeContextInformation(request);
+			}
+
+			@Override
+			public ICompletionProposal[] computeCompletionProposals(IContentAssistRequest request) {
+				return processor.computeCompletionProposals(request);
+			}
+
 			@Deprecated
 			@Override
 			public char[] getCompletionProposalAutoActivationCharacters() {

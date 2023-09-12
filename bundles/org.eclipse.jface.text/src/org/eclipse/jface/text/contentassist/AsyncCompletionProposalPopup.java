@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     Mickael Istria (Red Hat Inc.) - [251156] async content assist
+ *     Dawid Pakuła - [#1102] isAutoActivated flag
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
@@ -149,8 +150,8 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 	}
 
 	/**
-	 * This methods differs from its super as it will show the list of proposals that
-	 * gets augmented as the {@link IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)}
+	 * This methods differs from its super as it will show the list of proposals that gets augmented
+	 * as the {@link IContentAssistProcessor#computeCompletionProposals(IContentAssistRequest)}
 	 * complete. All computations operation happen in a non-UI Thread so they're not blocking UI.
 	 */
 	@Override
@@ -164,12 +165,11 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 			// add the listener before computing the proposals so we don't move the caret
 			// when the user types fast.
 			fContentAssistSubjectControlAdapter.addKeyListener(fKeyListener);
-
-			fInvocationOffset= fContentAssistSubjectControlAdapter.getSelectedRange().x;
-			fFilterOffset= fInvocationOffset;
+			fInvocationRequest= fContentAssistant.buildAssistantRequest(fContentAssistSubjectControlAdapter.getSelectedRange().x, autoActivated, false);
+			fFilterOffset= fInvocationRequest.getOffset();
 			fLastCompletionOffset= fFilterOffset;
 			// start invocation of processors as Futures, and make them populate the proposals upon completion
-			computeAndPopulateProposals(fInvocationOffset, null, true, autoActivated, true);
+			computeAndPopulateProposals(fInvocationRequest, null, true, true);
 		} else {
 			fLastCompletionOffset= fFilterOffset;
 			handleRepeatedInvocation();
@@ -181,11 +181,11 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 	@Override
 	void handleRepeatedInvocation() {
 		cancelFutures();
-		computeAndPopulateProposals(fInvocationOffset, null, false, false, false);
+		computeAndPopulateProposals(fContentAssistant.buildAssistantRequest(fInvocationRequest.getOffset(), false, true), null, false, false);
 	}
 
-	private void computeAndPopulateProposals(int offset, Consumer<List<ICompletionProposal>> callback, boolean createSelector, boolean autoActivated, boolean autoInsert) {
-		List<CompletableFuture<List<ICompletionProposal>>> computationFutures= buildCompletionFuturesOrJobs(offset);
+	private void computeAndPopulateProposals(IContentAssistRequest request, Consumer<List<ICompletionProposal>> callback, boolean createSelector, boolean autoInsert) {
+		List<CompletableFuture<List<ICompletionProposal>>> computationFutures= buildCompletionFuturesOrJobs(request);
 		toCancelFutures.addAll(computationFutures);
 		fComputedProposals= Collections.synchronizedList(new ArrayList<>());
 		List<CompletableFuture<Void>> populateFutures= computationFutures.stream().map(future -> future.thenAccept(fComputedProposals::addAll)).collect(Collectors.toList());
@@ -203,13 +203,13 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 		}
 		if (!useAsyncMode) {
 			int count= fComputedProposals.size();
-			if (count == 0 && hideWhenNoProposals(autoActivated)) {
+			if (count == 0 && hideWhenNoProposals(request.isAutoActivated())) {
 				return;
 			}
 
-			if (autoInsert && count == 1 && !autoActivated &&
+			if (autoInsert && count == 1 && !request.isAutoActivated() &&
 					fContentAssistant.isAutoActivateCompletionOnType() && canAutoInsert(fComputedProposals.get(0))) {
-				insertProposal(fComputedProposals.get(0), (char) 0, 0, offset);
+				insertProposal(fComputedProposals.get(0), (char) 0, 0, request.getOffset());
 				hide();
 			} else {
 				if (createSelector) {
@@ -226,7 +226,7 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 			if (createSelector) {
 				createProposalSelector();
 			}
-			ComputingProposal computingProposal= new ComputingProposal(offset, populateFutures.size());
+			ComputingProposal computingProposal= new ComputingProposal(request.getOffset(), populateFutures.size());
 			fComputedProposals.add(0, computingProposal);
 			setProposals(fComputedProposals, false);
 			AtomicInteger remaining= new AtomicInteger(populateFutures.size());
@@ -237,22 +237,22 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 					requestSpecificProposals.remove(computingProposal);
 				}
 				Control control= fContentAssistSubjectControlAdapter.getControl();
-				if (!control.isDisposed() && offset == fInvocationOffset) {
+				if (!control.isDisposed() && request.getOffset() == fInvocationRequest.getOffset()) {
 					control.getDisplay().asyncExec(() -> {
 						// Skip if offset has changed while runnable was scheduled
 						// nor when completion "session" was modified or canceled.
-						if (offset != fInvocationOffset || fComputedProposals != requestSpecificProposals) {
+						if (fInvocationRequest == null || request.getOffset() != fInvocationRequest.getOffset() || fComputedProposals != requestSpecificProposals) {
 							return;
 						}
 						boolean stillComputing= fComputedProposals.contains(computingProposal);
 						if (autoInsert
-								&& !autoActivated
+								&& !request.isAutoActivated()
 								&& !stillComputing
 								&& fComputedProposals.size() == 1
 								&& remaining.get() == 0
 								&& canAutoInsert(fComputedProposals.get(0))) {
 							if (isValid(fProposalShell)) {
-								insertProposal(fComputedProposals.get(0), (char) 0, 0, offset);
+								insertProposal(fComputedProposals.get(0), (char) 0, 0, request.getOffset());
 								hide();
 							}
 							return;
@@ -263,7 +263,7 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 							boolean hasProposals= (stillComputing && fComputedProposals.size() > 1)
 									|| (!stillComputing && !fComputedProposals.isEmpty());
 
-							if ((autoActivated && hasProposals) || !autoActivated) {
+							if ((request.isAutoActivated() && hasProposals) || !request.isAutoActivated()) {
 								setProposals(fComputedProposals, false);
 								displayProposals(true);
 							} else if (isValid(fProposalShell) && (!fProposalShell.isVisible() || !hasProposals) && remaining.get() == 0) {
@@ -277,7 +277,7 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 			fAggregatedPopulateFuture= CompletableFuture.allOf(populateFutures.toArray(new CompletableFuture[populateFutures.size()]));
 			toCancelFutures.add(fAggregatedPopulateFuture);
 		}
-		displayProposals(!autoActivated);
+		displayProposals(!request.isAutoActivated());
 	}
 
 	@Override
@@ -306,11 +306,11 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 		if (!isValid(fProposalShell) && !control.isDisposed())
 			fContentAssistSubjectControlAdapter.addKeyListener(fKeyListener);
 
-		fInvocationOffset= fContentAssistSubjectControlAdapter.getSelectedRange().x;
-		fFilterOffset= fInvocationOffset;
+		fInvocationRequest= fContentAssistant.buildAssistantRequest(fContentAssistSubjectControlAdapter.getSelectedRange().x, fInvocationRequest.isAutoActivated(), true);
+		fFilterOffset= fInvocationRequest.getOffset();
 		fLastCompletionOffset= fFilterOffset;
 
-		computeAndPopulateProposals(fInvocationOffset, (List<ICompletionProposal> proposals) -> {
+		computeAndPopulateProposals(fInvocationRequest, (List<ICompletionProposal> proposals) -> {
 			ensureDocumentListenerInstalled();
 			fFilteredProposals= proposals;
 			if (!proposals.isEmpty() && completeCommonPrefix()) {
@@ -319,16 +319,16 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 				setProposals(proposals, false);
 				displayProposals();
 			}
-		}, true, false, true);
+		}, true, true);
 		return getErrorMessage();
 	}
 
 	@Override
-	List<ICompletionProposal> computeProposals(int offset) {
+	List<ICompletionProposal> computeProposals(IContentAssistRequest request) {
 		if (fProposalShell != null) {
 			fProposalShell.dispose();
 		}
-		showProposals(true);
+		showProposals(request.isAutoActivated());
 		return fComputedProposals;
 	}
 
@@ -360,10 +360,15 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 		cancelFutures();
 	}
 
+	@Deprecated
 	protected List<CompletableFuture<List<ICompletionProposal>>> buildCompletionFuturesOrJobs(int invocationOffset) {
+		return buildCompletionFuturesOrJobs(fContentAssistant.buildAssistantRequest(invocationOffset, false, false));
+	}
+
+	protected List<CompletableFuture<List<ICompletionProposal>>> buildCompletionFuturesOrJobs(IContentAssistRequest request) {
 		Set<IContentAssistProcessor> processors = null;
 		try {
-			processors= fContentAssistant.getContentAssistProcessors(getTokenContentType(invocationOffset));
+			processors= fContentAssistant.getContentAssistProcessors(getTokenContentType(request.getOffset()));
 		} catch (BadLocationException e) {
 			// ignore
 		}
@@ -375,7 +380,7 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 			futures.add(CompletableFuture.supplyAsync(() -> {
 				AtomicReference<List<ICompletionProposal>> result= new AtomicReference<>();
 				SafeRunner.run(() -> {
-					ICompletionProposal[] proposals= processor.computeCompletionProposals(fViewer, invocationOffset);
+					ICompletionProposal[] proposals= processor.computeCompletionProposals(request);
 					if (proposals == null) {
 						result.set(Collections.emptyList());
 					} else {

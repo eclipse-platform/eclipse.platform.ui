@@ -73,6 +73,7 @@ import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
 import org.eclipse.jface.contentassist.ISubjectControlContentAssistProcessor;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.internal.text.ContentAssistRequest;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.util.OpenStrategy;
@@ -99,7 +100,8 @@ import org.eclipse.jface.text.TextUtilities;
  * Since 3.12, it can compute and display the proposals asynchronously when invoking
  * {@link #ContentAssistant(boolean)} with <code>true</code>.
  */
-public class ContentAssistant implements IContentAssistant, IContentAssistantExtension, IContentAssistantExtension2, IContentAssistantExtension3, IContentAssistantExtension4, IWidgetTokenKeeper, IWidgetTokenKeeperExtension {
+public class ContentAssistant implements IContentAssistant, IContentAssistantExtension, IContentAssistantExtension2, IContentAssistantExtension3, IContentAssistantExtension4, IWidgetTokenKeeper,
+		IWidgetTokenKeeperExtension {
 
 
 
@@ -109,6 +111,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.4
 	 */
 	public static final String SELECT_NEXT_PROPOSAL_COMMAND_ID= "org.eclipse.ui.edit.text.contentAssist.selectNextProposal"; //$NON-NLS-1$
+
 	/**
 	 * Content assist command identifier for 'select previous proposal'.
 	 *
@@ -117,8 +120,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	public static final String SELECT_PREVIOUS_PROPOSAL_COMMAND_ID= "org.eclipse.ui.edit.text.contentAssist.selectPreviousProposal"; //$NON-NLS-1$
 
 	enum TriggerType {
-		CONTEXT_INFORMATION,
-		COMPLETION_PROPOSAL, NONE;
+		CONTEXT_INFORMATION, COMPLETION_PROPOSAL, NONE;
 	}
 
 	/**
@@ -129,6 +131,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 		/** The shell that a <code>ControlListener</code> is registered with. */
 		private Shell fShell;
+
 		/**
 		 * The control that a <code>MouseListener</code>, a<code>FocusListener</code> and a
 		 * <code>DisposeListener</code> are registered with.
@@ -273,8 +276,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	}
 
 	/**
-	 * An implementation of <code>IContentAssistListener</code>, this class is used to monitor
-	 * key events in support of automatic activation of the content assistant. If enabled, the
+	 * An implementation of <code>IContentAssistListener</code>, this class is used to monitor key
+	 * events in support of automatic activation of the content assistant. If enabled, the
 	 * implementation utilizes a thread to watch for input characters matching the activation
 	 * characters specified by the content assist processor, and if detected, will wait the
 	 * indicated delay interval before activating the content assistant.
@@ -284,11 +287,15 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	protected class AutoAssistListener extends KeyAdapter implements Runnable, VerifyKeyListener {
 
 		private Thread fThread;
+
 		private boolean fIsReset= false;
+
 		private Object fMutex= new Object();
+
 		private int fShowStyle;
 
 		private final static int SHOW_PROPOSALS= 1;
+
 		private final static int SHOW_CONTEXT_INFO= 2;
 
 		protected AutoAssistListener() {
@@ -418,13 +425,17 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		// Presentation types.
 		/** The presentation type for the proposal selection popup. */
 		public final static int LAYOUT_PROPOSAL_SELECTOR= 0;
+
 		/** The presentation type for the context selection popup. */
 		public final static int LAYOUT_CONTEXT_SELECTOR= 1;
+
 		/** The presentation type for the context information hover . */
 		public final static int LAYOUT_CONTEXT_INFO_POPUP= 2;
 
 		int fContextType= LAYOUT_CONTEXT_SELECTOR;
+
 		Shell[] fShells= new Shell[3];
+
 		Object[] fPopups= new Object[3];
 
 		protected void add(Object popup, Shell shell, int type, int offset) {
@@ -449,7 +460,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 		protected void checkType(int type) {
 			Assert.isTrue(type == LAYOUT_PROPOSAL_SELECTOR ||
-				type == LAYOUT_CONTEXT_SELECTOR || type == LAYOUT_CONTEXT_INFO_POPUP);
+					type == LAYOUT_CONTEXT_SELECTOR || type == LAYOUT_CONTEXT_INFO_POPUP);
 		}
 
 		@Override
@@ -648,8 +659,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 		/**
 		 * Returns the display bounds for <code>shell</code> such that it appears right above
-		 * <code>offset</code>, or below it if above is not suitable. The returned bounds lie
-		 * within the monitor at the caret location and never overlap with the caret line.
+		 * <code>offset</code>, or below it if above is not suitable. The returned bounds lie within
+		 * the monitor at the caret location and never overlap with the caret line.
 		 *
 		 * @param shell the shell to compute the placement for
 		 * @param preferred the preferred size for <code>shell</code>
@@ -684,13 +695,14 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 		/**
 		 * Returns the display bounds for <code>shell</code> such that it appears right below
-		 * <code>offset</code>, or above it if below is not suitable. The returned bounds lie
-		 * within the monitor at the caret location and never overlap with the caret line.
+		 * <code>offset</code>, or above it if below is not suitable. The returned bounds lie within
+		 * the monitor at the caret location and never overlap with the caret line.
 		 *
 		 * @param shell the shell to compute the placement for
 		 * @param preferred the preferred size for <code>shell</code>
 		 * @param offset the caret offset in the subject control
-		 * @param popup a popup to inform if the location was switched to above, <code>null</code> to do nothing
+		 * @param popup a popup to inform if the location was switched to above, <code>null</code>
+		 *            to do nothing
 		 * @return the point right below <code>offset</code> in display coordinates
 		 * @since 3.3
 		 */
@@ -742,8 +754,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		protected Point getStackedLocation(Shell shell, Shell parent) {
 			Point p= parent.getLocation();
 			Point size= parent.getSize();
-			p.x += size.x / 4;
-			p.y += size.y;
+			p.x+= size.x / 4;
+			p.y+= size.y;
 
 			p= parent.toDisplay(p);
 
@@ -785,23 +797,23 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		 * @since 3.3
 		 */
 		private Monitor getClosestMonitor(Display toSearch, Rectangle rectangle) {
-			int closest = Integer.MAX_VALUE;
+			int closest= Integer.MAX_VALUE;
 
 			Point toFind= Geometry.centerPoint(rectangle);
-			Monitor[] monitors = toSearch.getMonitors();
-			Monitor result = monitors[0];
+			Monitor[] monitors= toSearch.getMonitors();
+			Monitor result= monitors[0];
 
 			for (Monitor current : monitors) {
-				Rectangle clientArea = current.getClientArea();
+				Rectangle clientArea= current.getClientArea();
 
 				if (clientArea.contains(toFind)) {
 					return current;
 				}
 
-				int distance = Geometry.distanceSquared(Geometry.centerPoint(clientArea), toFind);
+				int distance= Geometry.distanceSquared(Geometry.centerPoint(clientArea), toFind);
 				if (distance < closest) {
-					closest = distance;
-					result = current;
+					closest= distance;
+					result= current;
 				}
 			}
 
@@ -855,8 +867,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	}
 
 	/**
-	 * A subclass of ISafeRunnable which, in case of exception, logs a specified error message to the jface.text log and
-	 * sets fLastErrorMessage to this message.
+	 * A subclass of ISafeRunnable which, in case of exception, logs a specified error message to
+	 * the jface.text log and sets fLastErrorMessage to this message.
 	 */
 	private abstract class ExceptionLoggingSafeRunnable implements ISafeRunnable {
 		private static final String PLUGIN_ID= "org.eclipse.jface.text"; //$NON-NLS-1$
@@ -912,7 +924,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 	// Content-Assist Listener types
 	final static int CONTEXT_SELECTOR= 0;
+
 	final static int PROPOSAL_SELECTOR= 1;
+
 	final static int CONTEXT_INFO_POPUP= 2;
 
 	/**
@@ -922,19 +936,27 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.0
 	 */
 	public static final int WIDGET_PRIORITY= 20;
+
 	private static final int DEFAULT_AUTO_ACTIVATION_DELAY= 500;
 
 	private static final String COMPLETION_ERROR_MESSAGE_KEY= "ContentAssistant.error_computing_completion"; //$NON-NLS-1$
+
 	private static final String CONTEXT_ERROR_MESSAGE_KEY= "ContentAssistant.error_computing_context"; //$NON-NLS-1$
 
 	private BoldStylerProvider fBoldStylerProvider;
 
 	private IInformationControlCreator fInformationControlCreator;
+
 	private int fAutoActivationDelay= DEFAULT_AUTO_ACTIVATION_DELAY;
+
 	private boolean fIsAutoActivated= false;
+
 	private boolean fIsAutoInserting= false;
+
 	private int fProposalPopupOrientation= PROPOSAL_OVERLAY;
+
 	private int fContextInfoPopupOrientation= CONTEXT_INFO_ABOVE;
+
 	private Map<String, Set<IContentAssistProcessor>> fProcessors;
 
 	/**
@@ -945,21 +967,31 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	private String fPartitioning;
 
 	private Color fContextInfoPopupBackground;
+
 	private Color fContextInfoPopupForeground;
+
 	private Color fContextSelectorBackground;
+
 	private Color fContextSelectorForeground;
+
 	private Color fProposalSelectorBackground;
+
 	private Color fProposalSelectorForeground;
 
 	private ITextViewer fViewer;
+
 	private String fLastErrorMessage;
 
 	private Closer fCloser;
+
 	LayoutManager fLayoutManager;
 
 	AutoAssistListener fAutoAssistListener;
+
 	private InternalListener fInternalListener;
+
 	private CompletionProposalPopup fProposalPopup;
+
 	private ContextInformationPopup fContextInfoPopup;
 
 	/**
@@ -968,79 +1000,93 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.0
 	 */
 	private boolean fVerifyKeyListenerHooked= false;
+
 	private IContentAssistListener[] fListeners= new IContentAssistListener[4];
+
 	/**
 	 * The content assist subject control.
 	 *
 	 * @since 3.0
 	 */
 	private IContentAssistSubjectControl fContentAssistSubjectControl;
+
 	/**
 	 * The content assist subject control's shell.
 	 *
 	 * @since 3.2
 	 */
 	private Shell fContentAssistSubjectControlShell;
+
 	/**
 	 * The content assist subject control's shell traverse listener.
 	 *
 	 * @since 3.2
 	 */
 	private TraverseListener fCASCSTraverseListener;
+
 	/**
 	 * The content assist subject control adapter.
 	 *
 	 * @since 3.0
 	 */
 	private ContentAssistSubjectControlAdapter fContentAssistSubjectControlAdapter;
+
 	/**
 	 * The dialog settings for the control's bounds.
 	 *
 	 * @since 3.0
 	 */
 	private IDialogSettings fDialogSettings;
+
 	/**
 	 * Prefix completion setting.
 	 *
 	 * @since 3.0
 	 */
 	private boolean fIsPrefixCompletionEnabled= false;
+
 	/**
 	 * The list of completion listeners.
 	 *
 	 * @since 3.2
 	 */
 	private ListenerList<ICompletionListener> fCompletionListeners= new ListenerList<>(ListenerList.IDENTITY);
+
 	/**
 	 * The message to display at the bottom of the proposal popup.
 	 *
 	 * @since 3.2
 	 */
 	private String fMessage= ""; //$NON-NLS-1$
+
 	/**
 	 * The cycling mode property.
 	 *
 	 * @since 3.2
 	 */
 	private boolean fIsRepetitionMode= false;
+
 	/**
 	 * The show empty property.
 	 *
 	 * @since 3.2
 	 */
 	private boolean fShowEmptyList= false;
+
 	/**
 	 * The message line property.
 	 *
 	 * @since 3.2
 	 */
 	private boolean fIsStatusLineVisible;
+
 	/**
 	 * The last system time when auto activation performed.
 	 *
 	 * @since 3.2
 	 */
 	private long fLastAutoActivation= Long.MIN_VALUE;
+
 	/**
 	 * The iteration key sequence to listen for, or <code>null</code>.
 	 *
@@ -1136,8 +1182,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * Registers a given content assist processor for a particular content type. If there is already
 	 * a processor registered for this type, the new processor is registered instead of the old one.
 	 *
-	 * @param processor the content assist processor to register, or <code>null</code> to remove
-	 *        an existing one
+	 * @param processor the content assist processor to register, or <code>null</code> to remove an
+	 *            existing one
 	 * @param contentType the content type under which to register
 	 */
 	public void setContentAssistProcessor(IContentAssistProcessor processor, String contentType) {
@@ -1155,8 +1201,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 	/**
 	 * Registers a given content assist processor for a particular content type. If there is already
-	 * a processor registered for this type, it is kept and the new processor is appended to the list
-	 * of processors for given content-type.
+	 * a processor registered for this type, it is kept and the new processor is appended to the
+	 * list of processors for given content-type.
 	 *
 	 * @param processor The content-assist process to add
 	 * @param contentType Document token content-type it applies to
@@ -1198,7 +1244,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		if (fProcessors == null)
 			return null;
 
-		Set<IContentAssistProcessor> res = fProcessors.get(contentType);
+		Set<IContentAssistProcessor> res= fProcessors.get(contentType);
 		if (res == null || res.isEmpty()) {
 			return null;
 		} else {
@@ -1219,7 +1265,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		if (fProcessors == null)
 			return null;
 
-		Set<IContentAssistProcessor> res = fProcessors.get(contentType);
+		Set<IContentAssistProcessor> res= fProcessors.get(contentType);
 		if (res == null || res.isEmpty()) {
 			return null;
 		}
@@ -1292,7 +1338,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * Installs and uninstall the listeners needed for auto activation.
 	 *
 	 * @param start <code>true</code> if listeners must be installed, <code>false</code> if they
-	 *        must be removed
+	 *            must be removed
 	 * @since 2.0
 	 */
 	private void manageAutoActivation(boolean start) {
@@ -1351,16 +1397,16 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	/**
 	 * Sets the proposal pop-ups' orientation. The following values may be used:
 	 * <ul>
-	 *   <li>PROPOSAL_OVERLAY<p>
-	 *     proposal popup windows should overlay each other
-	 *   </li>
-	 *   <li>PROPOSAL_REMOVE<p>
-	 *     any currently shown proposal popup should be closed
-	 *   </li>
-	 *   <li>PROPOSAL_STACKED<p>
-	 *     proposal popup windows should be vertical stacked, with no overlap,
-	 *     beneath the line containing the current cursor location
-	 *   </li>
+	 * <li>PROPOSAL_OVERLAY
+	 * <p>
+	 * proposal popup windows should overlay each other</li>
+	 * <li>PROPOSAL_REMOVE
+	 * <p>
+	 * any currently shown proposal popup should be closed</li>
+	 * <li>PROPOSAL_STACKED
+	 * <p>
+	 * proposal popup windows should be vertical stacked, with no overlap, beneath the line
+	 * containing the current cursor location</li>
 	 * </ul>
 	 *
 	 * @param orientation the popup's orientation
@@ -1370,17 +1416,16 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	}
 
 	/**
-	 * Sets the context information popup's orientation.
-	 * The following values may be used:
+	 * Sets the context information popup's orientation. The following values may be used:
 	 * <ul>
-	 *   <li>CONTEXT_ABOVE<p>
-	 *     context information popup should always appear above the line containing
-	 *     the current cursor location
-	 *   </li>
-	 *   <li>CONTEXT_BELOW<p>
-	 *     context information popup should always appear below the line containing
-	 *     the current cursor location
-	 *   </li>
+	 * <li>CONTEXT_ABOVE
+	 * <p>
+	 * context information popup should always appear above the line containing the current cursor
+	 * location</li>
+	 * <li>CONTEXT_BELOW
+	 * <p>
+	 * context information popup should always appear below the line containing the current cursor
+	 * location</li>
 	 * </ul>
 	 *
 	 * @param orientation the popup's orientation
@@ -1432,8 +1477,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	/**
 	 * Sets the proposal selector's background color.
 	 * <p>
-	 * <strong>Note:</strong> As of 3.4, you should only call this
-	 * method if you want to override the {@link JFacePreferences#CONTENT_ASSIST_BACKGROUND_COLOR}.
+	 * <strong>Note:</strong> As of 3.4, you should only call this method if you want to override
+	 * the {@link JFacePreferences#CONTENT_ASSIST_BACKGROUND_COLOR}.
 	 * </p>
 	 *
 	 * @param background the background color
@@ -1456,8 +1501,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	/**
 	 * Sets the proposal's foreground color.
 	 * <p>
-	 * <strong>Note:</strong> As of 3.4, you should only call this
-	 * method if you want to override the {@link JFacePreferences#CONTENT_ASSIST_FOREGROUND_COLOR}.
+	 * <strong>Note:</strong> As of 3.4, you should only call this method if you want to override
+	 * the {@link JFacePreferences#CONTENT_ASSIST_FOREGROUND_COLOR}.
 	 * </p>
 	 *
 	 * @param foreground the foreground color
@@ -1644,7 +1689,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @param shell the shell of the content-assist popup
 	 * @param type the type of popup
 	 * @param visibleOffset the offset at which to layout the popup relative to the offset of the
-	 *        viewer's visible region
+	 *            viewer's visible region
 	 * @since 2.0
 	 */
 	void addToLayout(Object popup, Shell shell, int type, int visibleOffset) {
@@ -1658,7 +1703,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 *
 	 * @param type the type of popup to layout
 	 * @param visibleOffset the offset at which to layout relative to the offset of the viewer's
-	 *        visible region
+	 *            visible region
 	 * @since 2.0
 	 */
 	void layout(int type, int visibleOffset) {
@@ -1697,10 +1742,10 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	/**
 	 * Returns whether the widget token could be acquired. The following are valid listener types:
 	 * <ul>
-	 *   <li>AUTO_ASSIST</li>
-	 *   <li>CONTEXT_SELECTOR</li>
-	 *   <li>PROPOSAL_SELECTOR</li>
-	 *   <li>CONTEXT_INFO_POPUP</li>
+	 * <li>AUTO_ASSIST</li>
+	 * <li>CONTEXT_SELECTOR</li>
+	 * <li>PROPOSAL_SELECTOR</li>
+	 * <li>CONTEXT_INFO_POPUP</li>
 	 * </ul>
 	 *
 	 * @param type the listener type for which to acquire
@@ -1731,10 +1776,10 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	/**
 	 * Registers a content assist listener. The following are valid listener types:
 	 * <ul>
-	 *   <li>AUTO_ASSIST</li>
-	 *   <li>CONTEXT_SELECTOR</li>
-	 *   <li>PROPOSAL_SELECTOR</li>
-	 *   <li>CONTEXT_INFO_POPUP</li>
+	 * <li>AUTO_ASSIST</li>
+	 * <li>CONTEXT_SELECTOR</li>
+	 * <li>PROPOSAL_SELECTOR</li>
+	 * <li>CONTEXT_INFO_POPUP</li>
 	 * </ul>
 	 * Returns whether the listener could be added successfully. A listener can not be added if the
 	 * widget token could not be acquired.
@@ -1789,10 +1834,10 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * Releases the previously acquired widget token if the token is no longer necessary. The
 	 * following are valid listener types:
 	 * <ul>
-	 *   <li>AUTO_ASSIST</li>
-	 *   <li>CONTEXT_SELECTOR</li>
-	 *   <li>PROPOSAL_SELECTOR</li>
-	 *   <li>CONTEXT_INFO_POPUP</li>
+	 * <li>AUTO_ASSIST</li>
+	 * <li>CONTEXT_SELECTOR</li>
+	 * <li>PROPOSAL_SELECTOR</li>
+	 * <li>CONTEXT_INFO_POPUP</li>
 	 * </ul>
 	 *
 	 * @param type the listener type
@@ -1885,7 +1930,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * Prepares to show content assist proposals. It returns false if auto activation has kicked in
 	 * recently.
 	 *
-	 * @param isAutoActivated  whether completion was triggered by auto activation
+	 * @param isAutoActivated whether completion was triggered by auto activation
 	 * @return <code>true</code> if the caller should continue and show the proposals,
 	 *         <code>false</code> otherwise.
 	 * @since 3.2
@@ -1978,7 +2023,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	}
 
 	/**
-	 * Returns the content assist processors for the content type of the specified document position.
+	 * Returns the content assist processors for the content type of the specified document
+	 * position.
 	 *
 	 * @param contentAssistSubjectControl the content assist subject control
 	 * @param offset a offset within the document
@@ -2045,23 +2091,23 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * Returns an array of completion proposals computed based on the specified document position.
 	 * The position is used to determine the appropriate content assist processor to invoke.
 	 *
-	 * @param viewer the viewer for which to compute the proposals
-	 * @param offset a document offset
+	 * @param request assist request
+	 *
 	 * @return an array of completion proposals or <code>null</code> if no proposals are possible
-	 * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
+	 * @see IContentAssistProcessor#computeCompletionProposals(IContentAssistRequest)
 	 */
-	ICompletionProposal[] computeCompletionProposals(final ITextViewer viewer, final int offset) {
+	ICompletionProposal[] computeCompletionProposals(IContentAssistRequest request) {
 		fLastErrorMessage= null;
 
-		final Set<IContentAssistProcessor> processors= getProcessors(viewer, offset);
-		final List<ICompletionProposal> res = new ArrayList<>();
+		final Set<IContentAssistProcessor> processors= getProcessors(request.getViewer(), request.getOffset());
+		final List<ICompletionProposal> res= new ArrayList<>();
 		if (processors != null && !processors.isEmpty()) {
 			// Ensure that the assist session ends cleanly even if the processor throws an exception.
 			SafeRunner.run(new ExceptionLoggingSafeRunnable(COMPLETION_ERROR_MESSAGE_KEY) {
 				@Override
 				public void run() throws Exception {
 					processors.forEach(p -> {
-						ICompletionProposal[] proposals= p.computeCompletionProposals(viewer, offset);
+						ICompletionProposal[] proposals= p.computeCompletionProposals(request);
 						if (proposals != null) {
 							res.addAll(Arrays.asList(proposals));
 						}
@@ -2074,28 +2120,29 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		return res.isEmpty() ? null : res.toArray(new ICompletionProposal[res.size()]);
 	}
 
+
 	/**
 	 * Returns an array of context information objects computed based on the specified document
 	 * position. The position is used to determine the appropriate content assist processor to
 	 * invoke.
 	 *
-	 * @param viewer the viewer for which to compute the context information
-	 * @param offset a document offset
+	 * @param request assist request
+	 *
 	 * @return an array of context information objects
 	 * @see IContentAssistProcessor#computeContextInformation(ITextViewer, int)
 	 */
-	IContextInformation[] computeContextInformation(final ITextViewer viewer, final int offset) {
+	IContextInformation[] computeContextInformation(IContentAssistRequest request) {
 		fLastErrorMessage= null;
 
 		final List<IContextInformation> result= new ArrayList<>();
-		final Set<IContentAssistProcessor> processors= getProcessors(viewer, offset);
+		final Set<IContentAssistProcessor> processors= getProcessors(request.getViewer(), request.getOffset());
 		if (processors != null && !processors.isEmpty()) {
 			// Ensure that the assist session ends cleanly even if the processor throws an exception.
 			SafeRunner.run(new ExceptionLoggingSafeRunnable(CONTEXT_ERROR_MESSAGE_KEY) {
 				@Override
 				public void run() throws Exception {
 					processors.forEach(p -> {
-						IContextInformation[] contextInformation= p.computeContextInformation(viewer, offset);
+						IContextInformation[] contextInformation= p.computeContextInformation(request);
 						if (contextInformation != null) {
 							result.addAll(Arrays.asList(contextInformation));
 						}
@@ -2124,7 +2171,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		fLastErrorMessage= null;
 
 		final List<IContextInformation> result= new ArrayList<>();
-		final Set<IContentAssistProcessor> processors = getProcessors(contentAssistSubjectControl, offset);
+		final Set<IContentAssistProcessor> processors= getProcessors(contentAssistSubjectControl, offset);
 		if (processors != null) {
 			processors.forEach(p -> {
 				if (p instanceof ISubjectControlContentAssistProcessor) {
@@ -2429,8 +2476,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * Sets the prefix completion property. If enabled, content assist delegates completion to
 	 * prefix completion.
 	 *
-	 * @param enabled <code>true</code> to enable prefix completion, <code>false</code> to
-	 *        disable
+	 * @param enabled <code>true</code> to enable prefix completion, <code>false</code> to disable
 	 */
 	public void enablePrefixCompletion(boolean enabled) {
 		fIsPrefixCompletionEnabled= enabled;
@@ -2470,7 +2516,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	/**
 	 * Fires a session begin event to all registered {@link ICompletionListener}s.
 	 *
-	 * @param isAutoActivated  <code>true</code> if this session was triggered by auto activation
+	 * @param isAutoActivated <code>true</code> if this session was triggered by auto activation
 	 * @since 3.2
 	 */
 	void fireSessionBeginEvent(boolean isAutoActivated) {
@@ -2500,7 +2546,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 					ContentAssistEvent event= new ContentAssistEvent(this, processor);
 					for (ICompletionListener listener : fCompletionListeners) {
 						if (listener instanceof ICompletionListenerExtension)
-							((ICompletionListenerExtension)listener).assistSessionRestarted(event);
+							((ICompletionListenerExtension) listener).assistSessionRestarted(event);
 					}
 				});
 			}
@@ -2549,11 +2595,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	}
 
 	/**
-	 * Returns <code>true</code> if empty lists should be displayed, <code>false</code>
-	 * otherwise.
+	 * Returns <code>true</code> if empty lists should be displayed, <code>false</code> otherwise.
 	 *
-	 * @return <code>true</code> if empty lists should be displayed, <code>false</code>
-	 *         otherwise
+	 * @return <code>true</code> if empty lists should be displayed, <code>false</code> otherwise
 	 * @since 3.2
 	 */
 	boolean isShowEmptyList() {
@@ -2571,8 +2615,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * Returns <code>true</code> if a message line should be displayed, <code>false</code>
 	 * otherwise.
 	 *
-	 * @return <code>true</code> if a message line should be displayed, <code>false</code>
-	 *         otherwise
+	 * @return <code>true</code> if a message line should be displayed, <code>false</code> otherwise
 	 * @since 3.2
 	 */
 	boolean isStatusLineVisible() {
@@ -2626,7 +2669,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	void fireAppliedEvent(ICompletionProposal proposal) {
 		for (ICompletionListener listener : fCompletionListeners) {
 			if (listener instanceof ICompletionListenerExtension2)
-				((ICompletionListenerExtension2)listener).applied(proposal);
+				((ICompletionListenerExtension2) listener).applied(proposal);
 		}
 	}
 
@@ -2655,17 +2698,18 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @return <code>true</code> if the proposal popup is active, <code>false</code> otherwise
 	 * @since 3.4
 	 */
-	protected boolean isProposalPopupActive(){
+	protected boolean isProposalPopupActive() {
 		return fProposalPopup != null && fProposalPopup.isActive();
 	}
 
 	/**
 	 * Returns whether the context information popup is active.
 	 *
-	 * @return <code>true</code> if the context information popup is active, <code>false</code> otherwise
+	 * @return <code>true</code> if the context information popup is active, <code>false</code>
+	 *         otherwise
 	 * @since 3.4
 	 */
-	protected boolean isContextInfoPopupActive(){
+	protected boolean isContextInfoPopupActive() {
 		return fContextInfoPopup != null && fContextInfoPopup.isActive();
 	}
 
@@ -2703,7 +2747,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	/**
 	 * Tells whether the support for colored labels is enabled.
 	 *
-	 * @return <code>true</code> if the support for colored labels is enabled, <code>false</code> otherwise
+	 * @return <code>true</code> if the support for colored labels is enabled, <code>false</code>
+	 *         otherwise
 	 * @since 3.4
 	 */
 	boolean isColoredLabelsSupportEnabled() {
@@ -2712,10 +2757,13 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 	/**
 	 * Enables the support for colored labels in the proposal popup.
-	 * <p>Completion proposals can implement {@link ICompletionProposalExtension6}
-	 * to provide colored proposal labels.</p>
+	 * <p>
+	 * Completion proposals can implement {@link ICompletionProposalExtension6} to provide colored
+	 * proposal labels.
+	 * </p>
 	 *
-	 * @param isEnabled if <code>true</code> the support for colored labels is enabled in the proposal popup
+	 * @param isEnabled if <code>true</code> the support for colored labels is enabled in the
+	 *            proposal popup
 	 * @since 3.4
 	 */
 	public void enableColoredLabels(boolean isEnabled) {
@@ -2778,5 +2826,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 	boolean isAutoActivateCompletionOnType() {
 		return fAutoActivateCompletionOnType;
+	}
+
+	IContentAssistRequest buildAssistantRequest(int offset, boolean isAuto, boolean isIncremental) {
+		return new ContentAssistRequest(fViewer, offset, isAuto, isIncremental);
 	}
 }

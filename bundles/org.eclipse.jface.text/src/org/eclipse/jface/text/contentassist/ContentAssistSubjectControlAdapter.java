@@ -364,7 +364,7 @@ class ContentAssistSubjectControlAdapter implements IContentAssistSubjectControl
 	public IContextInformation[] computeContextInformation(ContentAssistant contentAssistant, int offset) {
 		if (fContentAssistSubjectControl != null)
 			return contentAssistant.computeContextInformation(fContentAssistSubjectControl, offset);
-		return contentAssistant.computeContextInformation(fViewer, offset);
+		return contentAssistant.computeContextInformation(contentAssistant.buildAssistantRequest(offset, false, false));
 	}
 
 	@Override

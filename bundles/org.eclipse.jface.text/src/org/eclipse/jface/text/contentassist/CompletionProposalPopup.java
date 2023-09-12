@@ -16,6 +16,7 @@
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 493649
  *     Mickael Istria (Red Hat Inc.) - [251156] Allow multiple contentAssitProviders internally & inheritance
  *     Christoph Läubrich - Bug 508821 - [Content assist] More flexible API in IContentAssistProcessor to decide whether to auto-activate or not
+ *     Dawid Pakuła - [#1102] isAutoActivated flag
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
@@ -304,7 +305,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	/** The computed list of proposals. */
 	List<ICompletionProposal> fComputedProposals;
 	/** The offset for which the proposals have been computed. */
-	int fInvocationOffset;
+	IContentAssistRequest fInvocationRequest;
 	/** The offset for which the computed proposals have been filtered. */
 	int fFilterOffset;
 	/**
@@ -443,8 +444,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 	ICompletionProposalSorter fSorter;
 
 	/**
-	 * Set to true by {@link #computeProposals(int)} when initial sorting is performed on the
-	 * computed proposals using {@link #fSorter}.
+	 * Set to true by {@link #computeProposals(IContentAssistRequest)} when initial sorting is
+	 * performed on the computed proposals using {@link #fSorter}.
 	 *
 	 * @since 3.11
 	 */
@@ -501,17 +502,17 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 			BusyIndicator.showWhile(control.getDisplay(), () -> {
 
-				fInvocationOffset= fContentAssistSubjectControlAdapter.getSelectedRange().x;
-				fFilterOffset= fInvocationOffset;
+				fInvocationRequest= fContentAssistant.buildAssistantRequest(fFilterOffset, autoActivated, false);
+				fFilterOffset= fInvocationRequest.getOffset();
 				fLastCompletionOffset= fFilterOffset;
-				fComputedProposals= computeProposals(fInvocationOffset);
+				fComputedProposals= computeProposals(fInvocationRequest);
 
 				int count= (fComputedProposals == null ? 0 : fComputedProposals.size());
 				if (count == 0 && hideWhenNoProposals(autoActivated))
 					return;
 
 				if (count == 1 && !autoActivated && canAutoInsert(fComputedProposals.get(0))) {
-					insertProposal(fComputedProposals.get(0), (char) 0, 0, fInvocationOffset);
+					insertProposal(fComputedProposals.get(0), (char) 0, 0, fInvocationRequest.getOffset());
 					hide();
 				} else {
 					createProposalSelector();
@@ -556,7 +557,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 */
 	void handleRepeatedInvocation() {
 		if (fContentAssistant.isRepeatedInvocationMode()) {
-			fComputedProposals= computeProposals(fFilterOffset);
+			fComputedProposals= computeProposals(fContentAssistant.buildAssistantRequest(fFilterOffset, false, true));
 			setProposals(fComputedProposals, false);
 		}
 	}
@@ -566,15 +567,16 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * Delegates the work to the content assistant. Sorts the computed proposals if sorting is
 	 * requested with {@link #fSorter}.
 	 *
-	 * @param offset the offset
+	 * @param request assit request
+	 *
 	 * @return the completion proposals available at this offset, never null
 	 */
-	List<ICompletionProposal> computeProposals(int offset) {
+	List<ICompletionProposal> computeProposals(IContentAssistRequest request) {
 		ICompletionProposal[] completionProposals;
 		if (fContentAssistSubjectControl != null) {
-			completionProposals= fContentAssistant.computeCompletionProposals(fContentAssistSubjectControl, offset);
+			completionProposals= fContentAssistant.computeCompletionProposals(fContentAssistSubjectControl, request.getOffset());
 		} else {
-			completionProposals= fContentAssistant.computeCompletionProposals(fViewer, offset);
+			completionProposals= fContentAssistant.computeCompletionProposals(request);
 		}
 		if (completionProposals == null) {
 			return Collections.emptyList();
@@ -1534,16 +1536,17 @@ class CompletionProposalPopup implements IContentAssistListener {
 	List<ICompletionProposal> computeFilteredProposals(int offset, DocumentEvent event) {
 		fDocumentEvents.clear();
 
-		if (offset == fInvocationOffset && event == null) {
+		if (fInvocationRequest != null && offset == fInvocationRequest.getOffset() && event == null) {
 			fIsFilteredSubset= false;
 			return fComputedProposals;
 		}
 
-		if (offset < fInvocationOffset) {
+		if (offset < fInvocationRequest.getOffset()) {
 			fIsFilteredSubset= false;
-			fInvocationOffset= offset;
+			fInvocationRequest= fContentAssistant.buildAssistantRequest(offset, fInvocationRequest.isAutoActivated(), fInvocationRequest.isAutoActivated());
+
 			fContentAssistant.fireSessionRestartEvent();
-			fComputedProposals= computeProposals(fInvocationOffset);
+			fComputedProposals= computeProposals(fInvocationRequest);
 			return fComputedProposals;
 		}
 
@@ -1587,9 +1590,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 			} else {
 				// restore original behavior
 				fIsFilteredSubset= false;
-				fInvocationOffset= offset;
+				fInvocationRequest= fContentAssistant.buildAssistantRequest(offset, fInvocationRequest.isAutoActivated(), fInvocationRequest.isIncremental());
 				fContentAssistant.fireSessionRestartEvent();
-				fComputedProposals= computeProposals(fInvocationOffset);
+				fComputedProposals= computeProposals(fInvocationRequest);
 				return fComputedProposals;
 			}
 		}
@@ -1654,10 +1657,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 			BusyIndicator.showWhile(control.getDisplay(), () -> {
 
-				fInvocationOffset= fContentAssistSubjectControlAdapter.getSelectedRange().x;
-				fFilterOffset= fInvocationOffset;
+				fInvocationRequest= fContentAssistant.buildAssistantRequest(fContentAssistSubjectControlAdapter.getSelectedRange().x, false, true);
+				fFilterOffset= fInvocationRequest.getOffset();
 				fLastCompletionOffset= fFilterOffset;
-				fFilteredProposals= computeProposals(fInvocationOffset);
+				fFilteredProposals= computeProposals(fInvocationRequest);
 
 				List<ICompletionProposal> proposals= fFilteredProposals;
 				int count= (proposals == null ? 0 : proposals.size());
@@ -1665,7 +1668,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 					return;
 
 				if (count == 1 && canAutoInsert(proposals.get(0))) {
-					insertProposal(proposals.get(0), (char) 0, 0, fInvocationOffset);
+					insertProposal(proposals.get(0), (char) 0, 0, fInvocationRequest.getOffset());
 					hide();
 				} else {
 					ensureDocumentListenerInstalled();
@@ -1797,7 +1800,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		if (rightCase.size() == 1) {
 			ICompletionProposal proposal= rightCase.get(0);
 			if (canAutoInsert(proposal) && rightCasePostfix.length() > 0) {
-				insertProposal(proposal, (char) 0, 0, fInvocationOffset);
+				insertProposal(proposal, (char) 0, 0, fInvocationRequest.getOffset());
 				hide();
 				return true;
 			}
@@ -1805,7 +1808,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		} else if (isWrongCaseMatch && wrongCase.size() == 1) {
 			ICompletionProposal proposal= wrongCase.get(0);
 			if (canAutoInsert(proposal)) {
-				insertProposal(proposal, (char) 0, 0, fInvocationOffset);
+				insertProposal(proposal, (char) 0, 0, fInvocationRequest.getOffset());
 				hide();
 			return true;
 			}

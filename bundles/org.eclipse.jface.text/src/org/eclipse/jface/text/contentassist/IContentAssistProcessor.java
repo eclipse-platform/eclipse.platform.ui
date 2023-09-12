@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Christoph Läubrich - Bug 508821 - [Content assist] More flexible API in IContentAssistProcessor to decide whether to auto-activate or not
+ *     Dawid Pakuła - [#1102] isAutoActivated flag
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
@@ -45,26 +46,60 @@ import org.eclipse.jface.text.ITextViewer;
 public interface IContentAssistProcessor {
 
 	/**
-	 * Returns a list of completion proposals based on the
-	 * specified location within the document that corresponds
-	 * to the current cursor position within the text viewer.
+	 * Returns a list of completion proposals based on the specified location within the document
+	 * that corresponds to the current cursor position within the text viewer.
 	 *
 	 * @param viewer the viewer whose document is used to compute the proposals
 	 * @param offset an offset within the document for which completions should be computed
 	 * @return an array of completion proposals or <code>null</code> if no proposals are possible
+	 * @deprecated Since 3.24
+	 * @see #computeCompletionProposals(IContentAssistRequest)
 	 */
-	ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset);
+	@Deprecated
+	default ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
+		throw new UnsupportedOperationException("Use computeCompletionProposals(IContentAssistRequest)"); //$NON-NLS-1$
+	}
 
 	/**
-	 * Returns information about possible contexts based on the
-	 * specified location within the document that corresponds
-	 * to the current cursor position within the text viewer.
+	 * Returns a list of completion proposals based on the specified location within the document
+	 * that corresponds to the current cursor position within the text viewer.
+	 *
+	 * @param request object with context information to compute the possible contexts
+	 * @return an array of completion proposals or <code>null</code> if no proposals are possible
+	 * @since 3.24
+	 */
+	default ICompletionProposal[] computeCompletionProposals(IContentAssistRequest request) {
+		return computeCompletionProposals(request.getViewer(), request.getOffset());
+	}
+
+	/**
+	 * Returns information about possible contexts based on the specified location within the
+	 * document that corresponds to the current cursor position within the text viewer.
 	 *
 	 * @param viewer the viewer whose document is used to compute the possible contexts
 	 * @param offset an offset within the document for which context information should be computed
-	 * @return an array of context information objects or <code>null</code> if no context could be found
+	 * @return an array of context information objects or <code>null</code> if no context could be
+	 *         found
+	 * @deprecated Since 3.24
+	 * @see #computeCompletionProposals(IContentAssistRequest)
 	 */
-	IContextInformation[] computeContextInformation(ITextViewer viewer, int offset);
+	@Deprecated
+	default IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
+		throw new UnsupportedOperationException("Use computeContextInformation(IContentAssistRequest)"); //$NON-NLS-1$
+	}
+
+	/**
+	 * Returns information about possible contexts based on the specified location within the
+	 * document that corresponds to the current cursor position within the text viewer.
+	 *
+	 * @param request object with context information to compute the possible contexts
+	 * @return an array of context information objects or <code>null</code> if no context could be
+	 *         found
+	 * @since 3.24
+	 */
+	default IContextInformation[] computeContextInformation(IContentAssistRequest request) {
+		return computeContextInformation(request);
+	}
 
 	/**
 	 * Returns the characters which when entered by the user should
