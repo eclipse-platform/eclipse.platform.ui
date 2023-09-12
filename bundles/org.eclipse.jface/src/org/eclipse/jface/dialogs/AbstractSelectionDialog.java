@@ -220,7 +220,7 @@ public abstract class AbstractSelectionDialog<T> extends TrayDialog {
 		List<T> selected = null;
 		if (selection instanceof IStructuredSelection && target != null) {
 			IStructuredSelection structured = (IStructuredSelection) selection;
-			selected = ((List<?>) structured.toList()).stream().filter(target::isInstance)
+			selected = structured.stream().filter(target::isInstance)
 					.map(target::cast).collect(Collectors.toList());
 		}
 		setResult(selected);
