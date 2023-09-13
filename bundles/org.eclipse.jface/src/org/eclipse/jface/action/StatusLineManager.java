@@ -16,6 +16,8 @@ package org.eclipse.jface.action;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -154,9 +156,13 @@ public class StatusLineManager extends ContributionManager implements
 			@Override
 			public void beginTask(String name, int totalWork) {
 				if (taskStarted != null) {
-					throw new IllegalStateException(
+					/// TODO: maybe even logging is too much as long as every SubMonitor.convert()
+					/// illegally calls beginTask as second time.
+					Exception e = new IllegalStateException(
 							"beginTask should only be called once per instance. At least call done() before further invocations", //$NON-NLS-1$
 							taskStarted);
+					Policy.getLog().log(Status.warning(e.getLocalizedMessage(), e));
+					done(); // workaround client error
 				}
 				taskStarted = new IllegalStateException(
 						"beginTask(" + name + ", " + totalWork + ") was called here previously"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -199,9 +205,6 @@ public class StatusLineManager extends ContributionManager implements
 
 			@Override
 			public void setTaskName(String name) {
-				if (taskStarted == null) {
-					throw new IllegalStateException("call to beginTask() missing"); //$NON-NLS-1$
-				}
 				progressDelegate.setTaskName(name);
 
 			}
@@ -215,7 +218,8 @@ public class StatusLineManager extends ContributionManager implements
 			@Override
 			public void worked(int work) {
 				if (taskStarted == null) {
-					throw new IllegalStateException("call to beginTask() missing"); //$NON-NLS-1$
+					Exception e = new IllegalStateException("call to beginTask() missing"); //$NON-NLS-1$
+					Policy.getLog().log(Status.warning(e.getLocalizedMessage(), e));
 				}
 				progressDelegate.worked(work);
 			}
