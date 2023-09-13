@@ -47,6 +47,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
@@ -2342,14 +2343,15 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				final InterruptedException[] ie = new InterruptedException[1];
 
 				BusyIndicator.showWhile(getShell().getDisplay(), () -> {
+					IProgressMonitor progressMonitor = manager.getProgressMonitor();
 					try {
-						ModalContext.run(runnable, fork, manager.getProgressMonitor(), getShell().getDisplay());
+						ModalContext.run(runnable, fork, progressMonitor, getShell().getDisplay());
 					} catch (InvocationTargetException e1) {
 						ite[0] = e1;
 					} catch (InterruptedException e2) {
 						ie[0] = e2;
 					} finally {
-						manager.getProgressMonitor().done();
+						progressMonitor.done();
 					}
 				});
 
