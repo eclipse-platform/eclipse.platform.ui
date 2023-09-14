@@ -293,7 +293,7 @@ public class JavaXPathFactoryImpl<T> extends XPathContextFactory<T> {
 		}
 
 		private Stream<EReference> availableReferences(EClass eClass) {
-			return eClass.getEAllReferences().stream().filter(eObject::eIsSet);
+			return eClass.getEAllReferences().stream().filter(r -> r.isContainment()).filter(eObject::eIsSet);
 		}
 
 		private Stream<Element> createReferenceNodes(EReference ref) {
