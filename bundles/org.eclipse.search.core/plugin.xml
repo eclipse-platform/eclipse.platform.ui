@@ -2,11 +2,7 @@
 <?eclipse version="3.0"?>
 
 <!-- ======================================================================= -->
-<!-- Search Plugin                                                           -->
+<!-- Search Plugin Core                                                      -->
 <!-- ======================================================================= -->
 <plugin>
-
-	<!-- Search extension point definitions -->
-    <extension-point name="%textSearchEngine" id="textSearchEngine" schema="schema/textSearchEngine.exsd"/>
-
 </plugin>
