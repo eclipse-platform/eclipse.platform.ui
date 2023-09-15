@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
+import org.eclipse.core.resources.undo.snapshot.IResourceSnapshot;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -119,7 +120,7 @@ public class MoveProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 			throws CoreException {
 		projectLocation = moveProject(getProject(), projectLocation, monitor);
 		// nothing was overwritten
-		setResourceDescriptions(new ResourceDescription[0]);
+		setResourceDescriptions(new IResourceSnapshot[0]);
 	}
 
 	@Override

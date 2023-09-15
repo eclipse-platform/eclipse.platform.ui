@@ -16,6 +16,7 @@ package org.eclipse.ui.ide.undo;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
+import org.eclipse.core.resources.undo.snapshot.IResourceSnapshot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -44,7 +45,7 @@ abstract class AbstractCreateResourcesOperation extends
 	 *            the label of the operation
 	 */
 	AbstractCreateResourcesOperation(
-			ResourceDescription[] resourceDescriptions, String label) {
+			IResourceSnapshot<? extends IResource>[] resourceDescriptions, String label) {
 		super(resourceDescriptions, label);
 	}
 
@@ -80,7 +81,7 @@ abstract class AbstractCreateResourcesOperation extends
 				modified = true;
 			}
 		} else {
-			for (ResourceDescription resourceDescription : resourceDescriptions) {
+			for (IResourceSnapshot resourceDescription : resourceDescriptions) {
 				if (resourceDescription != null) {
 					IResource resource = resourceDescription.createResourceHandle();
 					factory.create(resource);
