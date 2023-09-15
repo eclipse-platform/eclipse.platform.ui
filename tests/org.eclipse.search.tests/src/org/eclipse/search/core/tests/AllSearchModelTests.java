@@ -21,7 +21,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
 		QueryManagerTest.class,
 		TestSearchResult.class,
-		LineConversionTest.class
+		LineConversionTest.class,
+		ExtensionPointTest.class
 })
 public class AllSearchModelTests {
 	// see @SuiteClasses
