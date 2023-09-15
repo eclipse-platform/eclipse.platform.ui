@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.search.textSearchEngine">
+      <textSearchEngine
+            class="org.eclipse.search.tests.TestTextSearchEngine"
+            id="org.eclipse.search.tests.testSearchEngine"
+            label="Test Search Engine">
+      </textSearchEngine>
+   </extension>
+
+</plugin>

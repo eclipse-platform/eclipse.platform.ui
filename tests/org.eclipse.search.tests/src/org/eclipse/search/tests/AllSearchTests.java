@@ -23,7 +23,8 @@ import org.eclipse.search.tests.filesearch.AllFileSearchTests;
 @RunWith(Suite.class)
 @SuiteClasses({
 		AllFileSearchTests.class,
-		AllSearchModelTests.class
+		AllSearchModelTests.class,
+		TextSearchRegistryTest.class
 })
 public class AllSearchTests {
 	// see @SuiteClasses

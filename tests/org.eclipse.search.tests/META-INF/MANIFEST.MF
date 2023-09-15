@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
-Bundle-SymbolicName: org.eclipse.search.tests
-Bundle-Version: 3.11.100.qualifier
+Bundle-SymbolicName: org.eclipse.search.tests;singleton:=true
+Bundle-Version: 3.11.200.qualifier
 Bundle-Activator: org.eclipse.search.tests.SearchTestPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
