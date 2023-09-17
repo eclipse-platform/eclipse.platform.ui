@@ -112,6 +112,11 @@
          <command
                commandId="org.eclipse.ui.genericeditor.findReferences"
                style="push">
+            <visibleWhen>
+               <reference
+                     definitionId="org.eclipse.ui.genericeditor.GenericEditor.active">
+               </reference>
+            </visibleWhen>
          </command>
       </menuContribution>
       <menuContribution
