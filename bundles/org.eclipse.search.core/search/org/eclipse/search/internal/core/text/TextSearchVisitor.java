@@ -240,22 +240,22 @@ public class TextSearchVisitor {
 					}
 				}
 			} catch (UnsupportedCharsetException e) {
-				String[] args= { getCharSetName(file), file.getFullPath().makeRelative().toString()};
+				Object[] args= { getCharSetName(file), file.getFullPath().makeRelative().toString()};
 				String message = MessageFormat.format(SearchCoreMessages.TextSearchVisitor_unsupportedcharset, args);
 				return new Status(IStatus.ERROR, SearchCorePlugin.PLUGIN_ID, IStatus.ERROR, message, e);
 			} catch (IllegalCharsetNameException e) {
-				String[] args= { getCharSetName(file), file.getFullPath().makeRelative().toString()};
+				Object[] args= { getCharSetName(file), file.getFullPath().makeRelative().toString()};
 				String message = MessageFormat.format(SearchCoreMessages.TextSearchVisitor_illegalcharset, args);
 				return new Status(IStatus.ERROR, SearchCorePlugin.PLUGIN_ID, IStatus.ERROR, message, e);
 			} catch (IOException e) {
-				String[] args= { getExceptionMessage(e), file.getFullPath().makeRelative().toString()};
+				Object[] args= { getExceptionMessage(e), file.getFullPath().makeRelative().toString()};
 				String message = MessageFormat.format(SearchCoreMessages.TextSearchVisitor_error, args);
 				return new Status(IStatus.ERROR, SearchCorePlugin.PLUGIN_ID, IStatus.ERROR, message, e);
 			} catch (CoreException e) {
 				if (fIsLightweightAutoRefresh && IResourceStatus.RESOURCE_NOT_FOUND == e.getStatus().getCode()) {
 					return monitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
 				}
-				String[] args= { getExceptionMessage(e), file.getFullPath().makeRelative().toString() };
+				Object[] args= { getExceptionMessage(e), file.getFullPath().makeRelative().toString() };
 				String message = MessageFormat.format(SearchCoreMessages.TextSearchVisitor_error, args);
 				return new Status(IStatus.ERROR, SearchCorePlugin.PLUGIN_ID, IStatus.ERROR, message, e);
 			} catch (StackOverflowError e) {
