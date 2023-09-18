@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Latha Patil (ETAS GmbH) - GitHub Issue 748
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -113,7 +114,7 @@ public class ContainerGenerator {
 	private IProject createProject(IProject projectHandle, IProgressMonitor monitor) throws CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 2);
 		projectHandle.create(subMonitor.split(1));
-		projectHandle.open(subMonitor.split(1));
+		projectHandle.open(IResource.BACKGROUND_REFRESH, subMonitor.split(1));
 		return projectHandle;
 	}
 

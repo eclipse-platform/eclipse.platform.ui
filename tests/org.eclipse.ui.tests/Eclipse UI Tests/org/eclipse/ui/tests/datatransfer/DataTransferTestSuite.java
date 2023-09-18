@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474132
  *     Paul Pazderski - Bug 546546: migrate to JUnit4 suite
+ *     Latha Patil (ETAS GmbH) - GitHub Issue 748
  *******************************************************************************/
 package org.eclipse.ui.tests.datatransfer;
 
@@ -25,6 +26,7 @@ import org.junit.runners.Suite;
 	ExportFileSystemOperationTest.class,
 	ExportArchiveFileOperationTest.class,
 	ImportExistingProjectsWizardTest.class,
+		ImportExistingArchiveProjectFilterTest.class,
 	ImportExportWizardsCategoryTests.class,
 	SmartImportTests.class,
 	ZipSlipTests.class,
