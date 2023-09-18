@@ -293,6 +293,7 @@
 			extensions="*:1"
 			showScopeSection="true"		
 			canSearchEnclosingProjects="true"
+			canSearchOpenedEditors="true"
 			class="org.eclipse.search.internal.ui.text.TextSearchPage">
 		</page>
 	</extension>
