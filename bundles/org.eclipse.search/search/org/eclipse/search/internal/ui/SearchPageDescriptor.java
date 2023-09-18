@@ -64,6 +64,7 @@ class SearchPageDescriptor implements IPluginContribution, Comparable<SearchPage
 	private final static String EXTENSIONS_ATTRIBUTE= "extensions"; //$NON-NLS-1$
 	private final static String SHOW_SCOPE_SECTION_ATTRIBUTE= "showScopeSection"; //$NON-NLS-1$
 	private final static String CAN_SEARCH_ENCLOSING_PROJECTS= "canSearchEnclosingProjects"; //$NON-NLS-1$
+	private final static String CAN_SEARCH_OPENED_EDITORS = "canSearchOpenedEditors"; //$NON-NLS-1$
 	private final static String ENABLED_ATTRIBUTE= "enabled"; //$NON-NLS-1$
 	private final static String SEARCH_VIEW_HELP_CONTEXT_ID_ATTRIBUTE= "searchViewHelpContextId"; //$NON-NLS-1$
 
@@ -184,6 +185,19 @@ class SearchPageDescriptor implements IPluginContribution, Comparable<SearchPage
 	 */
 	public boolean canSearchInProjects() {
 		return Boolean.parseBoolean(fElement.getAttribute(CAN_SEARCH_ENCLOSING_PROJECTS));
+	}
+
+	/**
+	 * Returns <code>true</code> if the page can handle searches in opened
+	 * editors. The value should be ignored if <code>showScopeSection()</code>
+	 * returns <code>false</code>.
+	 *
+	 * This attribute is optional and defaults to <code>false</code>.
+	 * 
+	 * @return Returns if the page can handle searches in opened editors
+	 */
+	public boolean canSearchInOpenedEditors() {
+		return Boolean.parseBoolean(fElement.getAttribute(CAN_SEARCH_OPENED_EDITORS));
 	}
 
 	/**

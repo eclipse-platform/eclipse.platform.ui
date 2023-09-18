@@ -191,6 +191,8 @@ public final class SearchMessages extends NLS {
 	public static String ScopePart_workingSetText_accessible_label;
 	public static String ScopePart_workingSetScope_text;
 	public static String ScopePart_workspaceScope_text;
+	public static String ScopePart_openedEditorsScope_text;
+	public static String ScopePart_openedEditorsScope_tooltip_text;
 	public static String ScopePart_workingSetConcatenation;
 	public static String CopyToClipboardAction_label;
 	public static String CopyToClipboardAction_tooltip;

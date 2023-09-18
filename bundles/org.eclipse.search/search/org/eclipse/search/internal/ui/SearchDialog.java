@@ -771,7 +771,8 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 			c.setLayout(new GridLayout());
 
 			int index= fDescriptors.indexOf(descriptor);
-			fScopeParts[index]= new ScopePart(this, descriptor.canSearchInProjects());
+			fScopeParts[index] = new ScopePart(this, descriptor.canSearchInProjects(),
+					descriptor.canSearchInOpenedEditors());
 			Control part= fScopeParts[index].createPart(c);
 			applyDialogFont(part);
 			part.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
