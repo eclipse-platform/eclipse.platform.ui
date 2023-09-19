@@ -6,6 +6,7 @@ Bundle-Version: 3.14.300.qualifier
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
 Export-Package: 
+ org.eclipse.ui.internal.findandreplace,
  org.eclipse.ui.workbench.texteditor.tests,
  org.eclipse.ui.workbench.texteditor.tests.minimap,
  org.eclipse.ui.workbench.texteditor.tests.revisions,
@@ -21,3 +22,5 @@ Require-Bundle:
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Eclipse-BundleShape: dir
 Automatic-Module-Name: org.eclipse.ui.workbench.texteditor.tests
+Import-Package: org.mockito,
+ org.mockito.stubbing;version="5.5.0"

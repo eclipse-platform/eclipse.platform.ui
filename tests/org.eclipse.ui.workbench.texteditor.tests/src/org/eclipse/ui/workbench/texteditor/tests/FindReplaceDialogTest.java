@@ -43,6 +43,8 @@ import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.TextViewer;
 
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.findandreplace.FindReplaceLogic;
+import org.eclipse.ui.internal.findandreplace.SearchOptions;
 
 /**
  * Tests the FindReplaceDialog.
@@ -53,9 +55,12 @@ import org.eclipse.ui.PlatformUI;
 public class FindReplaceDialogTest {
 
 	@Rule
-	public TestName testName = new TestName();
+	public TestName testName= new TestName();
 
 	private Accessor fFindReplaceDialog;
+
+	private FindReplaceLogic findReplaceLogic;
+
 	private TextViewer fTextViewer;
 
 	private void runEventQueue() {
@@ -76,6 +81,7 @@ public class FindReplaceDialogTest {
 		Shell shell= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		fFindReplaceDialog= new Accessor("org.eclipse.ui.texteditor.FindReplaceDialog", getClass().getClassLoader(), new Object[] { shell });
 		fFindReplaceDialog.invoke("create", null);
+		findReplaceLogic= (FindReplaceLogic) fFindReplaceDialog.get("findReplaceLogic");
 	}
 
 	private void openTextViewerAndFindReplaceDialog() {
@@ -84,7 +90,10 @@ public class FindReplaceDialogTest {
 		fTextViewer.getControl().setFocus();
 
 		Accessor fFindReplaceAction;
-		fFindReplaceAction= new Accessor("org.eclipse.ui.texteditor.FindReplaceAction", getClass().getClassLoader(), new Class[] {ResourceBundle.class, String.class, Shell.class, IFindReplaceTarget.class}, new Object[] {ResourceBundle.getBundle("org.eclipse.ui.texteditor.ConstructedEditorMessages"), "Editor.FindReplace.", fTextViewer.getControl().getShell(), fTextViewer.getFindReplaceTarget()});
+		fFindReplaceAction= new Accessor("org.eclipse.ui.texteditor.FindReplaceAction", getClass().getClassLoader(),
+				new Class[] { ResourceBundle.class, String.class, Shell.class, IFindReplaceTarget.class },
+				new Object[] { ResourceBundle.getBundle("org.eclipse.ui.texteditor.ConstructedEditorMessages"), "Editor.FindReplace.", fTextViewer.getControl().getShell(),
+						fTextViewer.getFindReplaceTarget() });
 		fFindReplaceAction.invoke("run", null);
 
 		Object fFindReplaceDialogStub= fFindReplaceAction.get("fgFindReplaceDialogStub");
@@ -93,6 +102,7 @@ public class FindReplaceDialogTest {
 		Accessor fFindReplaceDialogStubAccessor= new Accessor(fFindReplaceDialogStub, "org.eclipse.ui.texteditor.FindReplaceAction$FindReplaceDialogStub", getClass().getClassLoader());
 
 		fFindReplaceDialog= new Accessor(fFindReplaceDialogStubAccessor.invoke("getDialog", null), "org.eclipse.ui.texteditor.FindReplaceDialog", getClass().getClassLoader());
+		findReplaceLogic= (FindReplaceLogic) fFindReplaceDialog.get("findReplaceLogic");
 	}
 
 	@After
@@ -112,37 +122,32 @@ public class FindReplaceDialogTest {
 	public void test01InitialButtonState() {
 		openFindReplaceDialog();
 
-		Boolean value;
-		value= (Boolean)fFindReplaceDialog.invoke("isWholeWordSearch", null);
-		assertFalse(value.booleanValue());
-		value= (Boolean)fFindReplaceDialog.invoke("isWholeWordSetting", null);
-		assertFalse(value.booleanValue());
-		value= (Boolean)fFindReplaceDialog.invoke("isWrapSearch", null);
-		assertTrue(value.booleanValue());
-		value= (Boolean)fFindReplaceDialog.invoke("isRegExSearch", null);
-		assertFalse(value.booleanValue());
-		value= (Boolean)fFindReplaceDialog.invoke("isRegExSearchAvailableAndChecked", null);
-		assertFalse(value.booleanValue());
-		Button checkbox= (Button)fFindReplaceDialog.get("fIsRegExCheckBox");
+		assertFalse(findReplaceLogic.isActive(SearchOptions.WHOLE_WORD));
+		assertTrue(findReplaceLogic.isActive(SearchOptions.WRAP));
+		assertFalse(findReplaceLogic.isActive(SearchOptions.REGEX));
+		Button checkbox= (Button) fFindReplaceDialog.get("fIsRegExCheckBox");
 		assertTrue(checkbox.isEnabled());
-		checkbox= (Button)fFindReplaceDialog.get("fWholeWordCheckBox");
+		checkbox= (Button) fFindReplaceDialog.get("fWholeWordCheckBox");
 		assertFalse(checkbox.isEnabled()); // there's no word in the Find field
 	}
 
 	@Test
 	public void testDisableWholeWordIfRegEx() {
 		openFindReplaceDialog();
+		fTextViewer= new TextViewer(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		fTextViewer.setDocument(new Document("line\nline\nline"));
+		fTextViewer.getControl().setFocus();
 
-		Combo findField= (Combo)fFindReplaceDialog.get("fFindField");
+		Combo findField= (Combo) fFindReplaceDialog.get("fFindField");
 		findField.setText("word");
 
-		Button isRegExCheckBox= (Button)fFindReplaceDialog.get("fIsRegExCheckBox");
-		Button wholeWordCheckbox= (Button)fFindReplaceDialog.get("fWholeWordCheckBox");
+		Button isRegExCheckBox= (Button) fFindReplaceDialog.get("fIsRegExCheckBox");
+		Button wholeWordCheckbox= (Button) fFindReplaceDialog.get("fWholeWordCheckBox");
 
 		assertTrue(isRegExCheckBox.isEnabled());
 		assertTrue(wholeWordCheckbox.isEnabled());
 
-		fFindReplaceDialog.set("fIsTargetSupportingRegEx", true);
+		findReplaceLogic.updateTarget(fTextViewer.getFindReplaceTarget(), false);
 		isRegExCheckBox.setSelection(true);
 		wholeWordCheckbox.setSelection(true);
 		fFindReplaceDialog.invoke("updateButtonState", null);
@@ -156,11 +161,10 @@ public class FindReplaceDialogTest {
 	public void testDisableWholeWordIfNotWord() {
 		openFindReplaceDialog();
 
-		Combo findField= (Combo)fFindReplaceDialog.get("fFindField");
-		Button isRegExCheckBox= (Button)fFindReplaceDialog.get("fIsRegExCheckBox");
-		Button wholeWordCheckbox= (Button)fFindReplaceDialog.get("fWholeWordCheckBox");
+		Combo findField= (Combo) fFindReplaceDialog.get("fFindField");
+		Button isRegExCheckBox= (Button) fFindReplaceDialog.get("fIsRegExCheckBox");
+		Button wholeWordCheckbox= (Button) fFindReplaceDialog.get("fWholeWordCheckBox");
 
-		fFindReplaceDialog.set("fIsTargetSupportingRegEx", false);
 		isRegExCheckBox.setSelection(false);
 		wholeWordCheckbox.setSelection(true);
 		fFindReplaceDialog.invoke("updateButtonState", null);
@@ -180,7 +184,7 @@ public class FindReplaceDialogTest {
 	public void testFocusNotChangedWhenEnterPressed() {
 		openTextViewerAndFindReplaceDialog();
 
-		Combo findField= (Combo)fFindReplaceDialog.get("fFindField");
+		Combo findField= (Combo) fFindReplaceDialog.get("fFindField");
 		findField.setFocus();
 		findField.setText("line");
 		final Event event= new Event();
@@ -192,7 +196,7 @@ public class FindReplaceDialogTest {
 		findField.traverse(SWT.TRAVERSE_RETURN, event);
 		runEventQueue();
 
-		Shell shell= ((Shell)fFindReplaceDialog.get("fActiveShell"));
+		Shell shell= ((Shell) fFindReplaceDialog.get("fActiveShell"));
 		if (shell == null && Util.isGtk()) {
 			if (ScreenshotTest.isRunByGerritHudsonJob()) {
 				takeScreenshot();
@@ -208,14 +212,14 @@ public class FindReplaceDialogTest {
 
 		assertTrue(findField.isFocusControl());
 
-		Button wrapSearchBox= (Button)fFindReplaceDialog.get("fWrapCheckBox");
+		Button wrapSearchBox= (Button) fFindReplaceDialog.get("fWrapCheckBox");
 		wrapSearchBox.setFocus();
 		event.doit= true;
 		findField.traverse(SWT.TRAVERSE_RETURN, event);
 		runEventQueue();
 		assertTrue(wrapSearchBox.isFocusControl());
 
-		Button allScopeBox= (Button)fFindReplaceDialog.get("fGlobalRadioButton");
+		Button allScopeBox= (Button) fFindReplaceDialog.get("fGlobalRadioButton");
 		allScopeBox.setFocus();
 		event.doit= true;
 		findField.traverse(SWT.TRAVERSE_RETURN, event);
@@ -234,12 +238,12 @@ public class FindReplaceDialogTest {
 
 		openTextViewerAndFindReplaceDialog();
 
-		Combo findField= (Combo)fFindReplaceDialog.get("fFindField");
+		Combo findField= (Combo) fFindReplaceDialog.get("fFindField");
 		findField.setText("line");
 		final Event event= new Event();
 
 		runEventQueue();
-		Shell shell= ((Shell)fFindReplaceDialog.get("fActiveShell"));
+		Shell shell= ((Shell) fFindReplaceDialog.get("fActiveShell"));
 		if (shell == null && Util.isGtk())
 			if (ScreenshotTest.isRunByGerritHudsonJob()) {
 				takeScreenshot();
@@ -247,7 +251,7 @@ public class FindReplaceDialogTest {
 			} else
 				fail("this test does not work on GTK unless the runtime workbench has focus. Screenshot: " + takeScreenshot());
 
-		Button wrapSearchBox= (Button)fFindReplaceDialog.get("fWrapCheckBox");
+		Button wrapSearchBox= (Button) fFindReplaceDialog.get("fWrapCheckBox");
 		wrapSearchBox.setFocus();
 		event.detail= SWT.TRAVERSE_MNEMONIC;
 		event.character= 'n';
@@ -256,7 +260,7 @@ public class FindReplaceDialogTest {
 		runEventQueue();
 		assertTrue(wrapSearchBox.isFocusControl());
 
-		Button allScopeBox= (Button)fFindReplaceDialog.get("fGlobalRadioButton");
+		Button allScopeBox= (Button) fFindReplaceDialog.get("fGlobalRadioButton");
 		allScopeBox.setFocus();
 		event.detail= SWT.TRAVERSE_MNEMONIC;
 		event.doit= false;
@@ -276,11 +280,11 @@ public class FindReplaceDialogTest {
 	public void testShiftEnterReversesSearchDirection() {
 		openTextViewerAndFindReplaceDialog();
 
-		Combo findField= (Combo)fFindReplaceDialog.get("fFindField");
+		Combo findField= (Combo) fFindReplaceDialog.get("fFindField");
 		findField.setText("line");
-		IFindReplaceTarget target= (IFindReplaceTarget)fFindReplaceDialog.get("fTarget");
+		IFindReplaceTarget target= findReplaceLogic.getTarget();
 		runEventQueue();
-		Shell shell= ((Shell)fFindReplaceDialog.get("fActiveShell"));
+		Shell shell= ((Shell) fFindReplaceDialog.get("fActiveShell"));
 		if (shell == null && Util.isGtk()) {
 			if (ScreenshotTest.isRunByGerritHudsonJob()) {
 				takeScreenshot();
@@ -309,8 +313,9 @@ public class FindReplaceDialogTest {
 		assertEquals(0, (target.getSelection()).x);
 		assertEquals(4, (target.getSelection()).y);
 
-		Button forwardRadioButton= (Button)fFindReplaceDialog.get("fForwardRadioButton");
+		Button forwardRadioButton= (Button) fFindReplaceDialog.get("fForwardRadioButton");
 		forwardRadioButton.setSelection(false);
+		fFindReplaceDialog.invoke("updateButtonState", null);
 		event.doit= true;
 		forwardRadioButton.traverse(SWT.TRAVERSE_RETURN, event);
 		assertEquals(5, (target.getSelection()).x);
