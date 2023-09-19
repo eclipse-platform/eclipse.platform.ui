@@ -10,16 +10,16 @@ Export-Package: org.eclipse.search.core.tests;x-internal:=true,
  org.eclipse.search.tests;x-internal:=true,
  org.eclipse.search.tests.filesearch;x-internal:=true
 Require-Bundle: 
- org.eclipse.ui;bundle-version="[3.5.0,4.0.0)",
- org.eclipse.ui.ide;bundle-version="[3.5.0,4.0.0)",
- org.eclipse.search;bundle-version="[3.5.100,4.0.0)",
- org.eclipse.core.runtime;bundle-version="[3.29.0,4.0.0)",
- org.eclipse.core.resources;bundle-version="[3.5.0,4.0.0)",
- org.junit;bundle-version="4.12.0",
- org.eclipse.ui.workbench.texteditor;bundle-version="[3.5.0,4.0.0)",
- org.eclipse.jface.text;bundle-version="[3.5.0,4.0.0)",
- org.eclipse.ui.editors;bundle-version="[3.5.0,4.0.0)",
- org.eclipse.ltk.core.refactoring;bundle-version="[3.5.0,4.0.0)"
+ org.eclipse.ui;bundle-version="[3.204.0,4.0.0)",
+ org.eclipse.ui.ide;bundle-version="[3.21.200,4.0.0)",
+ org.eclipse.search;bundle-version="[3.16.0,4.0.0)",
+ org.eclipse.core.runtime;bundle-version="[3.29.100,4.0.0)",
+ org.eclipse.core.resources;bundle-version="[3.19.200,4.0.0)",
+ org.junit;bundle-version="4.13.0",
+ org.eclipse.ui.workbench.texteditor;bundle-version="[3.17.200,4.0.0)",
+ org.eclipse.jface.text;bundle-version="[3.24.200,4.0.0)",
+ org.eclipse.ui.editors;bundle-version="[3.17.100,4.0.0)",
+ org.eclipse.ltk.core.refactoring;bundle-version="[3.14.100,4.0.0)"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Eclipse-BundleShape: dir
