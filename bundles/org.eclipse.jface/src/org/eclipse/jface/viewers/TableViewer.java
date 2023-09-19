@@ -20,12 +20,17 @@
 package org.eclipse.jface.viewers;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.internal.ExpandableNode;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
@@ -458,7 +463,7 @@ public class TableViewer extends AbstractTableViewer {
 	}
 
 	@Override
-	void handleExpandableNodeClicked(Widget w) {
+	void handleExpandableNodeClicked(Widget w, boolean expandAll) {
 		if (!(w instanceof Item item)) {
 			return;
 		}
@@ -474,8 +479,8 @@ public class TableViewer extends AbstractTableViewer {
 			setBusy(true);
 			table.setRedraw(false);
 
-			Object[] sortedChildren = expNode.getRemainingElements();
-			Object[] nextChildren = applyItemsLimit(data, sortedChildren);
+			Object[] remChildren = expNode.getRemainingElements();
+			Object[] nextChildren = expandAll ? remChildren : applyItemsLimit(data, remChildren);
 
 			if (nextChildren.length > 0) {
 				disassociate(item);
@@ -504,6 +509,41 @@ public class TableViewer extends AbstractTableViewer {
 			setBusy(oldBusy);
 			table.setRedraw(true);
 		}
+	}
+
+	@Override
+	void handleKeySelection(KeyEvent e) {
+		if (e.keyCode == SWT.KEYPAD_MULTIPLY || e.keyCode == SWT.KEYPAD_ADD || e.keyCode == SWT.ARROW_RIGHT) {
+			if (e.widget instanceof Table table) {
+				TableItem[] selection = table.getSelection();
+				if (selection.length != 1) {
+					return;
+				}
+				handleExpandableNodeClicked(selection[0], false);
+			}
+		}
+	}
+
+	@Override
+	void handleMenuSelection(MenuEvent e, Menu popupMenu) {
+		if (table.getSelection().length != 1) {
+			return;
+		}
+		TableItem selectedItem = table.getSelection()[0];
+		if (!selectedItem.isDisposed() && selectedItem.getData() instanceof ExpandableNode) {
+			MenuItem[] items = popupMenu.getItems();
+			for (int i = 0; i < items.length; i++) {
+				items[i].dispose();
+			}
+			MenuItem newItem = new MenuItem(popupMenu, SWT.NONE);
+			newItem.setText(JFaceResources.getString("ExpandableNode.showAllRemaining")); //$NON-NLS-1$
+			newItem.addListener(SWT.Selection, (selEvent) -> {
+				if (!selectedItem.isDisposed() && selectedItem.getData() instanceof ExpandableNode) {
+					handleExpandableNodeClicked(selectedItem, true);
+				}
+			});
+		}
+
 	}
 
 }

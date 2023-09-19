@@ -19,9 +19,14 @@
 package org.eclipse.jface.viewers;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.viewers.internal.ExpandableNode;
+import org.eclipse.swt.events.MenuAdapter;
+import org.eclipse.swt.events.MenuEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -145,14 +150,29 @@ public abstract class ViewerColumn {
 		}
 		labelProvider.update(cell);
 
-		// check if client has updated the label for this element. Otherwise use default
-		// label provided
+		// special handling for ExpandableNode
 		if (cell.getElement() instanceof ExpandableNode expNode) {
+			// set italic font
 			cell.setFont(JFaceResources.getFontRegistry().getItalic(JFaceResources.DEFAULT_FONT));
-			String text = cell.getText();
-			if (text.isEmpty() || text.equals(expNode.toString())) {
-				cell.setText(expNode.getLabel());
-			}
+
+			// set image to expandable node
+			Image image = JFaceResources.getImage(PopupDialog.POPUP_IMG_MENU);
+			cell.setImage(image);
+
+			// add pop up menu
+			Menu existingMenu = cell.getControl().getMenu();
+			final Menu popupMenu = existingMenu == null ? new Menu(cell.getControl()) : existingMenu;
+			cell.getControl().setMenu(popupMenu);
+
+			popupMenu.addMenuListener(new MenuAdapter() {
+				@Override
+				public void menuShown(MenuEvent e) {
+					getViewer().handleMenuSelection(e, popupMenu);
+				}
+			});
+
+			// set default text
+			cell.setText(expNode.getLabel());
 		}
 	}
 
