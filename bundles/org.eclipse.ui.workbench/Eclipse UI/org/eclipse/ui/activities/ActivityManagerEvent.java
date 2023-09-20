@@ -45,7 +45,7 @@ public final class ActivityManagerEvent {
 	/**
 	 * Indicates whether enabled IDs of non-expression-controlled activities have
 	 * changed. The value is calculated from changed enabled activity IDs given to
-	 * the constructor if known by the caller or is set to <code>null</null> and
+	 * the constructor if known by the caller or is set to <code>null</code> and
 	 * will be calculated on demand upon first access to the value.
 	 */
 	private Boolean enabledNonExpressionControlledActivityIdsChanged = null;
@@ -315,7 +315,7 @@ public final class ActivityManagerEvent {
 	 * Returns whether or not enabledActivityIds property changed and any of the
 	 * changed IDs belongs to a non-expression-controlled activity.
 	 *
-	 * @return <code>true>/code> iff the enabledActivityIds property changed and any
+	 * @return <code>true</code> iff the enabledActivityIds property changed and any
 	 *         of the changed IDs belongs to a non-expression-controlled activity.
 	 * @since 3.131
 	 */
