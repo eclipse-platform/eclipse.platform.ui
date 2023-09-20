@@ -166,6 +166,7 @@ public class WorkbenchAdvisorTest {
 		wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_STARTUP);
 		wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_WINDOW_OPEN);
 		wa.assertNextOperation(WorkbenchAdvisorObserver.FILL_ACTION_BARS);
+		wa.assertNextOperation(WorkbenchAdvisorObserver.POST_WINDOW_RESTORE);
 		wa.assertNextOperation(WorkbenchAdvisorObserver.POST_WINDOW_OPEN);
 		wa.assertNextOperation(WorkbenchAdvisorObserver.POST_STARTUP);
 		wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_SHUTDOWN);
@@ -213,7 +214,7 @@ public class WorkbenchAdvisorTest {
 		wa2.assertNextOperation(WorkbenchAdvisorObserver.PRE_STARTUP);
 		wa2.assertNextOperation(WorkbenchAdvisorObserver.PRE_WINDOW_OPEN);
 		wa2.assertNextOperation(WorkbenchAdvisorObserver.FILL_ACTION_BARS);
-		// wa2.assertNextOperation(WorkbenchAdvisorObserver.POST_WINDOW_RESTORE);
+		wa2.assertNextOperation(WorkbenchAdvisorObserver.POST_WINDOW_RESTORE);
 		wa2.assertNextOperation(WorkbenchAdvisorObserver.POST_WINDOW_OPEN);
 		wa2.assertNextOperation(WorkbenchAdvisorObserver.POST_STARTUP);
 		wa2.assertNextOperation(WorkbenchAdvisorObserver.PRE_SHUTDOWN);
@@ -244,6 +245,7 @@ public class WorkbenchAdvisorTest {
 		wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_STARTUP);
 		wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_WINDOW_OPEN);
 		wa.assertNextOperation(WorkbenchAdvisorObserver.FILL_ACTION_BARS);
+		wa.assertNextOperation(WorkbenchAdvisorObserver.POST_WINDOW_RESTORE);
 		wa.assertNextOperation(WorkbenchAdvisorObserver.POST_WINDOW_OPEN);
 		wa.assertNextOperation(WorkbenchAdvisorObserver.POST_STARTUP);
 		wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_SHUTDOWN);
