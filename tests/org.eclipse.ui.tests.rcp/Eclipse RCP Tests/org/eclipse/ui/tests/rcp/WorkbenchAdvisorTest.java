@@ -33,7 +33,6 @@ import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.tests.rcp.util.WorkbenchAdvisorObserver;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class WorkbenchAdvisorTest {
@@ -296,10 +295,6 @@ public class WorkbenchAdvisorTest {
 		assertEquals(PlatformUI.RETURN_OK, code);
 	}
 
-//  testShellClose() is commented out because it was failing with the shells having already been disposed.
-//      It's unclear what this was really trying to test anyway.
-
-	@Ignore
 	@Test
 	public void testShellClose() {
 		WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver() {
@@ -310,7 +305,7 @@ public class WorkbenchAdvisorTest {
 
 				Shell[] shells = disp.getShells();
 				for (Shell shell : shells) {
-					if (shell != null) {
+					if (shell != null && !shell.isDisposed()) {
 						shell.close();
 					}
 				}
@@ -325,6 +320,7 @@ public class WorkbenchAdvisorTest {
 		wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_STARTUP);
 		wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_WINDOW_OPEN);
 		wa.assertNextOperation(WorkbenchAdvisorObserver.FILL_ACTION_BARS);
+		wa.assertNextOperation(WorkbenchAdvisorObserver.POST_WINDOW_RESTORE);
 		wa.assertNextOperation(WorkbenchAdvisorObserver.POST_WINDOW_OPEN);
 		wa.assertNextOperation(WorkbenchAdvisorObserver.POST_STARTUP);
 		wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_WINDOW_SHELL_CLOSE);
