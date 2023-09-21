@@ -49,7 +49,8 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		IStructuredSelection selection = treeViewer.getStructuredSelection();
 		assertFalse("Selection must not be empty", selection.isEmpty());
 		Object firstElement = selection.getFirstElement();
-		assertTrue("Selection must be expandable node: " + firstElement, treeViewer.isExpandableNode(firstElement));
+		assertTrue("Selection must be expandable node: " + firstElement,
+				treeViewer.isExpandableNode(treeViewer.getTree().getSelection()[0]));
 	}
 
 	private void assertSetSelection(DataModel firstEle) {
@@ -118,16 +119,14 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 	private TreeItem[] assertLimitedItems(TreeItem treeItem) {
 		TreeItem[] items = treeItem.getItems();
 		assertEquals("There should be only limited items", VIEWER_LIMIT + 1, items.length);
-		Object data = items[VIEWER_LIMIT].getData();
-		assertTrue("last item must be expandable node", treeViewer.isExpandableNode(data));
+		assertTrue("last item must be expandable node", treeViewer.isExpandableNode(items[VIEWER_LIMIT]));
 		return items;
 	}
 
 	private TreeItem[] assertLimitedItems() {
 		TreeItem[] rootLevelItems = treeViewer.getTree().getItems();
 		assertEquals("There should be only limited items", VIEWER_LIMIT + 1, rootLevelItems.length);
-		Object data = rootLevelItems[VIEWER_LIMIT].getData();
-		assertTrue("last item must be expandable node", treeViewer.isExpandableNode(data));
+		assertTrue("last item must be expandable node", treeViewer.isExpandableNode(rootLevelItems[VIEWER_LIMIT]));
 		return rootLevelItems;
 	}
 
