@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.ui.workbench" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/1155" id="923795461">
+            <message_arguments>
+                <message_argument value="3.131.0"/>
+                <message_argument value="3.130.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.ui.part.MultiPageEditor">
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/1155" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.part.MultiPageEditor"/>
+                <message_argument value="org.eclipse.ui.workbench_3.131.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
