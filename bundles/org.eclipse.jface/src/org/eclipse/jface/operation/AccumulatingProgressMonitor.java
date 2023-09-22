@@ -50,6 +50,8 @@ import org.eclipse.swt.widgets.Display;
 	 * The display.
 	 */
 	private Display display;
+	private static final boolean LOG_BEGIN_TASK = Boolean
+			.getBoolean("AccumulatingProgressMonitor.logBeginTaskViolations"); //$NON-NLS-1$
 
 	/**
 	 * The collector, or <code>null</code> if none.
@@ -58,7 +60,8 @@ import org.eclipse.swt.widgets.Display;
 
 	private String currentTask = ""; //$NON-NLS-1$
 
-	private volatile Exception taskStarted;
+	private volatile boolean taskStarted;
+	private volatile Exception taskStartedStack;
 
 	private class Collector implements Runnable {
 		private String taskName;
@@ -144,15 +147,20 @@ import org.eclipse.swt.widgets.Display;
 
 	@Override
 	public void beginTask(final String name, final int totalWork) {
-		if (taskStarted != null) {
-			Exception e = new IllegalStateException(
-					"beginTask should only be called once per instance. At least call done() before further invocations", //$NON-NLS-1$
-					taskStarted);
-			Policy.getLog().log(Status.warning(e.getLocalizedMessage(), e));
+		if (taskStarted) {
+			if (LOG_BEGIN_TASK) {
+				Exception e = new IllegalStateException(
+						"beginTask should only be called once per instance. At least call done() before further invocations", //$NON-NLS-1$
+						taskStartedStack);
+				Policy.getLog().log(Status.warning(e.getLocalizedMessage(), e));
+			}
 			done(); // workaround client error
 		}
-		taskStarted = new IllegalStateException(
-				"beginTask(" + name + ", " + totalWork + ") was called here previously"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (LOG_BEGIN_TASK) {
+			taskStartedStack = new IllegalStateException(
+					"beginTask(" + name + ", " + totalWork + ") was called here previously"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
+		taskStarted = true;
 		synchronized (this) {
 			collector = null;
 		}
@@ -190,13 +198,14 @@ import org.eclipse.swt.widgets.Display;
 
 	@Override
 	public void done() {
-		if (taskStarted == null) {
+		if (!taskStarted) {
 			// ignore call to done() if beginTask() was not called!
 			// Otherwise an otherwise already started delegate would be finished
 			// see https://github.com/eclipse-jdt/eclipse.jdt.ui/issues/61
 			return;
 		}
-		taskStarted = null;
+		taskStarted = false;
+		taskStartedStack = null;
 		synchronized (this) {
 			collector = null;
 		}
