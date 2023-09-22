@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.ui" version="2">
     <resource path="META-INF/MANIFEST.MF">
-        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/issues/1155" id="923795461">
+        <filter comment="https://github.com/eclipse-platform/eclipse.platform.ui/pull/1156" id="926941240">
             <message_arguments>
-                <message_argument value="3.204.0"/>
+                <message_argument value="3.205.0"/>
                 <message_argument value="3.204.0"/>
             </message_arguments>
         </filter>
