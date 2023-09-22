@@ -5,4 +5,9 @@
 		<artifactId>tycho-build</artifactId>
 		<version>4.0.4</version>
 	</extension>
+	<extension>
+		<groupId>fr.jcgay.maven</groupId>
+		<artifactId>maven-profiler</artifactId>
+		<version>3.2</version>
+	</extension>
 </extensions>
