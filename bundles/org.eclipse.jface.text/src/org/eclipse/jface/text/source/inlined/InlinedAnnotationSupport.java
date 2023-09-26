@@ -219,12 +219,12 @@ public class InlinedAnnotationSupport {
 		/**
 		 * Return whether the given offset is in visible lines.
 		 *
-		 * @param offset the offset
+		 * @param documentOffset the document relative offset
 		 * @return <code>true</code> if the given offset is in visible lines and <code>false</code>
 		 *         otherwise.
 		 */
 		@SuppressWarnings("boxing")
-		boolean isInVisibleLines(int offset) {
+		boolean isInVisibleLines(int documentOffset) {
 			if (endOffset == null) {
 				Display display= fViewer.getTextWidget().getDisplay();
 				if (display.getThread() == Thread.currentThread()) {
@@ -233,7 +233,7 @@ public class InlinedAnnotationSupport {
 					display.syncExec(() -> endOffset= getExclusiveBottomIndexEndOffset());
 				}
 			}
-			return offset >= startOffset && offset <= endOffset;
+			return documentOffset >= startOffset && documentOffset <= endOffset;
 		}
 
 		/**
@@ -548,16 +548,16 @@ public class InlinedAnnotationSupport {
 	/**
 	 * Return whether the given offset is in visible lines.
 	 *
-	 * @param offset the offset
+	 * @param documentOffset the document offset
 	 * @return <code>true</code> if the given offset is in visible lines and <code>false</code>
 	 *         otherwise.
 	 */
-	boolean isInVisibleLines(int offset) {
+	boolean isInVisibleLines(int documentOffset) {
 		if (visibleLines == null) {
 			// case of support has been uninstalled and mining must be drawn.
 			return false;
 		}
-		return visibleLines.isInVisibleLines(offset);
+		return visibleLines.isInVisibleLines(documentOffset);
 	}
 
 
