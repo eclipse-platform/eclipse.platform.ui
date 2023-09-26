@@ -73,7 +73,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 			}
 			InlinedAnnotationSupport support = InlinedAnnotationSupport.getSupport(textWidget);
 			inlinedAnnotation.setSupport(support);
-			if (support.isInVisibleLines(widgetOffset) && inlinedAnnotation.isFirstVisibleOffset(widgetOffset, viewer)) {
+			if (support.isInVisibleLines(inlinedAnnotation.getPosition().offset) && inlinedAnnotation.isFirstVisibleOffset(widgetOffset, viewer)) {
 				GCConfig initialGCConfig = GCConfig.fromGC(gc);
 				GCConfig annotationGCConfig = new GCConfig(color, textWidget.getBackground(), getAnnotationFont(textWidget));
 				annotationGCConfig.applyTo(gc);
