@@ -93,7 +93,7 @@ public class Snippet030DateAndTimeObservableValue {
 	}
 
 	private void bindUI() {
-		DataBindingContext bindingContext = new DataBindingContext();
+		var bindingContext = new DataBindingContext();
 
 		IObservableValue<LocalDateTime> model = WritableValue.withValueType(LocalDateTime.class);
 		model.setValue(LocalDateTime.now());
