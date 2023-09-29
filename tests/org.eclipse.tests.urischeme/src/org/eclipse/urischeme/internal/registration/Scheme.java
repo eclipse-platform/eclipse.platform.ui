@@ -20,8 +20,8 @@ import org.eclipse.urischeme.IScheme;
  */
 public class Scheme implements IScheme {
 
-	private String name;
-	private String desription;
+	private final String name;
+	private final String desription;
 
 	public Scheme(String name, String desription) {
 		this.name = name;

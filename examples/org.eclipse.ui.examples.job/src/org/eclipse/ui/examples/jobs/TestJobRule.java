@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  *
  */
 public class TestJobRule implements ISchedulingRule {
-	private int jobOrder;
+	private final int jobOrder;
 
 	public TestJobRule(int order) {
 		jobOrder = order;

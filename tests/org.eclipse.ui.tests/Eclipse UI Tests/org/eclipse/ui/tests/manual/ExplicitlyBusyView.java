@@ -34,7 +34,7 @@ import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 public class ExplicitlyBusyView extends ViewPart {
 
 	private IWorkbenchSiteProgressService progressService;
-	private Object family = new Object();
+	private final Object family = new Object();
 	private int counter;
 
 	class SomeJob extends Job {

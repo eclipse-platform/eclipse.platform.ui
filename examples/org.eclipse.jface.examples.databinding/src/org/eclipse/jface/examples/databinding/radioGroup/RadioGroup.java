@@ -112,7 +112,7 @@ public class RadioGroup {
 		}
 	}
 
-	private SelectionListener selectionListener = new SelectionListener() {
+	private final SelectionListener selectionListener = new SelectionListener() {
 		@Override
 	public void widgetDefaultSelected(SelectionEvent e) {
 			widgetSelected(e);
@@ -150,7 +150,7 @@ public class RadioGroup {
 		}
 	};
 
-	private List<VetoableSelectionListener> widgetChangeListeners = new LinkedList<>();
+	private final List<VetoableSelectionListener> widgetChangeListeners = new LinkedList<>();
 
 	protected boolean fireWidgetChangeSelectionEvent(SelectionEvent e) {
 		for (VetoableSelectionListener listener : widgetChangeListeners) {
@@ -222,7 +222,7 @@ public class RadioGroup {
 	}
 
 
-	private List<SelectionListener> widgetSelectedListeners = new ArrayList<>();
+	private final List<SelectionListener> widgetSelectedListeners = new ArrayList<>();
 
 	protected void fireWidgetSelectedEvent(SelectionEvent e) {
 		for (SelectionListener listener : widgetSelectedListeners) {

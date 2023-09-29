@@ -223,7 +223,7 @@ public class ViewWithSaveables extends ViewPart implements ISaveablesSource,
 
 	class MySaveable extends Saveable {
 
-		private IObservableValue<Boolean> myDirty = new WritableValue<>(Boolean.FALSE,
+		private final IObservableValue<Boolean> myDirty = new WritableValue<>(Boolean.FALSE,
 				Boolean.TYPE);
 
 		@Override
@@ -275,7 +275,7 @@ public class ViewWithSaveables extends ViewPart implements ISaveablesSource,
 
 		Map<IObservableValue<Boolean>, MySaveable> writableValueToElement = new HashMap<>();
 
-		private IValueChangeListener<Boolean> valueChangeListener = event -> fireMapChange(
+		private final IValueChangeListener<Boolean> valueChangeListener = event -> fireMapChange(
 				Diffs.createMapDiffSingleChange(
 				writableValueToElement.get(event.getSource()), event.diff.getOldValue(), event.diff.getNewValue()));
 

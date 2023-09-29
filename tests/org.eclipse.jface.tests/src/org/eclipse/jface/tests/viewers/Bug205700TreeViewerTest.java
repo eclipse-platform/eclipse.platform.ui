@@ -146,7 +146,7 @@ public class Bug205700TreeViewerTest {
 
 		private final String name;
 
-		private TreeNode parent = null;
+		private final TreeNode parent = null;
 
 		private final List<TreeNode> children = new ArrayList<>();
 

@@ -34,8 +34,8 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class OpenMultipleEditorTest extends BasicPerformanceTest {
 
-	private String extension;
-	private boolean closeAll;
+	private final String extension;
+	private final boolean closeAll;
 
 	@Parameters
 	public static Collection<Object[]> data() {

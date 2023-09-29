@@ -62,7 +62,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 	private EventHandler activeChildHandler;
 	private EventHandler toBeRenderedHandler;
 
-	private Map<MUIElement, List<MPlaceholder>> renderedPlaceholders = new HashMap<>();
+	private final Map<MUIElement, List<MPlaceholder>> renderedPlaceholders = new HashMap<>();
 
 	private boolean createContributions = true;
 

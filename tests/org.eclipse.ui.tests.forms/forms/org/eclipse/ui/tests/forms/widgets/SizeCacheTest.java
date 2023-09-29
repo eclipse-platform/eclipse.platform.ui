@@ -46,7 +46,7 @@ public class SizeCacheTest {
 			Africa and New Zealand. """;
 	private Font font;
 	// change this to true if you want to see test is slow motion
-	private boolean humanWatching = Boolean.parseBoolean(System.getProperty("junit.human.watching"));
+	private final boolean humanWatching = Boolean.parseBoolean(System.getProperty("junit.human.watching"));
 	private SizeCache sizeCache;
 	private Control control;
 	private Point expectedSize;

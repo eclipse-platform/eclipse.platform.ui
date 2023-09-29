@@ -24,7 +24,7 @@ import org.eclipse.ui.tests.views.properties.tabbed.model.Element;
  */
 public class OverrideTestsSelection implements ISelection {
 
-	private Element element;
+	private final Element element;
 
 	/**
 	 * Constructor for OverrideTestsSelection

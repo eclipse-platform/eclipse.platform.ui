@@ -55,7 +55,7 @@ public class Snippet041SideEffectTwoWayBinding {
 	/** Observable Task model */
 	static class Task {
 
-		private WritableValue<String> summary = new WritableValue<>("Learn Databinding", String.class);
+		private final WritableValue<String> summary = new WritableValue<>("Learn Databinding", String.class);
 
 		public String getSummary() {
 			return summary.getValue();
@@ -67,7 +67,7 @@ public class Snippet041SideEffectTwoWayBinding {
 	}
 
 	static class View {
-		private Task task;
+		private final Task task;
 		private Text summaryText;
 
 		public View(Task task) {

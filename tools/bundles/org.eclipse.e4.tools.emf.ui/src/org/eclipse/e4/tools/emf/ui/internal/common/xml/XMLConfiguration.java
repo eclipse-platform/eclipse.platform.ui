@@ -29,7 +29,7 @@ public class XMLConfiguration extends SourceViewerConfiguration {
 	private XMLDoubleClickStrategy doubleClickStrategy;
 	private XMLTagScanner tagScanner;
 	private XMLScanner scanner;
-	private IResourcePool pool;
+	private final IResourcePool pool;
 
 	public XMLConfiguration(IResourcePool pool) {
 		this.pool = pool;

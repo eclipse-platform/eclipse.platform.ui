@@ -27,7 +27,7 @@ import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 
 public class TestNavigatorActionGroup extends ActionGroup {
 
-	private AdaptedResourceNavigator navigator;
+	private final AdaptedResourceNavigator navigator;
 
 	private AddBookmarkAction addBookmarkAction;
 

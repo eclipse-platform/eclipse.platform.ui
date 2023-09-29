@@ -82,7 +82,7 @@ public class AdaptedResourceNavigator extends ViewPart {
 	 */
 	private static final String LINK_NAVIGATOR_TO_EDITOR = "LINK_NAVIGATOR_TO_EDITOR"; //$NON-NLS-1$
 
-	private IPartListener partListener = new IPartListener() {
+	private final IPartListener partListener = new IPartListener() {
 		@Override
 		public void partActivated(IWorkbenchPart part) {
 			if (part instanceof IEditorPart editorPart) {

@@ -26,7 +26,7 @@ public class LevelServiceFactory extends AbstractServiceFactory {
 	static int instancesCreated = 0;
 
 	private static class LS implements ILevelService {
-		private int level;
+		private final int level;
 
 		public LS(int l) {
 			level = l;

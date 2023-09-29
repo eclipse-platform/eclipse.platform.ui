@@ -23,7 +23,7 @@ import org.eclipse.jface.examples.databinding.mask.EditMaskParseException;
  * @since 3.3
  */
 public class EditMaskParser {
-	private EditMaskLexerAndToken[] expectedTokens;
+	private final EditMaskLexerAndToken[] expectedTokens;
 	private char placeholder = ' ';
 
 	/**

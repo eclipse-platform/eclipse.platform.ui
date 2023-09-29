@@ -46,8 +46,8 @@ import org.eclipse.swt.widgets.Shell;
 public class ProjectFolderPickerDialog extends TitleAreaDialog {
 
 	private TreeViewer viewer;
-	private IProject project;
-	private String srcPath;
+	private final IProject project;
+	private final String srcPath;
 	private String value;
 
 	protected ProjectFolderPickerDialog(Shell parentShell, IProject project, String srcPath) {

@@ -57,12 +57,12 @@ public class ExternalizeStringHandler {
 	}
 
 	static class ExtractionDialog extends TitleAreaDialog {
-		private Messages messages;
-		private IObservableList<? extends EObject> list;
-		private IResourcePool pool;
-		private IProject project;
+		private final Messages messages;
+		private final IObservableList<? extends EObject> list;
+		private final IResourcePool pool;
+		private final IProject project;
 		private CheckboxTableViewer viewer;
-		private IModelResource resource;
+		private final IModelResource resource;
 
 		public ExtractionDialog(Shell parentShell, Messages messages, IModelResource resource,
 				IObservableList<? extends EObject> list, IResourcePool pool, IProject project) {
@@ -308,10 +308,10 @@ public class ExternalizeStringHandler {
 	}
 
 	static class Entry {
-		private EObject object;
-		private EStructuralFeature feature;
-		private String key;
-		private String value;
+		private final EObject object;
+		private final EStructuralFeature feature;
+		private final String key;
+		private final String value;
 
 		public Entry(EObject object, EStructuralFeature feature, String key, String value) {
 			this.object = object;

@@ -72,7 +72,7 @@ public class TestBug105491 {
 		}
 	}
 
-	private IWorkspace workspace = ResourcesPlugin.getWorkspace();
+	private final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
 	public TestBug105491() {
 		super();

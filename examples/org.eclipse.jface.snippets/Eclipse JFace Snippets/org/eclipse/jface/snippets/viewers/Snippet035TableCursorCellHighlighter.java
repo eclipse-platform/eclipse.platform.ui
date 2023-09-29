@@ -64,7 +64,7 @@ public class Snippet035TableCursorCellHighlighter {
 
 	private class MyEditingSupport extends EditingSupport {
 
-		private String property;
+		private final String property;
 
 		public MyEditingSupport(ColumnViewer viewer, String property) {
 			super(viewer);
@@ -95,7 +95,7 @@ public class Snippet035TableCursorCellHighlighter {
 
 	private static class MyColumnLabelProvider extends ColumnLabelProvider {
 		FontRegistry registry = JFaceResources.getFontRegistry();
-		private String columnIndex;
+		private final String columnIndex;
 
 		public MyColumnLabelProvider(String columnIndex) {
 			this.columnIndex = columnIndex;

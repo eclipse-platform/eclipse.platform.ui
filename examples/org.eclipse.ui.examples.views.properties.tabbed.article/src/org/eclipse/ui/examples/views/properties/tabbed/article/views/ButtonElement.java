@@ -32,9 +32,9 @@ import org.eclipse.ui.views.properties.IPropertySource;
 public class ButtonElement
 	implements IWorkbenchAdapter, IAdaptable {
 
-	private String headingName;
+	private final String headingName;
 
-	private Button ctl;
+	private final Button ctl;
 
 	/**
 	 * Creates a new ButtonElement.

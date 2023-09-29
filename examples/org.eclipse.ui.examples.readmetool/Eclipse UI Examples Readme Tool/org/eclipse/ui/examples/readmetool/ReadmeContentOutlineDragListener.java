@@ -27,7 +27,7 @@ import org.eclipse.ui.part.PluginTransferData;
  * <code>PluginTransfer</code> transfer types.
  */
 public class ReadmeContentOutlineDragListener extends DragSourceAdapter {
-	private ReadmeContentOutlinePage page;
+	private final ReadmeContentOutlinePage page;
 
 	/**
 	 * Creates a new drag listener for the given page.

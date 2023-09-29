@@ -52,7 +52,7 @@ public class OpenCloseTest extends UITestCase {
 
 	private static final int numIterations = 10;
 
-	private IWorkbenchWindow workbenchWindow;
+	private final IWorkbenchWindow workbenchWindow;
 
 	/**
 	 * Constructor.

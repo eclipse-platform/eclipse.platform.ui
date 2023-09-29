@@ -373,7 +373,7 @@ public class DecoratingStyledCellLabelProviderTest extends ViewerTestCase {
 
 		String cupYear;
 
-		private String baseName;
+		private final String baseName;
 
 		/**
 		 * Create a new instance of the receiver.

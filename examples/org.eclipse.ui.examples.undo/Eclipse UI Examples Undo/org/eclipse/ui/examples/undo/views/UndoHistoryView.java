@@ -83,7 +83,7 @@ public class UndoHistoryView extends ViewPart implements
 
 	private Action refreshListAction;
 
-	private IOperationHistory history = OperationHistoryFactory
+	private final IOperationHistory history = OperationHistoryFactory
 			.getOperationHistory();
 
 	private IUndoContext fContext = IOperationHistory.GLOBAL_UNDO_CONTEXT;

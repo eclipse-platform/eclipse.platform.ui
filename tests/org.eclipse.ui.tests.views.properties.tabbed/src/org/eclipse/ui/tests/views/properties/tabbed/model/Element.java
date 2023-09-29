@@ -17,7 +17,7 @@ import org.eclipse.swt.graphics.Image;
 
 public abstract class Element {
 
-	private String name;
+	private final String name;
 
 	public Element(String aName) {
 		super();

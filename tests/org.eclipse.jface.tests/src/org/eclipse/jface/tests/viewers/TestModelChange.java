@@ -14,11 +14,11 @@
 package org.eclipse.jface.tests.viewers;
 
 public class TestModelChange {
-	private int fKind;
+	private final int fKind;
 
-	private TestElement fParent;
+	private final TestElement fParent;
 
-	private TestElement[] fChildren;
+	private final TestElement[] fChildren;
 
 	public static final int KIND_MASK = 0x0F;
 

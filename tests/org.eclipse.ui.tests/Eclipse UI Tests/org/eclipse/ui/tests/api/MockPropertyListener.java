@@ -17,11 +17,11 @@ import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.tests.harness.util.CallHistory;
 
 public class MockPropertyListener implements IPropertyListener {
-	private CallHistory callTrace;
+	private final CallHistory callTrace;
 
-	private Object sourceMask;
+	private final Object sourceMask;
 
-	private int sourceId;
+	private final int sourceId;
 
 	/**
 	 * @param source the event source that fires the event to this listener

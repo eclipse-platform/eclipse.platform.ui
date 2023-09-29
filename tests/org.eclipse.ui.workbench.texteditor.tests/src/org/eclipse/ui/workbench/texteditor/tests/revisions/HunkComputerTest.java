@@ -36,7 +36,7 @@ public class HunkComputerTest {
 	private static final int U= ILineDiffInfo.UNCHANGED;
 
 	private int[] fDiffInformation;
-	private ILineDiffer fDiffer= new ILineDiffer() {
+	private final ILineDiffer fDiffer= new ILineDiffer() {
 
 		@Override
 		public ILineDiffInfo getLineInfo(final int line) {

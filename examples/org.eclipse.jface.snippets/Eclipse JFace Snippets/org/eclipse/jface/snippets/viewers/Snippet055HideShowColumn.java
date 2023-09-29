@@ -123,7 +123,7 @@ public class Snippet055HideShowColumn {
 
 	static class MyColumnLabelProvider extends ColumnLabelProvider {
 
-		private String prefix;
+		private final String prefix;
 
 		public MyColumnLabelProvider(String prefix) {
 			this.prefix = prefix;

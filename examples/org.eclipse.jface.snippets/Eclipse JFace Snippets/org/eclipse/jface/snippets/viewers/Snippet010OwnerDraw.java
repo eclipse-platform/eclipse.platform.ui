@@ -65,7 +65,7 @@ public class Snippet010OwnerDraw {
 
 		String cupYear;
 
-		private String baseName;
+		private final String baseName;
 
 		/**
 		 * Create a new instance of the receiver.
@@ -295,7 +295,7 @@ public class Snippet010OwnerDraw {
 
 	private TableViewer viewer;
 
-	private CountryEntry[] entries;
+	private final CountryEntry[] entries;
 
 	public Snippet010OwnerDraw() {
 		entries = new CountryEntry[4];

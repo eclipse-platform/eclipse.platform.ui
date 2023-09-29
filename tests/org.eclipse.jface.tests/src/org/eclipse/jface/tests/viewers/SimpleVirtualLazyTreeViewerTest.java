@@ -44,8 +44,8 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 	private static final int NUM_ROOTS = 100;
 	private static final int NUM_CHILDREN = 10;
 
-	private boolean callbacksEnabled = true;
-	private boolean printCallbacks = false;
+	private final boolean callbacksEnabled = true;
+	private final boolean printCallbacks = false;
 	private int offset = 0;
 
 	private int updateElementCallCount = 0;

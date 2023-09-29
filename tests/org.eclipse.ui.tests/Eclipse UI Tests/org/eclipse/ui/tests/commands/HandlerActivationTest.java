@@ -125,19 +125,19 @@ public class HandlerActivationTest extends UITestCase {
 
 	public static final String H3 = C_PREFIX + "h3";
 
-	private ICommandService commandService;
+	private final ICommandService commandService;
 
-	private IContextService contextService;
+	private final IContextService contextService;
 
-	private IHandlerService handlerService;
+	private final IHandlerService handlerService;
 
-	private IServiceLocator services;
+	private final IServiceLocator services;
 
-	private Map<String, IContextActivation> testContextActivations = new HashMap<>();
+	private final Map<String, IContextActivation> testContextActivations = new HashMap<>();
 
-	private Map<Object, IHandlerActivation> testHandlerActivations = new HashMap<>();
+	private final Map<Object, IHandlerActivation> testHandlerActivations = new HashMap<>();
 
-	private Map<String, IHandler> testHandlers = new HashMap<>();
+	private final Map<String, IHandler> testHandlers = new HashMap<>();
 
 	/**
 	 * Constructor for <code>HandlerActivationTest</code>.

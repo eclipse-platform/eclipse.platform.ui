@@ -49,15 +49,15 @@ public class UriSchemeHandlerPreferencePageTest {
 	private static final String THIS_ECLIPSE_HANDLER_LOCATION = "/this/eclipse";
 	private static final String OTHER_ECLIPSE_HANDLER_LOCATION = "/other/Eclipse";
 
-	private IScheme noAppScheme = new SchemeStub("hello", "helloScheme");
-	private ISchemeInformation noAppSchemeInfo = new SchemeInformationStub(noAppScheme, false, null);
+	private final IScheme noAppScheme = new SchemeStub("hello", "helloScheme");
+	private final ISchemeInformation noAppSchemeInfo = new SchemeInformationStub(noAppScheme, false, null);
 
-	private IScheme thisAppScheme = new SchemeStub("hello1", "hello1Scheme");
-	private ISchemeInformation thisAppSchemeInfo = new SchemeInformationStub(thisAppScheme, true,
+	private final IScheme thisAppScheme = new SchemeStub("hello1", "hello1Scheme");
+	private final ISchemeInformation thisAppSchemeInfo = new SchemeInformationStub(thisAppScheme, true,
 			THIS_ECLIPSE_HANDLER_LOCATION);
 
-	private IScheme otherAppScheme = new SchemeStub("hello2", "hello2Scheme");
-	private ISchemeInformation otherAppSchemeInfo = new SchemeInformationStub(otherAppScheme, false,
+	private final IScheme otherAppScheme = new SchemeStub("hello2", "hello2Scheme");
+	private final ISchemeInformation otherAppSchemeInfo = new SchemeInformationStub(otherAppScheme, false,
 			OTHER_ECLIPSE_HANDLER_LOCATION);
 
 	private UriSchemeHandlerPreferencePage page;
@@ -450,8 +450,8 @@ public class UriSchemeHandlerPreferencePageTest {
 
 	private static class SchemeStub implements IScheme {
 
-		private String name;
-		private String description;
+		private final String name;
+		private final String description;
 
 		public SchemeStub(String name, String description) {
 			super();
@@ -472,9 +472,9 @@ public class UriSchemeHandlerPreferencePageTest {
 
 	private static class SchemeInformationStub implements ISchemeInformation {
 
-		private IScheme scheme;
-		private boolean handled;
-		private String handlerInstanceLocation;
+		private final IScheme scheme;
+		private final boolean handled;
+		private final String handlerInstanceLocation;
 
 		public SchemeInformationStub(IScheme scheme, boolean handled, String handlerInstanceLocation) {
 			this.scheme = scheme;
@@ -505,7 +505,7 @@ public class UriSchemeHandlerPreferencePageTest {
 
 	private static final class OperatingSystemRegistrationMock implements IOperatingSystemRegistration {
 
-		private List<ISchemeInformation> schemeInformations;
+		private final List<ISchemeInformation> schemeInformations;
 		public Exception schemeInformationReadException = null;
 		public Exception schemeInformationRegisterException = null;
 		public Collection<IScheme> addedSchemes = Collections.emptyList();

@@ -38,11 +38,11 @@ public class OverrideTestsTabFolderPropertySheetPageContentManager implements
 
 	private IOverrideTestsTabFolder activeFolder;
 
-	private Composite composite;
+	private final Composite composite;
 
-	private IOverrideTestsTabFolder emptyFolder;
+	private final IOverrideTestsTabFolder emptyFolder;
 
-	private IOverrideTestsTabFolder[] folders;
+	private final IOverrideTestsTabFolder[] folders;
 
 	private OverrideTestsView overrideTestsView;
 

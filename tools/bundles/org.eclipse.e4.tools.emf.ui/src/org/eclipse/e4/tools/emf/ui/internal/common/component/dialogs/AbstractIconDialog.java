@@ -25,9 +25,9 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.swt.widgets.Shell;
 
 public abstract class AbstractIconDialog extends AbstractIconDialogWithScopeAndFilter {
-	private MApplicationElement element;
-	private EStructuralFeature feature;
-	private EditingDomain editingDomain;
+	private final MApplicationElement element;
+	private final EStructuralFeature feature;
+	private final EditingDomain editingDomain;
 	// private Map<IFile, Image> icons = Collections.synchronizedMap(new
 	// HashMap<IFile, Image>());
 

@@ -42,7 +42,7 @@ public class Snippet068TableViewerWithLimit {
 	List<MyModel> model;
 	final TableViewer viewer;
 
-	private SelectionListener listener = new SelectionListener() {
+	private final SelectionListener listener = new SelectionListener() {
 
 		@Override
 		public void widgetSelected(SelectionEvent e) {

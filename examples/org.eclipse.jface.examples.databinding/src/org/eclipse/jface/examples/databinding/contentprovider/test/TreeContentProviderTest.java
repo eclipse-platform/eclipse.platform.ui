@@ -49,16 +49,16 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class TreeContentProviderTest {
 
-	private Shell shell;
+	private final Shell shell;
 	private TreeViewer tree;
 
 	// Three randomly-generated sets of doubles
-	private AsynchronousTestSet set1;
-	private AsynchronousTestSet set2;
-	private AsynchronousTestSet set3;
+	private final AsynchronousTestSet set1;
+	private final AsynchronousTestSet set2;
+	private final AsynchronousTestSet set3;
 
 	// The union of the above three sets
-	private UnionSet<Object> union;
+	private final UnionSet<Object> union;
 	private Button randomize;
 
 	public TreeContentProviderTest() {

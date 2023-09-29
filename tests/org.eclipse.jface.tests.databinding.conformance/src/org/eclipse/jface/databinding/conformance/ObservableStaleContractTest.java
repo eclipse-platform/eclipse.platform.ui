@@ -32,7 +32,7 @@ import org.junit.Test;
  * @since 3.3
  */
 public class ObservableStaleContractTest extends ObservableDelegateTest {
-	private IObservableContractDelegate delegate;
+	private final IObservableContractDelegate delegate;
 	private IObservable observable;
 
 	public ObservableStaleContractTest(IObservableContractDelegate delegate) {

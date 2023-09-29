@@ -38,7 +38,7 @@ public class ColorAnnotation extends LineContentAnnotation {
 
 	private Color color;
 
-	private Consumer<MouseEvent> action = e -> {
+	private final Consumer<MouseEvent> action = e -> {
 		StyledText styledText = super.getTextWidget();
 		Shell shell = new Shell(styledText.getDisplay());
 		Rectangle location = Geometry.toDisplay(styledText, new Rectangle(e.x, e.y, 1, 1));

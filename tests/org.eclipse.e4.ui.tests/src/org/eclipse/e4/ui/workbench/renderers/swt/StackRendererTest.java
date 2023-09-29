@@ -150,8 +150,8 @@ public class StackRendererTest {
 	}
 
 	private static class CTabItemStylingMethodsListener implements InvocationHandler {
-		private MPart part;
-		private List<String> methods;
+		private final MPart part;
+		private final List<String> methods;
 
 		public CTabItemStylingMethodsListener(MPart part) {
 			this.part = part;

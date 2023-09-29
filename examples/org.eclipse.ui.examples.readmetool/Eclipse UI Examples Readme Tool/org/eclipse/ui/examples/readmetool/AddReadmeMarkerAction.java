@@ -34,11 +34,11 @@ import org.osgi.framework.Bundle;
  * Action for creating a readme marker with a specfic id attribute value.
  */
 public class AddReadmeMarkerAction extends Action {
-	private ITextEditor textEditor;
+	private final ITextEditor textEditor;
 
-	private Object[][] customAttributes;
+	private final Object[][] customAttributes;
 
-	private String message;
+	private final String message;
 
 	private static final String MARKER_TYPE = "org.eclipse.ui.examples.readmetool.readmemarker"; //$NON-NLS-1$
 

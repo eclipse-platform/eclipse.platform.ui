@@ -34,7 +34,7 @@ public class TestElement extends ElementAdapter {
 	private final String typeName;
 	private String className;
 	private String id;
-	private Map<String, String> attrs = new HashMap<>();
+	private final Map<String, String> attrs = new HashMap<>();
 	private Node parentNode = null;
 	private List<Node> children = null;
 

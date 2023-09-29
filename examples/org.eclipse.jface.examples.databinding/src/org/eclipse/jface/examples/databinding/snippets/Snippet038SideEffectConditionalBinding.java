@@ -71,9 +71,9 @@ public class Snippet038SideEffectConditionalBinding {
 	/** Observable Person model. */
 	static class Person {
 
-		private WritableValue<String> firstName = new WritableValue<>("Simon", String.class);
+		private final WritableValue<String> firstName = new WritableValue<>("Simon", String.class);
 
-		private WritableValue<String> lastName = new WritableValue<>("Scholz", String.class);
+		private final WritableValue<String> lastName = new WritableValue<>("Scholz", String.class);
 
 		public String getFirstName() {
 			return firstName.getValue();
@@ -93,7 +93,7 @@ public class Snippet038SideEffectConditionalBinding {
 	}
 
 	static class View {
-		private Person person;
+		private final Person person;
 		private Text personNameText;
 		private Button showDescriptionButton;
 		private Button changeNameButton;

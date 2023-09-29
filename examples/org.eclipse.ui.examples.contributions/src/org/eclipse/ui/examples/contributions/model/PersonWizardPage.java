@@ -34,7 +34,7 @@ import org.eclipse.ui.services.IServiceLocator;
  */
 public class PersonWizardPage extends WizardPage implements Listener {
 
-	private IServiceLocator locator;
+	private final IServiceLocator locator;
 	private Text surnameText;
 	private Text givennameText;
 	private Text idText;

@@ -69,7 +69,7 @@ public class StructuredContentProviderTest {
 	/**
 	 * Top-level shell for the dialog
 	 */
-	private Shell shell;
+	private final Shell shell;
 
 	/**
 	 * Random number stream. Used for the "add" button.

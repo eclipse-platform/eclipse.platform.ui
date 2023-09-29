@@ -28,7 +28,7 @@ import org.eclipse.jface.text.codemining.ICodeMiningProvider;
  */
 public class ClassReferenceCodeMining extends AbstractClassCodeMining {
 
-	private Object lock = new Object();
+	private final Object lock = new Object();
 
 	public ClassReferenceCodeMining(String className, int afterLineNumber, IDocument document, ICodeMiningProvider provider)
 			throws BadLocationException {

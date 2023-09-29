@@ -36,7 +36,7 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 	/**
 	 * The {@link IProject} this translation provider is connected to
 	 */
-	private IProject project;
+	private final IProject project;
 	/**
 	 * The manifest header identifying the base name of the bundle's
 	 * localization entries.

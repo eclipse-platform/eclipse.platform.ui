@@ -37,7 +37,7 @@ public class TabbedPropertySheetPageWithDecorations extends
 
 	private Image image;
 
-	private Color color = Display.getCurrent().getSystemColor(SWT.COLOR_RED);
+	private final Color color = Display.getCurrent().getSystemColor(SWT.COLOR_RED);
 
 	public TabbedPropertySheetPageWithDecorations(
 			ITabbedPropertySheetPageContributor tabbedPropertySheetPageContributor) {

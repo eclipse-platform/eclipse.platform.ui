@@ -19,8 +19,8 @@ import junit.framework.TestCase;
  * @since 3.1
  */
 public class AutoTestWrapper extends TestCase {
-	private AutoTest test;
-	private AbstractTestLogger log;
+	private final AutoTest test;
+	private final AbstractTestLogger log;
 
 	public AutoTestWrapper(AutoTest test, AbstractTestLogger resultLog) {
 		super(test.getName());

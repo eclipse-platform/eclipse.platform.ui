@@ -36,7 +36,7 @@ import org.eclipse.ui.views.properties.tabbed.ITabItem;
  * @since 3.4
  */
 public class OverrideTestsTabItem implements ITabItem {
-	private IOverrideTestsItem item;
+	private final IOverrideTestsItem item;
 	private boolean selected = false;
 
 	/**

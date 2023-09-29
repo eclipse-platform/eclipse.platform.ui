@@ -51,9 +51,9 @@ import org.eclipse.swt.widgets.Text;
 public class Snippet020CustomizedControlTooltips {
 	protected class MyToolTip extends ToolTip {
 
-		private Shell parentShell;
+		private final Shell parentShell;
 
-		private String headerText = "ToolTip-Header";
+		private final String headerText = "ToolTip-Header";
 
 		public static final String HEADER_BG_COLOR = Policy.JFACE + ".TOOLTIP_HEAD_BG_COLOR";
 

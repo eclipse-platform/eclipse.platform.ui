@@ -20,11 +20,11 @@ package org.eclipse.jface.tests.databinding.scenarios;
  */
 public class CustomBeanModelType<T> {
 
-	private String propertyName;
+	private final String propertyName;
 
-	private T object;
+	private final T object;
 
-	private Class<T> type;
+	private final Class<T> type;
 
 	/**
 	 * @param object

@@ -37,7 +37,7 @@ import org.junit.Test;
  */
 public class MutableObservableSetContractTest extends
 		MutableObservableCollectionContractTest {
-	private IObservableCollectionContractDelegate delegate;
+	private final IObservableCollectionContractDelegate delegate;
 
 	private IObservableSet set;
 

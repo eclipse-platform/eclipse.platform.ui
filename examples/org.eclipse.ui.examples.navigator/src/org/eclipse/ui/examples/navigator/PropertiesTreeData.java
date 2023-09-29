@@ -19,9 +19,9 @@ import org.eclipse.core.resources.IFile;
  */
 public class PropertiesTreeData {
 
-	private IFile container;
-	private String name;
-	private String value;
+	private final IFile container;
+	private final String name;
+	private final String value;
 
 	/**
 	 * Create a property with the given name and value contained by the given file.

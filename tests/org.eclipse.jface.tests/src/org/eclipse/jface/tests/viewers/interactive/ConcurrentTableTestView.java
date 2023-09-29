@@ -42,7 +42,7 @@ public class ConcurrentTableTestView extends ViewPart {
 
 	private TableViewer table;
 	private boolean enableSlowComparisons = false;
-	private TestComparator comparator = new TestComparator() {
+	private final TestComparator comparator = new TestComparator() {
 
 		@Override
 		public int compare(Object arg0, Object arg1) {
@@ -64,7 +64,7 @@ public class ConcurrentTableTestView extends ViewPart {
 	};
 	private DeferredContentProvider contentProvider;
 
-	private WorkbenchJob updateCountRunnable = new WorkbenchJob("") {
+	private final WorkbenchJob updateCountRunnable = new WorkbenchJob("") {
 
 		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
@@ -74,8 +74,8 @@ public class ConcurrentTableTestView extends ViewPart {
 	};
 
 	private Label updateCount;
-	private SetModel model = new SetModel();
-	private Random rand = new Random();
+	private final SetModel model = new SetModel();
+	private final Random rand = new Random();
 	private Button slowComparisons;
 
 	@Override

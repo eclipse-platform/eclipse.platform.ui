@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.Text;
  */
 public class TitleAreaFilterDialog extends TitleAreaDialog {
 
-	private ILabelProvider labelProvider;
+	private final ILabelProvider labelProvider;
 	private TableViewer viewer;
 	private Object result;
 	private Text text;

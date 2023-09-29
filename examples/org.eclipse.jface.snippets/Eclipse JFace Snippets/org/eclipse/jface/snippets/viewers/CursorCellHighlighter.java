@@ -29,9 +29,9 @@ import org.eclipse.jface.viewers.ViewerCell;
  *
  */
 public class CursorCellHighlighter extends FocusCellHighlighter {
-	private ColumnViewer viewer;
+	private final ColumnViewer viewer;
 
-	private AbstractCellCursor cursor;
+	private final AbstractCellCursor cursor;
 
 	/**
 	 * @param viewer

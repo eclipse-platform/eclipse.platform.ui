@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Shell;
 public class Snippet071WizardWithProgressAndCancel {
 
 	private static final class MyWizard extends Wizard {
-		private int fTasks;
+		private final int fTasks;
 
 		private MyPage fPage;
 

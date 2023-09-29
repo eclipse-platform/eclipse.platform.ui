@@ -68,8 +68,8 @@ public class LazyResourceManagerTest {
 
 	private static class TestResourceManager extends ResourceManager {
 		private Device device;
-		private Map<DeviceResourceDescriptor, AtomicReference<DeviceResourceDescriptor>> objects = new HashMap<>();
-		private Map<DeviceResourceDescriptor, Integer> refCount = new HashMap<>();
+		private final Map<DeviceResourceDescriptor, AtomicReference<DeviceResourceDescriptor>> objects = new HashMap<>();
+		private final Map<DeviceResourceDescriptor, Integer> refCount = new HashMap<>();
 		private Image defaultImage;
 
 		@Override

@@ -43,9 +43,9 @@ import org.eclipse.swt.widgets.Table;
  */
 public class Snippet034CellEditorPerRow {
 	private class MyEditingSupport extends EditingSupport {
-		private CellEditor textEditor;
+		private final CellEditor textEditor;
 
-		private CellEditor dropDownEditor;
+		private final CellEditor dropDownEditor;
 
 		public MyEditingSupport(TableViewer viewer) {
 			super(viewer);

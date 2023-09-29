@@ -29,7 +29,7 @@ import org.junit.Test;
  * @since 4.2.2
  */
 public class MenuHelperTest {
-	private IExtensionRegistry registry = RegistryFactory.getRegistry();
+	private final IExtensionRegistry registry = RegistryFactory.getRegistry();
 
 	/**
 	 * Verify that MenuHelper#getIconURI(IConfigElement,String) looks unresolved

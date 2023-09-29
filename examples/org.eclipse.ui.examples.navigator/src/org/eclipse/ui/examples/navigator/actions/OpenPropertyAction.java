@@ -40,9 +40,9 @@ import org.eclipse.ui.texteditor.ITextEditor;
  */
 public class OpenPropertyAction extends Action {
 
-	private IWorkbenchPage page;
+	private final IWorkbenchPage page;
 	private PropertiesTreeData data;
-	private ISelectionProvider provider;
+	private final ISelectionProvider provider;
 
 
 	/**

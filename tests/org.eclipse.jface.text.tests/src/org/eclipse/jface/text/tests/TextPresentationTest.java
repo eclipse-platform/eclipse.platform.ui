@@ -49,7 +49,7 @@ public class TextPresentationTest {
 	private StyleRange[] fNonDefaultRanges;
 
 	// collect colors for disposal
-	private ArrayList<Color> fColors= new ArrayList<>();
+	private final ArrayList<Color> fColors= new ArrayList<>();
 
 	private Display fDisplay;
 

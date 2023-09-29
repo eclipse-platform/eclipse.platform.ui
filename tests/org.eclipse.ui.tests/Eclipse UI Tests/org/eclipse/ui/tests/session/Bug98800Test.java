@@ -41,7 +41,7 @@ public class Bug98800Test extends TestCase {
 		return ts;
 	}
 
-	private IWorkbenchPage fPage;
+	private final IWorkbenchPage fPage;
 
 	public Bug98800Test(String testName) {
 		super(testName);

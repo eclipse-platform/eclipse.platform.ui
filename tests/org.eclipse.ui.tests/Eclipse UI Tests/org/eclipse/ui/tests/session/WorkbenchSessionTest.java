@@ -40,7 +40,7 @@ public class WorkbenchSessionTest extends SessionTestSuite {
 
 	private Map<String, String> arguments;
 
-	private String dataLocation;
+	private final String dataLocation;
 
 	/**
 	 * Create a new workbench session test.

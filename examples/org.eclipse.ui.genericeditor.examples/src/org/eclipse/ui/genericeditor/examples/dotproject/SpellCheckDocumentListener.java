@@ -72,7 +72,7 @@ public class SpellCheckDocumentListener implements IDocumentListener {
 				}
 				Region region = new Region(commentStart, commentEnd - commentStart);
 				service.check(event.getDocument(), new Region[] { region }, new SpellingContext(), new ISpellingProblemCollector() {
-					private Map<SpellingAnnotation, Position> annotations = new HashMap<>();
+					private final Map<SpellingAnnotation, Position> annotations = new HashMap<>();
 
 					@Override
 					public void endCollecting() {
