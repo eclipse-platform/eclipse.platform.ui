@@ -15,6 +15,7 @@
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.INavigationLocation;
@@ -165,7 +166,8 @@ public class NavigationHistoryEntry {
 	 * possible otherwise returns false.
 	 */
 	boolean mergeInto(NavigationHistoryEntry currentEntry) {
-		if (editorInfo.editorInput != null && editorInfo.editorInput.equals(currentEntry.editorInfo.editorInput)) {
+		if (Objects.equals(editorInfo.editorInput, currentEntry.editorInfo.editorInput)
+				&& Objects.equals(editorInfo.editorID, currentEntry.editorInfo.editorID)) {
 			if (location != null) {
 				if (currentEntry.location == null) {
 					currentEntry.location = location;
