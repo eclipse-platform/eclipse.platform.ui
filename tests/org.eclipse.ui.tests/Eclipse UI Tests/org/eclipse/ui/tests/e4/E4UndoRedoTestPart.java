@@ -30,7 +30,7 @@ public class E4UndoRedoTestPart {
 
 	private class Handler {
 
-		private String type;
+		private final String type;
 
 		public Handler(String type) {
 			this.type = type;

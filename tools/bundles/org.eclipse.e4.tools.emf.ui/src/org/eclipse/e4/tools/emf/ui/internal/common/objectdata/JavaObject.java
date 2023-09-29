@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JavaObject {
-	private Object instance;
+	private final Object instance;
 	private List<JavaAttribute> attributes;
 
 	public JavaObject(Object instance) {

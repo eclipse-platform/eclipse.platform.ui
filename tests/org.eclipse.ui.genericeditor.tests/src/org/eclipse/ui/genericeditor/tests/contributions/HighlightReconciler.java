@@ -19,7 +19,7 @@ import org.eclipse.jface.text.reconciler.Reconciler;
 
 public class HighlightReconciler extends Reconciler {
 
-	private HighlightStrategy fStrategy;
+	private final HighlightStrategy fStrategy;
 
 	public HighlightReconciler() {
 		fStrategy = new HighlightStrategy();

@@ -74,7 +74,7 @@ public class Bug95357Test extends TestCase {
 
 	private IProject fProject;
 
-	private IWorkbench fWorkbench;
+	private final IWorkbench fWorkbench;
 
 	private String[] itsFilename;
 

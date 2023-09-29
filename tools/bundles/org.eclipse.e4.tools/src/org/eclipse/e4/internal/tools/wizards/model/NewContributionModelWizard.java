@@ -42,8 +42,8 @@ public class NewContributionModelWizard extends BaseApplicationModelWizard {
 		STATIC(Messages.ContributionMode_Static, Messages.ContributionMode_Static_Info), DYNAMIC(
 				Messages.ContributionMode_Dynamic, Messages.ContributionMode_Dynamic_Info);
 
-		private String label;
-		private String description;
+		private final String label;
+		private final String description;
 
 		ContributionMode(String label, String description) {
 			this.label = label;

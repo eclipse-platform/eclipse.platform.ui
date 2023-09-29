@@ -56,7 +56,7 @@ public class AnnotationManagerTest {
 	private FileSearchQuery fQuery1;
 	private FileSearchQuery fQuery2;
 
-	private AnnotationTypeLookup fAnnotationTypeLookup= EditorsUI.getAnnotationTypeLookup();
+	private final AnnotationTypeLookup fAnnotationTypeLookup= EditorsUI.getAnnotationTypeLookup();
 
 	@ClassRule
 	public static JUnitSourceSetup fgJUnitSource= new JUnitSourceSetup();

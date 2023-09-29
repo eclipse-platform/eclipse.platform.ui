@@ -34,7 +34,7 @@ import org.junit.Before;
  * @since 3.2
  */
 public class ObservableDelegateTest {
-	private IObservableContractDelegate delegate;
+	private final IObservableContractDelegate delegate;
 
 	private Realm previousRealm;
 

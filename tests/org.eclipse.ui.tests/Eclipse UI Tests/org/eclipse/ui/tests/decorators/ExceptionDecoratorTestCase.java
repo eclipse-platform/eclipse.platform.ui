@@ -30,7 +30,7 @@ import org.junit.runners.JUnit4;
  */
 @RunWith(JUnit4.class)
 public class ExceptionDecoratorTestCase extends DecoratorEnablementTestCase {
-	private Collection<DecoratorDefinition> problemDecorators = new ArrayList<>();
+	private final Collection<DecoratorDefinition> problemDecorators = new ArrayList<>();
 
 	private DecoratorDefinition light;
 

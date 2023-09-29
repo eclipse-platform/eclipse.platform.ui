@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Shell;
 
 public class Snippet081AbstractNotificationPopup {
 
-	private Display display = new Display();
+	private final Display display = new Display();
 	private final Shell shell = new Shell(display);
 
 	public static void main(String[] args) {
@@ -67,7 +67,7 @@ public class Snippet081AbstractNotificationPopup {
 
 	private class NotificationPopUp extends AbstractNotificationPopup {
 
-		private String fText;
+		private final String fText;
 
 		public NotificationPopUp(Display display, String text) {
 			super(display);

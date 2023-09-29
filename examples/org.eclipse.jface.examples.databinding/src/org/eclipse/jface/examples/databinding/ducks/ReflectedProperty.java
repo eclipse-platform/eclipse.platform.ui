@@ -20,9 +20,9 @@ package org.eclipse.jface.examples.databinding.ducks;
  * @since 3.3
  */
 public class ReflectedProperty {
-	private String propertyName;
+	private final String propertyName;
 	private ReflectedMethod getter;
-	private ReflectedMethod setter;
+	private final ReflectedMethod setter;
 
 	/**
 	 * Construct a ReflectedProperty on some object, given the property name.

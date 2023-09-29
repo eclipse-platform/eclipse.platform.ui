@@ -76,10 +76,10 @@ public class Snippet067TreeViewerSorted {
 	}
 
 	public static class MyModel {
-		private MyModel parent;
-		private List<MyModel> children;
-		private String name;
-		private int populationSize;
+		private final MyModel parent;
+		private final List<MyModel> children;
+		private final String name;
+		private final int populationSize;
 		private int category = 0;
 
 		public MyModel(String locationName, int populationSize, MyModel parent) {

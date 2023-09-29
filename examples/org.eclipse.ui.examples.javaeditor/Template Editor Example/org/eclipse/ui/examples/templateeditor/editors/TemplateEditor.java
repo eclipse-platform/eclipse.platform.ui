@@ -23,7 +23,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
  */
 public class TemplateEditor extends AbstractDecoratedTextEditor {
 
-	private ColorManager colorManager;
+	private final ColorManager colorManager;
 
 	/**
 	 * Creates a new template editor.

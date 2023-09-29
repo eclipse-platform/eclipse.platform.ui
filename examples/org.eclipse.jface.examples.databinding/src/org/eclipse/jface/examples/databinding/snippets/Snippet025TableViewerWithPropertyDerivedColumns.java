@@ -65,7 +65,7 @@ public class Snippet025TableViewerWithPropertyDerivedColumns {
 
 	/** Helper class for implementing JavaBeans support. */
 	public static abstract class AbstractModelObject {
-		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+		private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
 		public void addPropertyChangeListener(PropertyChangeListener listener) {
 			propertyChangeSupport.addPropertyChangeListener(listener);
@@ -137,7 +137,7 @@ public class Snippet025TableViewerWithPropertyDerivedColumns {
 	 */
 	static class ViewModel {
 		// The model to bind
-		private IObservableList<Person> people = new WritableList<>();
+		private final IObservableList<Person> people = new WritableList<>();
 		{
 			Person fergus = new Person("Fergus McDuck", UNKNOWN, UNKNOWN);
 			Person downy = new Person("Downy O'Drake", UNKNOWN, UNKNOWN);
@@ -163,7 +163,7 @@ public class Snippet025TableViewerWithPropertyDerivedColumns {
 
 	/** The GUI view. */
 	static class View {
-		private ViewModel viewModel;
+		private final ViewModel viewModel;
 		private Table duckFamily;
 		private Text nameText;
 		private Combo motherCombo;

@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Label;
 
 public class SamplePreferencePage extends PreferencePage {
 
-	private String text;
+	private final String text;
 
 	public SamplePreferencePage(String title, String text) {
 		super(title);

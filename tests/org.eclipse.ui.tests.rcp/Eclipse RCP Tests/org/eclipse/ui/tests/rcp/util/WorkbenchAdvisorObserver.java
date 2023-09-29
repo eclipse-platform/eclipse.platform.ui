@@ -38,7 +38,7 @@ import org.junit.Assert;
  */
 public class WorkbenchAdvisorObserver extends RCPTestWorkbenchAdvisor {
 
-	private List<String> operations = new LinkedList<>();
+	private final List<String> operations = new LinkedList<>();
 
 	private Iterator<String> iterator;
 

@@ -25,7 +25,7 @@ import org.eclipse.ui.part.ViewPart;
 
 public abstract class DIViewPart<C> extends ViewPart {
 	private IEclipseContext context;
-	private Class<C> clazz;
+	private final Class<C> clazz;
 	private C component;
 
 	public DIViewPart(Class<C> clazz) {

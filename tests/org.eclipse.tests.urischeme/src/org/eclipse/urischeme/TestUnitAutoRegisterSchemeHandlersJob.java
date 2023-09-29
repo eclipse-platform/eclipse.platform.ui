@@ -193,7 +193,7 @@ public class TestUnitAutoRegisterSchemeHandlersJob {
 
 	private static final class OperatingSystemRegistrationMock implements IOperatingSystemRegistration {
 
-		private List<ISchemeInformation> schemeInformations;
+		private final List<ISchemeInformation> schemeInformations;
 		public Exception schemeInformationReadException = null;
 		public Exception schemeInformationRegisterException = null;
 		public Collection<IScheme> addedSchemes = null;

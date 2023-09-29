@@ -79,10 +79,10 @@ public class ExportIdsHandler {
 	}
 
 	static class ExportIdDialog extends TitleAreaDialog {
-		private Messages messages;
-		private IObservableList<?> list;
-		private IResourcePool pool;
-		private JavaClass clazz;
+		private final Messages messages;
+		private final IObservableList<?> list;
+		private final IResourcePool pool;
+		private final JavaClass clazz;
 		private CheckboxTableViewer viewer;
 		private Text textClassName;
 
@@ -322,9 +322,9 @@ public class ExportIdsHandler {
 	}
 
 	private static class Entry implements Comparable<Entry> {
-		private MApplicationElement object;
-		private String idFieldKey;
-		private String elementId;
+		private final MApplicationElement object;
+		private final String idFieldKey;
+		private final String elementId;
 
 		public Entry(MApplicationElement object, String idFieldKey, String elementId) {
 			this.object = object;

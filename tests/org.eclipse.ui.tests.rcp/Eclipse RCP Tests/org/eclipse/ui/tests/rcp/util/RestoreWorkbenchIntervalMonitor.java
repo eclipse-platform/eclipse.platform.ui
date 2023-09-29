@@ -27,8 +27,8 @@ import org.eclipse.ui.tests.harness.util.RCPTestWorkbenchAdvisor;
  */
 public class RestoreWorkbenchIntervalMonitor extends RCPTestWorkbenchAdvisor {
 
-	private PerformanceMeter startupMeter;
-	private PerformanceMeter shutdownMeter;
+	private final PerformanceMeter startupMeter;
+	private final PerformanceMeter shutdownMeter;
 
 	private boolean createRestorableWorkbench = false;
 

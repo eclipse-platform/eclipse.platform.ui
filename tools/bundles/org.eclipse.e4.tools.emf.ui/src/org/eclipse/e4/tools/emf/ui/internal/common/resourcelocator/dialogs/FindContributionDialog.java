@@ -61,17 +61,17 @@ import org.osgi.framework.ServiceReference;
  *
  */
 public class FindContributionDialog extends TitleAreaDialog {
-	private IProject project;
+	private final IProject project;
 	private Image javaClassImage;
 	private TableViewer viewer;
-	private Messages Messages;
+	private final Messages Messages;
 	private String bundleclassUri;
 	@SuppressWarnings("unused")
-	private IEclipseContext context;
-	private String packageFilter;
-	private String bundleFilter;
-	private Bundle bundle;
-	private String mode;
+	private final IEclipseContext context;
+	private final String packageFilter;
+	private final String bundleFilter;
+	private final Bundle bundle;
+	private final String mode;
 	private Image titleImage;
 	private String platformUri;
 
@@ -389,7 +389,7 @@ public class FindContributionDialog extends TitleAreaDialog {
 
 	private static class ContributionResultHandlerImpl implements ContributionResultHandler {
 		private boolean cancled = false;
-		private IObservableList<ContributionData> list;
+		private final IObservableList<ContributionData> list;
 
 		public ContributionResultHandlerImpl(IObservableList<ContributionData> list) {
 			this.list = list;

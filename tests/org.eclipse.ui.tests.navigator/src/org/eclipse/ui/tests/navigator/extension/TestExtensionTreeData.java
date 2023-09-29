@@ -25,13 +25,13 @@ public class TestExtensionTreeData {
 
 	private final Map<String, TestExtensionTreeData> children = new HashMap<>();
 
-	private TestExtensionTreeData parent;
+	private final TestExtensionTreeData parent;
 
-	private String name;
+	private final String name;
 
-	private Properties model;
+	private final Properties model;
 
-	private IFile container;
+	private final IFile container;
 
 	public TestExtensionTreeData(TestExtensionTreeData aParent, String aName,
 			Properties theModel, IFile aFile) {

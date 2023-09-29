@@ -29,7 +29,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  */
 public class PerspectiveWidgetFactory extends TestWidgetFactory {
 
-	private String perspectiveId;
+	private final String perspectiveId;
 	private IWorkbenchWindow window;
 
 	public PerspectiveWidgetFactory(String initialPerspective) {

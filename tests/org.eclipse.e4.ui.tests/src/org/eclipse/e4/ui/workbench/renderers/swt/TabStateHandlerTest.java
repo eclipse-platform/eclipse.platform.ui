@@ -282,8 +282,8 @@ public class TabStateHandlerTest {
 	}
 
 	private static class EventParam implements Map.Entry<String, Object> {
-		private String key;
-		private Object value;
+		private final String key;
+		private final Object value;
 
 		public EventParam(String key, Object value) {
 			this.key = key;

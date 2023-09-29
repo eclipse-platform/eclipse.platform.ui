@@ -182,7 +182,7 @@ public class TestBackgroundSaveEditor extends EditorPart implements ISaveablesSo
 		}
 	}
 
-	private MySaveable mySaveable;
+	private final MySaveable mySaveable;
 	private Text inputText;
 	private IEditorInput input;
 
@@ -477,7 +477,7 @@ public class TestBackgroundSaveEditor extends EditorPart implements ISaveablesSo
 		}
 	}
 
-	private Data data = new Data();
+	private final Data data = new Data();
 
 	@Override
 	public Saveable[] getActiveSaveables() {

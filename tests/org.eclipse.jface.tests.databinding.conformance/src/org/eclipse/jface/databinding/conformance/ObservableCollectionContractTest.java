@@ -41,7 +41,7 @@ import org.junit.Test;
  * @since 3.2
  */
 public class ObservableCollectionContractTest extends ObservableContractTest {
-	private IObservableCollectionContractDelegate delegate;
+	private final IObservableCollectionContractDelegate delegate;
 
 	private IObservableCollection collection;
 

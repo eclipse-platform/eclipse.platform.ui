@@ -81,7 +81,7 @@ public class Snippet010MasterDetail {
 	}
 
 	public static class Person {
-		private String name;
+		private final String name;
 
 		Person(String name) {
 			this.name = name;

@@ -40,7 +40,7 @@ public class DAGTest {
 	private static final Set<Object> ACD= new LinkedHashSet<>(Arrays.asList(new Object[] { A, C, D }));
 	private static final Set<Object> BD= new LinkedHashSet<>(Arrays.asList(new Object[] { B, D }));
 
-	private DAG<Object> fDag= new DAG<>();
+	private final DAG<Object> fDag= new DAG<>();
 
 	@Test
 	public void testEmpty() throws Exception {

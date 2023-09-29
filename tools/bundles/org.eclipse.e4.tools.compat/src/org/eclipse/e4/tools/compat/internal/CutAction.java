@@ -17,7 +17,7 @@ import org.eclipse.e4.tools.services.IClipboardService;
 import org.eclipse.jface.action.Action;
 
 public class CutAction extends Action {
-	private IClipboardService service;
+	private final IClipboardService service;
 
 	public CutAction(IClipboardService service) {
 		super(Messages.CutAction);

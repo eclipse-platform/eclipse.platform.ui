@@ -30,9 +30,9 @@ public class ActiveContextExpression extends Expression {
 	private static final int HASH_INITIAL = ActivePartExpression.class
 			.getName().hashCode();
 
-	private String contextId;
+	private final String contextId;
 
-	private String[] expressionInfo;
+	private final String[] expressionInfo;
 
 	public ActiveContextExpression(String id, String[] info) {
 		contextId = id;

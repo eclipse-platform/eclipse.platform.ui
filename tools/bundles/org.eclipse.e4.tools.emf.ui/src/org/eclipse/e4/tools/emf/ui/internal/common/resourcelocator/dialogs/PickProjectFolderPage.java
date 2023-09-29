@@ -44,7 +44,7 @@ public class PickProjectFolderPage extends WizardPage {
 
 	private TreeViewer viewer;
 	private String value;
-	private IEclipseContext context;
+	private final IEclipseContext context;
 	private IPath path;
 
 	private Label label2;

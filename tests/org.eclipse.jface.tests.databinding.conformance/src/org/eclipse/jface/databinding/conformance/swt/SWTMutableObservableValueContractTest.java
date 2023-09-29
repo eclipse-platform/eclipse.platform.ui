@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Display;
  */
 public class SWTMutableObservableValueContractTest extends
 		MutableObservableValueContractTest {
-	private IObservableValueContractDelegate delegate;
+	private final IObservableValueContractDelegate delegate;
 
 	public SWTMutableObservableValueContractTest(IObservableValueContractDelegate delegate) {
 		super(delegate);

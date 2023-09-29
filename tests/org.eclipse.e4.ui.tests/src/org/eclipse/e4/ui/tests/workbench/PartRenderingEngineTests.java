@@ -89,7 +89,7 @@ public class PartRenderingEngineTests {
 	@Inject
 	private MApplication application;
 
-	private LogListener listener = entry -> {
+	private final LogListener listener = entry -> {
 		if (!this.logged) {
 			this.logged = entry.getLogLevel() == LogLevel.ERROR;
 		}

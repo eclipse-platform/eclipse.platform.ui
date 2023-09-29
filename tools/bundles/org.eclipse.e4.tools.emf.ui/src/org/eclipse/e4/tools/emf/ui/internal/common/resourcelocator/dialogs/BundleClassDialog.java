@@ -59,7 +59,7 @@ public class BundleClassDialog extends Dialog implements UriDialog {
 	private String clazz = ""; //$NON-NLS-1$
 	private String pakage = ""; //$NON-NLS-1$
 	protected boolean ignoreModify;
-	private IEclipseContext context;
+	private final IEclipseContext context;
 
 	static Pattern patternBundleClass = Pattern.compile("bundleclass:/*([^/]+)/((.*)\\.)?([^\\.]+)"); //$NON-NLS-1$
 

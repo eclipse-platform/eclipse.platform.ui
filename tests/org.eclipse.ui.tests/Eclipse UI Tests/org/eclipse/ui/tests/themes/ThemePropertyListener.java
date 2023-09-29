@@ -24,7 +24,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  */
 public class ThemePropertyListener implements IPropertyChangeListener {
 
-	private ArrayList<PropertyChangeEvent> events = new ArrayList<>();
+	private final ArrayList<PropertyChangeEvent> events = new ArrayList<>();
 
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {

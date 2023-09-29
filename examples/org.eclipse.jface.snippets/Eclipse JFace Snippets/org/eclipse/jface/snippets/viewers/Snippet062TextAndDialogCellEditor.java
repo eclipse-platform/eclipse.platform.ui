@@ -56,7 +56,7 @@ public class Snippet062TextAndDialogCellEditor {
 	}
 
 	protected abstract class AbstractEditingSupport extends EditingSupport {
-		private CellEditor editor;
+		private final CellEditor editor;
 
 		public AbstractEditingSupport(TableViewer viewer, CellEditor anEditor) {
 			super(viewer);

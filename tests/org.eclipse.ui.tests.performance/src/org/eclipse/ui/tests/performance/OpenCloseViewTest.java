@@ -26,7 +26,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  */
 public class OpenCloseViewTest extends BasicPerformanceTest {
 
-	private String viewId;
+	private final String viewId;
 
 	public OpenCloseViewTest(String viewId, int tagging) {
 		super("showView:" + viewId, tagging);

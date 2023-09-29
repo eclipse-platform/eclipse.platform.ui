@@ -53,7 +53,7 @@ public class UserElement extends OrganizationElement {
 
 	private Address address_Default;
 
-	private String phoneNumber_Default = "555-1111"; //$NON-NLS-1$
+	private final String phoneNumber_Default = "555-1111"; //$NON-NLS-1$
 
 	private EmailAddress emailAddress_Default;
 

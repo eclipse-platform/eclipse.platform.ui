@@ -48,7 +48,7 @@ public class Snippet069TreeViewerWithLimit {
 	MyModel root;
 	private Object curSel;
 
-	private SelectionListener listener = new SelectionListener() {
+	private final SelectionListener listener = new SelectionListener() {
 
 		@Override
 		public void widgetSelected(SelectionEvent e) {
@@ -145,13 +145,13 @@ public class Snippet069TreeViewerWithLimit {
 	}
 
 	public static class MyModel {
-		private MyModel parent;
+		private final MyModel parent;
 
 		public MyModel getParent() {
 			return parent;
 		}
 
-		private List<MyModel> children = new ArrayList<>();
+		private final List<MyModel> children = new ArrayList<>();
 
 		public List<MyModel> getChildren() {
 			return children;

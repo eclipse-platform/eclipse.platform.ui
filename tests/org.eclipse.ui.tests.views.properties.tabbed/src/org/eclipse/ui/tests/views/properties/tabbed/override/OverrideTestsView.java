@@ -44,7 +44,7 @@ public class OverrideTestsView extends ViewPart implements
 
 	private OverrideTestsContentProvider overrideTestsContentProvider;
 
-	private List<TableViewer> selection = new ArrayList<>();
+	private final List<TableViewer> selection = new ArrayList<>();
 
 	private OverrideTestsSelectionProvider selectionProvider;
 

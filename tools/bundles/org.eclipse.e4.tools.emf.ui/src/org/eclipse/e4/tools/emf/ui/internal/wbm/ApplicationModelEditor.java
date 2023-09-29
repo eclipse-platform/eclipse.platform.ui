@@ -93,7 +93,7 @@ public class ApplicationModelEditor extends ModelEditor {
 	 * Listen for changes on the resource being edited. Will close the part if
 	 * the resource was deleted or the containing project was closed.
 	 */
-	private IResourceChangeListener listener = new IResourceChangeListener() {
+	private final IResourceChangeListener listener = new IResourceChangeListener() {
 		@Override
 		public void resourceChanged(IResourceChangeEvent event) {
 

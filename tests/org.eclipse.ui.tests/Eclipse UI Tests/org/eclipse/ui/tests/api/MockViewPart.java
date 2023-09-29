@@ -49,9 +49,9 @@ public class MockViewPart extends MockWorkbenchPart implements IViewPart {
 
 	public static String NAME = "Mock View 1";
 
-	private ContributionItem toolbarItem = new ContributionItem("someId") {
+	private final ContributionItem toolbarItem = new ContributionItem("someId") {
 
-		private DisposeListener disposeListener = e -> toolbarContributionItemWidgetDisposed();
+		private final DisposeListener disposeListener = e -> toolbarContributionItemWidgetDisposed();
 
 		@Override
 		public void fill(ToolBar parent, int index) {

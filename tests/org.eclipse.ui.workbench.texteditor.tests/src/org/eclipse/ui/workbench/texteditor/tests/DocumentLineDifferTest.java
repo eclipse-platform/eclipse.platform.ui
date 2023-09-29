@@ -30,11 +30,11 @@ import org.eclipse.ui.internal.texteditor.quickdiff.DocumentLineDiffer;
 public class DocumentLineDifferTest {
 
 	/** The document to connect to the {@link #fLineDiffer}. */
-	private Document fDocument= new Document();
+	private final Document fDocument= new Document();
 
 
 	/** The {@link DocumentLineDiffer line differ} under test. */
-	private DocumentLineDiffer fLineDiffer= new DocumentLineDiffer();
+	private final DocumentLineDiffer fLineDiffer= new DocumentLineDiffer();
 
 
 	/**

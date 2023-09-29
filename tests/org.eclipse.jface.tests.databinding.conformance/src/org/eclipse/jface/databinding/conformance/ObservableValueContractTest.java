@@ -39,7 +39,7 @@ import org.junit.Test;
  * @since 3.2
  */
 public class ObservableValueContractTest extends ObservableContractTest {
-	private IObservableValueContractDelegate delegate;
+	private final IObservableValueContractDelegate delegate;
 	private IObservableValue observable;
 
 	public ObservableValueContractTest(IObservableValueContractDelegate delegate) {

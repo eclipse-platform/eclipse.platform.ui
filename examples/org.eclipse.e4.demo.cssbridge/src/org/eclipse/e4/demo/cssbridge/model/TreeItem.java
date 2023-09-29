@@ -17,11 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TreeItem {
-	private TreeItem parent;
+	private final TreeItem parent;
 
 	private List<TreeItem> children;
 
-	private Object value;
+	private final Object value;
 
 	public TreeItem(TreeItem parent, Object value) {
 		this.parent = parent;

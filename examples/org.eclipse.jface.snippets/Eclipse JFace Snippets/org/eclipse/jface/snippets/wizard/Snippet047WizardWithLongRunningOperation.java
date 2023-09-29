@@ -47,7 +47,7 @@ public class Snippet047WizardWithLongRunningOperation {
 
 	private static class MyWizard extends Wizard {
 
-		private int loadingType;
+		private final int loadingType;
 
 		public MyWizard(int loadingType) {
 			this.loadingType = loadingType;
@@ -92,7 +92,7 @@ public class Snippet047WizardWithLongRunningOperation {
 	}
 
 	private static class MyWizardPageThread extends WizardPage {
-		private int loadingType;
+		private final int loadingType;
 		private boolean loading = true;
 		private TableViewer v;
 
@@ -198,7 +198,7 @@ public class Snippet047WizardWithLongRunningOperation {
 	}
 
 	private static class MyModel {
-		private int index;
+		private final int index;
 
 		public MyModel(int index) {
 			this.index = index;

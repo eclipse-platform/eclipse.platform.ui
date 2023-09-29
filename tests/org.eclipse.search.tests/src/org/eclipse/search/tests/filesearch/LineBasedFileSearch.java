@@ -49,7 +49,7 @@ public class LineBasedFileSearch extends FileSearchQuery  {
 		private final AbstractTextSearchResult fResult;
 		private IFile fLastFile;
 		private IDocument fLastDocument;
-		private Object fLock= new Object();
+		private final Object fLock= new Object();
 
 		private LineBasedTextSearchResultCollector(AbstractTextSearchResult result) {
 			fResult= result;

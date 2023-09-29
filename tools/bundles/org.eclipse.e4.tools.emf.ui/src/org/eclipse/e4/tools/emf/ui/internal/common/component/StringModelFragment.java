@@ -459,8 +459,8 @@ public class StringModelFragment extends AbstractComponentEditor<MStringModelFra
 
 	static class StringModelFragmentProposalProvider implements IContentProposalProvider {
 
-		private StringModelFragment fragment;
-		private Text text;
+		private final StringModelFragment fragment;
+		private final Text text;
 
 		/**
 		 * Initialize the class passing the current instance.

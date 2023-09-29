@@ -19,7 +19,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  * @since 3.1
  */
 public abstract class UITestCaseWithResult extends UITestCase implements AutoTest {
-	private AbstractTestLogger resultLog;
+	private final AbstractTestLogger resultLog;
 
 	public UITestCaseWithResult(String testName, AbstractTestLogger log) {
 		super(testName);

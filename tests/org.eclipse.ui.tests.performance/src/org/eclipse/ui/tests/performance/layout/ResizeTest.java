@@ -29,13 +29,13 @@ import org.eclipse.ui.tests.performance.BasicPerformanceTest;
  */
 public class ResizeTest extends BasicPerformanceTest {
 
-	private TestWidgetFactory widgetFactory;
+	private final TestWidgetFactory widgetFactory;
 
-	private int xIterations = 5;
+	private final int xIterations = 5;
 
-	private int yIterations = 5;
+	private final int yIterations = 5;
 
-	private String tagString;
+	private final String tagString;
 
 
 

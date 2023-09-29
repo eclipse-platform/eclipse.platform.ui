@@ -62,7 +62,7 @@ public class Snippet019TableViewerAddRemoveColumnsWithEditing {
 	}
 
 	private class GivenNameEditing extends EditingSupport {
-		private TextCellEditor cellEditor;
+		private final TextCellEditor cellEditor;
 
 		public GivenNameEditing(TableViewer viewer) {
 			super(viewer);
@@ -99,7 +99,7 @@ public class Snippet019TableViewerAddRemoveColumnsWithEditing {
 	}
 
 	private class SurNameEditing extends EditingSupport {
-		private TextCellEditor cellEditor;
+		private final TextCellEditor cellEditor;
 
 		public SurNameEditing(TableViewer viewer) {
 			super(viewer);
@@ -136,7 +136,7 @@ public class Snippet019TableViewerAddRemoveColumnsWithEditing {
 	}
 
 	private class EmailEditing extends EditingSupport {
-		private TextCellEditor cellEditor;
+		private final TextCellEditor cellEditor;
 
 		public EmailEditing(TableViewer viewer) {
 			super(viewer);

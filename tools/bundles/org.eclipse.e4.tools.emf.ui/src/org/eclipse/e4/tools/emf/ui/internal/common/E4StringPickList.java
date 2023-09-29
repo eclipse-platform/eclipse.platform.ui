@@ -52,10 +52,10 @@ import org.eclipse.swt.widgets.Text;
  */
 public class E4StringPickList extends AbstractPickList {
 
-	private Text text;
-	private Button tiReplace;
-	private AbstractComponentEditor<?> editor;
-	private EStructuralFeature feature;
+	private final Text text;
+	private final Button tiReplace;
+	private final AbstractComponentEditor<?> editor;
+	private final EStructuralFeature feature;
 
 	@Deprecated
 	public E4StringPickList(Composite parent, int flags, List<PickListFeatures> list, Messages messages,

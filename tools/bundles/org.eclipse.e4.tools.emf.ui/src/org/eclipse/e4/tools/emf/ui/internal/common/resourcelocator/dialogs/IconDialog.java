@@ -55,7 +55,7 @@ public class IconDialog extends Dialog implements UriDialog {
 	private String icon = ""; //$NON-NLS-1$
 	private String path = ""; //$NON-NLS-1$
 	protected boolean ignoreModify;
-	private IEclipseContext context;
+	private final IEclipseContext context;
 
 	static Pattern patternIcon = Pattern.compile("platform:/plugin/*([^/]+)/((.*)/)?([^/]+)"); //$NON-NLS-1$
 

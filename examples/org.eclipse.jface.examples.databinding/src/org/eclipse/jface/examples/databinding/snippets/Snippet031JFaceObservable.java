@@ -90,7 +90,7 @@ public class Snippet031JFaceObservable {
 	 */
 	static class ViewModel {
 		// The model to bind
-		private Person person = new Person();
+		private final Person person = new Person();
 
 		public Person getPerson() {
 			return person;
@@ -99,7 +99,7 @@ public class Snippet031JFaceObservable {
 
 	/** The GUI view. */
 	static class View {
-		private ViewModel viewModel;
+		private final ViewModel viewModel;
 		private Text name;
 
 		public View(ViewModel viewModel) {

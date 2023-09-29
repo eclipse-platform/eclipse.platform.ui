@@ -518,7 +518,7 @@ public class FilteringAsyncContentAssistTests {
 	private static class IncompleteCompletionProposal implements ICompletionProposal {
 
 		/** The string to be displayed in the completion proposal popup. */
-		private String fDisplayString;
+		private final String fDisplayString;
 		/** The replacement string. */
 		protected String fReplacementString;
 		/** The replacement offset. */
@@ -526,7 +526,7 @@ public class FilteringAsyncContentAssistTests {
 		/** The replacement length. */
 		protected int fReplacementLength;
 		/** The cursor position after this proposal has been applied. */
-		private int fCursorPosition;
+		private final int fCursorPosition;
 
 		public IncompleteCompletionProposal(String replacementString, int replacementOffset, int replacementLength, int cursorPosition, String displayString) {
 			fReplacementString= replacementString;

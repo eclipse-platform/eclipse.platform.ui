@@ -42,7 +42,7 @@ public class ReopenMenuTest {
 		}
 	}
 
-	private TextInfo[] data = {
+	private final TextInfo[] data = {
 			new TextInfo(
 					1,
 					"ReopenMenuTest.java",

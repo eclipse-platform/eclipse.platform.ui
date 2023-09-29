@@ -22,8 +22,8 @@ import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.Filter;
 import org.eclipse.e4.tools.emf.ui.common.IModelElementProvider.ModelResultHandler;
 
 public class ClassContributionCollector {
-	private CopyOnWriteArrayList<IClassContributionProvider> providers = new CopyOnWriteArrayList<>();
-	private CopyOnWriteArrayList<IModelElementProvider> modelElementProviders = new CopyOnWriteArrayList<>();
+	private final CopyOnWriteArrayList<IClassContributionProvider> providers = new CopyOnWriteArrayList<>();
+	private final CopyOnWriteArrayList<IModelElementProvider> modelElementProviders = new CopyOnWriteArrayList<>();
 
 	public void addContributor(IClassContributionProvider contributor) {
 		providers.add(contributor);

@@ -65,7 +65,7 @@ public class Snippet003UpdateComboBindUsingViewer {
 
 	/** Helper class for implementing JavaBeans support. */
 	public static abstract class AbstractModelObject {
-		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+		private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
 		public void addPropertyChangeListener(PropertyChangeListener listener) {
 			propertyChangeSupport.addPropertyChangeListener(listener);
@@ -122,7 +122,7 @@ public class Snippet003UpdateComboBindUsingViewer {
 
 	/** The GUI view. */
 	static class View {
-		private ViewModel viewModel;
+		private final ViewModel viewModel;
 
 		public View(ViewModel viewModel) {
 			this.viewModel = viewModel;

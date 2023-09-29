@@ -28,11 +28,11 @@ import org.eclipse.core.databinding.property.list.IListProperty;
  * @param <E> type of the child elements of the parent
  */
 public class VirtualEntry<P, E> {
-	private String id;
-	private P originalParent;
-	private String label;
-	private IObservableList<E> list;
-	private IListProperty<? super P, E> property;
+	private final String id;
+	private final P originalParent;
+	private final String label;
+	private final IObservableList<E> list;
+	private final IListProperty<? super P, E> property;
 
 	public VirtualEntry(String id, IListProperty<? super P, E> property, P originalParent, String label) {
 		this.id = id;

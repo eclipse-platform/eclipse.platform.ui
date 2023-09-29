@@ -54,7 +54,7 @@ public class VisibleTest extends AbstractDefaultRealmTestCase {
 		private Shell shell;
 		private W widget;
 
-		private Function<Shell, W> widgetFactory;
+		private final Function<Shell, W> widgetFactory;
 
 		public Delegate(Function<Shell, W> widgetFactory) {
 			super();

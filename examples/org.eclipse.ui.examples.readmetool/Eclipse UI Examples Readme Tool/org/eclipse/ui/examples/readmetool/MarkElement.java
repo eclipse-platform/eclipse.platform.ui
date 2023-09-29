@@ -31,15 +31,15 @@ import org.eclipse.ui.views.properties.IPropertySource;
  * can be used to provide navigation and display for that viewer.
  */
 public class MarkElement implements IWorkbenchAdapter, IAdaptable {
-	private String headingName;
+	private final String headingName;
 
-	private IAdaptable parent;
+	private final IAdaptable parent;
 
-	private int offset;
+	private final int offset;
 
 	private int numberOfLines;
 
-	private int length;
+	private final int length;
 
 	private ArrayList<MarkElement> children;
 

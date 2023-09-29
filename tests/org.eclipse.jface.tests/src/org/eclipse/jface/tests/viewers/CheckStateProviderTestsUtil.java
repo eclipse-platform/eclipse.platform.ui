@@ -65,7 +65,7 @@ public class CheckStateProviderTestsUtil {
 	 * @since 3.5
 	 */
 	public static final class TestCheckStateProvider extends TestMethodsInvokedCheckStateProvider {
-		private int shift;
+		private final int shift;
 
 		/**
 		 * A value from 0 to 2 which will change the checkstate assignments.

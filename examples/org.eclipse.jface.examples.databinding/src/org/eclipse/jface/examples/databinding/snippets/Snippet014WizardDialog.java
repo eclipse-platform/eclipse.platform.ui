@@ -122,7 +122,7 @@ public class Snippet014WizardDialog {
 
 	static class SampleWizard extends Wizard {
 
-		private SampleWizardModel model = new SampleWizardModel();
+		private final SampleWizardModel model = new SampleWizardModel();
 
 		@Override
 		public void addPages() {

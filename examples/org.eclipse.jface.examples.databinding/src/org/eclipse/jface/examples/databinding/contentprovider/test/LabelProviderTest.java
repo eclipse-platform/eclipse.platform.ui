@@ -48,19 +48,19 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class LabelProviderTest {
 
-	private Shell shell;
+	private final Shell shell;
 
-	private ListViewer list;
+	private final ListViewer list;
 
-	private WritableSet<RenamableItem> setOfRenamables;
+	private final WritableSet<RenamableItem> setOfRenamables;
 
-	private Button addButton;
+	private final Button addButton;
 
-	private Button removeButton;
+	private final Button removeButton;
 
-	private Button renameButton;
+	private final Button renameButton;
 
-	private SelectionListener buttonSelectionListener = new SelectionAdapter() {
+	private final SelectionListener buttonSelectionListener = new SelectionAdapter() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Button pressed = (Button) e.widget;
@@ -76,7 +76,7 @@ public class LabelProviderTest {
 		}
 	};
 
-	private IObservableValue<RenamableItem> selectedRenamable;
+	private final IObservableValue<RenamableItem> selectedRenamable;
 
 	/**
 	 *

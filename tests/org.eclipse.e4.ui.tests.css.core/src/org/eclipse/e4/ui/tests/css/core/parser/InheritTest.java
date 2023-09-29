@@ -154,7 +154,7 @@ public class InheritTest {
 	private static class TestHandlerProvider implements
 	ICSSPropertyHandlerProvider {
 
-		private PropertyToAttributeMapper propertyToAttributeMapper = new PropertyToAttributeMapper();
+		private final PropertyToAttributeMapper propertyToAttributeMapper = new PropertyToAttributeMapper();
 
 		@Override
 		public CSSStyleDeclaration getDefaultCSSStyleDeclaration(

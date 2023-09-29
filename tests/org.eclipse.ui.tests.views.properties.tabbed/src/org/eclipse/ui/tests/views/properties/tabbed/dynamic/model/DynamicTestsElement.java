@@ -47,19 +47,19 @@ public class DynamicTestsElement implements
 
 	public static String ID_SHAPE = "Shape"; //$NON-NLS-1$
 
-	private DynamicTestsColor dynamicTestsColor;
+	private final DynamicTestsColor dynamicTestsColor;
 
 	private Image image;
 
-	private String name;
+	private final String name;
 
-	private String path;
+	private final String path;
 
-	private List<PropertyDescriptor> propertyDescriptors = new ArrayList<>();
+	private final List<PropertyDescriptor> propertyDescriptors = new ArrayList<>();
 
-	private DynamicTestsShape shape;
+	private final DynamicTestsShape shape;
 
-	private DynamicTestsView view;
+	private final DynamicTestsView view;
 
 	public DynamicTestsElement(DynamicTestsView aView, String aPath) {
 		super();

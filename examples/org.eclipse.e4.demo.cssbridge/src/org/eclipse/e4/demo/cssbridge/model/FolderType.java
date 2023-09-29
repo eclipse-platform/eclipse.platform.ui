@@ -16,7 +16,7 @@ package org.eclipse.e4.demo.cssbridge.model;
 public enum FolderType {
 	Inbox("Inbox"), Drafts("Drafts"), Sent("Sent");
 
-	private String name;
+	private final String name;
 
 	private FolderType(String name) {
 		this.name = name;

@@ -46,7 +46,7 @@ import org.junit.Test;
 public class ExpandableCompositeTest {
 	private static final int SHORT_CONTROL_WIDTH = 58;
 
-	private int defaultFlags = ExpandableComposite.TWISTIE;
+	private final int defaultFlags = ExpandableComposite.TWISTIE;
 	private static Display display;
 	private Shell shell;
 	private ExpandableCompositeForTest ec;
@@ -58,7 +58,7 @@ public class ExpandableCompositeTest {
 			Africa and New Zealand. """;
 	private Font font;
 	// change this to true if you want to see test is slow motion
-	private boolean humanWatching = false;
+	private final boolean humanWatching = false;
 
 	private static class ExpandableCompositeForTest extends ExpandableComposite {
 		private Control separator;

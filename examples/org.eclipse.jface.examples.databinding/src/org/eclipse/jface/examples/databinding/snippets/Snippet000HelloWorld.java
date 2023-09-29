@@ -88,7 +88,7 @@ public class Snippet000HelloWorld {
 	 */
 	static class ViewModel {
 		// The model to bind
-		private Person person = new Person();
+		private final Person person = new Person();
 
 		public Person getPerson() {
 			return person;
@@ -97,7 +97,7 @@ public class Snippet000HelloWorld {
 
 	/** The GUI view. */
 	static class View {
-		private ViewModel viewModel;
+		private final ViewModel viewModel;
 		private Text textName;
 		private Person person;
 
