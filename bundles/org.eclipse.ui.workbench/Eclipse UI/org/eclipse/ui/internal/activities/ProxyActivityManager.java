@@ -66,4 +66,5 @@ public final class ProxyActivityManager extends AbstractActivityManager {
 	public IIdentifier getIdentifier(String identifierId) {
 		return activityManager.getIdentifier(identifierId);
 	}
+
 }

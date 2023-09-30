@@ -58,6 +58,9 @@ public class FileTool {
 					continue;
 				}
 				String entryName = entry.getName();
+				if (!new File(dstDir, entryName).toPath().normalize().startsWith(dstDir.toPath().normalize())) {
+					throw new RuntimeException("Bad zip entry: " + entryName); //$NON-NLS-1$
+				}
 				File file = new File(dstDir, changeSeparator(entryName, '/', File.separatorChar));
 				file.getParentFile().mkdirs();
 				try (InputStream src = zipFile.getInputStream(entry); OutputStream dst= new FileOutputStream(file)){

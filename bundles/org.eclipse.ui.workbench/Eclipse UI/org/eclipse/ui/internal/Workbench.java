@@ -3019,17 +3019,26 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 		workbenchListeners.clear();
 
 		cancelEarlyStartup();
-		if (workbenchService != null)
+		if (workbenchService != null) {
 			workbenchService.unregister();
+		}
 		workbenchService = null;
 
-		if (e4WorkbenchService != null)
+		if (e4WorkbenchService != null) {
 			e4WorkbenchService.unregister();
+		}
 		e4WorkbenchService = null;
 
 		// for dynamic UI
 		registry.removeRegistryChangeListener(extensionEventHandler);
 		registry.removeRegistryChangeListener(startupRegistryListener);
+
+		// shut down activity helper before disposing workbench activity support;
+		// dispose activity support before disposing service locator to avoid
+		// unnecessary activity disablement processing
+		activityHelper.shutdown();
+		workbenchActivitySupport.dispose();
+		WorkbenchHelpSystem.disposeIfNecessary();
 
 		// Bring down all of the services.
 		serviceLocator.dispose();
@@ -3038,11 +3047,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 		getDisplay().removeFilter(SWT.MouseDown, backForwardListener);
 		backForwardListener = null;
 
-		workbenchActivitySupport.dispose();
-		WorkbenchHelpSystem.disposeIfNecessary();
-
 		// shutdown the rest of the workbench
-		activityHelper.shutdown();
 		uninitializeImages();
 		if (WorkbenchPlugin.getDefault() != null) {
 			WorkbenchPlugin.getDefault().reset();

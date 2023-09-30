@@ -52,7 +52,7 @@ public class GenericEditorMergeViewer extends TextMergeViewer {
 
 			@Override
 			public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
-				// Nothing to do
+				res.unconfigure();
 			}
 		});
 		return res;

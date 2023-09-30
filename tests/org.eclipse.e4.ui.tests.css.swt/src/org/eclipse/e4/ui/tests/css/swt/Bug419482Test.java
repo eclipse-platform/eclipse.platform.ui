@@ -77,8 +77,13 @@ public class Bug419482Test extends CSSSWTTestCase {
 
 	@Test
 	void testOriginalBugReport() {
-		String css = "Shell, Shell > *, Shell > * > * {\n" + "    background-color: red;\n" + "}\n" + "ToolBar {\n"
-				+ "    background-color: blue;\n" + "}";
+		String css = """
+			Shell, Shell > *, Shell > * > * {
+			    background-color: red;
+			}
+			ToolBar {
+			    background-color: blue;
+			}""";
 
 		engine = createEngine(css, display);
 
@@ -94,8 +99,14 @@ public class Bug419482Test extends CSSSWTTestCase {
 
 	@Test
 	void testOriginalBugReportDifferentOrder() {
-		String css = "ToolBar {\n" + "    background-color: blue;\n" + "}" + "Shell, Shell > *, Shell > * > * {\n"
-				+ "    background-color: red;\n" + "}\n";
+		String css = """
+			ToolBar {
+			    background-color: blue;
+			}\
+			Shell, Shell > *, Shell > * > * {
+			    background-color: red;
+			}
+			""";
 
 		engine = createEngine(css, display);
 

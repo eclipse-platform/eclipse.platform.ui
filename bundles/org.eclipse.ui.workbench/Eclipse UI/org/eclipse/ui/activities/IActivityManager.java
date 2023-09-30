@@ -114,4 +114,13 @@ public interface IActivityManager {
 	 *                                performed.
 	 */
 	void removeActivityManagerListener(IActivityManagerListener activityManagerListener);
+
+	/**
+	 * Disposes this activity manager. Removes all listeners. The behavior of all
+	 * other methods after disposing is undefined.
+	 *
+	 * @since 3.131
+	 */
+	void dispose();
+
 }

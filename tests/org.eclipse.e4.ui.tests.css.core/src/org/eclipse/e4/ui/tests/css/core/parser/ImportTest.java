@@ -55,11 +55,13 @@ public class ImportTest {
 	 */
 	@Test
 	void testOverrideImportedRule() throws Exception {
-		String importedCss = ".ClassAlpha {\n" //
-				+ "     property: value;\n" //
-				+ "  }\n" + "  .ClassBeta {\n" //
-				+ "     property: value1;\n" //
-				+ "  }";
+		String importedCss = """
+			.ClassAlpha {
+			     property: value;
+			  }
+			  .ClassBeta {
+			     property: value1;
+			  }""";
 
 		File importedFile = createTempCssFile(importedCss);
 
