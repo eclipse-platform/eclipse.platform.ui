@@ -81,7 +81,7 @@ public class DeleteResourcesOperation extends AbstractResourcesOperation {
 			IResourceChangeDescriptionFactory factory, int operation) {
 		boolean modified = false;
 		if (operation == UNDO) {
-			for (IResourceSnapshot resourceDescription : resourceDescriptions) {
+			for (IResourceSnapshot<? extends IResource> resourceDescription : resourceDescriptions) {
 				if (resourceDescription != null) {
 					IResource resource = resourceDescription.createResourceHandle();
 					factory.create(resource);

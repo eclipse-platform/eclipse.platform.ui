@@ -130,12 +130,12 @@ public class MoveResourcesOperation extends
 		subMonitor.setTaskName(UndoMessages.AbstractResourcesOperation_MovingResources);
 		List<IResource> resourcesAtDestination = new ArrayList<>();
 		List<IPath> undoDestinationPaths = new ArrayList<>();
-		List<IResourceSnapshot> overwrittenResources = new ArrayList<>();
+		List<IResourceSnapshot<? extends IResource>> overwrittenResources = new ArrayList<>();
 
 		for (int i = 0; i < resources.length; i++) {
 			// Move the resources and record the overwrites that would
 			// be restored if this operation were reversed
-			IResourceSnapshot[] overwrites;
+			IResourceSnapshot<? extends IResource>[] overwrites;
 			overwrites = WorkspaceUndoUtil.move(new IResource[] { resources[i] }, getDestinationPath(resources[i], i),
 					resourcesAtDestination, undoDestinationPaths, subMonitor.split(1), uiInfo, true);
 
@@ -145,7 +145,7 @@ public class MoveResourcesOperation extends
 
 		// Are there any previously overwritten resources to restore now?
 		if (resourceDescriptions != null) {
-			for (IResourceSnapshot resourceDescription : resourceDescriptions) {
+			for (IResourceSnapshot<? extends IResource> resourceDescription : resourceDescriptions) {
 				if (resourceDescription != null) {
 					resourceDescription.createResource(subMonitor.split(1));
 				}
@@ -154,7 +154,7 @@ public class MoveResourcesOperation extends
 
 		// Reset resource descriptions to the just overwritten resources
 		setResourceDescriptions(overwrittenResources
-				.toArray(new IResourceSnapshot[overwrittenResources.size()]));
+				.toArray(new IResourceSnapshot<?>[overwrittenResources.size()]));
 
 		// Reset the target resources to refer to the resources in their new
 		// location.
@@ -181,7 +181,7 @@ public class MoveResourcesOperation extends
 		// only the files that were originally merged. This makes us more
 		// adaptable to changes in the target.
 		setTargetResources(originalResources);
-		this.resourceDescriptions = new IResourceSnapshot[0];
+		this.resourceDescriptions = new IResourceSnapshot<?>[0];
 		this.destination = originalDestination;
 		this.destinationPaths = originalDestinationPaths;
 	}

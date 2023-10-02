@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.FileInfoMatcherDescription;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceFilterDescription;
@@ -86,7 +87,7 @@ public class CreateFolderOperation extends AbstractCreateResourcesOperation {
 			boolean virtual,
 			UIResourceFilterDescription[] filterList, String label) {
 		super(null, label);
-		IContainerSnapshot containerDescription = virtual
+		IContainerSnapshot<? extends IContainer> containerDescription = virtual
 				? ResourceSnapshotFactory.fromVirtualFolderContainer(folderHandle)
 				: ResourceSnapshotFactory.fromContainer(folderHandle);
 		if (linkLocation != null) {
@@ -98,7 +99,7 @@ public class CreateFolderOperation extends AbstractCreateResourcesOperation {
 			IResourceFilterDescription[] asArr = l.toArray(new IResourceFilterDescription[l.size()]);
 			WorkspaceUndoUtil.getFirstLeafFolder(containerDescription).setFilters(asArr);
 		}
-		setResourceDescriptions(new IResourceSnapshot[] { containerDescription });
+		setResourceDescriptions(new IResourceSnapshot<?>[] { containerDescription });
 	}
 
 	private IResourceFilterDescription convert(final UIResourceFilterDescription desc) {

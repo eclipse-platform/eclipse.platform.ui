@@ -17,7 +17,9 @@ package org.eclipse.ui.ide.undo;
 import java.io.InputStream;
 import java.net.URI;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.undo.snapshot.IContainerSnapshot;
 import org.eclipse.core.resources.undo.snapshot.IResourceSnapshot;
 import org.eclipse.core.resources.undo.snapshot.ResourceSnapshotFactory;
@@ -61,20 +63,20 @@ public class CreateFileOperation extends AbstractCreateResourcesOperation {
 	public CreateFileOperation(IFile fileHandle, URI linkLocation,
 			InputStream contents, String label) {
 		super(null, label);
-		IResourceSnapshot resourceDescription;
+		IResourceSnapshot<? extends IResource> resourceDescription;
 		if (fileHandle.getParent().exists()) {
 			resourceDescription = ResourceSnapshotFactory.fromFileDetails(fileHandle, linkLocation, contents);
 		} else {
 			// must first ensure descriptions for the parent folders are
 			// created
-			IContainerSnapshot containerDescription = ResourceSnapshotFactory.fromContainer(fileHandle.getParent());
-			IResourceSnapshot fileDescription = ResourceSnapshotFactory.fromFileDetails(fileHandle, linkLocation,
+			IContainerSnapshot<? extends IContainer> containerDescription = ResourceSnapshotFactory
+					.fromContainer(fileHandle.getParent());
+			IResourceSnapshot<IFile> fileDescription = ResourceSnapshotFactory.fromFileDetails(fileHandle, linkLocation,
 					contents);
 			WorkspaceUndoUtil.getFirstLeafFolder(containerDescription).addMember(fileDescription);
 			resourceDescription = containerDescription;
 		}
-		setResourceDescriptions(new IResourceSnapshot[] { resourceDescription });
-
+		setResourceDescriptions(new IResourceSnapshot<?>[] { resourceDescription });
 	}
 
 

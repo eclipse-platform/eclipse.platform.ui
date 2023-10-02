@@ -41,6 +41,6 @@ public class CreateProjectOperation extends AbstractCreateResourcesOperation {
 	 */
 	public CreateProjectOperation(IProjectDescription projectDescription,
 			String label) {
-		super(new IResourceSnapshot[] { ResourceSnapshotFactory.fromProjectDescription(projectDescription) }, label);
+		super(new IResourceSnapshot<?>[] { ResourceSnapshotFactory.fromProjectDescription(projectDescription) }, label);
 	}
 }

@@ -53,7 +53,7 @@ public class CopyProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 
 	private IProject originalProject;
 
-	private IResourceSnapshot originalProjectDescription;
+	private IResourceSnapshot<? extends IResource> originalProjectDescription;
 
 	/**
 	 * Create a CopyProjectOperation that copies the specified project and sets
@@ -124,7 +124,7 @@ public class CopyProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 		IProject newProject = copyProject(originalProject, destination,
 				projectLocation, monitor);
 		setTargetResources(new IResource[] { newProject });
-		setResourceDescriptions(new IResourceSnapshot[0]);
+		setResourceDescriptions(new IResourceSnapshot<?>[0]);
 	}
 
 	/*
@@ -138,7 +138,7 @@ public class CopyProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 		WorkspaceUndoUtil.delete(resources, subMonitor.split(1), uiInfo, true);
 		// Set the target resource to the original
 		setTargetResources(new IResource[] { originalProject });
-		setResourceDescriptions(new IResourceSnapshot[0]);
+		setResourceDescriptions(new IResourceSnapshot<?>[0]);
 	}
 
 	@Override

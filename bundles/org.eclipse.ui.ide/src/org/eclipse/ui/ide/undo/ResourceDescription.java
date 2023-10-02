@@ -62,7 +62,7 @@ public abstract class ResourceDescription implements IResourceSnapshot<IResource
 			@Override
 			public void createExistentResourceFromHandle(IResource resource, IProgressMonitor monitor)
 					throws CoreException {
-				delegate.createExistentResourceFromHandle(resource, monitor);
+				delegate.createExistentResourceFromHandle(monitor);
 			}
 
 			@Override
@@ -72,12 +72,22 @@ public abstract class ResourceDescription implements IResourceSnapshot<IResource
 
 			@Override
 			public void recordStateFromHistory(IResource resource, IProgressMonitor monitor) throws CoreException {
-				delegate.recordStateFromHistory(resource, monitor);
+				delegate.recordStateFromHistory(monitor);
 			}
 
 			@Override
 			public boolean verifyExistence(boolean checkMembers) {
 				return delegate.verifyExistence(checkMembers);
+			}
+
+			@Override
+			public void createExistentResourceFromHandle(IProgressMonitor monitor) throws CoreException {
+				delegate.createExistentResourceFromHandle(monitor);
+			}
+
+			@Override
+			public void recordStateFromHistory(IProgressMonitor monitor) throws CoreException {
+				delegate.recordStateFromHistory(monitor);
 			}
 		};
 	}
@@ -119,7 +129,6 @@ public abstract class ResourceDescription implements IResourceSnapshot<IResource
 	 * @param monitor  the progress monitor to be used when creating the resource
 	 * @throws CoreException if creation failed
 	 */
-	@Override
 	public abstract void createExistentResourceFromHandle(IResource resource, IProgressMonitor monitor)
 			throws CoreException;
 
@@ -141,7 +150,6 @@ public abstract class ResourceDescription implements IResourceSnapshot<IResource
 	 * @param monitor  the progress monitor to be used
 	 * @throws CoreException in case of error
 	 */
-	@Override
 	public abstract void recordStateFromHistory(IResource resource, IProgressMonitor monitor) throws CoreException;
 
 	/**

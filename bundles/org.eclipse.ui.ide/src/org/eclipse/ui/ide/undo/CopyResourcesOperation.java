@@ -57,7 +57,7 @@ public class CopyResourcesOperation extends
 
 	IResource[] originalResources;
 
-	IResourceSnapshot[] snapshotResourceDescriptions;
+	IResourceSnapshot<? extends IResource>[] snapshotResourceDescriptions;
 
 	/**
 	 * Create a CopyResourcesOperation that copies a single resource to a new
@@ -150,12 +150,12 @@ public class CopyResourcesOperation extends
 				resources.length + (resourceDescriptions != null ? resourceDescriptions.length : 0));
 		subMonitor.setTaskName(UndoMessages.AbstractResourcesOperation_CopyingResourcesProgress);
 		List<IResource> resourcesAtDestination = new ArrayList<>();
-		List<IResourceSnapshot> overwrittenResources = new ArrayList<>();
+		List<IResourceSnapshot<? extends IResource>> overwrittenResources = new ArrayList<>();
 
 		for (int i = 0; i < resources.length; i++) {
 			// Copy the resources and record the overwrites that would
 			// be restored if this operation were reversed
-			IResourceSnapshot[] overwrites;
+			IResourceSnapshot<? extends IResource>[] overwrites;
 			overwrites = WorkspaceUndoUtil.copy(new IResource[] { resources[i] }, getDestinationPath(resources[i], i),
 					resourcesAtDestination, subMonitor.split(1), uiInfo, true, fCreateGroups, fCreateLinks,
 					fRelativeToVariable);
@@ -165,7 +165,7 @@ public class CopyResourcesOperation extends
 
 		// Are there any previously overwritten resources to restore now?
 		if (resourceDescriptions != null) {
-			for (IResourceSnapshot resourceDescription : resourceDescriptions) {
+			for (IResourceSnapshot<? extends IResource> resourceDescription : resourceDescriptions) {
 				if (resourceDescription != null) {
 					resourceDescription.createResource(subMonitor.split(1));
 				}
