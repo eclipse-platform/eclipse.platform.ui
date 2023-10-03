@@ -1245,9 +1245,6 @@ class CompletionProposalPopup implements IContentAssistListener {
 			if (showPopup) {
 				configureAndMakeVisible();
 			}
-		} else if (!fProposalShell.isVisible() && showPopup) {
-			// if a previous call did initialize but did make the popup visible, this will make sure the popup will be visible.
-			configureAndMakeVisible();
 		} else
 			hide();
 	}
