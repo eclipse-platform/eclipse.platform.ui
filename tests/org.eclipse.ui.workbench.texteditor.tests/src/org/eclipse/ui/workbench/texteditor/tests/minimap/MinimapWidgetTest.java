@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.workbench.texteditor.tests.minimap;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,20 +47,30 @@ public class MinimapWidgetTest {
 
 	private ITextViewer editorViewer;
 
+	private Composite minimapParent;
+
 	private StyledText editorStyledText;
 
 	private StyledText minimapStyledText;
 
 	@Before
 	public void createMinimap() {
-		Composite parent= new Shell();
-		editorViewer= new TextViewer(parent, SWT.NONE);
-		MinimapWidget minimapWidget= new MinimapWidget(parent, editorViewer);
+		minimapParent= new Shell();
+		editorViewer= new TextViewer(minimapParent, SWT.NONE);
+		MinimapWidget minimapWidget= new MinimapWidget(minimapParent, editorViewer);
 		minimapWidget.install();
 
 		editorStyledText= editorViewer.getTextWidget();
 		minimapStyledText= (StyledText) minimapWidget.getControl();
 
+	}
+
+	@After
+	public void tearDownMinimap() {
+		if (minimapParent != null) {
+			minimapParent.dispose();
+			minimapParent= null;
+		}
 	}
 
 	@Test
