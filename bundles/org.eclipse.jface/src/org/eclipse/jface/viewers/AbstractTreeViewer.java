@@ -112,6 +112,13 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	private boolean isTreePathContentProvider = false;
 
 	/**
+	 * Keeps track of how many methods have called
+	 * {@link #executeWithRedrawDisabled } before it could reset the state of the
+	 * tree.
+	 */
+	private int redrawCount = 0;
+
+	/**
 	 * Safe runnable used to update an item.
 	 */
 	class UpdateItemSafeRunnable extends SafeRunnable {
@@ -774,16 +781,12 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 */
 	public void collapseToLevel(Object elementOrTreePath, int level) {
 		Assert.isNotNull(elementOrTreePath);
-		Control control = getControl();
-		try {
-			control.setRedraw(false);
+		executeWithRedrawDisabled(() -> {
 			Widget w = internalGetWidgetToSelect(elementOrTreePath);
 			if (w != null) {
 				internalCollapseToLevel(w, level);
 			}
-		} finally {
-			control.setRedraw(true);
-		}
+		});
 	}
 
 	/**
@@ -1143,19 +1146,18 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	public void expandToLevel(Object elementOrTreePath, int level, boolean disableRedraw) {
 		if (checkBusy())
 			return;
-		Control control = getControl();
-		try {
-			if (disableRedraw) {
-				control.setRedraw(false);
-			}
+
+		Runnable expandToLevelOperation = () -> {
 			Widget w = internalExpand(elementOrTreePath, true);
 			if (w != null) {
 				internalExpandToLevel(w, level);
 			}
-		} finally {
-			if (disableRedraw) {
-				control.setRedraw(true);
-			}
+		};
+
+		if (disableRedraw) {
+			executeWithRedrawDisabled(expandToLevelOperation);
+		} else {
+			expandToLevelOperation.run();
 		}
 	}
 
@@ -1606,15 +1608,12 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	@Override
 	protected void inputChanged(Object input, Object oldInput) {
 		preservingSelection(() -> {
-			Control tree = getControl();
-			tree.setRedraw(false);
-			try {
+			executeWithRedrawDisabled(() -> {
+				Control tree = getControl();
 				removeAll(tree);
 				tree.setData(getRoot());
 				internalInitializeTree(tree);
-			} finally {
-				tree.setRedraw(true);
-			}
+			});
 		});
 	}
 
@@ -2272,12 +2271,10 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	@Override
 	protected void labelProviderChanged() {
-		// we have to walk the (visible) tree and update every item
-		Control tree = getControl();
-		tree.setRedraw(false);
-		// don't pick up structure changes, but do force label updates
-		internalRefresh(tree, getRoot(), false, true);
-		tree.setRedraw(true);
+		executeWithRedrawDisabled(() -> {
+			Control tree = getControl();
+			internalRefresh(tree, getRoot(), false, true);
+		});
 	}
 
 	/**
@@ -3399,6 +3396,28 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			return node.contains(element);
 		}
 		return false;
+	}
+
+	/**
+	 * Perform an action on the TreeViewer while redrawing is disabled. Disables
+	 * redraw, executes @code{ toExecute } and enables redraw again.
+	 *
+	 * @param toExecute the transaction to execute on the TreeViewer while it is not
+	 *                  reDrawing
+	 */
+	private void executeWithRedrawDisabled(Runnable toExecute) {
+		Control control = getControl();
+		try {
+			redrawCount++;
+			control.setRedraw(false);
+			toExecute.run();
+		} finally {
+			if (--redrawCount == 0) { // only reset the state after we are completely done operating on a
+										// non-redrawing tree. Useful when iteratively calling executeWithRedrawDisabled
+										// SWT is single threaded, we don't expect any problems with race conditions.
+				control.setRedraw(true);
+			}
+		}
 	}
 
 }
