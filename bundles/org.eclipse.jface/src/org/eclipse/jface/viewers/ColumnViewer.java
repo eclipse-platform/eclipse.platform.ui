@@ -650,7 +650,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 
 		if (cell != null) {
 			if (cell.getElement() instanceof ExpandableNode) {
-				handleExpandableNodeClicked(cell.getItem());
+				handleExpandableNodeClicked(cell.getItem(), true);
 			} else {
 				triggerEditorActivationEvent(new ColumnViewerEditorActivationEvent(cell, e));
 			}
@@ -885,9 +885,10 @@ public abstract class ColumnViewer extends StructuredViewer {
 	 * <p>
 	 * Default implementation does nothing.
 	 *
-	 * @param cell selected on click
+	 * @param cell         selected on click
+	 * @param setSelection
 	 */
-	void handleExpandableNodeClicked(Widget cell) {
+	void handleExpandableNodeClicked(Widget cell, boolean setSelection) {
 		// default implementation does nothing. Actual viewers can decide how to
 		// populate remaining elements.
 	}
@@ -917,12 +918,15 @@ public abstract class ColumnViewer extends StructuredViewer {
 		}
 
 		// fetch entire sorted children we need them in any of next cases.
+		boolean oldBusy = isBusy();
+		setBusy(true);
 		setDisplayIncrementally(0);
 		Object[] sortedAll;
 		try {
 			sortedAll = getSortedChildren(parent);
 		} finally {
 			setDisplayIncrementally(limit);
+			setBusy(oldBusy);
 		}
 
 		// model has lost some elements and length is less then visible items.
@@ -1031,7 +1035,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 	@Override
 	protected void handleDoubleSelect(SelectionEvent event) {
 		if (event.item != null && event.item.getData() instanceof ExpandableNode) {
-			handleExpandableNodeClicked(event.item);
+			handleExpandableNodeClicked(event.item, true);
 			// we do not want client listeners to be notified for this item.
 			return;
 		}
