@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  *             org.eclipse.core.resources.undo.snapshot package
  */
 @Deprecated
-public abstract class ResourceDescription implements IResourceSnapshot<IResource> {
+public abstract class ResourceDescription {
 
 	/**
 	 * Create a resource description given the specified resource. The resource is
@@ -79,16 +79,6 @@ public abstract class ResourceDescription implements IResourceSnapshot<IResource
 			public boolean verifyExistence(boolean checkMembers) {
 				return delegate.verifyExistence(checkMembers);
 			}
-
-			@Override
-			public void createExistentResourceFromHandle(IProgressMonitor monitor) throws CoreException {
-				delegate.createExistentResourceFromHandle(monitor);
-			}
-
-			@Override
-			public void recordStateFromHistory(IProgressMonitor monitor) throws CoreException {
-				delegate.recordStateFromHistory(monitor);
-			}
 		};
 	}
 
@@ -100,7 +90,6 @@ public abstract class ResourceDescription implements IResourceSnapshot<IResource
 	 * @return the resource handle that can be used to create a resource from this
 	 *         description
 	 */
-	@Override
 	public abstract IResource createResourceHandle();
 
 	/**
@@ -108,7 +97,6 @@ public abstract class ResourceDescription implements IResourceSnapshot<IResource
 	 *
 	 * @return the name of the Resource
 	 */
-	@Override
 	public abstract String getName();
 
 	/**
@@ -118,7 +106,6 @@ public abstract class ResourceDescription implements IResourceSnapshot<IResource
 	 * @return a resource that has the attributes of this resource description
 	 * @throws CoreException if creation failed
 	 */
-	@Override
 	public abstract IResource createResource(IProgressMonitor monitor) throws CoreException;
 
 	/**
@@ -139,7 +126,6 @@ public abstract class ResourceDescription implements IResourceSnapshot<IResource
 	 * @return <code>true</code> if the resource can be created, and
 	 *         <code>false</code> if it does not have enough information
 	 */
-	@Override
 	public abstract boolean isValid();
 
 	/**
@@ -164,7 +150,6 @@ public abstract class ResourceDescription implements IResourceSnapshot<IResource
 	 * @return a boolean indicating whether this description represents an existent
 	 *         resource.
 	 */
-	@Override
 	public abstract boolean verifyExistence(boolean checkMembers);
 }
 
