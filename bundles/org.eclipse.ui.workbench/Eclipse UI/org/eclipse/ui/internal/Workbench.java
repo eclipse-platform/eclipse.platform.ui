@@ -139,6 +139,7 @@ import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.internal.location.LocationHelper;
 import org.eclipse.osgi.service.runnable.StartupMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -290,12 +291,8 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 
 	public static final String EDITOR_TAG = "Editor"; //$NON-NLS-1$
 
-	private static final String PROP_VM = "eclipse.vm"; //$NON-NLS-1$
-	private static final String PROP_VMARGS = "eclipse.vmargs"; //$NON-NLS-1$
-	private static final String PROP_COMMANDS = "eclipse.commands"; //$NON-NLS-1$
 	public static final String PROP_EXIT_CODE = "eclipse.exitcode"; //$NON-NLS-1$
 	private static final String CMD_DATA = "-data"; //$NON-NLS-1$
-	private static final String CMD_VMARGS = "-vmargs"; //$NON-NLS-1$
 
 	private static final class StartupProgressBundleListener implements SynchronousBundleListener {
 
@@ -2593,64 +2590,16 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	 *         is not set
 	 */
 	private static String buildCommandLine(String workspace) {
-		String property = System.getProperty(PROP_VM);
-		if (property == null) {
-			if (!Platform.inDevelopmentMode()) {
-				// Don't log this when in development mode, since 'eclipse.vm'
-				// is never set in this case
-				WorkbenchPlugin.log(NLS.bind(WorkbenchMessages.Workbench_missingPropertyMessage, PROP_VM));
-			}
-			return null;
-		}
-
 		StringBuilder result = new StringBuilder(512);
-		result.append(property);
+
+		String userData = System.getProperty(IApplicationContext.EXIT_DATA_PROPERTY);
+		if (userData != null && !userData.isBlank())
+			result.append(userData);
+
+		result.append(CMD_DATA);
 		result.append('\n');
-
-		// append the vmargs and commands. Assume that these already end in \n
-		String vmargs = System.getProperty(PROP_VMARGS);
-		if (vmargs != null) {
-			result.append(vmargs);
-		}
-
-		// append the rest of the args, replacing or adding -data as required
-		property = System.getProperty(PROP_COMMANDS);
-		if (property == null) {
-			result.append(CMD_DATA);
-			result.append('\n');
-			result.append(workspace);
-			result.append('\n');
-		} else {
-			// find the index of the arg to add/replace its value
-			int cmd_data_pos = property.lastIndexOf(CMD_DATA);
-			if (cmd_data_pos != -1) {
-				cmd_data_pos += CMD_DATA.length() + 1;
-				result.append(property.substring(0, cmd_data_pos));
-				result.append(workspace);
-				// append from the next arg
-				int nextArg = property.indexOf("\n-", cmd_data_pos - 1); //$NON-NLS-1$
-				if (nextArg != -1) {
-					result.append(property.substring(nextArg));
-				}
-			} else {
-				result.append(CMD_DATA);
-				result.append('\n');
-				result.append(workspace);
-				result.append('\n');
-				result.append(property);
-			}
-		}
-
-		// put the vmargs back at the very end (the eclipse.commands property
-		// already contains the -vm arg)
-		if (vmargs != null) {
-			if (result.charAt(result.length() - 1) != '\n') {
-				result.append('\n');
-			}
-			result.append(CMD_VMARGS);
-			result.append('\n');
-			result.append(vmargs);
-		}
+		result.append(workspace);
+		result.append('\n');
 
 		return result.toString();
 	}
@@ -2662,13 +2611,15 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	 * @param workspacePath the new workspace location
 	 * @return {@link IApplication#EXIT_OK} or {@link IApplication#EXIT_RELAUNCH}
 	 */
+	@SuppressWarnings("restriction")
 	public static Object setRestartArguments(String workspacePath) {
-		String property = System.getProperty(Workbench.PROP_VM);
-		if (property == null) {
+		if (Platform.inDevelopmentMode()
+				&& !Platform.getInstanceLocation().getURL().equals(LocationHelper.buildURL(workspacePath, true))) {
 			MessageDialog.openError(null, WorkbenchMessages.Workbench_problemsRestartErrorTitle,
-					NLS.bind(WorkbenchMessages.Workbench_problemsRestartErrorMessage, Workbench.PROP_VM));
-			return IApplication.EXIT_OK;
+					WorkbenchMessages.Workbench_problemsRestartErrorMessage);
+			return null;
 		}
+
 		String command_line = Workbench.buildCommandLine(workspacePath);
 		if (command_line == null) {
 			return IApplication.EXIT_OK;
