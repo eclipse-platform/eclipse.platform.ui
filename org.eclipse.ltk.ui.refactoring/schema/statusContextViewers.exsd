@@ -1,0 +1,143 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.ltk.ui.refactoring">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ltk.ui.refactoring" id="statusContextViewers" name="Refactoring Status Context Viewers"/>
+      </appInfo>
+      <documentation>
+         This extension point is used to define a special viewer capable to present the context of a refactoring status entry to the user.
+
+&lt;p&gt;
+This extension point supports the &lt;code&gt;&amp;lt;enablement&amp;gt;&lt;/code&gt; element.
+&lt;!-- see org.eclipse.ltk.internal.ui.refactoring.AbstractDescriptor#matches(Object, String): --&gt;
+The default variable is the refactoring status context.
+&lt;br&gt;Defined variables for &lt;code&gt;&amp;lt;with&amp;gt;&lt;/code&gt; expressions are:
+&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&quot;context&quot;: type &lt;code&gt;org.eclipse.ltk.core.refactoring.RefactoringStatusContext&lt;/code&gt;; the context object managed by the refactoring status entry that is to be presented in the user interface (same as the default variable)&lt;/li&gt;
+&lt;/ul&gt;
+      </documentation>
+   </annotation>
+
+   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="statusContextViewer" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="statusContextViewer">
+      <complexType>
+         <all>
+            <element ref="enablement"/>
+         </all>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  unique identifier for the status context viewer.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the name of the class that provides the implementation.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ltk.ui.refactoring.IStatusContextViewer"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The example below contributes a status context viewer for FileStatusContext objects.
+
+&lt;pre&gt;
+   &lt;extension point=&quot;org.eclipse.ltk.ui.refactoring.statusContextViewers&quot;&gt;
+      &lt;statusContextViewer
+            class=&quot;org.eclipse.ltk.internal.ui.refactoring.FileStatusContextViewer&quot;
+            id=&quot;org.eclipse.ltk.internal.ui.refactoring.fileStatusContextViewer&quot;&gt;
+         &lt;enablement&gt;
+            &lt;instanceof value=&quot;org.eclipse.ltk.core.refactoring.FileStatusContext&quot;/&gt;
+         &lt;/enablement&gt;
+      &lt;/statusContextViewer&gt;
+   &lt;/extension&gt;
+ &lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The contributed class must extend &lt;code&gt;org.eclipse.ltk.ui.refactoring.IStatusContextViewer&lt;/code&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2001, 2013 IBM Corporation and others.&lt;br&gt;
+
+This program and the accompanying materials are made available under the terms of the Eclipse Public License 2.0 which accompanies this distribution, and is available at &lt;a href=&quot;https://www.eclipse.org/legal/epl-2.0&quot;&gt;https://www.eclipse.org/legal/epl-v20.html&lt;/a&gt;/
+
+SPDX-License-Identifier: EPL-2.0
+      </documentation>
+   </annotation>
+
+</schema>

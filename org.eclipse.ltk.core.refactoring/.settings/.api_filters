@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.ltk.core.refactoring" version="2">
+    <resource path="src/org/eclipse/ltk/core/refactoring/MultiStateTextFileChange.java" type="org.eclipse.ltk.core.refactoring.MultiStateTextFileChange">
+        <filter id="571519004">
+            <message_arguments>
+                <message_argument value="org.eclipse.ltk.core.refactoring.MultiStateTextFileChange.getPreviewContent(TextEditBasedChangeGroup[], IRegion, boolean, int, IProgressMonitor)"/>
+                <message_argument value="TextEditProcessor"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ltk/core/refactoring/TextEditBasedChange.java" type="org.eclipse.ltk.core.refactoring.TextEditBasedChange$LocalTextEditProcessor">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="TextEditProcessor"/>
+                <message_argument value="LocalTextEditProcessor"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ltk/core/refactoring/TextFileChange.java" type="org.eclipse.ltk.core.refactoring.TextFileChange">
+        <filter id="576778288">
+            <message_arguments>
+                <message_argument value="TextChange"/>
+                <message_argument value="TextFileChange"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

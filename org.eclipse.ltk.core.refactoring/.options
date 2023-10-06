@@ -1,0 +1,5 @@
+#Reports the time for a single refactoring participant condition check
+org.eclipse.ltk.core.refactoring/perf/participants/checkConditions=300
+
+#Reports the time for a single refactoring participant change creation
+org.eclipse.ltk.core.refactoring/perf/participants/createChanges=300

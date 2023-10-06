@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.ltk.core.refactoring">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ltk.core.refactoring" id="refactoringContributions" name="Refactoring Contributions"/>
+      </appInfo>
+      <documentation>
+         The extension point is used to define refactoring contributions. Refactoring contributions provide a means to dynamically construct a ready-to-execute refactoring instance based on a &lt;code&gt;RefactoringDescriptor&lt;/code&gt;.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="contribution" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="contribution">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The globally unique id of the contributed refactoring type. The id is usually a fully qualified identifier composed from the name of the contributing plugin and a unique identifier of the refactoring, e.g. org.eclipse.ltk.core.renameResource.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The fully qualified name of a refactoring contribution implementation which extends &lt;code&gt;org.eclipse.ltk.core.refactoring.RefactoringContribution&lt;/code&gt;.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ltk.core.refactoring.RefactoringContribution"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.2
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The example below defines a refactoring contribution implemented by class &lt;code&gt;RenameResourceRefactoringContribution&lt;/code&gt; for the rename resource refactoring with unique id &lt;code&gt;org.eclipse.ltk.core.rename.resource&lt;/code&gt;:
+
+&lt;pre&gt;
+   &lt;extension
+         point=&quot;org.eclipse.ltk.core.refactoring.refactoringContributions&quot;&gt;
+      &lt;contribution
+            class=&quot;org.eclipse.ltk.core.refactoring.RenameResourceRefactoringContribution&quot;
+            id=&quot;org.eclipse.ltk.core.rename.resource&quot;/&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The contributed implementation class must extend &lt;code&gt;org.eclipse.ltk.core.refactoring.RefactoringContribution&lt;/code&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2006 IBM Corporation and others.&lt;br&gt;
+
+This program and the accompanying materials are made available under the terms of the Eclipse Public License 2.0 which accompanies this distribution, and is available at &lt;a href=&quot;https://www.eclipse.org/legal/epl-2.0&quot;&gt;https://www.eclipse.org/legal/epl-v20.html&lt;/a&gt;/
+
+SPDX-License-Identifier: EPL-2.0
+      </documentation>
+   </annotation>
+
+</schema>
