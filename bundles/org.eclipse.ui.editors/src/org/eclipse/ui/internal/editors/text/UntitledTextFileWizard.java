@@ -17,6 +17,8 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.content.IContentType;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -40,6 +42,8 @@ import org.eclipse.ui.editors.text.EditorsUI;
  */
 public class UntitledTextFileWizard extends Wizard implements INewWizard {
 
+	private static final String TEXT_CONTENT_TYPE_ID= "org.eclipse.core.runtime.text"; //$NON-NLS-1$
+
 	private IWorkbenchWindow fWindow;
 
 	public UntitledTextFileWizard() {
@@ -59,7 +63,8 @@ public class UntitledTextFileWizard extends Wizard implements INewWizard {
 	private String getEditorId(IFileStore fileStore) {
 		IWorkbench workbench= fWindow.getWorkbench();
 		IEditorRegistry editorRegistry= workbench.getEditorRegistry();
-		IEditorDescriptor descriptor= editorRegistry.getDefaultEditor(fileStore.getName());
+		IContentType textContentType= Platform.getContentTypeManager().getContentType(TEXT_CONTENT_TYPE_ID);
+		IEditorDescriptor descriptor= editorRegistry.getDefaultEditor(fileStore.getName(), textContentType);
 		if (descriptor != null)
 			return descriptor.getId();
 		return EditorsUI.DEFAULT_TEXT_EDITOR_ID;
