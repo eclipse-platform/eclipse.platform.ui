@@ -600,6 +600,21 @@ public class WorkbenchMessages extends NLS {
 	public static String CheckedTreeSelectionDialog_select_all;
 	public static String CheckedTreeSelectionDialog_deselect_all;
 
+	public static String WindowsDefenderConfigurator_statusCheck;
+	public static String WindowsDefenderConfigurator_exclusionCheckMessage;
+	public static String WindowsDefenderConfigurator_exclusionInformation;
+	public static String WindowsDefenderConfigurator_scriptShowLabel;
+	public static String WindowsDefenderConfigurator_scriptHideLabel;
+	public static String WindowsDefenderConfigurator_scriptHint;
+	public static String WindowsDefenderConfigurator_performExclusionChoice;
+	public static String WindowsDefenderConfigurator_ignoreThisInstallationChoice;
+	public static String WindowsDefenderConfigurator_ignoreAllChoice;
+	public static String WindowsDefenderConfigurator_detailsAndOptionsLinkText;
+	public static String WindowsDefenderConfigurator_runExclusionFromPreferenceButtonLabel;
+	public static String WindowsDefenderConfigurator_statusInactive;
+	public static String WindowsDefenderConfigurator_statusCheckFailed;
+	public static String WindowsDefenderConfigurator_exclusionFailed;
+
 	// ==============================================================================
 	// Editor Framework
 	// ==============================================================================
