@@ -124,6 +124,22 @@ public class ModeledPageLayoutTest {
 		assertThat(getNumberOfOnboardingCommands(perspective.getTags()), is(5));
 	}
 
+	@Test
+	public void addEditorOnboardingCommandWhenBrokenKeyBindingExsists() throws Exception {
+		MBindingTable bindingTable = MCommandsFactory.INSTANCE.createBindingTable();
+		MKeyBinding binding = createBinding("unknownCommand", "Unknown", "M1+1+5");
+		binding.setCommand(null);
+		bindingTable.getBindings().add(binding);
+		bindingTable.getBindings().add(createBinding("org.eclipse.ui.window.quickAccess", "Find Actions", "M1+3"));
+
+		application.getBindingTables().add(bindingTable);
+
+		pageLayout.addEditorOnboardingCommandId("org.eclipse.ui.window.quickAccess");
+
+		assertThat(perspective.getTags(), hasItem(ModeledPageLayout.EDITOR_ONBOARDING_COMMAND + "Find Actions$$$"
+				+ KeySequence.getInstance("M1+3").format()));
+	}
+
 	private int getNumberOfOnboardingCommands(List<String> commands) {
 		return commands.stream().filter(t -> t.startsWith(EDITOR_ONBOARDING_COMMAND)).mapToInt(i -> 1).sum();
 	}
