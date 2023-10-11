@@ -32,6 +32,7 @@ import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
@@ -583,6 +584,23 @@ public class JFaceResources {
 		fontRegistry = registry;
 	}
 
+
+	/**
+	 * Creates a local registry that wraps the ResourceManager for the current
+	 * display. Anything allocated by this registry will be automatically cleaned up
+	 * with the given control is disposed. Note that registries created in this way
+	 * should not be used to allocate any resource that must outlive the given
+	 * control.
+	 *
+	 * shortcut for
+	 * <code>LocalResourceManager(JFaceResources.getResources(), owner)</code>
+	 *
+	 * @param owner control whose disposal will trigger cleanup of everything in the
+	 *              registry.
+	 */
+	static LocalResourceManager managerFor(Control owner) {
+		return new LocalResourceManager(getResources(), owner);
+	}
 	/**
 	 * Declare a private constructor to block instantiation.
 	 */
