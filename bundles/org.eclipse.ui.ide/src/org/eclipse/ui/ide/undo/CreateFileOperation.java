@@ -14,17 +14,17 @@
 
 package org.eclipse.ui.ide.undo;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URI;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.undo.snapshot.IContainerSnapshot;
+import org.eclipse.core.resources.undo.snapshot.IResourceSnapshot;
+import org.eclipse.core.resources.undo.snapshot.ResourceSnapshotFactory;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.ui.internal.ide.undo.ContainerDescription;
-import org.eclipse.ui.internal.ide.undo.FileDescription;
-import org.eclipse.ui.internal.ide.undo.IFileContentDescription;
 
 /**
  * A CreateFileOperation represents an undoable operation for creating a file in
@@ -63,57 +63,22 @@ public class CreateFileOperation extends AbstractCreateResourcesOperation {
 	public CreateFileOperation(IFile fileHandle, URI linkLocation,
 			InputStream contents, String label) {
 		super(null, label);
-		ResourceDescription resourceDescription;
+		IResourceSnapshot<? extends IResource> resourceDescription;
 		if (fileHandle.getParent().exists()) {
-			resourceDescription = new FileDescription(fileHandle, linkLocation,
-					createFileContentDescription(fileHandle, contents));
+			resourceDescription = ResourceSnapshotFactory.fromFileDetails(fileHandle, linkLocation, contents);
 		} else {
 			// must first ensure descriptions for the parent folders are
 			// created
-			ContainerDescription containerDescription = ContainerDescription
+			IContainerSnapshot<? extends IContainer> containerDescription = ResourceSnapshotFactory
 					.fromContainer(fileHandle.getParent());
-			containerDescription.getFirstLeafFolder()
-					.addMember(
-							new FileDescription(fileHandle, linkLocation,
-									createFileContentDescription(fileHandle,
-											contents)));
+			IResourceSnapshot<IFile> fileDescription = ResourceSnapshotFactory.fromFileDetails(fileHandle, linkLocation,
+					contents);
+			WorkspaceUndoUtil.getFirstLeafFolder(containerDescription).addMember(fileDescription);
 			resourceDescription = containerDescription;
 		}
-		setResourceDescriptions(new ResourceDescription[] { resourceDescription });
-
+		setResourceDescriptions(new IResourceSnapshot<?>[] { resourceDescription });
 	}
 
-	/*
-	 * Create a file state that represents the desired contents and attributes
-	 * of the file to be created. Used to mimic file history when a resource is
-	 * first created.
-	 */
-	private IFileContentDescription createFileContentDescription(
-			final IFile file, final InputStream contents) {
-		return new IFileContentDescription() {
-			@Override
-			public InputStream getContents() {
-				if (contents != null) {
-					return contents;
-				}
-				return new ByteArrayInputStream(new byte[0]);
-			}
-
-			@Override
-			public String getCharset() {
-				try {
-					return file.getCharset(false);
-				} catch (CoreException e) {
-					return null;
-				}
-			}
-
-			@Override
-			public boolean exists() {
-				return true;
-			}
-		};
-	}
 
 	@Override
 	public IStatus computeExecutionStatus(IProgressMonitor monitor) {
@@ -124,4 +89,5 @@ public class CreateFileOperation extends AbstractCreateResourcesOperation {
 		}
 		return status;
 	}
+
 }

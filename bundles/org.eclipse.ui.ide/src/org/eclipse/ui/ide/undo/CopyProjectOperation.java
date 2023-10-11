@@ -21,6 +21,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
+import org.eclipse.core.resources.undo.snapshot.IResourceSnapshot;
+import org.eclipse.core.resources.undo.snapshot.ResourceSnapshotFactory;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -30,7 +32,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.ui.internal.ide.undo.ProjectDescription;
 import org.eclipse.ui.internal.ide.undo.UndoMessages;
 
 /**
@@ -52,7 +53,7 @@ public class CopyProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 
 	private IProject originalProject;
 
-	private ProjectDescription originalProjectDescription;
+	private IResourceSnapshot<? extends IResource> originalProjectDescription;
 
 	/**
 	 * Create a CopyProjectOperation that copies the specified project and sets
@@ -123,7 +124,7 @@ public class CopyProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 		IProject newProject = copyProject(originalProject, destination,
 				projectLocation, monitor);
 		setTargetResources(new IResource[] { newProject });
-		setResourceDescriptions(new ResourceDescription[0]);
+		setResourceDescriptions(new IResourceSnapshot<?>[0]);
 	}
 
 	/*
@@ -137,7 +138,7 @@ public class CopyProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 		WorkspaceUndoUtil.delete(resources, subMonitor.split(1), uiInfo, true);
 		// Set the target resource to the original
 		setTargetResources(new IResource[] { originalProject });
-		setResourceDescriptions(new ResourceDescription[0]);
+		setResourceDescriptions(new IResourceSnapshot<?>[0]);
 	}
 
 	@Override
@@ -204,7 +205,7 @@ public class CopyProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 			// description for performing the undo.
 			project.open(null);
 		}
-		originalProjectDescription = new ProjectDescription(project);
+		originalProjectDescription = ResourceSnapshotFactory.fromResource(project);
 		IProjectDescription description = project.getDescription();
 
 		// Set the new name and location into the project's description
