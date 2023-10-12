@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -229,6 +229,16 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 	}
 
 	/**
+	 * Returns whether an empty tree is allowed
+	 *
+	 * @return true if empty tree is ok, false otherwise
+	 * @since 3.131
+	 */
+	protected boolean isEmptyTreeAllowed() {
+		return false;
+	}
+
+	/**
 	 * Validate the receiver and update the status with the result.
 	 *
 	 */
@@ -238,6 +248,11 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 				fCurrStatus = fValidator.validate(fViewer.getCheckedElements());
 				updateStatus(fCurrStatus);
 			} else if (!fCurrStatus.isOK()) {
+				fCurrStatus = new Status(IStatus.OK, PlatformUI.PLUGIN_ID, IStatus.OK, "", //$NON-NLS-1$
+						null);
+			}
+		} else if (isEmptyTreeAllowed()) {
+			if (!fCurrStatus.isOK()) {
 				fCurrStatus = new Status(IStatus.OK, PlatformUI.PLUGIN_ID, IStatus.OK, "", //$NON-NLS-1$
 						null);
 			}
