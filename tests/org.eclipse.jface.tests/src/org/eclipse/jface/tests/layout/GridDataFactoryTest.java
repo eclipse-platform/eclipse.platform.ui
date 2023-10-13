@@ -13,17 +13,18 @@
  ******************************************************************************/
 package org.eclipse.jface.tests.layout;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * @since 3.5
  */
-public class GridDataFactoryTest extends TestCase {
-
+public class GridDataFactoryTest {
+	@Test
 	public void testToStringWithAllOverrides() {
 		GridDataFactory factory = GridDataFactory.fillDefaults()
 				.grab(true, false)
@@ -38,6 +39,7 @@ public class GridDataFactoryTest extends TestCase {
 				factory.toString());
 	}
 
+	@Test
 	public void testToStringGrab() {
 		GridDataFactory factory = GridDataFactory.fillDefaults()
 				.grab(false, true);
@@ -47,6 +49,7 @@ public class GridDataFactoryTest extends TestCase {
 				factory.toString());
 	}
 
+	@Test
 	public void testToStringAlign() {
 		GridDataFactory factory = GridDataFactory.fillDefaults()
 				.align(SWT.FILL, SWT.BOTTOM);
@@ -56,6 +59,7 @@ public class GridDataFactoryTest extends TestCase {
 				factory.toString());
 	}
 
+	@Test
 	public void testToStringIndent() {
 		GridDataFactory factory = GridDataFactory.fillDefaults()
 				.indent(10, 39);
@@ -65,6 +69,7 @@ public class GridDataFactoryTest extends TestCase {
 				factory.toString());
 	}
 
+	@Test
 	public void testToStringSpan() {
 		GridDataFactory factory = GridDataFactory.fillDefaults()
 				.span(2, 3);
@@ -74,6 +79,7 @@ public class GridDataFactoryTest extends TestCase {
 				factory.toString());
 	}
 
+	@Test
 	public void testToStringMinSize() {
 		GridDataFactory factory = GridDataFactory.fillDefaults()
 				.minSize(30, 10);
@@ -83,6 +89,7 @@ public class GridDataFactoryTest extends TestCase {
 				factory.toString());
 	}
 
+	@Test
 	public void testToStringHint() {
 		GridDataFactory factory = GridDataFactory.fillDefaults()
 				.hint(SWT.DEFAULT, 310);
@@ -92,6 +99,7 @@ public class GridDataFactoryTest extends TestCase {
 				factory.toString());
 	}
 
+	@Test
 	public void testToNoOverrides() {
 		GridDataFactory factory = GridDataFactory.fillDefaults();
 
@@ -100,6 +108,7 @@ public class GridDataFactoryTest extends TestCase {
 				factory.toString());
 	}
 
+	@Test
 	public void testGridDataCreate() {
 		GridData actual = GridDataFactory.create(GridData.FILL_HORIZONTAL).create();
 		GridData expected = new GridData(GridData.FILL_HORIZONTAL);
@@ -107,4 +116,3 @@ public class GridDataFactoryTest extends TestCase {
 		assertEquals(expected.toString(), actual.toString());
 	}
 }
-

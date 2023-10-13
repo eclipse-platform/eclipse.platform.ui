@@ -13,23 +13,23 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.dialogs;
 
-import junit.framework.TestCase;
-
 import org.eclipse.jface.dialogs.InputDialog;
+import org.junit.After;
+import org.junit.Test;
 
-public class InputDialogTest extends TestCase {
+public class InputDialogTest {
 
 	private InputDialog dialog;
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		if (dialog != null) {
 			dialog.close();
 			dialog = null;
 		}
-		super.tearDown();
 	}
 
+	@Test
 	public void testSetErrorMessageEarly() {
 		dialog = new InputDialog(null, "TEST", "value", "test", null);
 		dialog.setBlockOnOpen(false);

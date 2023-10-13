@@ -15,19 +15,23 @@
 
 package org.eclipse.jface.tests.images;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import java.net.URL;
 
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.ImageData;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Test loading ImageDescriptors from a URL calculated on demand.
  */
-public class DeferredImageDescriptorTest extends TestCase {
+public class DeferredImageDescriptorTest {
 
+	@Test
 	public void testDeferredLoading() {
 		ImageData empty = ImageDescriptor.getMissingImageDescriptor().getImageData(100);
 		assertEquals(empty, ImageDescriptor.createFromURLSupplier(true, () -> null).getImageData(100));
@@ -40,12 +44,14 @@ public class DeferredImageDescriptorTest extends TestCase {
 				.getImageData(100));
 	}
 
+	@Test
 	public void testCreateImage() {
 		assertNotNull(ImageDescriptor
 				.createFromURLSupplier(true, () -> DeferredImageDescriptorTest.class.getResource("anything.gif"))
 				.createImage());
 	}
 
+	@Test
 	public void testAdaptToURL() {
 		ImageDescriptor descriptor = ImageDescriptor.createFromURLSupplier(false,
 				() -> DeferredImageDescriptorTest.class.getResource("anything.gif"));
