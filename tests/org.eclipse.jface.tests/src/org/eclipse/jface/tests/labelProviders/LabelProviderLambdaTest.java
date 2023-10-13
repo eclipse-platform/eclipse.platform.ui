@@ -1,5 +1,7 @@
 package org.eclipse.jface.tests.labelProviders;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.tests.viewers.StructuredViewerTest.TestLabelProvider;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -11,10 +13,9 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class LabelProviderLambdaTest extends TestCase {
+public class LabelProviderLambdaTest {
 
 	protected static Shell initializeShell() {
 		Display display = Display.getDefault();
@@ -39,6 +40,7 @@ public class LabelProviderLambdaTest extends TestCase {
 		return model;
 	}
 
+	@Test
 	public void testCreateTextProvider() {
 		Shell shell = initializeShell();
 		StructuredViewer viewer = initializeViewer(shell);
@@ -49,12 +51,12 @@ public class LabelProviderLambdaTest extends TestCase {
 		assertEquals("rendered label", Integer.valueOf(0).toString(), firstElementText);
 	}
 
+	@Test
 	public void testCreateTextImageProvider() {
 		Shell shell = initializeShell();
 		StructuredViewer viewer = initializeViewer(shell);
 		Image fgImage = ImageDescriptor.createFromFile(TestLabelProvider.class, "images/java.gif").createImage();
-		viewer.setLabelProvider(LabelProvider.createTextImageProvider(Object::toString,
-				inputElement -> fgImage));
+		viewer.setLabelProvider(LabelProvider.createTextImageProvider(Object::toString, inputElement -> fgImage));
 		shell.open();
 		Table table = (Table) viewer.getControl();
 		String firstElementText = table.getItem(0).getText();
@@ -64,6 +66,7 @@ public class LabelProviderLambdaTest extends TestCase {
 
 	}
 
+	@Test
 	public void testCreateImageProvider() {
 		Shell shell = initializeShell();
 		StructuredViewer viewer = initializeViewer(shell);

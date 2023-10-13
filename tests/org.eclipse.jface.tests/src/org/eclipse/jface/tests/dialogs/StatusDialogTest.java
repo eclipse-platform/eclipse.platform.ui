@@ -13,6 +13,8 @@
  ******************************************************************************/
 package org.eclipse.jface.tests.dialogs;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.StatusDialog;
@@ -20,15 +22,17 @@ import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class StatusDialogTest extends TestCase {
+public class StatusDialogTest {
 
 	private static final String PLUGIN_ID = "org.eclipse.ui.tests";
 
 	private Shell shell;
 
+	@Test
 	public void testEscapeAmpesandInStatusLabelBug395426() {
 		TestableStatusDialog dialog = new TestableStatusDialog(shell);
 		dialog.open();
@@ -37,13 +41,13 @@ public class StatusDialogTest extends TestCase {
 		assertEquals("&&", statusLabel.getText());
 	}
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		shell = new Shell();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		shell.dispose();
 	}
 

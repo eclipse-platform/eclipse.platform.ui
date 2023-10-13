@@ -13,14 +13,16 @@
  ******************************************************************************/
 package org.eclipse.jface.tests.layout;
 
-import org.eclipse.jface.layout.GridLayoutFactory;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
+import org.eclipse.jface.layout.GridLayoutFactory;
+import org.junit.Test;
 
 /**
  * @since 3.3
  */
-public class GridLayoutFactoryTest extends TestCase {
+public class GridLayoutFactoryTest {
+	@Test
 	public void testToStringAll() {
 		GridLayoutFactory factory = GridLayoutFactory.fillDefaults()
 			.numColumns(3)
@@ -34,6 +36,7 @@ public class GridLayoutFactoryTest extends TestCase {
 				factory.toString());
 	}
 
+	@Test
 	public void testToStringNumColumns() {
 		GridLayoutFactory factory = GridLayoutFactory.fillDefaults()
 			.numColumns(3);
@@ -43,6 +46,7 @@ public class GridLayoutFactoryTest extends TestCase {
 				factory.toString());
 	}
 
+	@Test
 	public void testToStringEqualWidth() {
 		GridLayoutFactory factory = GridLayoutFactory.fillDefaults()
 			.equalWidth(true);
@@ -52,6 +56,7 @@ public class GridLayoutFactoryTest extends TestCase {
 				factory.toString());
 	}
 
+	@Test
 	public void testToStringExtendedMargins() {
 		GridLayoutFactory factory = GridLayoutFactory.fillDefaults()
 			.extendedMargins(10, 20, 30, 40);
@@ -61,6 +66,7 @@ public class GridLayoutFactoryTest extends TestCase {
 				factory.toString());
 	}
 
+	@Test
 	public void testToStringMargins() {
 		GridLayoutFactory factory = GridLayoutFactory.fillDefaults()
 			.margins(30, 50);
@@ -70,6 +76,7 @@ public class GridLayoutFactoryTest extends TestCase {
 				factory.toString());
 	}
 
+	@Test
 	public void testToStringSpacing() {
 		GridLayoutFactory factory = GridLayoutFactory.fillDefaults()
 			.spacing(39, 59);
@@ -79,6 +86,7 @@ public class GridLayoutFactoryTest extends TestCase {
 				factory.toString());
 	}
 
+	@Test
 	public void testToStringNoOverrides() {
 		GridLayoutFactory factory = GridLayoutFactory.fillDefaults();
 

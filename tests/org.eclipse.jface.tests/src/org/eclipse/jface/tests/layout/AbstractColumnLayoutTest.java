@@ -15,6 +15,9 @@
 
 package org.eclipse.jface.tests.layout;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -25,19 +28,20 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @since 3.4
  *
  */
-public final class AbstractColumnLayoutTest extends TestCase {
+public final class AbstractColumnLayoutTest {
 	Display display;
 	Shell shell;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		display = Display.getCurrent();
 		if (display == null) {
 			display = new Display();
@@ -48,8 +52,8 @@ public final class AbstractColumnLayoutTest extends TestCase {
 
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		shell.dispose();
 	}
 
@@ -57,6 +61,7 @@ public final class AbstractColumnLayoutTest extends TestCase {
 	 * Ensures that the minimum size is not taken into account in a shell unless the
 	 * weighted size falls below the minimum.
 	 */
+	@Test
 	public void testIgnoreMinimumSize() {
 		Composite composite = new Composite(shell, SWT.NONE);
 		TableColumnLayout layout = new TableColumnLayout();
@@ -86,6 +91,7 @@ public final class AbstractColumnLayoutTest extends TestCase {
 	 * Ensures that width values based on weight are recalculated when a column
 	 * falls below minimums.
 	 */
+	@Test
 	public void testRecalculatePreferredSize() {
 		Composite composite = new Composite(shell, SWT.NONE);
 		TableColumnLayout layout = new TableColumnLayout();
@@ -116,6 +122,7 @@ public final class AbstractColumnLayoutTest extends TestCase {
 	 * Ensures that computeSize doesn't rely on the current size. That strategy can
 	 * lead to endless growth on {@link Shell#pack()}.
 	 */
+	@Test
 	public void testComputeSize() {
 		Composite composite = new Composite(shell, SWT.NONE);
 		TableColumnLayout layout = new TableColumnLayout();

@@ -19,7 +19,12 @@
 
 package org.eclipse.jface.tests.images;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.net.URL;
@@ -33,10 +38,9 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageFileNameProvider;
+import org.junit.Test;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
-
-import junit.framework.TestCase;
 
 /**
  * Test loading a directory full of images.
@@ -44,22 +48,14 @@ import junit.framework.TestCase;
  * @since 3.4
  *
  */
-public class FileImageDescriptorTest extends TestCase {
+public class FileImageDescriptorTest {
 
 	protected static final String IMAGES_DIRECTORY = "/icons/imagetests";
 
 	/**
-	 * Create a new instance of the receiver.
-	 *
-	 * @param name
-	 */
-	public FileImageDescriptorTest(String name) {
-		super(name);
-	}
-
-	/**
 	 * Test loading the image descriptors.
 	 */
+	@Test
 	public void testFileImageDescriptorWorkbench() {
 
 		Class<?> missing = null;
@@ -103,6 +99,7 @@ public class FileImageDescriptorTest extends TestCase {
 	/**
 	 * Test the file image descriptor.
 	 */
+	@Test
 	public void testFileImageDescriptorLocal() {
 
 		ImageDescriptor descriptor = ImageDescriptor.createFromFile(FileImageDescriptorTest.class, "anything.gif");
@@ -116,6 +113,7 @@ public class FileImageDescriptorTest extends TestCase {
 	/**
 	 * Test for a missing file image descriptor.
 	 */
+	@Test
 	public void testFileImageDescriptorMissing() {
 
 		ImageDescriptor descriptor = ImageDescriptor.createFromFile(FileImageDescriptorTest.class, "missing.gif");
@@ -127,6 +125,7 @@ public class FileImageDescriptorTest extends TestCase {
 	/**
 	 * Test for a missing file image descriptor.
 	 */
+	@Test
 	public void testFileImageDescriptorMissingWithDefault() {
 
 		ImageDescriptor descriptor = ImageDescriptor.createFromFile(FileImageDescriptorTest.class, "missing.gif");
@@ -139,6 +138,7 @@ public class FileImageDescriptorTest extends TestCase {
 	 * Test that individually created images of a given descriptor are not equal
 	 * (See issue #682).
 	 */
+	@Test
 	public void testDifferentImagesPerFileImageDescriptor() {
 		ImageDescriptor descriptor = ImageDescriptor.createFromFile(FileImageDescriptorTest.class, "anything.gif");
 		Image image1 = descriptor.createImage();
@@ -150,6 +150,7 @@ public class FileImageDescriptorTest extends TestCase {
 		image2.dispose();
 	}
 
+	@Test
 	public void testGetxName() {
 		ImageDescriptor descriptor = ImageDescriptor.createFromFile(FileImageDescriptorTest.class,
 				"/icons/imagetests/zoomIn.png");
@@ -160,6 +161,7 @@ public class FileImageDescriptorTest extends TestCase {
 		assertEquals(imageData.width * 2, imageDataZoomed.width);
 	}
 
+	@Test
 	public void testGetxPath() {
 		ImageDescriptor descriptor = ImageDescriptor.createFromFile(FileImageDescriptorTest.class,
 				"/icons/imagetests/16x16/zoomIn.png");
@@ -170,6 +172,7 @@ public class FileImageDescriptorTest extends TestCase {
 		assertEquals(imageData.width * 2, imageDataZoomed.width);
 	}
 
+	@Test
 	public void testGetxPathRectangular() {
 		ImageDescriptor descriptor = ImageDescriptor.createFromFile(FileImageDescriptorTest.class,
 				"/icons/imagetests/rectangular-57x16.png");
@@ -181,6 +184,7 @@ public class FileImageDescriptorTest extends TestCase {
 		assertEquals(imageData.height * 2, imageDataZoomed.height);
 	}
 
+	@Test
 	public void testGetxPath150() {
 		ImageDescriptor descriptor = ImageDescriptor.createFromFile(FileImageDescriptorTest.class,
 				"/icons/imagetests/rectangular-57x16.png");
@@ -192,6 +196,7 @@ public class FileImageDescriptorTest extends TestCase {
 		assertEquals(Math.round(imageData.height * 1.5), imageDataZoomed.height);
 	}
 
+	@Test
 	public void testImageFileNameProviderGetxPath() {
 		ImageDescriptor descriptor = ImageDescriptor.createFromFile(FileImageDescriptorTest.class,
 				"/icons/imagetests/rectangular-57x16.png");
@@ -215,6 +220,7 @@ public class FileImageDescriptorTest extends TestCase {
 		assertNull("FileImageDescriptor's ImageFileNameProvider does return a 250% path", imagePath250);
 	}
 
+	@Test
 	public void testImageFileNameProviderGetxName() {
 		ImageDescriptor descriptor = ImageDescriptor.createFromFile(FileImageDescriptorTest.class,
 				"/icons/imagetests/zoomIn.png");
@@ -230,6 +236,7 @@ public class FileImageDescriptorTest extends TestCase {
 		assertNull("FileImageDescriptor's ImageFileNameProvider does return a @1.5x path", imagePath150);
 	}
 
+	@Test
 	public void testAdaptToURL() {
 		ImageDescriptor descriptor = ImageDescriptor.createFromFile(FileImageDescriptorTest.class,
 				"/icons/imagetests/rectangular-57x16.png");

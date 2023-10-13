@@ -14,6 +14,11 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.images;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Objects;
 
 import org.eclipse.jface.resource.ColorDescriptor;
@@ -32,14 +37,15 @@ import org.eclipse.swt.graphics.ImageDataProvider;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
+import org.junit.After;
 import org.junit.Assert;
-
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @since 3.1
  */
-public class ResourceManagerTest extends TestCase {
+public class ResourceManagerTest {
 
 	private DeviceResourceDescriptor<?>[] descriptors;
 	private Image testImage;
@@ -90,9 +96,8 @@ public class ResourceManagerTest extends TestCase {
 		}
 	}
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		TestDescriptor.refCount = 0;
 		Display display = Display.getCurrent();
 		globalResourceManager = new DeviceResourceManager(display);
@@ -140,9 +145,8 @@ public class ResourceManagerTest extends TestCase {
 		numDupes = 12;
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@After
+	public void tearDown() throws Exception {
 		globalResourceManager.dispose();
 		Assert.assertEquals("Detected leaks", 0, TestDescriptor.refCount);
 		testImage.dispose();
@@ -162,6 +166,7 @@ public class ResourceManagerTest extends TestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testDescriptorAllocations() throws Exception {
 		Display display = Display.getCurrent();
 
@@ -191,6 +196,7 @@ public class ResourceManagerTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testDeviceManagerAllocations() throws Exception {
 
 		// Allocate resources directly using the descriptors.
@@ -233,6 +239,7 @@ public class ResourceManagerTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testLocalManagerAllocations() throws Exception {
 		// These arrays are indices into the descriptors array. For example, {0,1,7}
 		// is a quick shorthand to indicate we should allocate resources 0, 1, and 7.
@@ -279,6 +286,7 @@ public class ResourceManagerTest extends TestCase {
 
 	}
 
+	@Test
 	public void testImageDataResourceAllocations() throws Exception {
 		// These arrays are indices into the descriptors array. For example, {0,1,7}
 		// is a quick shorthand to indicate we should allocate resources 0, 1, and 7.
@@ -293,6 +301,7 @@ public class ResourceManagerTest extends TestCase {
 	/*
 	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=135088
 	 */
+	@Test
 	public void testResourceManagerFind() throws Exception {
 		DeviceResourceDescriptor<?> descriptor = descriptors[0];
 		Object resource = globalResourceManager.find(descriptor);
