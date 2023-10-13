@@ -14,6 +14,9 @@
 
 package org.eclipse.jface.tests.action;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -22,28 +25,29 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.CoolItem;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 
 /**
  * @since 3.6
  */
-public class CoolBarManagerTest extends JFaceActionTest {
+public class CoolBarManagerTest {
 
 	private CoolBarManager coolBarManager;
 
 	private CoolBar coolBar;
 
-	public CoolBarManagerTest(String name) {
-		super(name);
-	}
+	@Rule
+	public JFaceActionRule rule = new JFaceActionRule();
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
+	@Before
+	public void setUp() throws Exception {
 		coolBarManager = new CoolBarManager(SWT.FLAT);
-		coolBar = coolBarManager.createControl(getShell());
+		coolBar = coolBarManager.createControl(rule.getShell());
 	}
 
+	@Test
 	public void testResetItemOrderBug293433() {
 		IToolBarManager manager = new ToolBarManager();
 		manager.add(new Action() {

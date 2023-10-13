@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.action;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ContributionItem;
@@ -20,22 +23,18 @@ import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
+import org.junit.Rule;
+import org.junit.Test;
 
 /**
  * Tests for the [I]ContributionItem API.
  *
  * @since 3.1
  */
-public class ContributionItemTest extends JFaceActionTest {
+public class ContributionItemTest {
 
-	/**
-	 * Constructs a new test with the given name.
-	 *
-	 * @param name the name of the test
-	 */
-	public ContributionItemTest(String name) {
-		super(name);
-	}
+	@Rule
+	public JFaceActionRule rule = new JFaceActionRule();
 
 	/**
 	 * Tests that a contribution item's parent link is set when added to a
@@ -43,6 +42,7 @@ public class ContributionItemTest extends JFaceActionTest {
 	 * regression test for: Bug 80569 [Contributions] Parent of contribution item
 	 * not cleared when item removed from manager
 	 */
+	@Test
 	public void testParentLink() {
 		IContributionManager mgr = new DummyContributionManager();
 		ContributionItem item = new ActionContributionItem(new DummyAction());
@@ -59,14 +59,15 @@ public class ContributionItemTest extends JFaceActionTest {
 	 * [ActionSets] ActionContributionItem.MODE_FORCE_TEXT should apply to Buttons
 	 * too
 	 */
+	@Test
 	public void testForceModeText() {
 		Action action = new DummyAction();
 		action.setImageDescriptor(ResourceLocator
 				.imageDescriptorFromBundle("org.eclipse.jface.tests", "icons/anything.gif").orElse(null));
 		ActionContributionItem item = new ActionContributionItem(action);
-		item.fill(getShell());
+		item.fill(rule.getShell());
 
-		Control[] children = getShell().getChildren();
+		Control[] children = rule.getShell().getChildren();
 		Button button = (Button) children[0];
 		assertEquals("", button.getText());
 		action.setText("Text");

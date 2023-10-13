@@ -15,6 +15,15 @@
 
 package org.eclipse.jface.tests.action;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.Arrays;
 
 import org.eclipse.jface.action.Action;
@@ -33,14 +42,15 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.junit.Rule;
+import org.junit.Test;
 
-public class ToolBarManagerTest extends JFaceActionTest {
+public class ToolBarManagerTest {
 
 	private static final int DEFAULT_STYLE = SWT.WRAP | SWT.FLAT | SWT.RIGHT;
 
-	public ToolBarManagerTest(String name) {
-		super(name);
-	}
+	@Rule
+	public JFaceActionRule rule = new JFaceActionRule();
 
 	public void testSetStyleWhenToolBarDoesNotExist() {
 		Composite parent = createComposite();
@@ -52,6 +62,7 @@ public class ToolBarManagerTest extends JFaceActionTest {
 		verifyOrientation(toolBar, SWT.VERTICAL);
 	}
 
+	@Test
 	public void testSetStyleWhenToolBarExists() {
 		Composite parent = createComposite();
 		ToolBar toolBar = new ToolBar(parent, DEFAULT_STYLE | SWT.VERTICAL);
@@ -68,6 +79,7 @@ public class ToolBarManagerTest extends JFaceActionTest {
 		verifyOrientation(newToolBar, SWT.HORIZONTAL);
 	}
 
+	@Test
 	public void testCreateControlWhenParentNull() {
 		Composite parent = createComposite();
 		ToolBarManager manager = new ToolBarManager(DEFAULT_STYLE | SWT.VERTICAL);
@@ -79,6 +91,7 @@ public class ToolBarManagerTest extends JFaceActionTest {
 		assertSame(toolBar, manager.createControl(null));
 	}
 
+	@Test
 	public void testDispose() {
 		Composite parent = createComposite();
 		ToolBar toolBar = new ToolBar(parent, DEFAULT_STYLE | SWT.VERTICAL);
@@ -88,6 +101,7 @@ public class ToolBarManagerTest extends JFaceActionTest {
 		assertTrue(toolBar.isDisposed());
 	}
 
+	@Test
 	public void testUpdate() {
 		ToolBarManager manager = new ToolBarManager();
 		ObservableControlContribution item = new ObservableControlContribution("i want to be updated!");
@@ -104,6 +118,7 @@ public class ToolBarManagerTest extends JFaceActionTest {
 		assertTrue("computeWidth was not called", item.computeWidthCalled);
 	}
 
+	@Test
 	public void testControlContributionIsSet() {
 		ToolBarManager manager = new ToolBarManager();
 		manager.add(new ControlContribution("test") {
@@ -122,6 +137,7 @@ public class ToolBarManagerTest extends JFaceActionTest {
 		}
 	}
 
+	@Test
 	public void testDefaultImageIsGray() {
 		boolean oldState = ActionContributionItem.getUseColorIconsInToolbars();
 		try {
@@ -151,6 +167,7 @@ public class ToolBarManagerTest extends JFaceActionTest {
 		}
 	}
 
+	@Test
 	public void testActionImagesAreSet() {
 		boolean oldState = ActionContributionItem.getUseColorIconsInToolbars();
 		try {
@@ -201,6 +218,7 @@ public class ToolBarManagerTest extends JFaceActionTest {
 		}
 	}
 
+	@Test
 	public void testMissingIsSet() {
 		boolean oldState = ActionContributionItem.getUseColorIconsInToolbars();
 		try {
@@ -229,7 +247,7 @@ public class ToolBarManagerTest extends JFaceActionTest {
 	}
 
 	private Composite createComposite() {
-		return new Composite(getShell(), SWT.DEFAULT);
+		return new Composite(rule.getShell(), SWT.DEFAULT);
 	}
 
 	private static void verifyOrientation(ToolBar toolBar, int expected) {
