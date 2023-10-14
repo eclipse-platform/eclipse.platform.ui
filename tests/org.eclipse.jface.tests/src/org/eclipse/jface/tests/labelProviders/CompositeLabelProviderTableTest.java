@@ -14,6 +14,8 @@
 
 package org.eclipse.jface.tests.labelProviders;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.IViewerLabelProvider;
@@ -26,6 +28,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+import org.junit.Test;
 
 /**
  * CompositeLabelProviderTableTest tests a table that is a
@@ -59,15 +62,6 @@ public class CompositeLabelProviderTableTest extends CompositeLabelProviderTest 
 		}
 	}
 
-	/**
-	 * Create a new instance of the recevier.
-	 *
-	 * @param name
-	 */
-	public CompositeLabelProviderTableTest(String name) {
-		super(name);
-	}
-
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
 
@@ -82,6 +76,7 @@ public class CompositeLabelProviderTableTest extends CompositeLabelProviderTest 
 	/**
 	 * Test that all of the colours and fonts from the label provider are applied.
 	 */
+	@Test
 	public void testColorsAndFonts() {
 		Table table = (Table) fViewer.getControl();
 		TableItem item = table.getItem(0);

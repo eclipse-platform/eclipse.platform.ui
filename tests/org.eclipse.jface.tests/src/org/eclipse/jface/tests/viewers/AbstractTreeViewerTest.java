@@ -13,6 +13,12 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,14 +28,12 @@ import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
+import org.junit.After;
+import org.junit.Test;
 
 public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 
 	AbstractTreeViewer fTreeViewer;
-
-	public AbstractTreeViewerTest(String name) {
-		super(name);
-	}
 
 	protected void assertEqualsArray(String s, Object[] a1, Object[] a2) {
 		int s1 = a1.length;
@@ -50,6 +54,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 
 	protected abstract int getItemCount(TestElement element); // was IElement
 
+	@Test
 	public void testBulkExpand() {
 		// navigate
 		TestElement first = fRootElement.getFirstChild();
@@ -77,6 +82,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		assertEqualsArray("old and new expand state are the same", list1, list2);
 	}
 
+	@Test
 	public void testDeleteChildExpanded() {
 		TestElement first = fRootElement.getFirstChild();
 		TestElement first2 = first.getFirstChild();
@@ -87,12 +93,14 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		assertNull("first child is not visible", fViewer.testFindItem(first2));
 	}
 
+	@Test
 	public void testDeleteChildren() {
 		TestElement first = fRootElement.getFirstChild();
 		first.deleteChildren();
 		assertEquals("no children", 0, getItemCount(first));
 	}
 
+	@Test
 	public void testDeleteChildrenExpanded() {
 		TestElement first = fRootElement.getFirstChild();
 		TestElement first2 = first.getFirstChild();
@@ -103,6 +111,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		assertEquals("no children", 0, getItemCount(first));
 	}
 
+	@Test
 	public void testExpand() {
 		TestElement first = fRootElement.getFirstChild();
 		TestElement first2 = first.getFirstChild();
@@ -111,6 +120,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		assertNotNull("first child is visible", fViewer.testFindItem(first2));
 	}
 
+	@Test
 	public void testExpandElement() {
 		TestElement first = fRootElement.getFirstChild();
 		TestElement first2 = first.getFirstChild();
@@ -120,6 +130,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		assertNotNull("first2 is visible", fViewer.testFindItem(first2));
 	}
 
+	@Test
 	public void testExpandElementAgain() {
 		TestElement first = fRootElement.getFirstChild();
 		TestElement first2 = first.getFirstChild();
@@ -136,6 +147,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		assertNotNull("first3 is visible", fViewer.testFindItem(first3));
 	}
 
+	@Test
 	public void testExpandToLevel() {
 		TestElement first = fRootElement.getFirstChild();
 		TestElement first2 = first.getFirstChild();
@@ -151,6 +163,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		assertNotNull("first3 is visible", fViewer.testFindItem(first3));
 	}
 
+	@Test
 	public void testFilterExpanded() {
 		TestElement first = fRootElement.getFirstChild();
 		TestElement first2 = first.getFirstChild();
@@ -160,12 +173,14 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		assertEquals("filtered count", 5, getItemCount());
 	}
 
+	@Test
 	public void testInsertChildReveal() {
 		TestElement first = fRootElement.getFirstChild();
 		TestElement newElement = first.addChild(TestModelChange.INSERT | TestModelChange.REVEAL);
 		assertNotNull("new sibling is visible", fViewer.testFindItem(newElement));
 	}
 
+	@Test
 	public void testInsertChildRevealSelect() {
 		TestElement last = fRootElement.getLastChild();
 		TestElement newElement = last
@@ -174,6 +189,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		assertSelectionEquals("new element is selected", newElement);
 	}
 
+	@Test
 	public void testInsertChildRevealSelectExpanded() {
 		TestElement first = fRootElement.getFirstChild();
 		TestElement newElement = first
@@ -189,6 +205,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 	 * added dummy node even though parent item was expanded - in updateChildren, it
 	 * wasn't handling a dummy node
 	 */
+	@Test
 	public void testRefreshWithAddedChildren() {
 		TestElement parent = fRootElement.addChild(TestModelChange.INSERT);
 		TestElement child = parent.addChild(TestModelChange.INSERT);
@@ -216,6 +233,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 	 * refreshed rather than using add for new A
 	 * AbstractTreeViewer.updateChildren(...) was not properly handling it
 	 */
+	@Test
 	public void testRefreshWithDuplicateChild() {
 		TestElement first = fRootElement.getFirstChild();
 		TestElement newElement = (TestElement) first.clone();
@@ -229,6 +247,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 	 * expanded, B is not - A gets deleted - B gets expanded because it reused A's
 	 * item
 	 */
+	@Test
 	public void testRefreshWithReusedItems() {
 		// TestElement a= fRootElement.getFirstChild();
 		// TestElement aa= a.getChildAt(0);
@@ -243,6 +262,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		// assertFalse(expandedAfter.contains(ab));
 	}
 
+	@Test
 	public void testRenameChildElement() {
 		TestElement first = fRootElement.getFirstChild();
 		TestElement first2 = first.getFirstChild();
@@ -261,6 +281,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 	 * causing IDE to crash Problem was: - node A has child A - setExpanded with A
 	 * in the list caused an infinite recursion
 	 */
+	@Test
 	public void testSetExpandedWithCycle() {
 		TestElement first = fRootElement.getFirstChild();
 		first.addChild(first, new TestModelChange(TestModelChange.INSERT, first, first));
@@ -272,6 +293,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 	 * Test for Bug 41710 - assertion that an object may not be added to a given
 	 * TreeItem more than once.
 	 */
+	@Test
 	public void testSetDuplicateChild() {
 		// Widget root = fViewer.testFindItem(fRootElement);
 		// assertNotNull(root);
@@ -290,6 +312,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 	 * not backwards for an equal element, if the comparator returned 0. The example
 	 * below is a case where the previous implementation would fail.
 	 */
+	@Test
 	public void testChildIsNotDuplicatedWhenCompareEquals() {
 		fTreeViewer.setComparator(new TestLabelComparator());
 		fRootElement.deleteChildren();
@@ -310,6 +333,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 		assertEquals("Same element added to parent twice.", 3, tree.getItems().length);
 	}
 
+	@Test
 	public void testContains() {
 		// some random element.
 		assertFalse("element must not be available on the viewer", fTreeViewer.contains(fRootElement, ""));
@@ -330,6 +354,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 				fTreeViewer.contains(fRootElement.getFirstChild(), fRootElement.getFirstChild().getFirstChild()));
 	}
 
+	@After
 	@Override
 	public void tearDown() {
 		super.tearDown();

@@ -25,10 +25,6 @@ import org.eclipse.swt.widgets.Tree;
  */
 public class VirtualTreeViewerTest extends TreeViewerTest {
 
-	public VirtualTreeViewerTest(String name) {
-		super(name);
-	}
-
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
 		Tree tree = new Tree(parent, SWT.VIRTUAL);

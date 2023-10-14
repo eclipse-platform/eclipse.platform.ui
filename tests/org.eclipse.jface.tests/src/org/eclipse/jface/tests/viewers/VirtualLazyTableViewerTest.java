@@ -14,6 +14,12 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +27,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.Table;
+import org.junit.After;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * The VirtualLazyTableViewerTest is a test of table viewers with lazy
@@ -31,15 +40,6 @@ public class VirtualLazyTableViewerTest extends VirtualTableViewerTest {
 	private List<Integer> updatedElements;
 	// by default, no failure is triggered when updateElement is called
 	int updatedElementFailureTriggerIndex = -1;
-
-	/**
-	 * Create a new instance of the receiver/
-	 *
-	 * @param name
-	 */
-	public VirtualLazyTableViewerTest(String name) {
-		super(name);
-	}
 
 	@Override
 	protected TestModelContentProvider getContentProvider() {
@@ -59,6 +59,7 @@ public class VirtualLazyTableViewerTest extends VirtualTableViewerTest {
 		fModel = fRootElement.getModel();
 	}
 
+	@After
 	@Override
 	public void tearDown() {
 		super.tearDown();
@@ -76,6 +77,7 @@ public class VirtualLazyTableViewerTest extends VirtualTableViewerTest {
 	/**
 	 * Test selecting all elements.
 	 */
+	@Test
 	public void testSetIndexedSelection() {
 		TestElement[] children = fRootElement.getChildren();
 		int selectionSize = children.length / 2;
@@ -102,6 +104,7 @@ public class VirtualLazyTableViewerTest extends VirtualTableViewerTest {
 
 	}
 
+	@Test
 	public void testSetInputDoesNotMaterializeEverything() {
 		fViewer.setInput(null);
 		updatedElements.clear();
@@ -120,6 +123,7 @@ public class VirtualLazyTableViewerTest extends VirtualTableViewerTest {
 		assertEquals(materializedSize, updatedElements.size());
 	}
 
+	@Test
 	public void testBug160153() {
 		int childCount = fRootElement.getChildCount();
 		TestElement lastChild = fRootElement.getChildAt(childCount - 1);
@@ -131,45 +135,33 @@ public class VirtualLazyTableViewerTest extends VirtualTableViewerTest {
 		assertNull("last Child should no longer be in the map", fViewer.testFindItem(lastChild));
 	}
 
+	@Ignore("This test is no use here as it is based on the assumption that all items are created.")
 	@Override
 	public void testSorter() {
-		// This test is no use here as it is
-		// based on the assumption that all items
-		// are created.
 	}
 
+	@Ignore("This test is no use here as it is based on the assumption that all items are created.")
 	@Override
 	public void testRenameWithSorter() {
-		// This test is no use here as it is
-		// based on the assumption that all items
-		// are created.
 	}
 
+	@Ignore("This test is no use here as it is based on the assumption that all items are created.")
 	@Override
 	public void testSetFilters() {
-		// This test is no use here as it is
-		// based on the assumption that all items
-		// are created.
 	}
 
+	@Ignore("This test is no use here as it is based on the assumption that all items are created.")
 	@Override
 	public void testFilter() {
-		// This test is no use here as it is
-		// based on the assumption that all items
-		// are created.
 	}
 
+	@Ignore("This test is no use here as it is based on the assumption that all items are created.")
 	@Override
 	public void testRenameWithFilter() {
-		// This test is no use here as it is
-		// based on the assumption that all items
-		// are created.
 	}
 
+	@Ignore("This test is no use here as it is based on the assumption that all items are created.")
 	@Override
 	public void testContains() {
-		// This test is no use here as it is
-		// based on the assumption that all items
-		// are created.
 	}
 }
