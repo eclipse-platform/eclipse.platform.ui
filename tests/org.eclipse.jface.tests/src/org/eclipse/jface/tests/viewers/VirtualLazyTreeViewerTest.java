@@ -15,19 +15,26 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
+import org.junit.Ignore;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TestName;
 
 public class VirtualLazyTreeViewerTest extends TreeViewerTest {
 
-	protected int setDataCalls = 0;
+	@Rule
+	public TestName testName = new TestName();
 
-	public VirtualLazyTreeViewerTest(String name) {
-		super(name);
-	}
+	protected int setDataCalls = 0;
 
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
@@ -50,179 +57,185 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
 		super.setInput();
 	}
 
-	@Override
-	public void tearDown() {
-		super.tearDown();
-//    	System.out.println("calls: " + setDataCalls);
-	}
-
+	@Test
 	public void testLeafIsExpandable() {
 		TestElement leafElement = fRootElement.getChildAt(2).getChildAt(3).getChildAt(2);
 		assertEquals(0, leafElement.getChildCount());
 		assertFalse(fTreeViewer.isExpandable(leafElement));
 	}
 
+	@Test
 	public void testRootIsExpandable() {
 		TestElement rootElement = fRootElement.getChildAt(2);
 		assertTrue(rootElement.getChildCount() > 0);
 		assertTrue(fTreeViewer.isExpandable(rootElement));
 	}
 
+	@Test
 	public void testNodeIsExpandable() {
 		TestElement nodeElement = fRootElement.getChildAt(2).getChildAt(3);
 		assertTrue(nodeElement.getChildCount() > 0);
 		assertTrue(fTreeViewer.isExpandable(nodeElement));
 	}
 
+	@Ignore("Test leads to infinite loop. Duplicate children are a bad idea in virtual trees.")
 	@Override
 	public void testRefreshWithDuplicateChild() {
-		// Test leads to infinite loop. Duplicate children are a bad idea in virtual trees.
 	}
 
+	@Ignore("Test leads to infinite loop. Cycles are a bad idea in virtual trees.")
 	@Override
 	public void testSetExpandedWithCycle() {
-		// Test leads to infinite loop. Cycles are a bad idea in virtual trees.
 	}
 
+	@Ignore("no need to test since virtual trees do not support filtering")
 	@Override
 	public void testFilterExpanded() {
-		// no need to test since virtual trees do not support filtering
 	}
 
+	@Ignore("no need to test since virtual trees do not support filtering")
 	@Override
 	public void testFilter() {
-		// no need to test since virtual trees do not support filtering
 	}
 
+	@Ignore("no need to test since virtual trees do not support filtering")
 	@Override
 	public void testSetFilters() {
-		// no need to test since virtual trees do not support filtering
 	}
 
+	@Ignore("no need to test since virtual trees do not support filtering")
 	@Override
 	public void testInsertSiblingWithFilterFiltered() {
-		// no need to test since virtual trees do not support filtering
 	}
 
+	@Ignore("no need to test since virtual trees do not support filtering")
 	@Override
 	public void testInsertSiblingWithFilterNotFiltered() {
-		// no need to test since virtual trees do not support filtering
 	}
 
+	@Ignore("no need to test since virtual trees do not support sorting")
 	@Override
 	public void testInsertSiblingWithSorter() {
 		// no need to test since virtual trees do not support sorting
 	}
 
+	@Ignore("no need to test since virtual trees do not support filtering")
 	@Override
 	public void testRenameWithFilter() {
-		// no need to test since virtual trees do not support filtering
 	}
 
+	@Ignore("no need to test since virtual trees do not support sorting")
 	@Override
 	public void testRenameWithSorter() {
-		// no need to test since virtual trees do not support sorting
 	}
 
+	@Ignore("no need to test since virtual trees do not support sorting")
 	@Override
 	public void testSorter() {
-		// no need to test since virtual trees do not support sorting
 	}
 
+	@Ignore("test is not relevant for lazy tree viewer")
 	@Override
 	public void testChildIsNotDuplicatedWhenCompareEquals() {
-		// test is not relevant for lazy tree viewer
 	}
 
 	// Temporary overrides for bug 347491:
+	@Test
 	@Override
 	public void testRefreshWithAddedChildren() {
 		if (disableTestsBug347491) {
 			return;
 		}
 		if (setDataCalls == 0) {
-			System.err.println("SWT.SetData is not received. Cancelled test " + getName());
+			System.err.println("SWT.SetData is not received. Cancelled test " + testName.getMethodName());
 			return;
 		}
 		super.testRefreshWithAddedChildren();
 	}
 
+	@Test
 	@Override
 	public void testDeleteSibling() {
 		if (disableTestsBug347491) {
 			return;
 		}
 		if (setDataCalls == 0) {
-			System.err.println("SWT.SetData is not received. Cancelled test " + getName());
+			System.err.println("SWT.SetData is not received. Cancelled test " + testName.getMethodName());
 			return;
 		}
 		super.testDeleteSibling();
 	}
 
+	@Test
 	@Override
 	public void testExpandToLevel() {
 		if (setDataCalls == 0) {
-			System.err.println("SWT.SetData is not received. Cancelled test " + getName());
+			System.err.println("SWT.SetData is not received. Cancelled test " + testName.getMethodName());
 			return;
 		}
 		super.testExpandToLevel();
 	}
 
+	@Test
 	@Override
 	public void testInsertSibling() {
 		if (disableTestsBug347491) {
 			return;
 		}
 		if (setDataCalls == 0) {
-			System.err.println("SWT.SetData is not received. Cancelled test " + getName());
+			System.err.println("SWT.SetData is not received. Cancelled test " + testName.getMethodName());
 			return;
 		}
 		super.testInsertSibling();
 	}
 
+	@Test
 	@Override
 	public void testInsertSiblings() {
 		if (disableTestsBug347491) {
 			return;
 		}
 		if (setDataCalls == 0) {
-			System.err.println("SWT.SetData is not received. Cancelled test " + getName());
+			System.err.println("SWT.SetData is not received. Cancelled test " + testName.getMethodName());
 			return;
 		}
 		super.testInsertSiblings();
 	}
 
+	@Test
 	@Override
 	public void testSetInput() {
 		if (disableTestsBug347491) {
 			return;
 		}
 		if (setDataCalls == 0) {
-			System.err.println("SWT.SetData is not received. Cancelled test " + getName());
+			System.err.println("SWT.SetData is not received. Cancelled test " + testName.getMethodName());
 			return;
 		}
 		super.testSetInput();
 	}
 
+	@Test
 	@Override
 	public void testSomeChildrenChanged() {
 		if (disableTestsBug347491) {
 			return;
 		}
 		if (setDataCalls == 0) {
-			System.err.println("SWT.SetData is not received. Cancelled test " + getName());
+			System.err.println("SWT.SetData is not received. Cancelled test " + testName.getMethodName());
 			return;
 		}
 		super.testSomeChildrenChanged();
 	}
 
+	@Test
 	@Override
 	public void testWorldChanged() {
 		if (disableTestsBug347491) {
 			return;
 		}
 		if (setDataCalls == 0) {
-			System.err.println("SWT.SetData is not received. Cancelled test " + getName());
+			System.err.println("SWT.SetData is not received. Cancelled test " + testName.getMethodName());
 			return;
 		}
 		super.testWorldChanged();

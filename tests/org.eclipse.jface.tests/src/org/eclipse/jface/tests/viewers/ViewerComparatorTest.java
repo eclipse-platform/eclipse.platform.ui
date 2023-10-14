@@ -228,8 +228,4 @@ public abstract class ViewerComparatorTest extends ViewerTestCase {
 
 	}
 
-	public ViewerComparatorTest(String name) {
-		super(name);
-	}
-
 }

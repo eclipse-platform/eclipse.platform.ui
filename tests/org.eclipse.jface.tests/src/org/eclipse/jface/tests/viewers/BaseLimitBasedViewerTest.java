@@ -29,10 +29,6 @@ public class BaseLimitBasedViewerTest extends ViewerTestCase {
 	protected static final int VIEWER_LIMIT = 4;
 	protected static final int DEFAULT_ELEMENTS_COUNT = 40;
 
-	public BaseLimitBasedViewerTest(String name) {
-		super(name);
-	}
-
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
 		return null;

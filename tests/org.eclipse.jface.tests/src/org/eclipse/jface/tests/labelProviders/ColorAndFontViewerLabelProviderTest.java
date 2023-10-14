@@ -14,6 +14,7 @@
 
 package org.eclipse.jface.tests.labelProviders;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 import org.eclipse.jface.viewers.IColorProvider;
@@ -30,6 +31,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+import org.junit.Test;
 
 /**
  * ColorAndFontProviderTest is a test of a color and font provider that is an
@@ -72,15 +74,6 @@ public class ColorAndFontViewerLabelProviderTest extends CompositeLabelProviderT
 
 	}
 
-	/**
-	 * Create a new instance of the receiver.
-	 *
-	 * @param name
-	 */
-	public ColorAndFontViewerLabelProviderTest(String name) {
-		super(name);
-	}
-
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
 		initializeColors(parent);
@@ -94,6 +87,7 @@ public class ColorAndFontViewerLabelProviderTest extends CompositeLabelProviderT
 	/**
 	 * Test that all of the colours and fonts from the label provider are applied.
 	 */
+	@Test
 	public void testColorsAndFonts() {
 		Table table = (Table) fViewer.getControl();
 		TableItem item = table.getItem(0);

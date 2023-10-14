@@ -15,6 +15,8 @@
 
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -22,6 +24,8 @@ import org.eclipse.jface.viewers.TreeNode;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
+import org.junit.After;
+import org.junit.Test;
 
 /**
  * Description of the bug: Initially tree is populated by way shown below and is
@@ -46,13 +50,6 @@ import org.eclipse.swt.widgets.Composite;
 public class Bug138608Test extends ViewerTestCase {
 
 	private TreeContentProvider contentProvider;
-
-	/**
-	 * @param name
-	 */
-	public Bug138608Test(String name) {
-		super(name);
-	}
 
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
@@ -83,6 +80,7 @@ public class Bug138608Test extends ViewerTestCase {
 		return (TreeViewer) fViewer;
 	}
 
+	@Test
 	public void testBug138608() {
 		processEvents();
 		// Add 'd' as child of 'b' in data model first
@@ -104,6 +102,7 @@ public class Bug138608Test extends ViewerTestCase {
 
 	}
 
+	@After
 	@Override
 	public void tearDown() {
 		contentProvider = null;

@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
@@ -22,6 +24,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.junit.Test;
 
 /**
  * This testcase for Bug 242231 checks that applyEditorValue(), which has been
@@ -31,13 +34,6 @@ import org.eclipse.swt.widgets.Composite;
  * @since 3.5
  */
 public class Bug242231Test extends ViewerTestCase {
-
-	/**
-	 * @param name
-	 */
-	public Bug242231Test(String name) {
-		super(name);
-	}
 
 	protected static final String[] COMBO_ITEMS = new String[] { "default value", "some value", "value changed" };
 	private TableViewer tableViewer;
@@ -82,6 +78,7 @@ public class Bug242231Test extends ViewerTestCase {
 		};
 	}
 
+	@Test
 	public void testBug242231() {
 		// get a test element from the model and set the label to a known value
 		TestElement testElement = fRootElement.getChildAt(0);

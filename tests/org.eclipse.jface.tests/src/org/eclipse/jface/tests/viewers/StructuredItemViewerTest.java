@@ -13,15 +13,15 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ICheckable;
+import org.junit.Test;
 
 public abstract class StructuredItemViewerTest extends StructuredViewerTest {
 
-	public StructuredItemViewerTest(String name) {
-		super(name);
-	}
-
+	@Test
 	public void testCheckElement() {
 
 		if (fViewer instanceof ICheckable ctv) {

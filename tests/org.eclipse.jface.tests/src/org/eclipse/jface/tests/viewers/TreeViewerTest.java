@@ -21,10 +21,6 @@ import org.eclipse.swt.widgets.TreeItem;
 
 public class TreeViewerTest extends AbstractTreeViewerTest {
 
-	public TreeViewerTest(String name) {
-		super(name);
-	}
-
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
 		fTreeViewer = new TreeViewer(parent);
@@ -54,7 +50,4 @@ public class TreeViewerTest extends AbstractTreeViewerTest {
 		return tree.getItems()[at].getText();
 	}
 
-	public static void main(String args[]) {
-		junit.textui.TestRunner.run(TreeViewerTest.class);
-	}
 }

@@ -20,10 +20,6 @@ import org.eclipse.swt.widgets.Composite;
 
 public class TreeViewerWithLimitCompatibilityTest extends TreeViewerTest {
 
-	public TreeViewerWithLimitCompatibilityTest(String name) {
-		super(name);
-	}
-
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
 		ColumnViewer viewer = (ColumnViewer) super.createViewer(parent);
@@ -31,10 +27,6 @@ public class TreeViewerWithLimitCompatibilityTest extends TreeViewerTest {
 		// this should not break any existing tests.
 		viewer.setDisplayIncrementally(Integer.MAX_VALUE);
 		return viewer;
-	}
-
-	public static void main(String args[]) {
-		junit.textui.TestRunner.run(TreeViewerWithLimitCompatibilityTest.class);
 	}
 
 }

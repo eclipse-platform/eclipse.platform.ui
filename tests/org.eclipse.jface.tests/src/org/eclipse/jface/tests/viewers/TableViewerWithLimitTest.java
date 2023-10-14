@@ -14,6 +14,10 @@
 
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,21 +38,20 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+import org.junit.Test;
 
 public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 
-	public TableViewerWithLimitTest(String name) {
-		super(name);
-	}
-
 	TestTableViewer tableViewer;
 
+	@Test
 	public void testLimitedItemsCreatedWithExpansionNode() {
 		Table table = tableViewer.getTable();
 		TableItem[] items = table.getItems();
 		assertLimitedItems(items);
 	}
 
+	@Test
 	public void testAddElement() {
 		processEvents();
 		Table table = tableViewer.getTable();
@@ -98,6 +101,7 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		assertLimitedItems(table.getItems());
 	}
 
+	@Test
 	public void testRemoveElement() {
 		processEvents();
 		Table table = tableViewer.getTable();
@@ -140,6 +144,7 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 
 	}
 
+	@Test
 	public void testClickExpandableNode() {
 		Table table = tableViewer.getTable();
 		assertLimitedItems(table.getItems());
@@ -165,6 +170,7 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 				itemsAfterExp[itemsAfterExp.length - 1].getData().getClass(), DataModel.class);
 	}
 
+	@Test
 	public void testApplyFilter() {
 		Table table = tableViewer.getTable();
 		clickUntilAllExpandableNodes(table);
@@ -196,6 +202,7 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		processEvents();
 	}
 
+	@Test
 	public void testResetComparator() {
 		Table table = tableViewer.getTable();
 		// add an element at the end of the model. comparator will add it to right
@@ -213,6 +220,7 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		assertEquals("wrong item is found at given location", Integer.valueOf(4), data.id);
 	}
 
+	@Test
 	public void testSelection() {
 		// select an element which is not visible
 		DataModel toSelect = rootModel.get(rootModel.size() - VIEWER_LIMIT);
@@ -239,6 +247,7 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		assertTrue("Selection must not be empty", selection.isEmpty());
 	}
 
+	@Test
 	public void testRefresh() {
 		Table table = tableViewer.getTable();
 		assertLimitedItems(table.getItems());
@@ -286,6 +295,7 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		return expectedLabel;
 	}
 
+	@Test
 	public void testSetInput() {
 		List<DataModel> rootModel = new ArrayList<>();
 		DataModel rootLevel = new DataModel(Integer.valueOf(100));
@@ -298,6 +308,7 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		assertLimitedItems(tableViewer.getTable().getItems());
 	}
 
+	@Test
 	public void testBoundaryConditions() {
 		List<DataModel> dummy = new ArrayList<>();
 		dummy.add(new DataModel(Integer.valueOf(100)));
@@ -336,6 +347,7 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 
 	}
 
+	@Test
 	public void testContains() {
 		// some random element.
 		assertFalse("element must not be available on the viewer", tableViewer.contains(""));
@@ -370,10 +382,6 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 	protected void setInput() {
 		rootModel = createModel(DEFAULT_ELEMENTS_COUNT);
 		fViewer.setInput(rootModel);
-	}
-
-	public static void main(String args[]) {
-		junit.textui.TestRunner.run(TableViewerWithLimitTest.class);
 	}
 
 	private static void clickTableItem(Control viewerControl, TableItem item) {

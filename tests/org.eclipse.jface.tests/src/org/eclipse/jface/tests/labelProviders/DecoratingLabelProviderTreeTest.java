@@ -14,6 +14,8 @@
 
 package org.eclipse.jface.tests.labelProviders;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
@@ -25,6 +27,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.junit.Test;
 
 /**
  * @since 3.3
@@ -53,13 +56,6 @@ public class DecoratingLabelProviderTreeTest extends CompositeLabelProviderTest 
 		}
 	}
 
-	/**
-	 * @param name
-	 */
-	public DecoratingLabelProviderTreeTest(String name) {
-		super(name);
-	}
-
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
 
@@ -74,6 +70,7 @@ public class DecoratingLabelProviderTreeTest extends CompositeLabelProviderTest 
 	/**
 	 * Test that all of the colours and fonts from the label provider are applied.
 	 */
+	@Test
 	public void testColorsAndFonts() {
 		Tree tree = (Tree) fViewer.getControl();
 		TreeItem item = tree.getItem(0);

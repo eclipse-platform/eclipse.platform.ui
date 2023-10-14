@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import java.lang.reflect.Method;
 
 import org.eclipse.jface.viewers.ColumnViewer;
@@ -26,6 +30,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
+import org.junit.Test;
 
 public class TreeViewerColumnTest extends AbstractTreeViewerTest {
 
@@ -53,10 +58,6 @@ public class TreeViewerColumnTest extends AbstractTreeViewerTest {
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
 		}
-	}
-
-	public TreeViewerColumnTest(String name) {
-		super(name);
 	}
 
 	@Override
@@ -100,10 +101,6 @@ public class TreeViewerColumnTest extends AbstractTreeViewerTest {
 		return ((Tree) fViewer.getControl()).getItems()[at].getText();
 	}
 
-	public static void main(String args[]) {
-		junit.textui.TestRunner.run(TreeViewerColumnTest.class);
-	}
-
 	private static ViewerColumn getViewerColumn(ColumnViewer viewer, int index) {
 		Method method;
 		try {
@@ -115,6 +112,7 @@ public class TreeViewerColumnTest extends AbstractTreeViewerTest {
 		}
 	}
 
+	@Test
 	public void testViewerColumn() {
 		assertNull(getViewerColumn((TreeViewer) fViewer, -1));
 		assertNotNull(getViewerColumn((TreeViewer) fViewer, 0));
@@ -122,6 +120,7 @@ public class TreeViewerColumnTest extends AbstractTreeViewerTest {
 		assertNull(getViewerColumn((TreeViewer) fViewer, 2));
 	}
 
+	@Test
 	@Override
 	public void testLabelProvider() {
 		TreeViewer viewer = (TreeViewer) fViewer;
@@ -139,6 +138,7 @@ public class TreeViewerColumnTest extends AbstractTreeViewerTest {
 		fViewer.refresh();
 	}
 
+	@Test
 	@Override
 	public void testLabelProviderStateChange() {
 		TreeViewer viewer = (TreeViewer) fViewer;

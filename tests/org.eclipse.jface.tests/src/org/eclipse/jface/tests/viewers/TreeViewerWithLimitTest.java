@@ -14,6 +14,11 @@
 
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,15 +31,13 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.internal.ExpandableNode;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
+import org.junit.Test;
 
 public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 
 	private TestTreeViewer treeViewer;
 
-	public TreeViewerWithLimitTest(String name) {
-		super(name);
-	}
-
+	@Test
 	public void testSetSelection() {
 		DataModel firstEle = rootModel.get(0);
 		assertSetSelection(firstEle);
@@ -60,6 +63,7 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		assertEquals("incorrect element is selected", firstEle, selection.getFirstElement());
 	}
 
+	@Test
 	public void testReveal() throws Exception {
 		DataModel firstEle = rootModel.get(0);
 		DataModel toReveal = firstEle.children.get(2).children.get(2);
@@ -84,6 +88,7 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		assertTrue("item to select must be inside expandable node", found);
 	}
 
+	@Test
 	public void testCollapseAll() {
 		treeViewer.expandAll();
 		processEvents();
@@ -99,9 +104,11 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		}
 	}
 
+	@Test
 	public void testCollapseToLevel() {
 	}
 
+	@Test
 	public void testExpandAll() {
 		treeViewer.expandAll();
 		processEvents();
@@ -131,6 +138,7 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		return rootLevelItems;
 	}
 
+	@Test
 	public void testExpandToLevelInt() {
 		treeViewer.expandToLevel(2, true);
 		processEvents();
@@ -149,6 +157,7 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		assertNull("Dummy tree item data must be null", items[0].getData());
 	}
 
+	@Test
 	public void testExpandToLevelObjectInt() {
 		DataModel firstEle = rootModel.get(0);
 		treeViewer.expandToLevel(firstEle, 3, true);
@@ -165,6 +174,7 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		}
 	}
 
+	@Test
 	public void testRemoveItemsAtParent() {
 		treeViewer.expandAll();
 		processEvents();
@@ -179,6 +189,7 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		assertEquals("element contains unexpected data", thirdOfFirst, visItem.getData());
 	}
 
+	@Test
 	public void testRemoveItem() {
 		processEvents();
 		treeViewer.expandAll();
@@ -193,6 +204,7 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		assertEquals("element contains unexpected data", firstEle, firstItem.getData());
 	}
 
+	@Test
 	public void testSetAutoExpandLevel() {
 		treeViewer.setInput(new DataModel(Integer.valueOf(100)));
 		treeViewer.setAutoExpandLevel(2);
@@ -207,6 +219,7 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		}
 	}
 
+	@Test
 	public void testInsert() {
 		TreeItem thirdItem = treeViewer.getTree().getItem(2);
 		assertEquals("unexpected element found at position 2", rootModel.get(2), thirdItem.getData());
@@ -218,6 +231,7 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		assertEquals("unexpected element found at position 2", newElement, thirdItem.getData());
 	}
 
+	@Test
 	public void testRefresh() {
 		DataModel firstEle = rootModel.remove(0);
 		TreeItem firstItem = treeViewer.getTree().getItem(0);
@@ -229,6 +243,7 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		assertEquals("element contains unexpected data", firstEle, firstItem.getData());
 	}
 
+	@Test
 	public void testSetFilters() {
 		DataModel firstEle = rootModel.get(0);
 		TreeItem firstItem = treeViewer.getTree().getItem(0);
@@ -240,6 +255,7 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		assertEquals("element contains unexpected data", firstEle, firstItem.getData());
 	}
 
+	@Test
 	public void testSetInput() {
 		List<DataModel> rootModel = new ArrayList<>();
 		DataModel rootLevel = new DataModel(Integer.valueOf(100));
@@ -252,6 +268,7 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		assertLimitedItems();
 	}
 
+	@Test
 	public void testContains() {
 		// some random element.
 		assertFalse("element must not be available on the viewer", treeViewer.contains(fRootElement, ""));
@@ -285,10 +302,6 @@ public class TreeViewerWithLimitTest extends BaseLimitBasedViewerTest {
 	protected void setInput() {
 		rootModel = createModel(DEFAULT_ELEMENTS_COUNT);
 		treeViewer.setInput(rootModel);
-	}
-
-	public static void main(String args[]) {
-		junit.textui.TestRunner.run(TreeViewerWithLimitTest.class);
 	}
 
 	private static class TestTreeContentProvider implements ITreeContentProvider {

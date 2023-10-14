@@ -14,6 +14,14 @@
 
 package org.eclipse.jface.tests.labelProviders;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.tests.viewers.ViewerTestCase;
@@ -45,6 +53,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Most of the setup has been taken from
@@ -132,12 +142,14 @@ public class DecoratingStyledCellLabelProviderTest extends ViewerTestCase {
 	protected String changeMe = "OLD";
 	private static int COLUMN_COUNT = 3;
 
-	public DecoratingStyledCellLabelProviderTest(String name) {
-		super(name);
+	@Before
+	@Override
+	public void setUp() {
 		entries = new CountryEntry[3];
 		entries[0] = new AustriaEntry();
 		entries[1] = new GermanyEntry();
 		entries[2] = new EnglandEntry();
+		super.setUp();
 	}
 
 	@Override
@@ -223,10 +235,12 @@ public class DecoratingStyledCellLabelProviderTest extends ViewerTestCase {
 	}
 
 	// the tests
+	@Test
 	public void testGetDecorationContext() {
 		assertNotNull(getDecoratingStyledLabelProvider().getDecorationContext());
 	}
 
+	@Test
 	public void testSetDecorationContext() {
 		try {
 			getDecoratingStyledLabelProvider().setDecorationContext(null);
@@ -236,6 +250,7 @@ public class DecoratingStyledCellLabelProviderTest extends ViewerTestCase {
 		}
 	}
 
+	@Test
 	public void testUpdate() {
 		Table table = ((TableViewer) fViewer).getTable();
 		String before = table.getItem(0).toString();
@@ -244,6 +259,7 @@ public class DecoratingStyledCellLabelProviderTest extends ViewerTestCase {
 		assertNotSame(before, table.getItem(0).toString());
 	}
 
+	@Test
 	public void testGetForeground() {
 		// TODO: Incomplete test
 		// fViewer.getControl().getShell().setFocus();
@@ -263,6 +279,7 @@ public class DecoratingStyledCellLabelProviderTest extends ViewerTestCase {
 		// ti));
 	}
 
+	@Test
 	public void testGetBackground() {
 		// TODO: Incomplete test
 
@@ -275,6 +292,7 @@ public class DecoratingStyledCellLabelProviderTest extends ViewerTestCase {
 		// getDecoratingStyledLabelProvider().getBackground(ti));
 	}
 
+	@Test
 	public void testGetFont() {
 		// TODO: Incomplete test
 
@@ -284,6 +302,7 @@ public class DecoratingStyledCellLabelProviderTest extends ViewerTestCase {
 		// assertEquals(f, getDecoratingStyledLabelProvider().getFont(ti));
 	}
 
+	@Test
 	public void testGetImage() {
 		Table table = ((TableViewer) fViewer).getTable();
 
@@ -291,6 +310,7 @@ public class DecoratingStyledCellLabelProviderTest extends ViewerTestCase {
 
 	}
 
+	@Test
 	public void testGetLabelDecorator() {
 		assertNotNull(getDecoratingStyledLabelProvider().getLabelDecorator());
 
@@ -298,6 +318,7 @@ public class DecoratingStyledCellLabelProviderTest extends ViewerTestCase {
 		assertNull(getDecoratingStyledLabelProvider().getLabelDecorator());
 	}
 
+	@Test
 	public void testSetLabelDecorator() {
 		ILabelDecorator labelDecorator = getDecorator();
 		getDecoratingStyledLabelProvider().setLabelDecorator(labelDecorator);
@@ -305,6 +326,7 @@ public class DecoratingStyledCellLabelProviderTest extends ViewerTestCase {
 
 	}
 
+	@Test
 	public void testAddListener() {
 		String old = changeMe; // String will change because the listener will
 		// be listening for it
@@ -314,6 +336,7 @@ public class DecoratingStyledCellLabelProviderTest extends ViewerTestCase {
 		assertNotSame(old, changeMe);
 	}
 
+	@Test
 	public void testRemoveListener() {
 		String old = changeMe = "OLD";
 		ILabelProviderListener listener = getListener();
@@ -323,11 +346,13 @@ public class DecoratingStyledCellLabelProviderTest extends ViewerTestCase {
 		assertEquals(old, changeMe);
 	}
 
+	@Test
 	public void testIsLabelProperty() {
 		boolean check = getDecoratingStyledLabelProvider().isLabelProperty("element", "property");
 		assertTrue(check);
 	}
 
+	@Test
 	public void testDispose() {
 		fShell.dispose();
 		assertFalse(fViewer.getLabelProvider() instanceof DecoratingStyledCellLabelProvider);

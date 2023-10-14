@@ -14,6 +14,8 @@
 
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.tests.viewers.TableViewerTest.TableTestLabelProvider;
 import org.eclipse.jface.viewers.ColumnLayoutData;
@@ -31,6 +33,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * The TableFontProviderTest is a test suite designed to test
@@ -42,17 +46,9 @@ public class TableFontProviderTest extends StructuredViewerTest {
 	Font font2;
 
 	/**
-	 * Create a new instance of the receiver
-	 *
-	 * @param name
-	 */
-	public TableFontProviderTest(String name) {
-		super(name);
-	}
-
-	/**
 	 * Test the general font provider.
 	 */
+	@Test
 	public void testFontProvider() {
 		TableViewer viewer = (TableViewer) fViewer;
 
@@ -73,6 +69,7 @@ public class TableFontProviderTest extends StructuredViewerTest {
 	 * Test that the fonts are being set.
 	 *
 	 */
+	@Test
 	public void testTableItemsFontProvider() {
 		TableViewer viewer = (TableViewer) fViewer;
 
@@ -89,21 +86,13 @@ public class TableFontProviderTest extends StructuredViewerTest {
 
 	}
 
+	@Before
 	@Override
 	public void setUp() {
 		super.setUp();
 		font1 = JFaceResources.getFont(JFaceResources.BANNER_FONT);
 		font2 = JFaceResources.getFont(JFaceResources.HEADER_FONT);
 
-	}
-
-	/**
-	 * Run as a stand alone test
-	 *
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(TableFontProviderTest.class);
 	}
 
 	@Override
