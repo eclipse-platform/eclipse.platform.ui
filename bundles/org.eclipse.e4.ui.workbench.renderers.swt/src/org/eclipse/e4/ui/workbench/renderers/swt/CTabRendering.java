@@ -87,6 +87,7 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 	public static final boolean SHOW_FULL_TEXT_FOR_VIEW_TABS_DEFAULT = false;
 
 	private static int MIN_VIEW_CHARS = 1;
+	private static int MAX_VIEW_CHARS = 9999;
 
 	private static final String EditorTag = "EditorStack"; //$NON-NLS-1$
 
@@ -1314,9 +1315,10 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 		boolean showFullText = getShowFullTextForViewTabsPreference();
 		if (!isPartOfEditorStack()) {
 			if (showFullText) {
-				Optional<Integer> max = Arrays.stream(parent.getItems()).map(CTabItem::getText).map(String::length)
+				Optional<Integer> lengthOfLongestItemText = Arrays.stream(parent.getItems()).map(CTabItem::getText)
+						.map(String::length)
 						.max(Integer::compare);
-				parent.setMinimumCharacters(max.orElseGet(() -> 9999));
+				parent.setMinimumCharacters(lengthOfLongestItemText.orElseGet(() -> MAX_VIEW_CHARS));
 			} else {
 				parent.setMinimumCharacters(MIN_VIEW_CHARS);
 			}
@@ -1339,10 +1341,7 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 
 	private boolean isPartOfEditorStack() {
 		MUIElement element = (MUIElement) parent.getData(AbstractPartRenderer.OWNING_ME);
-		if (element != null && element.getTags().contains(EditorTag)) {
-			return true;
-		}
-		return false;
+		return element != null && element.getTags().contains(EditorTag);
 	}
 
 	private boolean getHideIconsForViewTabsPreference() {

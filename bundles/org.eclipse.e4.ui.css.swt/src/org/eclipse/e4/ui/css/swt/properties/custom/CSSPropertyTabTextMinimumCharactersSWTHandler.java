@@ -47,8 +47,7 @@ public class CSSPropertyTabTextMinimumCharactersSWTHandler extends AbstractCSSPr
 	@Override
 	protected String retrieveCSSProperty(Control control, String property, String pseudo, CSSEngine engine)
 			throws Exception {
-		if (control instanceof CTabFolder) {
-			CTabFolder folder = (CTabFolder) control;
+		if (control instanceof CTabFolder folder) {
 			return Integer.toString(folder.getMinimumCharacters());
 		}
 		return null;
