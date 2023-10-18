@@ -14,31 +14,22 @@
 package org.eclipse.jface.tests.viewers;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.TreeSet;
 
 import org.eclipse.jface.viewers.deferred.LazySortedCollection;
+import org.junit.After;
 import org.junit.Assert;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @since 3.1
  */
-public class LazySortedCollectionTest extends TestCase {
-
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(LazySortedCollectionTest.class);
-	}
-
-	public static Test suite() {
-		return new TestSuite(LazySortedCollectionTest.class);
-	}
-
+public class LazySortedCollectionTest {
 	private TestComparator comparator;
 	private TestComparator comparisonComparator;
 
@@ -72,10 +63,8 @@ public class LazySortedCollectionTest extends TestCase {
 		}
 	}
 
-	@Override
-	protected void setUp() throws Exception {
-		System.out.println("--- " + getName());
-
+	@Before
+	public void setUp() throws Exception {
 		comparator = new TestComparator();
 		collection = new LazySortedCollection(comparator);
 		// Ensure a predictable tree structure
@@ -85,17 +74,13 @@ public class LazySortedCollectionTest extends TestCase {
 		comparisonCollection = new TreeSet<>(comparisonComparator);
 
 		addAll(elements);
-
-		super.setUp();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		System.out.println("Comparisons required by lazy collection: " + comparator.comparisons);
 		System.out.println("Comparisons required by reference implementation: " + comparisonComparator.comparisons);
 		System.out.println("");
-
-		super.tearDown();
 	}
 
 	/**
@@ -217,6 +202,7 @@ public class LazySortedCollectionTest extends TestCase {
 		return result;
 	}
 
+	@Test
 	public void testComparisonCount() {
 		assertEquals("additions should not require any comparisons", 0, comparator.comparisons);
 
@@ -232,6 +218,7 @@ public class LazySortedCollectionTest extends TestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public void testSortAll() {
 		// Test that sorting the entire array works
 		queryRange(0, elements.length, true);
@@ -249,6 +236,7 @@ public class LazySortedCollectionTest extends TestCase {
 	/**
 	 * Tests LazySortedCollection.removeNode(int) when removing a leaf node
 	 */
+	@Test
 	public void testRemoveLeafNode() {
 		forceFullSort();
 		remove(se[9]);
@@ -259,6 +247,7 @@ public class LazySortedCollectionTest extends TestCase {
 	 * Tests LazySortedCollection.removeNode(int) when removing a node with no left
 	 * child
 	 */
+	@Test
 	public void testRemoveNodeWithNoLeftChild() {
 		forceFullSort();
 		remove(se[23]);
@@ -271,6 +260,7 @@ public class LazySortedCollectionTest extends TestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public void testRemoveNodeWithNoRightChild() {
 		forceFullSort();
 		remove(se[13]);
@@ -282,6 +272,7 @@ public class LazySortedCollectionTest extends TestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public void testRemoveRootNode() {
 		forceFullSort();
 		remove(se[19]);
@@ -295,6 +286,7 @@ public class LazySortedCollectionTest extends TestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public void testRemoveWhereSwappedNodeIsntLeaf() {
 		forceFullSort();
 		remove(se[14]);
@@ -308,6 +300,7 @@ public class LazySortedCollectionTest extends TestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public void testRemoveWithUnsortedSwap() {
 		// Ensure that we've sorted nodes 13 and 14
 		queryRange(14, 1, true);
@@ -340,6 +333,7 @@ public class LazySortedCollectionTest extends TestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public void testRemoveFromUnsorted() {
 		remove(se[10]);
 		assertContentsValid();
@@ -350,6 +344,7 @@ public class LazySortedCollectionTest extends TestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public void testRemoveRootFromUnsorted() {
 		remove(se[19]);
 		assertContentsValid();
@@ -360,6 +355,7 @@ public class LazySortedCollectionTest extends TestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public void testRemoveUnknown() {
 		remove("some unknown element");
 		assertContentsValid();
@@ -374,6 +370,7 @@ public class LazySortedCollectionTest extends TestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public void testRemovePreviouslySwappedNode() {
 		queryRange(0, elements.length, true);
 		remove(se[14]);
@@ -389,6 +386,7 @@ public class LazySortedCollectionTest extends TestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public void testRemoveFullRange() {
 		removeRange(0, se.length);
 		assertContentsValid();
@@ -399,6 +397,7 @@ public class LazySortedCollectionTest extends TestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public void testRemoveFromStart() {
 		removeRange(0, se.length / 2);
 		assertContentsValid();
@@ -409,6 +408,7 @@ public class LazySortedCollectionTest extends TestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public void testRemoveFromEnd() {
 		int start = se.length / 2;
 		removeRange(start, se.length - start);
@@ -421,6 +421,7 @@ public class LazySortedCollectionTest extends TestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public void testRemoveIncludingRoot() {
 		removeRange(14, 6);
 		assertContentsValid();
@@ -432,6 +433,7 @@ public class LazySortedCollectionTest extends TestCase {
 	 * Tests moving an entire right subtree, and a left subtree including the tree
 	 * itself
 	 */
+	@Test
 	public void testRemoveRightSubtree() {
 		removeRange(9, 5);
 		assertContentsValid();
@@ -440,6 +442,7 @@ public class LazySortedCollectionTest extends TestCase {
 	/**
 	 * Test boundary conditions: Tests moving an entire left subtree
 	 */
+	@Test
 	public void testRemoveLeftSubtree() {
 		removeRange(3, 4);
 		assertContentsValid();
@@ -449,16 +452,19 @@ public class LazySortedCollectionTest extends TestCase {
 	 * Test boundary conditions: Tests moving an entire left subtree including the
 	 * tree itself
 	 */
+	@Test
 	public void testRemoveRightIncludingRoot() {
 		removeRange(3, 5);
 		assertContentsValid();
 	}
 
+	@Test
 	public void testClear() {
 		clear();
 		assertContentsValid();
 	}
 
+	@Test
 	public void testClearSorted() {
 		forceFullSort();
 		clear();

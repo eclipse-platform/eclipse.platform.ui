@@ -19,6 +19,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.AbstractReusableInformationControlCreator;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IDocument;
@@ -28,6 +29,7 @@ import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.internal.genericeditor.preferences.GenericEditorPreferenceConstants;
 
 /**
  * Extension of the ContentAssistant that supports the following additional
@@ -64,6 +66,27 @@ public class GenericEditorContentAssistant extends ContentAssistant {
 	public GenericEditorContentAssistant(
 			ContentTypeRelatedExtensionTracker<IContentAssistProcessor> contentAssistProcessorTracker,
 			List<IContentAssistProcessor> processors, Set<IContentType> types) {
+		this(contentAssistProcessorTracker, processors, types, null);
+	}
+
+	/**
+	 * Creates a new GenericEditorContentAssistant instance for the given content
+	 * types and contentAssistProcessorTracker
+	 * 
+	 * @param contentAssistProcessorTracker the tracker to use for tracking
+	 *                                      additional
+	 *                                      {@link IContentAssistProcessor}s in the
+	 *                                      OSGi service factory
+	 * @param processors                    the static processor list
+	 * @param types                         the {@link IContentType} that are used
+	 *                                      to filter appropriate candidates from
+	 *                                      the registry
+	 * @param preferenceStore               the {@link IPreferenceStore} containing
+	 *                                      the content assistant preferences
+	 */
+	public GenericEditorContentAssistant(
+			ContentTypeRelatedExtensionTracker<IContentAssistProcessor> contentAssistProcessorTracker,
+			List<IContentAssistProcessor> processors, Set<IContentType> types, IPreferenceStore preferenceStore) {
 		super(true);
 		this.contentAssistProcessorTracker = contentAssistProcessorTracker;
 		this.processors = Objects.requireNonNullElseGet(processors, () -> Collections.emptyList());
@@ -71,10 +94,20 @@ public class GenericEditorContentAssistant extends ContentAssistant {
 
 		setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_BELOW);
 		setProposalPopupOrientation(IContentAssistant.PROPOSAL_REMOVE);
-		setAutoActivationDelay(10);
 		enableColoredLabels(true);
-		enableAutoActivation(true);
-		enableAutoActivateCompletionOnType(true);
+		if (preferenceStore != null) {
+			enableAutoActivation(
+					preferenceStore.getBoolean(GenericEditorPreferenceConstants.CONTENT_ASSISTANT_AUTO_ACTIVATION));
+			setAutoActivationDelay(
+					preferenceStore.getInt(GenericEditorPreferenceConstants.CONTENT_ASSISTANT_AUTO_ACTIVATION_DELAY));
+			enableAutoActivateCompletionOnType(preferenceStore
+					.getBoolean(GenericEditorPreferenceConstants.CONTENT_ASSISTANT_AUTO_ACTIVATION_ON_TYPE));
+		} else {
+			enableAutoActivation(GenericEditorPreferenceConstants.CONTENT_ASSISTANT_AUTO_ACTIVATION_DEFAULT);
+			setAutoActivationDelay(GenericEditorPreferenceConstants.CONTENT_ASSISTANT_AUTO_ACTIVATION_DELAY_DEFUALT);
+			enableAutoActivateCompletionOnType(
+					GenericEditorPreferenceConstants.CONTENT_ASSISTANT_AUTO_ACTIVATION_ON_TYPE_DEFAULT);
+		}
 		setInformationControlCreator(new AbstractReusableInformationControlCreator() {
 			@Override
 			protected IInformationControl doCreateInformationControl(Shell parent) {

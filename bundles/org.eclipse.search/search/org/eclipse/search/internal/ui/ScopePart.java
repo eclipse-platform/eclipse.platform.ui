@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -50,9 +51,13 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 
@@ -77,9 +82,11 @@ public class ScopePart {
 	private Button fUseSelection;
 	private Button fUseProject;
 	private Button fUseWorkingSet;
+	private Button fUseOpenedEditors;
 
 	private int fScope;
 	private boolean fCanSearchEnclosingProjects;
+	private boolean fCanSearchOpenedEditors;
 	private Text fWorkingSetText;
 	private IWorkingSet[] fWorkingSets;
 
@@ -89,36 +96,50 @@ public class ScopePart {
 	private boolean fActiveEditorCanProvideScopeSelection;
 
 	/**
-	 * Returns a new scope part with workspace as initial scope.
-	 * The part is not yet created.
-	 * @param searchDialog The parent container
-	 * @param searchEnclosingProjects If true, add the 'search enclosing project' radio button
+	 * Returns a new scope part with workspace as initial scope. The part is not
+	 * yet created.
+	 * 
+	 * @param searchDialog
+	 *            The parent container
+	 * @param searchEnclosingProjects
+	 *            If true, add the 'search enclosing project' radio button
+	 * @param searchOpenedEditors
+	 *            If true, add the 'search opened editors' radio button
 	 */
-	public ScopePart(SearchDialog searchDialog, boolean searchEnclosingProjects) {
+	public ScopePart(SearchDialog searchDialog, boolean searchEnclosingProjects, boolean searchOpenedEditors) {
 		fSearchDialog= searchDialog;
 		fCanSearchEnclosingProjects= searchEnclosingProjects;
+		fCanSearchOpenedEditors = searchOpenedEditors;
 
 		fSettingsStore= SearchPlugin.getDefault().getDialogSettingsSection(DIALOG_SETTINGS_KEY);
-		fScope= getStoredScope(fSettingsStore, searchEnclosingProjects);
+		fScope = getStoredScope(fSettingsStore, searchEnclosingProjects, searchOpenedEditors);
 
 		fWorkingSets= getStoredWorkingSets();
 	}
 
-	private static int getStoredScope(IDialogSettings settingsStore, boolean canSearchEnclosingProjects) {
+	private static int getStoredScope(IDialogSettings settingsStore, boolean canSearchEnclosingProjects,
+			boolean cansearchOpenedEditors) {
 		int scope;
 		try {
 			scope= settingsStore.getInt(STORE_SCOPE);
 		} catch (NumberFormatException ex) {
 			scope= ISearchPageContainer.WORKSPACE_SCOPE;
 		}
-		if (scope != ISearchPageContainer.WORKING_SET_SCOPE
-			&& scope != ISearchPageContainer.SELECTION_SCOPE
-			&& scope != ISearchPageContainer.SELECTED_PROJECTS_SCOPE
-			&& scope != ISearchPageContainer.WORKSPACE_SCOPE)
-			scope= ISearchPageContainer.WORKSPACE_SCOPE;
+		if (scope != ISearchPageContainer.WORKING_SET_SCOPE 
+				&& scope != ISearchPageContainer.SELECTION_SCOPE
+				&& scope != ISearchPageContainer.SELECTED_PROJECTS_SCOPE
+				&& scope != ISearchPageContainer.OPENED_EDITORS_SCOPE
+				&& scope != ISearchPageContainer.WORKSPACE_SCOPE) {
+			scope = ISearchPageContainer.WORKSPACE_SCOPE;
+		}
 
-		if (!canSearchEnclosingProjects && scope == ISearchPageContainer.SELECTED_PROJECTS_SCOPE)
+		if (!canSearchEnclosingProjects && scope == ISearchPageContainer.SELECTED_PROJECTS_SCOPE) {
+			scope = ISearchPageContainer.WORKSPACE_SCOPE;
+		}
+
+		if (!cansearchOpenedEditors && scope == ISearchPageContainer.OPENED_EDITORS_SCOPE) {
 			scope= ISearchPageContainer.WORKSPACE_SCOPE;
+		}
 
 		return scope;
 	}
@@ -203,6 +224,43 @@ public class ScopePart {
 		return resources;
 	}
 
+	public static List<IResource> selectedResourcesFromEditors() {
+		IEditorReference[] editorReferences = getEditorReferences();
+		Set<IResource> resources = new LinkedHashSet<>();
+		for (IEditorReference ref : editorReferences) {
+			IFile file;
+			IResource resource;
+			try {
+				IEditorInput editorInput = ref.getEditorInput();
+				resource = editorInput.getAdapter(IResource.class);
+				if (resource != null) {
+					resources.add(resource);
+					continue;
+				}
+				file = editorInput.getAdapter(IFile.class);
+				if (file != null) {
+					resources.add(file);
+					continue;
+				}
+				// May trigger editor init
+				IEditorPart editor = ref.getEditor(true);
+				resource = editor.getAdapter(IResource.class);
+				if (resource != null) {
+					resources.add(resource);
+					continue;
+				}
+				file = editor.getAdapter(IFile.class);
+				if (file != null) {
+					resources.add(file);
+					continue;
+				}
+			} catch (PartInitException e) {
+				// continue
+			}
+		}
+		return new ArrayList<>(resources);
+	}
+
 	private String getSelectedResurcesButtonText() {
 		int size = selectedResourcesFromContainer(fSearchDialog).size();
 		if (size == 1) {
@@ -242,11 +300,13 @@ public class ScopePart {
 	 * @param scope the scope to be selected in this part
 	 */
 	public void setSelectedScope(int scope) {
-		Assert.isLegal(scope >= 0 && scope <= 3);
+		Assert.isLegal(
+				scope >= ISearchPageContainer.WORKSPACE_SCOPE && scope <= ISearchPageContainer.OPENED_EDITORS_SCOPE);
 		Assert.isNotNull(fUseWorkspace);
 		Assert.isNotNull(fUseSelection);
 		Assert.isNotNull(fUseWorkingSet);
 		Assert.isNotNull(fUseProject);
+		Assert.isNotNull(fUseOpenedEditors);
 
 		fSettingsStore.put(STORE_SCOPE, scope);
 
@@ -259,6 +319,14 @@ public class ScopePart {
 			}
 		} else if (scope == ISearchPageContainer.SELECTION_SCOPE && !fUseSelection.isEnabled()) {
 			scope= fUseProject.isEnabled() ? ISearchPageContainer.SELECTED_PROJECTS_SCOPE : ISearchPageContainer.WORKSPACE_SCOPE;
+		} else if (scope == ISearchPageContainer.OPENED_EDITORS_SCOPE) {
+			if (!fCanSearchOpenedEditors) {
+				SearchPlugin.log(new Status(IStatus.WARNING, NewSearchUI.PLUGIN_ID, IStatus.WARNING,
+						"Opened editors scope set on search page that does not support it", null)); //$NON-NLS-1$
+				scope = ISearchPageContainer.WORKSPACE_SCOPE;
+			} else if (!fUseOpenedEditors.isEnabled()) {
+				scope = ISearchPageContainer.WORKSPACE_SCOPE;
+			}
 		}
 		fScope= scope;
 
@@ -266,6 +334,7 @@ public class ScopePart {
 		fUseSelection.setSelection(scope == ISearchPageContainer.SELECTION_SCOPE);
 		fUseProject.setSelection(scope == ISearchPageContainer.SELECTED_PROJECTS_SCOPE);
 		fUseWorkingSet.setSelection(scope == ISearchPageContainer.WORKING_SET_SCOPE);
+		fUseOpenedEditors.setSelection(scope == ISearchPageContainer.OPENED_EDITORS_SCOPE);
 
 		updateSearchPageContainerActionPerformedEnablement();
 
@@ -276,7 +345,7 @@ public class ScopePart {
 		fUseSelection.setEnabled(canSearchInSelection());
 
 		// Reinitialize the controls
-		fScope= getStoredScope(fSettingsStore, fCanSearchEnclosingProjects);
+		fScope = getStoredScope(fSettingsStore, fCanSearchEnclosingProjects, fCanSearchOpenedEditors);
 		setSelectedScope(fScope);
 	}
 
@@ -381,6 +450,16 @@ public class ScopePart {
 		if (!fCanSearchEnclosingProjects)
 			fUseProject.setVisible(false);
 
+		fUseOpenedEditors = new Button(fPart, SWT.RADIO);
+		fUseOpenedEditors.setData(Integer.valueOf(ISearchPageContainer.OPENED_EDITORS_SCOPE));
+		fUseOpenedEditors.setText(SearchMessages.ScopePart_openedEditorsScope_text);
+		fUseOpenedEditors.setToolTipText(SearchMessages.ScopePart_openedEditorsScope_tooltip_text);
+		fUseOpenedEditors.setEnabled(!selectedResourcesFromEditors().isEmpty());
+
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalSpan = 4;
+		fUseOpenedEditors.setLayoutData(gd);
+
 		fUseWorkingSet= new Button(fPart, SWT.RADIO);
 		fUseWorkingSet.setData(Integer.valueOf(ISearchPageContainer.WORKING_SET_SCOPE));
 		fUseWorkingSet.setText(SearchMessages.ScopePart_workingSetScope_text);
@@ -421,6 +500,7 @@ public class ScopePart {
 		fUseSelection.addSelectionListener(scopeChangedLister);
 		fUseProject.addSelectionListener(scopeChangedLister);
 		fUseWorkingSet.addSelectionListener(scopeChangedLister);
+		fUseOpenedEditors.addSelectionListener(scopeChangedLister);
 
 		// Set initial scope
 		setSelectedScope(fScope);
@@ -430,6 +510,10 @@ public class ScopePart {
 			fWorkingSetText.setText(toString(fWorkingSets));
 
 		return fPart;
+	}
+
+	private static IEditorReference[] getEditorReferences() {
+		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getEditorReferences();
 	}
 
 	private boolean canSearchInSelection() {

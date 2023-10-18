@@ -42,8 +42,7 @@ public class EditablePropertyTester extends PropertyTester {
 	@Override
 	public boolean test(Object receiver, String property, Object[] args,
 			Object expectedValue) {
-		if (property.equals(EDITABLE)) {
-			MarkerSupportItem item = (MarkerSupportItem) receiver;
+		if (property.equals(EDITABLE) && receiver instanceof MarkerSupportItem item) {
 			Set<IMarker> markers = new HashSet<>();
 			if (item.isConcrete()) {
 				markers.add(((MarkerEntry) receiver).getMarker());

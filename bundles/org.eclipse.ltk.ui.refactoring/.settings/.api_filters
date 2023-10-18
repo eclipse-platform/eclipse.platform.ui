@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.ltk.ui.refactoring" version="2">
+    <resource path="src/org/eclipse/ltk/internal/ui/refactoring/ChangeElementTreeViewer.java" type="org.eclipse.ltk.internal.ui.refactoring.ChangeElementTreeViewer">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="CheckboxTreeViewer"/>
+                <message_argument value="ChangeElementTreeViewer"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ltk/internal/ui/refactoring/RefactoringUIPlugin.java" type="org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin">
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="RefactoringCore"/>
+                <message_argument value="RefactoringUIPlugin"/>
+                <message_argument value="internalSetQueryFactory(IValidationCheckResultQueryFactory)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ltk/internal/ui/refactoring/UIPerformChangeOperation.java" type="org.eclipse.ltk.internal.ui.refactoring.UIPerformChangeOperation">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="PerformChangeOperation"/>
+                <message_argument value="UIPerformChangeOperation"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ltk/internal/ui/refactoring/history/RefactoringHistoryControl.java" type="org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryControl$RefactoringHistoryTreeViewer">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="CheckboxTreeViewer"/>
+                <message_argument value="RefactoringHistoryTreeViewer"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ltk/internal/ui/refactoring/model/RefactoringDescriptorDiff.java" type="org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorDiff">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IThreeWayDiff"/>
+                <message_argument value="RefactoringDescriptorDiff"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ltk/internal/ui/refactoring/model/RefactoringDescriptorSynchronizationProxy.java" type="org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorSynchronizationProxy">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="RefactoringDescriptorProxy"/>
+                <message_argument value="RefactoringDescriptorSynchronizationProxy"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ltk/internal/ui/refactoring/model/RefactoringHistoryDiff.java" type="org.eclipse.ltk.internal.ui.refactoring.model.RefactoringHistoryDiff">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IThreeWayDiff"/>
+                <message_argument value="RefactoringHistoryDiff"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ltk/internal/ui/refactoring/util/ViewerPane.java" type="org.eclipse.ltk.internal.ui.refactoring.util.ViewerPane">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="ViewForm"/>
+                <message_argument value="ViewerPane"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ltk/ui/refactoring/TextEditChangeNode.java" type="org.eclipse.ltk.ui.refactoring.TextEditChangeNode">
+        <filter id="576720909">
+            <message_arguments>
+                <message_argument value="InternalTextEditChangeNode"/>
+                <message_argument value="TextEditChangeNode"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ltk/ui/refactoring/TextEditChangeNode.java" type="org.eclipse.ltk.ui.refactoring.TextEditChangeNode$ChildNode">
+        <filter id="576720909">
+            <message_arguments>
+                <message_argument value="PreviewNode"/>
+                <message_argument value="ChildNode"/>
+            </message_arguments>
+        </filter>
+        <filter id="643850349">
+            <message_arguments>
+                <message_argument value="PreviewNode"/>
+                <message_argument value="ChildNode"/>
+                <message_argument value="ChildNode(PreviewNode)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ltk/ui/refactoring/UserInputWizardPage.java" type="org.eclipse.ltk.ui.refactoring.UserInputWizardPage">
+        <filter id="576778288">
+            <message_arguments>
+                <message_argument value="RefactoringWizardPage"/>
+                <message_argument value="UserInputWizardPage"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ltk/ui/refactoring/history/RefactoringHistoryWizard.java" type="org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryWizard">
+        <filter id="571519004">
+            <message_arguments>
+                <message_argument value="org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryWizard.performFinish()"/>
+                <message_argument value="PerformRefactoringHistoryOperation"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

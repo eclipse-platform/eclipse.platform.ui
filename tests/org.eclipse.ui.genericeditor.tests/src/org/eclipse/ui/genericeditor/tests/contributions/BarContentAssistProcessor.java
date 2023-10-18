@@ -29,11 +29,11 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
 public class BarContentAssistProcessor implements IContentAssistProcessor {
 
-	public static final String PROPOSAL = "bars are good for a beer.";
+	public static final String BAR_CONTENT_ASSIST_PROPOSAL = "bars are good for a beer.";
 	private final String completeString;
 
 	public BarContentAssistProcessor() {
-		this(PROPOSAL);
+		this(BAR_CONTENT_ASSIST_PROPOSAL);
 	}
 
 	public BarContentAssistProcessor(String completeString) {
@@ -96,20 +96,22 @@ public class BarContentAssistProcessor implements IContentAssistProcessor {
 	@Override
 	public IContextInformationValidator getContextInformationValidator() {
 		return new IContextInformationValidator() {
-			ITextViewer viewer;
-			int offset;
+			private ITextViewer viewer;
+			private int offset;
+			
 			@Override
-			public void install(IContextInformation info, ITextViewer viewer, int offset) {
-				this.viewer= viewer;
-				this.offset= offset;
+			public void install(IContextInformation info, ITextViewer infoViewer, int documentOffset) {
+				this.viewer= infoViewer;
+				this.offset= documentOffset;
 			}
+			
 			@Override
-			public boolean isContextInformationValid(int offset) {
+			public boolean isContextInformationValid(int offsetToTest) {
 				try {
 					IDocument document= viewer.getDocument();
 					IRegion line= document.getLineInformationOfOffset(this.offset);
 					int end= line.getOffset() + line.getLength();
-					return (offset >= this.offset && offset < end);
+					return (offsetToTest >= this.offset && offsetToTest < end);
 				} catch (BadLocationException e) {
 					return false;
 				}

@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.resource.JFaceResources;
@@ -207,6 +208,14 @@ public class StructuredSelection implements IStructuredSelection {
 		return Arrays.asList(elements == null ? new Object[0] : elements);
 	}
 
+	@Override
+	public Stream<Object> stream() {
+		if (isEmpty()) {
+			return Stream.empty();
+		}
+		return Arrays.stream(elements);
+	}
+
 	/**
 	 * Internal method which returns a string representation of this
 	 * selection suitable for debug purposes only.
@@ -215,6 +224,7 @@ public class StructuredSelection implements IStructuredSelection {
 	 */
 	@Override
 	public String toString() {
-		return isEmpty() ? JFaceResources.getString("<empty_selection>") : toList().toString(); //$NON-NLS-1$
+		return isEmpty() ? JFaceResources.getString("<empty_selection>") //$NON-NLS-1$
+				: Arrays.toString(elements);
 	}
 }

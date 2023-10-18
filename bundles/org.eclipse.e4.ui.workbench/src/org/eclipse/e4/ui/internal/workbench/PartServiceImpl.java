@@ -611,6 +611,7 @@ public class PartServiceImpl implements EPartService {
 			List<MPart> newPerspectiveParts = modelService.findElements(perspective, null,
 					MPart.class, null);
 			// if possible, keep the same active part across perspective switches
+			IEclipseContext eclipseContext = perspective.getContext();
 			if (newPerspectiveParts.contains(activePart)
 					&& partActivationHistory.isValid(perspective, activePart)) {
 				MPart target = activePart;
@@ -619,10 +620,10 @@ public class PartServiceImpl implements EPartService {
 					activeChild.deactivate();
 				}
 				if (target.getContext() != null && target.getContext().get(MPerspective.class) != null
-						&& target.getContext().get(MPerspective.class).getContext() == perspective.getContext()) {
+						&& target.getContext().get(MPerspective.class).getContext() == eclipseContext) {
 					target.getContext().activateBranch();
-				} else {
-					perspective.getContext().activate();
+				} else if (eclipseContext != null) {
+					eclipseContext.activate();
 				}
 
 				modelService.bringToTop(target);
@@ -631,7 +632,7 @@ public class PartServiceImpl implements EPartService {
 				return;
 			}
 
-			MPart newActivePart = perspective.getContext().getActiveLeaf().get(MPart.class);
+			MPart newActivePart = eclipseContext != null ? eclipseContext.getActiveLeaf().get(MPart.class) : null;
 			if (newActivePart == null) {
 				// whatever part was previously active can no longer be found, find another one
 				MPart candidate = partActivationHistory.getActivationCandidate(perspective);
@@ -646,7 +647,9 @@ public class PartServiceImpl implements EPartService {
 			// there seems to be no parts in this perspective, just activate it as is then
 			if (newActivePart == null) {
 				modelService.bringToTop(perspective);
-				perspective.getContext().activate();
+				if (eclipseContext != null) {
+					eclipseContext.activate();
+				}
 			} else {
 				if ((modelService.getElementLocation(newActivePart) & EModelService.IN_SHARED_AREA) != 0) {
 					if (newActivePart.getParent() != null

@@ -49,10 +49,10 @@ public abstract class TestLabelProvider extends LabelProvider implements
 	public boolean _blank;
 	public boolean _null;
 
-	public static boolean _throw;
+	public static Runnable _runnable;
 
 	public static void resetTest() {
-		_throw = false;
+		_runnable = null;
 	}
 
 	static {
@@ -85,8 +85,8 @@ public abstract class TestLabelProvider extends LabelProvider implements
 
 	@Override
 	public Image getImage(Object element) {
-		if (_throw)
-			throw new RuntimeException("Throwing...");
+		if (_runnable != null)
+			_runnable.run();
 		if (element instanceof TestExtensionTreeData)
 			return PlatformUI.getWorkbench().getSharedImages().getImage(
 					ISharedImages.IMG_OBJ_ELEMENT);
@@ -95,8 +95,8 @@ public abstract class TestLabelProvider extends LabelProvider implements
 
 	@Override
 	public String getText(Object element) {
-		if (_throw)
-			throw new RuntimeException("Throwing...");
+		if (_runnable != null)
+			_runnable.run();
 		if (_blank)
 			return "";
 		if (_null)
@@ -114,8 +114,8 @@ public abstract class TestLabelProvider extends LabelProvider implements
 
 	@Override
 	public String getDescription(Object anElement) {
-		if (_throw)
-			throw new RuntimeException("Throwing...");
+		if (_runnable != null)
+			_runnable.run();
 		if (anElement instanceof TestExtensionTreeData) {
 			TestExtensionTreeData data = (TestExtensionTreeData) anElement;
 			return "TestItem: " + data.getName();
@@ -125,36 +125,36 @@ public abstract class TestLabelProvider extends LabelProvider implements
 
 	@Override
 	public void restoreState(IMemento aMemento) {
-		if (_throw)
-			throw new RuntimeException("Throwing...");
+		if (_runnable != null)
+			_runnable.run();
 
 	}
 
 	@Override
 	public void saveState(IMemento aMemento) {
-		if (_throw)
-			throw new RuntimeException("Throwing...");
+		if (_runnable != null)
+			_runnable.run();
 
 	}
 
 	@Override
 	public Color getForeground(Object element) {
-		if (_throw)
-			throw new RuntimeException("Throwing...");
+		if (_runnable != null)
+			_runnable.run();
 		return toForegroundColor(getTestColor());
 	}
 
 	@Override
 	public Color getBackground(Object element) {
-		if (_throw)
-			throw new RuntimeException("Throwing...");
+		if (_runnable != null)
+			_runnable.run();
 		return getTestColor();
 	}
 
 	@Override
 	public Font getFont(Object element) {
-		if (_throw)
-			throw new RuntimeException("Throwing...");
+		if (_runnable != null)
+			_runnable.run();
 		if (element instanceof TestExtensionTreeData) {
 			TestExtensionTreeData data = (TestExtensionTreeData) element;
 			if (data.getParent() != null
@@ -166,9 +166,13 @@ public abstract class TestLabelProvider extends LabelProvider implements
 
 	@Override
 	public void dispose() {
-		if (_throw)
-			throw new RuntimeException("Throwing...");
+		if (_runnable != null)
+			_runnable.run();
+		boldFont.dispose();
 		boldFont = null;
+
+//		font.dispose();
+//		font = null;
 	}
 
 }

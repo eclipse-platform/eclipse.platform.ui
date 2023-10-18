@@ -7145,7 +7145,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			getAdapter(IDocument.class); // make sure the document is cached
 			if (disconnectStack == null && !disconnectStackShown) {
 				disconnectStack = new IllegalStateException(
-						"Disconnected before saving. Please post stacktrace to https://bugs.eclipse.org/bugs/show_bug.cgi?id=569286 " //$NON-NLS-1$
+						"Disconnected before saving. https://bugs.eclipse.org/bugs/show_bug.cgi?id=569286 " //$NON-NLS-1$
 								+ fTextEditor.getClass().getName() + " " + getName()); //$NON-NLS-1$
 			}
 			fTextEditor = null;

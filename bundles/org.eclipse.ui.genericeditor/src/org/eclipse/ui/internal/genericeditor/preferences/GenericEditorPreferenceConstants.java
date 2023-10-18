@@ -80,6 +80,42 @@ public class GenericEditorPreferenceConstants {
 	public final static String EDITOR_ENCLOSING_BRACKETS = "enclosingBrackets"; //$NON-NLS-1$
 
 	/**
+	 * A named preference that controls whether auto activation is enabled on the
+	 * content assistant.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 *
+	 * @since 1.3
+	 */
+	public final static String CONTENT_ASSISTANT_AUTO_ACTIVATION = "contentAssistant.autoActivation"; //$NON-NLS-1$
+	public final static boolean CONTENT_ASSISTANT_AUTO_ACTIVATION_DEFAULT = true;
+
+	/**
+	 * A named preference that controls how long the auto activation delay is on the
+	 * content assistant.
+	 * <p>
+	 * Value is of type <code>Integer</code> and in milliseconds.
+	 * </p>
+	 *
+	 * @since 1.3
+	 */
+	public final static String CONTENT_ASSISTANT_AUTO_ACTIVATION_DELAY = "contentAssistant.autoActivationDelay"; //$NON-NLS-1$
+	public final static int CONTENT_ASSISTANT_AUTO_ACTIVATION_DELAY_DEFUALT = 10;
+
+	/**
+	 * A named preference that controls whether auto activation on typing is enabled
+	 * on the content assistant.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 *
+	 * @since 1.3
+	 */
+	public final static String CONTENT_ASSISTANT_AUTO_ACTIVATION_ON_TYPE = "contentAssistant.autoActivationOnType"; //$NON-NLS-1$
+	public final static boolean CONTENT_ASSISTANT_AUTO_ACTIVATION_ON_TYPE_DEFAULT = true;
+
+	/**
 	 * Returns the Generic Editor preference store.
 	 *
 	 * @return the Generic Editor preference store
@@ -99,6 +135,12 @@ public class GenericEditorPreferenceConstants {
 		store.setDefault(GenericEditorPreferenceConstants.EDITOR_MATCHING_BRACKETS, true);
 		store.setDefault(GenericEditorPreferenceConstants.EDITOR_HIGHLIGHT_BRACKET_AT_CARET_LOCATION, false);
 		store.setDefault(GenericEditorPreferenceConstants.EDITOR_ENCLOSING_BRACKETS, false);
+		store.setDefault(GenericEditorPreferenceConstants.CONTENT_ASSISTANT_AUTO_ACTIVATION,
+				CONTENT_ASSISTANT_AUTO_ACTIVATION_DEFAULT);
+		store.setDefault(GenericEditorPreferenceConstants.CONTENT_ASSISTANT_AUTO_ACTIVATION_DELAY,
+				CONTENT_ASSISTANT_AUTO_ACTIVATION_DELAY_DEFUALT);
+		store.setDefault(GenericEditorPreferenceConstants.CONTENT_ASSISTANT_AUTO_ACTIVATION_ON_TYPE,
+				CONTENT_ASSISTANT_AUTO_ACTIVATION_ON_TYPE_DEFAULT);
 		// Colors that are set by the current theme
 		GenericEditorPluginPreferenceInitializer.setThemeBasedPreferences(store, false);
 	}

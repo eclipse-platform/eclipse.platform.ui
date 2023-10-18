@@ -13,6 +13,9 @@
  */
 package org.eclipse.jface.text.examples.codemining;
 
+import java.util.concurrent.atomic.AtomicReference;
+
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -29,9 +32,10 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.ISourceViewerExtension5;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * A Code Mining demo with class references and implementations minings.
@@ -43,8 +47,13 @@ public class CodeMiningDemo {
 
 		Display display = new Display();
 		Shell shell = new Shell(display);
-		shell.setLayout(new FillLayout());
+		shell.setLayout(new GridLayout());
 		shell.setText("Code Mining demo");
+
+		AtomicReference<String> endOfLineString = new AtomicReference<>("End of line");
+		Text endOfLineText = new Text(shell, SWT.NONE);
+		endOfLineText.setText(endOfLineString.get());
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(endOfLineText);
 
 		ISourceViewer sourceViewer = new SourceViewer(shell, null, SWT.V_SCROLL | SWT.BORDER);
 		sourceViewer.setDocument(
@@ -63,6 +72,7 @@ public class CodeMiningDemo {
 						+ "new 5\n" //
 						+ "new 5\n"),
 				new AnnotationModel());
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(sourceViewer.getTextWidget());
 		// Add AnnotationPainter (required by CodeMining)
 		addAnnotationPainter(sourceViewer);
 		// Initialize codemining providers
@@ -71,7 +81,7 @@ public class CodeMiningDemo {
 				new ClassImplementationsCodeMiningProvider(), //
 				new ToEchoWithHeaderAndInlineCodeMiningProvider("echo"), //
 				new EmptyLineCodeMiningProvider(), //
-				new EchoAtEndOfLineCodeMiningProvider()});
+				new EchoAtEndOfLineCodeMiningProvider(endOfLineString) });
 		// Execute codemining in a reconciler
 		MonoReconciler reconciler = new MonoReconciler(new IReconcilingStrategy() {
 
@@ -91,6 +101,11 @@ public class CodeMiningDemo {
 			}
 		}, false);
 		reconciler.install(sourceViewer);
+
+		endOfLineText.addModifyListener(event -> {
+			endOfLineString.set(endOfLineText.getText());
+			((ISourceViewerExtension5) sourceViewer).updateCodeMinings();
+		});
 
 		shell.open();
 		while (!shell.isDisposed()) {

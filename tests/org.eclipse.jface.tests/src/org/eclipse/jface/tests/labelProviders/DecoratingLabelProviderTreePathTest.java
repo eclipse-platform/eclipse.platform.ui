@@ -14,6 +14,8 @@
 
 package org.eclipse.jface.tests.labelProviders;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ITreePathLabelProvider;
@@ -27,6 +29,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.junit.Test;
 
 /**
  * DecoratingLabelProviderTreePathTest is the tree path version of the
@@ -60,16 +63,6 @@ public class DecoratingLabelProviderTreePathTest extends CompositeLabelProviderT
 		}
 	}
 
-	/**
-	 * Create a new instance of the receiver.
-	 *
-	 * @param name
-	 */
-	public DecoratingLabelProviderTreePathTest(String name) {
-		super(name);
-
-	}
-
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
 
@@ -88,6 +81,7 @@ public class DecoratingLabelProviderTreePathTest extends CompositeLabelProviderT
 	/**
 	 * Test that all of the colours and fonts from the label provider are applied.
 	 */
+	@Test
 	public void testColorsAndFonts() {
 		Tree tree = (Tree) fViewer.getControl();
 		TreeItem item = tree.getItem(0);

@@ -85,7 +85,7 @@ public class FileTableContentProvider implements IStructuredContentProvider, IFi
 		boolean tableLimited= elementLimit != -1;
 		for (Object updatedElement : updatedElements) {
 			if (fPage.getDisplayedMatchCount(updatedElement) > 0) {
-				if (viewer.testFindItem(updatedElement) != null)
+				if (viewer.contains(updatedElement))
 					viewer.update(updatedElement, null);
 				else {
 					if (!tableLimited || viewer.getTable().getItemCount() < elementLimit)

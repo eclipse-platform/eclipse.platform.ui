@@ -74,7 +74,7 @@ public final class FileTextSearchScope extends TextSearchScope {
 	 * @param roots the roots resources defining the scope.
 	 * @param fileNamePatterns file name pattern that all files have to match <code>null</code> to include all file names.
 	 * @param includeDerived defines if derived files and files inside derived containers are included in the scope.
-	 * @return a scope containing the resources and its children if they match the given file name patterns.
+	 * @return a scope containing the resources and their children if they match the given file name patterns.
 	 */
 	public static FileTextSearchScope newSearchScope(IResource[] roots, String[] fileNamePatterns, boolean includeDerived) {
 		roots= removeRedundantEntries(roots, includeDerived);

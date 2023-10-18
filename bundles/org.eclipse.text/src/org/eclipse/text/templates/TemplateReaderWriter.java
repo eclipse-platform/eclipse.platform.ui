@@ -27,12 +27,10 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -157,8 +155,8 @@ public class TemplateReaderWriter {
 			Collection<TemplatePersistenceData> templates= new ArrayList<>();
 			Set<String> ids= new HashSet<>();
 
-			DocumentBuilderFactory factory= DocumentBuilderFactory.newInstance();
-			DocumentBuilder parser= factory.newDocumentBuilder();
+			@SuppressWarnings("restriction")
+			DocumentBuilder parser= org.eclipse.core.internal.runtime.XmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
 			parser.setErrorHandler(new DefaultHandler());
 			Document document= parser.parse(source);
 
@@ -263,10 +261,8 @@ public class TemplateReaderWriter {
 	 */
 	private void save(TemplatePersistenceData[] templates, StreamResult result) throws IOException {
 		try {
-			DocumentBuilderFactory factory= DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder= factory.newDocumentBuilder();
-			Document document= builder.newDocument();
-
+			@SuppressWarnings("restriction")
+			Document document= org.eclipse.core.internal.runtime.XmlProcessorFactory.newDocumentWithErrorOnDOCTYPE();
 			Node root= document.createElement(TEMPLATE_ROOT);
 			document.appendChild(root);
 
@@ -322,9 +318,8 @@ public class TemplateReaderWriter {
 					node.appendChild(pattern);
 				}
 			}
-
-
-			Transformer transformer=TransformerFactory.newInstance().newTransformer();
+			@SuppressWarnings("restriction")
+			Transformer transformer= org.eclipse.core.internal.runtime.XmlProcessorFactory.createTransformerFactoryWithErrorOnDOCTYPE().newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.ENCODING, StandardCharsets.UTF_8.name());
 			DOMSource source = new DOMSource(document);

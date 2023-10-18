@@ -14,6 +14,11 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.images;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -27,11 +32,10 @@ import org.eclipse.jface.resource.LazyResourceManager;
 import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class LazyResourceManagerTest extends TestCase {
+public class LazyResourceManagerTest {
 	private static class CachableTestDescriptor extends DeviceResourceDescriptor<Object> {
 		CachableTestDescriptor() {
 			super(true);
@@ -115,10 +119,7 @@ public class LazyResourceManagerTest extends TestCase {
 
 	}
 
-	public LazyResourceManagerTest(String name) {
-		super(name);
-	}
-
+	@Test
 	public void testDefaultImage() {
 		// note, we must touch the class to ensure the static initialer runs
 		// so the image registry is up to date
@@ -148,6 +149,7 @@ public class LazyResourceManagerTest extends TestCase {
 
 	}
 
+	@Test
 	public void testUncachable() {
 		TestResourceManager tst = new TestResourceManager();
 		LazyResourceManager mgr = new LazyResourceManager(2, tst);
@@ -201,6 +203,7 @@ public class LazyResourceManagerTest extends TestCase {
 	/**
 	 * Creates multiple resources for 2 Descriptors. Only 1 of them can be cached
 	 **/
+	@Test
 	public void testLazyResourceManagerRefCounting() {
 		TestResourceManager tst = new TestResourceManager();
 		LazyResourceManager mgr = new LazyResourceManager(1, tst);
@@ -238,6 +241,7 @@ public class LazyResourceManagerTest extends TestCase {
 	}
 
 	/** Creates resources for 3 Descriptors. Only 2 of them can be cached **/
+	@Test
 	public void testLazyResourceManager() {
 		TestResourceManager tst = new TestResourceManager();
 		LazyResourceManager mgr = new LazyResourceManager(2, tst);
@@ -302,6 +306,7 @@ public class LazyResourceManagerTest extends TestCase {
 	 * Creates resources for 3 Descriptors. Only the 2 last recently used should be
 	 * cached
 	 **/
+	@Test
 	public void testLazyResourceManagerLRU() {
 		TestResourceManager tst = new TestResourceManager();
 		LazyResourceManager mgr = new LazyResourceManager(2, tst);
@@ -361,6 +366,7 @@ public class LazyResourceManagerTest extends TestCase {
 		assertCached(expected2, mgr, tst, descriptor2); // 2 still cached, because recently used
 	}
 
+	@Test
 	public void testNullDescriptor() {
 		TestResourceManager tst = new TestResourceManager();
 		LazyResourceManager mgr = new LazyResourceManager(2, tst);

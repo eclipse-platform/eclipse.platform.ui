@@ -1,0 +1,79 @@
+<!DOCTYPE doctype PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="Author" content="IBM">
+  <title>LTK UI API changes</title>
+  <link rel="stylesheet" href="http://dev.eclipse.org/default_style.css"
+ type="text/css">
+</head>
+<body>
+<p>This document lists the API changes that occurred between
+R3.3 and R3.4 and
+how to migrate from the R3.3 API to the R3.4 API.
+</p>
+<table border="0" cellpadding="2" cellspacing="5" width="100%" summary="Breaking API changes">
+  <tbody>
+    <tr>
+      <td align="left" width="72%"> <font size="+3"><b>LTK UI Refactoring -
+Breaking API changes from R3.3 to R3.4</b></font> <br>
+      </td>
+    </tr>
+     <tr>
+      <td>None
+      </td>
+    
+  </tbody>
+</table>
+<p> </p>
+<table border="0" cellpadding="2" cellspacing="5" width="100%" summary="Non-breaking API changes">
+  <tbody>
+    <tr>
+      <td align="left" width="72%"> <font size="+3"><b>LTK UI Refactoring -
+Non-breaking API changes from R3.3 to R3.4</b></font> <br>
+      </td>
+    </tr>
+    <tr>
+      <td>Added 'Rename resource refactoring' (Pushed down from JDT).
+      <ul>
+      <li><code>RenameResourceWizard</code>: wizard to start rename resource refactoring
+      (<code>org.eclipse.ltk.ui.refactoring.resource</code>)</li>
+      </ul>
+      </td>
+    </tr>
+    <tr><td><hr></td></tr>    
+     <tr>
+      <td>Added 'Move resources refactoring'
+      <ul>
+      <li><code>MoveResourcesWizard</code>: wizard to start move resources refactoring
+      (<code>org.eclipse.ltk.ui.refactoring.resource</code>)</li>
+      </ul>
+      </td>
+    </tr>
+    <tr><td><hr></td></tr>    
+     <tr>
+      <td>Added 'Delete resources refactoring'
+      <ul>
+      <li><code>DeleteResourcesWizard</code>: wizard to start delete resources refactoring
+      (<code>org.eclipse.ltk.ui.refactoring.resource</code>)</li>
+      </ul>
+      </td>
+    </tr>
+    <tr><td><hr></td></tr>    
+     <tr>
+      <td>Added <code>createRefactoring(RefactoringDescriptor, RefactoringStatus, IProgressMonitor)</code> to
+      <code>org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryWizard</code>.
+      <ul><li>Default implementation calls <code>createRefactoring(RefactoringDescriptor, RefactoringStatus)</code> and
+      <code>aboutToPerformRefactoring(Refactoring, RefactoringDescriptor, IProgressMonitor)}</code></li>
+	  <li>Implementors can replace this implementation</li>
+	  </ul>
+      </td>
+    </tr>         
+  </tbody>
+</table>
+<p>
+API changes from 3.2 to 3.3 can be found <a href="./notes/r3.3/apichanges_ltk-ui.html?view=co">here</a>.
+</p>
+</body>
+</html>

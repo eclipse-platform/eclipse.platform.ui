@@ -71,9 +71,10 @@ public class MarkersTreeViewer extends TreeViewer {
 		/*
 		 * For performance reasons clear cache of the item used in updating UI.
 		 */
-		MarkerSupportItem cellItem = (MarkerSupportItem) element;
-		if (cellItem.isConcrete())
-			cellItem.clearCache();
+		if (element instanceof MarkerSupportItem cellItem) {
+			if (cellItem.isConcrete())
+				cellItem.clearCache();
+		}
 	}
 
 }

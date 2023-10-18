@@ -97,20 +97,20 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	/** The document's line tracker */
 	private ILineTracker fTracker;
 	/** The registered document listeners */
-	private ListenerList<IDocumentListener> fDocumentListeners;
+	private final ListenerList<IDocumentListener> fDocumentListeners= new ListenerList<>(ListenerList.IDENTITY);
 	/** The registered pre-notified document listeners */
-	private ListenerList<IDocumentListener> fPrenotifiedDocumentListeners;
+	private final ListenerList<IDocumentListener> fPrenotifiedDocumentListeners= new ListenerList<>(ListenerList.IDENTITY);
 	/** The registered document partitioning listeners */
-	private ListenerList<IDocumentPartitioningListener> fDocumentPartitioningListeners;
+	private final ListenerList<IDocumentPartitioningListener> fDocumentPartitioningListeners= new ListenerList<>(ListenerList.IDENTITY);
 	/** All positions managed by the document ordered by their start positions. */
-	private Map<String, List<Position>> fPositions;
+	private final Map<String, List<Position>> fPositions= new HashMap<>();
 	/**
 	 * All positions managed by the document ordered by their end positions.
 	 * @since 3.4
 	 */
-	private Map<String, List<Position>> fEndPositions;
+	private final Map<String, List<Position>> fEndPositions= new HashMap<>();
 	/** All registered document position updaters */
-	private List<IPositionUpdater> fPositionUpdaters;
+	private final List<IPositionUpdater> fPositionUpdaters= new CopyOnWriteArrayList<>();
 	/**
 	 * The list of post notification changes
 	 * @since 2.0
@@ -165,7 +165,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * The registered document rewrite session listeners.
 	 * @since 3.1
 	 */
-	private List<IDocumentRewriteSessionListener> fDocumentRewriteSessionListeners;
+	private final List<IDocumentRewriteSessionListener> fDocumentRewriteSessionListeners= new ArrayList<>();
 	/**
 	 * The current modification stamp.
 	 * @since 3.1
@@ -291,15 +291,6 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * have been set.
 	 */
 	protected void completeInitialization() {
-
-		fPositions= new HashMap<>();
-		fEndPositions= new HashMap<>();
-		fPositionUpdaters= new CopyOnWriteArrayList<>();
-		fDocumentListeners= new ListenerList<>(ListenerList.IDENTITY);
-		fPrenotifiedDocumentListeners= new ListenerList<>(ListenerList.IDENTITY);
-		fDocumentPartitioningListeners= new ListenerList<>(ListenerList.IDENTITY);
-		fDocumentRewriteSessionListeners= new ArrayList<>();
-
 		addPositionCategory(DEFAULT_CATEGORY);
 		addPositionUpdater(new DefaultPositionUpdater(DEFAULT_CATEGORY));
 	}

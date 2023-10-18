@@ -2,11 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.ui.tests.rcp; singleton:=true
-Bundle-Version: 3.6.100.qualifier
+Bundle-Version: 3.6.200.qualifier
 Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
  org.junit,
+ org.mockito.mockito-core,
  org.eclipse.test.performance,
  org.eclipse.ui.tests.harness
 Bundle-ActivationPolicy: lazy

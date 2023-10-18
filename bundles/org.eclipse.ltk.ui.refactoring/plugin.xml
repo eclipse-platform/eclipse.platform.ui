@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension-point id="statusContextViewers" name="%statusViewerExtensionPoint" schema="schema/statusContextViewers.exsd"/>
+   <extension-point id="changePreviewViewers" name="%changeViewerExtensionPoint" schema="schema/changePreviewViewers.exsd"/>
+   <extension point="org.eclipse.ltk.ui.refactoring.statusContextViewers">
+      <statusContextViewer
+            class="org.eclipse.ltk.internal.ui.refactoring.FileStatusContextViewer"
+            id="org.eclipse.ltk.internal.ui.refactoring.fileStatusContextViewer">
+         <enablement>
+            <instanceof value="org.eclipse.ltk.core.refactoring.FileStatusContext"/>
+         </enablement>
+      </statusContextViewer>
+   </extension>
+   <extension point="org.eclipse.ltk.ui.refactoring.changePreviewViewers">
+      <changePreviewViewer
+            class="org.eclipse.ltk.internal.ui.refactoring.TextEditChangePreviewViewer"
+            id="org.eclipse.ltk.internal.ui.refactoring.textEditChangePreviewViewer">
+         <enablement>
+            <instanceof value="org.eclipse.ltk.core.refactoring.TextEditBasedChange"/>
+         </enablement>
+      </changePreviewViewer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            class="org.eclipse.ltk.internal.ui.refactoring.history.RefactoringPropertyPage"
+            id="org.eclipse.ltk.ui.refactoring.property.page"
+            name="%RefactoringPropertyPage_name"
+            >
+         <keywordReference id="org.eclipse.ltk.ui.refactoring.property.page"/>
+         <enabledWhen>
+         	<adapt type="org.eclipse.core.resources.IProject">
+            	<test property="org.eclipse.ltk.ui.refactoring.refactoringPropertiesEnabled"
+                  forcePluginActivation="false"
+                  value="true"/>
+            </adapt>
+         </enabledWhen>
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.keywords">
+      <keyword
+            id="org.eclipse.ltk.ui.refactoring.property.page"
+            label="%RefactoringPropertyPage_keywords"/>
+   </extension>
+   <extension
+         point="org.eclipse.team.core.storageMergers">
+      <storageMerger
+            class="org.eclipse.ltk.internal.ui.refactoring.model.RefactoringIndexMerger"
+            id="org.eclipse.ltk.ui.refactoring.model.RefactoringIndexMerger"/>
+      <contentTypeBinding
+            contentTypeId="org.eclipse.ltk.core.refactoring.refactoringIndex"
+            storageMergerId="org.eclipse.ltk.ui.refactoring.model.RefactoringIndexMerger"/>
+      <storageMerger
+            class="org.eclipse.ltk.internal.ui.refactoring.model.RefactoringHistoryMerger"
+            id="org.eclipse.ltk.ui.refactoring.model.RefactoringHistoryMerger"/>
+      <contentTypeBinding
+            contentTypeId="org.eclipse.ltk.core.refactoring.refactoringHistory"
+            storageMergerId="org.eclipse.ltk.ui.refactoring.model.RefactoringHistoryMerger"/>
+   </extension>
+   <extension
+         point="org.eclipse.compare.contentMergeViewers">
+      <viewer
+            class="org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorCompareViewerCreator"
+            extensions="refactoring_descriptor"
+            label="%contentMergeViewers.refactoring.label"
+            id="org.eclipse.ltk.ui.refactoring.descriptor.viewer"/>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorCompareInput"
+            class="org.eclipse.ltk.internal.ui.refactoring.model.RefactoringModelAdapterFactory">
+         <adapter type="org.eclipse.core.resources.mapping.ResourceMapping"/>
+      </factory>
+   </extension>
+   <extension
+         point="org.eclipse.team.core.storageMergers">
+      <storageMerger
+            class="org.eclipse.ltk.internal.ui.refactoring.model.RefactoringIndexMerger"
+            id="org.eclipse.ltk.ui.refactoring.model.RefactoringIndexMerger"/>
+      <contentTypeBinding
+            contentTypeId="org.eclipse.ltk.core.refactoring.refactoringIndex"
+            storageMergerId="org.eclipse.ltk.ui.refactoring.model.RefactoringIndexMerger"/>
+      <storageMerger
+            class="org.eclipse.ltk.internal.ui.refactoring.model.RefactoringHistoryMerger"
+            id="org.eclipse.ltk.ui.refactoring.model.RefactoringHistoryMerger"/>
+      <contentTypeBinding
+            contentTypeId="org.eclipse.ltk.core.refactoring.refactoringHistory"
+            storageMergerId="org.eclipse.ltk.ui.refactoring.model.RefactoringHistoryMerger"/>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.eclipse.ltk.internal.ui.refactoring.history.RefactoringPropertyPageTester"
+            id="org.eclipse.ltk.ui.refactoring.refactoringPropertiesTester"
+            namespace="org.eclipse.ltk.ui.refactoring"
+            properties="refactoringPropertiesEnabled"
+            type="org.eclipse.core.runtime.IAdaptable">
+      </propertyTester>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            id="org.eclipse.ltk.ui.category.refactoring"
+            name="%refactoring.category">
+      </category>
+      <command
+            categoryId="org.eclipse.ltk.ui.category.refactoring"
+            defaultHandler="org.eclipse.ltk.internal.ui.refactoring.actions.DeleteResourcesHandler"
+            description="%deleteResources.description"
+            id="org.eclipse.ltk.ui.refactoring.commands.deleteResources"
+            name="%deleteResources.name">
+      </command>
+      <command
+            categoryId="org.eclipse.ltk.ui.category.refactoring"
+            defaultHandler="org.eclipse.ltk.internal.ui.refactoring.actions.MoveResourcesHandler"
+            description="%moveResources.description"
+            id="org.eclipse.ltk.ui.refactoring.commands.moveResources"
+            name="%moveResources.name">
+      </command>
+      <command
+            categoryId="org.eclipse.ltk.ui.category.refactoring"
+            defaultHandler="org.eclipse.ltk.internal.ui.refactoring.actions.RenameResourceHandler"
+            description="%renameResource.description"
+            id="org.eclipse.ltk.ui.refactoring.commands.renameResource"
+            name="%renameResource.name">
+			<commandParameter
+                  id="org.eclipse.ltk.ui.refactoring.commands.renameResource.newName.parameter.key"
+                  name="%renameResource.commandParameter.newName"
+                  optional="true">
+            </commandParameter>
+      </command>
+   </extension>
+</plugin>

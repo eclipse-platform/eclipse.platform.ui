@@ -1528,6 +1528,9 @@ public final class IDE {
 		// Try file specific editor.
 		IEditorRegistry editorReg = PlatformUI.getWorkbench()
 				.getEditorRegistry();
+		if (editorReg == null) {
+			return null;
+		}
 
 		IContentType contentType = null;
 		if (determineContentType) {

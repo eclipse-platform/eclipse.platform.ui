@@ -20,6 +20,8 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
+import org.eclipse.core.resources.undo.snapshot.IResourceSnapshot;
+import org.eclipse.core.resources.undo.snapshot.ResourceSnapshotFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
@@ -55,7 +57,7 @@ public class CopyResourcesOperation extends
 
 	IResource[] originalResources;
 
-	ResourceDescription[] snapshotResourceDescriptions;
+	IResourceSnapshot<? extends IResource>[] snapshotResourceDescriptions;
 
 	/**
 	 * Create a CopyResourcesOperation that copies a single resource to a new
@@ -148,12 +150,12 @@ public class CopyResourcesOperation extends
 				resources.length + (resourceDescriptions != null ? resourceDescriptions.length : 0));
 		subMonitor.setTaskName(UndoMessages.AbstractResourcesOperation_CopyingResourcesProgress);
 		List<IResource> resourcesAtDestination = new ArrayList<>();
-		List<ResourceDescription> overwrittenResources = new ArrayList<>();
+		List<IResourceSnapshot<? extends IResource>> overwrittenResources = new ArrayList<>();
 
 		for (int i = 0; i < resources.length; i++) {
 			// Copy the resources and record the overwrites that would
 			// be restored if this operation were reversed
-			ResourceDescription[] overwrites;
+			IResourceSnapshot<? extends IResource>[] overwrites;
 			overwrites = WorkspaceUndoUtil.copy(new IResource[] { resources[i] }, getDestinationPath(resources[i], i),
 					resourcesAtDestination, subMonitor.split(1), uiInfo, true, fCreateGroups, fCreateLinks,
 					fRelativeToVariable);
@@ -163,7 +165,7 @@ public class CopyResourcesOperation extends
 
 		// Are there any previously overwritten resources to restore now?
 		if (resourceDescriptions != null) {
-			for (ResourceDescription resourceDescription : resourceDescriptions) {
+			for (IResourceSnapshot<? extends IResource> resourceDescription : resourceDescriptions) {
 				if (resourceDescription != null) {
 					resourceDescription.createResource(subMonitor.split(1));
 				}
@@ -172,7 +174,7 @@ public class CopyResourcesOperation extends
 
 		// Reset resource descriptions to the just overwritten resources
 		setResourceDescriptions(overwrittenResources
-				.toArray(new ResourceDescription[overwrittenResources.size()]));
+				.toArray(new IResourceSnapshot[overwrittenResources.size()]));
 
 		// Reset the target resources to refer to the resources in their new
 		// location.
@@ -193,7 +195,7 @@ public class CopyResourcesOperation extends
 		WorkspaceUndoUtil.delete(resources, subMonitor.split(1), uiInfo, true);
 		// then restoring any overwritten by the previous copy...
 		WorkspaceUndoUtil.recreate(resourceDescriptions, subMonitor.split(1), uiInfo);
-		setResourceDescriptions(new ResourceDescription[0]);
+		setResourceDescriptions(new IResourceSnapshot[0]);
 		// then setting the target resources back to the original ones.
 		// Note that the destination paths never changed since they
 		// are not used during undo.
@@ -210,7 +212,7 @@ public class CopyResourcesOperation extends
 				update = true;
 				factory.delete(resource);
 			}
-			for (ResourceDescription resourceDescription : resourceDescriptions) {
+			for (IResourceSnapshot resourceDescription : resourceDescriptions) {
 				if (resourceDescription != null) {
 					update = true;
 					IResource resource = resourceDescription.createResourceHandle();
@@ -244,7 +246,7 @@ public class CopyResourcesOperation extends
 			markInvalid();
 			return getErrorStatus(UndoMessages.CopyResourcesOperation_NotAllowedDueToDataLoss);
 		}
-		for (ResourceDescription snapshotResourceDescription : snapshotResourceDescriptions) {
+		for (IResourceSnapshot snapshotResourceDescription : snapshotResourceDescriptions) {
 			if (!snapshotResourceDescription.verifyExistence(true)) {
 				markInvalid();
 				return getErrorStatus(UndoMessages.CopyResourcesOperation_NotAllowedDueToDataLoss);
@@ -271,10 +273,9 @@ public class CopyResourcesOperation extends
 	 */
 	private void setOriginalResources(IResource[] originals) {
 		originalResources = originals;
-		snapshotResourceDescriptions = new ResourceDescription[originals.length];
+		snapshotResourceDescriptions = new IResourceSnapshot[originals.length];
 		for (int i = 0; i < originals.length; i++) {
-			snapshotResourceDescriptions[i] = ResourceDescription
-					.fromResource(originals[i]);
+			snapshotResourceDescriptions[i] = ResourceSnapshotFactory.fromResource(originals[i]);
 		}
 	}
 }

@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.genericeditor.tests;
 
+import static org.eclipse.ui.genericeditor.tests.contributions.BarContentAssistProcessor.BAR_CONTENT_ASSIST_PROPOSAL;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -33,7 +34,6 @@ import org.eclipse.text.tests.Accessor;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.source.SourceViewer;
 
-import org.eclipse.ui.genericeditor.tests.contributions.BarContentAssistProcessor;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
@@ -49,7 +49,7 @@ public class ContextInfoTest extends AbstratGenericEditorTest {
 	@Test
 	public void testContextInfo() throws Exception {
 		cleanFileAndEditor();
-		createAndOpenFile("foobar.txt", BarContentAssistProcessor.PROPOSAL);
+		createAndOpenFile("foobar.txt", BAR_CONTENT_ASSIST_PROPOSAL);
 
 		final Set<Shell> beforeShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
 		TextOperationAction action = (TextOperationAction) editor.getAction(ITextEditorActionConstants.CONTENT_ASSIST_CONTEXT_INFORMATION);
@@ -74,7 +74,7 @@ public class ContextInfoTest extends AbstratGenericEditorTest {
 	@Test
 	public void testContextInfo_hide_Bug512251() throws Exception {
 		cleanFileAndEditor();
-		createAndOpenFile("foobar.txt", BarContentAssistProcessor.PROPOSAL);
+		createAndOpenFile("foobar.txt", BAR_CONTENT_ASSIST_PROPOSAL);
 
 		final Set<Shell> beforeShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
 		TextOperationAction action = (TextOperationAction) editor.getAction(ITextEditorActionConstants.CONTENT_ASSIST_CONTEXT_INFORMATION);

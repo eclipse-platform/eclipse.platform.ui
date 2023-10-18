@@ -19,7 +19,9 @@
 package org.eclipse.jface.viewers;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Policy;
+import org.eclipse.jface.viewers.internal.ExpandableNode;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -142,6 +144,16 @@ public abstract class ViewerColumn {
 			" has no label provider."); //$NON-NLS-1$
 		}
 		labelProvider.update(cell);
+
+		// check if client has updated the label for this element. Otherwise use default
+		// label provided
+		if (cell.getElement() instanceof ExpandableNode expNode) {
+			cell.setFont(JFaceResources.getFontRegistry().getItalic(JFaceResources.DEFAULT_FONT));
+			String text = cell.getText();
+			if (text.isEmpty() || text.equals(expNode.toString())) {
+				cell.setText(expNode.getLabel());
+			}
+		}
 	}
 
 	/**

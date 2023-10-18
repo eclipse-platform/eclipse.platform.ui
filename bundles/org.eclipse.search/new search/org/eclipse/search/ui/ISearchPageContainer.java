@@ -62,6 +62,13 @@ public interface ISearchPageContainer {
 	public static final int SELECTED_PROJECTS_SCOPE= 3;
 
 	/**
+	 * Current Project scope (value <code>4</code>).
+	 *
+	 * @since 3.16
+	 */
+	public static final int OPENED_EDITORS_SCOPE = 4;
+
+	/**
 	 * Returns the selection with which this container was opened.
 	 *
 	 * @return the selection passed to this container when it was opened
@@ -85,8 +92,9 @@ public interface ISearchPageContainer {
 	 public void setPerformActionEnabled(boolean state);
 
 	/**
-	 * Returns search container's selected scope.
-	 * The scope is WORKSPACE_SCOPE, SELECTED_PROJECTS_SCOPE, SELECTION_SCOPE or WORKING_SET_SCOPE.
+	 * Returns search container's selected scope. The scope is WORKSPACE_SCOPE,
+	 * SELECTED_PROJECTS_SCOPE, SELECTION_SCOPE, OPENED_EDITORS_SCOPE or
+	 * WORKING_SET_SCOPE.
 	 *
 	 * @return the selected scope
 	 * @since 2.0
@@ -94,9 +102,12 @@ public interface ISearchPageContainer {
 	public int getSelectedScope();
 
 	/**
-	 * Sets the selected scope of this search page container.
-	 * The scope is WORKSPACE_SCOPE, SELECTED_PROJECTS_SCOPE, SELECTION_SCOPE or WORKING_SET_SCOPE.
-	 * @param scope the newly selected scope
+	 * Sets the selected scope of this search page container. The scope is
+	 * WORKSPACE_SCOPE, SELECTED_PROJECTS_SCOPE, SELECTION_SCOPE,
+	 * OPENED_EDITORS_SCOPE or WORKING_SET_SCOPE.
+	 * 
+	 * @param scope
+	 *            the newly selected scope
 	 *
 	 * @since 2.0
 	 */

@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.resources.IMarker;
 
 import org.eclipse.jface.text.BadLocationException;
@@ -63,19 +66,22 @@ public final class BasicMarkerUpdater implements IMarkerUpdater {
 		int markerStart= MarkerUtilities.getCharStart(marker);
 		int markerEnd= MarkerUtilities.getCharEnd(marker);
 
+
+		Map<String, Object> attributeChanges= new HashMap<>(3);
+
 		if (markerStart != -1 && markerEnd != -1) {
 
 			offsetsInitialized= true;
 
 			int offset= position.getOffset();
 			if (markerStart != offset) {
-				MarkerUtilities.setCharStart(marker, offset);
+				MarkerUtilities.setCharStart(attributeChanges, offset);
 				offsetsChanged= true;
 			}
 
 			offset += position.getLength();
 			if (markerEnd != offset) {
-				MarkerUtilities.setCharEnd(marker, offset);
+				MarkerUtilities.setCharEnd(attributeChanges, offset);
 				offsetsChanged= true;
 			}
 		}
@@ -83,9 +89,13 @@ public final class BasicMarkerUpdater implements IMarkerUpdater {
 		if (!offsetsInitialized || (offsetsChanged && MarkerUtilities.getLineNumber(marker) != -1)) {
 			try {
 				// marker line numbers are 1-based
-				MarkerUtilities.setLineNumber(marker, document.getLineOfOffset(position.getOffset()) + 1);
+				MarkerUtilities.setLineNumber(attributeChanges, document.getLineOfOffset(position.getOffset()) + 1);
 			} catch (BadLocationException x) {
 			}
+		}
+
+		if (!attributeChanges.isEmpty()) {
+			MarkerUtilities.changeAttributes(marker, attributeChanges);
 		}
 
 		return true;

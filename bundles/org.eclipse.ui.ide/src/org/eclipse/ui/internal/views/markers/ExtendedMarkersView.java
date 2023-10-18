@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2019 IBM Corporation and others.
+ * Copyright (c) 2007, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -110,6 +110,7 @@ import org.eclipse.ui.part.MarkerTransfer;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.eclipse.ui.views.WorkbenchViewerSetup;
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerItem;
 import org.eclipse.ui.views.markers.internal.ContentGeneratorDescriptor;
@@ -165,6 +166,15 @@ public class ExtendedMarkersView extends ViewPart {
 
 	private Action filterAction;
 
+	/**
+	 * The user can set a custom name when opening a new view. This value has to be
+	 * persisted when closing the Eclipse. Otherwise the view would fall back to its
+	 * default name. We must only persist the part name when a custom name has been
+	 * set in order to prevent saving a translated name.
+	 *
+	 * @see OpenMarkersViewHandler
+	 */
+	private String customPartName;
 
 	/**
 	 * Tells whether the tree has been painted.
@@ -256,6 +266,7 @@ public class ExtendedMarkersView extends ViewPart {
 
 		viewer = new MarkersTreeViewer(new Tree(parent, SWT.H_SCROLL
 				/*| SWT.VIRTUAL */| SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION));
+		WorkbenchViewerSetup.setupViewer(viewer);
 		viewer.getTree().setLinesVisible(true);
 		viewer.setUseHashlookup(true);
 		createColumns(new TreeColumn[0], new int[0]);
@@ -581,9 +592,10 @@ public class ExtendedMarkersView extends ViewPart {
 	IMarker[] getOpenableMarkers() {
 		HashSet<IMarker> result = new HashSet<>();
 		for (Object o : viewer.getStructuredSelection()) {
-			MarkerSupportItem next = (MarkerSupportItem) o;
-			if (next.isConcrete()) {
-				result.add(((MarkerEntry) next).getMarker());
+			if (o instanceof MarkerSupportItem next) {
+				if (next.isConcrete()) {
+					result.add(((MarkerEntry) next).getMarker());
+				}
 			}
 		}
 		if (result.isEmpty()) {
@@ -872,18 +884,20 @@ public class ExtendedMarkersView extends ViewPart {
 		final List<IMarker> result = new ArrayList<>(structured.size());
 		MarkerCategory lastCategory = null;
 		for (Iterator<?> i = structured.iterator(); i.hasNext();) {
-			final MarkerSupportItem next = (MarkerSupportItem) i.next();
-			if (next.isConcrete()) {
-				if (lastCategory != null && lastCategory == next.getParent()) {
-					continue;
-				}
-				result.add(next.getMarker());
-			} else {
-				lastCategory = (MarkerCategory) next;
-				final MarkerEntry[] children = (MarkerEntry[]) lastCategory.getChildren();
+			Object item = i.next();
+			if (item instanceof MarkerSupportItem next) {
+				if (next.isConcrete()) {
+					if (lastCategory != null && lastCategory == next.getParent()) {
+						continue;
+					}
+					result.add(next.getMarker());
+				} else {
+					lastCategory = (MarkerCategory) next;
+					final MarkerEntry[] children = (MarkerEntry[]) lastCategory.getChildren();
 
-				for (MarkerEntry element : children) {
-					result.add(element.getMarker());
+					for (MarkerEntry element : children) {
+						result.add(element.getMarker());
+					}
 				}
 			}
 		}
@@ -1039,7 +1053,7 @@ public class ExtendedMarkersView extends ViewPart {
 		if (m == null || m.getString(TAG_PART_NAME) == null) {
 			return;
 		}
-		setPartName(m.getString(TAG_PART_NAME));
+		initializeTitle(m.getString(TAG_PART_NAME));
 	}
 
 	/**
@@ -1079,6 +1093,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @param name
 	 */
 	void initializeTitle(String name) {
+		customPartName = name;
 		setPartName(name);
 	}
 
@@ -1229,7 +1244,9 @@ public class ExtendedMarkersView extends ViewPart {
 	@Override
 	public void saveState(IMemento m) {
 		super.saveState(m);
-		m.putString(TAG_PART_NAME, getPartName());
+		if (customPartName != null) {
+			m.putString(TAG_PART_NAME, customPartName);
+		}
 		if (generator != null) {
 			m.putString(TAG_GENERATOR, builder.getGenerator().getId());
 		}
@@ -1377,21 +1394,24 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @param newSelection
 	 */
 	void updateStatusLine(IStructuredSelection newSelection) {
-		String message;
+		String message = null;
 
 		if (newSelection == null || newSelection.isEmpty()) {
 			message = MarkerSupportInternalUtilities.EMPTY_STRING;
 		} else if (newSelection.size() == 1) {
 			// Use the Message attribute of the marker
-			message = ((MarkerSupportItem) newSelection.getFirstElement()).getDescription();
+			if (newSelection.getFirstElement() instanceof MarkerSupportItem element) {
+				message = element.getDescription();
+			}
 
 		} else {
 			Iterator<?> elements = newSelection.iterator();
 			Collection<MarkerSupportItem> result = new ArrayList<>();
 			while (elements.hasNext()) {
-				MarkerSupportItem next = (MarkerSupportItem) elements.next();
-				if (next.isConcrete()) {
-					result.add(next);
+				if (elements.next() instanceof MarkerSupportItem next) {
+					if (next.isConcrete()) {
+						result.add(next);
+					}
 				}
 			}
 			MarkerEntry[] entries = new MarkerEntry[result.size()];
@@ -1734,5 +1754,13 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	boolean isVisible() {
 		return isViewVisible;
+	}
+
+	@Override
+	public <T> T getAdapter(Class<T> adapter) {
+		if (adapter == MarkersTreeViewer.class) {
+			return adapter.cast(viewer);
+		}
+		return super.getAdapter(adapter);
 	}
 }

@@ -323,6 +323,8 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 				return getSelectedResourcesScope();
 			case ISearchPageContainer.SELECTED_PROJECTS_SCOPE:
 				return getEnclosingProjectScope();
+			case ISearchPageContainer.OPENED_EDITORS_SCOPE:
+				return getOpenedEditorstScope();
 			case ISearchPageContainer.WORKING_SET_SCOPE:
 				IWorkingSet[] workingSets= getContainer().getSelectedWorkingSets();
 				return FileTextSearchScope.newSearchScope(workingSets, getExtensions(), fSearchDerived);
@@ -352,6 +354,10 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		return FileTextSearchScope.newSearchScope(res, getExtensions(), fSearchDerived);
 	}
 
+	private FileTextSearchScope getOpenedEditorstScope() {
+		IResource[] arr = ScopePart.selectedResourcesFromEditors().toArray(new IResource[0]);
+		return FileTextSearchScope.newSearchScope(arr, getExtensions(), fSearchDerived);
+	}
 
 	private SearchPatternData findInPrevious(String pattern) {
 		for (SearchPatternData element : fPreviousSearchPatterns) {

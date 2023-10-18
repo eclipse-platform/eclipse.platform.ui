@@ -1627,6 +1627,36 @@
          </description>
       </colorDefinition>
       <colorDefinition
+            label="%Color.formHeadingErrorMessage"
+            value="COLOR_RED"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            id="org.eclipse.ui.workbench.FORM_HEADING_ERROR_COLOR"
+            isEditable="false">
+         <description>
+            %Color.formHeadingErrorMessageDesc
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            label="%Color.formHeadingWarningMessage"
+            value="COLOR_DARK_YELLOW"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            id="org.eclipse.ui.workbench.FORM_HEADING_WARNING_COLOR"
+            isEditable="false">
+         <description>
+            %Color.formHeadingWarningMessageDesc
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            label="%Color.formHeadingInfoMessage"
+            value="COLOR_BLACK"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            id="org.eclipse.ui.workbench.FORM_HEADING_INFO_COLOR"
+            isEditable="false">
+         <description>
+            %Color.formHeadingInfoMessageDesc
+         </description>
+      </colorDefinition>
+      <colorDefinition
             categoryId="org.eclipse.ui.workbenchMisc"
             id="HYPERLINK_COLOR"
             value="COLOR_LINK_FOREGROUND"

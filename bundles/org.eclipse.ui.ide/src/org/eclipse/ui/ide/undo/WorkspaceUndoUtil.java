@@ -32,6 +32,9 @@ import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.undo.snapshot.IContainerSnapshot;
+import org.eclipse.core.resources.undo.snapshot.IResourceSnapshot;
+import org.eclipse.core.resources.undo.snapshot.ResourceSnapshotFactory;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -51,8 +54,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.undo.ContainerDescription;
-import org.eclipse.ui.internal.ide.undo.FileDescription;
 import org.eclipse.ui.internal.ide.undo.UndoMessages;
 
 
@@ -179,13 +180,14 @@ public class WorkspaceUndoUtil {
 	 * @throws CoreException
 	 *             propagates any CoreExceptions thrown from the resources API
 	 */
-	static ResourceDescription[] delete(IResource[] resourcesToDelete, IProgressMonitor mon, IAdaptable uiInfo,
+	static IResourceSnapshot<? extends IResource>[] delete(IResource[] resourcesToDelete, IProgressMonitor mon,
+			IAdaptable uiInfo,
 			boolean deleteContent) throws CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(mon, resourcesToDelete.length);
 
 		final List<CoreException> exceptions = new ArrayList<>();
 		boolean forceOutOfSyncDelete = false;
-		ResourceDescription[] returnedResourceDescriptions = new ResourceDescription[resourcesToDelete.length];
+		IResourceSnapshot<? extends IResource>[] returnedResourceDescriptions = new IResourceSnapshot<?>[resourcesToDelete.length];
 		subMonitor.setTaskName(UndoMessages.AbstractResourcesOperation_DeleteResourcesProgress);
 		for (int i = 0; i < resourcesToDelete.length; ++i) {
 			IResource resource = resourcesToDelete[i];
@@ -258,7 +260,8 @@ public class WorkspaceUndoUtil {
 	 * @throws CoreException
 	 *             propagates any CoreExceptions thrown from the resources API
 	 */
-	static ResourceDescription[] copy(IResource[] resources, IPath destination, List<IResource> resourcesAtDestination,
+	static IResourceSnapshot<? extends IResource>[] copy(IResource[] resources, IPath destination,
+			List<IResource> resourcesAtDestination,
 			IProgressMonitor monitor, IAdaptable uiInfo, boolean pathIncludesName) throws CoreException {
 		return copy(resources, destination, resourcesAtDestination, monitor,
 				uiInfo, pathIncludesName, false, false, null);
@@ -308,12 +311,13 @@ public class WorkspaceUndoUtil {
 	 * @throws CoreException
 	 *             propagates any CoreExceptions thrown from the resources API
 	 */
-	static ResourceDescription[] copy(IResource[] resources, IPath destination, List<IResource> resourcesAtDestination,
+	static IResourceSnapshot<? extends IResource>[] copy(IResource[] resources, IPath destination,
+			List<IResource> resourcesAtDestination,
 			IProgressMonitor monitor, IAdaptable uiInfo, boolean pathIncludesName, boolean createVirtual,
 			boolean createLinks, String relativeToVariable) throws CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, resources.length);
 		subMonitor.setTaskName(UndoMessages.AbstractResourcesOperation_CopyingResourcesProgress);
-		List<ResourceDescription> overwrittenResources = new ArrayList<>();
+		List<IResourceSnapshot<? extends IResource>> overwrittenResources = new ArrayList<>();
 		for (IResource source : resources) {
 			SubMonitor iterationProgress = subMonitor.split(1).setWorkRemaining(100);
 			IPath destinationPath;
@@ -335,7 +339,7 @@ public class WorkspaceUndoUtil {
 					// copy only linked resource children (267173)
 					if (source.isLinked() && source.getLocation().equals(existing.getLocation()))
 						children = filterNonLinkedResources(children);
-					ResourceDescription[] overwritten = copy(children,
+					IResourceSnapshot<? extends IResource>[] overwritten = copy(children,
 							destinationPath, resourcesAtDestination,
 							iterationProgress, uiInfo, false,
 							createVirtual, createLinks, relativeToVariable);
@@ -345,7 +349,8 @@ public class WorkspaceUndoUtil {
 				} else {
 					// delete the destination folder, copying a linked folder
 					// over an unlinked one or vice versa. Fixes bug 28772.
-					ResourceDescription[] deleted = delete(new IResource[] { existing }, iterationProgress.split(1),
+					IResourceSnapshot<? extends IResource>[] deleted = delete(new IResource[] { existing },
+							iterationProgress.split(1),
 							uiInfo, false);
 					iterationProgress.setWorkRemaining(100);
 					if ((createLinks || createVirtual) && (source.isLinked() == false)
@@ -376,7 +381,7 @@ public class WorkspaceUndoUtil {
 							&& (source.isLinked() == false)) {
 						// we create a linked file, and overwrite the
 						// destination
-						ResourceDescription[] deleted = delete(
+						IResourceSnapshot<? extends IResource>[] deleted = delete(
 								new IResource[] { existing },
 								iterationProgress.split(1), uiInfo,
 								false);
@@ -415,7 +420,7 @@ public class WorkspaceUndoUtil {
 							// Copying a linked resource over unlinked or vice
 							// versa. Can't use setContents here. Fixes bug
 							// 28772.
-							ResourceDescription[] deleted = delete(
+							IResourceSnapshot<? extends IResource>[] deleted = delete(
 									new IResource[] { existing },
 									iterationProgress.split(1), uiInfo,
 									false);
@@ -472,7 +477,7 @@ public class WorkspaceUndoUtil {
 			}
 		}
 		return overwrittenResources
-				.toArray(new ResourceDescription[overwrittenResources.size()]);
+				.toArray(new IResourceSnapshot<?>[overwrittenResources.size()]);
 	}
 
 	/**
@@ -530,13 +535,14 @@ public class WorkspaceUndoUtil {
 	 * @throws CoreException
 	 *             propagates any CoreExceptions thrown from the resources API
 	 */
-	static ResourceDescription[] move(IResource[] resources, IPath destination, List<IResource> resourcesAtDestination,
+	static IResourceSnapshot<? extends IResource>[] move(IResource[] resources, IPath destination,
+			List<IResource> resourcesAtDestination,
 			List<IPath> reverseDestinations, IProgressMonitor mon, IAdaptable uiInfo, boolean pathIncludesName)
 					throws CoreException {
 
 		SubMonitor subMonitor = SubMonitor.convert(mon, resources.length);
 		subMonitor.setTaskName(UndoMessages.AbstractResourcesOperation_MovingResources);
-		List<ResourceDescription> overwrittenResources = new ArrayList<>();
+		List<IResourceSnapshot<? extends IResource>> overwrittenResources = new ArrayList<>();
 		for (IResource resource : resources) {
 			SubMonitor iterationProgress = subMonitor.split(1);
 			IPath destinationPath;
@@ -555,7 +561,8 @@ public class WorkspaceUndoUtil {
 					// move only linked resource children (267173)
 					if (resource.isLinked() && resource.getLocation().equals(existing.getLocation()))
 						children = filterNonLinkedResources(children);
-					ResourceDescription[] overwritten = move(children, destinationPath, resourcesAtDestination,
+					IResourceSnapshot<? extends IResource>[] overwritten = move(children, destinationPath,
+							resourcesAtDestination,
 							reverseDestinations, iterationProgress.split(90), uiInfo, false);
 					// We don't record the moved resources since the recursive
 					// call has done so. Just record the overwrites.
@@ -566,7 +573,8 @@ public class WorkspaceUndoUtil {
 				} else {
 					// delete the destination folder, moving a linked folder
 					// over an unlinked one or vice versa. Fixes bug 28772.
-					ResourceDescription[] deleted = delete(new IResource[] { existing }, iterationProgress.split(10),
+					IResourceSnapshot<? extends IResource>[] deleted = delete(new IResource[] { existing },
+							iterationProgress.split(10),
 							uiInfo, false);
 					// Record the original path
 					reverseDestinations.add(resource.getFullPath());
@@ -587,7 +595,7 @@ public class WorkspaceUndoUtil {
 					} else {
 						// Moving a linked resource over unlinked or vice
 						// versa. Can't use setContents here. Fixes bug 28772.
-						ResourceDescription[] deleted = delete(
+						IResourceSnapshot<? extends IResource>[] deleted = delete(
 								new IResource[] { existing },
 								iterationProgress.split(1), uiInfo,
 								false);
@@ -625,7 +633,7 @@ public class WorkspaceUndoUtil {
 			}
 		}
 		return overwrittenResources
-				.toArray(new ResourceDescription[overwrittenResources.size()]);
+				.toArray(new IResourceSnapshot<?>[overwrittenResources.size()]);
 
 	}
 
@@ -660,7 +668,7 @@ public class WorkspaceUndoUtil {
 	 * @throws CoreException
 	 *             propagates any CoreExceptions thrown from the resources API
 	 */
-	static IResource[] recreate(ResourceDescription[] resourcesToRecreate,
+	static IResource[] recreate(IResourceSnapshot<? extends IResource>[] resourcesToRecreate,
 			IProgressMonitor monitor, IAdaptable uiInfo) throws CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, resourcesToRecreate.length);
 		final List<CoreException> exceptions = new ArrayList<>();
@@ -705,12 +713,12 @@ public class WorkspaceUndoUtil {
 	 * @throws CoreException
 	 *             propagates any CoreExceptions thrown from the resources API
 	 */
-	static ResourceDescription delete(IResource resourceToDelete,
+	static IResourceSnapshot<? extends IResource> delete(IResource resourceToDelete,
 			IProgressMonitor monitor, IAdaptable uiInfo,
 			boolean forceOutOfSyncDelete, boolean deleteContent)
 			throws CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor);
-		ResourceDescription resourceDescription = ResourceDescription
+		IResourceSnapshot<? extends IResource> resourceDescription = ResourceSnapshotFactory
 				.fromResource(resourceToDelete);
 		if (resourceToDelete.getType() == IResource.PROJECT) {
 			// it is a project
@@ -730,7 +738,7 @@ public class WorkspaceUndoUtil {
 				updateFlags = IResource.KEEP_HISTORY;
 			}
 			resourceToDelete.delete(updateFlags, subMonitor.split(1));
-			resourceDescription.recordStateFromHistory(resourceToDelete, subMonitor.split(1));
+			resourceDescription.recordStateFromHistory(subMonitor.split(1));
 		}
 
 		return resourceDescription;
@@ -741,7 +749,7 @@ public class WorkspaceUndoUtil {
 	 * returning a ResourceDescription that can be used to restore the original
 	 * content. Do nothing if the resources are not files.
 	 */
-	private static ResourceDescription copyOverExistingResource(
+	private static IResourceSnapshot<IResource> copyOverExistingResource(
 			IResource source, IResource existing, IProgressMonitor monitor,
 			IAdaptable uiInfo, boolean deleteSourceFile) throws CoreException {
 		if (!(source instanceof IFile && existing instanceof IFile)) {
@@ -755,10 +763,10 @@ public class WorkspaceUndoUtil {
 			if (validateEdit(file, existingFile, getShell(uiInfo))) {
 				// Remember the state of the existing file so it can be
 				// restored.
-				FileDescription fileDescription = new FileDescription(existingFile);
+				IResourceSnapshot<IResource> fileDescription = ResourceSnapshotFactory.fromResource(existingFile);
 				// Reset the contents to that of the file being moved
 				existingFile.setContents(file.getContents(), IResource.KEEP_HISTORY, subMonitor.split(1));
-				fileDescription.recordStateFromHistory(existingFile, subMonitor.split(1));
+				fileDescription.recordStateFromHistory(subMonitor.split(1));
 				// Now delete the source file if requested
 				// We don't need to remember anything about it, because
 				// any undo involving this operation will move the original
@@ -770,6 +778,32 @@ public class WorkspaceUndoUtil {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Return the first folder found that has no child folders.
+	 *
+	 * @since 3.22
+	 * @param parent the parent folder
+	 *
+	 * @return the container description for the first child in the receiver that is
+	 *         a leaf, or this container if there are no children.
+	 */
+	public static IContainerSnapshot<? extends IContainer> getFirstLeafFolder(
+			IContainerSnapshot<? extends IContainer> parent) {
+		// If there are no members, this is a leaf
+		IResourceSnapshot<? extends IResource>[] members = parent.getMembers();
+		if (members == null || members.length == 0) {
+			return parent;
+		}
+		// Traverse the members and find the first potential leaf
+		for (IResourceSnapshot<? extends IResource> member : members) {
+			if (member instanceof IContainerSnapshot) {
+				return getFirstLeafFolder(((IContainerSnapshot<? extends IResource>) member));
+			}
+		}
+		// No child folders were found, this is a leaf
+		return parent;
 	}
 
 	/*
@@ -798,11 +832,10 @@ public class WorkspaceUndoUtil {
 			container = ResourcesPlugin.getWorkspace().getRoot()
 					.getFolder(path);
 		}
-		ContainerDescription containerDescription = ContainerDescription
+		IResourceSnapshot<? extends IContainer> containerDescription = ResourceSnapshotFactory
 				.fromContainer((IContainer) container);
 		container = containerDescription.createResourceHandle();
-		containerDescription.createExistentResourceFromHandle(container,
-				new NullProgressMonitor());
+		containerDescription.createExistentResourceFromHandle(new NullProgressMonitor());
 		return (IContainer) container;
 	}
 

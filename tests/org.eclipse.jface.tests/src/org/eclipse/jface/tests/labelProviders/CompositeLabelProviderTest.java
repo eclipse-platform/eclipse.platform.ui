@@ -58,15 +58,6 @@ public abstract class CompositeLabelProviderTest extends ViewerTestCase {
 	Font font;
 
 	/**
-	 * Create a new instance of the receiver.
-	 *
-	 * @param name
-	 */
-	public CompositeLabelProviderTest(String name) {
-		super(name);
-	}
-
-	/**
 	 * Initialize the colors used by the receiver.
 	 *
 	 * @param parent

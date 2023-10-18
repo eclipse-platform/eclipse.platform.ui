@@ -1414,7 +1414,17 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 
 	@Override
 	public void refresh() {
-		refresh(getRoot());
+		Control control = getControl();
+		if (control != null) {
+			control.setRedraw(false);
+		}
+		try {
+			refresh(getRoot());
+		} finally {
+			if (control != null) {
+				control.setRedraw(true);
+			}
+		}
 	}
 
 	/**

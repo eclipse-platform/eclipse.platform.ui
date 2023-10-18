@@ -151,7 +151,7 @@ public class ContainerSelectionDialog extends SelectionDialog {
 	@Override
 	protected void okPressed() {
 
-		List chosenContainerPathList = new ArrayList();
+		List<IPath> chosenContainerPathList = new ArrayList<>();
 		IPath returnValue = group.getContainerFullPath();
 		if (returnValue != null) {
 			chosenContainerPathList.add(returnValue);

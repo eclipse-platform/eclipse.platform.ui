@@ -13,6 +13,12 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +38,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.junit.Test;
 
 public class CheckboxTableViewerTest extends TableViewerTest {
 	public static class CheckboxTableTestLabelProvider extends TestLabelProvider implements ITableLabelProvider {
@@ -61,9 +68,6 @@ public class CheckboxTableViewerTest extends TableViewerTest {
 	}
 
 	public static class DeprecatedConstructor extends CheckboxTableViewerTest {
-		public DeprecatedConstructor(String name) {
-			super(name);
-		}
 
 		@Override
 		protected StructuredViewer createViewer(Composite parent) {
@@ -94,6 +98,7 @@ public class CheckboxTableViewerTest extends TableViewerTest {
 			return viewer;
 		}
 
+		@Test
 		@Override
 		public void testViewerColumn() {
 			assertNull(getViewerColumn((TableViewer) fViewer, -1));
@@ -107,9 +112,6 @@ public class CheckboxTableViewerTest extends TableViewerTest {
 	}
 
 	public static class FactoryMethod extends CheckboxTableViewerTest {
-		public FactoryMethod(String name) {
-			super(name);
-		}
 
 		@Override
 		protected StructuredViewer createViewer(Composite parent) {
@@ -139,10 +141,6 @@ public class CheckboxTableViewerTest extends TableViewerTest {
 			viewer.setLabelProvider(new TableTestLabelProvider());
 			return viewer;
 		}
-	}
-
-	public CheckboxTableViewerTest(String name) {
-		super(name);
 	}
 
 	@Override
@@ -173,10 +171,7 @@ public class CheckboxTableViewerTest extends TableViewerTest {
 		return viewer;
 	}
 
-	public static void main(String args[]) {
-		junit.textui.TestRunner.run(CheckboxTableViewerTest.class);
-	}
-
+	@Test
 	public void testCheckAllElements() {
 		CheckboxTableViewer ctv = (CheckboxTableViewer) fViewer;
 		ctv.setAllChecked(true);
@@ -187,6 +182,7 @@ public class CheckboxTableViewerTest extends TableViewerTest {
 		assertTrue(!ctv.getChecked(fRootElement.getLastChild()));
 	}
 
+	@Test
 	public void testGrayAllElements() {
 		CheckboxTableViewer ctv = (CheckboxTableViewer) fViewer;
 		ctv.setAllGrayed(true);
@@ -197,6 +193,7 @@ public class CheckboxTableViewerTest extends TableViewerTest {
 		assertTrue(!ctv.getGrayed(fRootElement.getLastChild()));
 	}
 
+	@Test
 	public void testGrayed() {
 		CheckboxTableViewer ctv = (CheckboxTableViewer) fViewer;
 		TestElement element = fRootElement.getFirstChild();
@@ -215,6 +212,7 @@ public class CheckboxTableViewerTest extends TableViewerTest {
 		ctv.setAllGrayed(false);
 	}
 
+	@Test
 	public void testGrayedElements() {
 		CheckboxTableViewer ctv = (CheckboxTableViewer) fViewer;
 		TestElement first = fRootElement.getFirstChild();
@@ -238,12 +236,14 @@ public class CheckboxTableViewerTest extends TableViewerTest {
 		ctv.setAllGrayed(false);
 	}
 
+	@Test
 	public void testWithoutCheckProvider() {
 		// Check that without a provider, no exceptions are thrown
 		CheckboxTableViewer ctv = (CheckboxTableViewer) fViewer;
 		ctv.refresh();
 	}
 
+	@Test
 	public void testCheckProviderInvoked() {
 		// Check that a refresh successfully causes the provider's
 		// setChecked and setGrayed methods to be invoked.
@@ -261,18 +261,22 @@ public class CheckboxTableViewerTest extends TableViewerTest {
 		assertTrue("isGrayed should be invoked on a refresh", (!provider.isGrayedInvokedOn.isEmpty()));
 	}
 
+	@Test
 	public void testCheckedFalseGrayedFalse() {
 		testSpecificState(false, false);
 	}
 
+	@Test
 	public void testCheckedFalseGrayedTrue() {
 		testSpecificState(false, true);
 	}
 
+	@Test
 	public void testCheckedTrueGrayedFalse() {
 		testSpecificState(true, false);
 	}
 
+	@Test
 	public void testCheckedTrueGrayedTrue() {
 		testSpecificState(true, true);
 	}
@@ -298,6 +302,7 @@ public class CheckboxTableViewerTest extends TableViewerTest {
 		assertEquals(item.getGrayed(), isGrayed);
 	}
 
+	@Test
 	public void testSetCheckProviderRefreshesItems() {
 		CheckboxTableViewer ctv = (CheckboxTableViewer) fViewer;
 
@@ -319,6 +324,7 @@ public class CheckboxTableViewerTest extends TableViewerTest {
 		ctv.refresh();
 	}
 
+	@Test
 	public void testCheckProviderWithSorter() {
 		CheckboxTableViewer ctv = (CheckboxTableViewer) fViewer;
 
@@ -332,6 +338,7 @@ public class CheckboxTableViewerTest extends TableViewerTest {
 		checkAllStates("Testing checkbox state with a sorter", ctv, 0);
 	}
 
+	@Test
 	public void testCheckProviderWithFilter() {
 		CheckboxTableViewer ctv = (CheckboxTableViewer) fViewer;
 
@@ -358,6 +365,7 @@ public class CheckboxTableViewerTest extends TableViewerTest {
 		}
 	}
 
+	@Test
 	public void testCheckProviderUpdate() {
 		CheckboxTableViewer ctv = (CheckboxTableViewer) fViewer;
 
@@ -415,6 +423,7 @@ public class CheckboxTableViewerTest extends TableViewerTest {
 				item.getGrayed());
 	}
 
+	@Test
 	public void testGetCheckedElements() {
 		CheckboxTableViewer ctv = (CheckboxTableViewer) fViewer;
 
@@ -436,6 +445,7 @@ public class CheckboxTableViewerTest extends TableViewerTest {
 		assertTrue("getCheckedElements should not include any unchecked elements", checked.isEmpty());
 	}
 
+	@Test
 	public void testSetCheckedElements() {
 		CheckboxTableViewer ctv = (CheckboxTableViewer) fViewer;
 
@@ -460,6 +470,7 @@ public class CheckboxTableViewerTest extends TableViewerTest {
 		}
 	}
 
+	@Test
 	public void testSetGrayedElements() {
 		CheckboxTableViewer ctv = (CheckboxTableViewer) fViewer;
 

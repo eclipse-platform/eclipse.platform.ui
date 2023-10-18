@@ -20,13 +20,14 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.undo.snapshot.IMarkerSnapshot;
+import org.eclipse.core.resources.undo.snapshot.ResourceSnapshotFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
-import org.eclipse.ui.internal.ide.undo.MarkerDescription;
 import org.eclipse.ui.internal.ide.undo.UndoMessages;
 import org.eclipse.ui.views.markers.internal.MarkerType;
 import org.eclipse.ui.views.markers.internal.MarkerTypesModel;
@@ -44,7 +45,7 @@ import org.eclipse.ui.views.markers.internal.MarkerTypesModel;
  */
 abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 
-	MarkerDescription[] markerDescriptions;
+	IMarkerSnapshot[] markerDescriptions;
 
 	IMarker[] markers;
 
@@ -68,7 +69,7 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	 *            the name used to describe the operation
 	 */
 	AbstractMarkersOperation(IMarker[] markers,
-			MarkerDescription[] markerDescriptions, Map attributes, String name) {
+			IMarkerSnapshot[] markerDescriptions, Map attributes, String name) {
 		super(name);
 		this.markers = markers;
 		this.attributes = null;
@@ -111,9 +112,9 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 			return;
 		}
 		int markerWork = work / markers.length;
-		markerDescriptions = new MarkerDescription[markers.length];
+		markerDescriptions = new IMarkerSnapshot[markers.length];
 		for (int i = 0; i < markers.length; i++) {
-			markerDescriptions[i] = new MarkerDescription(markers[i]);
+			markerDescriptions[i] = ResourceSnapshotFactory.fromMarker(markers[i]);
 			markers[i].delete();
 			monitor.worked(markerWork);
 		}
@@ -199,7 +200,7 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	 * @param descriptions
 	 *            the descriptions of markers that can be created.
 	 */
-	protected void setMarkerDescriptions(MarkerDescription[] descriptions) {
+	protected void setMarkerDescriptions(IMarkerSnapshot[] descriptions) {
 		markerDescriptions = descriptions;
 		addUndoContexts();
 		updateTargetResources();

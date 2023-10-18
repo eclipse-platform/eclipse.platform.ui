@@ -16,6 +16,10 @@
 
 package org.eclipse.jface.tests.preferences;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.lang.reflect.Field;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
@@ -28,10 +32,10 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class BooleanFieldEditorTest extends TestCase {
+public class BooleanFieldEditorTest {
 
 	private Shell shell;
 	private BooleanFieldEditor bfEditorWithSameLabel;
@@ -40,16 +44,15 @@ public class BooleanFieldEditorTest extends TestCase {
 	private boolean otherThreadEventOccurred = false;
 	private final Object lock = new Object();
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
+	@Before
+	public void setUp() throws Exception {
 		shell = new Shell();
 
 		bfEditorWithSameLabel = new BooleanFieldEditor("name", "label", shell);
 		bfEditorWithSeparateLabel = new BooleanFieldEditor("name2", "label", BooleanFieldEditor.SEPARATE_LABEL, shell);
 	}
 
+	@Test
 	public void testSetLabelText() {
 		bfEditorWithSameLabel.setLabelText("label text");
 		assertEquals("label text", bfEditorWithSameLabel.getLabelText());
@@ -58,6 +61,7 @@ public class BooleanFieldEditorTest extends TestCase {
 		assertEquals("label text", bfEditorWithSameLabel.getLabelText());
 	}
 
+	@Test
 	public void testLoad() {
 		PreferenceStore myPreferenceStore = new PreferenceStore();
 		bfEditorWithSameLabel.setPreferenceName("name");
@@ -74,6 +78,7 @@ public class BooleanFieldEditorTest extends TestCase {
 		assertTrue(bfEditorWithSameLabel.getBooleanValue());
 	}
 
+	@Test
 	public void testLoadDefault() {
 		bfEditorWithSameLabel.setPropertyChangeListener(event -> otherThreadEventOccurred());
 
@@ -95,6 +100,7 @@ public class BooleanFieldEditorTest extends TestCase {
 		assertTrue(otherThreadEventOccurred);
 	}
 
+	@Test
 	public void testGetBooleanValue() {
 		PreferenceStore myPreferenceStore = new PreferenceStore();
 		bfEditorWithSameLabel.setPreferenceName("name");
@@ -112,6 +118,7 @@ public class BooleanFieldEditorTest extends TestCase {
 		assertTrue(bfEditorWithSameLabel.getBooleanValue());
 	}
 
+	@Test
 	public void testStore() {
 		PreferenceStore myPreferenceStore = new PreferenceStore();
 		bfEditorWithSameLabel.setPreferenceName("name");
@@ -134,6 +141,7 @@ public class BooleanFieldEditorTest extends TestCase {
 		assertTrue(myPreferenceStore.getBoolean("name"));
 	}
 
+	@Test
 	public void testValueChanged() {
 		bfEditorWithSameLabel.setPropertyChangeListener(event -> otherThreadEventOccurred());
 
@@ -157,6 +165,7 @@ public class BooleanFieldEditorTest extends TestCase {
 		assertTrue(otherThreadEventOccurred);
 	}
 
+	@Test
 	public void testSetFocus() {
 		bfEditorWithSameLabel = new BooleanFieldEditor("name", "label", shell) {
 			@Override
@@ -180,6 +189,7 @@ public class BooleanFieldEditorTest extends TestCase {
 		assertTrue(otherThreadEventOccurred);
 	}
 
+	@Test
 	public void testSetEnabled() {
 		Button buttonWithSameLabel = getButton(bfEditorWithSameLabel);
 
@@ -208,6 +218,7 @@ public class BooleanFieldEditorTest extends TestCase {
 		assertTrue(separateLabel.isEnabled());
 	}
 
+	@Test
 	public void testAdjustForNumColumns() {
 		final BooleanFieldEditor[] editors = new BooleanFieldEditor[2];
 
@@ -278,11 +289,6 @@ public class BooleanFieldEditorTest extends TestCase {
 				}
 			}
 		}
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
 	}
 
 }

@@ -16,6 +16,7 @@ package org.eclipse.ui.workbench.texteditor.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,6 +39,7 @@ public class TextViewerDeleteLineTargetTest {
 
 	private Document document;
 
+	private Shell parentShell;
 	private TextViewerDeleteLineTarget underTest;
 
 	@Before
@@ -46,10 +48,19 @@ public class TextViewerDeleteLineTargetTest {
 				"\n" +
 				"third line\n");
 
-		TextViewer textViewer= new TextViewer(new Shell(), SWT.NONE);
+		parentShell= new Shell();
+		TextViewer textViewer= new TextViewer(parentShell, SWT.NONE);
 		textViewer.setDocument(document);
 
 		underTest= new TextViewerDeleteLineTarget(textViewer);
+	}
+
+	@After
+	public void tearDown() {
+		if (parentShell != null) {
+			parentShell.dispose();
+			parentShell= null;
+		}
 	}
 
 	@Test

@@ -16,15 +16,13 @@ package org.eclipse.jface.tests.dialogs;
 
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.widgets.Display;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+public class ProgressMonitorDialogTest {
 
-public class ProgressMonitorDialogTest extends TestCase {
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
+	@Before
+	public void setUp() throws Exception {
 		// ensure we've initialized a display for this thread
 		Display.getDefault();
 	}
@@ -42,18 +40,22 @@ public class ProgressMonitorDialogTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testRunTrueTrue() throws Exception {
 		testRun(true, true);
 	}
 
+	@Test
 	public void testRunTrueFalse() throws Exception {
 		testRun(true, false);
 	}
 
+	@Test
 	public void testRunFalseTrue() throws Exception {
 		testRun(false, true);
 	}
 
+	@Test
 	public void testRunFalseFalse() throws Exception {
 		testRun(false, false);
 	}

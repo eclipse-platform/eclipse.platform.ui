@@ -56,8 +56,9 @@ public class FormTextModel {
 		}
 	}
 
-	private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
-			.newInstance();
+	@SuppressWarnings("restriction")
+	private static final DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = org.eclipse.core.internal.runtime.XmlProcessorFactory
+			.createDocumentBuilderFactoryWithErrorOnDOCTYPE();
 
 	private boolean whitespaceNormalized = true;
 
@@ -132,13 +133,12 @@ public class FormTextModel {
 
 	public void parseInputStream(InputStream is, boolean expandURLs) {
 
-		documentBuilderFactory.setNamespaceAware(true);
-		documentBuilderFactory.setIgnoringComments(true);
+		DOCUMENT_BUILDER_FACTORY.setNamespaceAware(true);
+		DOCUMENT_BUILDER_FACTORY.setIgnoringComments(true);
 
 		reset();
 		try {
-			DocumentBuilder parser = documentBuilderFactory
-					.newDocumentBuilder();
+			DocumentBuilder parser = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder();
 			parser.setErrorHandler(new ParseErrorHandler());
 			InputSource source = new InputSource(is);
 			Document doc = parser.parse(source);

@@ -15,16 +15,21 @@ package org.eclipse.search.tests.filesearch;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assume.assumeFalse;
 
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+
+import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.core.resources.IFile;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.LocationKind;
+
+import org.eclipse.jface.util.Util;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -74,6 +79,7 @@ public class PositionTrackerTest {
 
 	@Test
 	public void testInsertInsideMatch() throws Exception {
+		assumeFalse("test fails on Mac, see https://github.com/eclipse-platform/eclipse.platform.ui/issues/882", Util.isMac());
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		FileSearchResult result= (FileSearchResult) fQuery1.getSearchResult();
 		Object[] elements= result.getElements();
@@ -92,6 +98,7 @@ public class PositionTrackerTest {
 		try {
 			SearchTestPlugin.openTextEditor(SearchPlugin.getActivePage(), file);
 			ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);
+			Job.getJobManager().beginRule(file, null);
 			IDocument doc= fb.getDocument();
 
 			for (Match matche : matches) {
@@ -110,6 +117,7 @@ public class PositionTrackerTest {
 				assertEquals(buf.toString(), ((FileSearchQuery) result.getQuery()).getSearchString());
 			}
 		} finally {
+			Job.getJobManager().endRule(file);
 			SearchPlugin.getActivePage().closeAllEditors(false);
 		}
 }
@@ -123,6 +131,7 @@ public class PositionTrackerTest {
 		try {
 			SearchTestPlugin.openTextEditor(SearchPlugin.getActivePage(), file);
 			ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);
+			Job.getJobManager().beginRule(file, null);
 			IDocument doc= fb.getDocument();
 			doc.replace(0, 0, "Test");
 
@@ -133,6 +142,7 @@ public class PositionTrackerTest {
 
 			}
 		} finally {
+			Job.getJobManager().endRule(file);
 			SearchPlugin.getActivePage().closeAllEditors(false);
 		}
 	}

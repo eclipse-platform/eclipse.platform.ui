@@ -22,6 +22,8 @@ import org.eclipse.ui.activities.IActivityManagerListener;
 public abstract class AbstractActivityManager implements IActivityManager {
 	private ListenerList<IActivityManagerListener> activityManagerListeners;
 
+	private boolean disposed;
+
 	protected AbstractActivityManager() {
 	}
 
@@ -60,4 +62,15 @@ public abstract class AbstractActivityManager implements IActivityManager {
 			activityManagerListeners.remove(activityManagerListener);
 		}
 	}
+
+	@Override
+	public void dispose() {
+		activityManagerListeners.clear();
+		disposed = true;
+	}
+
+	protected boolean isDisposed() {
+		return disposed;
+	}
+
 }

@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -67,6 +68,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 
 	private IntegerFieldEditor saveInterval;
 
+	private IntegerFieldEditor largeViewLimit;
+
 	private boolean openOnSingleClick;
 
 	private boolean selectOnHover;
@@ -78,6 +81,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	private Button showInlineRenameButton;
 
 	protected static int MAX_SAVE_INTERVAL = 9999;
+	protected static int MAX_VIEW_LIMIT = 1_000_000;
 
 	private boolean renameModeInline;
 
@@ -109,6 +113,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		createShowUserDialogPref(composite);
 		createStickyCyclePref(composite);
 		createHeapStatusPref(composite);
+		createLargeViewLimitPref(composite);
 	}
 
 	/**
@@ -136,6 +141,58 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 
 		showHeapStatusButton.setSelection(
 				PrefUtil.getAPIPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR));
+	}
+
+	/**
+	 * Create the widget for the max number of elements in the view
+	 *
+	 * @param composite
+	 */
+	protected void createLargeViewLimitPref(Composite composite) {
+		Composite groupComposite = new Composite(composite, SWT.LEFT);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		groupComposite.setLayout(layout);
+		GridData gd = new GridData();
+		gd.horizontalAlignment = GridData.FILL;
+		gd.grabExcessHorizontalSpace = true;
+		groupComposite.setLayoutData(gd);
+
+		largeViewLimit = new IntegerFieldEditor(IWorkbenchPreferenceConstants.LARGE_VIEW_LIMIT,
+				WorkbenchMessages.WorkbenchPreference_largeViewLimit, groupComposite) {
+
+			@Override
+			protected Text createTextWidget(Composite parent) {
+				Text w = super.createTextWidget(parent);
+				w.setToolTipText(WorkbenchMessages.WorkbenchPreference_largeViewLimitTooltip);
+				return w;
+			}
+
+			@Override
+			public Label getLabelControl(Composite parent) {
+				Label label = super.getLabelControl(parent);
+				if (label != null) {
+					label.setToolTipText(WorkbenchMessages.WorkbenchPreference_largeViewLimitTooltip);
+				}
+				return label;
+			}
+		};
+
+		largeViewLimit.setPreferenceStore(getPreferenceStore());
+		largeViewLimit.setPage(this);
+		largeViewLimit.setTextLimit(7);
+		largeViewLimit.setErrorMessage(
+				NLS.bind(WorkbenchMessages.WorkbenchPreference_largeViewLimitError, Integer.valueOf(MAX_VIEW_LIMIT)));
+		largeViewLimit.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
+		largeViewLimit.setValidRange(0, MAX_VIEW_LIMIT);
+
+		largeViewLimit.load();
+
+		largeViewLimit.setPropertyChangeListener(event -> {
+			if (event.getProperty().equals(FieldEditor.IS_VALID)) {
+				setValid(largeViewLimit.isValid());
+			}
+		});
 	}
 
 	/**
@@ -359,6 +416,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	protected void performDefaults() {
 		IPreferenceStore store = getPreferenceStore();
 		saveInterval.loadDefault();
+		largeViewLimit.loadDefault();
 		stickyCycleButton.setSelection(store.getBoolean(IPreferenceConstants.STICKY_CYCLE));
 		openOnSingleClick = store.getDefaultBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK);
 		selectOnHover = store.getDefaultBoolean(IPreferenceConstants.SELECT_ON_HOVER);
@@ -395,6 +453,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		store.setValue(IPreferenceConstants.OPEN_AFTER_DELAY, openAfterDelay);
 		store.setValue(IPreferenceConstants.RUN_IN_BACKGROUND, showUserDialogButton.getSelection());
 		store.setValue(IPreferenceConstants.WORKBENCH_SAVE_INTERVAL, saveInterval.getIntValue());
+		store.setValue(IWorkbenchPreferenceConstants.LARGE_VIEW_LIMIT, largeViewLimit.getIntValue());
 
 		String renameModeValue = IWorkbenchPreferenceConstants.RESOURCE_RENAME_MODE_INLINE;
 		if (!renameModeInline) {

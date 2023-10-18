@@ -1,0 +1,172 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.ltk.core.refactoring">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ltk.core.refactoring" id="copyParticipants" name="Copy Participants"/>
+      </appInfo>
+      <documentation>
+         This extension point is used to define refactoring copy participants.
+
+&lt;p&gt;
+This extension point supports the &lt;code&gt;&amp;lt;enablement&amp;gt;&lt;/code&gt; element.
+&lt;!-- see org.eclipse.ltk.core.refactoring.participants.ParticipantExtensionPoint#createEvaluationContext(..): --&gt;
+The default variable is the element to be copied.
+&lt;br&gt;Defined variables for &lt;code&gt;&amp;lt;with&amp;gt;&lt;/code&gt; expressions are:
+&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&quot;element&quot;: type &lt;code&gt;java.lang.Object&lt;/code&gt;; the element to be copied (same as the default variable)&lt;/li&gt;
+&lt;li&gt;&quot;affectedNatures&quot;: type &lt;code&gt;java.util.List&amp;lt;String&amp;gt;&lt;/code&gt;; the natures of all projects affected by the refactoring&lt;/li&gt;
+&lt;li&gt;&quot;processorIdentifier&quot;: type &lt;code&gt;java.lang.String&lt;/code&gt;; the id of the refactoring processor that will own the participant&lt;/li&gt;
+&lt;/ul&gt;
+      </documentation>
+   </annotation>
+
+   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="copyParticipant" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="copyParticipant">
+      <complexType>
+         <all>
+            <element ref="enablement"/>
+         </all>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  unique identifier for the copy participant.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a human reabable name of the copy participant
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the name of the class that provides the participant implementation.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ltk.core.refactoring.participants.CopyParticipant"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="processOnCancel" type="string">
+            <annotation>
+               <documentation>
+                  if true the change created by the participant will be executed even if
+                  the overall change got canceled.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="false"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The example below defines a participant for copying files. The participant is enabled if one of the project affected by the refactoring has a Java nature.
+
+&lt;pre&gt;
+&lt;copyParticipant
+    id=&quot;org.eclipse.samples.copyParticipant&quot;
+    name=&quot;%CopyFileParticipant.name&quot; 
+    class=&quot;org.eclipse.samples.CopyFileParticipant&quot;&gt;
+    &lt;enablement&gt;
+      &lt;with variable=&quot;affectedNatures&quot;&gt;
+        &lt;iterate operator=&quot;or&quot;&gt;
+          &lt;equals value=&quot;org.eclipse.jdt.core.javanature&quot;/&gt;
+        &lt;/iterate&gt;
+      &lt;/with&gt;
+      &lt;with variable=&quot;element&quot;&gt;
+        &lt;instanceof value=&quot;org.eclipse.core.resources.IFile&quot;/&gt;
+      &lt;/with&gt;
+    &lt;/enablement&gt;
+&lt;/copyParticipant&gt;
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.1
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The contributed class must extend &lt;code&gt;org.eclipse.ltk.core.refactoring.participants.CopyParticipant&lt;/code&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2001, 2013 IBM Corporation and others.&lt;br&gt;
+
+This program and the accompanying materials are made available under the terms of the Eclipse Public License 2.0 which accompanies this distribution, and is available at &lt;a href=&quot;https://www.eclipse.org/legal/epl-2.0&quot;&gt;https://www.eclipse.org/legal/epl-v20.html&lt;/a&gt;/
+
+SPDX-License-Identifier: EPL-2.0
+      </documentation>
+   </annotation>
+
+</schema>

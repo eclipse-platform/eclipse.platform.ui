@@ -15,7 +15,11 @@
  ******************************************************************************/
 package org.eclipse.jface.tests.images;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 
 import java.net.URL;
 
@@ -25,15 +29,15 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageFileNameProvider;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class UrlImageDescriptorTest extends TestCase {
+public class UrlImageDescriptorTest {
 
 	/**
 	 * Test that individually created images of a given descriptor are not equal
 	 * (See issue #682).
 	 */
+	@Test
 	public void testDifferentImagesPerUrlImageDescriptor() {
 		ImageDescriptor descriptor = ImageDescriptor
 				.createFromURL(FileImageDescriptorTest.class.getResource("/icons/imagetests/anything.gif"));
@@ -46,6 +50,7 @@ public class UrlImageDescriptorTest extends TestCase {
 		image2.dispose();
 	}
 
+	@Test
 	public void testGetxName() {
 		ImageDescriptor descriptor = ImageDescriptor
 				.createFromURL(FileImageDescriptorTest.class.getResource("/icons/imagetests/zoomIn.png"));
@@ -56,6 +61,7 @@ public class UrlImageDescriptorTest extends TestCase {
 		assertEquals(imageData.width * 2, imageDataZoomed.width);
 	}
 
+	@Test
 	public void testGetxPath() {
 		ImageDescriptor descriptor = ImageDescriptor
 				.createFromURL(FileImageDescriptorTest.class.getResource("/icons/imagetests/16x16/zoomIn.png"));
@@ -66,6 +72,7 @@ public class UrlImageDescriptorTest extends TestCase {
 		assertEquals(imageData.width * 2, imageDataZoomed.width);
 	}
 
+	@Test
 	public void testImageFileNameProviderGetxPath() {
 		ImageDescriptor descriptor = ImageDescriptor
 				.createFromURL(FileImageDescriptorTest.class.getResource("/icons/imagetests/rectangular-57x16.png"));
@@ -90,6 +97,7 @@ public class UrlImageDescriptorTest extends TestCase {
 		assertNull("URLImageDescriptor's ImageFileNameProvider does return a 250% path", imagePath250);
 	}
 
+	@Test
 	public void testImageFileNameProviderGetxName() {
 		ImageDescriptor descriptor = ImageDescriptor
 				.createFromURL(FileImageDescriptorTest.class.getResource("/icons/imagetests/zoomIn.png"));
@@ -106,6 +114,7 @@ public class UrlImageDescriptorTest extends TestCase {
 		assertNull("URLImageDescriptor's ImageFileNameProvider does return a @1.5x path", imagePath150);
 	}
 
+	@Test
 	public void testAdaptToURL() {
 		ImageDescriptor descriptor = ImageDescriptor
 				.createFromURL(FileImageDescriptorTest.class.getResource("/icons/imagetests/rectangular-57x16.png"));

@@ -533,6 +533,7 @@ public abstract class AbstractTableInformationControl {
 	}
 
 	public void setFocus() {
+		fShell.forceActive();
 		fShell.forceFocus();
 		fFilterText.setFocus();
 	}

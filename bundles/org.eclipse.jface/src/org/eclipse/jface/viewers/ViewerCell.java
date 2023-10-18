@@ -34,31 +34,31 @@ import org.eclipse.swt.widgets.Widget;
  *
  */
 public class ViewerCell {
-	private int columnIndex;
+	private final int columnIndex;
 
-	private ViewerRow row;
+	private final ViewerRow row;
 
-	private Object element;
+	private final Object element;
 
 	/**
 	 * Constant denoting the cell above current one (value is 1).
 	 */
-	public static int ABOVE = 1;
+	public static final int ABOVE = 1;
 
 	/**
 	 * Constant denoting the cell below current one (value is 2).
 	 */
-	public static int BELOW = 1 << 1;
+	public static final int BELOW = 1 << 1;
 
 	/**
 	 * Constant denoting the cell to the left of the current one (value is 4).
 	 */
-	public static int LEFT = 1 << 2;
+	public static final int LEFT = 1 << 2;
 
 	/**
 	 * Constant denoting the cell to the right of the current one (value is 8).
 	 */
-	public static int RIGHT = 1 << 3;
+	public static final int RIGHT = 1 << 3;
 
 	/**
 	 * Create a new instance of the receiver on the row.
@@ -67,6 +67,7 @@ public class ViewerCell {
 	 * @param columnIndex
 	 */
 	ViewerCell(ViewerRow row, int columnIndex, Object element) {
+		Objects.requireNonNull(row);
 		this.row = row;
 		this.columnIndex = columnIndex;
 		this.element = element;
@@ -198,29 +199,6 @@ public class ViewerCell {
 	 */
 	public StyleRange[] getStyleRanges() {
 		return row.getStyleRanges(columnIndex);
-	}
-
-	/**
-	 * Set the columnIndex.
-	 *
-	 * @param column the column index to set
-	 */
-	void setColumn(int column) {
-		columnIndex = column;
-
-	}
-
-	/**
-	 * Set the row to rowItem and the columnIndex to column.
-	 *
-	 * @param rowItem the row item to set
-	 * @param column  the column index to set
-	 * @param element the element to set
-	 */
-	void update(ViewerRow rowItem, int column, Object element) {
-		row = rowItem;
-		columnIndex = column;
-		this.element = element;
 	}
 
 	/**

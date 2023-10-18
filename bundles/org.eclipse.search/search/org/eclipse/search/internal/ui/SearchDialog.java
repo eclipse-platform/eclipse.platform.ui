@@ -274,23 +274,10 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 			return null;
 
 		IEditorPart activeEditor= activePage.getActiveEditor();
-		if (activeEditor == activePart || isOldSearchView(activePart))
+		if (activeEditor == activePart )
 			return activeEditor;
 
 		return null;
-	}
-
-	/**
-	 * Tells whether the given part is the old ('classic') search view.
-	 *
-	 * @param part the part to test
-	 * @return <code>true</code> if the given part is the old search view
-	 * @deprecated old ('classic') search is deprecated
-	 * @since 3.7
-	 */
-	@Deprecated
-	private static boolean isOldSearchView(IWorkbenchPart part) {
-		return org.eclipse.search.ui.SearchUI.SEARCH_RESULT_VIEW_ID.equals(part.getSite().getId());
 	}
 
 	//---- Page Handling -------------------------------------------------------
@@ -771,7 +758,8 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 			c.setLayout(new GridLayout());
 
 			int index= fDescriptors.indexOf(descriptor);
-			fScopeParts[index]= new ScopePart(this, descriptor.canSearchInProjects());
+			fScopeParts[index] = new ScopePart(this, descriptor.canSearchInProjects(),
+					descriptor.canSearchInOpenedEditors());
 			Control part= fScopeParts[index].createPart(c);
 			applyDialogFont(part);
 			part.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));

@@ -11,7 +11,6 @@
 	<extension-point name="%searchPages" id="searchPages" schema="schema/searchPages.exsd"/>
 	<extension-point name="%searchResultSorters" id="searchResultSorters" schema="schema/searchResultSorters.exsd"/>
   	<extension-point name="%searchResultViewPages" id="searchResultViewPages" schema="schema/searchResultViewPages.exsd"/>
-    <extension-point name="%textSearchEngine" id="textSearchEngine" schema="schema/textSearchEngine.exsd"/>
     <extension-point name="%textSearchQueryProvider" id="textSearchQueryProvider" schema="schema/textSearchQueryProvider.exsd"/>
 	
 	
@@ -294,6 +293,7 @@
 			extensions="*:1"
 			showScopeSection="true"		
 			canSearchEnclosingProjects="true"
+			canSearchOpenedEditors="true"
 			class="org.eclipse.search.internal.ui.text.TextSearchPage">
 		</page>
 	</extension>

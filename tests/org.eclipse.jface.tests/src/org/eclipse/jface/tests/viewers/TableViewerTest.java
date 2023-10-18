@@ -13,6 +13,12 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.lang.reflect.Method;
 
 import org.eclipse.jface.viewers.ColumnLayoutData;
@@ -29,6 +35,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.junit.Test;
 
 public class TableViewerTest extends StructuredItemViewerTest {
 	public static class TableTestLabelProvider extends TestLabelProvider implements ITableLabelProvider {
@@ -54,10 +61,6 @@ public class TableViewerTest extends StructuredItemViewerTest {
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
 		}
-	}
-
-	public TableViewerTest(String name) {
-		super(name);
 	}
 
 	/**
@@ -101,6 +104,7 @@ public class TableViewerTest extends StructuredItemViewerTest {
 		}
 	}
 
+	@Test
 	public void testViewerColumn() {
 		assertNull(getViewerColumn((TableViewer) fViewer, -1));
 		assertNotNull(getViewerColumn((TableViewer) fViewer, 0));
@@ -141,10 +145,7 @@ public class TableViewerTest extends StructuredItemViewerTest {
 		return table.getItem(at).getText();
 	}
 
-	public static void main(String args[]) {
-		junit.textui.TestRunner.run(TableViewerTest.class);
-	}
-
+	@Test
 	@Override
 	public void testLabelProvider() {
 
@@ -163,6 +164,7 @@ public class TableViewerTest extends StructuredItemViewerTest {
 		// LabelProvider changes
 	}
 
+	@Test
 	@Override
 	public void testLabelProviderStateChange() {
 		TableViewer tableviewer = (TableViewer) fViewer;
@@ -182,6 +184,7 @@ public class TableViewerTest extends StructuredItemViewerTest {
 		fViewer.refresh();
 	}
 
+	@Test
 	public void testRemove() {
 		TableViewer tableviewer = (TableViewer) fViewer;
 		TestElement first = fRootElement.getFirstChild();
@@ -189,6 +192,19 @@ public class TableViewerTest extends StructuredItemViewerTest {
 		tableviewer.remove(first);
 		assertNull("Removed item still exists", fViewer.testFindItem(first));
 
+	}
+
+	@Test
+	public void testContains() {
+		TableViewer tViewer = (TableViewer) fViewer;
+		// some random element.
+		assertFalse("element must not be available on the viewer", tViewer.contains(""));
+
+		// first child of root.
+		assertTrue("element must be available on the viewer", tViewer.contains(fRootElement.getFirstChild()));
+
+		// last child of the root
+		assertTrue("element must be available on the viewer", tViewer.contains(fRootElement.getLastChild()));
 	}
 
 }

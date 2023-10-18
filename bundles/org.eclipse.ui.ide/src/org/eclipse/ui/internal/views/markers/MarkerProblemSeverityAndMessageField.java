@@ -76,7 +76,8 @@ public class MarkerProblemSeverityAndMessageField extends
 	public void update(ViewerCell cell) {
 		super.update(cell);
 
-		MarkerItem item = (MarkerItem) cell.getElement();
-		cell.setImage(annotateImage(item, getImage(item)));
+		if (cell.getElement() instanceof MarkerItem item) {
+			cell.setImage(annotateImage(item, getImage(item)));
+		}
 	}
 }

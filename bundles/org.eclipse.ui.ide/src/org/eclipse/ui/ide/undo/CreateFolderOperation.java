@@ -15,10 +15,21 @@
 package org.eclipse.ui.ide.undo;
 
 import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import org.eclipse.core.resources.FileInfoMatcherDescription;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceFilterDescription;
+import org.eclipse.core.resources.undo.snapshot.IContainerSnapshot;
+import org.eclipse.core.resources.undo.snapshot.IResourceSnapshot;
+import org.eclipse.core.resources.undo.snapshot.ResourceSnapshotFactory;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.ide.dialogs.UIResourceFilterDescription;
-import org.eclipse.ui.internal.ide.undo.ContainerDescription;
 
 /**
  * A CreateFolderOperation represents an undoable operation for creating a
@@ -76,14 +87,41 @@ public class CreateFolderOperation extends AbstractCreateResourcesOperation {
 			boolean virtual,
 			UIResourceFilterDescription[] filterList, String label) {
 		super(null, label);
-		ContainerDescription containerDescription = virtual? ContainerDescription
-				.fromVirtualFolderContainer(folderHandle):
-				ContainerDescription.fromContainer(folderHandle);
+		IContainerSnapshot<? extends IContainer> containerDescription = virtual
+				? ResourceSnapshotFactory.fromVirtualFolderContainer(folderHandle)
+				: ResourceSnapshotFactory.fromContainer(folderHandle);
 		if (linkLocation != null) {
-			containerDescription.getFirstLeafFolder().setLocation(linkLocation);
+			WorkspaceUndoUtil.getFirstLeafFolder(containerDescription).setLocation(linkLocation);
 		}
-		if (filterList != null)
-			containerDescription.getFirstLeafFolder().setFilters(filterList);
-		setResourceDescriptions(new ResourceDescription[] { containerDescription });
+		if (filterList != null) {
+			List<IResourceFilterDescription> l = Arrays.asList(filterList).stream().map(x -> convert(x))
+					.collect(Collectors.toList());
+			IResourceFilterDescription[] asArr = l.toArray(new IResourceFilterDescription[l.size()]);
+			WorkspaceUndoUtil.getFirstLeafFolder(containerDescription).setFilters(asArr);
+		}
+		setResourceDescriptions(new IResourceSnapshot<?>[] { containerDescription });
+	}
+
+	private IResourceFilterDescription convert(final UIResourceFilterDescription desc) {
+		return new IResourceFilterDescription() {
+			@Override
+			public FileInfoMatcherDescription getFileInfoMatcherDescription() {
+				return desc.getFileInfoMatcherDescription();
+			}
+
+			@Override
+			public IResource getResource() {
+				return desc.getProject();
+			}
+
+			@Override
+			public int getType() {
+				return desc.getType();
+			}
+
+			@Override
+			public void delete(int updateFlags, IProgressMonitor monitor) throws CoreException {
+			}
+		};
 	}
 }

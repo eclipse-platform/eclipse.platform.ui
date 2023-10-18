@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,10 +26,11 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class Bug205700TreeViewerTest extends TestCase {
+public class Bug205700TreeViewerTest {
 
 	private Shell shell;
 
@@ -41,8 +44,8 @@ public class Bug205700TreeViewerTest extends TestCase {
 
 	private final TreeNode child10 = new TreeNode("Child10");
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		shell = new Shell();
 
 		viewer = new TreeViewer(shell, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
@@ -55,11 +58,12 @@ public class Bug205700TreeViewerTest extends TestCase {
 		shell.open();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		shell.close();
 	}
 
+	@Test
 	public void testAddWithoutSorter() throws Exception {
 		assertItemNames(new String[] { "Child1", "Child5", "Child10" });
 
@@ -94,6 +98,7 @@ public class Bug205700TreeViewerTest extends TestCase {
 		assertEquals("at " + index, name, viewer.getTree().getItem(index).getText());
 	}
 
+	@Test
 	public void testAddWithSorter() throws Exception {
 		assertItemNames(new String[] { "Child1", "Child5", "Child10" });
 		viewer.setComparator(new ViewerComparator());
@@ -113,6 +118,7 @@ public class Bug205700TreeViewerTest extends TestCase {
 				"Child8", "Child9" });
 	}
 
+	@Test
 	public void testAddEquallySortedElements() throws Exception {
 		assertItemNames(new String[] { "Child1", "Child5", "Child10" });
 		viewer.setComparator(new ViewerComparator());

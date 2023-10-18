@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.osgi.framework.Bundle;
 
@@ -401,5 +403,51 @@ public final class MarkerUtilities {
 		if (fgMarkerTypeHierarchy == null)
 			fgMarkerTypeHierarchy= new MarkerTypeHierarchy();
 		return fgMarkerTypeHierarchy.getSuperTypes(markerType);
+	}
+
+	/**
+	 * Changes the given attribute key-value pairs of the map on this marker. The values must be
+	 * <code>null</code> or an instance of one of the following classes: <code>String</code>,
+	 * <code>Integer</code>, or <code>Boolean</code>. If a value is <code>null</code>, the new value
+	 * of the attribute is considered to be undefined.
+	 *
+	 * <p>
+	 * The values of the attributes cannot be <code>String</code> whose UTF encoding exceeds 65535
+	 * bytes. On persistent markers this limit is enforced by an assertion.
+	 * </p>
+	 *
+	 * <p>
+	 * This method changes resources; these changes will be reported in a subsequent resource change
+	 * event, including an indication that this marker has been modified.
+	 * </p>
+	 * 
+	 * @param marker the marker
+	 * @param attributeChanges map with to be executed attribute changes
+	 * @see IMarker#setAttributes(String[], Object[])
+	 * @since 3.17
+	 */
+	public static void changeAttributes(IMarker marker, Map<String, Object> attributeChanges) {
+
+		Set<Entry<String, Object>> entries= attributeChanges.entrySet();
+		int size= entries.size();
+
+		String[] keys= new String[size];
+		Object[] values= new Object[size];
+
+		int i= 0;
+		for (Entry<String, Object> e : entries) {
+			keys[i]= e.getKey();
+			values[i]= e.getValue();
+			i++;
+		}
+
+		try {
+			if (marker.exists()) {
+				marker.setAttributes(keys, values);
+			}
+		} catch (CoreException e) {
+			handleCoreException(e);
+		}
+
 	}
 }

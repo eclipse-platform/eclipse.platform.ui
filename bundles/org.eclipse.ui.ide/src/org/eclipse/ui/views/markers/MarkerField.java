@@ -252,8 +252,10 @@ public abstract class MarkerField {
 	 * @param cell cell to update; not <code>null</code>
 	 */
 	public void update(ViewerCell cell) {
-		cell.setText(getValue((MarkerItem) cell.getElement()));
-		cell.setImage(null);
+		if (cell.getElement() instanceof MarkerItem element) {
+			cell.setText(getValue(element));
+			cell.setImage(null);
+		}
 	}
 
 	@Override

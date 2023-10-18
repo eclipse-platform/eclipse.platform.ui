@@ -17,6 +17,7 @@ package org.eclipse.jface.text.tests.contentassist;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeFalse;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,6 +40,8 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+
+import org.eclipse.jface.util.Util;
 
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -130,6 +133,7 @@ public class AsyncContentAssistTest {
 
 	@Test
 	public void testCompleteActivationChar() {
+		assumeFalse("test fails on Windows, see https://github.com/eclipse-platform/eclipse.platform.ui/issues/890", Util.isWindows());
 		shell.setLayout(new FillLayout());
 		shell.setSize(500, 300);
 		SourceViewer viewer= new SourceViewer(shell, null, SWT.NONE);

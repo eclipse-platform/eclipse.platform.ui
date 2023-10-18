@@ -15,24 +15,24 @@
 
 package org.eclipse.jface.tests.preferences;
 
-
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.junit.Before;
+import org.junit.Test;
 
-public class IntegerFieldEditorTest extends TestCase {
+public class IntegerFieldEditorTest {
 
 	private Shell shell;
 	private IntegerFieldEditor integerFieldEditor;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
+	@Before
+	public void setUp() throws Exception {
 		shell = new Shell();
 
 		integerFieldEditor = new IntegerFieldEditor("name", "label", shell);
@@ -40,6 +40,7 @@ public class IntegerFieldEditorTest extends TestCase {
 		integerFieldEditor.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
 	}
 
+	@Test
 	public void testLoad() {
 		PreferenceStore myPreferenceStore = new PreferenceStore();
 		integerFieldEditor.setPreferenceName("name");
@@ -55,6 +56,7 @@ public class IntegerFieldEditorTest extends TestCase {
 		assertEquals(integerFieldEditor.getIntValue(), 6);
 	}
 
+	@Test
 	public void testLoadDefault() {
 		PreferenceStore myPreferenceStore = new PreferenceStore();
 		integerFieldEditor.setPreferenceName("name");
@@ -66,6 +68,7 @@ public class IntegerFieldEditorTest extends TestCase {
 		assertEquals(integerFieldEditor.getIntValue(), 5);
 	}
 
+	@Test
 	public void testSetValueInWidget() {
 		PreferenceStore myPreferenceStore = new PreferenceStore();
 		integerFieldEditor.setPreferenceName("name");
@@ -80,6 +83,7 @@ public class IntegerFieldEditorTest extends TestCase {
 		assertEquals(integerFieldEditor.getIntValue(), 6);
 	}
 
+	@Test
 	public void testSetValueInEditor() {
 		PreferenceStore myPreferenceStore = new PreferenceStore();
 		integerFieldEditor.setPreferenceName("name");
@@ -95,6 +99,7 @@ public class IntegerFieldEditorTest extends TestCase {
 		assertEquals(integerFieldEditor.getIntValue(), 6);
 	}
 
+	@Test
 	public void testValidate() {
 		PreferenceStore myPreferenceStore = new PreferenceStore();
 		integerFieldEditor.setPreferenceName("name");
@@ -105,10 +110,4 @@ public class IntegerFieldEditorTest extends TestCase {
 		assertFalse(integerFieldEditor.isValid());
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-	}
-
 }
-

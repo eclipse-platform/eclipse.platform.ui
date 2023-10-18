@@ -21,6 +21,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IToolTipProvider;
@@ -432,11 +434,24 @@ public class LabelProviderTest extends NavigatorTestBase {
 		_contentService.getActivationService().activateExtensions(
 				new String[] { TEST_CONTENT_EMPTY, COMMON_NAVIGATOR_RESOURCE_EXT }, true);
 
-		TestLabelProvider._throw = true;
-		TestEmptyContentProvider._throw = true;
+		AtomicBoolean labelProviderThrewException = new AtomicBoolean(false);
+		AtomicBoolean contentProviderThrewException = new AtomicBoolean(false);
+
+		TestEmptyContentProvider._runnable = () -> {
+			contentProviderThrewException.set(true);
+			throw new RuntimeException("Throwing... " + LabelProviderTest.class + " threw this exception!");
+
+		};
+		TestLabelProvider._runnable = () -> {
+			labelProviderThrewException.set(true);
+			throw new RuntimeException("Throwing... " + LabelProviderTest.class + " threw this exception!");
+		};
 
 		refreshViewer();
 		// Have to look at the log to see a bunch of stuff thrown
+
+		assertTrue(labelProviderThrewException.get());
+		assertTrue(contentProviderThrewException.get());
 	}
 
 	@Test

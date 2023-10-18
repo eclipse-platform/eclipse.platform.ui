@@ -20,11 +20,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
+import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -644,7 +646,9 @@ public class ModeledPageLayout implements IPageLayout {
 		if (numberOfOnboardingCommands >= 5)
 			return;
 
-		Predicate<MKeyBinding> commandWithEqualId = b -> b.getCommand().getElementId().equals(commandId);
+		Predicate<MKeyBinding> commandWithEqualId = b -> Optional.of(b).map(MKeyBinding::getCommand)
+				.map(MCommand::getElementId).filter(elementId -> elementId.equals(commandId)).isPresent();
+
 		Function<MKeyBinding, String> toCommandText = b -> {
 			try {
 				return b.getCommand().getCommandName() + EDITOR_ONBOARDING_COMMAND_SEPARATOR

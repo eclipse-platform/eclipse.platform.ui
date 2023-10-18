@@ -31,6 +31,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.core.internal.runtime.XmlProcessorFactory;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -60,6 +61,7 @@ import org.xml.sax.SAXException;
  * be accessed
  *
  */
+@SuppressWarnings("restriction")
 public class PluginWalkerTest {
 
 	private BundleContext bundleContext;
@@ -187,7 +189,7 @@ public class PluginWalkerTest {
 	}
 
 	private static DocumentBuilder createDocumentBuilder() throws ParserConfigurationException {
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilderFactory factory = XmlProcessorFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE();
 		factory.setNamespaceAware(true);
 		return factory.newDocumentBuilder();
 	}

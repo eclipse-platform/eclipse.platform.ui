@@ -18,11 +18,11 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
 public class LongRunningBarContentAssistProcessor extends BarContentAssistProcessor {
 
-	public static final String PROPOSAL = "bars are also good for soft drink cocktails.";
+	public static final String LONG_RUNNING_BAR_CONTENT_ASSIST_PROPOSAL = "bars are also good for soft drink cocktails.";
 	public static final int DELAY = 2000;
 
 	public LongRunningBarContentAssistProcessor() {
-		super(PROPOSAL);
+		super(LONG_RUNNING_BAR_CONTENT_ASSIST_PROPOSAL);
 	}
 
 	@Override

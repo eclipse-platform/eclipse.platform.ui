@@ -14,6 +14,8 @@
 
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +29,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.junit.Test;
 
 /**
  * @since 3.2
@@ -93,10 +96,7 @@ public class TreeViewerComparatorTest extends ViewerComparatorTest {
 		}
 	}
 
-	public TreeViewerComparatorTest(String name) {
-		super(name);
-	}
-
+	@Test
 	@SuppressWarnings("deprecation")
 	public void testViewerSorter() {
 		fViewer.setSorter(new ViewerSorter());
@@ -105,6 +105,7 @@ public class TreeViewerComparatorTest extends ViewerComparatorTest {
 		assertSortedResult(expected);
 	}
 
+	@Test
 	@SuppressWarnings("deprecation")
 	public void testViewerSorterInsertElement() {
 		fViewer.setSorter(new ViewerSorter());
@@ -114,6 +115,7 @@ public class TreeViewerComparatorTest extends ViewerComparatorTest {
 		assertSortedResult(expected);
 	}
 
+	@Test
 	public void testViewerComparator() {
 		fViewer.setComparator(new ViewerComparator());
 		getTreeViewer().expandAll();
@@ -121,6 +123,7 @@ public class TreeViewerComparatorTest extends ViewerComparatorTest {
 		assertSortedResult(expected);
 	}
 
+	@Test
 	public void testViewerComparatorInsertElement() {
 		fViewer.setComparator(new ViewerComparator());
 		getTreeViewer().expandAll();
@@ -179,13 +182,6 @@ public class TreeViewerComparatorTest extends ViewerComparatorTest {
 		input.add(team2);
 		input.add(team3);
 		fViewer.setInput(input);
-	}
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(TreeViewerComparatorTest.class);
 	}
 
 }

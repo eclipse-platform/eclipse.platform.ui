@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.undo.snapshot.IResourceSnapshot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -54,7 +55,7 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 	 * The array of resource descriptions known by this operation to create or
 	 * restore overwritten resources.
 	 */
-	protected ResourceDescription[] resourceDescriptions;
+	protected IResourceSnapshot<? extends IResource>[] resourceDescriptions;
 
 	/*
 	 * Return true if the specified subResource is a descendant of the specified
@@ -91,7 +92,7 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 	 * @param label
 	 *            the label of the operation
 	 */
-	AbstractResourcesOperation(ResourceDescription[] resourceDescriptions,
+	AbstractResourcesOperation(IResourceSnapshot<? extends IResource>[] resourceDescriptions,
 			String label) {
 		super(label);
 		addContext(WorkspaceUndoUtil.getWorkspaceUndoContext());
@@ -143,7 +144,7 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 			throws CoreException {
 		setTargetResources(WorkspaceUndoUtil.recreate(resourceDescriptions,
 				monitor, uiInfo));
-		setResourceDescriptions(new ResourceDescription[0]);
+		setResourceDescriptions(new IResourceSnapshot<?>[0]);
 	}
 
 	/**
@@ -171,7 +172,7 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 			markInvalid();
 			return getErrorStatus(UndoMessages.AbstractResourcesOperation_NotEnoughInfo);
 		}
-		for (ResourceDescription resourceDescription : resourceDescriptions) {
+		for (IResourceSnapshot<? extends IResource> resourceDescription : resourceDescriptions) {
 			// Check for enough info to restore the resource
 			if (resourceDescription == null || !resourceDescription.isValid()) {
 				markInvalid();
@@ -245,9 +246,9 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 	 * @param descriptions
 	 *            the array of resource descriptions
 	 */
-	protected void setResourceDescriptions(ResourceDescription[] descriptions) {
+	protected void setResourceDescriptions(IResourceSnapshot<? extends IResource>[] descriptions) {
 		if (descriptions == null) {
-			resourceDescriptions = new ResourceDescription[0];
+			resourceDescriptions = new IResourceSnapshot<?>[0];
 		} else {
 			resourceDescriptions = descriptions;
 		}
@@ -313,7 +314,7 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 	protected void setTargetResources(IResource[] targetResources) {
 		// Remove any descendants if the parent has also
 		// been specified.
-		Set subResources = new HashSet();
+		Set<IResource> subResources = new HashSet<>();
 		for (IResource subResource : targetResources) {
 			for (IResource superResource : targetResources) {
 				if (isDescendantOf(subResource, superResource) && !subResources.contains(subResource))

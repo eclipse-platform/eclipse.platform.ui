@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<!-- ======================================================================= -->
+<!-- Search Plugin                                                           -->
+<!-- ======================================================================= -->
+<plugin>
+    <extension-point id="org.eclipse.search.textSearchEngine" name="%textSearchEngine" schema="schema/textSearchEngine.exsd"/>
+</plugin>

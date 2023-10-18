@@ -19,6 +19,8 @@ package org.eclipse.jface.tests.viewers;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.junit.After;
+import org.junit.Test;
 
 public class CheckboxTreeViewerMissingTest extends CheckboxTreeViewerTest {
 	private static Image testImage;
@@ -40,15 +42,12 @@ public class CheckboxTreeViewerMissingTest extends CheckboxTreeViewerTest {
 
 	}
 
-	public CheckboxTreeViewerMissingTest(String name) {
-		super(name);
-	}
-
 	@Override
 	public IBaseLabelProvider getTestLabelProvider() {
 		return new CheckboxMissingTableTestLabelProvider();
 	}
 
+	@After
 	@Override
 	public void tearDown() {
 		super.tearDown();
@@ -58,6 +57,7 @@ public class CheckboxTreeViewerMissingTest extends CheckboxTreeViewerTest {
 		}
 	}
 
+	@Test
 	@Override
 	public void testLabelProvider() {
 		super.testLabelProvider();
