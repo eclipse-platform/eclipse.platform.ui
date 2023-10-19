@@ -74,6 +74,7 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 	private class UpdateActionBarsJob extends UIJob {
 		public UpdateActionBarsJob(String label) {
 			super(label);
+			setUser(false);
 		}
 
 		@Override
