@@ -25,15 +25,9 @@ import java.util.List;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.internal.progress.JobInfo;
 import org.eclipse.ui.internal.progress.JobSnapshot;
-import org.eclipse.ui.tests.harness.util.TestRunLogUtil;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestWatcher;
 
 public class JobInfoTestOrdering {
-	@Rule
-	public TestWatcher LOG_TESTRUN = TestRunLogUtil.LOG_TESTRUN;
-
 	/**
 	 * Test that checks when jobs sorted by their state, the running ones
 	 * are ordered to first place

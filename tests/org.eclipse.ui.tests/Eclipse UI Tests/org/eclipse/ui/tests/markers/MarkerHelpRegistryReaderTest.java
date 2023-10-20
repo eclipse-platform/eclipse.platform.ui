@@ -22,18 +22,12 @@ import static org.mockito.Mockito.verify;
 import org.eclipse.ui.internal.ide.registry.MarkerHelpRegistry;
 import org.eclipse.ui.internal.ide.registry.MarkerHelpRegistryReader;
 import org.eclipse.ui.internal.ide.registry.MarkerQuery;
-import org.eclipse.ui.tests.harness.util.TestRunLogUtil;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestWatcher;
 
 /**
  * The test class for {@link MarkerHelpRegistryReader}.
  */
 public class MarkerHelpRegistryReaderTest {
-	@Rule
-	public TestWatcher LOG_TESTRUN = TestRunLogUtil.LOG_TESTRUN;
-
 	/**
 	 * Tests if the matchChildren flag of the contributions to the markerHelp
 	 * extension point is correctly read from the plugin.xml by

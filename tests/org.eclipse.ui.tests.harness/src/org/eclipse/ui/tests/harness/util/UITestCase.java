@@ -42,11 +42,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
 import org.junit.runner.RunWith;
-import org.junit.runners.BlockJUnit4ClassRunner;
 
 import junit.framework.TestCase;
 
@@ -78,27 +74,6 @@ public abstract class UITestCase extends TestCase {
 
 	/** Preference helper to restore changed preference values after test run. */
 	private PreferenceMemento prefMemento = new PreferenceMemento();
-
-	/**
-	 * Required to preserve the existing logging output when running tests with
-	 * {@link BlockJUnit4ClassRunner}.
-	 */
-	@Rule
-	public TestWatcher testWatcher = new TestWatcher() {
-		@Override
-		protected void starting(Description description) {
-			runningTest = description.getMethodName();
-		}
-		@Override
-		protected void finished(Description description) {
-			runningTest = null;
-		}
-	};
-	/**
-	 * Name of the currently executed test method. Only valid if test is executed
-	 * with {@link BlockJUnit4ClassRunner}.
-	 */
-	private String runningTest = null;
 
 	public UITestCase(String testName) {
 		super(testName);
@@ -156,16 +131,6 @@ public abstract class UITestCase extends TestCase {
 	}
 
 	/**
-	 * Outputs a trace message to the trace output device, if enabled.
-	 * By default, trace messages are sent to <code>System.out</code>.
-	 *
-	 * @param msg the trace message
-	 */
-	protected void trace(String msg) {
-		System.out.println(msg);
-	}
-
-	/**
 	 * Simple implementation of setUp. Subclasses are prevented from overriding this
 	 * method to maintain logging consistency. doSetUp() should be overridden
 	 * instead.
@@ -180,8 +145,6 @@ public abstract class UITestCase extends TestCase {
 		super.setUp();
 		closeTestWindows.before();
 		fWorkbench = PlatformUI.getWorkbench();
-		String name = runningTest != null ? runningTest : this.getName();
-		trace(TestRunLogUtil.formatTestStartMessage(name));
 		doSetUp();
 
 	}
@@ -208,8 +171,6 @@ public abstract class UITestCase extends TestCase {
 	@After
 	@Override
 	public final void tearDown() throws Exception {
-		String name = runningTest != null ? runningTest : this.getName();
-		trace(TestRunLogUtil.formatTestFinishedMessage(name));
 		prefMemento.resetPreferences();
 		doTearDown();
 		fWorkbench = null;

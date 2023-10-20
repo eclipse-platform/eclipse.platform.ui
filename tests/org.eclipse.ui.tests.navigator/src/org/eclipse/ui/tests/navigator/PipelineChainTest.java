@@ -25,20 +25,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
-import org.eclipse.ui.tests.harness.util.TestRunLogUtil;
 import org.eclipse.ui.tests.navigator.extension.TestPipelineProvider;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestWatcher;
 
 /**
  * @since 3.3
  *
  */
 public class PipelineChainTest extends NavigatorTestBase {
-
-	@Rule
-	public TestWatcher LOG_TESTRUN = TestRunLogUtil.LOG_TESTRUN;
 
 	private static final boolean SLEEP_LONG = false;
 

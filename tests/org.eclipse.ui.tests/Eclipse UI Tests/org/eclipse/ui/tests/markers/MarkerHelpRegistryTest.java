@@ -25,20 +25,14 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ui.internal.ide.registry.MarkerHelpRegistry;
 import org.eclipse.ui.internal.ide.registry.MarkerHelpRegistryReader;
-import org.eclipse.ui.tests.harness.util.TestRunLogUtil;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestWatcher;
 
 /**
  * The test class for {@link MarkerHelpRegistry}.
  */
 public class MarkerHelpRegistryTest {
-	@Rule
-	public TestWatcher LOG_TESTRUN = TestRunLogUtil.LOG_TESTRUN;
-
 	static final String ATT_HELP_CONTEXT = "helpContext";
 	static final String ATT_HAS_HELP = "hasHelp";
 	static final String HELP_CONTEXT_STRING = "helpContextIdHere";

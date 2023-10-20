@@ -23,16 +23,10 @@ import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.dialogs.PatternFilter;
-import org.eclipse.ui.tests.harness.util.TestRunLogUtil;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestWatcher;
 
 public class PatternFilterTest {
-	@Rule
-	public TestWatcher LOG_TESTRUN = TestRunLogUtil.LOG_TESTRUN;
-
 	private class MockViewer extends ContentViewer {
 
 		private Object input;
