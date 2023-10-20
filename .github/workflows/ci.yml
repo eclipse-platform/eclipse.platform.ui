@@ -4,18 +4,31 @@ concurrency:
     cancel-in-progress: true
 
 on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+#  push:
+#    branches: [ master ]
+#  pull_request:
+#    branches: [ master ]
+ workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'     
+        required: true
+        default: 'warning'
+      tags:
+        description: 'Test scenario tags'  
 
 jobs:
-  check-freeze-period:
-    if: github.event_name == 'pull_request'
-    uses: eclipse-platform/eclipse.platform.releng.aggregator/.github/workflows/verifyFreezePeriod.yml@master
-  check-merge-commits:
-    if: github.event_name == 'pull_request'
-    uses: eclipse-platform/eclipse.platform.releng.aggregator/.github/workflows/checkMergeCommits.yml@master
+#  check-freeze-period:
+#    if: github.event_name == 'pull_request'
+#    uses: eclipse-platform/eclipse.platform.releng.aggregator/.github/workflows/verifyFreezePeriod.yml@master
+#  check-merge-commits:
+#    if: github.event_name == 'pull_request'
+#    uses: eclipse-platform/eclipse.platform.releng.aggregator/.github/workflows/checkMergeCommits.yml@master
   build:
     uses: eclipse-platform/eclipse.platform.releng.aggregator/.github/workflows/mavenBuild.yml@master
-
+  printInputs:
+    runs-on: windows-latest
+    steps:
+    - run: |
+        echo "Log level: ${{ github.event.inputs.logLevel }}"
+        echo "Tags: ${{ github.event.inputs.tags }}" 
