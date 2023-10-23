@@ -27,10 +27,10 @@ import java.nio.charset.StandardCharsets;
  */
 public class TarInputStream extends FilterInputStream
 {
-	private int nextEntry = 0;
-	private int nextEOF = 0;
-	private int filepos = 0;
-	private int bytesread = 0;
+	private long nextEntry = 0;
+	private long nextEOF = 0;
+	private long filepos = 0;
+	private long bytesread = 0;
 	private TarEntry firstEntry = null;
 	private String longLinkName = null;
 
@@ -79,7 +79,7 @@ public class TarInputStream extends FilterInputStream
 	 * @return false if the entry has already been passed
 	 */
 	boolean skipToEntry(TarEntry entry) throws TarException, IOException {
-		int bytestoskip = entry.filepos - bytesread;
+		long bytestoskip = entry.filepos - bytesread;
 		if(bytestoskip < 0) {
 			return false;
 		}
@@ -310,7 +310,7 @@ public class TarInputStream extends FilterInputStream
 			return -1;
 		}
 		if(len > nextEOF) {
-			len = nextEOF;
+			len = (int) nextEOF;
 		}
 		int size = super.read(b, off, len);
 		nextEntry -= size;
