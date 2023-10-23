@@ -23,7 +23,7 @@ public class TarEntry implements Cloneable
 	private String name;
 	private long mode, time, size;
 	private int type;
-	int filepos;
+	long filepos;
 
 	/**
 	 * Entry type for normal files.
@@ -42,7 +42,7 @@ public class TarEntry implements Cloneable
 	 * @param name filename
 	 * @param pos position in the file in bytes
 	 */
-	TarEntry(String name, int pos) {
+	TarEntry(String name, long pos) {
 		this.name = name;
 		mode = 0644;
 		type = FILE;
