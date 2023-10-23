@@ -162,7 +162,12 @@ public class ZipLeveledStructureProvider implements
 
 	@Override
 	public String getFullPath(Object element) {
-		return stripPath(((ZipEntry) element).getName());
+		String name = ((ZipEntry) element).getName();
+		String base = "base"; //$NON-NLS-1$
+		if (!java.nio.file.Path.of(base, name).normalize().startsWith(base)) {
+			throw new RuntimeException("Bad zip entry in " + zipFile.getName() + ": " + name); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		return stripPath(name);
 	}
 
 	@Override
