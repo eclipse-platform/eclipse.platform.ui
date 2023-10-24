@@ -42,12 +42,11 @@ public interface ICSSValueConverter {
 	 * Returns the result of the conversion of the given CSSValue
 	 * <code>value</code>.
 	 *
-	 * @param value
-	 *            the CSSValue to convert, of type {@link #getFromType()}
+	 * @param value   the CSSValue to convert
 	 * @param engine
 	 * @param context
 	 *
-	 * @return the converted object, of type {@link #getToType()}
+	 * @return the converted object
 	 */
 	public Object convert(CSSValue value, CSSEngine engine, Object context)
 			throws Exception;
