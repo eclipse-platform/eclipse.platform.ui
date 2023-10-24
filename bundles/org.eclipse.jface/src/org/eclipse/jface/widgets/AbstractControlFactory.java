@@ -52,9 +52,9 @@ public abstract class AbstractControlFactory<F extends AbstractControlFactory<?,
 	 * setting the tool tip text to an empty string replaces the default, causing no
 	 * tool tip text to be shown.
 	 *
-	 * The mnemonic indicator (character '&') is not displayed in a tool tip. To
-	 * display a single '&' in the tool tip, the character '&' can be escaped by
-	 * doubling it in the string.
+	 * The mnemonic indicator (character '&amp;') is not displayed in a tool tip. To
+	 * display a single '&amp;' in the tool tip, the character '&amp;' can be
+	 * escaped by doubling it in the string.
 	 *
 	 * @param tooltipText the tool tip text
 	 * @return this
