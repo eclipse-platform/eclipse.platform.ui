@@ -127,7 +127,6 @@ public class CSS2FontPropertiesHelpers {
 	 *
 	 * @param font
 	 * @param value
-	 * @throws Exception
 	 */
 	public static void updateCSSPropertyFontFamily(CSS2FontProperties font, CSSValue value) {
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
@@ -140,7 +139,6 @@ public class CSS2FontPropertiesHelpers {
 	 *
 	 * @param font
 	 * @param value
-	 * @throws Exception
 	 */
 	public static void updateCSSPropertyFontSize(CSS2FontProperties font, CSSValue value) {
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
@@ -153,7 +151,6 @@ public class CSS2FontPropertiesHelpers {
 	 *
 	 * @param font
 	 * @param value
-	 * @throws Exception
 	 */
 	public static void updateCSSPropertyFontStyle(CSS2FontProperties font, CSSValue value) {
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
@@ -166,7 +163,6 @@ public class CSS2FontPropertiesHelpers {
 	 *
 	 * @param font
 	 * @param value
-	 * @throws Exception
 	 */
 	public static void updateCSSPropertyFontWeight(CSS2FontProperties font, CSSValue value) {
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
