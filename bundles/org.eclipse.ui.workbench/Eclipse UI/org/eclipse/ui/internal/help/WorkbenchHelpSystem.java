@@ -552,7 +552,7 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 	 *             {@link org.eclipse.help.HelpSystem HelpSystem}instead of the
 	 *             IHelp methods on the object returned by this method.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2023-12")
 	public IHelp getHelpSupport() {
 		AbstractHelpUI helpUI = getHelpUI();
 		if (helpUI != null && helpCompatibilityWrapper == null) {
