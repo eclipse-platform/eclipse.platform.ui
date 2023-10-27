@@ -887,10 +887,10 @@ public class ExpandableComposite extends Canvas {
 	/**
 	 * Changes expanded state.
 	 *
-	 * Equivalent to <code>setExpanded(expanded, false)</code>. @see {@link #setExpanded(boolean, boolean)}.
+	 * Equivalent to <code>setExpanded(expanded, false)</code>.
 	 *
-	 * @param expanded
-	 *            the new expanded state
+	 * @param expanded the new expanded state
+	 * @see #setExpanded(boolean, boolean)
 	 */
 	public void setExpanded(boolean expanded) {
 		setExpanded(expanded, false);
