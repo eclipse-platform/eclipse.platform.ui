@@ -723,7 +723,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * methods on this viewer.
 	 * <p>
 	 * This method was introduced to support multiple equal elements in a viewer
-	 * (@see {@link AbstractTreeViewer}). Multiple equal elements are only
+	 * (see {@link AbstractTreeViewer}). Multiple equal elements are only
 	 * supported if the element map is enabled by calling
 	 * {@link #setUseHashlookup(boolean)} and passing <code>true</code>.
 	 * </p>

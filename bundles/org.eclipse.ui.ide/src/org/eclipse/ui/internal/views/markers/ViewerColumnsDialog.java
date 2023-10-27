@@ -567,7 +567,7 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 	}
 
 	/**
-	 * Internal helper to @see {@link ViewerColumnsDialog#getLabelProvider()}
+	 * Internal helper to {@link ViewerColumnsDialog#getLabelProvider()}
 	 */
 	ITableLabelProvider doGetLabelProvider() {
 		return getLabelProvider();
@@ -595,7 +595,7 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 	protected abstract IColumnInfoProvider<T> getColumnInfoProvider();
 
 	/**
-	 * Internal helper to @see {@link ViewerColumnsDialog#getColumnUpdater()}
+	 * Internal helper to {@link ViewerColumnsDialog#getColumnUpdater()}
 	 */
 	IColumnUpdater<T> doGetColumnUpdater() {
 		return getColumnUpdater();
