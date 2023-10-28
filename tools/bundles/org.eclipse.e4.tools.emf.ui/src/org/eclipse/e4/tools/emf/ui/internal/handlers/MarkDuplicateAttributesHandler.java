@@ -16,7 +16,7 @@ package org.eclipse.e4.tools.emf.ui.internal.handlers;
 
 import java.util.Collection;
 import java.util.HashSet;
-import javax.inject.Named;
+
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
@@ -30,6 +30,8 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+
+import jakarta.inject.Named;
 
 public class MarkDuplicateAttributesHandler extends MarkDuplicateItemsBase {
 

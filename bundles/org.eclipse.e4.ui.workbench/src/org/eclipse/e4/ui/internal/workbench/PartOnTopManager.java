@@ -14,9 +14,9 @@
 
 package org.eclipse.e4.ui.internal.workbench;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 import java.util.List;
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;

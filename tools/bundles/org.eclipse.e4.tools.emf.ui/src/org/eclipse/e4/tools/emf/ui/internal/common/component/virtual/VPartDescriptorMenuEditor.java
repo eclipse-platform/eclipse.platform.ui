@@ -1,8 +1,8 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
+
+import jakarta.inject.Inject;
 
 public class VPartDescriptorMenuEditor extends VMenuEditor<MPartDescriptor> {
 	@Inject

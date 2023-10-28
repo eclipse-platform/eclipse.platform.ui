@@ -17,7 +17,7 @@ public class AddonTemplate
   protected final String TEXT_1 = " ";
   protected final String TEXT_2 = NL + "package ";
   protected final String TEXT_3 = ";";
-  protected final String TEXT_4 = NL + NL + "import javax.inject.Inject;" + NL + "" + NL + "import org.eclipse.e4.core.di.annotations.Optional;" + NL + "import org.eclipse.e4.core.di.extensions.EventTopic;" + NL + "import org.eclipse.e4.ui.workbench.UIEvents;" + NL + "import org.osgi.service.event.Event;" + NL + "" + NL + "import org.eclipse.e4.core.services.events.IEventBroker;" + NL + "" + NL + "public class ";
+  protected final String TEXT_4 = NL + NL + "import jakarta.inject.Inject;" + NL + "" + NL + "import org.eclipse.e4.core.di.annotations.Optional;" + NL + "import org.eclipse.e4.core.di.extensions.EventTopic;" + NL + "import org.eclipse.e4.ui.workbench.UIEvents;" + NL + "import org.osgi.service.event.Event;" + NL + "" + NL + "import org.eclipse.e4.core.services.events.IEventBroker;" + NL + "" + NL + "public class ";
   protected final String TEXT_5 = " {" + NL + "" + NL + "\t@Inject" + NL + "\t@Optional" + NL + "\tpublic void applicationStarted(" + NL + "\t\t\t@EventTopic(UIEvents.UILifeCycle.APP_STARTUP_COMPLETE) Event event) {" + NL + "\t\t// TODO Modify the UIEvents.UILifeCycle.APP_STARTUP_COMPLETE EventTopic to a certain event you want to listen to." + NL + "\t}" + NL + "" + NL + "}";
   protected final String TEXT_6 = NL;
 

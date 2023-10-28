@@ -14,10 +14,10 @@
 
 package org.eclipse.e4.core.commands.internal;
 
+import jakarta.inject.Inject;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
-import javax.inject.Inject;
 import org.eclipse.core.commands.AbstractParameterValueConverter;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionException;

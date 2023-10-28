@@ -14,7 +14,7 @@
 
 package org.eclipse.e4.ui.internal.workbench;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.log.ILoggerProvider;

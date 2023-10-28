@@ -14,8 +14,6 @@
 
 package org.eclipse.e4.ui.progress;
 
-import javax.annotation.PostConstruct;
-
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -24,6 +22,8 @@ import org.eclipse.e4.ui.progress.internal.Preferences;
 import org.eclipse.e4.ui.progress.internal.ProgressManager;
 import org.eclipse.e4.ui.progress.internal.ProgressViewUpdater;
 import org.eclipse.e4.ui.progress.internal.Services;
+
+import jakarta.annotation.PostConstruct;
 
 public class ProgressViewAddon {
 

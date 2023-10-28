@@ -1,10 +1,10 @@
 package org.eclipse.ui.tests.e4;
 
-import javax.annotation.PostConstruct;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+
+import jakarta.annotation.PostConstruct;
 
 
 public class E4Part {

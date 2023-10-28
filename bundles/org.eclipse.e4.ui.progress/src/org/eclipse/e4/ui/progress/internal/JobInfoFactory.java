@@ -13,11 +13,11 @@
  ******************************************************************************/
 package org.eclipse.e4.ui.progress.internal;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.di.annotations.Creatable;
+
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 @Creatable
 @Singleton

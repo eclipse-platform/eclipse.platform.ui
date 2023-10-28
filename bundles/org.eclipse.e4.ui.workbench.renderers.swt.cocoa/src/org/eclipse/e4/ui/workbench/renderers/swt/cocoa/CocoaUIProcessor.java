@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt.cocoa;
 
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 import java.util.List;
-import javax.inject.Inject;
-import javax.inject.Provider;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.di.annotations.Execute;

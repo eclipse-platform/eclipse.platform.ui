@@ -14,7 +14,7 @@
 
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;

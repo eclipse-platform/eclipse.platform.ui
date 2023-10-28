@@ -14,8 +14,8 @@
 
 package org.eclipse.e4.ui.tests.application;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 
 /**

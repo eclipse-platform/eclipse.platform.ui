@@ -23,9 +23,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.emf.xpath.EcoreXPathContextFactory;
@@ -93,6 +90,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 
 public class StringModelFragment extends AbstractComponentEditor<MStringModelFragment> {
 	private Composite composite;

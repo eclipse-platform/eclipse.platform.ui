@@ -42,7 +42,7 @@ public class E4TemplateCompletionProposalComputer extends AbstractTemplateComple
 	 * The following annotations are used to detect if an if a project uses e4.
 	 */
 	private static final String E4_ANNOTATION_FOCUS = "org.eclipse.e4.ui.di.Focus"; //$NON-NLS-1$
-	private static final String E4_ANNOTATION_POSTCONSTRUCT = "javax.annotation.PostConstruct"; //$NON-NLS-1$
+	private static final String E4_ANNOTATION_POSTCONSTRUCT = "jakarta.annotation.PostConstruct"; //$NON-NLS-1$
 
 	/**
 	 * Listener that resets the cached java project if its build path changes.
