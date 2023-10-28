@@ -25,6 +25,9 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -34,9 +37,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
 import org.eclipse.e4.core.commands.ExpressionContext;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IContextFunction;

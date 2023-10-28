@@ -15,7 +15,7 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MBasicFactory;

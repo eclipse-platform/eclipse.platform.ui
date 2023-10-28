@@ -19,8 +19,6 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.conversion.Converter;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -72,6 +70,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+
+import jakarta.inject.Inject;
 
 public abstract class ToolItemEditor<M extends MToolItem> extends AbstractComponentEditor<M> {
 	private Composite composite;

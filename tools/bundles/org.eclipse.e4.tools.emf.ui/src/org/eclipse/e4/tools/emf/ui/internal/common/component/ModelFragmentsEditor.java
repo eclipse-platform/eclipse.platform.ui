@@ -18,8 +18,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -56,6 +54,8 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+
+import jakarta.inject.Inject;
 
 public class ModelFragmentsEditor extends AbstractComponentEditor<MModelFragments> {
 	private Composite composite;

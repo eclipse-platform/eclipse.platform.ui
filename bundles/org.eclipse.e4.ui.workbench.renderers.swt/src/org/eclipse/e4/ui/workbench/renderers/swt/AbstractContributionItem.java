@@ -14,7 +14,7 @@
 
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.e4.core.contexts.IContextFunction;

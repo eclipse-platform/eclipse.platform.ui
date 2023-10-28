@@ -15,13 +15,13 @@
 
 package org.eclipse.e4.ui.bindings.keys;
 
+import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.inject.Inject;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;

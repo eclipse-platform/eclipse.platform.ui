@@ -14,14 +14,14 @@
 
 package org.eclipse.ui.internal.e4.migration;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;

@@ -14,7 +14,7 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 import org.eclipse.e4.core.di.annotations.Evaluate;
 import org.eclipse.e4.core.di.annotations.Optional;
 

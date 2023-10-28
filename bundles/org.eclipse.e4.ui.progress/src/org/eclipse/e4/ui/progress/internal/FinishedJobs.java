@@ -20,14 +20,14 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.inject.Singleton;
-
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.ui.progress.IDisposableAction;
 import org.eclipse.e4.ui.progress.IProgressConstants;
+
+import jakarta.inject.Singleton;
 
 /**
  * This singleton remembers all JobTreeElements that should be preserved (e.g.

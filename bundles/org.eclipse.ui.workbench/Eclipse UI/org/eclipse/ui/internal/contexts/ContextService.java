@@ -14,10 +14,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.contexts;
 
+import jakarta.inject.Inject;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import javax.inject.Inject;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.commands.contexts.IContextManagerListener;

@@ -14,8 +14,6 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import javax.inject.Inject;
-
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.resources.IProject;
@@ -44,6 +42,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
+
+import jakarta.inject.Inject;
 
 public class ToolBarSeparatorEditor extends AbstractComponentEditor<MToolBarSeparator> {
 	private Composite composite;

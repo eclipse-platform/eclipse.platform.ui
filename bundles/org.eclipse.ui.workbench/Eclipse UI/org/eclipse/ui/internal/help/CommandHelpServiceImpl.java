@@ -14,9 +14,9 @@
  ******************************************************************************/
 package org.eclipse.ui.internal.help;
 
+import jakarta.inject.Inject;
 import java.util.Map;
 import java.util.WeakHashMap;
-import javax.inject.Inject;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.internal.commands.util.Util;

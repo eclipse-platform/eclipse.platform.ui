@@ -16,9 +16,9 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
+import jakarta.inject.Inject;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicBoolean;
-import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;

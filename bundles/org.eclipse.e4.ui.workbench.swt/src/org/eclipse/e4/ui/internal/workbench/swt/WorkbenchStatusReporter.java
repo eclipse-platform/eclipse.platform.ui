@@ -15,7 +15,7 @@
 
 package org.eclipse.e4.ui.internal.workbench.swt;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.contexts.IEclipseContext;

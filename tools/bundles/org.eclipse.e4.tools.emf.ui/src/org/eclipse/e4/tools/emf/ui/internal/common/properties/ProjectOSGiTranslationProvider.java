@@ -13,9 +13,6 @@ import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.ResourceBundle.Control;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -27,6 +24,9 @@ import org.eclipse.e4.core.services.translation.TranslationService;
 import org.eclipse.e4.tools.services.impl.ResourceBundleHelper;
 import org.eclipse.e4.tools.services.impl.ResourceBundleTranslationProvider;
 import org.osgi.framework.Constants;
+
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationProvider {
 

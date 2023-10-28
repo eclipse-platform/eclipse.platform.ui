@@ -2,9 +2,6 @@
 package org.eclipse.ui.tests.e4;
 
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.swt.SWT;
@@ -13,6 +10,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.ActionFactory;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 
 public class E4UndoRedoTestPart {
 

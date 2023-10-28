@@ -175,7 +175,7 @@ public class NewPartClassWizard extends AbstractNewClassWizard {
 		final Set<String> rv = super.getImportedPackages();
 		final PartClass cl = (PartClass) getDomainClass();
 		if (cl.usePostConstruct || cl.usePredestroy) {
-			rv.add("javax.annotation;version=\"1.0.0\";resolution:=optional"); //$NON-NLS-1$
+			rv.add("jakarta.annotation;version=\"[2.1.0,3.0.0)\";resolution:=optional"); //$NON-NLS-1$
 		}
 		return rv;
 	}

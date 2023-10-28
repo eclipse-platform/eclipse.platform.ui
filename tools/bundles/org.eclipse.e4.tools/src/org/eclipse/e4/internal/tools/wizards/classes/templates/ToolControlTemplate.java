@@ -16,8 +16,8 @@ public class ToolControlTemplate
   public final String NL = nl == null ? (System.getProperties().getProperty("line.separator")) : nl;
   protected final String TEXT_1 = "package ";
   protected final String TEXT_2 = ";";
-  protected final String TEXT_3 = NL + NL + "import javax.annotation.PostConstruct;";
-  protected final String TEXT_4 = NL + "import javax.inject.Inject;";
+  protected final String TEXT_3 = NL + NL + "import jakarta.annotation.PostConstruct;";
+  protected final String TEXT_4 = NL + "import jakarta.inject.Inject;";
   protected final String TEXT_5 = NL + NL + "public class ";
   protected final String TEXT_6 = " {" + NL + "\t";
   protected final String TEXT_7 = NL + "\t@Inject" + NL + "\tpublic ";

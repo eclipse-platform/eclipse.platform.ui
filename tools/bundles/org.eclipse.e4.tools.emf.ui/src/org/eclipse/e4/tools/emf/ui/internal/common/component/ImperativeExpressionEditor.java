@@ -14,8 +14,6 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import javax.inject.Inject;
-
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -31,6 +29,8 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+
+import jakarta.inject.Inject;
 
 public class ImperativeExpressionEditor extends AbstractComponentEditor<MImperativeExpression> {
 	private Composite composite;

@@ -57,7 +57,7 @@ IStylingEngine stylingEngine;</template>
 public void postConstruct(${type:newType(org.eclipse.swt.widgets.Composite)} parent) { 
 	${cursor}
 }
-${imp:import(javax.annotation.PostConstruct)}
+${imp:import(jakarta.annotation.PostConstruct)}
 </template>
 
 <template name="Focus" description="%Templates.focus_method" id="org.eclipse.e4.tools.jdt.templates.focus" context="e4-members" enabled="true" autoinsert="false">@Focus
@@ -71,7 +71,7 @@ ${imp:import(org.eclipse.e4.ui.di.Focus)}
 public void preDestroy() {
 	${cursor}
 }
-${imp:import(javax.annotation.PreDestroy)}
+${imp:import(jakarta.annotation.PreDestroy)}
 </template>
 
 <template name="Execute" description="%Templates.execute_method" id="org.eclipse.e4.tools.jdt.templates.execute" context="e4-members" enabled="true" autoinsert="false">@Execute

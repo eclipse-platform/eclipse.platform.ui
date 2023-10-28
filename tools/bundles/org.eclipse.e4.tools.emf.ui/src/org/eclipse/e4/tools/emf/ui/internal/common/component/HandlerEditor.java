@@ -18,8 +18,6 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.text.MessageFormat;
 
-import javax.inject.Inject;
-
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -58,6 +56,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+
+import jakarta.inject.Inject;
 
 public class HandlerEditor extends AbstractComponentEditor<MHandler> {
 	private Composite composite;

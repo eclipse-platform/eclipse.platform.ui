@@ -17,9 +17,9 @@ public class PartTemplate
   protected final String TEXT_1 = " ";
   protected final String TEXT_2 = NL + "package ";
   protected final String TEXT_3 = ";";
-  protected final String TEXT_4 = NL + NL + "import javax.inject.Inject;";
-  protected final String TEXT_5 = NL + "import javax.annotation.PostConstruct;" + NL + "import org.eclipse.swt.widgets.Composite;";
-  protected final String TEXT_6 = NL + "import javax.annotation.PreDestroy;";
+  protected final String TEXT_4 = NL + NL + "import jakarta.inject.Inject;";
+  protected final String TEXT_5 = NL + "import jakarta.annotation.PostConstruct;" + NL + "import org.eclipse.swt.widgets.Composite;";
+  protected final String TEXT_6 = NL + "import jakarta.annotation.PreDestroy;";
   protected final String TEXT_7 = NL + "import org.eclipse.e4.ui.di.Focus;";
   protected final String TEXT_8 = NL + "import org.eclipse.e4.ui.di.Persist;";
   protected final String TEXT_9 = NL + NL + "public class ";

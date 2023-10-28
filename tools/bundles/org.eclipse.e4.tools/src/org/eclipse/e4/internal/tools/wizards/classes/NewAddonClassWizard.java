@@ -68,7 +68,7 @@ public class NewAddonClassWizard extends AbstractNewClassWizard {
 	@Override
 	protected Set<String> getImportedPackages() {
 		final Set<String> rv = super.getImportedPackages();
-		rv.add("javax.annotation;version=\"1.0.0\";resolution:=optional"); //$NON-NLS-1$
+		rv.add("jakarta.annotation;version=\"[2.1.0,3.0.0)\";resolution:=optional"); //$NON-NLS-1$
 		return super.getImportedPackages();
 	}
 }

@@ -15,8 +15,8 @@
 
 package org.eclipse.e4.core.commands;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.e4.core.commands.internal.CommandServiceImpl;
 import org.eclipse.e4.core.commands.internal.HandlerServiceCreationFunction;

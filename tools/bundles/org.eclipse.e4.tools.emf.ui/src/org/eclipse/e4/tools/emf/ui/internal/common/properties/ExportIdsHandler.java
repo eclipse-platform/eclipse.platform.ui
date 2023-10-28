@@ -18,8 +18,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Named;
-
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -62,6 +60,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
+
+import jakarta.inject.Named;
 
 /**
  * This handler exports all Id values within the application model to a file for

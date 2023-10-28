@@ -14,8 +14,8 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;

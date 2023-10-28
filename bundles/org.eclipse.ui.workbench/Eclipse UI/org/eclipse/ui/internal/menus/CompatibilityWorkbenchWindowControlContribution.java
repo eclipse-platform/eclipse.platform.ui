@@ -14,8 +14,8 @@
 
 package org.eclipse.ui.internal.menus;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;

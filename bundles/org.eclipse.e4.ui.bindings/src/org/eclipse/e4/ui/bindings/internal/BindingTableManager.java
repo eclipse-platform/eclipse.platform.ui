@@ -14,11 +14,11 @@
 
 package org.eclipse.e4.ui.bindings.internal;
 
+import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
-import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.e4.core.contexts.IEclipseContext;

@@ -14,9 +14,9 @@
 
 package org.eclipse.ui.internal.handlers;
 
+import jakarta.inject.Named;
 import java.util.Collections;
 import java.util.Map;
-import javax.inject.Named;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;

@@ -15,8 +15,8 @@
 
 package org.eclipse.e4.ui.internal.workbench;
 
+import jakarta.inject.Inject;
 import java.util.List;
-import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
