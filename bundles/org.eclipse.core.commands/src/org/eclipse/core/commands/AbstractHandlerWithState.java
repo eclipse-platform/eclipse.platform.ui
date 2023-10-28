@@ -68,9 +68,14 @@ public abstract class AbstractHandlerWithState extends AbstractHandler implement
 		if (states == null) {
 			states = new HashMap<>(3);
 		}
-		states.put(stateId, state);
+		State oldState = states.put(stateId, state);
 		state.addListener(this);
-		handleStateChange(state, null);
+		if (oldState != null) {
+			oldState.removeListener(this);
+			handleStateChange(state, oldState.getValue());
+		} else {
+			handleStateChange(state, null);
+		}
 	}
 
 	@Override
@@ -125,5 +130,13 @@ public abstract class AbstractHandlerWithState extends AbstractHandler implement
 				}
 			}
 		}
+	}
+
+	@Override
+	public void dispose() {
+		for (String id : getStateIds()) {
+			removeState(id);
+		}
+		super.dispose();
 	}
 }

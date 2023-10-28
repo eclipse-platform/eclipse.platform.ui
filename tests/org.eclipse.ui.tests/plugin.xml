@@ -2752,8 +2752,59 @@
          <state
                class="org.eclipse.jface.menus.TextState"
                id="TEXT"/>
+         <state
+               class="org.eclipse.ui.handlers.RegistryToggleState"
+               id="org.eclipse.ui.commands.toggleState">
+         </state>
       </command>
    </extension>
+   
+   <extension
+       point="org.eclipse.ui.handlers">
+    <handler
+          class="org.eclipse.ui.tests.menus.HandlerWithStateMock"
+          commandId="org.eclipse.ui.tests.commandWithState">
+       <activeWhen>
+          <with
+                variable="activeContexts">
+             <iterate
+                   ifEmpty="false"
+                   operator="or">
+                <equals
+                      value="org.eclipse.ui.tests.issue925">
+                </equals>
+             </iterate>
+          </with>
+       </activeWhen>
+    </handler>
+    </extension>
+    <extension
+           point="org.eclipse.ui.contexts">
+        <context
+              description="Enable a stateful command handler to reproduce issue #925"
+              id="org.eclipse.ui.tests.issue925"
+              name="issue925">
+        </context>
+    </extension>
+    <extension
+       point="org.eclipse.ui.menus">
+        <menuContribution
+              allPopups="false"
+              locationURI="toolbar:org.eclipse.ui.tests.api.MenuTestHarness">
+           <command
+                 commandId="org.eclipse.ui.tests.commandWithState"
+                 style="toggle">
+           </command>
+        </menuContribution>
+        <menuContribution
+              allPopups="false"
+              locationURI="toolbar:org.eclipse.ui.tests.commands.WorkbenchStateTest">
+           <command
+                 commandId="org.eclipse.ui.tests.commandWithState"
+                 style="toggle">
+           </command>
+        </menuContribution>
+    </extension>
    
    <!-- for bug 125792 -->
    <extension
