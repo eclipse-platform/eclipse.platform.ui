@@ -82,6 +82,8 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 
 	private int fStyle = SWT.BORDER;
 
+	private boolean fIsEmptyTreeAllowed;
+
 	/**
 	 * Constructs an instance of <code>ElementTreeSelectionDialog</code>.
 	 *
@@ -92,6 +94,21 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 	public CheckedTreeSelectionDialog(Shell parent, ILabelProvider labelProvider,
 			ITreeContentProvider contentProvider) {
 		this(parent, labelProvider, contentProvider, SWT.BORDER);
+	}
+
+	/**
+	 * Constructs an instance of <code>ElementTreeSelectionDialog</code>.
+	 *
+	 * @param parent             The shell to parent from.
+	 * @param labelProvider      the label provider to render the entries
+	 * @param contentProvider    the content provider to evaluate the tree structure
+	 * @param isEmptyTreeAllowed true if an empty tree can be input, false otherwise
+	 * @since 3.131
+	 */
+	public CheckedTreeSelectionDialog(Shell parent, ILabelProvider labelProvider, ITreeContentProvider contentProvider,
+			boolean isEmptyTreeAllowed) {
+		this(parent, labelProvider, contentProvider, SWT.BORDER);
+		fIsEmptyTreeAllowed = isEmptyTreeAllowed;
 	}
 
 	/**
@@ -235,7 +252,7 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 	 * @since 3.131
 	 */
 	protected boolean isEmptyTreeAllowed() {
-		return false;
+		return fIsEmptyTreeAllowed;
 	}
 
 	/**
