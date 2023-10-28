@@ -43,6 +43,7 @@ import org.junit.runners.Suite;
 	ActionDelegateProxyTest.class,
 	ToggleStateTest.class,
 	RadioStateTest.class,
+	WorkbenchStateTest.class,
 	E4CommandImageTest.class
 })
 public final class CommandsTestSuite {
