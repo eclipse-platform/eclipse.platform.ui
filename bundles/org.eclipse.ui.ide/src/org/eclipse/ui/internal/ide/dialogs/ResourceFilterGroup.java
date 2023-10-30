@@ -2665,13 +2665,13 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 			arguments.addModifyListener(e -> validateInputText());
 
 			dummyLabel1 = new Label(multiArgumentComposite, SWT.NONE);
-			data = new GridData(SWT.LEFT, SWT.CENTER, true, true);
+			data = new GridData(SWT.LEFT, SWT.CENTER, false, true);
 			dummyLabel1.setText(""); //$NON-NLS-1$
 			data.horizontalSpan = 1;
 			dummyLabel1.setLayoutData(data);
 
 			dummyLabel2 = new Label(multiArgumentComposite, SWT.NONE);
-			data = new GridData(SWT.LEFT, SWT.CENTER, true, true);
+			data = new GridData(SWT.LEFT, SWT.CENTER, false, true);
 			dummyLabel2.setText(""); //$NON-NLS-1$
 			data.horizontalSpan = 1;
 			dummyLabel2.setLayoutData(data);
