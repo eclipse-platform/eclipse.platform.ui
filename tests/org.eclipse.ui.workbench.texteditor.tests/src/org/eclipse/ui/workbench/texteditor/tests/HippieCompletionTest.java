@@ -541,7 +541,7 @@ public class HippieCompletionTest {
 				"bar2\n" +
 				"");
 
-		Iterator<String> suggestions= fEngine.getMultipleDocumentsIterator(openDocument, new ArrayList<IDocument>(), "bar", 3);
+		Iterator<String> suggestions= fEngine.getMultipleDocumentsIterator(openDocument, new ArrayList<>(), "bar", 3);
 		assertEquals("1", suggestions.next());
 		assertEquals("2", suggestions.next());
 		assertEquals("", suggestions.next());
@@ -585,7 +585,7 @@ public class HippieCompletionTest {
 				"bar0 bar1 bar" +
 				"");
 
-		suggestions= fEngine.getMultipleDocumentsIterator(openDocument, new ArrayList<IDocument>(), "bar", openDocument.getLength());
+		suggestions= fEngine.getMultipleDocumentsIterator(openDocument, new ArrayList<>(), "bar", openDocument.getLength());
 		assertEquals("1", suggestions.next());
 		assertEquals("0", suggestions.next());
 		assertEquals("", suggestions.next());

@@ -56,7 +56,7 @@ public class CompositeChange extends Change {
 	 *  be used to display the change in the user interface
 	 */
 	public CompositeChange(String name) {
-		this(name, new ArrayList<Change>(2));
+		this(name, new ArrayList<>(2));
 	}
 
 	/**
@@ -68,7 +68,7 @@ public class CompositeChange extends Change {
 	 * @param children the initial array of children
 	 */
 	public CompositeChange(String name, Change[] children) {
-		this(name, new ArrayList<Change>(children.length));
+		this(name, new ArrayList<>(children.length));
 		addAll(children);
 	}
 
