@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 import org.eclipse.core.resources.IWorkspace;
@@ -207,7 +207,7 @@ public class PerformChangeOperation implements IWorkspaceRunnable {
 			if (createChange()) {
 				pm.beginTask("", 4); //$NON-NLS-1$
 				pm.subTask(""); //$NON-NLS-1$
-				fCreateChangeOperation.run(new SubProgressMonitor(pm, 3));
+				fCreateChangeOperation.run(SubMonitor.convert(pm, 3));
 				// Check for cancellation before executing the change, since canceling
 				// during change execution is not supported
 				// (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=187265 ):
@@ -216,7 +216,7 @@ public class PerformChangeOperation implements IWorkspaceRunnable {
 
 				fChange= fCreateChangeOperation.getChange();
 				if (fChange != null) {
-					executeChange(new SubProgressMonitor(pm, 1));
+					executeChange(SubMonitor.convert(pm, 1));
 				} else {
 					pm.worked(1);
 				}
@@ -244,7 +244,7 @@ public class PerformChangeOperation implements IWorkspaceRunnable {
 			boolean undoInitialized= false;
 			try {
 				monitor.beginTask("", 10); //$NON-NLS-1$
-				fValidationStatus= fChange.isValid(new SubProgressMonitor(monitor, 1));
+				fValidationStatus= fChange.isValid(SubMonitor.convert(monitor, 1));
 				if (fValidationStatus.hasFatalError())
 					return;
 				boolean aboutToPerformChangeCalled= false;
@@ -255,7 +255,7 @@ public class PerformChangeOperation implements IWorkspaceRunnable {
 						aboutToPerformChangeCalled= true;
 					}
 					fChangeExecutionFailed= true;
-					fUndoChange= fChange.perform(new SubProgressMonitor(monitor, 9));
+					fUndoChange= fChange.perform(SubMonitor.convert(monitor, 9));
 					fChangeExecutionFailed= false;
 					fChangeExecuted= true;
 				} finally {
@@ -268,7 +268,7 @@ public class PerformChangeOperation implements IWorkspaceRunnable {
 				fChange.dispose();
 				if (fUndoChange != null) {
 					fUndoChange.initializeValidationData(new NotCancelableProgressMonitor(
-						new SubProgressMonitor(monitor, 1)));
+						SubMonitor.convert(monitor, 1)));
 					undoInitialized= true;
 				}
 				if (fUndoManager != null) {

@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 /**
  * Abstract super class for all refactorings. Refactorings are used to perform
@@ -158,11 +158,11 @@ public abstract class Refactoring extends PlatformObject {
 		RefactoringTickProvider refactoringTickProvider= getRefactoringTickProvider();
 		pm.beginTask("", refactoringTickProvider.getCheckAllConditionsTicks()); //$NON-NLS-1$
 		RefactoringStatus result= new RefactoringStatus();
-		result.merge(checkInitialConditions(new SubProgressMonitor(pm, refactoringTickProvider.getCheckInitialConditionsTicks())));
+		result.merge(checkInitialConditions(SubMonitor.convert(pm, refactoringTickProvider.getCheckInitialConditionsTicks())));
 		if (!result.hasFatalError()) {
 			if (pm.isCanceled())
 				throw new OperationCanceledException();
-			result.merge(checkFinalConditions(new SubProgressMonitor(pm, refactoringTickProvider.getCheckFinalConditionsTicks())));
+			result.merge(checkFinalConditions(SubMonitor.convert(pm, refactoringTickProvider.getCheckFinalConditionsTicks())));
 		}
 		pm.done();
 		return result;

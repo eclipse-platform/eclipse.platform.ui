@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.PerformanceStats;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -204,7 +204,7 @@ public class ProcessorBasedRefactoring extends Refactoring {
 		pm.beginTask("", 10); //$NON-NLS-1$
 		pm.setTaskName(RefactoringCoreMessages.ProcessorBasedRefactoring_initial_conditions);
 
-		result.merge(getProcessor().checkInitialConditions(new SubProgressMonitor(pm, 8)));
+		result.merge(getProcessor().checkInitialConditions(SubMonitor.convert(pm, 8)));
 		if (result.hasFatalError()) {
 			pm.done();
 			return result;
@@ -223,7 +223,7 @@ public class ProcessorBasedRefactoring extends Refactoring {
 		pm.beginTask("", 9); //$NON-NLS-1$
 		pm.setTaskName(RefactoringCoreMessages.ProcessorBasedRefactoring_final_conditions);
 
-		result.merge(getProcessor().checkFinalConditions(new SubProgressMonitor(pm, 5), context));
+		result.merge(getProcessor().checkFinalConditions(SubMonitor.convert(pm, 5), context));
 		if (result.hasFatalError()) {
 			pm.done();
 			return result;
@@ -243,7 +243,7 @@ public class ProcessorBasedRefactoring extends Refactoring {
 			pm.done();
 			return result;
 		}
-		IProgressMonitor sm= new SubProgressMonitor(pm, 2);
+		IProgressMonitor sm= SubMonitor.convert(pm, 2);
 
 		sm.beginTask("", fParticipants.size()); //$NON-NLS-1$
 		for (Iterator<RefactoringParticipant> iter= fParticipants.iterator(); iter.hasNext() && !result.hasFatalError(); ) {
@@ -254,7 +254,7 @@ public class ProcessorBasedRefactoring extends Refactoring {
 			stats.startRun();
 
 			try {
-				result.merge(participant.checkConditions(new SubProgressMonitor(sm, 1), context));
+				result.merge(participant.checkConditions(SubMonitor.convert(sm, 1), context));
 			} catch (OperationCanceledException e) {
 				throw e;
 			} catch (RuntimeException e) {
@@ -276,7 +276,7 @@ public class ProcessorBasedRefactoring extends Refactoring {
 			pm.done();
 			return result;
 		}
-		result.merge(context.check(new SubProgressMonitor(pm, 1)));
+		result.merge(context.check(SubMonitor.convert(pm, 1)));
 		pm.done();
 		return result;
 	}
@@ -287,7 +287,7 @@ public class ProcessorBasedRefactoring extends Refactoring {
 			pm= new NullProgressMonitor();
 		pm.beginTask("", fParticipants.size() + 3); //$NON-NLS-1$
 		pm.setTaskName(RefactoringCoreMessages.ProcessorBasedRefactoring_create_change);
-		Change processorChange= getProcessor().createChange(new SubProgressMonitor(pm, 1));
+		Change processorChange= getProcessor().createChange(SubMonitor.convert(pm, 1));
 		if (pm.isCanceled())
 			throw new OperationCanceledException();
 
@@ -302,8 +302,8 @@ public class ProcessorBasedRefactoring extends Refactoring {
 				final PerformanceStats stats= PerformanceStats.getStats(PERF_CREATE_CHANGES, getName() + ", " + participant.getName()); //$NON-NLS-1$
 				stats.startRun();
 
-				Change preChange= participant.createPreChange(new SubProgressMonitor(pm, 1));
-				Change change= participant.createChange(new SubProgressMonitor(pm, 1));
+				Change preChange= participant.createPreChange(SubMonitor.convert(pm, 1));
+				Change change= participant.createChange(SubMonitor.convert(pm, 1));
 
 				stats.endRun();
 
@@ -336,7 +336,7 @@ public class ProcessorBasedRefactoring extends Refactoring {
 
 		Change postChange= getProcessor().postCreateChange(
 			changes.toArray(new Change[changes.size()]),
-			new SubProgressMonitor(pm, 1));
+			SubMonitor.convert(pm, 1));
 
 		ProcessorChange result= new ProcessorChange(getName());
 		result.addAll(preChanges.toArray(new Change[preChanges.size()]));

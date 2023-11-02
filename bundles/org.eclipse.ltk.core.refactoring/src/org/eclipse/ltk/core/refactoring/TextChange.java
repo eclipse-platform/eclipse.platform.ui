@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
@@ -235,11 +235,11 @@ public abstract class TextChange extends TextEditBasedChange {
 		IDocument document= null;
 
 		try {
-			document= acquireDocument(new SubProgressMonitor(pm, 1));
+			document= acquireDocument(SubMonitor.convert(pm, 1));
 
 			UndoEdit undo= performEdits(document);
 
-			commit(document, new SubProgressMonitor(pm, 1));
+			commit(document, SubMonitor.convert(pm, 1));
 			return createUndoChange(undo);
 
 		} catch (BadLocationException e) {
@@ -247,7 +247,7 @@ public abstract class TextChange extends TextEditBasedChange {
 		} catch (MalformedTreeException e) {
 			throw Changes.asCoreException(e);
 		} finally {
-			releaseDocument(document, new SubProgressMonitor(pm, 1));
+			releaseDocument(document, SubMonitor.convert(pm, 1));
 			pm.done();
 		}
 	}
@@ -310,10 +310,10 @@ public abstract class TextChange extends TextEditBasedChange {
 		IDocument result= null;
 		pm.beginTask("", 2); //$NON-NLS-1$
 		try{
-			result= acquireDocument(new SubProgressMonitor(pm, 1));
+			result= acquireDocument(SubMonitor.convert(pm, 1));
 		} finally {
 			if (result != null)
-				releaseDocument(result, new SubProgressMonitor(pm, 1));
+				releaseDocument(result, SubMonitor.convert(pm, 1));
 		}
 		pm.done();
 		return result;

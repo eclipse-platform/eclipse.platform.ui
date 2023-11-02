@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SafeRunner;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
@@ -214,7 +214,7 @@ public class CompositeChange extends Change {
 	public void initializeValidationData(IProgressMonitor pm) {
 		pm.beginTask("", fChanges.size()); //$NON-NLS-1$
 		for (Change change : fChanges) {
-			change.initializeValidationData(new SubProgressMonitor(pm, 1));
+			change.initializeValidationData(SubMonitor.convert(pm, 1));
 			pm.worked(1);
 		}
 	}
@@ -238,7 +238,7 @@ public class CompositeChange extends Change {
 		for (Iterator<Change> iter= fChanges.iterator(); iter.hasNext() && !result.hasFatalError();) {
 			Change change= iter.next();
 			if (change.isEnabled())
-				result.merge(change.isValid(new SubProgressMonitor(pm, 1)));
+				result.merge(change.isValid(SubMonitor.convert(pm, 1)));
 			else
 				pm.worked(1);
 			if (pm.isCanceled())
@@ -278,7 +278,7 @@ public class CompositeChange extends Change {
 				if (change.isEnabled()) {
 					Change undoChange= null;
 					try {
-						undoChange= change.perform(new SubProgressMonitor(pm, 1));
+						undoChange= change.perform(SubMonitor.convert(pm, 1));
 					} catch(OperationCanceledException e) {
 						canceled= true;
 						if (!internalContinueOnCancel())
