@@ -24,8 +24,8 @@ public final class TestRunLogUtil {
 	private static final String LINE_BREAK = System.lineSeparator();
 
 	/**
-	 * A {@link TestWatcher} to log test start and end. Should be added as @Rule in
-	 * every JUnit4 test class (which not already extends {@link UITestCase}) as
+	 * A {@link TestWatcher} to log current test method name. Can be added as @Rule
+	 * in every JUnit4 test class (which not already extends {@link UITestCase}) as
 	 *
 	 * <pre>
 	 * &#64;Rule
@@ -39,11 +39,6 @@ public final class TestRunLogUtil {
 		protected void starting(Description description) {
 			System.out.println(formatTestStartMessage(description.getMethodName()));
 		}
-
-		@Override
-		protected void finished(Description description) {
-			System.out.println(formatTestFinishedMessage(description.getMethodName()));
-		}
 	};
 
 	/**
@@ -53,18 +48,10 @@ public final class TestRunLogUtil {
 	 * @return message used to log test start
 	 */
 	public static String formatTestStartMessage(String testName) {
-		return "----- " + testName + LINE_BREAK + testName + ": setUp..."; //$NON-NLS-1$ //$NON-NLS-2$
+		return "----- " + testName; //$NON-NLS-1$
 	}
 
-	/**
-	 * Create message used to log end of a test.
-	 *
-	 * @param testName name of finished test
-	 * @return message used to log test end
-	 */
-	public static String formatTestFinishedMessage(String testName) {
-		return testName + ": tearDown...\n"; //$NON-NLS-1$
-	}
+
 
 	private TestRunLogUtil() {
 	}

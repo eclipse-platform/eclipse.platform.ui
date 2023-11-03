@@ -208,8 +208,6 @@ public abstract class UITestCase extends TestCase {
 	@After
 	@Override
 	public final void tearDown() throws Exception {
-		String name = runningTest != null ? runningTest : this.getName();
-		trace(TestRunLogUtil.formatTestFinishedMessage(name));
 		prefMemento.resetPreferences();
 		doTearDown();
 		fWorkbench = null;
