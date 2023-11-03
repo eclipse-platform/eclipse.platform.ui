@@ -287,14 +287,14 @@ public abstract class ToolItemEditor<M extends MToolItem> extends AbstractCompon
 					E4Properties.selected(getEditingDomain()).observeDetail(getMaster()));
 
 			final UpdateValueStrategy<Boolean, ItemType> t2m = new UpdateValueStrategy<>();
-			t2m.setConverter(new Converter<Boolean, ItemType>(boolean.class, ItemType.class) {
+			t2m.setConverter(new Converter<>(boolean.class, ItemType.class) {
 				@Override
 				public ItemType convert(Boolean fromObject) {
 					return null;
 				}
 			});
 			final UpdateValueStrategy<ItemType, Boolean> m2t = new UpdateValueStrategy<>();
-			m2t.setConverter(new Converter<ItemType, Boolean>(ItemType.class, boolean.class) {
+			m2t.setConverter(new Converter<>(ItemType.class, boolean.class) {
 
 				@Override
 				public Boolean convert(ItemType fromObject) {
