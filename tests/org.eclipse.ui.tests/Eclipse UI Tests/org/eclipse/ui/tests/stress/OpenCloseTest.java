@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.stress;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.util.HashMap;
 
 import org.eclipse.core.commands.Command;
@@ -28,6 +30,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -38,7 +41,7 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.FileUtil;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -47,20 +50,35 @@ import org.junit.runners.JUnit4;
  * Test opening and closing of items.
  */
 @RunWith(JUnit4.class)
-public class OpenCloseTest extends UITestCase {
+public class OpenCloseTest {
 	private static final String ORG_ECLIPSE_JDT_UI_JAVA_PERSPECTIVE = "org.eclipse.jdt.ui.JavaPerspective";
 
 	private static final int numIterations = 10;
 
-	private final IWorkbenchWindow workbenchWindow;
+	private IWorkbenchWindow workbenchWindow;
+	private IWorkbench workbench;
+	private IWorkbenchPage page;
 
-	/**
-	 * Constructor.
-	 */
-	public OpenCloseTest() {
-		super(OpenCloseTest.class.getSimpleName());
+
+	@Before
+	public void setup() {
+		workbench = PlatformUI.getWorkbench();
 		workbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		IIntroPart intro = PlatformUI.getWorkbench().getIntroManager().getIntro();
+		if (intro != null) {
+			PlatformUI.getWorkbench().getIntroManager().closeIntro(intro);
+		}
+
+		try {
+			PlatformUI.getWorkbench().showPerspective(ORG_ECLIPSE_JDT_UI_JAVA_PERSPECTIVE, workbenchWindow);
+		} catch (WorkbenchException e) {
+			e.printStackTrace();
+		}
+
+		page = workbenchWindow.getActivePage();
+		assertNotNull(page);
 	}
+
 
 	/**
 	 * Test the opening and closing of a file.
@@ -94,7 +112,8 @@ public class OpenCloseTest extends UITestCase {
 	public void testOpenCloseWorkbenchWindow() throws WorkbenchException {
 		IWorkbenchWindow secondWorkbenchWindow = null;
 		for (int index = 0; index < numIterations; index++) {
-			secondWorkbenchWindow = PlatformUI.getWorkbench().openWorkbenchWindow(getPageInput());
+			secondWorkbenchWindow = PlatformUI.getWorkbench()
+					.openWorkbenchWindow(ResourcesPlugin.getWorkspace().getRoot());
 			secondWorkbenchWindow.close();
 		}
 	}
@@ -105,7 +124,7 @@ public class OpenCloseTest extends UITestCase {
 	 */
 	@Test
 	public void testOpenClosePerspective() {
-		ICommandService commandService = fWorkbench.getService(ICommandService.class);
+		ICommandService commandService = workbench.getService(ICommandService.class);
 		Command command = commandService.getCommand("org.eclipse.ui.window.closePerspective");
 
 		HashMap<String, String> parameters = new HashMap<>();
