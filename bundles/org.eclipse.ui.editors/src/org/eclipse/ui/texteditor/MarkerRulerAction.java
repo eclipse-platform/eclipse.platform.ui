@@ -406,7 +406,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 		String title= getString(fBundle, fPrefix + "add.dialog.title", fPrefix + "add.dialog.title"); //$NON-NLS-2$ //$NON-NLS-1$
 		String message= getString(fBundle, fPrefix + "add.dialog.message", fPrefix + "add.dialog.message"); //$NON-NLS-2$ //$NON-NLS-1$
 		String addButtonText= getString(fBundle, fPrefix + "add.dialog.addbutton", fPrefix + "add.dialog.addbutton"); //$NON-NLS-1$ //$NON-NLS-2$
-		IInputValidator inputValidator= newText -> (newText == null || newText.trim().isEmpty()) ? " " : null;
+		IInputValidator inputValidator= newText -> (newText == null || newText.trim().isEmpty()) ? " " : null; //$NON-NLS-1$
 		AddBookmarkDialog dialog= new AddBookmarkDialog(fTextEditor.getSite().getShell(), title, message, proposal, inputValidator, addButtonText);
 
 		String label= null;

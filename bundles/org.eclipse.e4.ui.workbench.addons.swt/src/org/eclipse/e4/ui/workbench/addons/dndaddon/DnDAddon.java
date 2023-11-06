@@ -31,7 +31,7 @@ import org.osgi.service.event.Event;
  */
 public class DnDAddon {
 
-	private static final String DISABLE_DND_ADDON = "DisableDnDAddon";
+	private static final String DISABLE_DND_ADDON = "DisableDnDAddon"; //$NON-NLS-1$
 
 	@Inject
 	MApplication app;

@@ -15,6 +15,7 @@ package org.eclipse.e4.internal.tools.wizards.classes.templates;
 
 import org.eclipse.e4.internal.tools.wizards.classes.NewImperativeExpressionClassWizard.ImperativeExpressionClass;
 
+@SuppressWarnings("nls")
 public class ImperativeExpressionTemplate
 {
 	protected static String nl;

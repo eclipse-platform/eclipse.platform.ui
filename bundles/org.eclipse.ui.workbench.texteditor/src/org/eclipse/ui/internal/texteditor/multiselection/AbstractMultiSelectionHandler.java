@@ -252,7 +252,7 @@ abstract class AbstractMultiSelectionHandler extends AbstractHandler {
 				return createRegionIfValid(matchPos, region.getLength());
 			}
 		} catch (BadLocationException e) {
-			throw new ExecutionException("Internal error in findNextMatch", e);
+			throw new ExecutionException("Internal error in findNextMatch", e); //$NON-NLS-1$
 		}
 	}
 
@@ -268,7 +268,7 @@ abstract class AbstractMultiSelectionHandler extends AbstractHandler {
 				return createRegionIfValid(matchPos, region.getLength());
 			}
 		} catch (BadLocationException e) {
-			throw new ExecutionException("Internal error in findPreviousMatch", e);
+			throw new ExecutionException("Internal error in findPreviousMatch", e); //$NON-NLS-1$
 		}
 	}
 
@@ -287,7 +287,7 @@ abstract class AbstractMultiSelectionHandler extends AbstractHandler {
 			List<IRegion> regions = findAllMatches(fullText, searchString);
 			return toArray(regions);
 		} catch (BadLocationException e) {
-			throw new ExecutionException("Internal error in findAllMatches", e);
+			throw new ExecutionException("Internal error in findAllMatches", e); //$NON-NLS-1$
 		}
 	}
 

@@ -114,7 +114,7 @@ public class AnnotationCodeMiningProvider extends AbstractCodeMiningProvider
 
 		private void scheduleTimer() {
 			if (removeTimer == null) {
-				removeTimer= new Timer("Remove Code Mining Annotations");
+				removeTimer= new Timer("Remove Code Mining Annotations"); //$NON-NLS-1$
 				removeTimer.schedule(new RemoveCodeMiningTimerTask(), 111);
 			}
 		}
