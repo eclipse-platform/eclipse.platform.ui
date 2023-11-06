@@ -102,7 +102,7 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 	 * @param parent             The shell to parent from.
 	 * @param labelProvider      the label provider to render the entries
 	 * @param contentProvider    the content provider to evaluate the tree structure
-	 * @param isEmptyTreeAllowed true if an empty tree can be input, false otherwise
+	 * @param allowEmptyTree <code>true</code> if an empty tree can be input, <code>false</code> if an empty tree must be treated as an error
 	 * @since 3.131
 	 */
 	public CheckedTreeSelectionDialog(Shell parent, ILabelProvider labelProvider, ITreeContentProvider contentProvider,
