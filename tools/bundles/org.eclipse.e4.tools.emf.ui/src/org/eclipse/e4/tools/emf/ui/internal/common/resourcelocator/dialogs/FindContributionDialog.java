@@ -235,7 +235,7 @@ public class FindContributionDialog extends TitleAreaDialog {
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				ContributionData cd = (ContributionData) element;
-				if ("show-bundles".equals(mode)) {
+				if ("show-bundles".equals(mode)) { //$NON-NLS-1$
 					boolean found = false;
 					for (Iterator<?> it = list.iterator(); it.hasNext();) {
 						ContributionData cd2 = (ContributionData) it.next();
@@ -248,26 +248,26 @@ public class FindContributionDialog extends TitleAreaDialog {
 						}
 					}
 					return true;
-				} else if ("show-packages".equals(mode)) {
+				} else if ("show-packages".equals(mode)) { //$NON-NLS-1$
 					if (bundleFilter != null && bundleFilter.isEmpty() == false) {
 						if (!bundleFilter.equals(cd.bundleName)) {
 							return false;
 						}
 					}
 					String packageName;
-					int last = cd.className.lastIndexOf(".");
+					int last = cd.className.lastIndexOf("."); //$NON-NLS-1$
 					if (last >= 0) {
 						packageName = cd.className.substring(0, last);
 					} else {
-						packageName = "";
+						packageName = ""; //$NON-NLS-1$
 					}
 					boolean found = false;
 					for (Iterator<?> it = list.iterator(); it.hasNext();) {
 						boolean matches = false;
 						ContributionData cd2 = (ContributionData) it.next();
-						if (packageName.isEmpty() && cd2.className.contains(".") == false) {
+						if (packageName.isEmpty() && cd2.className.contains(".") == false) { //$NON-NLS-1$
 							matches = true;
-						} else if (cd2.className.startsWith(packageName + ".")) {
+						} else if (cd2.className.startsWith(packageName + ".")) { //$NON-NLS-1$
 							matches = true;
 						}
 						if (matches) {
@@ -279,7 +279,7 @@ public class FindContributionDialog extends TitleAreaDialog {
 						}
 					}
 					return true;
-				} else if ("show-icons".equals(mode)) {
+				} else if ("show-icons".equals(mode)) { //$NON-NLS-1$
 					if (cd.iconPath == null) {
 						return false;
 					}
@@ -289,7 +289,7 @@ public class FindContributionDialog extends TitleAreaDialog {
 						}
 					}
 					if (packageFilter != null && packageFilter.isEmpty() == false) {
-						if (!cd.className.startsWith(packageFilter + ".")) {
+						if (!cd.className.startsWith(packageFilter + ".")) { //$NON-NLS-1$
 							return false;
 						}
 					}
@@ -301,7 +301,7 @@ public class FindContributionDialog extends TitleAreaDialog {
 						}
 					}
 					if (packageFilter != null && packageFilter.isEmpty() == false) {
-						if (!cd.className.startsWith(packageFilter + ".")) {
+						if (!cd.className.startsWith(packageFilter + ".")) { //$NON-NLS-1$
 							return false;
 						}
 					}

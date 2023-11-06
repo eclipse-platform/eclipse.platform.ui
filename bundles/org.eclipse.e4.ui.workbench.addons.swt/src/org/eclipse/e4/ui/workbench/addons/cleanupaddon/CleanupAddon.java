@@ -48,7 +48,7 @@ import org.osgi.service.event.Event;
 
 public class CleanupAddon {
 
-	private static final String DISABLE_CLEANUP_ADDON = "DisableCleanupAddon";
+	private static final String DISABLE_CLEANUP_ADDON = "DisableCleanupAddon"; //$NON-NLS-1$
 
 	@Inject
 	IEventBroker eventBroker;

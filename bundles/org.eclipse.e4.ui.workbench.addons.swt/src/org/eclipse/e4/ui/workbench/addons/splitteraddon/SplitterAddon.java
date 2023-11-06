@@ -36,7 +36,7 @@ import org.osgi.service.event.Event;
  */
 public class SplitterAddon {
 
-	private static final String DISABLE_SPLITTER_ADDON = "DisableSplitterAddon";
+	private static final String DISABLE_SPLITTER_ADDON = "DisableSplitterAddon"; //$NON-NLS-1$
 
 	@Inject
 	EModelService ms;

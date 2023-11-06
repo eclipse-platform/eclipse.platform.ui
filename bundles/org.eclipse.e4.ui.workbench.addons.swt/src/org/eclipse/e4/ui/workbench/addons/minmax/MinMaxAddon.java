@@ -65,7 +65,7 @@ import org.osgi.service.event.Event;
  */
 public class MinMaxAddon {
 
-	private static final String DISABLE_MINMAX_ADDON = "DisableMinMaxAddon";
+	private static final String DISABLE_MINMAX_ADDON = "DisableMinMaxAddon"; //$NON-NLS-1$
 
 	private static final String MIN_MAXIMIZEABLE_CHILDREN_AREA_TAG = IPresentationEngine.MIN_MAXIMIZEABLE_CHILDREN_AREA_TAG;
 

@@ -49,7 +49,7 @@ public class MultiCaretDownHandler extends AbstractMultiSelectionHandler {
 			IRegion nextLineRegion = createRegionIfValid(newOffset, lastRegion.getLength());
 			selectRegions(addRegion(regions, nextLineRegion));
 		} catch (BadLocationException e) {
-			throw new ExecutionException("Internal error in extendSelectionWithSamePositionInNextLine", e);
+			throw new ExecutionException("Internal error in extendSelectionWithSamePositionInNextLine", e); //$NON-NLS-1$
 		}
 	}
 
