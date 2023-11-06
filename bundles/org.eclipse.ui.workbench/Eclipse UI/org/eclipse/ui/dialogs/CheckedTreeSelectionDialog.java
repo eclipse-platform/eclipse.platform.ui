@@ -82,7 +82,7 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 
 	private int fStyle = SWT.BORDER;
 
-	private boolean fIsEmptyTreeAllowed;
+	private final boolean fAllowEmptyTree;
 
 	/**
 	 * Constructs an instance of <code>ElementTreeSelectionDialog</code>.
