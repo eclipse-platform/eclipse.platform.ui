@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.core.resources.IFile;
 
@@ -117,12 +117,13 @@ public class CheckConditionsContext {
 				return 1;
 			return 0;
 		});
-		pm.beginTask("", values.size()); //$NON-NLS-1$
+		SubMonitor sm= SubMonitor.convert(pm, "", values.size()); //$NON-NLS-1$
 		for (IConditionChecker checker : values) {
-			result.merge(checker.check(new SubProgressMonitor(pm, 1)));
+			result.merge(checker.check(sm.split(1)));
 			if (pm.isCanceled())
 				throw new OperationCanceledException();
 		}
+		pm.done();
 		return result;
 	}
 

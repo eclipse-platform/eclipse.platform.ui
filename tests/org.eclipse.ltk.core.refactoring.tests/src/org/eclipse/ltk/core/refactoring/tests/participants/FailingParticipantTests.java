@@ -27,6 +27,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.eclipse.core.tests.harness.FussyProgressMonitor;
+
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -65,18 +67,25 @@ public class FailingParticipantTests {
 	@Test
 	public void testFailingParticipants() throws Exception {
 		fRefactoring= new ElementRenameRefactoring(0);
-		fRefactoring.checkInitialConditions(new NullProgressMonitor());
-		fRefactoring.checkFinalConditions(new NullProgressMonitor());
+		FussyProgressMonitor pm= new FussyProgressMonitor();
+		fRefactoring.checkInitialConditions(pm);
+		pm.assertUsedUp();
+		pm.prepare();
+		fRefactoring.checkFinalConditions(pm);
+		pm.assertUsedUp();
+		pm.prepare();
 
 		resetLog();
 
 		boolean exception= false;
 		try {
 			// blows up because FailingParticipant throws in createChange
-			fRefactoring.createChange(new NullProgressMonitor());
+			fRefactoring.createChange(pm);
 		} catch (FailingParticipant.Exception e) {
 			exception= true;
 		}
+		pm.assertUsedUp();
+		pm.prepare();
 
 		assertEquals(1, fLogEntries.size());
 		IStatus status= fLogEntries.get(0);
@@ -88,16 +97,24 @@ public class FailingParticipantTests {
 		// FailingParticipant now disabled
 
 		fRefactoring= new ElementRenameRefactoring(0);
-		fRefactoring.checkInitialConditions(new NullProgressMonitor());
-		fRefactoring.checkFinalConditions(new NullProgressMonitor());
+		fRefactoring.checkInitialConditions(pm);
+		pm.assertUsedUp();
+		pm.prepare();
+		fRefactoring.checkFinalConditions(pm);
+		pm.assertUsedUp();
+		pm.prepare();
 		// FailingParticipant2 blows up when executing the change
-		Change change= fRefactoring.createChange(new NullProgressMonitor());
+		Change change= fRefactoring.createChange(pm);
+		pm.assertUsedUp();
+		pm.prepare();
 		exception= false;
 		try {
-			change.perform(new NullProgressMonitor());
+			change.perform(pm);
 		} catch (FailingParticipant2.Exception e) {
 			exception= true;
 		}
+		pm.assertUsedUp();
+		pm.prepare();
 
 		assertEquals(1, fLogEntries.size());
 		status= fLogEntries.get(0);
@@ -110,10 +127,18 @@ public class FailingParticipantTests {
 
 		// this time everything must pass - only working participant
 		fRefactoring= new ElementRenameRefactoring(0);
-		fRefactoring.checkInitialConditions(new NullProgressMonitor());
-		fRefactoring.checkFinalConditions(new NullProgressMonitor());
-		change= fRefactoring.createChange(new NullProgressMonitor());
-		change.perform(new NullProgressMonitor());
+		fRefactoring.checkInitialConditions(pm);
+		pm.assertUsedUp();
+		pm.prepare();
+		fRefactoring.checkFinalConditions(pm);
+		pm.assertUsedUp();
+		pm.prepare();
+		change= fRefactoring.createChange(pm);
+		pm.assertUsedUp();
+		pm.prepare();
+		change.perform(pm);
+		pm.assertUsedUp();
+		pm.prepare();
 
 		assertEquals(0, fLogEntries.size());
 		assertTrue("Working participant not executed", ElementRenameProcessor.fHistory.contains(ElementRenameProcessor.WORKING_EXEC));
@@ -123,15 +148,23 @@ public class FailingParticipantTests {
 	@Test
 	public void testFailingRefactorWithPreParticipants() throws Exception {
 		fRefactoring= new ElementRenameRefactoring(ElementRenameRefactoring.WORKING | ElementRenameRefactoring.FAIL_TO_EXECUTE | ElementRenameRefactoring.PRE_CHANGE);
-		fRefactoring.checkInitialConditions(new NullProgressMonitor());
-		fRefactoring.checkFinalConditions(new NullProgressMonitor());
+		FussyProgressMonitor pm= new FussyProgressMonitor();
+		fRefactoring.checkInitialConditions(pm);
+		pm.assertUsedUp();
+		pm.prepare();
+		fRefactoring.checkFinalConditions(pm);
+		pm.assertUsedUp();
+		pm.prepare();
 
 		resetLog();
         boolean exception= false;
-		Change change= fRefactoring.createChange(new NullProgressMonitor());
+		Change change= fRefactoring.createChange(pm);
+		pm.assertUsedUp();
+		pm.prepare();
 		try {
 			// blows up because main refactoring fails to execute
-			change.perform(new NullProgressMonitor());
+			change.perform(pm);
+			pm.assertUsedUp();
 		} catch (RuntimeException e) {
 			exception= true;
 		}
