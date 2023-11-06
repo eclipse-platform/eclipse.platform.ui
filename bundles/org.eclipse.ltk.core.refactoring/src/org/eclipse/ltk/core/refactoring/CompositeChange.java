@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
@@ -265,8 +266,7 @@ public class CompositeChange extends Change {
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		fUndoUntilException= null;
 		List<Change> undos= new ArrayList<>(fChanges.size());
-		pm.beginTask("", fChanges.size()); //$NON-NLS-1$
-		pm.setTaskName(RefactoringCoreMessages.CompositeChange_performingChangesTask_name);
+		SubMonitor sm= SubMonitor.convert(pm, RefactoringCoreMessages.CompositeChange_performingChangesTask_name, fChanges.size());
 		Change change= null;
 		boolean canceled= false;
 		try {
@@ -278,7 +278,7 @@ public class CompositeChange extends Change {
 				if (change.isEnabled()) {
 					Change undoChange= null;
 					try {
-						undoChange= change.perform(new SubProgressMonitor(pm, 1));
+						undoChange= change.perform(sm.split(1));
 					} catch(OperationCanceledException e) {
 						canceled= true;
 						if (!internalContinueOnCancel())
@@ -324,6 +324,8 @@ public class CompositeChange extends Change {
 			handleUndos(change, undos);
 			internalHandleException(change, e);
 			throw e;
+		} finally {
+			pm.done();
 		}
 	}
 
