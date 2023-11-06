@@ -35,7 +35,7 @@ import org.eclipse.core.commands.internal.util.Tracing;
  *
  * @since 3.1
  */
-public final class ContextManager extends HandleObjectManager implements IContextListener {
+public final class ContextManager extends HandleObjectManager<Context> implements IContextListener {
 
 	/**
 	 * This flag can be set to <code>true</code> if the context manager should
@@ -191,7 +191,7 @@ public final class ContextManager extends HandleObjectManager implements IContex
 	public final Context getContext(final String contextId) {
 		checkId(contextId);
 
-		Context context = (Context) handleObjectsById.get(contextId);
+		Context context = handleObjectsById.get(contextId);
 		if (context == null) {
 			context = new Context(contextId);
 			handleObjectsById.put(contextId, context);
@@ -220,7 +220,7 @@ public final class ContextManager extends HandleObjectManager implements IContex
 	 * @since 3.2
 	 */
 	public final Context[] getDefinedContexts() {
-		return (Context[]) definedHandleObjects.toArray(new Context[definedHandleObjects.size()]);
+		return definedHandleObjects.toArray(new Context[definedHandleObjects.size()]);
 	}
 
 	/**
