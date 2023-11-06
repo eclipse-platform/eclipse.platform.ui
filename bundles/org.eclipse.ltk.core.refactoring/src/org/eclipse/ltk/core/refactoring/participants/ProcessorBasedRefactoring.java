@@ -200,153 +200,157 @@ public class ProcessorBasedRefactoring extends Refactoring {
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException {
 		if (pm == null)
 			pm= new NullProgressMonitor();
-		RefactoringStatus result= new RefactoringStatus();
-		pm.beginTask("", 10); //$NON-NLS-1$
-		pm.setTaskName(RefactoringCoreMessages.ProcessorBasedRefactoring_initial_conditions);
+		try {
+			RefactoringStatus result= new RefactoringStatus();
+			pm.beginTask(RefactoringCoreMessages.ProcessorBasedRefactoring_initial_conditions, 10);
 
-		result.merge(getProcessor().checkInitialConditions(SubMonitor.convert(pm, 8)));
-		if (result.hasFatalError()) {
-			pm.done();
+			result.merge(getProcessor().checkInitialConditions(pm));
+			if (result.hasFatalError()) {
+				return result;
+			}
 			return result;
+		} finally {
+			pm.done();
 		}
-		pm.done();
-		return result;
 	}
 
 	@Override
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm) throws CoreException {
 		if (pm == null)
 			pm= new NullProgressMonitor();
-		RefactoringStatus result= new RefactoringStatus();
-		CheckConditionsContext context= createCheckConditionsContext();
+		try {
+			RefactoringStatus result= new RefactoringStatus();
+			CheckConditionsContext context= createCheckConditionsContext();
 
-		pm.beginTask("", 9); //$NON-NLS-1$
-		pm.setTaskName(RefactoringCoreMessages.ProcessorBasedRefactoring_final_conditions);
+			SubMonitor sm= SubMonitor.convert(pm, RefactoringCoreMessages.ProcessorBasedRefactoring_final_conditions, 9);
 
-		result.merge(getProcessor().checkFinalConditions(SubMonitor.convert(pm, 5), context));
-		if (result.hasFatalError()) {
-			pm.done();
-			return result;
-		}
-		if (pm.isCanceled())
-			throw new OperationCanceledException();
-
-		SharableParticipants sharableParticipants= new SharableParticipants(); // must not be shared when checkFinalConditions is called again
-		RefactoringParticipant[] loadedParticipants= getProcessor().loadParticipants(result, sharableParticipants);
-		if (loadedParticipants == null || loadedParticipants.length == 0) {
-			fParticipants= EMPTY_PARTICIPANTS;
-		} else {
-			fParticipants= new ArrayList<>();
-			fParticipants.addAll(Arrays.asList(loadedParticipants));
-		}
-		if (result.hasFatalError()) {
-			pm.done();
-			return result;
-		}
-		IProgressMonitor sm= SubMonitor.convert(pm, 2);
-
-		sm.beginTask("", fParticipants.size()); //$NON-NLS-1$
-		for (Iterator<RefactoringParticipant> iter= fParticipants.iterator(); iter.hasNext() && !result.hasFatalError(); ) {
-
-			RefactoringParticipant participant= iter.next();
-
-			final PerformanceStats stats= PerformanceStats.getStats(PERF_CHECK_CONDITIONS, getName() + ", " + participant.getName()); //$NON-NLS-1$
-			stats.startRun();
-
-			try {
-				result.merge(participant.checkConditions(SubMonitor.convert(sm, 1), context));
-			} catch (OperationCanceledException e) {
-				throw e;
-			} catch (RuntimeException e) {
-				// remove the participant so that it will be ignored during change execution.
-				RefactoringCorePlugin.log(e);
-				result.merge(RefactoringStatus.createErrorStatus(Messages.format(
-					RefactoringCoreMessages.ProcessorBasedRefactoring_check_condition_participant_failed,
-					participant.getName())));
-				iter.remove();
+			result.merge(getProcessor().checkFinalConditions(sm.split(5), context));
+			if (result.hasFatalError()) {
+				return result;
+			}
+			if (sm.isCanceled()) {
+				throw new OperationCanceledException();
 			}
 
-			stats.endRun();
+			SharableParticipants sharableParticipants= new SharableParticipants(); // must not be shared when checkFinalConditions is called again
+			RefactoringParticipant[] loadedParticipants= getProcessor().loadParticipants(result, sharableParticipants);
+			if (loadedParticipants == null || loadedParticipants.length == 0) {
+				fParticipants= EMPTY_PARTICIPANTS;
+			} else {
+				fParticipants= new ArrayList<>();
+				fParticipants.addAll(Arrays.asList(loadedParticipants));
+			}
+			if (result.hasFatalError()) {
+				return result;
+			}
+			SubMonitor sm2= SubMonitor.convert(sm.split(2), fParticipants.size());
+			for (Iterator<RefactoringParticipant> iter= fParticipants.iterator(); iter.hasNext() && !result.hasFatalError();) {
 
-			if (sm.isCanceled())
-				throw new OperationCanceledException();
-		}
-		sm.done();
-		if (result.hasFatalError()) {
-			pm.done();
+				RefactoringParticipant participant= iter.next();
+
+				final PerformanceStats stats= PerformanceStats.getStats(PERF_CHECK_CONDITIONS, getName() + ", " + participant.getName()); //$NON-NLS-1$
+				stats.startRun();
+
+				try {
+					result.merge(participant.checkConditions(sm2.split(1), context));
+				} catch (OperationCanceledException e) {
+					throw e;
+				} catch (RuntimeException e) {
+					// remove the participant so that it will be ignored during change execution.
+					RefactoringCorePlugin.log(e);
+					result.merge(RefactoringStatus.createErrorStatus(Messages.format(
+							RefactoringCoreMessages.ProcessorBasedRefactoring_check_condition_participant_failed,
+							participant.getName())));
+					iter.remove();
+				}
+
+				stats.endRun();
+
+				if (sm2.isCanceled()) {
+					throw new OperationCanceledException();
+				}
+			}
+			if (result.hasFatalError()) {
+				return result;
+			}
+			result.merge(context.check(SubMonitor.convert(sm2, 1)));
 			return result;
+		} finally {
+			pm.done();
 		}
-		result.merge(context.check(SubMonitor.convert(pm, 1)));
-		pm.done();
-		return result;
 	}
 
 	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException {
 		if (pm == null)
 			pm= new NullProgressMonitor();
-		pm.beginTask("", fParticipants.size() + 3); //$NON-NLS-1$
-		pm.setTaskName(RefactoringCoreMessages.ProcessorBasedRefactoring_create_change);
-		Change processorChange= getProcessor().createChange(SubMonitor.convert(pm, 1));
-		if (pm.isCanceled())
-			throw new OperationCanceledException();
-
-		fTextChangeMap= new HashMap<>();
-		addToTextChangeMap(processorChange);
-
-		List<Change> changes= new ArrayList<>();
-		List<Change> preChanges= new ArrayList<>();
-		Map<Change, RefactoringParticipant> participantMap= new HashMap<>();
-		for (RefactoringParticipant participant : fParticipants) {
-			try {
-				final PerformanceStats stats= PerformanceStats.getStats(PERF_CREATE_CHANGES, getName() + ", " + participant.getName()); //$NON-NLS-1$
-				stats.startRun();
-
-				Change preChange= participant.createPreChange(SubMonitor.convert(pm, 1));
-				Change change= participant.createChange(SubMonitor.convert(pm, 1));
-
-				stats.endRun();
-
-				if (preChange != null) {
-					if (fPreChangeParticipants == null)
-						fPreChangeParticipants= new ArrayList<>();
-					fPreChangeParticipants.add(participant);
-					preChanges.add(preChange);
-					participantMap.put(preChange, participant);
-					addToTextChangeMap(preChange);
-				}
-
-				if (change != null) {
-					changes.add(change);
-					participantMap.put(change, participant);
-					addToTextChangeMap(change);
-				}
-
-			} catch (OperationCanceledException e) {
-				throw e;
-			} catch (CoreException | RuntimeException e) {
-				disableParticipant(participant, e);
-				throw e;
-			}
-			if (pm.isCanceled())
+		try {
+			SubMonitor sm= SubMonitor.convert(pm, RefactoringCoreMessages.ProcessorBasedRefactoring_create_change, fParticipants.size() * 2 + 1);
+			Change processorChange= getProcessor().createChange(sm.split(1));
+			if (sm.isCanceled()) {
 				throw new OperationCanceledException();
+			}
+
+			fTextChangeMap= new HashMap<>();
+			addToTextChangeMap(processorChange);
+
+			List<Change> changes= new ArrayList<>();
+			List<Change> preChanges= new ArrayList<>();
+			Map<Change, RefactoringParticipant> participantMap= new HashMap<>();
+			for (RefactoringParticipant participant : fParticipants) {
+				try {
+					final PerformanceStats stats= PerformanceStats.getStats(PERF_CREATE_CHANGES, getName() + ", " + participant.getName()); //$NON-NLS-1$
+					stats.startRun();
+
+					Change preChange= participant.createPreChange(sm.split(1));
+					Change change= participant.createChange(sm.split(1));
+
+					stats.endRun();
+
+					if (preChange != null) {
+						if (fPreChangeParticipants == null)
+							fPreChangeParticipants= new ArrayList<>();
+						fPreChangeParticipants.add(participant);
+						preChanges.add(preChange);
+						participantMap.put(preChange, participant);
+						addToTextChangeMap(preChange);
+					}
+
+					if (change != null) {
+						changes.add(change);
+						participantMap.put(change, participant);
+						addToTextChangeMap(change);
+					}
+
+				} catch (OperationCanceledException e) {
+					throw e;
+				} catch (CoreException | RuntimeException e) {
+					disableParticipant(participant, e);
+					throw e;
+				}
+				if (sm.isCanceled())
+					throw new OperationCanceledException();
+			}
+
+			fTextChangeMap= null;
+
+			Change postChange= getProcessor().postCreateChange(
+					changes.toArray(new Change[changes.size()]),
+					sm.split(1));
+
+			ProcessorChange result= new ProcessorChange(getName());
+			result.addAll(preChanges.toArray(new Change[preChanges.size()]));
+			result.add(processorChange);
+			result.addAll(changes.toArray(new Change[changes.size()]));
+			result.setParticipantMap(participantMap);
+			result.setPreChangeParticipants(fPreChangeParticipants);
+			if (postChange != null) {
+				result.add(postChange);
+			}
+			return result;
+		} finally {
+			pm.done();
 		}
-
-		fTextChangeMap= null;
-
-		Change postChange= getProcessor().postCreateChange(
-			changes.toArray(new Change[changes.size()]),
-			SubMonitor.convert(pm, 1));
-
-		ProcessorChange result= new ProcessorChange(getName());
-		result.addAll(preChanges.toArray(new Change[preChanges.size()]));
-		result.add(processorChange);
-		result.addAll(changes.toArray(new Change[changes.size()]));
-		result.setParticipantMap(participantMap);
-		result.setPreChangeParticipants(fPreChangeParticipants);
-		if (postChange != null)
-			result.add(postChange);
-		return result;
 	}
 
 	/**

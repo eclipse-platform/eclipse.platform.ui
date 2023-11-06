@@ -117,12 +117,13 @@ public class CheckConditionsContext {
 				return 1;
 			return 0;
 		});
-		pm.beginTask("", values.size()); //$NON-NLS-1$
+		SubMonitor sm= SubMonitor.convert(pm, "", values.size()); //$NON-NLS-1$
 		for (IConditionChecker checker : values) {
-			result.merge(checker.check(SubMonitor.convert(pm, 1)));
+			result.merge(checker.check(sm.split(1)));
 			if (pm.isCanceled())
 				throw new OperationCanceledException();
 		}
+		pm.done();
 		return result;
 	}
 

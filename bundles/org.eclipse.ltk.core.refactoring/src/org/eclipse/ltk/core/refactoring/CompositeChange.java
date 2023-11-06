@@ -265,8 +265,7 @@ public class CompositeChange extends Change {
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		fUndoUntilException= null;
 		List<Change> undos= new ArrayList<>(fChanges.size());
-		pm.beginTask("", fChanges.size()); //$NON-NLS-1$
-		pm.setTaskName(RefactoringCoreMessages.CompositeChange_performingChangesTask_name);
+		SubMonitor sm= SubMonitor.convert(pm, RefactoringCoreMessages.CompositeChange_performingChangesTask_name, fChanges.size());
 		Change change= null;
 		boolean canceled= false;
 		try {
@@ -278,7 +277,7 @@ public class CompositeChange extends Change {
 				if (change.isEnabled()) {
 					Change undoChange= null;
 					try {
-						undoChange= change.perform(SubMonitor.convert(pm, 1));
+						undoChange= change.perform(sm.split(1));
 					} catch(OperationCanceledException e) {
 						canceled= true;
 						if (!internalContinueOnCancel())
@@ -324,6 +323,8 @@ public class CompositeChange extends Change {
 			handleUndos(change, undos);
 			internalHandleException(change, e);
 			throw e;
+		} finally {
+			pm.done();
 		}
 	}
 
