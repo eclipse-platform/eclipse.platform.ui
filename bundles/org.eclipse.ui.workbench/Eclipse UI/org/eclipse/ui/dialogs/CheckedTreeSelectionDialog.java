@@ -106,9 +106,8 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 	 * @since 3.131
 	 */
 	public CheckedTreeSelectionDialog(Shell parent, ILabelProvider labelProvider, ITreeContentProvider contentProvider,
-			boolean isEmptyTreeAllowed) {
-		this(parent, labelProvider, contentProvider, SWT.BORDER);
-		fIsEmptyTreeAllowed = isEmptyTreeAllowed;
+			boolean allowEmptyTree) {
+		this(parent, labelProvider, contentProvider, SWT.BORDER, allowEmptyTree);
 	}
 
 	/**
@@ -122,6 +121,23 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 	 */
 	public CheckedTreeSelectionDialog(Shell parent, ILabelProvider labelProvider, ITreeContentProvider contentProvider,
 			int style) {
+		this(parent, labelProvider, contentProvider, style, false);
+	}
+
+	/**
+	 * Constructs an instance of <code>ElementTreeSelectionDialog</code>.
+	 *
+	 * @param parent          The shell to parent from.
+	 * @param labelProvider   the label provider to render the entries
+	 * @param contentProvider the content provider to evaluate the tree structure
+	 * @param style           the style of the tree
+	 * @param allowEmptyTree  <code>true</code> if an empty tree can be input,
+	 *                        <code>false</code> if an empty tree must be treated as
+	 *                        an error
+	 * @since 3.131
+	 */
+	public CheckedTreeSelectionDialog(Shell parent, ILabelProvider labelProvider, ITreeContentProvider contentProvider,
+			int style, boolean allowEmptyTree) {
 		super(parent);
 		fLabelProvider = labelProvider;
 		fContentProvider = contentProvider;
@@ -130,6 +146,7 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 		fContainerMode = false;
 		fExpandedElements = null;
 		fStyle = style;
+		fAllowEmptyTree = allowEmptyTree;
 	}
 
 	/**
@@ -246,16 +263,6 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 	}
 
 	/**
-	 * Returns whether an empty tree is allowed
-	 *
-	 * @return true if empty tree is ok, false otherwise
-	 * @since 3.131
-	 */
-	protected boolean isEmptyTreeAllowed() {
-		return fIsEmptyTreeAllowed;
-	}
-
-	/**
 	 * Validate the receiver and update the status with the result.
 	 *
 	 */
@@ -268,7 +275,7 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 				fCurrStatus = new Status(IStatus.OK, PlatformUI.PLUGIN_ID, IStatus.OK, "", //$NON-NLS-1$
 						null);
 			}
-		} else if (isEmptyTreeAllowed()) {
+		} else if (fAllowEmptyTree) {
 			if (!fCurrStatus.isOK()) {
 				fCurrStatus = new Status(IStatus.OK, PlatformUI.PLUGIN_ID, IStatus.OK, "", //$NON-NLS-1$
 						null);
