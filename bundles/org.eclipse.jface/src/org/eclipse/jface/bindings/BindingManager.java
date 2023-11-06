@@ -67,8 +67,8 @@ import org.eclipse.jface.util.Util;
  *
  * @since 3.1
  */
-public final class BindingManager extends HandleObjectManager implements
-		IContextManagerListener, ISchemeListener {
+public final class BindingManager extends HandleObjectManager<Scheme>
+		implements IContextManagerListener, ISchemeListener {
 
 	/**
 	 * This flag can be set to <code>true</code> if the binding manager should
@@ -1421,7 +1421,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 *         <code>null</code>.
 	 */
 	public Scheme[] getDefinedSchemes() {
-		return (Scheme[]) definedHandleObjects
+		return definedHandleObjects
 				.toArray(new Scheme[definedHandleObjects.size()]);
 	}
 
