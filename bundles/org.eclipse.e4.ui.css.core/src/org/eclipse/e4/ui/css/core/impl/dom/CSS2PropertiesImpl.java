@@ -1279,9 +1279,6 @@ public class CSS2PropertiesImpl implements CSS2Properties {
 	/**
 	 * Parse and apply CSS property name <code>propertyName</code> with value
 	 * <code>propertyValue</code> to the widget.
-	 *
-	 * @param propertyName
-	 * @param propertyValue
 	 */
 	protected void parseAndApplyStyle(String propertyName, String propertyValue) {
 		try {

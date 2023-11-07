@@ -23,15 +23,11 @@ public interface ExtendedDocumentHandler extends DocumentHandler {
 
 	/**
 	 * Return root node.
-	 *
-	 * @return
 	 */
 	public Object getNodeRoot();
 
 	/**
 	 * Set node stack.
-	 *
-	 * @param statck
 	 */
 	public void setNodeStack(Stack<Object> statck);
 }

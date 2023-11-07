@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Composite;
  * Abstract base class for Cell-Editors presented as combo boxes
  *
  * @since 3.4
- *
  */
 abstract class AbstractComboBoxCellEditor extends CellEditor {
 	/**
@@ -64,7 +63,6 @@ abstract class AbstractComboBoxCellEditor extends CellEditor {
 	/**
 	 * Creates a new cell editor with no control and no st of choices.
 	 * Initially, the cell editor has no cell validator.
-	 *
 	 */
 	AbstractComboBoxCellEditor() {
 	}

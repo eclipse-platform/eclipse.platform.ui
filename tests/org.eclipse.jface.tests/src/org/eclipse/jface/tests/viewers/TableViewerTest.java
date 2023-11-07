@@ -124,7 +124,6 @@ public class TableViewerTest extends StructuredItemViewerTest {
 	/**
 	 * Create the table viewer for the test
 	 *
-	 * @param parent
 	 * @return The newly created TableViewer.
 	 */
 	protected TableViewer createTableViewer(Composite parent) {

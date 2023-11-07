@@ -47,7 +47,6 @@ import org.eclipse.ui.internal.ide.undo.UndoMessages;
  * This class is not intended to be subclassed by clients.
  *
  * @since 3.3
- *
  */
 abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 

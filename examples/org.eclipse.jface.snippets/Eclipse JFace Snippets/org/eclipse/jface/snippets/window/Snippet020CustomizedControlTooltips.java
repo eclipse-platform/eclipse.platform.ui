@@ -46,7 +46,6 @@ import org.eclipse.swt.widgets.Text;
  * Demonstrate usage of custom toolstips for controls
  *
  * @author Tom Schindl
- *
  */
 public class Snippet020CustomizedControlTooltips {
 	protected class MyToolTip extends ToolTip {

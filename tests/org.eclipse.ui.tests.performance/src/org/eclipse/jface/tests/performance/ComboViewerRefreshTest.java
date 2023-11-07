@@ -52,8 +52,6 @@ public class ComboViewerRefreshTest extends ViewerTest {
 
 	/**
 	 * Test the time for doing a refresh.
-	 *
-	 * @throws Throwable
 	 */
 	public void testRefresh() throws Throwable {
 		ELEMENT_COUNT = 1000;
@@ -72,8 +70,6 @@ public class ComboViewerRefreshTest extends ViewerTest {
 
 	/**
 	 * Test the time for doing a refresh.
-	 *
-	 * @throws Throwable
 	 */
 	public void testRefreshSmall() throws Throwable {
 		ELEMENT_COUNT = 50;

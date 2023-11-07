@@ -30,7 +30,6 @@ import org.eclipse.ui.navigator.INavigatorContentService;
 
 /**
  * @since 3.2
- *
  */
 public class CommonDropDescriptorManager {
 

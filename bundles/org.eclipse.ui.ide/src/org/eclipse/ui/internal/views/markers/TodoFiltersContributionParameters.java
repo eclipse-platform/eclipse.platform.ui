@@ -22,7 +22,6 @@ import org.eclipse.ui.views.markers.MarkerSupportConstants;
 /**
  * TodoFiltersContributionParameters is the filter to just show TODOs.
  * @since 3.4
- *
  */
 public class TodoFiltersContributionParameters extends FiltersContributionParameters {
 

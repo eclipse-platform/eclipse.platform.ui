@@ -88,8 +88,6 @@ public class TableComparator extends ViewerComparator implements Comparator {
 
 	/**
 	 * Return a TableSorter based on the supplied fields.
-	 *
-	 * @param sortingFields
 	 */
 	static TableComparator createTableSorter(IField[] sortingFields) {
 		int[] defaultPriorities = new int[sortingFields.length];
@@ -209,10 +207,6 @@ public class TableComparator extends ViewerComparator implements Comparator {
 	 * Compare obj1 and obj2 at depth. If continueSearching continue searching
 	 * below depth to continue the comparison.
 	 *
-	 * @param obj1
-	 * @param obj2
-	 * @param depth
-	 * @param continueSearching
 	 * @return int
 	 */
 	protected int compare(Object obj1, Object obj2, int depth,
@@ -343,11 +337,6 @@ public class TableComparator extends ViewerComparator implements Comparator {
 	/**
 	 * Sorts the given elements in-place, modifying the given array from index
 	 * start to index end.
-	 *
-	 * @param viewer
-	 * @param elements
-	 * @param start
-	 * @param end
 	 */
 	public void sort(final Viewer viewer, Object[] elements, int start, int end) {
 		Arrays.sort(elements, start, end, (a, b) -> TableComparator.this.compare(viewer, a, b));

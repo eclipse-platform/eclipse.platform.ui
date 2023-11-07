@@ -36,7 +36,6 @@ import org.junit.Test;
  * {@link org.eclipse.jface.viewers.IColorProvider}, {@link IFontProvider}
  *
  * @since 3.3
- *
  */
 public class CompositeLabelProviderTableTest extends CompositeLabelProviderTest {
 

@@ -34,7 +34,6 @@ import org.eclipse.ui.navigator.ICommonMenuConstants;
  * Adds the properties action to the menu.
  *
  * @since 3.2
- *
  */
 public class PropertiesActionProvider extends CommonActionProvider {
 

@@ -39,7 +39,6 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * A Code Mining demo with class references and implementations minings.
- *
  */
 public class CodeMiningDemo {
 

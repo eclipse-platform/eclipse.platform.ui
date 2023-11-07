@@ -17,9 +17,6 @@ package org.eclipse.e4.ui.internal.workbench;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 
-/**
- *
- */
 public class ActiveChildLookupFunction extends ContextFunction {
 
 	private String localVar;

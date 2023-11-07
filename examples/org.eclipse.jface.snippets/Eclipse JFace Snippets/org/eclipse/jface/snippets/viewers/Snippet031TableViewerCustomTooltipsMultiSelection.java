@@ -47,7 +47,6 @@ import org.eclipse.swt.widgets.TableItem;
  * This code is for users pre 3.3 others could use newly added tooltip support in {@link CellLabelProvider}
 
  * @author Adam Neal &lt;Adam_Neal@ca.ibm.com&gt;
- *
  */
 public class Snippet031TableViewerCustomTooltipsMultiSelection {
 	public static class MyLableProvider implements ITableLabelProvider {

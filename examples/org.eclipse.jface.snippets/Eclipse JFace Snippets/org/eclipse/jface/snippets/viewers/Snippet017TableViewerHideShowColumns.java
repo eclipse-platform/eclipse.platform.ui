@@ -169,9 +169,6 @@ public class Snippet017TableViewerHideShowColumns {
 		return elements;
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display();
 

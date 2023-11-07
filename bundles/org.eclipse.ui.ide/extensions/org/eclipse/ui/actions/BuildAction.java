@@ -118,9 +118,6 @@ public class BuildAction extends WorkspaceAction {
 		initAction(type);
 	}
 
-	/**
-	 * @param type
-	 */
 	private void initAction(int type) {
 		if (type == IncrementalProjectBuilder.INCREMENTAL_BUILD) {
 			setText(IDEWorkbenchMessages.BuildAction_text);

@@ -151,9 +151,6 @@ public class SaveAllDirtyPartsAddon {
 
 	private long autoSaveInterval;
 
-	/**
-	 * @param autoSave
-	 */
 	@Inject
 	@Optional
 	public void setAutoSave(
@@ -167,9 +164,6 @@ public class SaveAllDirtyPartsAddon {
 		}
 	}
 
-	/**
-	 * @param newInterval
-	 */
 	@Inject
 	@Optional
 	public void autoSaveIntervalChanged(

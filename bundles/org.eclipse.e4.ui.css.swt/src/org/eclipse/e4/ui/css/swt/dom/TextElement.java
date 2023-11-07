@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * {@link CSSStylableElement} implementation which wrap SWT {@link Text}.
- *
  */
 public class TextElement extends ControlElement {
 

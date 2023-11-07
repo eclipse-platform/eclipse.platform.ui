@@ -29,9 +29,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.emf.ecore.EObject;
 import org.junit.Test;
 
-/**
- *
- */
 public class E4ResourceTest {
 	@Test
 	public void bug_leak_517124() {

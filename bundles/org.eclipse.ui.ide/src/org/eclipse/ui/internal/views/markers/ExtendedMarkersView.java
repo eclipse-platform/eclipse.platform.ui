@@ -131,7 +131,6 @@ import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
  * markerContentProvider will be used.
  *
  * @since 3.4
- *
  */
 public class ExtendedMarkersView extends ViewPart {
 
@@ -210,9 +209,6 @@ public class ExtendedMarkersView extends ViewPart {
 	/**
 	 * Add all concrete {@link MarkerSupportItem} elements associated with the
 	 * receiver to allMarkers.
-	 *
-	 * @param markerItem
-	 * @param allMarkers
 	 */
 	private void addAllConcreteItems(MarkerSupportItem markerItem,
 			Collection<MarkerSupportItem> allMarkers) {
@@ -230,8 +226,6 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * Add the category to the list of expanded categories.
-	 *
-	 * @param category
 	 */
 	void addExpandedCategory(MarkerCategory category) {
 		getCategoriesToExpand().add(category.getName());
@@ -241,7 +235,6 @@ public class ExtendedMarkersView extends ViewPart {
 	/**
 	 * Add all of the markers in markerItem recursively.
 	 *
-	 * @param markerItem
 	 * @param allMarkers
 	 *            {@link Collection} of {@link IMarker}
 	 */
@@ -258,8 +251,6 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * Create the columns for the receiver.
-	 *
-	 * @param parent
 	 */
 	private void createViewer(Composite parent) {
 		parent.setLayout(new FillLayout());
@@ -290,7 +281,6 @@ public class ExtendedMarkersView extends ViewPart {
 	 *
 	 * @param currentColumns
 	 *            the columns to refresh
-	 * @param widths
 	 */
 	private void createColumns(TreeColumn[] currentColumns, int[] widths) {
 
@@ -385,9 +375,6 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 *
-	 * @param markerField
-	 * @param preferredWidth
-	 * @param considerUIWidths
 	 * @return desired width for the column representing markerField
 	 */
 	int getFieldWidth(MarkerField markerField, int preferredWidth, boolean considerUIWidths) {
@@ -463,9 +450,6 @@ public class ExtendedMarkersView extends ViewPart {
 
 	}
 
-	/**
-	 *
-	 */
 	private void startView() {
 		viewer.setInput(builder.getMarkers());
 		//always use a clone for Thread safety
@@ -497,9 +481,6 @@ public class ExtendedMarkersView extends ViewPart {
 		});
 	}
 
-	/**
-	 *
-	 */
 	private void addPageAndPartSelectionListener() {
 		// Initialize any selection based filtering
 		pageSelectionListener = new ViewerPageSelectionListener(this);
@@ -511,9 +492,6 @@ public class ExtendedMarkersView extends ViewPart {
 		pageSelectionListener.selectionChanged(getSite().getPage().getActivePart(), getSite().getPage().getSelection());
 	}
 
-	/**
-	 *
-	 */
 	private void addSelectionListener() {
 		viewer.addSelectionChangedListener(event -> {
 			ISelection selection = event.getSelection();
@@ -523,9 +501,6 @@ public class ExtendedMarkersView extends ViewPart {
 		});
 	}
 
-	/**
-	 *
-	 */
 	private void addHelpListener() {
 		// Set help on the view itself
 		viewer.getControl().addHelpListener(e -> {
@@ -538,9 +513,6 @@ public class ExtendedMarkersView extends ViewPart {
 		});
 	}
 
-	/**
-	 *
-	 */
 	private void addExpansionListener() {
 		viewer.getTree().addTreeListener(new TreeAdapter() {
 			@Override
@@ -555,9 +527,6 @@ public class ExtendedMarkersView extends ViewPart {
 		});
 	}
 
-	/**
-	 *
-	 */
 	private void addLinkWithEditorSupport() {
 		new OpenAndLinkWithEditorHelper(viewer) {
 			@Override
@@ -738,7 +707,6 @@ public class ExtendedMarkersView extends ViewPart {
 	 * Return the content provider for the receiver.
 	 *
 	 * @return ITreeContentProvider
-	 *
 	 */
 	private IContentProvider getContentProvider() {
 		return new MarkerViewerContentProvider(this);
@@ -747,7 +715,6 @@ public class ExtendedMarkersView extends ViewPart {
 	/**
 	 * Get the id of the marker field in treeColumn.
 	 *
-	 * @param treeColumn
 	 * @return String
 	 */
 	private String getFieldId(TreeColumn treeColumn) {
@@ -1058,7 +1025,6 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * @return viewId
-	 *
 	 */
 	String getViewsEffectiveId() {
 		IViewSite site = (IViewSite) getSite();
@@ -1071,7 +1037,6 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * @return viewsPrimaryId
-	 *
 	 */
 	String getViewsPrimaryId() {
 		IViewSite site = (IViewSite) getSite();
@@ -1080,7 +1045,6 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * @return viewsSecondaryId
-	 *
 	 */
 	String getViewsSecondaryId() {
 		IViewSite site = (IViewSite) getSite();
@@ -1089,8 +1053,6 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * Initialize the title based on the name
-	 *
-	 * @param name
 	 */
 	void initializeTitle(String name) {
 		customPartName = name;
@@ -1100,7 +1062,6 @@ public class ExtendedMarkersView extends ViewPart {
 	/**
 	 * Return whether or not group is enabled.
 	 *
-	 * @param group
 	 * @return boolean
 	 */
 	boolean isEnabled(MarkerFieldFilterGroup group) {
@@ -1119,7 +1080,6 @@ public class ExtendedMarkersView extends ViewPart {
 	/**
 	 * Return whether or not generator is the selected one.
 	 *
-	 * @param markerGenerator
 	 * @return boolean
 	 */
 	boolean isShowing(MarkerContentGenerator markerGenerator) {
@@ -1135,8 +1095,6 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * Log that a generator id is invalid.
-	 *
-	 * @param id
 	 */
 	void logInvalidGenerator(String id) {
 		StatusManager.getManager().handle(
@@ -1176,7 +1134,6 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @since 3.20
 	 *
 	 * @return true if a filter is enabled, false if no filter is enabled.
-	 *
 	 */
 	public boolean isFilterEnabled() {
 		return generator != null && generator.getEnabledFilters().size() > 0;
@@ -1195,7 +1152,6 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * Restore the expanded categories.
-	 *
 	 */
 	void reexpandCategories() {
 		if (!getCategoriesToExpand().isEmpty() && builder.isShowingHierarchy()) {
@@ -1234,8 +1190,6 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * Remove the category from the list of expanded ones.
-	 *
-	 * @param category
 	 */
 	void removeExpandedCategory(MarkerCategory category) {
 		getCategoriesToExpand().remove(category.getName());
@@ -1289,8 +1243,6 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * Set the category group for the receiver.
-	 *
-	 * @param group
 	 */
 	void setCategoryGroup(MarkerGroup group) {
 		getCategoriesToExpand().clear();
@@ -1304,8 +1256,6 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * Set the primary sort field
-	 *
-	 * @param field
 	 */
 	void setPrimarySortField(MarkerField field) {
 		TreeColumn[] columns = viewer.getTree().getColumns();
@@ -1323,9 +1273,6 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * Set the primary sort field to field and update the column.
-	 *
-	 * @param field
-	 * @param column
 	 */
 	private void setPrimarySortField(MarkerField field, TreeColumn column) {
 		builder.setPrimarySortField(field);
@@ -1337,9 +1284,6 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * Set the selection of the receiver. reveal the item if reveal is true.
-	 *
-	 * @param structuredSelection
-	 * @param reveal
 	 */
 	void setSelection(StructuredSelection structuredSelection, boolean reveal) {
 		List<MarkerItem> newSelection = new ArrayList<>(structuredSelection.size());
@@ -1359,8 +1303,6 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * Add group to the enabled filters.
-	 *
-	 * @param group
 	 */
 	void toggleFilter(MarkerFieldFilterGroup group) {
 		generator.toggleFilter(group);
@@ -1375,9 +1317,6 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * Update the direction indicator as column is now the primary column.
-	 *
-	 * @param column
-	 * @param field
 	 */
 	void updateDirectionIndicator(TreeColumn column, MarkerField field) {
 		viewer.getTree().setSortColumn(column);
@@ -1390,8 +1329,6 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * Update the status line with the new selection
-	 *
-	 * @param newSelection
 	 */
 	void updateStatusLine(IStructuredSelection newSelection) {
 		String message = null;
@@ -1424,8 +1361,6 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * Get the status line summary of markers.
-	 *
-	 * @param entries
 	 */
 	private String getStatusSummary(MarkerEntry[] entries) {
 		Integer[] counts = Markers.getMarkerCounts(entries);
@@ -1526,9 +1461,6 @@ public class ExtendedMarkersView extends ViewPart {
 		return generator.getHiddenFields();
 	}
 
-	/**
-	 * @param visible
-	 */
 	void setVisibleFields(Collection<MarkerField> visible,int[] widths) {
 		generator.setVisibleFields(visible);
 		//viewer.setSelection(new StructuredSelection());
@@ -1562,7 +1494,6 @@ public class ExtendedMarkersView extends ViewPart {
 	 * The method should not be called directly, see
 	 * {@link MarkerUpdateScheduler}
 	 *
-	 * @param delay
 	 * @return UIUpdateJob
 	 */
 	UIUpdateJob scheduleUpdate(long delay) {
@@ -1588,7 +1519,6 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * @return lastUiRefreshTime
-	 *
 	 */
 	long getLastUIRefreshTime() {
 		if (uiUpdateJob != null) {
@@ -1598,7 +1528,6 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 	/**
 	 * @return true if the UI isUpdating
-	 *
 	 */
 	boolean isUIUpdating() {
 		return uiUpdateJob!=null?uiUpdateJob.isUpdating():false;
@@ -1621,9 +1550,6 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * Open the supplied marker in an editor in page
-	 *
-	 * @param marker
-	 * @param page
 	 */
 	public static void openMarkerInEditor(IMarker marker, IWorkbenchPage page) {
 		// optimization: if the active editor has the same input as
@@ -1681,7 +1607,6 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * Return The selection listener for the page selection change.
-	 *
 	 */
 	private class ViewerPageSelectionListener implements ISelectionListener {
 		private final ExtendedMarkersView view;

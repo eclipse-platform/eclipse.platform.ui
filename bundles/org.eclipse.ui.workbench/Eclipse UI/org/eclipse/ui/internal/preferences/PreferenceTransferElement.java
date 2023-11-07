@@ -46,9 +46,6 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements IPlug
 
 	/**
 	 * Create a new instance of this class
-	 *
-	 * @param configurationElement
-	 *
 	 */
 	public PreferenceTransferElement(IConfigurationElement configurationElement) {
 		this.configurationElement = configurationElement;
@@ -66,7 +63,6 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements IPlug
 	 * Answer the preference filter of this element.
 	 *
 	 * @return a preference filter
-	 * @throws CoreException
 	 */
 	public IPreferenceFilter getFilter() throws CoreException {
 		if (filter == null) {

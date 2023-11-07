@@ -435,7 +435,6 @@ public class DialogSettings implements IDialogSettings {
 		/**
 		 * Create a new XMLWriter
 		 * @param output the stream to write the output to
-		 * @throws IOException
 		 */
 		public XMLWriter(OutputStream output) throws IOException {
 			this(new OutputStreamWriter(output, StandardCharsets.UTF_8));
@@ -444,7 +443,6 @@ public class DialogSettings implements IDialogSettings {
 		/**
 		 * Create a new XMLWriter
 		 * @param output the write to used when writing to
-		 * @throws IOException
 		 */
 		public XMLWriter(Writer output) throws IOException {
 			super(output);
@@ -460,7 +458,6 @@ public class DialogSettings implements IDialogSettings {
 		/**
 		 * write the intended end tag
 		 * @param name the name of the tag to end
-		 * @throws IOException
 		 */
 		public void endTag(String name) throws IOException {
 			tab--;
@@ -478,7 +475,6 @@ public class DialogSettings implements IDialogSettings {
 		 * @param name the name of the tag
 		 * @param parameters map of parameters
 		 * @param close should the tag be ended automatically (=&gt; empty tag)
-		 * @throws IOException
 		 */
 		public void printTag(String name, Map<String, String> parameters, boolean close) throws IOException {
 			printTag(name, parameters, true, true, close);
@@ -516,7 +512,6 @@ public class DialogSettings implements IDialogSettings {
 		 * Start the tag
 		 * @param name the name of the tag
 		 * @param parameters map of parameters
-		 * @throws IOException
 		 */
 		public void startTag(String name, Map<String, String> parameters) throws IOException {
 			startTag(name, parameters, true);

@@ -362,9 +362,6 @@ public class NewFolderDialog extends SelectionStatusDialog {
 	/**
 	 * Update the dialog's status line to reflect the given status. It is safe to
 	 * call this method before the dialog has been opened.
-	 *
-	 * @param severity
-	 * @param message
 	 */
 	private void updateStatus(int severity, String message) {
 		updateStatus(new Status(severity, IDEWorkbenchPlugin.IDE_WORKBENCH, severity, message, null));

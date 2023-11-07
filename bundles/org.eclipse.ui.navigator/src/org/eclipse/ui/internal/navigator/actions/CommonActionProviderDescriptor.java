@@ -105,7 +105,6 @@ public class CommonActionProviderDescriptor implements
 	 * @param anEnablementExpression
 	 *            A configuration element with the name 'enablement' or
 	 *            'triggerPoints' and containing an Eclipse Core Expression
-	 * @param defaultPriority
 	 * @param anOverrideId
 	 *            A unique identifier for this descriptor. Ids can be used as a
 	 *            filtering device for activities or viewer***Bindings.
@@ -408,7 +407,6 @@ public class CommonActionProviderDescriptor implements
 	/**
 	 * Sorts CommonActionProviderDescriptors by priority, and then by defined id.
 	 * @since 3.2
-	 *
 	 */
 	public static class CommonActionProviderDescriptorCompator implements Comparator {
 

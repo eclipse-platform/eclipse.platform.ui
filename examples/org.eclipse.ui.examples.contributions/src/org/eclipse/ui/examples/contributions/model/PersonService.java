@@ -102,10 +102,6 @@ public class PersonService implements IPersonService, IDisposable {
 		firePersonChange(PROP_CHANGE, oldVal, person);
 	}
 
-	/**
-	 * @param oldVal
-	 * @param person
-	 */
 	private void firePersonChange(String property, Person oldVal, Person person) {
 		if (listeners.isEmpty()) {
 			return;

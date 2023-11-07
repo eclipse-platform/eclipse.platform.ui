@@ -32,7 +32,6 @@ import org.junit.Test;
  *
  * @since 3.5
  * @author Prakash G.R.
- *
  */
 public class Bug231304Test {
 

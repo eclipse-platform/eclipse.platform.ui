@@ -835,9 +835,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 		return limbo;
 	}
 
-	/**
-	 * @param element
-	 */
 	@Override
 	public void removeGui(final MUIElement element) {
 		// wrap the handling in a SafeRunner so that exceptions do not prevent

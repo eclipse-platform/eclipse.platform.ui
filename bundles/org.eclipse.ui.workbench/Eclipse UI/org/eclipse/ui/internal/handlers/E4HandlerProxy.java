@@ -50,7 +50,6 @@ import org.eclipse.ui.menus.UIElement;
 
 /**
  * @since 3.5
- *
  */
 public class E4HandlerProxy implements IHandler2, IHandlerListener, IElementUpdater, IObjectWithState {
 	public HandlerActivation activation;

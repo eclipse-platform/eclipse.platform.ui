@@ -21,7 +21,6 @@ import org.w3c.dom.css.CSSPrimitiveValue;
  *
  * @version 1.0.0
  * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- *
  */
 public class CSSBorderPropertiesImpl implements CSSBorderProperties {
 

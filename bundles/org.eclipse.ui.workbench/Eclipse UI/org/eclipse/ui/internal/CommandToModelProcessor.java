@@ -34,7 +34,6 @@ import org.eclipse.ui.internal.commands.CommandPersistence;
 
 /**
  * @since 3.5
- *
  */
 public class CommandToModelProcessor {
 
@@ -74,10 +73,6 @@ public class CommandToModelProcessor {
 		cp.dispose();
 	}
 
-	/**
-	 * @param application
-	 * @param commandManager
-	 */
 	private void generateCommands(MApplication application, CommandManager commandManager) {
 		for (Command cmd : commandManager.getDefinedCommands()) {
 			final MCommand mCommand = commands.get(cmd.getId());
@@ -111,9 +106,6 @@ public class CommandToModelProcessor {
 		}
 	}
 
-	/**
-	 * @param commandManager
-	 */
 	private void generateCategories(MApplication application, CommandManager commandManager) {
 		for (Category cat : commandManager.getDefinedCategories()) {
 			if (categories.containsKey(cat.getId())) {

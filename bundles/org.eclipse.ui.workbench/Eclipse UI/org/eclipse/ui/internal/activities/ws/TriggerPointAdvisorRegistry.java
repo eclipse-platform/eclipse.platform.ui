@@ -33,9 +33,6 @@ public class TriggerPointAdvisorRegistry {
 
 	private static TriggerPointAdvisorRegistry instance;
 
-	/**
-	 *
-	 */
 	private TriggerPointAdvisorRegistry() {
 	}
 
@@ -119,8 +116,6 @@ public class TriggerPointAdvisorRegistry {
 	}
 
 	/**
-	 * @param targetProductId
-	 * @param extensions
 	 * @return the advisor id
 	 */
 	private String getAdvisorForProduct(String targetProductId, IExtension[] extensions) {

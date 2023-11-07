@@ -23,7 +23,6 @@ import org.eclipse.jface.viewers.ViewerFilter;
  * {@link CommonFilterDescriptor#createFilter()}.
  *
  * @since 3.2
- *
  */
 public class SkeletonViewerFilter extends ViewerFilter {
 

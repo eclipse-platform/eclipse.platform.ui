@@ -38,7 +38,6 @@ import org.junit.runners.JUnit4;
  * </ul>
  *
  * @since 3.3
- *
  */
 @RunWith(JUnit4.class)
 public class MenuBaseTests extends MenuTestCase {

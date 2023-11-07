@@ -33,7 +33,6 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
  * </p>
  *
  * @since 3.2
- *
  */
 public interface ICommonContentProvider extends ITreeContentProvider,
 		IMementoAware {

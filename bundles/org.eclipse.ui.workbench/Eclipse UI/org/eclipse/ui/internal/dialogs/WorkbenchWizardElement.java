@@ -70,7 +70,6 @@ public class WorkbenchWizardElement extends WorkbenchAdapter
 	/**
 	 * Create a new instance of this class
 	 *
-	 * @param configurationElement
 	 * @since 3.1
 	 */
 	public WorkbenchWizardElement(IConfigurationElement configurationElement) {
@@ -119,7 +118,6 @@ public class WorkbenchWizardElement extends WorkbenchAdapter
 	 * point.
 	 *
 	 * @return the new object
-	 * @throws CoreException
 	 */
 	public Object createExecutableExtension() throws CoreException {
 		return WorkbenchPlugin.createExtension(configurationElement, IWorkbenchRegistryConstants.ATT_CLASS);

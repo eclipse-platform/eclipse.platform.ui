@@ -34,7 +34,6 @@ import org.eclipse.ui.views.markers.MarkerViewUtil;
 
 /**
  * The Util class is the class of general utilities used by the marker support.
- *
  */
 public final class Util {
 
@@ -54,8 +53,6 @@ public final class Util {
 	 * Get the propery called property from the marker. If it is not found
 	 * return the empty string.
 	 *
-	 * @param property
-	 * @param marker
 	 * @return String
 	 */
 	public static String getProperty(String property, IMarker marker) {
@@ -77,7 +74,6 @@ public final class Util {
 	/**
 	 * Get the human readable creation time from the timestamp
 	 *
-	 * @param timestamp
 	 * @return String
 	 */
 	public static String getCreationTime(long timestamp) {
@@ -91,7 +87,6 @@ public final class Util {
 	/**
 	 * Get the human readable creation time from the marker.
 	 *
-	 * @param marker
 	 * @return String
 	 */
 	public static String getCreationTime(IMarker marker) {
@@ -108,7 +103,6 @@ public final class Util {
 	 * MarkerViewUtil#PATH_ATTRIBUTE set use that. Otherwise use the path of the
 	 * parent resource.
 	 *
-	 * @param marker
 	 * @return String
 	 */
 	public static String getContainerName(IMarker marker) {
@@ -155,7 +149,6 @@ public final class Util {
 	/**
 	 * Return whether or not the marker is editable.
 	 *
-	 * @param marker
 	 * @return boolean <code>true</code> if it is editable
 	 */
 	public static boolean isEditable(IMarker marker) {
@@ -174,7 +167,6 @@ public final class Util {
 	/**
 	 * Return an error status for the given exception.
 	 *
-	 * @param exception
 	 * @return IStatus
 	 */
 	public static IStatus errorStatus(Throwable exception) {
@@ -199,7 +191,6 @@ public final class Util {
 	/**
 	 * Get the image for the severity if it can be identified.
 	 *
-	 * @param severity
 	 * @return Image or <code>null</code>
 	 */
 	public static Image getImage(int severity) {
@@ -220,7 +211,6 @@ public final class Util {
 	/**
 	 * Get the IDE image at path.
 	 *
-	 * @param path
 	 * @return Image
 	 */
 	private static Image getIDEImage(String constantName) {
@@ -233,7 +223,6 @@ public final class Util {
 	/**
 	 * Get the short name for the container
 	 *
-	 * @param marker
 	 * @return String
 	 */
 	public static String getShortContainerName(IMarker marker) {
@@ -277,7 +266,6 @@ public final class Util {
 	/**
 	 * Return whether or not the selection has one element that is concrete.
 	 *
-	 * @param selection
 	 * @return <code>true</code> if the selection has one element that is concrete.
 	 */
 	static boolean isSingleConcreteSelection(IStructuredSelection selection) {
@@ -293,7 +281,6 @@ public final class Util {
 	/**
 	 * Return whether or not all of the elements in the selection are concrete.
 	 *
-	 * @param selection
 	 * @return <code>true</code> if all of the elements are concrete.
 	 */
 	public static boolean allConcreteSelection(IStructuredSelection selection) {

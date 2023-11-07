@@ -244,9 +244,6 @@ public abstract class Realm {
 
 	}
 
-	/**
-	 *
-	 */
 	private void ensureWorkerThreadIsRunning() {
 		if (workerThread == null) {
 			workerThread = new Thread() {

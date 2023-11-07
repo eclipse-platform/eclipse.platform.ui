@@ -30,9 +30,6 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.XMLMemento;
-/**
- *
- */
 public class BrowserManager extends Observable {
 	protected List<IBrowserDescriptor> browsers;
 	protected IBrowserDescriptor currentBrowser;

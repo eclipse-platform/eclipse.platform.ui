@@ -357,8 +357,6 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 	 * on the selection by comparing the version information. This method does
 	 * not examine the runtime state (e.g., is the workspace already locked?).
 	 *
-	 * @param shell
-	 * @param launchData
 	 * @param force
 	 *            setting to true makes the dialog open regardless of the
 	 *            showDialog value

@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.Platform;
 
 /**
  * @since 3.3
- *
  */
 
 /**

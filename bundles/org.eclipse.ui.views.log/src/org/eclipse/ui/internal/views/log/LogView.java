@@ -1756,10 +1756,6 @@ public class LogView extends ViewPart implements LogListener {
 	 * <li>There is no preference for the given key</li>
 	 * <li>The returned preference value is too small, making the columns invisible by width.</li>
 	 * </ul>
-	 * @param instancePrefs
-	 * @param defaultPrefs
-	 * @param key
-	 * @param defaultwidth
 	 * @return the stored width for the a column described by the given key or the default width
 	 *
 	 * @since 3.6
@@ -1860,9 +1856,6 @@ public class LogView extends ViewPart implements LogListener {
 		return (fInputFile.equals(Platform.getLogFileLocation().toFile()));
 	}
 
-	/**
-	 *
-	 */
 	public void setPlatformLog() {
 		setLogFile(Platform.getLogFileLocation().toFile());
 	}

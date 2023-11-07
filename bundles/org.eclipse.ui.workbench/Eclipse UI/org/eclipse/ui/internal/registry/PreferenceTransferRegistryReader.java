@@ -116,7 +116,6 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
 	/**
 	 * Get the preference mappings.
 	 *
-	 * @param configElement
 	 * @return the child configuration elements
 	 */
 	public static IConfigurationElement[] getMappings(IConfigurationElement configElement) {
@@ -129,7 +128,6 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
 	}
 
 	/**
-	 * @param element
 	 * @return the scope attribute for this element
 	 */
 	public static String getScope(IConfigurationElement element) {

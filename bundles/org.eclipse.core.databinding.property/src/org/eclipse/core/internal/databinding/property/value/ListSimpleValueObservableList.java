@@ -101,10 +101,6 @@ public class ListSimpleValueObservableList<S, M extends S, T> extends AbstractOb
 
 	private INativePropertyListener<S> detailListener;
 
-	/**
-	 * @param masterList
-	 * @param valueProperty
-	 */
 	public ListSimpleValueObservableList(IObservableList<M> masterList, SimpleValueProperty<S, T> valueProperty) {
 		super(masterList.getRealm());
 		this.masterList = masterList;

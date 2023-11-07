@@ -356,7 +356,6 @@ public class Form extends Composite {
 	 *
 	 * @param backgroundImage
 	 *            the head background image.
-	 *
 	 */
 	@Override
 	public void setBackgroundImage(Image backgroundImage) {

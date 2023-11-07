@@ -23,7 +23,6 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  * MarkerSeverityField is the field for showing severity categories.
  *
  * @since 3.4
- *
  */
 public class MarkerSeverityField extends MarkerField {
 

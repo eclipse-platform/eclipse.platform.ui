@@ -46,8 +46,6 @@ public class NonRestorableViewTest extends TestCase {
 
 	/**
 	 * This is the first part  instantiates a non restorable view
-	 *
-	 * @throws Throwable
 	 */
 	public void test01ActivateView() throws Throwable {
 		final IWorkbench workbench = PlatformUI.getWorkbench();
@@ -62,8 +60,6 @@ public class NonRestorableViewTest extends TestCase {
 	/**
 	 * In the second session the view shouldn't be
 	 * instantiated.
-	 *
-	 * @throws Throwable
 	 */
 	public void test02SecondOpening() throws Throwable {
 		final IWorkbench workbench = PlatformUI.getWorkbench();

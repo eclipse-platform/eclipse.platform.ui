@@ -180,9 +180,6 @@ public abstract class ResourceWalker extends Job {
 	 * <p>
 	 * If the priority returned is PRIORITY_IGNORE then the resource will be ignored
 	 * completely and not visited at all.
-	 *
-	 * @param r
-	 * @return
 	 */
 	final double priority(IResource r) {
 		return prioritFun.priority(r);

@@ -23,7 +23,6 @@ import org.eclipse.ui.navigator.IDescriptionProvider;
 /**
  *
  * @since 3.2
- *
  */
 public final class NavigatorContentServiceDescriptionProvider implements
 		IDescriptionProvider {

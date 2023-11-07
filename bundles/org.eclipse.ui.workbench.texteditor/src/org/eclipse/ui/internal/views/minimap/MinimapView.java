@@ -27,7 +27,6 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * Minimap view used to display content of current text editor with scale.
- *
  */
 public class MinimapView extends PageBookView {
 

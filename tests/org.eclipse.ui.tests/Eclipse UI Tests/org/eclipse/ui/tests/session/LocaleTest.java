@@ -20,9 +20,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.navigator.AbstractNavigatorTest;
 
-/**
- *
- */
 public class LocaleTest extends AbstractNavigatorTest {
 
 
@@ -50,9 +47,6 @@ public class LocaleTest extends AbstractNavigatorTest {
 		Locale.setDefault(oldLocale);
 	}
 
-	/**
-	 * @param locale
-	 */
 	private void switchLocale(Locale locale) {
 		Locale.setDefault(locale);
 		System.out.println(locale.toString());

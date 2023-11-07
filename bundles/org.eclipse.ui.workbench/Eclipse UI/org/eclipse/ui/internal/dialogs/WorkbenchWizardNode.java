@@ -72,7 +72,6 @@ public abstract class WorkbenchWizardNode implements IWizardNode, IPluginContrib
 	 * override this method.
 	 *
 	 * @return the wizard object
-	 * @throws CoreException
 	 */
 	public abstract IWorkbenchWizard createWizard() throws CoreException;
 

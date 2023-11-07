@@ -30,7 +30,6 @@ import org.eclipse.ui.IWorkbench;
  * <code>org.eclipse.ui.internal.ide.application.IDEWorkbenchAdvisor</code>).
  *
  * @since 3.4
- *
  */
 public class QuitHandler extends AbstractHandler {
 	private static final String COMMAND_PARAMETER_ID_MAY_PROMPT = "mayPrompt"; //$NON-NLS-1$

@@ -27,10 +27,6 @@ import java.text.Format;
  * @since 1.0
  */
 public class NumberToBigDecimalConverter extends NumberToNumberConverter<BigDecimal> {
-	/**
-	 * @param numberFormat
-	 * @param fromType
-	 */
 	public NumberToBigDecimalConverter(Format numberFormat, Class<?> fromType) {
 		super(numberFormat, fromType, BigDecimal.class);
 	}

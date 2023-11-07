@@ -179,8 +179,6 @@ public class WizardFileSystemResourceExportPage1 extends
 	/**
 	 * Create the buttons for the group that determine if the entire or
 	 * selected directory structure should be created.
-	 * @param optionsGroup
-	 * @param font
 	 */
 	protected void createDirectoryStructureOptions(Composite optionsGroup, Font font) {
 		// create directory structure radios
@@ -201,8 +199,6 @@ public class WizardFileSystemResourceExportPage1 extends
 	/**
 	 * Create the button for checking if we should ask if we are going to
 	 * overwrite existing files.
-	 * @param optionsGroup
-	 * @param font
 	 */
 	protected void createOverwriteExisting(Group optionsGroup, Font font) {
 		// overwrite... checkbox
@@ -214,9 +210,6 @@ public class WizardFileSystemResourceExportPage1 extends
 
 	/**
 	 * Create the button for checking if we should export linked files.
-	 *
-	 * @param parent
-	 * @param font
 	 */
 	protected void createResolveLinkedResources(Composite parent, Font font) {
 		// resolve links... checkbox
@@ -456,7 +449,6 @@ public class WizardFileSystemResourceExportPage1 extends
 	/**
 	 *	Set the contents of the receivers destination specification widget to
 	 *	the passed value
-	 *
 	 */
 	protected void setDestinationValue(String value) {
 		destinationNameField.setText(value);

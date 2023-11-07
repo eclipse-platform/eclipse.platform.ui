@@ -54,7 +54,6 @@ import org.eclipse.swt.widgets.Shell;
  * during tests.
  *
  * @since 0.15
- *
  */
 public class TimeoutDumpTimer extends TimerTask {
 

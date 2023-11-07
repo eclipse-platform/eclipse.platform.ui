@@ -84,8 +84,6 @@ public class JobInfo extends JobTreeElement {
 
 	/**
 	 * Adds the amount of work to the job info.
-	 *
-	 * @param workIncrement
 	 */
 	void addWork(double workIncrement) {
 		Optional<TaskInfo> optionalInfo = getTaskInfo();
@@ -102,9 +100,6 @@ public class JobInfo extends JobTreeElement {
 
 	/**
 	 * Begins the task called taskName with the supplied work.
-	 *
-	 * @param taskName
-	 * @param work
 	 */
 	void beginTask(String taskName, int work) {
 		taskInfo = Optional.of(new TaskInfo(this, taskName, work));
@@ -342,8 +337,6 @@ public class JobInfo extends JobTreeElement {
 
 	/**
 	 * Sets the GroupInfo to be the group.
-	 *
-	 * @param group
 	 */
 	void setGroupInfo(GroupInfo group) {
 		parent = group;
@@ -351,8 +344,6 @@ public class JobInfo extends JobTreeElement {
 
 	/**
 	 * Sets the name of the taskInfo.
-	 *
-	 * @param name
 	 */
 	void setTaskName(String name) {
 		taskInfo.ifPresent(info -> info.setTaskName(name));

@@ -35,8 +35,6 @@ public class ObservableColumnLabelProvider<M> extends CellLabelProvider {
 
 	/**
 	 * Creates a new label provider that tracks changes to one attribute.
-	 *
-	 * @param attributeMap
 	 */
 	@SuppressWarnings("unchecked")
 	public ObservableColumnLabelProvider(IObservableMap<?, ?> attributeMap) {
@@ -47,8 +45,6 @@ public class ObservableColumnLabelProvider<M> extends CellLabelProvider {
 	 * Creates a new label provider that tracks changes to more than one
 	 * attribute. This constructor should be used by subclasses that override
 	 * {@link #update(ViewerCell)} and make use of more than one attribute.
-	 *
-	 * @param attributeMaps
 	 */
 	@SuppressWarnings("unchecked")
 	protected ObservableColumnLabelProvider(IObservableMap<M, ?>[] attributeMaps) {

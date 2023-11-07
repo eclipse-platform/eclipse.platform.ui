@@ -197,7 +197,6 @@ public class OpenStrategy {
 	 * This method is internal to the framework; it should not be implemented outside
 	 * the framework.
 	 * @return the current used single/double-click method
-	 *
 	 */
 	public static int getOpenMethod() {
 		return CURRENT_METHOD;

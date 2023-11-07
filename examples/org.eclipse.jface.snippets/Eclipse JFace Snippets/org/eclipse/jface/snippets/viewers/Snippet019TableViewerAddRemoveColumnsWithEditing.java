@@ -290,9 +290,6 @@ public class Snippet019TableViewerAddRemoveColumnsWithEditing {
 				new Person("Jeanderson", "Candido", "jeandersonbc@gmail.com") };
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display();
 

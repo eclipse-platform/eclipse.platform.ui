@@ -27,9 +27,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
  * form colors that is shared between multiple editor instances.
  */
 public class SimpleFormEditor extends FormEditor {
-	/**
-	 *
-	 */
 	public SimpleFormEditor() {
 	}
 	@Override

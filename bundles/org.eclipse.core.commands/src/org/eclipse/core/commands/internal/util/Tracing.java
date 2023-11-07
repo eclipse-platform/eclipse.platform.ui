@@ -21,7 +21,6 @@ package org.eclipse.core.commands.internal.util;
  * <p>
  * Clients must not extend or instantiate this class.
  * </p>
- *
  */
 public final class Tracing {
 

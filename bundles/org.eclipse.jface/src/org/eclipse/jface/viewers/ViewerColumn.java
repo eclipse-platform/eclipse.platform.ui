@@ -31,7 +31,6 @@ import org.eclipse.swt.widgets.Widget;
  * concrete subclass of {@link ViewerColumn}.
  *
  * @since 3.3
- *
  */
 public abstract class ViewerColumn {
 
@@ -83,10 +82,6 @@ public abstract class ViewerColumn {
 		setLabelProvider(labelProvider, true);
 	}
 
-	/**
-	 * @param labelProvider
-	 * @param registerListener
-	 */
 	/* package */void setLabelProvider(CellLabelProvider labelProvider,
 			boolean registerListener) {
 		if (listenerRegistered && this.labelProvider != null) {

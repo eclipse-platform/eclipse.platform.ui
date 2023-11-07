@@ -77,7 +77,6 @@ public class DocumentFetcher {
 	 * If the file is not open, then the document just reflects the
 	 * contents of the file.
 	 *
-	 * @param file
 	 * @return Document containing the contents of the file or editor buffer,
 	 *    or null if the content can not be found (it exists neither as a editor
 	 *    buffer nor corresponds to an existing file in the workspace.

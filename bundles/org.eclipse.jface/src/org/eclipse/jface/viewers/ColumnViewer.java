@@ -51,7 +51,6 @@ import org.eclipse.swt.widgets.Widget;
  * </p>
  *
  * @since 3.3
- *
  */
 public abstract class ColumnViewer extends StructuredViewer {
 
@@ -227,9 +226,6 @@ public abstract class ColumnViewer extends StructuredViewer {
 	/**
 	 * Sets up editing support for the given column based on the "old" cell
 	 * editor API.
-	 *
-	 * @param columnIndex
-	 * @param viewer
 	 */
 	private void setupEditingSupport(final int columnIndex, ViewerColumn viewer) {
 		if (getCellModifier() != null) {
@@ -340,7 +336,6 @@ public abstract class ColumnViewer extends StructuredViewer {
 	 * may also implement {@link IColorProvider} and/or {@link IFontProvider} to
 	 * provide colors and/or fonts.
 	 * </p>
-	 *
 	 */
 	@Override
 	public void setLabelProvider(IBaseLabelProvider labelProvider) {

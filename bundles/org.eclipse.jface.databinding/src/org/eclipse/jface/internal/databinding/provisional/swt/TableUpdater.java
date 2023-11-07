@@ -40,7 +40,6 @@ import org.eclipse.swt.widgets.TableItem;
  * @noextend This class is not intended to be subclassed by clients. (We do
  *           encourage experimentation for non-production code and are
  *           interested in feedback though.)
- *
  */
 public abstract class TableUpdater<E> {
 
@@ -171,7 +170,6 @@ public abstract class TableUpdater<E> {
 	 *
 	 * @param table
 	 *            table to update
-	 * @param list
 	 * @since 1.2
 	 */
 	public TableUpdater(Table table, IObservableList<E> list) {
@@ -211,10 +209,8 @@ public abstract class TableUpdater<E> {
 	 * the appearance of the widget.
 	 * </p>
 	 *
-	 * @param index
 	 * @param item
 	 *            the item to update
-	 * @param element
 	 * @since 1.2
 	 */
 	protected abstract void updateItem(int index, TableItem item, E element);

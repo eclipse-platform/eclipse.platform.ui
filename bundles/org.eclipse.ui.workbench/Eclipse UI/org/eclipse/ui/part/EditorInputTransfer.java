@@ -193,7 +193,6 @@ public class EditorInputTransfer extends ByteArrayTransfer {
 	/**
 	 * Method readEditorInput.
 	 *
-	 * @param in
 	 * @return EditorInputData
 	 */
 	private EditorInputData readEditorInput(DataInputStream dataIn) throws IOException, WorkbenchException {
@@ -225,9 +224,6 @@ public class EditorInputTransfer extends ByteArrayTransfer {
 
 	/**
 	 * Method writeEditorInput.
-	 *
-	 * @param dataOut
-	 * @param editorInputData
 	 */
 	private void writeEditorInput(DataOutputStream dataOut, EditorInputData editorInputData) throws IOException {
 		// write the id of the editor

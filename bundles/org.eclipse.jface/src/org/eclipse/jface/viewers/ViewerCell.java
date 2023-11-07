@@ -31,7 +31,6 @@ import org.eclipse.swt.widgets.Widget;
  * The ViewerCell is the JFace representation of a cell entry in a ViewerRow.
  *
  * @since 3.3
- *
  */
 public class ViewerCell {
 	private final int columnIndex;
@@ -62,9 +61,6 @@ public class ViewerCell {
 
 	/**
 	 * Create a new instance of the receiver on the row.
-	 *
-	 * @param row
-	 * @param columnIndex
 	 */
 	ViewerCell(ViewerRow row, int columnIndex, Object element) {
 		Objects.requireNonNull(row);

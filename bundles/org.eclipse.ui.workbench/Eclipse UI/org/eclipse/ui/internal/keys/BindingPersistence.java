@@ -813,7 +813,6 @@ public class BindingPersistence extends PreferencePersistence {
 	 * Reads the specified attribute from the configuration element. If the value is
 	 * an empty string, will return null.
 	 *
-	 * @param configurationElement
 	 * @return the attribute value
 	 */
 	private static String readNonEmptyAttribute(IConfigurationElement configurationElement, String attribute) {

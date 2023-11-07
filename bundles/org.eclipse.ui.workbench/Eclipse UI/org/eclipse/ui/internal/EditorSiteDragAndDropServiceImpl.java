@@ -48,7 +48,6 @@ import org.eclipse.ui.services.IDisposable;
  * </p>
  *
  * @since 3.3
- *
  */
 public class EditorSiteDragAndDropServiceImpl implements IDragAndDropService, IDisposable {
 	// Key used to store/retrieve the MergedDropTarget instance from the real
@@ -65,7 +64,6 @@ public class EditorSiteDragAndDropServiceImpl implements IDragAndDropService, ID
 	 * </p>
 	 *
 	 * @since 3.3
-	 *
 	 */
 	private static class MergedDropTarget {
 		private DropTarget realDropTarget;

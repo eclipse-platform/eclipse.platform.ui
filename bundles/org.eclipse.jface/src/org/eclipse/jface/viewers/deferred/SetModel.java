@@ -35,7 +35,6 @@ public class SetModel extends AbstractConcurrentModel {
 	 * Return the contents of the model.
 	 *
 	 * @return the array of elements
-	 *
 	 */
 	public Object[] getElements() {
 		return data.toArray();

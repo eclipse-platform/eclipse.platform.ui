@@ -28,7 +28,6 @@ import org.eclipse.ui.PlatformUI;
  */
 public class BusyShowWhileDialog extends IconAndMessageDialog {
 	/**
-	 * @param parentShell
 	 * @todo Generated comment
 	 */
 	public BusyShowWhileDialog(Shell parentShell) {

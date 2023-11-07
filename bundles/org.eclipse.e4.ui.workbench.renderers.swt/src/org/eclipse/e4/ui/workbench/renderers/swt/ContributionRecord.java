@@ -88,9 +88,6 @@ public class ContributionRecord {
 		return generatedElements;
 	}
 
-	/**
-	 * @param context
-	 */
 	public void updateVisibility(IEclipseContext context) {
 		ExpressionContext exprContext = new ExpressionContext(context);
 		updateIsVisible(exprContext);
@@ -259,9 +256,6 @@ public class ContributionRecord {
 		return true;
 	}
 
-	/**
-	 * @return
-	 */
 	private List<MMenuElement> mergeFactoryIntoModel() {
 		Object obj = menuContribution.getTransientData().get(FACTORY);
 		if (!(obj instanceof IContextFunction)) {

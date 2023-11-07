@@ -48,7 +48,6 @@ import org.eclipse.swt.widgets.Text;
  * removing, and replacing.
  *
  * @author Steven Spungin
- *
  */
 public class E4StringPickList extends AbstractPickList {
 

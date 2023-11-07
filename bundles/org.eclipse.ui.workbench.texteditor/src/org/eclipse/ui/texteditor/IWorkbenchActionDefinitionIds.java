@@ -85,7 +85,6 @@ public interface IWorkbenchActionDefinitionIds {
 	 * Value: <code>"org.eclipse.ui.edit.cut"</code>
 	 *
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_CUT}
-	 *
 	 */
 	@Deprecated
 	public static final String CUT= IWorkbenchCommandConstants.EDIT_CUT;

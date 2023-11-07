@@ -23,9 +23,6 @@ import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 
 import org.eclipse.search.internal.core.SearchCoreMessages;
 
-/**
- *
- */
 public class PatternConstructor {
 
 

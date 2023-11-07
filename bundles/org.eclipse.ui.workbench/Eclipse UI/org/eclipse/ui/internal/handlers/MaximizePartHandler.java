@@ -24,7 +24,6 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * @since 3.4
- *
  */
 public class MaximizePartHandler extends AbstractHandler {
 

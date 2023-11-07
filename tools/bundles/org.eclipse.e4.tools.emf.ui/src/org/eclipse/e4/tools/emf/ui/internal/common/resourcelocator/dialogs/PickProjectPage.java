@@ -35,7 +35,6 @@ import org.eclipse.swt.widgets.Composite;
  * Wizard page to select a referenced project
  *
  * @author Steven Spungin
- *
  */
 public class PickProjectPage extends WizardPage {
 

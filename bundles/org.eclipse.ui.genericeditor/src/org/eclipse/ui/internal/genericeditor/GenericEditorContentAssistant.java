@@ -42,7 +42,6 @@ import org.eclipse.ui.internal.genericeditor.preferences.GenericEditorPreference
  * </ul>
  * 
  * @author christoph
- *
  */
 public class GenericEditorContentAssistant extends ContentAssistant {
 	private static final DefaultContentAssistProcessor DEFAULT_CONTENT_ASSIST_PROCESSOR = new DefaultContentAssistProcessor();

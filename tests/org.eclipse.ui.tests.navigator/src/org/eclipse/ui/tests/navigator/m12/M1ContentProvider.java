@@ -68,9 +68,6 @@ public class M1ContentProvider extends ResourceWrapperContentProvider {
 		return null;
 	}
 
-	/**
-	 * @return
-	 */
 	public static int getInterceptAddCount() {
 		return getCounter(M1ContentProvider.class.getName(), INTERCEPT_ADD);
 	}

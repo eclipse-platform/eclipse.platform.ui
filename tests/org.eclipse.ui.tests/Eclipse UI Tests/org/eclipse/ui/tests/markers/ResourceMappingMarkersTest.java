@@ -38,8 +38,6 @@ public class ResourceMappingMarkersTest extends AbstractNavigatorTest {
 
 	/**
 	 * Set up the receiver.
-	 *
-	 * @throws Exception
 	 */
 	@Override
 	protected void doSetUp() throws Exception {

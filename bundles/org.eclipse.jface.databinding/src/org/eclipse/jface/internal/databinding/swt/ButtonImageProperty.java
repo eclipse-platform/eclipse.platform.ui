@@ -19,7 +19,6 @@ import org.eclipse.swt.widgets.Button;
 
 /**
  * @since 3.3
- *
  */
 public class ButtonImageProperty extends WidgetImageValueProperty<Button> {
 	@Override

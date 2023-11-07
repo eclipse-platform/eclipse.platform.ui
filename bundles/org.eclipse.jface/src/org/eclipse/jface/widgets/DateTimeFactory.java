@@ -59,7 +59,6 @@ import org.eclipse.swt.widgets.DateTime;
  * </p>
  *
  * @since 3.22
- *
  */
 public final class DateTimeFactory extends AbstractControlFactory<DateTimeFactory, DateTime> {
 
@@ -71,7 +70,6 @@ public final class DateTimeFactory extends AbstractControlFactory<DateTimeFactor
 	 * Creates a new DateTimeFactory with the given style. Refer to
 	 * {@link DateTime#DateTime(Composite, int)} for possible styles.
 	 *
-	 * @param style
 	 * @return a new DateTimeFactory instance
 	 */
 	public static DateTimeFactory newDateTime(int style) {

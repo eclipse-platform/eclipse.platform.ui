@@ -144,7 +144,6 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor<Image> {
 	 *
 	 * @see Image#Image(Device, Image, int)
 	 * @since 3.1
-	 *
 	 */
 	public static ImageDescriptor createWithFlags(ImageDescriptor originalImage, int swtFlags) {
 		return new DerivedImageDescriptor(originalImage, swtFlags);

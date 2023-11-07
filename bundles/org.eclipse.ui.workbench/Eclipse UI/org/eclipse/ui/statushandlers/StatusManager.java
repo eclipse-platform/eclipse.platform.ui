@@ -285,7 +285,6 @@ public class StatusManager {
 	 * @param pluginId      the unique identifier of the relevant plug-in
 	 * @see StatusManager#handle(IStatus)
 	 * @since 3.4
-	 *
 	 */
 	public void handle(CoreException coreException, String pluginId) {
 		IStatus exceptionStatus = coreException.getStatus();
@@ -391,7 +390,6 @@ public class StatusManager {
 	 * </ul>
 	 *
 	 * @since 3.5
-	 *
 	 */
 	public interface INotificationListener {
 		/**
@@ -408,7 +406,6 @@ public class StatusManager {
 	 * @since 3.5
 	 * @noextend This interface is not intended to be extended by clients.
 	 * @noimplement This interface is not intended to be implemented by clients.
-	 *
 	 */
 	public interface INotificationTypes {
 

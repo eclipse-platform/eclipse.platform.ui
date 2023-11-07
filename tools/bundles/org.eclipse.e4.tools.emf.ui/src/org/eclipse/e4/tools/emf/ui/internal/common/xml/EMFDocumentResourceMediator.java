@@ -104,7 +104,6 @@ public class EMFDocumentResourceMediator {
 	}
 
 	/**
-	 * @param object
 	 * @return The region for the start tag of the EObject, or null if not
 	 *         found.
 	 */

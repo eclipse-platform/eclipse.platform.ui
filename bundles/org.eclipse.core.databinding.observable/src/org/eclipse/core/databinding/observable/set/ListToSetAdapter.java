@@ -37,7 +37,6 @@ import org.eclipse.core.databinding.observable.list.ListDiffEntry;
  * @param <E>
  *            the type of elements in the collection
  * @since 1.0
- *
  */
 public class ListToSetAdapter<E> extends ObservableSet<E> {
 

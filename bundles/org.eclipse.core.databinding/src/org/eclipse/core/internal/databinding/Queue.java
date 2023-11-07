@@ -17,7 +17,6 @@ package org.eclipse.core.internal.databinding;
  * Created to avoid a dependency on java.util.LinkedList, see bug 205224.
  *
  * @since 1.1
- *
  */
 public class Queue {
 

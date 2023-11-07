@@ -29,17 +29,12 @@ import org.eclipse.ui.navigator.CommonViewer;
 
 /**
  * @since 3.3
- *
  */
 public class SelectProjectForFolderAction extends Action {
 
 	private final Collection<IProject> project;
 	private final CommonViewer viewer;
 
-	/**
-	 * @param project
-	 * @param viewer
-	 */
 	public SelectProjectForFolderAction(Collection<IProject> project, CommonViewer viewer) {
 		super(WorkbenchNavigatorMessages.SelectProjectForFolderAction_SelectProjects);
 		this.project = project;

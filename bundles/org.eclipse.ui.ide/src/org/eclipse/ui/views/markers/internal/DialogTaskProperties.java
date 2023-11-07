@@ -33,7 +33,6 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * DialogTaskProperties is the properties dialog
  * for tasks.
- *
  */
 public class DialogTaskProperties extends DialogMarkerProperties {
 
@@ -50,18 +49,11 @@ public class DialogTaskProperties extends DialogMarkerProperties {
 
 	protected Button completedCheckbox;
 
-	/**
-	 * @param parentShell
-	 */
 	public DialogTaskProperties(Shell parentShell) {
 		super(parentShell);
 		setType(IMarker.TASK);
 	}
 
-	/**
-	 * @param parentShell
-	 * @param title
-	 */
 	public DialogTaskProperties(Shell parentShell, String title) {
 		super(parentShell, title);
 		setType(IMarker.TASK);

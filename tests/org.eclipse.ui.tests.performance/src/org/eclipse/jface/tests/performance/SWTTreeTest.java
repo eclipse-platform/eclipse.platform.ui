@@ -61,7 +61,6 @@ public class SWTTreeTest extends BasicPerformanceTest {
 
 	/**
 	 * Test the getItems API.
-	 *
 	 */
 	public void testGetItems() throws CoreException {
 		openBrowser();
@@ -84,7 +83,6 @@ public class SWTTreeTest extends BasicPerformanceTest {
 	/**
 	 * @throws CoreException
 	 * Test the getItem API.
-	 *
 	 */
 	public void testGetItemAt() throws CoreException {
 		openBrowser();

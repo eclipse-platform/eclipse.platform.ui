@@ -343,7 +343,6 @@ public class DialogMarkerProperties extends TrayDialog {
 
 	/**
 	 * Method createCreationTimeArea.
-	 * @param parent
 	 */
 	private void createCreationTimeArea(Composite parent) {
 		Label label = new Label(parent, SWT.NONE);

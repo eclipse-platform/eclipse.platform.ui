@@ -132,8 +132,6 @@ public abstract class DecoratorDefinition implements IPluginContribution {
 
 	/**
 	 * Dispose the decorator instance and remove listeners as appropirate.
-	 *
-	 * @param disposedDecorator
 	 */
 	protected void disposeCachedDecorator(IBaseLabelProvider disposedDecorator) {
 		disposedDecorator.removeListener(WorkbenchPlugin.getDefault().getDecoratorManager());

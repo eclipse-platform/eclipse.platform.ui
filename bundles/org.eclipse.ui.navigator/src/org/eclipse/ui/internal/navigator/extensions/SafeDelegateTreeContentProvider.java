@@ -70,9 +70,6 @@ public class SafeDelegateTreeContentProvider implements
 		return contentProvider instanceof ITreePathContentProvider;
 	}
 
-	/**
-	 *
-	 */
 	@Override
 	public void dispose() {
 		SafeRunner.run(new NavigatorSafeRunnable() {

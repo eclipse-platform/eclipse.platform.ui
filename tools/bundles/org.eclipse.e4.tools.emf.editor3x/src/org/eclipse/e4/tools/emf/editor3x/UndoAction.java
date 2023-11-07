@@ -71,7 +71,6 @@ public class UndoAction extends Action {
 	 *
 	 * For instance : Add Trimmedwindow or Delete 5 objects
 	 *
-	 * @param cmd
 	 * @return a description string for the command
 	 */
 	public static String getCommandLabel(Command cmd) {
@@ -96,7 +95,6 @@ public class UndoAction extends Action {
 	/**
 	 * Get the eClassname or empty string of the first element in the collection
 	 *
-	 * @param c
 	 * @return name of classname if object is an EObject else an empty string
 	 */
 	private static String getFirstClassName(Collection<?> c)

@@ -39,14 +39,12 @@ import org.eclipse.ui.views.markers.MarkerItem;
 
 /**
  * @since 3.2
- *
  */
 public class MarkerGroup {
 
 	/**
 	 * Create a new MarkerGroup from element.
 	 *
-	 * @param element
 	 * @return MarkerGroup
 	 */
 	public static MarkerGroup createMarkerGroup(IConfigurationElement element) {
@@ -67,10 +65,6 @@ public class MarkerGroup {
 		/**
 		 * Create a mapping for an attribute with name attributeName and value
 		 * value to the supplied entry.
-		 *
-		 * @param entry
-		 * @param attributeName
-		 * @param value
 		 */
 		AttributeMapping(MarkerGroupingEntry entry, String attributeName, String value, AttributeMarkerGrouping grouping) {
 			super(entry);
@@ -111,8 +105,6 @@ public class MarkerGroup {
 
 		/**
 		 * Create an entry mapping for the receiver.
-		 *
-		 * @param entry
 		 */
 		EntryMapping(MarkerGroupingEntry entry) {
 			groupingEntry = entry;
@@ -130,7 +122,6 @@ public class MarkerGroup {
 		/**
 		 * Test the attribute of the marker to find a grouping.
 		 *
-		 * @param marker
 		 * @return MarkerGroupingEntry or <code>null</code> if there is not
 		 *         entry.
 		 */
@@ -218,7 +209,6 @@ public class MarkerGroup {
 	 * GroupMarkerField is the MarkerField used for MarkerGroupungs
 	 *
 	 * @since 3.4
-	 *
 	 */
 	class GroupMarkerField extends MarkerField {
 
@@ -278,8 +268,6 @@ public class MarkerGroup {
 
 	/**
 	 * Create a new instance of the receiver called name with id identifier.
-	 *
-	 * @param element
 	 */
 	protected MarkerGroup(IConfigurationElement element) {
 		configurationElement = element;
@@ -356,9 +344,6 @@ public class MarkerGroup {
 
 	/**
 	 * Add the entry for the markerType.
-	 *
-	 * @param markerType
-	 * @param entry
 	 */
 	private void addEntry(String markerType, EntryMapping entry) {
 		for (MarkerType type : getMarkerTypes(markerType)) {
@@ -375,7 +360,6 @@ public class MarkerGroup {
 	 * Find the group value. If it cannot be found in an attribute mapping then
 	 * return null;
 	 *
-	 * @param concreteMarker
 	 * @return String or <code>null</code>
 	 */
 	private MarkerGroupingEntry findGroupValue(ConcreteMarker concreteMarker) {
@@ -387,8 +371,6 @@ public class MarkerGroup {
 	/**
 	 * Find the group for the marker of the specified marker type.
 	 *
-	 * @param type
-	 * @param marker
 	 * @return MarkerGroupingEntry
 	 */
 	public MarkerGroupingEntry findGroupValue(String type, IMarker marker) {
@@ -436,7 +418,6 @@ public class MarkerGroup {
 	/**
 	 * Get the attribute mapping for the marker
 	 *
-	 * @param marker
 	 * @return MarkerGroupingEntry
 	 */
 	private MarkerGroupingEntry getMapping(ConcreteMarker marker) {
@@ -458,7 +439,6 @@ public class MarkerGroup {
 	/**
 	 * Return the marker types that match and are subtypes of markerType.
 	 *
-	 * @param markerType
 	 * @return MarkerType[]
 	 */
 	private MarkerType[] getMarkerTypes(String markerType) {
@@ -491,10 +471,6 @@ public class MarkerGroup {
 
 	/**
 	 * Add an attributeMapping for the markerType.
-	 *
-	 * @param attributeGrouping
-	 * @param entry
-	 * @param attributeValue
 	 */
 	public void mapAttribute(AttributeMarkerGrouping attributeGrouping,
 			MarkerGroupingEntry entry, String attributeValue) {
@@ -506,8 +482,6 @@ public class MarkerGroup {
 
 	/**
 	 * Remove the entry from all of the entries in the receiver.
-	 *
-	 * @param entry
 	 */
 	public void remove(MarkerGroupingEntry entry) {
 		Iterator<Set<EntryMapping>> entries = typesToMappings.values().iterator();
@@ -529,9 +503,6 @@ public class MarkerGroup {
 
 	/**
 	 * Set entry and the default entry for the supplied markerType.
-	 *
-	 * @param markerType
-	 * @param entry
 	 */
 
 	public void setAsDefault(String markerType, MarkerGroupingEntry entry) {
@@ -540,8 +511,6 @@ public class MarkerGroup {
 
 	/**
 	 * Unmap the attributeMarkerGrouping from the receiver.
-	 *
-	 * @param attributeMarkerGrouping
 	 */
 	public void unmap(AttributeMarkerGrouping attributeMarkerGrouping) {
 		String type = attributeMarkerGrouping.getMarkerType();

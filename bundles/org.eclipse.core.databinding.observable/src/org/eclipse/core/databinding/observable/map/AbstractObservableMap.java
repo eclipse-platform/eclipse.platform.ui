@@ -79,21 +79,13 @@ public abstract class AbstractObservableMap<K, V> extends AbstractMap<K, V>
 
 	private boolean stale;
 
-	/**
-	 */
 	public AbstractObservableMap() {
 		this(Realm.getDefault());
 	}
 
-	/**
-	 *
-	 */
 	protected void lastListenerRemoved() {
 	}
 
-	/**
-	 *
-	 */
 	protected void firstListenerAdded() {
 	}
 

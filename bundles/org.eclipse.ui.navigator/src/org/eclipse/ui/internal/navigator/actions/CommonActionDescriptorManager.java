@@ -42,7 +42,6 @@ import org.eclipse.ui.navigator.Priority;
  * <b>org.eclipse.ui.navigator.navigatorContent</b> extension point.
  *
  * @since 3.2
- *
  */
 public class CommonActionDescriptorManager {
 
@@ -135,7 +134,6 @@ public class CommonActionDescriptorManager {
 	 * Orders the set of available descriptors based on the order defined by the
 	 * <i>dependsOn</i> attribute from the &lt;actionProvider /&gt; element in
 	 * <b>org.eclipse.ui.navigator.navigatorContent</b>
-	 *
 	 */
 	protected void computeOrdering() {
 		sortDescriptors(rootDescriptorsList, rootDescriptors);
@@ -245,12 +243,6 @@ public class CommonActionDescriptorManager {
 		return NO_DESCRIPTORS;
 	}
 
-	/**
-	 * @param aContentService
-	 * @param structuredSelection
-	 * @param actionDescriptor
-	 * @param providers
-	 */
 	private boolean addProviderIfRelevant(
 			INavigatorContentService aContentService,
 			IStructuredSelection structuredSelection,

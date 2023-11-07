@@ -25,15 +25,11 @@ import org.eclipse.ui.IWorkbenchWindow;
  * displayed on.
  *
  * @since 3.3
- *
  */
 public abstract class InternalControlContribution extends ControlContribution {
 	private IWorkbenchWindow wbw;
 	private int curSide;
 
-	/**
-	 * @param id
-	 */
 	protected InternalControlContribution(String id) {
 		super(id);
 	}

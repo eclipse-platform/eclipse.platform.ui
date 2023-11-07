@@ -24,15 +24,9 @@ import org.eclipse.swt.widgets.Layout;
  * necessary.
  *
  * @since 3.12
- *
  */
 public class NonUIThreadProgressMonitorPart extends ProgressMonitorPart {
 
-	/**
-	 * @param parent
-	 * @param layout
-	 * @param createStopButton
-	 */
 	public NonUIThreadProgressMonitorPart(Composite parent, Layout layout, boolean createStopButton) {
 		super(parent, layout, createStopButton);
 	}

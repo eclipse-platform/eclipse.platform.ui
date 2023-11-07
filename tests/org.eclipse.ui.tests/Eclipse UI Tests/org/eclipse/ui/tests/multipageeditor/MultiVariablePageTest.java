@@ -75,8 +75,6 @@ public class MultiVariablePageTest extends UITestCase {
 	 * Make sure that setting the active page programmatically calls
 	 * pageChanged(int) on the way. This method is overridden in a lot of
 	 * editors to provide their functionality on page changes.
-	 *
-	 * @throws Throwable
 	 */
 	@Test
 	public void testSetActivePage() throws Throwable {
@@ -107,8 +105,6 @@ public class MultiVariablePageTest extends UITestCase {
 	/**
 	 * Make sure that removing a page that is a Control (instead of an editor)
 	 * disposes of the Control immediately.
-	 *
-	 * @throws Throwable
 	 */
 	@Test
 	public void testRemovePage() throws Throwable {
@@ -239,10 +235,6 @@ public class MultiVariablePageTest extends UITestCase {
 
 	/**
 	 * Assert if the contextId is active in the contextService.
-	 *
-	 * @param contextService
-	 * @param contextId
-	 * @param isActive
 	 */
 	private void checkActiveContext(IContextService contextService,
 			String contextId, boolean isActive) {

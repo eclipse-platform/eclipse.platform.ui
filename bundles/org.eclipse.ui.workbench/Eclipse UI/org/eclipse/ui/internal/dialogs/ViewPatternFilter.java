@@ -24,7 +24,6 @@ import org.eclipse.ui.dialogs.PatternFilter;
  * string.
  *
  * @since 3.2
- *
  */
 public class ViewPatternFilter extends PatternFilter {
 

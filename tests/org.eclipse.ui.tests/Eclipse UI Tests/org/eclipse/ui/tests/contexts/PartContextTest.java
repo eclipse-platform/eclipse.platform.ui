@@ -39,14 +39,8 @@ import org.junit.runners.JUnit4;
  */
 @RunWith(JUnit4.class)
 public class PartContextTest extends UITestCase {
-	/**
-	 *
-	 */
 	public static final String PAGE_VIEW_ID = "org.eclipse.ui.tests.contexts.MockPageView";
 
-	/**
-	 *
-	 */
 	private static final String TEXT_EDITOR_ID = "org.eclipse.ui.DefaultTextEditor";
 
 	public static final String WINDOW_CONTEXT_ID = "org.eclipse.ui.tests.contexts.WorkbenchWindow";
@@ -185,10 +179,6 @@ public class PartContextTest extends UITestCase {
 
 	/**
 	 * Assert if the contextId is active in the contextService.
-	 *
-	 * @param contextService
-	 * @param contextId
-	 * @param isActive
 	 */
 	private void checkActiveContext(IContextService contextService,
 			String contextId, boolean isActive) {

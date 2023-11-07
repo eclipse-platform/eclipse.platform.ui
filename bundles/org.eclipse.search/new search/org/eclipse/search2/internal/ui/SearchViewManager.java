@@ -32,9 +32,6 @@ import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.NewSearchUI;
 
-/**
- *
- */
 public class SearchViewManager {
 
 	private IQueryListener fNewQueryListener;

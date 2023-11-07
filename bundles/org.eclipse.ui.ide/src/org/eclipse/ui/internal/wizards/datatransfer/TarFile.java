@@ -40,10 +40,6 @@ public class TarFile implements AutoCloseable {
 
 	/**
 	 * Create a new TarFile for the given file.
-	 *
-	 * @param file
-	 * @throws TarException
-	 * @throws IOException
 	 */
 	public TarFile(File file) throws TarException, IOException {
 		this.file = file;
@@ -87,10 +83,6 @@ public class TarFile implements AutoCloseable {
 
 	/**
 	 * Create a new TarFile for the given path name.
-	 *
-	 * @param filename
-	 * @throws TarException
-	 * @throws IOException
 	 */
 	public TarFile(String filename) throws TarException, IOException {
 		this(new File(filename));
@@ -124,10 +116,7 @@ public class TarFile implements AutoCloseable {
 	/**
 	 * Returns a new InputStream for the given file in the tar archive.
 	 *
-	 * @param entry
 	 * @return an input stream for the given file
-	 * @throws TarException
-	 * @throws IOException
 	 */
 	public InputStream getInputStream(TarEntry entry) throws TarException, IOException {
 		if(entryStream == null || !entryStream.skipToEntry(entry)) {

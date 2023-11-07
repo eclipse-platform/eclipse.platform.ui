@@ -101,8 +101,6 @@ public abstract class AbstractTableInformationControl {
 
 	/**
 	 * True if the focus is still in one of the control elements.
-	 *
-	 * @return
 	 */
 	public boolean hasFocus() {
 		if (fShell == null || fShell.isDisposed()) {

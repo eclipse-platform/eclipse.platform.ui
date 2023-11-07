@@ -45,7 +45,6 @@ import org.junit.Test;
  * 'd' model element is not shown as child of 'b'!
  *
  * @since 3.2
- *
  */
 public class Bug138608Test extends ViewerTestCase {
 
@@ -73,9 +72,6 @@ public class Bug138608Test extends ViewerTestCase {
 		getTreeViewer().expandAll();
 	}
 
-	/**
-	 * @return
-	 */
 	private TreeViewer getTreeViewer() {
 		return (TreeViewer) fViewer;
 	}

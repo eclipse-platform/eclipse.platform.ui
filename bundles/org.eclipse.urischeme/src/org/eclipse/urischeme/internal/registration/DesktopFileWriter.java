@@ -82,7 +82,6 @@ public class DesktopFileWriter {
 	 *
 	 * @see <a href= "https://tools.ietf.org/html/rfc3986#section-3.1">Uniform
 	 *      Resource Identifier (URI): Generic Syntax</a>
-	 *
 	 */
 	public void addScheme(String scheme) {
 		// check precondition
@@ -116,7 +115,6 @@ public class DesktopFileWriter {
 	 *
 	 * @see <a href=
 	 *      "https://tools.ietf.org/html/rfc3986#section-3.1">https://tools.ietf.org/html/rfc3986#section-3.1</a>
-	 *
 	 */
 	public void removeScheme(String scheme) {
 		Util.assertUriSchemeIsLegal(scheme);

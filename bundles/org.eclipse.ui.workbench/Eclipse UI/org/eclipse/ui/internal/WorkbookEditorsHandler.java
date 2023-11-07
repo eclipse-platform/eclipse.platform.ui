@@ -59,7 +59,6 @@ import org.eclipse.ui.themes.ITheme;
  * Shows a list of open editor and parts in the current or last active workbook.
  *
  * @since 3.4
- *
  */
 public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 
@@ -309,7 +308,6 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 	 * given path (device ids are ignored), comparing in decreasing segment number
 	 * order starting at the last segment.
 	 *
-	 * @param path
 	 * @param anotherPath the other path to compare with
 	 * @return the number of matching segments
 	 */

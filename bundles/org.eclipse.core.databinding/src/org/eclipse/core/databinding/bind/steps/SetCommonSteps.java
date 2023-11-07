@@ -42,7 +42,6 @@ public final class SetCommonSteps {
 		 * from-end of the binding.
 		 *
 		 * @see DataBindingContext#bindSet
-		 * @param from
 		 * @return next step
 		 */
 		<F> Step from(IObservableSet<F> from);
@@ -61,7 +60,6 @@ public final class SetCommonSteps {
 		 * one will configure that from-end of the binding.
 		 *
 		 * @see DataBindingContext#bindSet
-		 * @param to
 		 * @return next step
 		 */
 		WriteConfigStep<F, T, ?> to(IObservableSet<T> to);
@@ -75,7 +73,6 @@ public final class SetCommonSteps {
 	 */
 	public interface SetUntypedTo<F> extends Step {
 		/**
-		 * @param to
 		 * @return TODO
 		 */
 		<T> WriteConfigStep<F, T, ?> to(IObservableSet<T> to);

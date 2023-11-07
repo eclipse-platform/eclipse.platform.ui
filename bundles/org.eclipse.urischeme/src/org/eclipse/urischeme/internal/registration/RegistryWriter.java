@@ -13,7 +13,6 @@ package org.eclipse.urischeme.internal.registration;
 /**
  * Used to add entries to Windows Registry. Adds handler entries for uri schemes
  * like scheme and HandlerPath.Can also remove schemes.
- *
  */
 public class RegistryWriter implements IRegistryWriter {
 
@@ -30,7 +29,6 @@ public class RegistryWriter implements IRegistryWriter {
 
 	/**
 	 * This constructor creates all it's dependencies on it's own.
-	 *
 	 */
 	public RegistryWriter() {
 		this(new WinRegistry(), new FileProvider());
@@ -41,7 +39,6 @@ public class RegistryWriter implements IRegistryWriter {
 	 *
 	 * @param winRegistry  API to the windows registry
 	 * @param fileProvider Encapsulates access to the file system
-	 *
 	 */
 	public RegistryWriter(IWinRegistry winRegistry, IFileProvider fileProvider) {
 		this.winRegistry = winRegistry;

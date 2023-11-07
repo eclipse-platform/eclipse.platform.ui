@@ -80,7 +80,6 @@ import org.eclipse.ui.views.WorkbenchViewerSetup;
  * @see CommonNavigator
  * @see INavigatorContentService
  * @since 3.2
- *
  */
 @SuppressWarnings("restriction")
 public final class ProjectExplorer extends CommonNavigator implements ISecondarySaveableSource {

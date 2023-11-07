@@ -37,12 +37,6 @@ public class WidgetListener<S, D extends IDiff> extends NativePropertyListener<S
 	private final int[] changeEvents;
 	private final int[] staleEvents;
 
-	/**
-	 * @param property
-	 * @param listener
-	 * @param changeEvents
-	 * @param staleEvents
-	 */
 	public WidgetListener(IProperty property, ISimplePropertyListener<S, D> listener, int[] changeEvents,
 			int[] staleEvents) {
 		super(property, listener);

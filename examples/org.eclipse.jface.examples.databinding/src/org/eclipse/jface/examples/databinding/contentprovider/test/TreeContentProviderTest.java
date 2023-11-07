@@ -98,9 +98,6 @@ public class TreeContentProviderTest {
 		shell.addDisposeListener(e -> dispose());
 	}
 
-	/**
-	 *
-	 */
 	protected void dispose() {
 		set1.dispose();
 		set2.dispose();
@@ -166,9 +163,6 @@ public class TreeContentProviderTest {
 		tree.setInput(new Object());
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		final Display display = Display.getDefault();
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {

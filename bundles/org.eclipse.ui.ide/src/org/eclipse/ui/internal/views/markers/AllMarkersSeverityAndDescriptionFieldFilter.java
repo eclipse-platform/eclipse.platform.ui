@@ -24,7 +24,6 @@ import org.eclipse.ui.views.markers.MarkerItem;
  * {@link SeverityAndDescriptionFieldFilter} that handles the no severity case.
  *
  * @since 3.4
- *
  */
 public class AllMarkersSeverityAndDescriptionFieldFilter extends
 		SeverityAndDescriptionFieldFilter {
@@ -64,8 +63,6 @@ public class AllMarkersSeverityAndDescriptionFieldFilter extends
 
 	/**
 	 * Set the whether or not we are filtering on severity
-	 *
-	 * @param filter
 	 */
 	void setFilterOnSeverity(boolean filter) {
 		filterOnSeverity = filter;

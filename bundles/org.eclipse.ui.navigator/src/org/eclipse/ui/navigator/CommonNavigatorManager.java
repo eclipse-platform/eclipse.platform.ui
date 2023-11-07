@@ -197,7 +197,6 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 	/**
 	 * <p>
 	 * Called by {@link CommonNavigator} when the View Part is disposed.
-	 *
 	 */
 	public void dispose() {
 		commonNavigator.getCommonViewer().removeSelectionChangedListener(this);
@@ -251,7 +250,6 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 	 * @param aMenuManager
 	 *            A popup menu
 	 * @see NavigatorActionService#fillContextMenu(IMenuManager)
-	 *
 	 */
 	protected void fillContextMenu(IMenuManager aMenuManager) {
 		ISelection selection = commonNavigator.getCommonViewer().getSelection();

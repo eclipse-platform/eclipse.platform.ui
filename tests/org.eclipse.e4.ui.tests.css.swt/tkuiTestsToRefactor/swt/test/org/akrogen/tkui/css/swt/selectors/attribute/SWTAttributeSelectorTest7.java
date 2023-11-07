@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.Shell;
  * 
  * Selector=E[hreflang|="en"] an E element whose "hreflang" attribute has a
  * hyphen-separated list of values beginning (from the left) with "en"
- * 
  */
 public class SWTAttributeSelectorTest7 {
 

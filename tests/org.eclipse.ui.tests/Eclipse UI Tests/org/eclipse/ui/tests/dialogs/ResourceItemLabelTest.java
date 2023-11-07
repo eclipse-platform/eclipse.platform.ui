@@ -66,8 +66,6 @@ public class ResourceItemLabelTest extends UITestCase {
 
 	/**
 	 * Tests that the highlighting matches basic substrings
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testSubstringMatch() throws Exception {
@@ -96,8 +94,6 @@ public class ResourceItemLabelTest extends UITestCase {
 
 	/**
 	 * Tests that the highlighting matches CamelCase searches
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testCamelCaseMatch() throws Exception {
@@ -130,8 +126,6 @@ public class ResourceItemLabelTest extends UITestCase {
 
 	/**
 	 * Tests that the highlighting matches searches using '*' and '?'
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testPatternMatch() throws Exception {
@@ -160,8 +154,6 @@ public class ResourceItemLabelTest extends UITestCase {
 
 	/**
 	 * Tests that regex symbols do not break search
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testBug529451() throws Exception {
@@ -174,8 +166,6 @@ public class ResourceItemLabelTest extends UITestCase {
 
 	/**
 	 * Tests that the highlighting matches searches using '&gt;' and ' '
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testDisableAutoPrefixMatching() throws Exception {
@@ -206,8 +196,6 @@ public class ResourceItemLabelTest extends UITestCase {
 
 	/**
 	 * Tests that the highlighting matches extension searches
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testExtensionMatch() throws Exception {
@@ -229,8 +217,6 @@ public class ResourceItemLabelTest extends UITestCase {
 
 	/**
 	 * Tests for Bug 528301: Camel Case match with precursing letter matches
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testBug528301() throws Exception {
@@ -253,8 +239,6 @@ public class ResourceItemLabelTest extends UITestCase {
 	/**
 	 * Tests for Bug 531610: Open Resource dialog doesn't show paths for duplicated
 	 * files
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testBug531610() throws Exception {

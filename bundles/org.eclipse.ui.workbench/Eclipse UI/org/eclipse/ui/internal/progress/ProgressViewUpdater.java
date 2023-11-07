@@ -72,8 +72,6 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 
 		/**
 		 * Add an add update
-		 *
-		 * @param addition
 		 */
 		synchronized void add(JobTreeElement addition) {
 			additions.add(addition);
@@ -81,8 +79,6 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 
 		/**
 		 * Add a remove update
-		 *
-		 * @param removal
 		 */
 		synchronized void remove(JobTreeElement removal) {
 			deletions.add(removal);
@@ -90,8 +86,6 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 
 		/**
 		 * Add a refresh update
-		 *
-		 * @param refresh
 		 */
 		synchronized void refresh(JobTreeElement refresh) {
 			refreshes.add(refresh);
@@ -99,8 +93,6 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 
 		/**
 		 * Add an update for a job which has finished and should be kept
-		 *
-		 * @param finished
 		 */
 		synchronized void keptFinished(JobTreeElement finished) {
 			keptFinished.add(finished);
@@ -108,8 +100,6 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 
 		/**
 		 * Add an update for a job which was kept and is removed now
-		 *
-		 * @param removed
 		 */
 		synchronized void keptRemoved(JobTreeElement removed) {
 			keptRemoved.add(removed);
@@ -236,8 +226,6 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 	/**
 	 * Add the new collector to the list of collectors. Collector will not receive
 	 * updates from {@link FinishedJobs}.
-	 *
-	 * @param newCollector
 	 */
 	void addCollector(IProgressUpdateCollector newCollector) {
 		addCollector(newCollector, false);
@@ -246,7 +234,6 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 	/**
 	 * Add the new collector to the list of collectors.
 	 *
-	 * @param newCollector
 	 * @param includeFinished if <code>true</code> the collector will receive
 	 *                        updates from {@link FinishedJobs}.
 	 */
@@ -259,8 +246,6 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 
 	/**
 	 * Remove the collector from the list of collectors.
-	 *
-	 * @param provider
 	 */
 	void removeCollector(IProgressUpdateCollector provider) {
 		collectors.remove(provider);

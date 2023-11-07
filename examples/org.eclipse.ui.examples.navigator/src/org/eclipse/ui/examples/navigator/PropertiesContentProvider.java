@@ -50,7 +50,6 @@ public class PropertiesContentProvider implements ITreeContentProvider,
 	 * Create the PropertiesContentProvider instance.
 	 *
 	 * Adds the content provider as a resource change listener to track changes on disk.
-	 *
 	 */
 	public PropertiesContentProvider() {
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);

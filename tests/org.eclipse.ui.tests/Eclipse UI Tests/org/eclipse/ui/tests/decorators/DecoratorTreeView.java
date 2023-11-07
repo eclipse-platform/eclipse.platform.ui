@@ -25,9 +25,6 @@ public class DecoratorTreeView extends DecoratorTestPart {
 
 	TreeViewer viewer;
 
-	/**
-	 *
-	 */
 	public DecoratorTreeView() {
 		super();
 		// XXX Auto-generated constructor stub

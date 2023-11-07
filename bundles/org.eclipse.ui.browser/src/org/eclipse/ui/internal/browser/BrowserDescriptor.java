@@ -14,9 +14,6 @@
 package org.eclipse.ui.internal.browser;
 
 import org.eclipse.ui.IMemento;
-/**
- *
- */
 public class BrowserDescriptor implements IBrowserDescriptor {
 	private static final String MEMENTO_NAME = "name"; //$NON-NLS-1$
 	private static final String MEMENTO_LOCATION = "location"; //$NON-NLS-1$

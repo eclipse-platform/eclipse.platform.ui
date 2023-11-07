@@ -43,7 +43,6 @@ import org.eclipse.ui.internal.navigator.Policy;
  * </p>
  *
  * @since 3.2
- *
  */
 public final class CommonViewerSorter extends TreePathViewerSorter {
 

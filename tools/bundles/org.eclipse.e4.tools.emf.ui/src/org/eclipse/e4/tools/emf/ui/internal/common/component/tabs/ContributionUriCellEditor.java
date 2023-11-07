@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.Control;
  * item.
  *
  * @author Steven Spungin
- *
  */
 public class ContributionUriCellEditor extends DialogCellEditor {
 

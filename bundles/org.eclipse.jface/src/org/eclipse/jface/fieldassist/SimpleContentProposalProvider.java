@@ -23,7 +23,6 @@ import java.util.ArrayList;
  *
  * @see IContentProposalProvider
  * @since 3.2
- *
  */
 public class SimpleContentProposalProvider implements IContentProposalProvider {
 

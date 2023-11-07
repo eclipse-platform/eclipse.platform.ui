@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.TreeColumn;
  * providers and editing support.
  *
  * @since 3.3
- *
  */
 public final class TreeViewerColumn extends ViewerColumn {
 	private TreeColumn column;

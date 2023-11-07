@@ -30,7 +30,6 @@ import org.eclipse.ui.internal.contexts.ContextPersistence;
 
 /**
  * @since 3.5
- *
  */
 public class ContextToModelProcessor {
 	private Map<String, MBindingContext> contexts = new HashMap<>();
@@ -49,10 +48,6 @@ public class ContextToModelProcessor {
 		cp.dispose();
 	}
 
-	/**
-	 * @param application
-	 * @param contextManager
-	 */
 	private void generateContexts(MApplication application, ContextManager contextManager) {
 		for (Context ctx : contextManager.getDefinedContexts()) {
 			try {
@@ -92,18 +87,12 @@ public class ContextToModelProcessor {
 		}
 	}
 
-	/**
-	 * @param contextList
-	 */
 	private void gatherContexts(List<MBindingContext> contextList) {
 		for (MBindingContext ctx : contextList) {
 			gatherContexts(ctx);
 		}
 	}
 
-	/**
-	 * @param ctx
-	 */
 	private void gatherContexts(MBindingContext ctx) {
 		if (ctx == null) {
 			return;

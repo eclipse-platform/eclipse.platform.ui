@@ -43,12 +43,8 @@ import org.eclipse.emf.ecore.EObject;
 /**
  * A pointer allocated by a PropertyOwnerPointer to represent the value of
  * a property of the parent object.
- *
  */
 public abstract class EStructuralFeaturePointer extends NodePointer {
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 1L;
 
 	public static final int UNSPECIFIED_PROPERTY = Integer.MIN_VALUE;

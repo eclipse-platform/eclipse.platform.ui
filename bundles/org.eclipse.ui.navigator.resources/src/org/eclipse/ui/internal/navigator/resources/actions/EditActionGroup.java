@@ -33,7 +33,6 @@ import org.eclipse.ui.navigator.ICommonMenuConstants;
 
 /**
  * @since 3.2
- *
  */
 public class EditActionGroup extends ActionGroup {
 
@@ -49,10 +48,6 @@ public class EditActionGroup extends ActionGroup {
 
 	private Shell shell;
 
-	/**
-	 *
-	 * @param aShell
-	 */
 	public EditActionGroup(Shell aShell) {
 		shell = aShell;
 		makeActions();

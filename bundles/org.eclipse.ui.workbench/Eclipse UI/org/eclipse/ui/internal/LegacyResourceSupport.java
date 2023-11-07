@@ -331,7 +331,6 @@ public final class LegacyResourceSupport {
 	 * Returns <code>true</code> if the provided type name is an
 	 * <code>IResource</code>, and <code>false</code> otherwise.
 	 *
-	 * @param objectClassName
 	 * @return <code>true</code> if the provided type name is an
 	 *         <code>IResource</code>, and <code>false</code> otherwise.
 	 *
@@ -351,7 +350,6 @@ public final class LegacyResourceSupport {
 	 * <code>"org.eclipse.core.resources.mapping.ResourceMapping"</code>, and
 	 * <code>false</code> otherwise.
 	 *
-	 * @param objectClassName
 	 * @return <code>true</code> if the provided type name is an
 	 *         <code>"org.eclipse.core.resources.mapping.ResourceMapping"</code>,
 	 *         and <code>false</code> otherwise.

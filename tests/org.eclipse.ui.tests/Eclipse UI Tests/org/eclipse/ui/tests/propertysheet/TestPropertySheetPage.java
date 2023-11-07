@@ -22,7 +22,6 @@ import org.eclipse.ui.views.properties.PropertySheetPage;
 
 /**
  * @since 3.4
- *
  */
 public class TestPropertySheetPage extends PropertySheetPage implements
 		IAdapterFactory {

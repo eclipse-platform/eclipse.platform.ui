@@ -32,7 +32,6 @@ import org.eclipse.ui.internal.WorkingSetManager;
  * working sets.
  *
  * @since 3.3
- *
  */
 public class WorkingSetSettingsTransfer extends WorkbenchSettingsTransfer {
 

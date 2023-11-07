@@ -180,7 +180,6 @@ public class NavigatorContentExtension implements IMementoAware,
 
 	/**
 	 * Dispose of any resources acquired during the lifecycle of the extension.
-	 *
 	 */
 	public void dispose() {
 		try {

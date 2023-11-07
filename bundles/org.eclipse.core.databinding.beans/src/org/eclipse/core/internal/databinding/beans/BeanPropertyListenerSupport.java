@@ -35,10 +35,6 @@ public class BeanPropertyListenerSupport {
 	/**
 	 * Start listen to target (if it supports the JavaBean property change
 	 * listener pattern)
-	 *
-	 * @param bean
-	 * @param propertyName
-	 * @param listener
 	 */
 	public static void hookListener(Object bean, String propertyName,
 			PropertyChangeListener listener) {
@@ -51,10 +47,6 @@ public class BeanPropertyListenerSupport {
 
 	/**
 	 * Stop listen to target
-	 *
-	 * @param bean
-	 * @param propertyName
-	 * @param listener
 	 */
 	public static void unhookListener(Object bean, String propertyName,
 			PropertyChangeListener listener) {

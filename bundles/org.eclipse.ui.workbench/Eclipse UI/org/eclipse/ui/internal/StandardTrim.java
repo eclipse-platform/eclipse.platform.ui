@@ -34,7 +34,6 @@ import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * @since 3.5
- *
  */
 public class StandardTrim {
 	@Inject
@@ -62,10 +61,6 @@ public class StandardTrim {
 		}
 	}
 
-	/**
-	 * @param parent
-	 * @param toolControl
-	 */
 	private void createProgressBar(Composite parent, MToolControl toolControl) {
 		IEclipseContext context = modelService.getContainingContext(toolControl);
 		IEclipseContext child = context.createChild(ProgressRegion.class.getName());
@@ -97,17 +92,10 @@ public class StandardTrim {
 		}
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createHeapStatus(Composite parent) {
 		new HeapStatus(parent, PrefUtil.getInternalPreferenceStore());
 	}
 
-	/**
-	 * @param parent
-	 * @param toolControl
-	 */
 	private void createStatusLine(Composite parent, MToolControl toolControl) {
 		IEclipseContext context = modelService.getContainingContext(toolControl);
 		WorkbenchWindow wbw = (WorkbenchWindow) context.get(IWorkbenchWindow.class);

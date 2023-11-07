@@ -33,7 +33,6 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  * DeleteHandler is the handler for the deletion of a marker.
  *
  * @since 3.4
- *
  */
 public class DeleteHandler extends MarkerViewHandler {
 

@@ -37,7 +37,6 @@ import org.eclipse.ui.services.IServiceLocator;
  * @author Prakash G.R.
  *
  * @since 3.6
- *
  */
 public class DynamicToolBarContributionItem extends WorkbenchWindowControlContribution {
 
@@ -52,7 +51,6 @@ public class DynamicToolBarContributionItem extends WorkbenchWindowControlContri
 	 * @param id              - Id of the menu item
 	 * @param locator         - The Service Locator
 	 * @param dynamicAddition - The Configuration Element defined in the plugin.xml
-	 *
 	 */
 	public DynamicToolBarContributionItem(String id, IServiceLocator locator, IConfigurationElement dynamicAddition) {
 		super(id);

@@ -408,7 +408,6 @@ public class ModalContext {
 	 * Invoke the ThreadListener if there are any errors or RuntimeExceptions
 	 * return them.
 	 *
-	 * @param listener
 	 * @param switchingThread
 	 *            the {@link Thread} being switched to
 	 */

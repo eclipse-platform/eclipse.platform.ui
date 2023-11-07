@@ -28,12 +28,8 @@ import org.eclipse.swt.widgets.Event;
  * @param <S> type of the source object
  *
  * @since 3.3
- *
  */
 public class ControlFocusedProperty<S extends Control> extends WidgetBooleanValueProperty<S> {
-	/**
-	 *
-	 */
 	public ControlFocusedProperty() {
 		super();
 	}
@@ -57,12 +53,6 @@ public class ControlFocusedProperty<S extends Control> extends WidgetBooleanValu
 
 	private static class ControlFocusListener<S extends Control>
 			extends WidgetListener<S, ValueDiff<? extends Boolean>> {
-		/**
-		 * @param property
-		 * @param listener
-		 * @param changeEvents
-		 * @param staleEvents
-		 */
 		private ControlFocusListener(IProperty property,
 				ISimplePropertyListener<S, ValueDiff<? extends Boolean>> listener, int[] changeEvents,
 				int[] staleEvents) {

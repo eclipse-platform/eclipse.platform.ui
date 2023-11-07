@@ -40,8 +40,6 @@ import org.eclipse.search.tests.SearchTestPlugin;
 
 import org.eclipse.search2.internal.ui.text.PositionTracker;
 
-/**
- */
 public class LineConversionTest {
 	private IFile fFile;
 

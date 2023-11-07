@@ -54,7 +54,6 @@ public interface IPropertyMap {
 	 * iff the property existed in every map in the union. Always returns true if
 	 * this map was not computed from the union of multiple maps.
 	 *
-	 * @param propertyId
 	 * @return true iff the given property existed in every child map
 	 * @since 3.1
 	 */
@@ -63,7 +62,6 @@ public interface IPropertyMap {
 	/**
 	 * Returns true iff the given property exists.
 	 *
-	 * @param propertyId
 	 * @return true iff the given property exists in this map
 	 * @since 3.1
 	 */
@@ -72,8 +70,6 @@ public interface IPropertyMap {
 	/**
 	 * Sets the value of the given property to the given value (optional operation).
 	 *
-	 * @param propertyId
-	 * @param newValue
 	 * @throws UnsupportedOperationException if this type of property map is
 	 *                                       read-only
 	 * @since 3.1

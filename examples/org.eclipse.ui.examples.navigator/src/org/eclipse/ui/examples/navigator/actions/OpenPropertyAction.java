@@ -36,7 +36,6 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * @since 3.2
- *
  */
 public class OpenPropertyAction extends Action {
 

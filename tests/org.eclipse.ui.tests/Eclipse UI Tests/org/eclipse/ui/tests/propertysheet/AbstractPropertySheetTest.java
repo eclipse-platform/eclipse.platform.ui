@@ -28,7 +28,6 @@ import org.eclipse.ui.views.properties.PropertySheet;
 
 /**
  * @since 3.4
- *
  */
 public abstract class AbstractPropertySheetTest extends UITestCase {
 

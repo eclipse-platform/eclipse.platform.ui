@@ -25,7 +25,6 @@ import org.eclipse.ui.actions.CompoundContributionItem;
  * items used in the Markers views.
  *
  * @since 3.4
- *
  */
 abstract class MarkersContribution extends CompoundContributionItem {
 
@@ -38,8 +37,6 @@ abstract class MarkersContribution extends CompoundContributionItem {
 
 	/**
 	 * Create a new instance of the receiver.
-	 *
-	 * @param id
 	 */
 	public MarkersContribution(String id) {
 		super(id);

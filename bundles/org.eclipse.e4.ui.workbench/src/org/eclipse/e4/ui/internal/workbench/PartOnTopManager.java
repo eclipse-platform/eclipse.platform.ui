@@ -43,9 +43,6 @@ public class PartOnTopManager {
 	@Inject
 	private EModelService modelService;
 
-	/**
-	 * @param context
-	 */
 	@PostConstruct
 	public void init(IEclipseContext context) {
 		context.set(PartOnTopManager.class, this);
@@ -100,10 +97,6 @@ public class PartOnTopManager {
 
 	}
 
-	/**
-	 * @param oldValue
-	 * @param newValue
-	 */
 	private void handlePerspectiveSwitch(Object oldValue, Object newValue) {
 		handleNewAndOldSelectedElementsOfElementContainer(oldValue, newValue);
 	}

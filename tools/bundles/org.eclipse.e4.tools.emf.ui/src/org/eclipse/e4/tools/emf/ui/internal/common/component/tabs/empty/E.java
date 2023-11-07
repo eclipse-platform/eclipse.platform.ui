@@ -21,7 +21,6 @@ import java.util.Collection;
  * An object is empty if it is null, an empty string, or an empty collection
  *
  * @author Steven Spungin
- *
  */
 public class E {
 
@@ -59,8 +58,6 @@ public class E {
 
 	/**
 	 *
-	 * @param obj1
-	 * @param obj2
 	 * @return true if (both objects are null) or (both objects are not null and
 	 *         equal)
 	 */
@@ -80,8 +77,6 @@ public class E {
 	/**
 	 * Compares 2 objects.
 	 *
-	 * @param obj1
-	 * @param obj2
 	 * @return If both objects are null, returns 0. If only 1 object is null, it
 	 *         will return 1 or -1. Otherwise call compareTo on the first
 	 *         object.

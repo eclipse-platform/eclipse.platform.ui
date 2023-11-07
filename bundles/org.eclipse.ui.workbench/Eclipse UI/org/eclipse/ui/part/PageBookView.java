@@ -376,8 +376,6 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 
 	/**
 	 * Prepares the page in the given page rec for use in this view.
-	 *
-	 * @param rec
 	 */
 	private void preparePage(PageRec rec) {
 		IPageSite site = null;
@@ -781,7 +779,6 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	 * Removes a page record. If it is the last reference to the page dispose of it
 	 * - otherwise just decrement the reference count.
 	 *
-	 * @param rec
 	 * @param doDestroy if <code>true</code>, also call
 	 *                  {@link #doDestroyPage(IWorkbenchPart, PageRec)}
 	 */
@@ -837,8 +834,6 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 
 	/**
 	 * Handle page selection changes.
-	 *
-	 * @param event
 	 */
 	private void pageSelectionChanged(SelectionChangedEvent event) {
 		// forward this change from a page to our site's selection provider
@@ -850,8 +845,6 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 
 	/**
 	 * Handle page selection changes.
-	 *
-	 * @param event
 	 */
 	private void postSelectionChanged(SelectionChangedEvent event) {
 		// forward this change from a page to our site's selection provider

@@ -179,8 +179,6 @@ public class ResourceHandlerTest {
 	}
 
 	/**
-	 * @param children
-	 * @param id
 	 * @return the MMenuElement or null if not found
 	 */
 	private Object findByElementId(List<MMenuElement> children, String id) {

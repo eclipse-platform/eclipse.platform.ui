@@ -32,7 +32,6 @@ import org.eclipse.ui.services.IDisposable;
  * </p>
  *
  * @since 3.4
- *
  */
 public class SlavePartService implements IPartService, IDisposable {
 

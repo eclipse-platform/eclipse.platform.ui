@@ -17,9 +17,6 @@ package org.eclipse.ui.internal.e4.compatibility;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
-/**
- *
- */
 public class E4Util {
 
 	// debug tracing

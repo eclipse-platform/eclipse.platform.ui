@@ -145,8 +145,6 @@ public class PreferenceStore extends EventManager implements
 	/**
 	 * Helper function: gets boolean for a given name.
 	 *
-	 * @param p
-	 * @param name
 	 * @return boolean
 	 */
 	private boolean getBoolean(Properties p, String name) {
@@ -198,8 +196,6 @@ public class PreferenceStore extends EventManager implements
 	/**
 	 * Helper function: gets double for a given name.
 	 *
-	 * @param p
-	 * @param name
 	 * @return double
 	 */
 	private double getDouble(Properties p, String name) {
@@ -223,8 +219,6 @@ public class PreferenceStore extends EventManager implements
 	/**
 	 * Helper function: gets float for a given name.
 	 *
-	 * @param p
-	 * @param name
 	 * @return float
 	 */
 	private float getFloat(Properties p, String name) {
@@ -248,8 +242,6 @@ public class PreferenceStore extends EventManager implements
 	/**
 	 * Helper function: gets int for a given name.
 	 *
-	 * @param p
-	 * @param name
 	 * @return int
 	 */
 	private int getInt(Properties p, String name) {
@@ -570,10 +562,6 @@ public class PreferenceStore extends EventManager implements
 
 	/**
 	 * Helper method: sets value for a given name.
-	 *
-	 * @param p
-	 * @param name
-	 * @param value
 	 */
 	private void setValue(Properties p, String name, double value) {
 		Assert.isTrue(p != null);
@@ -582,10 +570,6 @@ public class PreferenceStore extends EventManager implements
 
 	/**
 	 * Helper method: sets value for a given name.
-	 *
-	 * @param p
-	 * @param name
-	 * @param value
 	 */
 	private void setValue(Properties p, String name, float value) {
 		Assert.isTrue(p != null);
@@ -594,10 +578,6 @@ public class PreferenceStore extends EventManager implements
 
 	/**
 	 * Helper method: sets value for a given name.
-	 *
-	 * @param p
-	 * @param name
-	 * @param value
 	 */
 	private void setValue(Properties p, String name, int value) {
 		Assert.isTrue(p != null);
@@ -606,10 +586,6 @@ public class PreferenceStore extends EventManager implements
 
 	/**
 	 * Helper method: sets the value for a given name.
-	 *
-	 * @param p
-	 * @param name
-	 * @param value
 	 */
 	private void setValue(Properties p, String name, long value) {
 		Assert.isTrue(p != null);
@@ -618,10 +594,6 @@ public class PreferenceStore extends EventManager implements
 
 	/**
 	 * Helper method: sets the value for a given name.
-	 *
-	 * @param p
-	 * @param name
-	 * @param value
 	 */
 	private void setValue(Properties p, String name, String value) {
 		Assert.isTrue(p != null && value != null);
@@ -630,10 +602,6 @@ public class PreferenceStore extends EventManager implements
 
 	/**
 	 * Helper method: sets the value for a given name.
-	 *
-	 * @param p
-	 * @param name
-	 * @param value
 	 */
 	private void setValue(Properties p, String name, boolean value) {
 		Assert.isTrue(p != null);

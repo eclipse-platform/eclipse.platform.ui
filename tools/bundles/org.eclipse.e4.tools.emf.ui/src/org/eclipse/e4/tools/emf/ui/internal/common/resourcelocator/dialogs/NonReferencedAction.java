@@ -18,7 +18,6 @@ package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs;
  * Actions used to resolve non referenced resource issues.
  *
  * @author Steven Spungin
- *
  */
 public enum NonReferencedAction {
 	REQUIRE, IMPORT, COPY, COPY_TO_OTHER, USE_ANYWAY, CONVERT_AND_REQUIRE

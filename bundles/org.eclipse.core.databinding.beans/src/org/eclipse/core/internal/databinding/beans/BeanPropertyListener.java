@@ -28,7 +28,6 @@ import org.eclipse.core.databinding.property.NativePropertyListener;
  * @param <T> type of the property value that is being listened to
  * @param <D> type of the diff handled by this listener
  * @since 3.3
- *
  */
 public abstract class BeanPropertyListener<S, T, D extends IDiff> extends NativePropertyListener<S, D>
 		implements PropertyChangeListener {

@@ -31,16 +31,12 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  * only, and not used currently.
  *
  * @since 3.6
- *
  */
 class IncrementUpdateJob extends MarkerUpdateJob {
 
 	private LinkedList<MarkerEntry> incrementEntryList;
 	private LinkedList<MarkerUpdate> updateQueue;
 
-	/**
-	 * @param builder
-	 */
 	public IncrementUpdateJob(CachedMarkerBuilder builder) {
 		super(builder);
 		incrementEntryList = new LinkedList<>();
@@ -98,8 +94,6 @@ class IncrementUpdateJob extends MarkerUpdateJob {
 
 	/**
 	 * Update the list
-	 *
-	 * @param markerEntries
 	 */
 	private boolean updateIncrementalList(Collection<MarkerEntry> markerEntries) {
 		markerEntries.clear();
@@ -113,8 +107,6 @@ class IncrementUpdateJob extends MarkerUpdateJob {
 
 	/**
 	 * Process the incremental updates
-	 *
-	 * @param monitor
 	 */
 	private boolean processUpdates(IProgressMonitor monitor) {
 		Collection<MarkerEntry> markerEntries = incrementalEntries();
@@ -164,10 +156,6 @@ class IncrementUpdateJob extends MarkerUpdateJob {
 		return false;
 	}
 
-	/**
-	 * @param added
-	 * @param monitor
-	 */
 	private void handleAddedEntries(Collection<MarkerEntry> markerEntries, Collection<MarkerEntry> added,
 			IProgressMonitor monitor) {
 		MarkerContentGenerator generator = builder.getGenerator();
@@ -180,10 +168,6 @@ class IncrementUpdateJob extends MarkerUpdateJob {
 		}
 	}
 
-	/**
-	 * @param changed
-	 * @param monitor
-	 */
 	private void handleChangedEntries(Collection<MarkerEntry> markerEntries,
 			Collection<MarkerEntry> changed, IProgressMonitor monitor) {
 		MarkerContentGenerator generator = builder.getGenerator();
@@ -204,10 +188,6 @@ class IncrementUpdateJob extends MarkerUpdateJob {
 		markerEntries.addAll(changed);
 	}
 
-	/**
-	 * @param removed
-	 * @param monitor
-	 */
 	private void handleRemovedEntries(Collection<MarkerEntry> markerEntries,
 			Collection<MarkerEntry> removed, IProgressMonitor monitor) {
 		boolean found = false;
@@ -275,8 +255,6 @@ class IncrementUpdateJob extends MarkerUpdateJob {
 
 	/**
 	 * Add update to the list
-	 *
-	 * @param update
 	 */
 	void addUpdate(MarkerUpdate update) {
 		LinkedList<MarkerUpdate> updateList = getUpdatesQueue();

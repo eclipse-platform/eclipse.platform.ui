@@ -38,16 +38,11 @@ import org.eclipse.core.databinding.property.value.IValueProperty;
  * @param <V>
  *            type of the values in the map
  * @since 3.3
- *
  */
 public class ValuePropertyDetailMap<S, M, K, V> extends MapProperty<S, K, V> {
 	private final IValueProperty<S, M> masterProperty;
 	private final IMapProperty<? super M, K, V> detailProperty;
 
-	/**
-	 * @param masterProperty
-	 * @param detailProperty
-	 */
 	public ValuePropertyDetailMap(IValueProperty<S, M> masterProperty, IMapProperty<? super M, K, V> detailProperty) {
 		this.masterProperty = masterProperty;
 		this.detailProperty = detailProperty;

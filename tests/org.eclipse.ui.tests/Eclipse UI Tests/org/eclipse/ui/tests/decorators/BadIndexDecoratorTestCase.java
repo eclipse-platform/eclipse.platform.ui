@@ -22,7 +22,6 @@ import org.junit.runners.JUnit4;
 
 /**
  * @since 3.2
- *
  */
 @RunWith(JUnit4.class)
 public class BadIndexDecoratorTestCase extends DecoratorEnablementTestCase {

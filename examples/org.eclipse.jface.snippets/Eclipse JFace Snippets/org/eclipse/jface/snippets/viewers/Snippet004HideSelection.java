@@ -35,7 +35,6 @@ import org.eclipse.swt.widgets.TableColumn;
 
 /**
  * Snippet that hides the selection when nothing is selected.
- *
  */
 public class Snippet004HideSelection {
 

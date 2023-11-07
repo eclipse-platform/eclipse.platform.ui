@@ -27,7 +27,6 @@ import org.eclipse.ui.preferences.SettingsTransfer;
  * transfers in the workbench.
  *
  * @since 3.3
- *
  */
 public abstract class WorkbenchSettingsTransfer extends SettingsTransfer {
 
@@ -44,7 +43,6 @@ public abstract class WorkbenchSettingsTransfer extends SettingsTransfer {
 	/**
 	 * Return the workbench settings location for the new root
 	 *
-	 * @param newWorkspaceRoot
 	 * @return IPath or <code>null</code> if it can't be determined.
 	 */
 	protected IPath getNewWorkbenchStateLocation(IPath newWorkspaceRoot) {

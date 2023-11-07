@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.IStatus;
  * result.
  *
  * @since 1.1
- *
  */
 public abstract class ValidationStatusProvider {
 

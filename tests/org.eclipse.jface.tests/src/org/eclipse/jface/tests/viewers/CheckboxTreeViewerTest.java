@@ -338,7 +338,6 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 	/**
 	 * Invokes the appropriate asserts to verify the state of a TestElement.
 	 *
-	 * @param te
 	 * @param viewer the viewer <code>te</code> is in.
 	 * @param shift  the shift parameter being used
 	 */
@@ -351,7 +350,6 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 	 * Invokes the appropriate asserts to verify the state of a TestElement's
 	 * associated TreeItem
 	 *
-	 * @param te
 	 * @param item  the item representing <code>te</code>
 	 * @param shift the shift parameter being used
 	 */

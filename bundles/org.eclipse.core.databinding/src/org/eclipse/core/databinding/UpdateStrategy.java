@@ -52,7 +52,6 @@ import org.eclipse.core.runtime.Status;
 
 /**
  * @since 1.0
- *
  */
 /* package */class UpdateStrategy<S, D> {
 
@@ -433,10 +432,6 @@ import org.eclipse.core.runtime.Status;
 	/**
 	 * Registers converters to boxed and unboxed types from a list of from
 	 * classes.
-	 *
-	 * @param map
-	 * @param numberFormat
-	 * @param fromTypes
 	 */
 	private static void addNumberToByteConverters(Map<Pair, Object> map, Format numberFormat, Class<?>[] fromTypes) {
 
@@ -456,10 +451,6 @@ import org.eclipse.core.runtime.Status;
 	/**
 	 * Registers converters to boxed and unboxed types from a list of from
 	 * classes.
-	 *
-	 * @param map
-	 * @param numberFormat
-	 * @param fromTypes
 	 */
 	private static void addNumberToShortConverters(Map<Pair, Object> map, Format numberFormat, Class<?>[] fromTypes) {
 		for (Class<?> fromType : fromTypes) {
@@ -479,10 +470,6 @@ import org.eclipse.core.runtime.Status;
 	/**
 	 * Registers converters to boxed and unboxed types from a list of from
 	 * classes.
-	 *
-	 * @param map
-	 * @param numberFormat
-	 * @param fromTypes
 	 */
 	private static void addNumberToIntegerConverters(Map<Pair, Object> map, Format numberFormat, Class<?>[] fromTypes) {
 		for (Class<?> fromType : fromTypes) {
@@ -504,10 +491,6 @@ import org.eclipse.core.runtime.Status;
 	/**
 	 * Registers converters to boxed and unboxed types from a list of from
 	 * classes.
-	 *
-	 * @param map
-	 * @param numberFormat
-	 * @param fromTypes
 	 */
 	private static void addNumberToLongConverters(Map<Pair, Object> map, Format numberFormat, Class<?>[] fromTypes) {
 		for (Class<?> fromType : fromTypes) {
@@ -526,10 +509,6 @@ import org.eclipse.core.runtime.Status;
 	/**
 	 * Registers converters to boxed and unboxed types from a list of from
 	 * classes.
-	 *
-	 * @param map
-	 * @param numberFormat
-	 * @param fromTypes
 	 */
 	private static void addNumberToFloatConverters(Map<Pair, Object> map, Format numberFormat, Class<?>[] fromTypes) {
 		for (Class<?> fromType : fromTypes) {
@@ -549,10 +528,6 @@ import org.eclipse.core.runtime.Status;
 	/**
 	 * Registers converters to boxed and unboxed types from a list of from
 	 * classes.
-	 *
-	 * @param map
-	 * @param numberFormat
-	 * @param fromTypes
 	 */
 	private static void addNumberToDoubleConverters(Map<Pair, Object> map, Format numberFormat, Class<?>[] fromTypes) {
 		for (Class<?> fromType : fromTypes) {
@@ -573,10 +548,6 @@ import org.eclipse.core.runtime.Status;
 	/**
 	 * Registers converters to boxed and unboxed types from a list of from
 	 * classes.
-	 *
-	 * @param map
-	 * @param numberFormat
-	 * @param fromTypes
 	 */
 	private static void addNumberToBigIntegerConverters(Map<Pair, Object> map, Format numberFormat,
 			Class<?>[] fromTypes) {
@@ -594,10 +565,6 @@ import org.eclipse.core.runtime.Status;
 	/**
 	 * Registers converters to boxed and unboxed types from a list of from
 	 * classes.
-	 *
-	 * @param map
-	 * @param numberFormat
-	 * @param fromTypes
 	 */
 	private static void addNumberToBigDecimalConverters(Map<Pair, Object> map, Format numberFormat,
 			Class<?>[] fromTypes) {
@@ -704,10 +671,6 @@ import org.eclipse.core.runtime.Status;
 
 		private final Object fromType;
 
-		/**
-		 * @param fromType
-		 * @param toType
-		 */
 		DefaultConverter(Object fromType, Object toType) {
 			this.toType = toType;
 			this.fromType = fromType;

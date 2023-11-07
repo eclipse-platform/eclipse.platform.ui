@@ -31,7 +31,6 @@ import org.eclipse.ui.navigator.PipelinedViewerUpdate;
 
 /**
  * @since 3.2
- *
  */
 public class NavigatorPipelineService implements INavigatorPipelineService {
 

@@ -34,7 +34,6 @@ import org.eclipse.ui.handlers.HandlerUtil;
  * </p>
  *
  * @since 3.3
- *
  */
 public class CloseOthersHandler extends AbstractEvaluationHandler {
 	private Expression enabledWhen;

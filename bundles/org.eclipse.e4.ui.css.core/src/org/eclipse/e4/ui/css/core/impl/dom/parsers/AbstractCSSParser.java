@@ -111,8 +111,6 @@ public class AbstractCSSParser implements CSSParser {
 
 	/**
 	 * Return instance of {@link DocumentHandlerFactory}.
-	 *
-	 * @return
 	 */
 	public DocumentHandlerFactory getDocumentHandlerFactory() {
 		if (documentHandlerFactory == null) {
@@ -123,8 +121,6 @@ public class AbstractCSSParser implements CSSParser {
 
 	/**
 	 * Set instance of {@link DocumentHandlerFactory}.
-	 *
-	 * @param documentHandlerFactory
 	 */
 	@Override
 	public void setDocumentHandlerFactory(DocumentHandlerFactory documentHandlerFactory) {
@@ -133,8 +129,6 @@ public class AbstractCSSParser implements CSSParser {
 
 	/**
 	 * Return SAC {@link Parser} to use.
-	 *
-	 * @return
 	 */
 	public Parser getParser() {
 		if (parser == null) {
@@ -157,8 +151,6 @@ public class AbstractCSSParser implements CSSParser {
 
 	/**
 	 * Set SAC {@link Parser} to use.
-	 *
-	 * @param parser
 	 */
 	public void setParser(Parser parser) {
 		this.parser = parser;
@@ -166,8 +158,6 @@ public class AbstractCSSParser implements CSSParser {
 
 	/**
 	 * Return factory {@link ISACParserFactory} to use.
-	 *
-	 * @return
 	 */
 	public ISACParserFactory getSACParserFactory() {
 		if (parserFactory == null) {
@@ -178,8 +168,6 @@ public class AbstractCSSParser implements CSSParser {
 
 	/**
 	 * Set factory {@link ISACParserFactory} to use.
-	 *
-	 * @param parserFactory
 	 */
 	public void setSACParserFactory(ISACParserFactory parserFactory) {
 		this.parserFactory = parserFactory;

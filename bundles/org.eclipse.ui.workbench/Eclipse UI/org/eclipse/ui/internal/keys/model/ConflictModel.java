@@ -25,7 +25,6 @@ import org.eclipse.jface.bindings.TriggerSequence;
 
 /**
  * @since 3.4
- *
  */
 public class ConflictModel extends CommonModel {
 
@@ -47,9 +46,6 @@ public class ConflictModel extends CommonModel {
 	 */
 	private Map<BindingElement, Collection<BindingElement>> conflictsMap;
 
-	/**
-	 * @param kc
-	 */
 	public ConflictModel(KeyController kc) {
 		super(kc);
 	}

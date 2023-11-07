@@ -27,7 +27,6 @@ import org.w3c.dom.Node;
 
 /**
  * {@link CSSStylableElement} implementation which wrap SWT {@link TableItem}.
- *
  */
 public class ToolItemElement extends ItemElement {
 

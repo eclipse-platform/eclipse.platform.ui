@@ -1080,7 +1080,6 @@ public class ActionContributionItem extends ContributionItem {
 	 * @param item
 	 *            the tool item the text belongs to
 	 * @return the shortened string
-	 *
 	 */
 	protected String shortenText(String textValue, ToolItem item) {
 		if (textValue == null) {

@@ -56,7 +56,6 @@ public class MarkerTypesModel {
 	}
 
 	/**
-	 * @param id
 	 * @return the marker type with the given id, or <code>null</code> if there
 	 *         is no such marker type.
 	 */

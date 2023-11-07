@@ -152,7 +152,6 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
  * Dialog to allow users the ability to customize the perspective. This includes
  * customizing menus and toolbars by adding, removing, or re-arranging commands
  * or groups of commands.
- *
  */
 public class CustomizePerspectiveDialog extends TrayDialog {
 
@@ -310,8 +309,6 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	}
 
 	/**
-	 * @param descriptor
-	 * @param window
 	 * @return the appropriate {@link IContributionItem} for the given wizard
 	 */
 	private static ActionContributionItem getIContributionItem(IWizardDescriptor descriptor, IWorkbenchWindow window) {
@@ -320,8 +317,6 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	}
 
 	/**
-	 * @param descriptor
-	 * @param window
 	 * @return the appropriate {@link IContributionItem} for the given perspective
 	 */
 	private static ActionContributionItem getIContributionItem(IPerspectiveDescriptor descriptor,
@@ -331,7 +326,6 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	}
 
 	/**
-	 * @param window
 	 * @return the appropriate {@link IContributionItem} for showing views
 	 */
 	private static ActionContributionItem getIContributionItem(IWorkbenchWindow window) {
@@ -1158,7 +1152,6 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	/**
 	 * Creates a table to display action sets.
 	 *
-	 * @param parent
 	 * @return a viewer to display action sets
 	 */
 	private static TableViewer initActionSetViewer(Composite parent) {
@@ -1178,7 +1171,6 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	/**
 	 * Creates a CheckboxTreeViewer to display menu or toolbar structure.
 	 *
-	 * @param parent
 	 * @param checkStateListener the listener which listens to the viewer for check
 	 *                           changes
 	 * @param filter             the filter used in the viewer (null for none)
@@ -1243,9 +1235,6 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 	/**
 	 * Set the selection on a structured viewer.
-	 *
-	 * @param viewer
-	 * @param selected
 	 */
 	private static void setSelectionOn(Viewer viewer, final Object selected) {
 		ISelection selection;
@@ -1281,7 +1270,6 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	}
 
 	/**
-	 * @param item
 	 * @return true iff the item is available - i.e. if it belongs to an action set,
 	 *         that that action set is available, or has a child which is available
 	 *         thus must be displayed in order to display the child
@@ -1300,7 +1288,6 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	}
 
 	/**
-	 * @param item
 	 * @return true iff the item will show up in a menu or toolbar structure - i.e.
 	 *         it is available, or has a child which is available thus must be
 	 *         displayed in order to display the child
@@ -1528,7 +1515,6 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	/**
 	 * Evaluates if the view is filtered by an activity
 	 *
-	 * @param elementId
 	 * @return result of the check
 	 */
 	private boolean isFilteredByActivity(MPartDescriptor descriptor) {
@@ -1766,8 +1752,6 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 	/**
 	 * Causes all items under the manager to be visible, so they can be read.
-	 *
-	 * @param manager
 	 */
 	private static void makeAllContributionsVisible(IContributionManager manager) {
 		IContributionItem[] items = manager.getItems();
@@ -1779,8 +1763,6 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 	/**
 	 * Makes all items under the item to be visible, so they can be read.
-	 *
-	 * @param item
 	 */
 	private static void makeContributionVisible(IContributionItem item) {
 		item.setVisible(true);
@@ -2010,9 +1992,6 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 	/**
 	 * Causes a viewer to update the state of a category and all its ancestors.
-	 *
-	 * @param viewer
-	 * @param category
 	 */
 	private void updateCategoryAndParents(StructuredViewer viewer, Category category) {
 		while (category.getParent() != shortcuts) {

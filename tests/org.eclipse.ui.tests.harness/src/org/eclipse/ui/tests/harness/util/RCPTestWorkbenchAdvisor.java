@@ -150,9 +150,6 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 		}
 	}
 
-	/**
-	 * @param display
-	 */
 	private void setupSyncDisplayThread(final boolean callDisplayAccess, final Display display) {
 		Thread syncThread = new Thread() {
 			@Override
@@ -179,9 +176,6 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 		syncThread.start();
 	}
 
-	/**
-	 * @param display
-	 */
 	private void setupAsyncDisplayThread(final boolean callDisplayAccess, final Display display) {
 		Thread asyncThread = new Thread() {
 			@Override

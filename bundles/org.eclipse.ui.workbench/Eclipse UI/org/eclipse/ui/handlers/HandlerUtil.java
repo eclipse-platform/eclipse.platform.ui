@@ -395,7 +395,6 @@ public class HandlerUtil {
 	 * @return the current IStructuredSelection, or
 	 *         <code>StructuredSelection.EMPTY</code>.
 	 * @since 3.108
-	 *
 	 */
 	public static IStructuredSelection getCurrentStructuredSelection(ExecutionEvent event) {
 		ISelection selection = getCurrentSelection(event);

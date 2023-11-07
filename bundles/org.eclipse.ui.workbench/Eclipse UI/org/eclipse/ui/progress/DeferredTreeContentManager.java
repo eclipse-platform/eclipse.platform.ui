@@ -63,7 +63,6 @@ public class DeferredTreeContentManager {
 	 * receiver.
 	 *
 	 * @since 3.1
-	 *
 	 */
 	static class DeferredContentFamily {
 		protected DeferredTreeContentManager manager;
@@ -72,9 +71,6 @@ public class DeferredTreeContentManager {
 		/**
 		 * Create a new instance of the receiver to define a family for object in a
 		 * particular scheduling manager.
-		 *
-		 * @param schedulingManager
-		 * @param object
 		 */
 		DeferredContentFamily(DeferredTreeContentManager schedulingManager, Object object) {
 			this.manager = schedulingManager;

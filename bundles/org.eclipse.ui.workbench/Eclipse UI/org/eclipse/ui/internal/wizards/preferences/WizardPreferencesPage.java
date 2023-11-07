@@ -109,9 +109,6 @@ public abstract class WizardPreferencesPage extends WizardPage implements Listen
 
 	protected static final int COMBO_HISTORY_LENGTH = 5;
 
-	/**
-	 * @param pageName
-	 */
 	protected WizardPreferencesPage(String pageName) {
 		super(pageName);
 	}
@@ -191,9 +188,6 @@ public abstract class WizardPreferencesPage extends WizardPage implements Listen
 		Dialog.applyDialogFont(composite);
 	}
 
-	/**
-	 * @param composite
-	 */
 	protected abstract void createTransferArea(Composite composite);
 
 	/**
@@ -242,9 +236,6 @@ public abstract class WizardPreferencesPage extends WizardPage implements Listen
 		return transfers;
 	}
 
-	/**
-	 * @param composite
-	 */
 	protected void createTransfersList(Composite composite) {
 
 		transferAllButton = new Button(composite, SWT.CHECK);
@@ -368,9 +359,6 @@ public abstract class WizardPreferencesPage extends WizardPage implements Listen
 		deselectAllButton.setFont(parentFont);
 	}
 
-	/**
-	 * @param bool
-	 */
 	protected void setAllChecked(boolean bool) {
 		transferAllButton.setSelection(false);
 	}
@@ -614,7 +602,6 @@ public abstract class WizardPreferencesPage extends WizardPage implements Listen
 	}
 
 	/**
-	 * @param transfers
 	 * @return boolean
 	 */
 	protected abstract boolean transfer(IPreferenceFilter[] transfers);
@@ -896,7 +883,6 @@ public abstract class WizardPreferencesPage extends WizardPage implements Listen
 	 * <code>IOverwriteQuery</code> method asks the user whether the existing
 	 * resource at the given path should be overwritten.
 	 *
-	 * @param pathString
 	 * @return the user's reply: one of <code>"YES"</code>, <code>"NO"</code>,
 	 *         <code>"ALL"</code>, or <code>"CANCEL"</code>
 	 */

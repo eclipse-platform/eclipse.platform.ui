@@ -117,8 +117,6 @@ public class ViewerItemsLimitTest extends UITestCase {
 	 * check it goes inside ExpandbaleNode. Delete the newly added project and check
 	 * the projects order is as expected. Reset the viewer limit to default and
 	 * check if all the project are visible.
-	 *
-	 * @throws CoreException
 	 */
 	@Test
 	public void testProjectExplorerLimitedProjects() throws CoreException {
@@ -274,8 +272,6 @@ public class ViewerItemsLimitTest extends UITestCase {
 	 * Add one more marker check which will go inside expandable node. Delete the
 	 * last added marker and check it refreshes properly. Set the viewer limit to
 	 * default and check if all the markers are visible.
-	 *
-	 * @throws CoreException
 	 */
 	@Test
 	public void testMarkersViewLimitedMarkers() throws CoreException {
@@ -368,8 +364,6 @@ public class ViewerItemsLimitTest extends UITestCase {
 	 * Create some projects and some search data. Create some query and execute the
 	 * search. Check limited search results. Add new search data onto workspace and
 	 * refresh search to see if search results updated properly.
-	 *
-	 * @throws CoreException
 	 */
 	@Ignore
 	@Test

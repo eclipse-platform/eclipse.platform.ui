@@ -20,14 +20,11 @@ import org.w3c.dom.css.CSSPrimitiveValue;
  *
  * @version 1.0.0
  * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- *
  */
 public interface CSSBorderProperties {
 
 	/**
 	 * Return border-color value.
-	 *
-	 * @return
 	 */
 	public CSSPrimitiveValue getColor();
 
@@ -38,8 +35,6 @@ public interface CSSBorderProperties {
 
 	/**
 	 * Return border-width value.
-	 *
-	 * @return
 	 */
 	public int getWidth();
 
@@ -50,8 +45,6 @@ public interface CSSBorderProperties {
 
 	/**
 	 * Return border-style value.
-	 *
-	 * @return
 	 */
 	public String getStyle();
 

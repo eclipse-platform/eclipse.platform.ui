@@ -151,9 +151,6 @@ public class LabelProviderWrapper extends ViewerComparator implements ITableLabe
 
 	private Map<Object, Object> dialogState;
 
-	/**
-	 * @param dialogState
-	 */
 	public LabelProviderWrapper(Map<Object, Object> dialogState) {
 		this.dialogState = dialogState;
 	}

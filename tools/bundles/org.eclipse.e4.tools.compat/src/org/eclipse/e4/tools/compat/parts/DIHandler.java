@@ -26,8 +26,6 @@ import org.eclipse.ui.PlatformUI;
  * This is a preliminary implementation of a Handler wrapper. It does not support @CanExecute yet
  *
  * @author Jonas
- *
- * @param <C>
  */
 public class DIHandler<C> extends AbstractHandler {
 

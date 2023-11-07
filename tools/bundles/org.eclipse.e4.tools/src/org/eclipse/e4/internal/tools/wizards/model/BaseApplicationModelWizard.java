@@ -434,10 +434,6 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 
 	}
 
-	/**
-	 * @param resource
-	 * @param rootObject
-	 */
 	protected void mergeWithExistingFile(Resource resource, EObject rootObject) {
 		// do nothing
 

@@ -186,8 +186,6 @@ public class ExpandableNode {
 	 * Client can use {@link TableViewer#add(Object[])} to add an element beyond
 	 * visible range. It must be tracked to render when {@link ExpandableNode} node
 	 * is clicked.
-	 *
-	 * @param element
 	 */
 	public void addElement(Object element) {
 		initializeUniqueMap();
@@ -207,7 +205,6 @@ public class ExpandableNode {
 	/**
 	 * Returns true if the given element is present in the all elements.
 	 *
-	 * @param element
 	 * @return returns if it finds in all the elements.
 	 */
 	public boolean contains(Object element) {

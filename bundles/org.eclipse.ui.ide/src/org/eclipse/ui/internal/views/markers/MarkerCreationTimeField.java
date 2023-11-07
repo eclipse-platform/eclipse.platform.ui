@@ -25,7 +25,6 @@ import org.eclipse.ui.views.markers.MarkerItem;
  * MarkerCreationTimeField is the field that shows the creation time of a field.
  *
  * @since 3.4
- *
  */
 public class MarkerCreationTimeField extends MarkerField {
 

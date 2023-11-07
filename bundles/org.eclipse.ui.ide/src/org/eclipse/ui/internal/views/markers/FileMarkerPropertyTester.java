@@ -22,7 +22,6 @@ import org.eclipse.core.resources.IResource;
  * is a marker that has a file behind it.
  *
  * @since 3.4
- *
  */
 public class FileMarkerPropertyTester extends PropertyTester {
 

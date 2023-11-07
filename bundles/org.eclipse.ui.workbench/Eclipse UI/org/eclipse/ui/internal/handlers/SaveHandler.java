@@ -37,7 +37,6 @@ import org.eclipse.ui.internal.WorkbenchWindow;
  * </p>
  *
  * @since 3.7
- *
  */
 public class SaveHandler extends AbstractSaveHandler {
 
@@ -110,12 +109,6 @@ public class SaveHandler extends AbstractSaveHandler {
 		return enabled ? EvaluationResult.TRUE : EvaluationResult.FALSE;
 	}
 
-	/**
-	 * @param context
-	 * @param window
-	 * @param page
-	 * @return
-	 */
 	private boolean evaluateEnabled(IEvaluationContext context, IWorkbenchWindow window) {
 
 		WorkbenchPage page = (WorkbenchPage) window.getActivePage();

@@ -28,7 +28,6 @@ package org.eclipse.core.databinding.observable.value;
  *              releases when methods are added to this interface.
  *
  * @since 1.0
- *
  */
 public interface IVetoableValue<T> extends IObservableValue<T> {
 

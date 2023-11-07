@@ -35,16 +35,11 @@ import org.eclipse.core.databinding.property.value.ValueProperty;
  *            type of this value property, being the same as the type of the
  *            value of the detail property
  * @since 1.2
- *
  */
 public class ValuePropertyDetailValue<S, M, T> extends ValueProperty<S, T>implements IValueProperty<S, T> {
 	private IValueProperty<S, M> masterProperty;
 	private IValueProperty<? super M, T> detailProperty;
 
-	/**
-	 * @param masterProperty
-	 * @param detailProperty
-	 */
 	public ValuePropertyDetailValue(IValueProperty<S, M> masterProperty, IValueProperty<? super M, T> detailProperty) {
 		this.masterProperty = masterProperty;
 		this.detailProperty = detailProperty;

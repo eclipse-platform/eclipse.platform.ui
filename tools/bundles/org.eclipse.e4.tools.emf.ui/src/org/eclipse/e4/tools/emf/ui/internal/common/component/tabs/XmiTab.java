@@ -142,8 +142,6 @@ public class XmiTab extends Composite {
 
 	/**
 	 *
-	 * @param text
-	 * @param startOffset
 	 * @return The endOFfset, or -1 if not found
 	 */
 	protected int searchAndHighlight(String text, int startOffset) {

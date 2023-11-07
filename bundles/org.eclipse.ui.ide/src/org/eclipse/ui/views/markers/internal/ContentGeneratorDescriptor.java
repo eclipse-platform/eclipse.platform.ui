@@ -34,7 +34,6 @@ import org.eclipse.ui.views.markers.MarkerField;
  * extension point.
  *
  * @since 3.6
- *
  */
 public class ContentGeneratorDescriptor {
 
@@ -53,8 +52,6 @@ public class ContentGeneratorDescriptor {
 
 	/**
 	 * Create a new ContentGeneratorDescriptor
-	 *
-	 * @param element
 	 */
 	public ContentGeneratorDescriptor(IConfigurationElement element) {
 		configurationElement = element;
@@ -62,8 +59,6 @@ public class ContentGeneratorDescriptor {
 
 	/**
 	 * Add the groups defined in the receiver to the collection of groups.
-	 *
-	 * @param groupss
 	 */
 	private void addDefinedGroups(Collection<MarkerGroup> groupss) {
 		// Add the ones in the receiver.
@@ -87,8 +82,6 @@ public class ContentGeneratorDescriptor {
 
 	/**
 	 * Add all of the markerGroups defined in element.
-	 *
-	 * @param groupss
 	 */
 	private void addGroupsFrom(IConfigurationElement element, Collection<MarkerGroup> groupss) {
 		for (IConfigurationElement grouping : element.getChildren(MarkerSupportRegistry.MARKER_GROUPING)) {
@@ -100,7 +93,6 @@ public class ContentGeneratorDescriptor {
 	 * Return whether or not all of {@link MarkerTypesModel} are in the
 	 * selectedTypes.
 	 *
-	 * @param selectedTypes
 	 * @return boolean
 	 */
 	public boolean allTypesSelected(Collection<MarkerType> selectedTypes) {
@@ -223,7 +215,6 @@ public class ContentGeneratorDescriptor {
 	/**
 	 * Return the type for typeId.
 	 *
-	 * @param typeId
 	 * @return {@link MarkerType} or <code>null</code> if it is not found.
 	 */
 	public MarkerType getType(String typeId) {
@@ -283,8 +274,6 @@ public class ContentGeneratorDescriptor {
 
 	/**
 	 * Remove the element from the generator extensions
-	 *
-	 * @param element
 	 */
 	public void removeExtension(IConfigurationElement element) {
 		generatorExtensions.remove(element);

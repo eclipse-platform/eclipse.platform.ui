@@ -33,7 +33,6 @@ import org.eclipse.jface.text.templates.TemplateContextType;
 
 /**
  * Computer that computes the template proposals for the E4 context type.
- *
  */
 @SuppressWarnings("restriction")
 public class E4TemplateCompletionProposalComputer extends AbstractTemplateCompletionProposalComputer {

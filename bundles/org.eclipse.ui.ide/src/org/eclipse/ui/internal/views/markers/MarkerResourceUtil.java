@@ -43,7 +43,6 @@ import org.eclipse.ui.views.tasklist.ITaskListResourceAdapter;
  *
  * @author hitesh soliwal
  * @since 3.6
- *
  */
 class MarkerResourceUtil {
 
@@ -79,8 +78,6 @@ class MarkerResourceUtil {
 	 * duplicates. We collect markers with a flag of DEPTH_INFINITE; so,
 	 * effectively the children of a resource are also its duplicates.
 	 *
-	 * @param root
-	 * @param resourceSet
 	 * @return set
 	 */
 	static Set<IResource> trim2ParentResources(IWorkspaceRoot root, Set<IResource> resourceSet) {
@@ -119,8 +116,6 @@ class MarkerResourceUtil {
 	 * would save a good amount of system-resources if we ORed them before
 	 * gathering phase,removing duplicates.
 	 *
-	 * @param enabledFilters
-	 * @param root
 	 * @return set
 	 */
 	static Set<IResource> getResourcesFiltersOred(Collection<MarkerFieldFilterGroup> enabledFilters,
@@ -160,9 +155,6 @@ class MarkerResourceUtil {
 	 * ANDed the scopes(resources) we'd, save a good amount of system-resources
 	 * in both phases.
 	 *
-	 * @param enabledFilters
-	 * @param selectedResources
-	 * @param root
 	 * @return set
 	 */
 	static Set<IResource> getResourcesFiltersAnded(Collection<MarkerFieldFilterGroup> enabledFilters,
@@ -233,10 +225,6 @@ class MarkerResourceUtil {
 
 	/**
 	 * Get the resources indicated by the filter's scope.
-	 *
-	 * @param group
-	 * @param selectedResources
-	 * @param root
 	 */
 	static Set<IResource> getResourcesForFilter(MarkerFieldFilterGroup group,
 			IResource[] selectedResources, IWorkspaceRoot root) {
@@ -267,7 +255,6 @@ class MarkerResourceUtil {
 	/**
 	 * Returns the set of projects that contain the given set of resources.
 	 *
-	 * @param resources
 	 * @return IProject[]
 	 */
 	static IProject[] getProjects(IResource[] resources) {
@@ -301,9 +288,6 @@ class MarkerResourceUtil {
 
 	/**
 	 * Add the resources in resourceMapping to the resourceCollection
-	 *
-	 * @param resourceCollection
-	 * @param resourceMapping
 	 */
 	static void addResources(Collection<IResource> resourceCollection, ResourceMapping resourceMapping) {
 		try {
@@ -328,8 +312,6 @@ class MarkerResourceUtil {
 	 * 		Try to adapt to an IResource
 	 * 		Try to adapt to an IFile
 	 * 		Finally try adapting to a ResourceMapping
-	 *
-	 * @param object
 	 */
 	static Object adapt2ResourceElement(Object object) {
 		IResource resource = null;
@@ -358,8 +340,6 @@ class MarkerResourceUtil {
 
 	/**
 	 * Gets all sub-type id(s) including self, for the list of marker typeIds
-	 *
-	 * @param typeIds
 	 */
 	static String[] getAllSubTypesIds(String[] typeIds) {
 		HashSet<MarkerType> set = getAllSubTypes(typeIds);
@@ -369,8 +349,6 @@ class MarkerResourceUtil {
 	/**
 	 * Gets all sub-types {@link MarkerType} including self for the list of
 	 * marker typeIds
-	 *
-	 * @param typeIds
 	 */
 	static HashSet<MarkerType> getAllSubTypes(String[] typeIds) {
 		HashSet<MarkerType> set = new HashSet<>();
@@ -386,8 +364,6 @@ class MarkerResourceUtil {
 	/**
 	 * Gets mutually exclusive super-types ids for the list of
 	 * marker typeIds
-	 *
-	 * @param typeIds
 	 */
 	static String[] getMutuallyExclusiveSupersIds(String[] typeIds) {
 		HashSet<MarkerType> set = getMutuallyExclusiveSupers(typeIds);
@@ -397,8 +373,6 @@ class MarkerResourceUtil {
 	/**
 	 * Gets mutually exclusive super-types {@link MarkerType} for the list of
 	 * marker typeIds
-	 *
-	 * @param typeIds
 	 */
 	static HashSet<MarkerType> getMutuallyExclusiveSupers(String[] typeIds) {
 		HashSet<MarkerType> set = new HashSet<>();
@@ -420,8 +394,6 @@ class MarkerResourceUtil {
 	/**
 	 * Converts a collection of {@link MarkerType} into an array of marker
 	 * typeIds
-	 *
-	 * @param collection
 	 */
 	private static String[] toTypeStrings(Collection<MarkerType> collection) {
 		HashSet<String> ids = new HashSet<>();

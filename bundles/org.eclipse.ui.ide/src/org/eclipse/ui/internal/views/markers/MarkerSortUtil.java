@@ -71,12 +71,6 @@ public class MarkerSortUtil {
 	 * modified heapsort, such that {@literal
 	 * array[first]<array[first+1]<...<array[middle] and
 	 * array[middle]<arra[middle+1||middle+2|| ....last]}
-	 *
-	 * @param array
-	 * @param first
-	 * @param middle
-	 * @param last
-	 * @param comparator
 	 */
 	private static void partiallySort(MarkerEntry[] array, int first, int middle, int last,
 			Comparator<MarkerItem> comparator) {
@@ -89,12 +83,6 @@ public class MarkerSortUtil {
 
 	/**
 	 * Swap the max heap element with any greater elements in rest of the array
-	 *
-	 * @param heapArray
-	 * @param first
-	 * @param heapSize
-	 * @param last
-	 * @param comparator
 	 */
 	private static void adjustMaxElement(MarkerEntry[] heapArray, int first, int heapSize, int last,
 			Comparator<MarkerItem> comparator) {
@@ -123,12 +111,6 @@ public class MarkerSortUtil {
 	 *
 	 *  Note: caches are not cleared in this method, as it would offset
 	 *  to a certain extent the benefit of caching in sorting.
-	 *
-	 * @param array
-	 * @param first
-	 * @param position
-	 * @param last
-	 * @param comparator
 	 */
 	private static void adjustHeap(MarkerEntry[] array, int first,
  int position, int last,
@@ -144,11 +126,6 @@ public class MarkerSortUtil {
 	 * Percolate down the Heap: adjust left ,right, self nodes for heap starting
 	 * from hole all the way down the heap
 	 *
-	 * @param array
-	 * @param first
-	 * @param position
-	 * @param last
-	 * @param comparator
 	 * @return new holeIndex
 	 */
 	private static int leafSearch(MarkerEntry[] array, int first, int position,
@@ -177,13 +154,6 @@ public class MarkerSortUtil {
 	 * percolate up the Heap: add the hole element back to heap at the right
 	 * position, all the way up the heap between fromIndex and toIndex
 	 *
-	 * @param array
-	 * @param first
-	 * @param fromIndex
-	 * @param toIndex
-	 * @param hole
-	 * @param last
-	 * @param comparator
 	 * @return new holeIndex
 	 */
 	private static int bottomUpSearch(MarkerEntry[] array, int first, int fromIndex,
@@ -256,10 +226,6 @@ public class MarkerSortUtil {
 
 	/**
 	 * Makes a heap in the array
-	 * @param array
-	 * @param first
-	 * @param last
-	 * @param comparator
 	 */
 	private static void heapify(MarkerEntry[] array, int first, int last,
  Comparator<MarkerItem> comparator) {
@@ -273,12 +239,6 @@ public class MarkerSortUtil {
 
 	/**
 	 * Converts a heap array to sorted array
-	 *
-	 * @param array
-	 * @param first
-	 * @param last
-	 * @param comparator
-	 *
 	 */
 	private static void heapToSortedArray(MarkerEntry[] array, int first,
  int last, Comparator<MarkerItem> comparator) {
@@ -309,13 +269,6 @@ public class MarkerSortUtil {
 	 *
 	 * Note: if k is greater than a number,the sorting happens in batches of that
 	 * number, this for performance reasons.
-	 *
-	 * @param entries
-	 * @param comparator
-	 * @param from
-	 * @param to
-	 * @param k
-	 * @param monitor
 	 */
 	public static void sortStartingKElement(MarkerEntry[] entries,
  Comparator<MarkerItem> comparator, int from, int to,
@@ -370,13 +323,6 @@ public class MarkerSortUtil {
 		}
 	}
 
-	/**
-	 * @param fArray1
-	 * @param comparator
-	 * @param from
-	 * @param k
-	 * @param limit
-	 */
 	public static void sortStartingKElement(MockMarkerEntry[] fArray1,
  Comparator<MarkerItem> comparator, int from,
 			int k, int limit) {
@@ -394,11 +340,6 @@ public class MarkerSortUtil {
 	 *
 	 * Note: if k is greater than a number,the sorting happens in batches of that
 	 * number, this for performance reasons.
-	 *
-	 * @param entries
-	 * @param comparator
-	 * @param k
-	 * @param monitor
 	 */
 	public static void sortStartingKElement(MarkerEntry[] entries,
  Comparator<MarkerItem> comparator, int k,
@@ -415,12 +356,6 @@ public class MarkerSortUtil {
 	 *
 	 * Note: if k is greater than a number,the sorting happens in batches of
 	 * that number, this for performance reasons.
-	 *
-	 * @param entries
-	 * @param comparator
-	 * @param from
-	 * @param k
-	 * @param monitor
 	 */
 	public static void sortStartingKElement(MarkerEntry[] entries,
  Comparator<MarkerItem> comparator, int from, int k,

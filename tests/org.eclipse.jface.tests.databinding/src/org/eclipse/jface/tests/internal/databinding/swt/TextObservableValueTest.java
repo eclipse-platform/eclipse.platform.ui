@@ -67,8 +67,6 @@ public class TextObservableValueTest extends AbstractDefaultRealmTestCase {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=171132
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testGetValueBeforeFocusOutChangeEventsFire() throws Exception {

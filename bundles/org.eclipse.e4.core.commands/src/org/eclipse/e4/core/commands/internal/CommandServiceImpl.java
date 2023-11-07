@@ -24,9 +24,6 @@ import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.ECommandService;
 
-/**
- *
- */
 public class CommandServiceImpl implements ECommandService {
 
 	private CommandManager commandManager;

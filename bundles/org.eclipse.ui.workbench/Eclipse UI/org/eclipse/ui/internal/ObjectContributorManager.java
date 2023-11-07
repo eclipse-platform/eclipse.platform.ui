@@ -66,10 +66,6 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
 	 * @since 3.1
 	 */
 	private static class ContributorRecord {
-		/**
-		 * @param contributor
-		 * @param targetType
-		 */
 		public ContributorRecord(IObjectContributor contributor, String targetType) {
 			this.contributor = contributor;
 			this.objectClassName = targetType;
@@ -498,8 +494,6 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
 	 * Prunes from the list of adapters type names that are in the class search
 	 * order of every class in <code>results</code>.
 	 *
-	 * @param adapters
-	 * @param results
 	 * @since 3.1
 	 */
 	protected void removeCommonAdapters(List adapters, List results) {

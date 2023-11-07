@@ -20,8 +20,6 @@ public interface ICSSParserFactory {
 
 	/**
 	 * Return instance of {@link CSSParser}.
-	 *
-	 * @return
 	 */
 	public CSSParser makeCSSParser();
 }

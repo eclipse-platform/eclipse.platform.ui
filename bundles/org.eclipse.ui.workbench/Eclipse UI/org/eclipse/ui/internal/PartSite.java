@@ -554,9 +554,6 @@ public abstract class PartSite implements IWorkbenchPartSite {
 
 	/**
 	 * Get an adapter for this type.
-	 *
-	 * @param adapter
-	 * @return
 	 */
 	@Override
 	public final <T> T getAdapter(Class<T> adapter) {

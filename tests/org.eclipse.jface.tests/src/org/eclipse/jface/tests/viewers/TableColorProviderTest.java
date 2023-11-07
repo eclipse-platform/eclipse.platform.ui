@@ -86,7 +86,6 @@ public class TableColorProviderTest extends StructuredViewerTest {
 
 	/**
 	 * Test that the foregrounds are being set.
-	 *
 	 */
 	@Test
 	public void testTableItemsColorProviderForeground() {
@@ -106,7 +105,6 @@ public class TableColorProviderTest extends StructuredViewerTest {
 
 	/**
 	 * Test the table item colours.
-	 *
 	 */
 	@Test
 	public void testTableItemsColorProviderBackground() {

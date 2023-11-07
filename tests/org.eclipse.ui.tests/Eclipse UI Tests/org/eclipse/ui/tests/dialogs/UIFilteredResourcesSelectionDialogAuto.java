@@ -37,8 +37,6 @@ public class UIFilteredResourcesSelectionDialogAuto extends
 
 	/**
 	 * Checks if content provider displays expected resources from the history.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testReadHistory() throws Exception {

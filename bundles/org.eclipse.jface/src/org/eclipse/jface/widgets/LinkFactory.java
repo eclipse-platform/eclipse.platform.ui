@@ -62,7 +62,6 @@ import org.eclipse.swt.widgets.Link;
  * </p>
  *
  * @since 3.21
- *
  */
 public final class LinkFactory extends AbstractControlFactory<LinkFactory, Link> {
 
@@ -74,7 +73,6 @@ public final class LinkFactory extends AbstractControlFactory<LinkFactory, Link>
 	 * Creates a new factory with the given style. Refer to
 	 * {@link Link#Link(Composite, int)} for possible styles.
 	 *
-	 * @param style
 	 * @return a new LinkFactory instance
 	 */
 	public static LinkFactory newLink(int style) {

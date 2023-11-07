@@ -79,7 +79,6 @@ public class SearchPattern {
 	 * used. For example, with <code>"NPE"</code> string pattern, search will
 	 * only use Camel Case match rule, but with <code>N*P*E*</code> string
 	 * pattern, it will use only Pattern match rule.
-	 *
 	 */
 	public static final int RULE_CAMELCASE_MATCH = 0x0080;
 
@@ -159,7 +158,6 @@ public class SearchPattern {
 	/**
 	 * Matches text with pattern. matching is determine by matchKind.
 	 *
-	 * @param text
 	 * @return true if search pattern was matched with text false in other way
 	 */
 	public boolean matches(String text) {
@@ -223,8 +221,6 @@ public class SearchPattern {
 	}
 
 	/**
-	 * @param text
-	 * @param prefix
 	 * @return true if text starts with given prefix, ignoring case false in
 	 *         other way
 	 */
@@ -296,7 +292,6 @@ public class SearchPattern {
 	 * @param name
 	 *            the given name
 	 * @return true if the pattern matches the given name, false otherwise
-	 *
 	 */
 	private boolean camelCaseMatch(String pattern, String name) {
 		if (pattern == null)
@@ -519,7 +514,6 @@ public class SearchPattern {
 	 * Checks pattern's character is allowed for specified set. It could be
 	 * override if you want change logic of camelCaseMatch methods.
 	 *
-	 * @param patternChar
 	 * @return true if patternChar is in set of allowed characters for pattern
 	 */
 	protected boolean isPatternCharAllowed(char patternChar) {

@@ -32,7 +32,6 @@ import org.junit.Test;
 
 /**
  * @since 3.3
- *
  */
 public class Bug201002TreeViewerTest extends ViewerTestCase {
 	public static class MyModel {

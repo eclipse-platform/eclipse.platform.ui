@@ -267,11 +267,6 @@ public class LabelProviderTest extends NavigatorTestBase {
 		assertBefore(queries, 'G', 'C');
 	}
 
-	/**
-	 * @param queries
-	 * @param firstChar
-	 * @param secondChar
-	 */
 	private void assertBefore(String queries, char firstChar, char secondChar) {
 		boolean first = false;
 		final int LEN = queries.length();

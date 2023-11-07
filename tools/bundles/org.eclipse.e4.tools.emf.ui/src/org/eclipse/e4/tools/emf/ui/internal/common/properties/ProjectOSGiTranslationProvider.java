@@ -279,7 +279,6 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 		/**
 		 * Loads the properties file by using the {@link IProject} of the {@link ProjectOSGiTranslationProvider}.
 		 *
-		 * @param name
 		 * @return The {@link InputStream} to the properties file to load
 		 */
 		protected InputStream getResourceAsStream(String name) {

@@ -132,9 +132,6 @@ public class ActionExpression {
 	}
 
 	private static abstract class CompositeExpression extends AbstractExpression {
-		/**
-		 *
-		 */
 		protected ArrayList<AbstractExpression> list;
 
 		/**
@@ -283,8 +280,6 @@ public class ActionExpression {
 		/**
 		 * Create an ObjectClass expression based on the className. Added for backwards
 		 * compatibility.
-		 *
-		 * @param className
 		 */
 		public ObjectClassExpression(String className) {
 			super();
@@ -759,43 +754,36 @@ public class ActionExpression {
 
 	/**
 	 * Constant definition for AND.
-	 *
 	 */
 	public static final String EXP_TYPE_AND = "and"; //$NON-NLS-1$
 
 	/**
 	 * Constant definition for NOT.
-	 *
 	 */
 	public static final String EXP_TYPE_NOT = "not"; //$NON-NLS-1$
 
 	/**
 	 * Constant definition for objectClass.
-	 *
 	 */
 	public static final String EXP_TYPE_OBJECT_CLASS = "objectClass"; //$NON-NLS-1$
 
 	/**
 	 * Constant definition for objectState.
-	 *
 	 */
 	public static final String EXP_TYPE_OBJECT_STATE = "objectState"; //$NON-NLS-1$
 
 	/**
 	 * Constant definition for OR.
-	 *
 	 */
 	public static final String EXP_TYPE_OR = "or"; //$NON-NLS-1$
 
 	/**
 	 * Constant definition for pluginState.
-	 *
 	 */
 	public static final String EXP_TYPE_PLUG_IN_STATE = "pluginState"; //$NON-NLS-1$
 
 	/**
 	 * Constant definition for systemProperty.
-	 *
 	 */
 	public static final String EXP_TYPE_SYSTEM_PROPERTY = "systemProperty"; //$NON-NLS-1$
 

@@ -129,7 +129,6 @@ public final class IDE {
 	 *  }
 	 * </code>
 	 * </pre>
-	 *
 	 */
 	public static final QualifiedName EDITOR_KEY = new QualifiedName(
 			"org.eclipse.ui.internal.registry.ResourceEditorRegistry", "EditorProperty");//$NON-NLS-2$//$NON-NLS-1$

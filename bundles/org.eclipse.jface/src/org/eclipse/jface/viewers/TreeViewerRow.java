@@ -32,15 +32,12 @@ import org.eclipse.swt.widgets.Widget;
  * TreeViewerRow is the Tree implementation of ViewerRow.
  *
  * @since 3.3
- *
  */
 public class TreeViewerRow extends ViewerRow {
 	private TreeItem item;
 
 	/**
 	 * Create a new instance of the receiver.
-	 *
-	 * @param item
 	 */
 	TreeViewerRow(TreeItem item) {
 		this.item = item;

@@ -17,7 +17,6 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * MinimapMessages is the message class for the messages used in the minimap.
- *
  */
 public class MinimapMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.views.minimap.MinimapMessages";//$NON-NLS-1$

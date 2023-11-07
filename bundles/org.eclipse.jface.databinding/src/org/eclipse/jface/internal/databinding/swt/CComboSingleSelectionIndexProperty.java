@@ -19,12 +19,8 @@ import org.eclipse.swt.custom.CCombo;
 
 /**
  * @since 3.3
- *
  */
 public class CComboSingleSelectionIndexProperty extends SingleSelectionIndexProperty<CCombo> {
-	/**
-	 *
-	 */
 	public CComboSingleSelectionIndexProperty() {
 		super(new int[] { SWT.Selection, SWT.DefaultSelection });
 	}

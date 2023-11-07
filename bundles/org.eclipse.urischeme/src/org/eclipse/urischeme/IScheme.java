@@ -12,7 +12,6 @@ package org.eclipse.urischeme;
 
 /**
  * The basic information of an URI scheme like name and description.
- *
  */
 public interface IScheme {
 

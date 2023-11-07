@@ -32,7 +32,6 @@ import org.junit.runners.JUnit4;
 
 /**
  * @since 3.3
- *
  */
 @RunWith(JUnit4.class)
 public class MenusTest extends UITestCase {
@@ -44,17 +43,11 @@ public class MenusTest extends UITestCase {
 
 	/**
 	 * @since 3.3
-	 *
 	 */
 	private static final class TestFactory extends AbstractContributionFactory {
 		private CommandContributionItem fooItemWithNoVisibilityClause;
 		private CommandContributionItem barItemWithNoVisibilityClause;
 
-		/**
-		 * @param location
-		 * @param namespace
-		 * @param items
-		 */
 		private TestFactory(String location, String namespace) {
 			super(location, namespace);
 		}

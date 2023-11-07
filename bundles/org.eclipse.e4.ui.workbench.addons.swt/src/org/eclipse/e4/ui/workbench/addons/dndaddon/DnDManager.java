@@ -246,9 +246,6 @@ class DnDManager {
 		Display.getCurrent().update();
 	}
 
-	/**
-	 * @param performDrop
-	 */
 	private void finishDrag(boolean performDrop) {
 		// Tear down any feedback
 		if (tracker != null && !tracker.isDisposed()) {
@@ -543,9 +540,6 @@ class DnDManager {
 		return feedbackStyle;
 	}
 
-	/**
-	 * @param newBounds
-	 */
 	public void setHostBounds(Rectangle newBounds) {
 		if (dragHost == null || dragHost.isDisposed()) {
 			return;

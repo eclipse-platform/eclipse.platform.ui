@@ -30,7 +30,6 @@ import org.eclipse.ui.operations.UndoRedoActionGroup;
 
 /**
  * @since 3.4
- *
  */
 public class UndoRedoActionProvider extends CommonActionProvider {
 

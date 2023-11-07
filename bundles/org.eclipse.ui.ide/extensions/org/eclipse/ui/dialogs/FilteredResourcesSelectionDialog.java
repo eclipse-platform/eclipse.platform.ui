@@ -526,7 +526,6 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 	}
 
 	/**
-	 * @param pattern
 	 * @return the first character from the given string which <em>could</em> be
 	 *         considered a part of a file name. Returns <code>0</code> if there is
 	 *         no such character found.
@@ -924,11 +923,6 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 
 		/**
 		 * Creates new ResourceProxyVisitor instance.
-		 *
-		 * @param contentProvider
-		 * @param resourceFilter
-		 * @param progressMonitor
-		 * @throws CoreException
 		 */
 		public ResourceProxyVisitor(AbstractContentProvider contentProvider, ResourceFilter resourceFilter,
 				IProgressMonitor progressMonitor) throws CoreException {
@@ -1020,10 +1014,8 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 		/**
 		 * Creates new ResourceFilter instance
 		 *
-		 * @param container
 		 * @param searchContainer IContainer to use for performing relative search
 		 * @param showDerived     flag which determine showing derived elements
-		 * @param typeMask
 		 * @since 3.6
 		 */
 		private ResourceFilter(IContainer container, IContainer searchContainer, boolean showDerived, int typeMask) {

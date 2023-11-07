@@ -114,9 +114,6 @@ public class TabbedPropertyTitle
 		 */
 	}
 
-	/**
-	 * @param e
-	 */
 	protected void drawTitleBackground(PaintEvent e) {
 		Rectangle bounds = getClientArea();
 		label.setBackground(new Color[] {

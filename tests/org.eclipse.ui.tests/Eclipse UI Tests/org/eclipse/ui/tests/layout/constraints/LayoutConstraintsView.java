@@ -137,9 +137,6 @@ public class LayoutConstraintsView extends ViewPart implements ISizeProvider {
 
 	}
 
-	/**
-	 *
-	 */
 	protected void applyPressed() {
 		// Copy the values from the text boxes
 		minWidth = getInt(minWidthText);
@@ -232,10 +229,6 @@ public class LayoutConstraintsView extends ViewPart implements ISizeProvider {
 		return result.toString();
 	}
 
-	/**
-	 * @param minWidth2
-	 * @return
-	 */
 	private int getInt(Text text) {
 		if (text.getText().isEmpty()) {
 			return ISizeProvider.INFINITE;
@@ -248,16 +241,10 @@ public class LayoutConstraintsView extends ViewPart implements ISizeProvider {
 		}
 	}
 
-	/**
-	 *
-	 */
 	protected void updateLayout() {
 		firePropertyChange(IWorkbenchPartConstants.PROP_PREFERRED_SIZE);
 	}
 
-	/**
-	 * @param parent
-	 */
 	private Text createText(Composite parent) {
 		return new Text(parent, SWT.BORDER);
 	}

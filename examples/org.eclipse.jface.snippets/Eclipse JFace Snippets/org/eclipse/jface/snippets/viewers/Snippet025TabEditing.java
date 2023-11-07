@@ -42,7 +42,6 @@ import org.eclipse.swt.widgets.TableColumn;
  * Edit cell values in a table
  *
  * @author Tom Schindl &lt;tom.schindl@bestsolution.at&gt;
- *
  */
 public class Snippet025TabEditing {
 
@@ -97,9 +96,6 @@ public class Snippet025TabEditing {
 		return elements;
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display();
 		Shell shell = new Shell(display);

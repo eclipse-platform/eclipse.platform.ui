@@ -22,7 +22,6 @@ import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 /**
  * AllMarkersView is the view that shows all markers.
  * @since 3.4
- *
  */
 public class AllMarkersView extends MarkerSupportView {
 

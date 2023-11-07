@@ -37,15 +37,6 @@ public class ThemeElementCategory implements IPluginContribution, IThemeElementD
 
 	private String pluginId;
 
-	/**
-	 *
-	 * @param label
-	 * @param id
-	 * @param parentId
-	 * @param description
-	 * @param pluginId
-	 * @param element
-	 */
 	public ThemeElementCategory(String label, String id, String parentId, String description, String pluginId,
 			IConfigurationElement element) {
 

@@ -52,9 +52,6 @@ public abstract class AbstractElementEditorContribution {
 	 *            this contribution, added to the elements {@link CTabFolder}
 	 * @param context
 	 *            the data-binding context of the enclosing editor
-	 * @param master
-	 * @param editingDomain
-	 * @param project
 	 */
 	public abstract void createContributedEditorTab(Composite parent, EMFDataBindingContext context,
 			WritableValue<?> master, EditingDomain editingDomain, IProject project);

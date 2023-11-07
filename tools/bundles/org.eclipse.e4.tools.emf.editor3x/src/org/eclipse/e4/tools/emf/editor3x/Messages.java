@@ -18,7 +18,6 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * @author Jonas
- *
  */
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.e4.tools.emf.editor3x.messages"; //$NON-NLS-1$

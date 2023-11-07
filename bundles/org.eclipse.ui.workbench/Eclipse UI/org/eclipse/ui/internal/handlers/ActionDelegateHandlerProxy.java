@@ -236,9 +236,6 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener, ISe
 		currentPart = null;
 	}
 
-	/**
-	 *
-	 */
 	private void disposeDelegate() {
 		final IActionDelegate actDel = getDelegate();
 		if (actDel instanceof IWorkbenchWindowActionDelegate) {
@@ -292,10 +289,6 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener, ISe
 		return null;
 	}
 
-	/**
-	 * @param action
-	 * @param context
-	 */
 	private void updateDelegate(final IAction action, final IEvaluationContext context) {
 		if (action == null) {
 			return;
@@ -332,9 +325,6 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener, ISe
 		}
 	}
 
-	/**
-	 * @param activePart
-	 */
 	private void updateActivePart(IWorkbenchPart activePart) {
 		if (currentPart == activePart) {
 			return;
@@ -361,10 +351,6 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener, ISe
 		}
 	}
 
-	/**
-	 * @param context
-	 * @return
-	 */
 	private Object getCurrentSelection(final IEvaluationContext context) {
 		Object obj = context.getVariable(ISources.ACTIVE_MENU_EDITOR_INPUT_NAME);
 		if (obj == null || obj == IEvaluationContext.UNDEFINED_VARIABLE) {

@@ -94,7 +94,6 @@ public class ProgressManagerUtil {
 	/**
 	 * Return a status for the exception.
 	 *
-	 * @param exception
 	 * @return IStatus
 	 */
 	static IStatus exceptionStatus(Throwable exception) {
@@ -104,8 +103,6 @@ public class ProgressManagerUtil {
 
 	/**
 	 * Log the exception for debugging.
-	 *
-	 * @param exception
 	 */
 	static void logException(Throwable exception) {
 		BundleUtility.log(PlatformUI.PLUGIN_ID, exception);
@@ -130,8 +127,6 @@ public class ProgressManagerUtil {
 
 	/**
 	 * Open the progress view in the supplied window.
-	 *
-	 * @param window
 	 */
 	static void openProgressView(IWorkbenchWindow window) {
 		IWorkbenchPage page = window.getActivePage();
@@ -157,8 +152,6 @@ public class ProgressManagerUtil {
 	 * the original string with an ellipsis ("..."). Override if you need a
 	 * different strategy.
 	 *
-	 * @param textValue
-	 * @param control
 	 * @return String
 	 */
 	static String shortenText(String textValue, Control control) {
@@ -322,7 +315,6 @@ public class ProgressManagerUtil {
 	 * Find the second index of a whitespace. Return the first index if there isn't
 	 * one or 0 if there is no space at all.
 	 *
-	 * @param textValue
 	 * @param gc        The GC to test max length
 	 * @param maxWidth  The maximim extent
 	 * @return int

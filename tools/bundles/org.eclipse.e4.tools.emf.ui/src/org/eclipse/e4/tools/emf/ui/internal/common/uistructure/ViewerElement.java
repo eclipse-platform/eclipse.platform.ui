@@ -37,7 +37,6 @@ import jakarta.inject.Inject;
  * A viewer with buttons.
  *
  * @author wim.jongman@remainsoftware.com
- *
  */
 public class ViewerElement {
 
@@ -53,10 +52,6 @@ public class ViewerElement {
 
 	private Button upButton;
 
-	/**
-	 * @param parent
-	 * @param editor
-	 */
 	@Inject
 	public ViewerElement(Composite parent, AbstractComponentEditor<?> editor) {
 		this.parent = parent;
@@ -177,9 +172,6 @@ public class ViewerElement {
 	 * Creates and returns a new instance of this class based on the supplied
 	 * context.
 	 *
-	 * @param parentContext
-	 * @param parent
-	 * @param editor
 	 * @return a new {@link ViewerElement}
 	 */
 	public static ViewerElement create(IEclipseContext parentContext, Composite parent,

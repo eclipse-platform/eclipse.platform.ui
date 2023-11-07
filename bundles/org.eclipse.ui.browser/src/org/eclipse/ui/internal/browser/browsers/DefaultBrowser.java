@@ -25,9 +25,6 @@ import org.eclipse.ui.browser.AbstractWebBrowser;
 import org.eclipse.ui.internal.browser.Messages;
 import org.eclipse.ui.internal.browser.Trace;
 import org.eclipse.ui.internal.browser.WebBrowserUIPlugin;
-/**
- *
- */
 public class DefaultBrowser extends AbstractWebBrowser {
 	protected String location;
 	protected String parameters;
@@ -69,8 +66,6 @@ public class DefaultBrowser extends AbstractWebBrowser {
 	/**
 	 * Creates the final command to launch.
 	 *
-	 * @param path
-	 * @param url
 	 * @return String[]
 	 */
 	protected String[] prepareCommand(String path, String url) {

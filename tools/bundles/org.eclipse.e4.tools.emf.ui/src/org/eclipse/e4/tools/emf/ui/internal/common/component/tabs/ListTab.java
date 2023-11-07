@@ -111,7 +111,6 @@ import jakarta.inject.Inject;
  * EObject features.
  *
  * @author Steven Spungin
- *
  */
 public class ListTab implements IViewEObjects {
 
@@ -789,7 +788,6 @@ public class ListTab implements IViewEObjects {
 	/**
 	 * Adds a column if it does not already exist
 	 *
-	 * @param attName
 	 * @return The existing or newly created column
 	 */
 	private EAttributeTableViewerColumn addColumn(String attName) {

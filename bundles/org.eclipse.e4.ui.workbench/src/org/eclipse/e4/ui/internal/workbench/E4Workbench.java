@@ -144,9 +144,6 @@ public class E4Workbench implements IWorkbench {
 		return UUID.randomUUID().toString();
 	}
 
-	/**
-	 * @param uiRoot
-	 */
 	public void createAndRunUI(MApplicationElement uiRoot) {
 		// Has someone already created one ?
 		instantiateRenderer();
@@ -156,9 +153,6 @@ public class E4Workbench implements IWorkbench {
 		}
 	}
 
-	/**
-	 *
-	 */
 	public void instantiateRenderer() {
 		renderer = appContext.get(IPresentationEngine.class);
 		if (renderer == null) {

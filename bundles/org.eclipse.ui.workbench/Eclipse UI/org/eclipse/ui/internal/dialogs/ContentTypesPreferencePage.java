@@ -137,7 +137,6 @@ public class ContentTypesPreferencePage extends PreferencePage implements IWorkb
 		 *                     {@link IContentType#FILE_EXTENSION_SPEC},
 		 *                     {@link IContentType#FILE_PATTERN_SPEC}
 		 * @param isPredefined true if predefined, false is user-defined
-		 * @param sortValue
 		 */
 		public Spec(String specText, int specType, boolean isPredefined, int sortValue) {
 			if (specType != IContentType.FILE_NAME_SPEC && specType != IContentType.FILE_EXTENSION_SPEC

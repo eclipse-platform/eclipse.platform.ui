@@ -300,7 +300,6 @@ public class Util {
 
 	/**
 	 * A listener to reset the cache of e4Xmi resource for the index research
-	 *
 	 */
 	private static void registerE4XmiListener() {
 		// Register once on the workspace.
@@ -403,7 +402,6 @@ public class Util {
 	 * This method checks if an EClass can be extended using a fragment. ie : it
 	 * must have containment EReference to a model object.
 	 *
-	 * @param c
 	 * @return true if at least one reference type is not a StringStringToMap or
 	 *         other no editable type
 	 */
@@ -422,7 +420,6 @@ public class Util {
 	 * This method checks if an EReference can be considered in a model fragment ie
 	 * : it must be containment EReference to a model object.
 	 *
-	 * @param r
 	 * @return true if the reference is containment and type is not a
 	 *         StringStringToMap or other no editable type
 	 */

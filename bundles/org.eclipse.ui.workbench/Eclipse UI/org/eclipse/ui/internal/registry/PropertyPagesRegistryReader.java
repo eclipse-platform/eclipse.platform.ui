@@ -94,9 +94,6 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 
 		/**
 		 * Create a new category node on the given reader for the property page.
-		 *
-		 * @param reader
-		 * @param propertyPage
 		 */
 		PropertyCategoryNode(CategorizedPageRegistryReader reader, RegistryPageContributor propertyPage) {
 			super(reader);
@@ -158,9 +155,6 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 
 	/**
 	 * Register the contributor for all of the relevant classes.
-	 *
-	 * @param contributor
-	 * @param objectClassNames
 	 */
 	private void registerContributors(RegistryPageContributor contributor, List<String> objectClassNames) {
 

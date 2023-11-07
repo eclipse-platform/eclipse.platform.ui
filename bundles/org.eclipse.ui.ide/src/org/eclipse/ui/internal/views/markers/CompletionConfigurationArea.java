@@ -28,7 +28,6 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  * based on configurations.
  *
  * @since 3.4
- *
  */
 public class CompletionConfigurationArea extends FilterConfigurationArea {
 
@@ -80,9 +79,6 @@ public class CompletionConfigurationArea extends FilterConfigurationArea {
 	/**
 	 * Update the completion value based on the constant and the selection
 	 * value.
-	 *
-	 * @param constant
-	 * @param enabled
 	 */
 	void updateCompletion(int constant, boolean enabled) {
 

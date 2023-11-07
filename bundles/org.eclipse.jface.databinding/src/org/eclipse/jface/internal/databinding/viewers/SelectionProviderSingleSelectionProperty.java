@@ -31,7 +31,6 @@ import org.eclipse.jface.viewers.Viewer;
  * @param <T> type of the value of the property
  *
  * @since 3.3
- *
  */
 public class SelectionProviderSingleSelectionProperty<S extends ISelectionProvider, T>
 		extends ViewerValueProperty<S, T> {

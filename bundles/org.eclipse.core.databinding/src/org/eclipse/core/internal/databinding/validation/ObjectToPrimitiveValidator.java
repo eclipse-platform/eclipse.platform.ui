@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.Status;
 
 /**
  * @since 3.2
- *
  */
 public class ObjectToPrimitiveValidator implements IValidator<Object> {
 
@@ -36,9 +35,6 @@ public class ObjectToPrimitiveValidator implements IValidator<Object> {
 			{ Boolean.TYPE, Boolean.class },
 			{ Character.TYPE, Character.class } };
 
-	/**
-	 * @param toType
-	 */
 	public ObjectToPrimitiveValidator(Class<?> toType) {
 		this.toType = toType;
 	}

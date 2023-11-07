@@ -88,11 +88,6 @@ public class TestContentProvider implements ITreeContentProvider,
 		return NO_CHILDREN;
 	}
 
-	/**
-	 * @param parentElement
-	 * @param class1
-	 * @return
-	 */
 	private IProject adaptToProject(Object parentElement) {
 		if(parentElement instanceof IProject)
 			return (IProject) parentElement;
@@ -102,9 +97,6 @@ public class TestContentProvider implements ITreeContentProvider,
 			return Platform.getAdapterManager().getAdapter(parentElement, IProject.class);
 	}
 
-	/**
-	 * @param modelFile
-	 */
 	private TestExtensionTreeData updateModel(IFile modelFile) {
 		Properties model = new Properties();
 		if (modelFile.exists()) {

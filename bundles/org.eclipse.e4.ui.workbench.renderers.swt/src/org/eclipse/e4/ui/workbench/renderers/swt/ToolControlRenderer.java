@@ -277,8 +277,6 @@ public class ToolControlRenderer extends SWTPartRenderer {
 	 * Removes the IPresentationEngine.HIDDEN_EXPLICITLY from the trimbar
 	 * entries. Having a separate logic for toolbars and toolcontrols would be
 	 * confusing for the user, hence we remove this tag for both these types
-	 *
-	 * @param toolbarModel
 	 */
 	private void removeHiddenTags(MToolControl toolControl) {
 		MWindow mWindow = modelService.getTopLevelWindowFor(toolControl);

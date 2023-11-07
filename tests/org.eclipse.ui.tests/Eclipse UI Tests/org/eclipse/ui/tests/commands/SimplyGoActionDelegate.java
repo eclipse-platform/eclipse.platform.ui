@@ -21,7 +21,6 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 /**
  * @since 3.5
- *
  */
 public class SimplyGoActionDelegate implements IWorkbenchWindowActionDelegate {
 	static boolean executed = false;

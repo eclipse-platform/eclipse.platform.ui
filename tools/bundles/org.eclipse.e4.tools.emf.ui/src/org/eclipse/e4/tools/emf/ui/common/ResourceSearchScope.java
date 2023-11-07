@@ -21,7 +21,6 @@ package org.eclipse.e4.tools.emf.ui.common;
  * projects, and target platform.
  *
  * @author Steven Spungin
- *
  */
 public enum ResourceSearchScope {
 	/**

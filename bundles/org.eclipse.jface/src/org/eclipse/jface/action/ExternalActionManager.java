@@ -563,7 +563,6 @@ public final class ExternalActionManager {
 	 * </p>
 	 *
 	 * @since 3.4
-	 *
 	 */
 	public interface IExecuteCallback {
 
@@ -599,7 +598,6 @@ public final class ExternalActionManager {
 		 *            execution event to be fired. Cannot be <code>null</code>.
 		 * @param e
 		 *            The SWT Event, may be <code>null</code>.
-		 *
 		 */
 		void preExecute(IAction action,
 				Event e);
@@ -612,7 +610,6 @@ public final class ExternalActionManager {
 		 *            execution event to be fired. Cannot be <code>null</code>.
 		 * @param returnValue
 		 *            The command's result, may be <code>null</code>.
-		 *
 		 */
 		void postExecuteSuccess(IAction action,
 				Object returnValue);

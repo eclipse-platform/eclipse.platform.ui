@@ -180,8 +180,6 @@ public class GradientBackgroundListener implements Listener {
 	 * and percentages.
 	 *
 	 * @param gc @param rect @param gradientColors @param gradientPercents
-	 *
-	 * @param gradientVertical
 	 */
 	private static void fillGradient(GC gc, Rectangle rect,
 			List<Color> gradientColors, int[] gradientPercents,

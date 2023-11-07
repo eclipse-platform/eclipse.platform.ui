@@ -25,7 +25,6 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * Minimap page which displays scaled content of the given text editor.
- *
  */
 public class MinimapPage extends Page {
 

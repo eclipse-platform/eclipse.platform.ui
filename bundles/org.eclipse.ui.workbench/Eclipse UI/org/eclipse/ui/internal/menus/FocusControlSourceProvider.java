@@ -29,7 +29,6 @@ import org.eclipse.ui.swt.IFocusService;
 
 /**
  * @since 3.3
- *
  */
 public class FocusControlSourceProvider extends AbstractSourceProvider implements IFocusService {
 
@@ -88,9 +87,6 @@ public class FocusControlSourceProvider extends AbstractSourceProvider implement
 		return focusListener;
 	}
 
-	/**
-	 * @param widget
-	 */
 	private void focusIn(Widget widget) {
 		String id = controlToId.get(widget);
 		if (currentId != id) {

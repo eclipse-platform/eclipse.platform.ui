@@ -49,7 +49,6 @@ public class OpenWorkspaceAction extends Action implements ActionFactory.IWorkbe
 	 * chooser).
 	 *
 	 * @since 3.3
-	 *
 	 */
 	class OpenDialogAction extends Action {
 

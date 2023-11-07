@@ -23,7 +23,6 @@ import org.eclipse.ui.views.markers.MarkerItem;
  * MarkerLocationField is the field for the location field.
  *
  * @since 3.4
- *
  */
 public class MarkerLocationField extends MarkerField {
 

@@ -56,7 +56,6 @@ import org.eclipse.jface.text.tests.util.DisplayHelper;
  * Tests for Async completion proposal popup proposals filtering mechanics
  *
  * @author Alex Boyko
- *
  */
 public class FilteringAsyncContentAssistTests {
 

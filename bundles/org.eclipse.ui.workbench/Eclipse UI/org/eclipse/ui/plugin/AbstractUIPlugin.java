@@ -587,7 +587,6 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 *                      root of the plug-in; the path must be legal
 	 * @return an image descriptor, or <code>null</code> if no image could be found
 	 * @since 3.0
-	 *
 	 */
 	public static ImageDescriptor imageDescriptorFromPlugin(String pluginId, String imageFilePath) {
 		if (pluginId == null || imageFilePath == null) {

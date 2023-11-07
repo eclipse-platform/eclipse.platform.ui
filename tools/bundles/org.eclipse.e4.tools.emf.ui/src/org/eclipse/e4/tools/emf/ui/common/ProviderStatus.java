@@ -18,7 +18,6 @@ package org.eclipse.e4.tools.emf.ui.common;
  * Provider status used in IProviderStatusCallback
  *
  * @author Steven Spungin
- *
  */
 public enum ProviderStatus {
 	INITIALIZING, READY, CANCELLED

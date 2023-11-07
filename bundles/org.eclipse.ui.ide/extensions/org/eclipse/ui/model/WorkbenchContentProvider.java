@@ -143,7 +143,6 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 
 	/**
 	 * Run all of the runnables that are the widget updates
-	 * @param runnables
 	 */
 	private void runUpdates(Collection runnables) {
 		Iterator runnableIterator = runnables.iterator();
@@ -301,7 +300,6 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 	}
 	/**
 	 * Return a runnable for refreshing a resource.
-	 * @param resource
 	 * @return Runnable
 	 */
 	private Runnable getRefreshRunnable(final IResource resource) {
@@ -310,7 +308,6 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 
 		/**
 		 * Return a runnable for refreshing a resource.
-		 * @param resource
 		 * @return Runnable
 		 */
 		private Runnable getUpdateRunnable(final IResource resource) {

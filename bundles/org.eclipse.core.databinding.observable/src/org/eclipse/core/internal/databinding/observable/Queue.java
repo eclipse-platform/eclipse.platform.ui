@@ -17,7 +17,6 @@ package org.eclipse.core.internal.databinding.observable;
  * Created to avoid a dependency on java.util.LinkedList, see bug 205224.
  *
  * @since 1.1
- *
  */
 public class Queue {
 
@@ -36,8 +35,6 @@ public class Queue {
 
 	/**
 	 * Adds the given object to the end of the queue.
-	 *
-	 * @param o
 	 */
 	public void enqueue(Object o) {
 		Entry oldLast = last;

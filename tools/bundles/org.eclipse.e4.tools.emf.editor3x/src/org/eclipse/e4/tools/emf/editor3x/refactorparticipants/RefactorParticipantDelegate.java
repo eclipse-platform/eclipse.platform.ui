@@ -46,12 +46,9 @@ class RefactorParticipantDelegate {
 	 * Creates a set of changes and returns a new {@link CompositeChange} or
 	 * adds the changes to the passed {@link CompositeChange}.
 	 *
-	 * @param pProgressMonitor
 	 * @param pModel
 	 *
 	 * @return a set of changes in a {@link CompositeChange}
-	 * @throws CoreException
-	 * @throws OperationCanceledException
 	 */
 	public static CompositeChange createChange(IProgressMonitor pProgressMonitor, final RefactorModel pModel)
 			throws CoreException, OperationCanceledException {

@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * A snippet to demonstrate the progress indicator on Vista showing paused and
  * errors
- *
  */
 public class Snippet059VistaProgressIndicator {
 

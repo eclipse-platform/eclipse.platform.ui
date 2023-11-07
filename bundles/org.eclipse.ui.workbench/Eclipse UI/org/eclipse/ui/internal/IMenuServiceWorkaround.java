@@ -22,9 +22,6 @@ public interface IMenuServiceWorkaround {
 
 	/**
 	 * Disposes contributions created by service for given part. See bug 537046.
-	 *
-	 * @param site
-	 * @param part
 	 */
 	void clearContributions(PartSite site, MPart part);
 

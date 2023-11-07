@@ -22,9 +22,6 @@ import org.eclipse.ui.dialogs.PropertyPage;
  */
 public class DynamicPropertyPage extends PropertyPage {
 
-	/**
-	 *
-	 */
 	public DynamicPropertyPage() {
 		super();
 	}

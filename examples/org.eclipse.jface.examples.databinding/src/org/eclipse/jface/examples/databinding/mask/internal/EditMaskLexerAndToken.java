@@ -121,8 +121,6 @@ public class EditMaskLexerAndToken {
 
 	/**
 	 * ignores invalid input; stores valid input
-	 * @param inputCharacter
-	 * @return
 	 */
 	public boolean accept(String inputCharacter) {
 		if (readOnly) {

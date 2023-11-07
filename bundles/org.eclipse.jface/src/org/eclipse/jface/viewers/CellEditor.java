@@ -914,7 +914,6 @@ public abstract class CellEditor {
 	 * @param event
 	 *            deactivation event
 	 * @since 3.4
-	 *
 	 */
 	protected void deactivate(ColumnViewerEditorDeactivationEvent event) {
 		deactivate();

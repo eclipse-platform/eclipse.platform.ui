@@ -163,8 +163,6 @@ public class ResourceManagerTest {
 
 	/**
 	 * Tests that the descriptors themselves w
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testDescriptorAllocations() throws Exception {

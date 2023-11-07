@@ -21,7 +21,6 @@ import org.eclipse.test.performance.Dimension;
 
 /**
  * The ListViewerRefreshTest is a test of refreshing the list viewer.
- *
  */
 public class ListViewerRefreshTest extends ViewerTest {
 
@@ -51,8 +50,6 @@ public class ListViewerRefreshTest extends ViewerTest {
 
 	/**
 	 * Test the time for doing a refresh.
-	 *
-	 * @throws Throwable
 	 */
 	public void testRefresh() throws Throwable {
 

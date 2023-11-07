@@ -58,7 +58,6 @@ import org.osgi.framework.ServiceReference;
  * package
  *
  * @author Steven Spungin
- *
  */
 public class FindContributionDialog extends TitleAreaDialog {
 	private final IProject project;

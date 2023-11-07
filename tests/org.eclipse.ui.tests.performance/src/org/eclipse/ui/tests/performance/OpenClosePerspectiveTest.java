@@ -113,9 +113,6 @@ public class OpenClosePerspectiveTest extends BasicPerformanceTest {
 		assertPerformance();
 	}
 
-	/**
-	 * @param activePage
-	 */
 	private void closePerspective(IWorkbenchPage activePage) {
 		IPerspectiveDescriptor persp = activePage.getPerspective();
 

@@ -136,10 +136,6 @@ public class UnmodifiableObservableSetTest extends AbstractDefaultRealmTestCase 
 	}
 
 	private static class MutableObservableSet extends ObservableSet {
-		/**
-		 * @param wrappedList
-		 * @param elementType
-		 */
 		public MutableObservableSet(Set wrappedSet, Object elementType) {
 			super(wrappedSet, elementType);
 		}

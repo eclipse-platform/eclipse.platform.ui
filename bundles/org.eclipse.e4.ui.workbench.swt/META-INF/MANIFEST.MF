@@ -45,8 +45,8 @@ Import-Package: jakarta.annotation;version="[2.1.0,3.0.0)",
  org.osgi.framework;version="[1.5.0,2.0.0)",
  org.osgi.service.event;version="[1.3.0,2.0.0)",
  org.osgi.util.tracker;version="[1.4.0,2.0.0)"
-Service-Component: OSGI-INF/org.eclipse.e4.ui.internal.workbench.swt.MenuServiceCreationFunction.xml,
- OSGI-INF/org.eclipse.e4.ui.internal.workbench.swt.StatusReporterCreationFunction.xml,
- OSGI-INF/org.eclipse.e4.ui.internal.workbench.swt.E4Testable.xml,
- OSGI-INF/org.eclipse.e4.ui.internal.workbench.swt.ContextListener.xml
 Automatic-Module-Name: org.eclipse.e4.ui.workbench.swt
+Service-Component: OSGI-INF/org.eclipse.e4.ui.internal.workbench.swt.ContextListener.xml,
+ OSGI-INF/org.eclipse.e4.ui.internal.workbench.swt.E4Testable.xml,
+ OSGI-INF/org.eclipse.e4.ui.internal.workbench.swt.MenuServiceCreationFunction.xml,
+ OSGI-INF/org.eclipse.e4.ui.internal.workbench.swt.StatusReporterCreationFunction.xml

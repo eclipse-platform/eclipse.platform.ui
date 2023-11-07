@@ -99,7 +99,6 @@ public class PropertyDialogAction extends SelectionProviderAction {
 	 * Returns whether the provided selection has pages registered in the property
 	 * page manager.
 	 *
-	 * @param object
 	 * @return boolean
 	 */
 	private boolean hasPropertyPagesFor(IStructuredSelection object) {

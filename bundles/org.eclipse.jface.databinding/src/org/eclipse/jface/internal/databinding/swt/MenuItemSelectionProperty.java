@@ -17,13 +17,7 @@ package org.eclipse.jface.internal.databinding.swt;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MenuItem;
 
-/**
- *
- */
 public class MenuItemSelectionProperty extends WidgetBooleanValueProperty<MenuItem> {
-	/**
-	 *
-	 */
 	public MenuItemSelectionProperty() {
 		super(SWT.Selection);
 	}

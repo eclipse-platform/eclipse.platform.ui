@@ -141,7 +141,6 @@ public class DelayedEventsProcessor implements Listener {
 	 *
 	 * @param display the display to run the asynchronous operation.
 	 * @param event   the url to open is contained in <code>event.text</code>.
-	 *
 	 */
 	private static void openUrl(Display display, Event event) {
 		display.asyncExec(() -> {

@@ -201,8 +201,6 @@ public class ContainerSelectionGroup extends Composite {
 
 	/**
 	 * Creates the contents of the composite.
-	 *
-	 * @param message
 	 */
 	public void createContents(String message) {
 		createContents(message, SIZING_SELECTION_PANE_HEIGHT,
@@ -211,10 +209,6 @@ public class ContainerSelectionGroup extends Composite {
 
 	/**
 	 * Creates the contents of the composite.
-	 *
-	 * @param message
-	 * @param heightHint
-	 * @param widthHint
 	 */
 	public void createContents(String message, int heightHint, int widthHint) {
 		GridLayout layout = new GridLayout();
@@ -329,8 +323,6 @@ public class ContainerSelectionGroup extends Composite {
 
 	/**
 	 * Sets the selected existing container.
-	 *
-	 * @param container
 	 */
 	public void setSelectedContainer(IContainer container) {
 		selectedContainer = container;

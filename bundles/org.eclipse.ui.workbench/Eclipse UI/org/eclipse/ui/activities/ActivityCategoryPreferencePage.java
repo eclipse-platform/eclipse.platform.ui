@@ -270,9 +270,6 @@ public final class ActivityCategoryPreferencePage extends PreferencePage
 		return composite;
 	}
 
-	/**
-	 * @param composite
-	 */
 	private void createPromptButton(Composite composite) {
 		activityPromptButton = new Button(composite, SWT.CHECK);
 		activityPromptButton
@@ -311,9 +308,6 @@ public final class ActivityCategoryPreferencePage extends PreferencePage
 
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createDetailsArea(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -339,9 +333,6 @@ public final class ActivityCategoryPreferencePage extends PreferencePage
 		dependantViewer.setInput(Collections.EMPTY_SET);
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createCategoryArea(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();

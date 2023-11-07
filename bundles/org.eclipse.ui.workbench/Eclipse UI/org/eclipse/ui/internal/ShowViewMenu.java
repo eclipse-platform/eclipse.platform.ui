@@ -336,10 +336,6 @@ public class ShowViewMenu extends ContributionItem {
 		actions.remove(viewId);
 	}
 
-	/**
-	 * @param commandService
-	 * @param makeFast
-	 */
 	private ParameterizedCommand getCommand(ICommandService commandService, final boolean makeFast) {
 		Command c = commandService.getCommand(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW);
 		Parameterization[] parms = null;

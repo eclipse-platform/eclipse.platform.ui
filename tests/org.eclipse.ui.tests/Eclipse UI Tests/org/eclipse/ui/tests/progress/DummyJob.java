@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.jobs.Job;
  *
  * @since 3.6
  * @author Prakash G.R. (grprakash@in.ibm.com)
- *
  */
 public class DummyJob extends Job {
 

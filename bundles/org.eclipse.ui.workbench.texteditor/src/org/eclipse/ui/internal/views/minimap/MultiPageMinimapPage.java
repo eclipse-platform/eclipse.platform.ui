@@ -34,7 +34,6 @@ import org.eclipse.ui.texteditor.ITextEditor;
 /**
  * Minimap with multi page editor which shows a minimap for the current page
  * which is an {@link ITextEditor}.
- *
  */
 public class MultiPageMinimapPage extends Page {
 

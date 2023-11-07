@@ -132,8 +132,6 @@ public class WizardsRegistryReader extends RegistryReader {
 
 	/**
 	 *
-	 * @param parent
-	 * @param element
 	 * @since 3.1
 	 */
 	private WizardCollectionElement createCollectionElement(WizardCollectionElement parent,

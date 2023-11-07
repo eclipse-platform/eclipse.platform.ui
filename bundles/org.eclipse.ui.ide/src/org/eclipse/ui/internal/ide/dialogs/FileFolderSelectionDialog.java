@@ -202,7 +202,6 @@ public class FileFolderSelectionDialog extends ElementTreeSelectionDialog {
 	/**
 	 * Creates a new instance of the receiver.
 	 *
-	 * @param parent
 	 * @param multiSelect
 	 *            <code>true</code> if multi selection is allowed.
 	 *            <code>false</code> if only single selection is allowed.

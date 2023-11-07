@@ -59,7 +59,6 @@ import org.junit.runners.JUnit4;
 
 /**
  * @since 3.3
- *
  */
 @RunWith(JUnit4.class)
 public class MenuVisibilityTest extends UITestCase {

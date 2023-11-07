@@ -27,8 +27,6 @@ public class FastTableViewerRefreshTest extends TableViewerRefreshTest {
 
 	/**
 	 * Test the time for doing a refresh.
-	 *
-	 * @throws Throwable
 	 */
 	public void testRefreshMultiple() throws Throwable {
 		openBrowser();
@@ -50,8 +48,6 @@ public class FastTableViewerRefreshTest extends TableViewerRefreshTest {
 
 	/**
 	 * Test the time for doing a refresh.
-	 *
-	 * @throws Throwable
 	 */
 	public void testUpdateMultiple() throws Throwable {
 		openBrowser();

@@ -34,7 +34,6 @@ import org.junit.runners.JUnit4;
  *
  * @since 3.5
  * @author Prakash G.R.
- *
  */
 @RunWith(JUnit4.class)
 public class MarkerTesterTest extends UITestCase {

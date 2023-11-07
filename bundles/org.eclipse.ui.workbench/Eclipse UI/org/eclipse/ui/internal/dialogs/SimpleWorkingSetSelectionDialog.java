@@ -39,7 +39,6 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * references to non-editable/non-visible working sets.
  *
  * @since 3.4
- *
  */
 public class SimpleWorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 

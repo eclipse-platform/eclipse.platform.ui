@@ -362,7 +362,6 @@ public class ResourceBundleHelper {
 	 * s you have to use the bundleclass URI with the Message annotation.
 	 *
 	 * @author Dirk Fauth
-	 *
 	 */
 	static class BundleResourceBundleControl extends ResourceBundle.Control {
 

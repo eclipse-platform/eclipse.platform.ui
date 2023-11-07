@@ -138,8 +138,6 @@ public class ApplicationModelEditor extends ModelEditor {
 	/**
 	 * Shows an error dialog based on the passed exception. It should never
 	 * occur but if it does, the user can report a problem.
-	 *
-	 * @param exc
 	 */
 	protected void statusDialog(final Exception exc) {
 		try {

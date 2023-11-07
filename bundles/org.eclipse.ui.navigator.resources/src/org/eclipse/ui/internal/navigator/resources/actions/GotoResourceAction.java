@@ -32,10 +32,6 @@ public class GotoResourceAction extends Action {
 
 	protected TreeViewer viewer;
 
-	/**
-	 * @param shell
-	 * @param viewer
-	 */
 	public GotoResourceAction(Shell shell, TreeViewer viewer) {
 		this.shell = shell;
 		this.viewer = viewer;

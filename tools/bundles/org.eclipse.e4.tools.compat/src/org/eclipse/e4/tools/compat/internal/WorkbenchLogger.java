@@ -132,9 +132,6 @@ public final class WorkbenchLogger extends Logger {
 		}
 	}
 
-	/**
-	 * @param log
-	 */
 	@Inject
 	public void setFrameworkLog(FrameworkLog log) {
 		this.log = log;

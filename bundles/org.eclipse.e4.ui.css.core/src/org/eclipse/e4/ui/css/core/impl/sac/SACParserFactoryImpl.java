@@ -57,8 +57,6 @@ public class SACParserFactoryImpl extends SACParserFactory {
 
 	/**
 	 * Register SAC parser name.
-	 *
-	 * @param parser
 	 */
 	public static void registerSACParser(String parser) {
 		registerSACParser(parser, parser);
@@ -67,9 +65,6 @@ public class SACParserFactoryImpl extends SACParserFactory {
 	/**
 	 * register SAC parser with name <code>name</code> mapped with Class name
 	 * <code>classNameParser</code>.
-	 *
-	 * @param name
-	 * @param classNameParser
 	 */
 	public static void registerSACParser(String name, String classNameParser) {
 		parsers.put(name, classNameParser);

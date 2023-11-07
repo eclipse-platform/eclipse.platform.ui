@@ -25,8 +25,6 @@ import org.eclipse.core.text.StringMatcher;
  */
 public class StringFileInfoMatcher extends AbstractFileInfoMatcher {
 
-	/**
-	 */
 	public static String ID = "org.eclipse.ui.ide.patternFilterMatcher"; //$NON-NLS-1$
 
 	StringMatcher matcher = null;

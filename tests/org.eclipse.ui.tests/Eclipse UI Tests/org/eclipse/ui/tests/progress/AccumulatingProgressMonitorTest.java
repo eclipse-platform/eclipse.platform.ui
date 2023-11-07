@@ -38,7 +38,6 @@ import org.junit.runners.JUnit4;
  * on the UI thread.
  *
  * @since 3.5
- *
  */
 @RunWith(JUnit4.class)
 public class AccumulatingProgressMonitorTest {

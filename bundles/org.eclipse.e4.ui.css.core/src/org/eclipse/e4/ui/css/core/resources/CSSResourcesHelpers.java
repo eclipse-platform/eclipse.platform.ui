@@ -22,7 +22,6 @@ import org.w3c.dom.css.RGBColor;
 
 /**
  * CSS Resources Helper to manage {@link IResourcesRegistry}.
- *
  */
 public class CSSResourcesHelpers {
 
@@ -39,9 +38,6 @@ public class CSSResourcesHelpers {
 	/**
 	 * Return the key of the CSSPrimitiveValue <code>value</code> which is
 	 * used to cache Resource into {@link IResourcesRegistry}.
-	 *
-	 * @param value
-	 * @return
 	 */
 	public static String getCSSPrimitiveValueKey(CSSPrimitiveValue value) {
 		switch (value.getPrimitiveType()) {
@@ -91,11 +87,6 @@ public class CSSResourcesHelpers {
 	 * Return the resource type of <code>type</code> cached into
 	 * <code>resourcesRegistry</code> with CSSPrimitiveValue
 	 * <code>value</code> key.
-	 *
-	 * @param resourcesRegistry
-	 * @param type
-	 * @param value
-	 * @return
 	 */
 	public static Object getResource(IResourcesRegistry resourcesRegistry, Object type, CSSPrimitiveValue value) {
 		String key = getCSSPrimitiveValueKey(value);
@@ -105,11 +96,6 @@ public class CSSResourcesHelpers {
 	/**
 	 * Return the resource type of <code>type</code> cached into
 	 * <code>resourcesRegistry</code> with key <code>key</code>.
-	 *
-	 * @param resourcesRegistry
-	 * @param type
-	 * @param key
-	 * @return
 	 */
 	public static Object getResource(IResourcesRegistry resourcesRegistry, Object type, String key) {
 		if (key == null) {
@@ -125,11 +111,6 @@ public class CSSResourcesHelpers {
 	 * Register the <code>resource</code> type of <code>type</code> into
 	 * <code>resourcesRegistry</code> with CSSPrimitiveValue
 	 * <code>value</code> key.
-	 *
-	 * @param resourcesRegistry
-	 * @param type
-	 * @param value
-	 * @param resource
 	 */
 	public static void registerResource(IResourcesRegistry resourcesRegistry, Object type, CSSPrimitiveValue value,
 			Object resource) {
@@ -144,11 +125,6 @@ public class CSSResourcesHelpers {
 	/**
 	 * Register the <code>resource</code> type of <code>type</code> into
 	 * <code>resourcesRegistry</code> with <code>key</code>.
-	 *
-	 * @param resourcesRegistry
-	 * @param type
-	 * @param key
-	 * @param resource
 	 */
 	public static void registerResource(IResourcesRegistry resourcesRegistry, Object type, String key,
 			Object resource) {

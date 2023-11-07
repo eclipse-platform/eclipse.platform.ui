@@ -350,9 +350,6 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		}
 	}
 
-	/**
-	 *
-	 */
 	@PostConstruct
 	public void init() {
 		context.set(ToolBarManagerRenderer.class, this);
@@ -440,10 +437,6 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		return renderedCtrl;
 	}
 
-	/**
-	 * @param toolbarModel
-	 * @param elementId
-	 */
 	public void processContribution(MToolBar toolbarModel, String elementId) {
 
 		ToolBarManager manager = getManager(toolbarModel);
@@ -587,10 +580,6 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		}
 	}
 
-	/**
-	 * @param record
-	 * @param copy
-	 */
 	public void cleanUpCopy(ToolBarContributionRecord record, MToolBarElement copy) {
 		modelContributionToRecord.remove(copy);
 		IContributionItem ici = getContribution(copy);
@@ -832,7 +821,6 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	}
 
 	/**
-	 * @param model
 	 * @return mapped manager, if any
 	 */
 	public ToolBarManager getManager(MToolBar model) {
@@ -840,17 +828,12 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	}
 
 	/**
-	 * @param manager
 	 * @return mapped model, if any
 	 */
 	public MToolBar getToolBarModel(ToolBarManager manager) {
 		return managerToModel.get(manager);
 	}
 
-	/**
-	 * @param model
-	 * @param manager
-	 */
 	public void linkModelToManager(MToolBar model, ToolBarManager manager) {
 		modelToManager.put(model, manager);
 		managerToModel.put(manager, model);
@@ -860,10 +843,6 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		}
 	}
 
-	/**
-	 * @param model
-	 * @param manager
-	 */
 	public void clearModelToManager(MToolBar model, ToolBarManager manager) {
 		for (MToolBarElement element : model.getChildren()) {
 			if (element instanceof MToolBar) {
@@ -886,7 +865,6 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	}
 
 	/**
-	 * @param element
 	 * @return mapped contribution, if any
 	 */
 	public IContributionItem getContribution(MToolBarElement element) {
@@ -894,17 +872,12 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	}
 
 	/**
-	 * @param item
 	 * @return mapped toolbar element, if any
 	 */
 	public MToolBarElement getToolElement(IContributionItem item) {
 		return contributionToModel.get(item);
 	}
 
-	/**
-	 * @param model
-	 * @param item
-	 */
 	public void linkModelToContribution(MToolBarElement model, IContributionItem item) {
 		modelToContribution.put(model, item);
 		contributionToModel.put(item, model);
@@ -915,10 +888,6 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		}
 	}
 
-	/**
-	 * @param model
-	 * @param item
-	 */
 	public void clearModelToContribution(MToolBarElement model, IContributionItem item) {
 		if (model instanceof MToolBar) {
 			for (MToolBarElement element : ((MToolBar) model).getChildren()) {
@@ -936,7 +905,6 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	}
 
 	/**
-	 * @param item
 	 * @return non null records list
 	 */
 	public ArrayList<ToolBarContributionRecord> getList(MToolBarElement item) {
@@ -948,26 +916,17 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		return tmp;
 	}
 
-	/**
-	 * @param element
-	 * @param record
-	 */
 	public void linkElementToContributionRecord(MToolBarElement element, ToolBarContributionRecord record) {
 		modelContributionToRecord.put(element, record);
 	}
 
 	/**
-	 * @param element
 	 * @return mapped record, if any
 	 */
 	public ToolBarContributionRecord getContributionRecord(MToolBarElement element) {
 		return modelContributionToRecord.get(element);
 	}
 
-	/**
-	 * @param menuManager
-	 * @param toolBar
-	 */
 	public void reconcileManagerToModel(IToolBarManager menuManager, MToolBar toolBar) {
 		List<MToolBarElement> newChildren = new ArrayList<>();
 

@@ -45,8 +45,6 @@ public abstract class TestSelectionAction extends TestBrowserAction implements I
 	/**
 	 * The default implementation calls run(TestElement) on every element contained
 	 * in the vector.
-	 *
-	 * @param o
 	 */
 	abstract protected void run(TestElement o);
 

@@ -29,7 +29,6 @@ import org.eclipse.ui.statushandlers.WorkbenchStatusDialogManager;
  * {@link WorkbenchStatusDialogManager} properties. Some properties may be
  * promoted to the API. Some of those properties are used to configure the
  * dialog, while others are used to describe the state of the dialgo.
- *
  */
 public interface IStatusDialogConstants {
 

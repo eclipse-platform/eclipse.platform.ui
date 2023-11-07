@@ -20,20 +20,13 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * @since 3.4
- *
  */
 public class SchemeElement extends ModelElement {
 
-	/**
-	 * @param kc
-	 */
 	public SchemeElement(KeyController kc) {
 		super(kc);
 	}
 
-	/**
-	 * @param scheme
-	 */
 	public void init(Scheme scheme) {
 		setId(scheme.getId());
 		setModelObject(scheme);

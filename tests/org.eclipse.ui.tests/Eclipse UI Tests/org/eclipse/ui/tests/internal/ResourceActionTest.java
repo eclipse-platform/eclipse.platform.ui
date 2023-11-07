@@ -11,7 +11,6 @@ import org.junit.Before;
 
 /**
  * @since 3.5
- *
  */
 public abstract class ResourceActionTest {
 

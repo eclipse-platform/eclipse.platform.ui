@@ -1740,7 +1740,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 * {@inheritDoc}
 		 * <p>
 		 * Subclasses may extend this method.</p>
-		 *
 		 */
 		@Override
 		public void dispose() {

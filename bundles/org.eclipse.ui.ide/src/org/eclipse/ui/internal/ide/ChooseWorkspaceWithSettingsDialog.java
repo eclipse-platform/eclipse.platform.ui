@@ -62,7 +62,6 @@ import org.osgi.framework.FrameworkUtil;
  * with an optional settings export.
  *
  * @since 3.3
- *
  */
 public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 
@@ -115,8 +114,6 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 
 	/**
 	 * Create the controls for selecting the controls we are going to export.
-	 *
-	 * @param workArea
 	 */
 	private void createSettingsControls(Composite workArea) {
 		final FormToolkit toolkit = new FormToolkit(workArea.getDisplay());
@@ -164,8 +161,6 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 	/**
 	 * Create the buttons for the settings transfer.
 	 *
-	 * @param toolkit
-	 * @param sectionClient
 	 * @return boolean <code>true</code> if any were selected
 	 */
 	private boolean createButtons(FormToolkit toolkit, Composite sectionClient) {
@@ -242,7 +237,6 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 	/**
 	 * Get the settings for the receiver based on the entries in section.
 	 *
-	 * @param section
 	 * @return String[] or <code>null</code>
 	 */
 	private String[] getEnabledSettings(IDialogSettings section) {
@@ -289,8 +283,6 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 
 	/**
 	 * Save the ids of the selected elements.
-	 *
-	 * @param selectionIDs
 	 */
 	private void saveSettings(String[] selectionIDs) {
 		IDialogSettings dialogSettings = PlatformUI
@@ -308,8 +300,6 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 	/**
 	 * Take the values from element and execute the class for path.
 	 *
-	 * @param elem
-	 * @param path
 	 * @return IStatus the result of the settings transfer.
 	 */
 	private IStatus transferSettings(final IConfigurationElement element,

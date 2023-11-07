@@ -81,19 +81,12 @@ public class Bug205700TreeViewerTest {
 				"Child8", "Child9" });
 	}
 
-	/**
-	 * @param names
-	 */
 	private void assertItemNames(String[] names) {
 		for (int i = 0; i < names.length; i++) {
 			assertItemName(i, names[i]);
 		}
 	}
 
-	/**
-	 * @param index
-	 * @param name
-	 */
 	private void assertItemName(int index, String name) {
 		assertEquals("at " + index, name, viewer.getTree().getItem(index).getText());
 	}

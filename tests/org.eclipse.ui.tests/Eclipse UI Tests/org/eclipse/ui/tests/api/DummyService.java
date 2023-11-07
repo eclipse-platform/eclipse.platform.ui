@@ -20,7 +20,6 @@ import org.eclipse.ui.internal.services.INestable;
  *
  * @since 3.5
  * @author Prakash G.R.
- *
  */
 public class DummyService implements INestable {
 

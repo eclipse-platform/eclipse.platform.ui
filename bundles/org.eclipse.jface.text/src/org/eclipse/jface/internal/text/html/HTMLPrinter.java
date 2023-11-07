@@ -223,7 +223,6 @@ public class HTMLPrinter {
 	 * @param pageProlog The Pageprolog where the color has to be set
 	 * @param fgRGB Foreground-Color
 	 * @param bgRGB Background-Color
-	 *
 	 */
 	private static void appendColors(StringBuilder pageProlog, RGB fgRGB, RGB bgRGB) {
 		pageProlog.append("<body text=\""); //$NON-NLS-1$
@@ -256,7 +255,6 @@ public class HTMLPrinter {
 	 *
 	 * @param buffer The Output buffer
 	 * @param rgb RGB-Value
-	 *
 	 */
 	private static void appendColor(StringBuilder buffer, RGB rgb) {
 		buffer.append('#');
@@ -285,7 +283,6 @@ public class HTMLPrinter {
 	 *
 	 * @param buffer the output buffer
 	 * @param intValue the intValue will be converted to hex and appended
-	 *
 	 */
 	private static void appendAsHexString(StringBuilder buffer, int intValue) {
 		String hexValue= Integer.toHexString(intValue);
@@ -313,7 +310,6 @@ public class HTMLPrinter {
 	 *
 	 * @param buffer the output buffer
 	 * @param styles array with styles to be appended
-	 *
 	 */
 	public static void insertStyles(StringBuilder buffer, String[] styles) {
 		if (styles == null || styles.length == 0)
@@ -386,7 +382,6 @@ public class HTMLPrinter {
 	 * @param styleSheet the stylesheet
 	 * @param fgRGB Foreground-Color
 	 * @param bgRGB Background-Color
-	 *
 	 */
 	private static void appendStyleSheet(StringBuilder buffer, String styleSheet, RGB fgRGB, RGB bgRGB) {
 		if (styleSheet == null)
@@ -452,7 +447,6 @@ public class HTMLPrinter {
 	 *
 	 * @param buffer the output buffer
 	 * @param styleSheetURL the URL to the Stylesheet
-	 *
 	 */
 	private static void appendStyleSheetURL(StringBuilder buffer, URL styleSheetURL) {
 		if (styleSheetURL == null)
@@ -493,7 +487,6 @@ public class HTMLPrinter {
 	 *
 	 * @param buffer the output buffer
 	 * @param position the offset
-	 *
 	 */
 	public static void insertPageProlog(StringBuilder buffer, int position) {
 		StringBuilder pageProlog= new StringBuilder(60);
@@ -539,7 +532,6 @@ public class HTMLPrinter {
 	 * @param buffer the output buffer
 	 * @param position the offset
 	 * @param styleSheetURL URL to the Stylesheet
-	 *
 	 */
 	public static void insertPageProlog(StringBuilder buffer, int position, URL styleSheetURL) {
 		StringBuilder pageProlog= new StringBuilder(300);
@@ -554,7 +546,6 @@ public class HTMLPrinter {
 	 * @param buffer the output buffer
 	 * @param position the offset
 	 * @param styleSheet Stylesheet
-	 *
 	 */
 	public static void insertPageProlog(StringBuilder buffer, int position, String styleSheet) {
 		insertPageProlog(buffer, position, null, null, styleSheet);
@@ -576,7 +567,6 @@ public class HTMLPrinter {
 	/**
 	 *
 	 * @param buffer the output buffer
-	 *
 	 */
 	public static void addPageProlog(StringBuilder buffer) {
 		insertPageProlog(buffer, buffer.length());
@@ -611,7 +601,6 @@ public class HTMLPrinter {
 	/**
 	 *
 	 * @param buffer the output buffer
-	 *
 	 */
 	public static void startBulletList(StringBuilder buffer) {
 		buffer.append("<ul>"); //$NON-NLS-1$
@@ -632,7 +621,6 @@ public class HTMLPrinter {
 	 * ends the bulletpointlist
 	 *
 	 * @param buffer the output buffer
-	 *
 	 */
 	public static void endBulletList(StringBuilder buffer) {
 		buffer.append("</ul>"); //$NON-NLS-1$
@@ -655,7 +643,6 @@ public class HTMLPrinter {
 	 *
 	 * @param buffer the output buffer
 	 * @param bullet the bulletpoint
-	 *
 	 */
 	public static void addBullet(StringBuilder buffer, String bullet) {
 		if (bullet != null) {
@@ -688,7 +675,6 @@ public class HTMLPrinter {
 	 *
 	 * @param buffer the output buffer
 	 * @param header of h5 headline
-	 *
 	 */
 	public static void addSmallHeader(StringBuilder buffer, String header) {
 		if (header != null) {
@@ -720,7 +706,6 @@ public class HTMLPrinter {
 	 *
 	 * @param buffer the output buffer
 	 * @param paragraph the content of the paragraph
-	 *
 	 */
 	public static void addParagraph(StringBuilder buffer, String paragraph) {
 		if (paragraph != null) {
@@ -795,7 +780,6 @@ public class HTMLPrinter {
 	 *
 	 * @param buffer the output buffer
 	 * @param paragraphReader The content of the Read will be added to output buffer
-	 *
 	 */
 	public static void addParagraph(StringBuilder buffer, Reader paragraphReader) {
 		if (paragraphReader != null)

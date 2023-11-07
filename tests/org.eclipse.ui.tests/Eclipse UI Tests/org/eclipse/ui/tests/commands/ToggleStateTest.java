@@ -43,7 +43,6 @@ import org.junit.runners.MethodSorters;
 /**
  * @since 3.5
  * @author Prakash G.R.
- *
  */
 @RunWith(JUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)

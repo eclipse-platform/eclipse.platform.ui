@@ -94,7 +94,6 @@ public abstract class AbstractStringToNumberValidator implements IValidator<Obje
 	/**
 	 * Invoked by {@link #validate(Object)} when the range is to be validated.
 	 *
-	 * @param number
 	 * @return <code>true</code> if in range
 	 */
 	protected abstract boolean isInRange(Number number);

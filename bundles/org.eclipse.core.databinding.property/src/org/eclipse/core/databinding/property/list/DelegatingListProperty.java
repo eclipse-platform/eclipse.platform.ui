@@ -31,7 +31,6 @@ import org.eclipse.core.databinding.property.ISimplePropertyListener;
  * @param <E>
  *            type of the elements in the list
  * @since 1.2
- *
  */
 public abstract class DelegatingListProperty<S, E> extends ListProperty<S, E> {
 	private final IListProperty<S, E> nullProperty;

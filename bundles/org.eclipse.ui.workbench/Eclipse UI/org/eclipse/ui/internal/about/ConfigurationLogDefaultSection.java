@@ -47,9 +47,6 @@ public class ConfigurationLogDefaultSection implements ISystemSummarySection {
 		appendSection(SECTION_USER_PREFERENCES, WorkbenchMessages.SystemSummary_userPreferences, writer);
 	}
 
-	/**
-	 * @param writer
-	 */
 	private void appendSection(String section, String caption, PrintWriter writer) {
 		writer.println();
 		writer.println(caption);

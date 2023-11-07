@@ -413,8 +413,6 @@ public class IWorkingSetManagerTest extends UITestCase {
 	}
 	/**
 	 * Tests to ensure that a misbehaving listener does not bring down the manager.
-	 *
-	 * @throws Throwable
 	 */
 	@Test
 	public void testListenerSafety() throws Throwable {
@@ -439,11 +437,6 @@ public class IWorkingSetManagerTest extends UITestCase {
 		}
 	}
 
-	/**
-	 * @param setIds
-	 * @param i
-	 * @return
-	 */
 	private IWorkingSet createSet(final String[] setIds, final int i) {
 		return new IWorkingSet() {
 
