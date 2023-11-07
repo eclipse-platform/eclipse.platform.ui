@@ -17,7 +17,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.application;
 
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.text.Collator;
 import java.util.ArrayList;
@@ -41,8 +40,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.ProgressMonitorWrapper;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
@@ -52,19 +51,14 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TrayDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Resource;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
@@ -84,7 +78,6 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.internal.ide.undo.WorkspaceUndoMonitor;
-import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.statushandlers.AbstractStatusHandler;
 import org.eclipse.urischeme.AutoRegisterSchemeHandlersJob;
@@ -462,71 +455,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		}
 	}
 
-	protected static class CancelableProgressMonitorWrapper extends
-			ProgressMonitorWrapper {
-		private double total = 0;
-		private ProgressMonitorJobsDialog dialog;
 
-		CancelableProgressMonitorWrapper(IProgressMonitor monitor,
-				ProgressMonitorJobsDialog dialog) {
-			super(monitor);
-			this.dialog = dialog;
-		}
-
-		@Override
-		public void internalWorked(double work) {
-			super.internalWorked(work);
-			total += work;
-			updateProgressDetails();
-		}
-
-		@Override
-		public void worked(int work) {
-			super.worked(work);
-			total += work;
-			updateProgressDetails();
-		}
-
-		@Override
-		public void beginTask(String name, int totalWork) {
-			super.beginTask(name, totalWork);
-			subTask(IDEWorkbenchMessages.IDEWorkbenchAdvisor_preHistoryCompaction);
-		}
-
-		private void updateProgressDetails() {
-			if (!isCanceled() && Math.abs(total - 4.0) < 0.0001 /* right before history compacting */) {
-				subTask(IDEWorkbenchMessages.IDEWorkbenchAdvisor_cancelHistoryPruning);
-				dialog.setCancelable(true);
-			}
-			if (Math.abs(total - 5.0) < 0.0001 /* history compacting finished */) {
-				subTask(IDEWorkbenchMessages.IDEWorkbenchAdvisor_postHistoryCompaction);
-				dialog.setCancelable(false);
-			}
-		}
-	}
-
-	protected static class CancelableProgressMonitorJobsDialog extends
-			ProgressMonitorJobsDialog {
-
-		public CancelableProgressMonitorJobsDialog(Shell parent) {
-			super(parent);
-		}
-
-		@Override
-		protected void createButtonsForButtonBar(Composite parent) {
-			super.createButtonsForButtonBar(parent);
-			registerCancelButtonListener();
-		}
-
-		public void registerCancelButtonListener() {
-			cancel.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					subTaskLabel.setText(""); //$NON-NLS-1$
-				}
-			});
-		}
-	}
 
 	/**
 	 * Disconnect from the core workspace.
@@ -539,31 +468,9 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		final MultiStatus status = new MultiStatus(IDEWorkbenchPlugin.IDE_WORKBENCH, 1,
 				IDEWorkbenchMessages.ProblemSavingWorkbench);
 		try {
-			final ProgressMonitorJobsDialog p = new CancelableProgressMonitorJobsDialog(
-					null);
+			status.merge(((Workspace) ResourcesPlugin.getWorkspace()).save(true, true, new NullProgressMonitor()));
 
-			final boolean applyPolicy = ResourcesPlugin.getWorkspace()
-					.getDescription().isApplyFileStatePolicy();
-
-			IRunnableWithProgress runnable = monitor -> {
-				try {
-					if (applyPolicy)
-						monitor = new CancelableProgressMonitorWrapper(monitor, p);
-
-					status.merge(((Workspace) ResourcesPlugin.getWorkspace()).save(true, true, monitor));
-				} catch (CoreException e) {
-					status.merge(e.getStatus());
-				}
-			};
-
-			p.run(true, false, runnable);
-		} catch (InvocationTargetException e) {
-			status
-					.merge(new Status(IStatus.ERROR,
-							IDEWorkbenchPlugin.IDE_WORKBENCH, 1,
-							IDEWorkbenchMessages.InternalError, e
-									.getTargetException()));
-		} catch (InterruptedException e) {
+		} catch (CoreException e) {
 			status.merge(new Status(IStatus.ERROR,
 					IDEWorkbenchPlugin.IDE_WORKBENCH, 1,
 					IDEWorkbenchMessages.InternalError, e));
