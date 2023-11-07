@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.search.tests.filesearch;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assume.assumeFalse;
@@ -137,8 +141,8 @@ public class PositionTrackerTest {
 
 			for (int i= 0; i < originalStarts.length; i++) {
 				Position currentPosition= InternalSearchUI.getInstance().getPositionTracker().getCurrentPosition(matches[i]);
-				assertNotNull(currentPosition);
-				assertEquals(originalStarts[i] + "Test".length(), currentPosition.getOffset());
+				assertThat(String.format("No position for match '%s' in file '%s'", matches[i], file), currentPosition, not(is(nullValue())));
+				assertEquals(originalStarts[i] + "Test".length(),currentPosition.getOffset());
 
 			}
 		} finally {
