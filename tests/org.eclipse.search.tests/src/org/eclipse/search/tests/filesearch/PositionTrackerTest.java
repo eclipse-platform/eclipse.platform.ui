@@ -19,11 +19,13 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assume.assumeFalse;
 
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -33,13 +35,16 @@ import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.LocationKind;
 
-import org.eclipse.jface.util.Util;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.text.FileSearchQuery;
@@ -58,6 +63,29 @@ public class PositionTrackerTest {
 	@ClassRule
 	public static JUnitSourceSetup junitSource= new JUnitSourceSetup();
 
+	@Rule
+	public final TestWatcher temporaryPreferenceDisablement= new TestWatcher() {
+		private boolean oldLineNumberRulerValue= true;
+		private boolean oldQuickDiffAlwaysOnValue= true;
+
+		@Override
+		protected void starting(Description description) {
+			IPreferenceStore store= EditorsPlugin.getDefault().getPreferenceStore();
+			oldLineNumberRulerValue= store.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER);
+			oldQuickDiffAlwaysOnValue= store.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON);
+			store.setValue(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, false);
+			store.setValue(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON, false);
+		}
+
+		@Override
+		protected void finished(Description description) {
+			IPreferenceStore store= EditorsPlugin.getDefault().getPreferenceStore();
+			store.setValue(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, oldLineNumberRulerValue);
+			store.setValue(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON, oldQuickDiffAlwaysOnValue);
+		}
+
+	};
+
 	@Before
 	public void setUp() throws Exception {
 		String[] fileNamePatterns= { "*.java" };
@@ -65,7 +93,6 @@ public class PositionTrackerTest {
 
 		fQuery1= new FileSearchQuery("Test", false, true, scope);
 	}
-
 
 	@Test
 	public void testInsertAt0() throws Exception {
@@ -83,7 +110,6 @@ public class PositionTrackerTest {
 
 	@Test
 	public void testInsertInsideMatch() throws Exception {
-		assumeFalse("test fails on Mac, see https://github.com/eclipse-platform/eclipse.platform.ui/issues/882", Util.isMac());
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		FileSearchResult result= (FileSearchResult) fQuery1.getSearchResult();
 		Object[] elements= result.getElements();
@@ -141,7 +167,7 @@ public class PositionTrackerTest {
 
 			for (int i= 0; i < originalStarts.length; i++) {
 				Position currentPosition= InternalSearchUI.getInstance().getPositionTracker().getCurrentPosition(matches[i]);
-				assertThat(String.format("No position for match '%s' in file '%s'", matches[i], file), currentPosition, not(is(nullValue())));
+				assertThat("No position for match found: " + matches[i], currentPosition, not(is(nullValue())));
 				assertEquals(originalStarts[i] + "Test".length(),currentPosition.getOffset());
 
 			}
