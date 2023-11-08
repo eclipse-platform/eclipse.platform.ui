@@ -4,7 +4,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.e4.tools.persistence;singleton:=true
 Automatic-Module-Name: org.eclipse.e4.tools.persistence
-Bundle-Version: 1.1.100.qualifier
+Bundle-Version: 1.1.200.qualifier
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %Bundle-Vendor
 Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.29.0,4.0.0)",
