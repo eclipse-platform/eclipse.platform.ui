@@ -14,6 +14,7 @@
 
 package org.eclipse.e4.core.commands.internal;
 
+import java.lang.ref.WeakReference;
 import org.eclipse.core.commands.AbstractHandlerWithState;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -43,7 +44,7 @@ public class HandlerServiceHandler extends AbstractHandlerWithState {
 
 	protected final String commandId;
 	// Remove state from currentStateHandler when it goes out of scope
-	private IObjectWithState currentStateHandler;
+	private WeakReference<IObjectWithState> currentStateHandler = new WeakReference<IObjectWithState>(null);
 
 	public HandlerServiceHandler(String commandId) {
 		this.commandId = commandId;
@@ -250,11 +251,12 @@ public class HandlerServiceHandler extends AbstractHandlerWithState {
 		} else {
 			typed = null;
 		}
-		IObjectWithState oldHandler = currentStateHandler;
+
+		IObjectWithState oldHandler = currentStateHandler.get();
 		if (oldHandler == typed) {
 			return;
 		}
-		currentStateHandler = typed;
+		currentStateHandler = new WeakReference<>(typed);
 		for (String id : getStateIds()) {
 			if (oldHandler != null) {
 				oldHandler.removeState(id);
