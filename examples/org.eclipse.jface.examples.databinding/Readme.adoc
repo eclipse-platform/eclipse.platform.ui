@@ -1,0 +1,7 @@
+JFace Data Binding/Snippets
+
+Snippets show how common use cases can be implemented using the JFace Data Binding framework. 
+
+They are typically a single self-contained Java class with a main method.
+
+Most of the examples in the snippets folder provide a main method, you can run it as a Java Application to see what happens.
