@@ -31,12 +31,18 @@ public interface IObjectWithState {
 	/**
 	 * Adds state to this object.
 	 *
-	 * @param id
-	 *            The identifier indicating the type of state being added; must
-	 *            not be <code>null</code>.
-	 * @param state
-	 *            The new state to add to this object; must not be
-	 *            <code>null</code>.
+	 * Usually, consumers will call <code>removeState()</code> with a matching id in
+	 * the same lifecycle of IObjectWithState. However, this behavior is not
+	 * guaranteed. Implementors should not rely on <code>removeState()</code> for
+	 * resource disposal. The recommended practice is to free resources associated
+	 * with non-removed states in some kind of dispose() method.
+	 *
+	 * @see AbstractHandlerWithState
+	 *
+	 * @param id    The identifier indicating the type of state being added; must
+	 *              not be <code>null</code>.
+	 * @param state The new state to add to this object; must not be
+	 *              <code>null</code>.
 	 */
 	public void addState(String id, State state);
 
