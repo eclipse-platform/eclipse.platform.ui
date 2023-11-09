@@ -34,17 +34,17 @@ public class TestJob extends Job {
 	/**
 	 * Total duration that the test job should sleep, in milliseconds.
 	 */
-	private long duration;
+	private final long duration;
 	/**
 	 * Whether the test job should fail.
 	 */
-	private boolean failure;
+	private final boolean failure;
 	/**
 	 * Whether the job should report unknown progress.
 	 */
-	private boolean unknown;
-	private boolean reschedule;
-	private long rescheduleWait;
+	private final boolean unknown;
+	private final boolean reschedule;
+	private final long rescheduleWait;
 
 	/**
 	 * Creates a new test job

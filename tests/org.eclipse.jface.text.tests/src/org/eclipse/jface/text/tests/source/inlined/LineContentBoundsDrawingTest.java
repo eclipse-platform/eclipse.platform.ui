@@ -58,7 +58,7 @@ public class LineContentBoundsDrawingTest {
 		};
 	}
 
-	private String text;
+	private final String text;
 
 	public LineContentBoundsDrawingTest(String text) {
 		this.text = text;

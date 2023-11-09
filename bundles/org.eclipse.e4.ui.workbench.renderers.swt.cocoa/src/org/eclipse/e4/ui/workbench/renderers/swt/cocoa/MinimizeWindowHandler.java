@@ -15,7 +15,7 @@
 
 package org.eclipse.e4.ui.workbench.renderers.swt.cocoa;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.swt.internal.cocoa.NSWindow;

@@ -30,9 +30,9 @@ public abstract class SaveDialogBoundsSettingsDialog extends TitleAreaDialog {
 	private static final int DIALOG_MINIMUM_HEIGHT = 300;
 	private static final int DIALOG_MINIMUM_WIDTH = 400;
 
-	private IDialogSettings dialogSettings = new DialogSettings(Plugin.ID);
+	private final IDialogSettings dialogSettings = new DialogSettings(Plugin.ID);
 
-	private Preferences preferences = InstanceScope.INSTANCE.getNode(Plugin.ID);
+	private final Preferences preferences = InstanceScope.INSTANCE.getNode(Plugin.ID);
 
 	public SaveDialogBoundsSettingsDialog(Shell parentShell) {
 		super(parentShell);

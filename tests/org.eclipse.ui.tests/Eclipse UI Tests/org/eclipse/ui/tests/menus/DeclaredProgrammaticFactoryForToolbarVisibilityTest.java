@@ -61,7 +61,7 @@ public class DeclaredProgrammaticFactoryForToolbarVisibilityTest extends Extensi
 	}
 
 	private static class TestActionMenuManager extends MenuManager {
-		private ActionContributionItem actionContributionItem;
+		private final ActionContributionItem actionContributionItem;
 
 		public TestActionMenuManager(String id) {
 			super(id, id);

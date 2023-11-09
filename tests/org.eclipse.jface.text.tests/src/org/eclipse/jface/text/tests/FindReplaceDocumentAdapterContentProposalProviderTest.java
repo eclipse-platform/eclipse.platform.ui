@@ -21,7 +21,7 @@ import org.eclipse.jface.text.FindReplaceDocumentAdapterContentProposalProvider;
 
 public class FindReplaceDocumentAdapterContentProposalProviderTest {
 
-	private FindReplaceDocumentAdapterContentProposalProvider provider= new FindReplaceDocumentAdapterContentProposalProvider(true);
+	private final FindReplaceDocumentAdapterContentProposalProvider provider= new FindReplaceDocumentAdapterContentProposalProvider(true);
 
 	private void assertProposal(IContentProposal[] proposals, String prefix, String replacement) {
 		IContentProposal match= null;

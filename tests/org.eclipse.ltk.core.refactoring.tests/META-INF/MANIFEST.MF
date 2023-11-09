@@ -22,7 +22,8 @@ Require-Bundle:
  org.eclipse.text;bundle-version="[3.5.0,4.0.0)",
  org.junit,
  org.eclipse.core.commands;bundle-version="[3.5.0,4.0.0)",
- org.eclipse.core.filesystem;bundle-version="[1.2.0,2.0.0)"
+ org.eclipse.core.filesystem;bundle-version="[1.2.0,2.0.0)",
+ org.eclipse.core.tests.harness
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Eclipse-BundleShape: dir
 Import-Package: org.junit.jupiter.api

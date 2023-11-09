@@ -14,7 +14,7 @@
 
 package org.eclipse.ui.internal.handlers;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;

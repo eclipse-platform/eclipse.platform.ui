@@ -14,10 +14,11 @@
 
 package org.eclipse.e4.tools.emf.ui.internal.handlers;
 
-import javax.inject.Named;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.IViewEObjects;
+
+import jakarta.inject.Named;
 
 public class AbstractHandler {
 

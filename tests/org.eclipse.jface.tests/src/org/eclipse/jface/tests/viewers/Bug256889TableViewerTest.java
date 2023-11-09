@@ -35,7 +35,7 @@ public class Bug256889TableViewerTest extends ViewerTestCase {
 
 	private int rowcounter = 0;
 
-	private List<String> model = new ArrayList<>();
+	private final List<String> model = new ArrayList<>();
 	private Table table;
 	private TableViewer tableViewer;
 

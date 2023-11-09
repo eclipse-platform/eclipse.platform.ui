@@ -19,9 +19,9 @@ import org.eclipse.ui.progress.UIJob;
  * Base class for a simple test UI job with configurable parameters
  */
 public class UITestJob extends UIJob {
-	private long duration;
-	private boolean failure;
-	private boolean unknown;
+	private final long duration;
+	private final boolean failure;
+	private final boolean unknown;
 	public UITestJob(long duration, boolean lock, boolean failure, boolean indeterminate) {
 		super("Test job"); //$NON-NLS-1$
 		this.duration = duration;

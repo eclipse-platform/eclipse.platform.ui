@@ -38,8 +38,8 @@ import org.osgi.framework.FrameworkUtil;
 
 public class ProjectUnzipUtil {
 
-	private IPath zipLocation;
-	private String[] projectNames;
+	private final IPath zipLocation;
+	private final String[] projectNames;
 	private IPath rootLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation();
 	private static final String META_PROJECT_NAME = ".project"; //$NON-NLS-1$
 

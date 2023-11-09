@@ -55,7 +55,7 @@ public class Snippet040TableViewerSorting {
 	}
 
 	protected abstract class AbstractEditingSupport extends EditingSupport {
-		private TextCellEditor editor;
+		private final TextCellEditor editor;
 
 		public AbstractEditingSupport(TableViewer viewer) {
 			super(viewer);
@@ -222,8 +222,8 @@ public class Snippet040TableViewerSorting {
 		public static final int DESC = -1;
 
 		private int direction = 0;
-		private TableViewerColumn column;
-		private ColumnViewer viewer;
+		private final TableViewerColumn column;
+		private final ColumnViewer viewer;
 
 		public ColumnViewerComparator(ColumnViewer viewer, TableViewerColumn column) {
 			this.column = column;

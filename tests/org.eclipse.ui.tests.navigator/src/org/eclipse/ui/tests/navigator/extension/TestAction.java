@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Shell;
 
 public class TestAction extends Action implements IAction {
 
-	private Shell shell;
+	private final Shell shell;
 
 	public TestAction(Shell aShell) {
 		super("Test Action");

@@ -20,9 +20,6 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListDiffVisitor;
@@ -86,6 +83,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 
 public class MenuEditor extends AbstractComponentEditor<MMenu> {
 	private Composite composite;

@@ -27,8 +27,8 @@ import org.eclipse.ui.internal.ide.handlers.ShowInSystemExplorerHandler;
 @SuppressWarnings("restriction")
 public class ShowInSystemExplorerHyperlink implements IHyperlink {
 
-	private String fileLocation;
-	private IRegion region;
+	private final String fileLocation;
+	private final IRegion region;
 
 	public ShowInSystemExplorerHyperlink(String fileLocation, IRegion region) {
 		this.fileLocation = fileLocation;

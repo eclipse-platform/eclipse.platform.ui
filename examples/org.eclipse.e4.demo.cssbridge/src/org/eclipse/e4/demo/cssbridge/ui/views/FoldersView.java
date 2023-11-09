@@ -47,7 +47,7 @@ public class FoldersView extends ViewPart {
 
 	private IMailService mailService;
 
-	private Listener treeItemPaintListener = new ItemPaintListener<org.eclipse.swt.widgets.TreeItem>() {
+	private final Listener treeItemPaintListener = new ItemPaintListener<org.eclipse.swt.widgets.TreeItem>() {
 		@Override
 		protected String getText(org.eclipse.swt.widgets.TreeItem item,
 				int index) {
@@ -79,7 +79,7 @@ public class FoldersView extends ViewPart {
 		}
 	};
 
-	private Listener shellReskinListener = event -> viewer.refresh();
+	private final Listener shellReskinListener = event -> viewer.refresh();
 
 	@Override
 	public void init(IViewSite site) throws PartInitException {

@@ -1,8 +1,8 @@
 package org.eclipse.ui.tests.e4;
 
-import javax.annotation.PostConstruct;
-
 import org.eclipse.swt.widgets.Composite;
+
+import jakarta.annotation.PostConstruct;
 
 public class E4CompositePart {
 

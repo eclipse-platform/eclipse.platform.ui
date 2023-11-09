@@ -101,7 +101,7 @@ public class Snippet070GenericSelectionDialog {
 		 */
 		private static final int LIST_HEIGHT = 10;
 
-		private Collection<Model> models;
+		private final Collection<Model> models;
 
 		/**
 		 * List to display the resolutions.

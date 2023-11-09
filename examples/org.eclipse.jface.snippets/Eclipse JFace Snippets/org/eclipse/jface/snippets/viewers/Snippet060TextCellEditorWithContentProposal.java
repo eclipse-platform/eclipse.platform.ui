@@ -124,7 +124,7 @@ public class Snippet060TextCellEditorWithContentProposal {
 	}
 
 	private static class ColorNameEditingSupport extends EditingSupport {
-		private TextCellEditorWithContentProposal cellEditor;
+		private final TextCellEditorWithContentProposal cellEditor;
 
 		public ColorNameEditingSupport(TableViewer viewer) {
 			super(viewer);

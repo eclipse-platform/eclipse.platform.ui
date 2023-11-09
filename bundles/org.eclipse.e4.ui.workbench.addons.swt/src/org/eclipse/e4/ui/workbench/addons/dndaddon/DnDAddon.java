@@ -15,7 +15,7 @@
 
 package org.eclipse.e4.ui.workbench.addons.dndaddon;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -31,7 +31,7 @@ import org.osgi.service.event.Event;
  */
 public class DnDAddon {
 
-	private static final String DISABLE_DND_ADDON = "DisableDnDAddon";
+	private static final String DISABLE_DND_ADDON = "DisableDnDAddon"; //$NON-NLS-1$
 
 	@Inject
 	MApplication app;

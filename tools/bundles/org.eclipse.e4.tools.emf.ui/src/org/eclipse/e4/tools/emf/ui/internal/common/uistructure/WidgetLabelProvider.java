@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 
 public class WidgetLabelProvider extends StyledCellLabelProvider {
-	private IResourcePool resourcePool;
+	private final IResourcePool resourcePool;
 
 	public WidgetLabelProvider(IResourcePool resourcePool) {
 		this.resourcePool = resourcePool;

@@ -38,9 +38,9 @@ import org.eclipse.jface.text.link.LinkedPositionGroup;
 
 public class LinkedModeModelTest {
 
-	private List<LinkedPosition> fPositions= new LinkedList<>();
+	private final List<LinkedPosition> fPositions= new LinkedList<>();
 
-	private List<IDocument[]> fDocumentMap= new ArrayList<>();
+	private final List<IDocument[]> fDocumentMap= new ArrayList<>();
 
 	@Test
 	public void testUpdate() throws BadLocationException {

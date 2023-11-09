@@ -29,7 +29,7 @@ import org.eclipse.swt.graphics.Image;
 
 public class CompressedJavaProject implements ICompressedNode, IAdaptable {
 
-	private IProject project;
+	private final IProject project;
 	private CompressedJavaLibraries compressedLibraries;
 
 	public CompressedJavaProject(StructuredViewer viewer, IProject project) {

@@ -39,8 +39,8 @@ public class ChainedPreferenceStoreTest {
 		}
 	}
 
-	private List<PropertyChangeEvent> fEvents= new ArrayList<>();
-	private PropertyChangeListener fPropertyChangeListener= new PropertyChangeListener();
+	private final List<PropertyChangeEvent> fEvents= new ArrayList<>();
+	private final PropertyChangeListener fPropertyChangeListener= new PropertyChangeListener();
 
 	private static final String PROPERTY= "some.property";
 	private static final String VALUE= "8";

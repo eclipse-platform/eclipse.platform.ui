@@ -37,11 +37,11 @@ public class BarContentAssistProcessor implements IContentAssistProcessorExtensi
 
 	protected static class BarContextInformation implements IContextInformation, IContextInformationExtension {
 
-		private String contextDisplayString;
+		private final String contextDisplayString;
 
-		private String informationDisplayString;
+		private final String informationDisplayString;
 
-		private int offset;
+		private final int offset;
 
 		public BarContextInformation(String contextDisplayString, String informationDisplayString, int offset) {
 			this.contextDisplayString= contextDisplayString;

@@ -57,7 +57,7 @@ public class InfoView extends ViewPart {
 	private IHandler countHandler;
 	private ArrayList<Object> viewerInput;
 
-	private IPropertyChangeListener personListener = event -> {
+	private final IPropertyChangeListener personListener = event -> {
 		if (IPersonService.PROP_CHANGE.equals(event.getProperty())) {
 			refresh();
 		} else if (IPersonService.PROP_ADD.equals(event.getProperty())) {

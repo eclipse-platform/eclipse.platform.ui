@@ -15,10 +15,12 @@
 package org.eclipse.e4.tools.emf.ui.internal.handlers;
 
 import java.util.Collections;
-import javax.inject.Named;
+
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.IViewEObjects;
 import org.eclipse.emf.ecore.EObject;
+
+import jakarta.inject.Named;
 
 public class UnmarkItemsHandler extends AbstractHandler {
 

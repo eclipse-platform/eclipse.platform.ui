@@ -18,10 +18,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -31,6 +27,10 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.progress.IProgressConstants;
 import org.eclipse.e4.ui.progress.UIJob;
 import org.eclipse.e4.ui.progress.internal.legacy.PlatformUI;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 /**
  * The ProgressViewUpdater is the singleton that updates viewers.

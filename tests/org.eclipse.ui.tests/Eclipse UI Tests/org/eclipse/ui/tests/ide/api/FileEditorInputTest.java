@@ -57,7 +57,7 @@ public class FileEditorInputTest extends UITestCase {
 	}
 
 	static class OtherFileEditorInput implements IFileEditorInput {
-		private IFile file;
+		private final IFile file;
 
 		public OtherFileEditorInput(IFile file) {
 			this.file = file;

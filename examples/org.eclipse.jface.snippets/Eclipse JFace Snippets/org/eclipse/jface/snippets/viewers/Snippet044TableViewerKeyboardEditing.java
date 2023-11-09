@@ -58,8 +58,8 @@ public class Snippet044TableViewerKeyboardEditing {
 
 	private static class MyColumnLabelProvider extends ColumnLabelProvider {
 
-		private int columnIndex;
-		private Table table;
+		private final int columnIndex;
+		private final Table table;
 
 		public MyColumnLabelProvider(Table table, int columnIndex) {
 			this.table = table;
@@ -74,7 +74,7 @@ public class Snippet044TableViewerKeyboardEditing {
 
 	private class MyEditingSupport extends EditingSupport {
 
-		private String property;
+		private final String property;
 
 		public MyEditingSupport(ColumnViewer viewer, String property) {
 			super(viewer);

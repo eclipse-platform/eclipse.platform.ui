@@ -287,7 +287,7 @@ public class ValidatedObservableValueTest extends AbstractDefaultRealmTestCase {
 	}
 
 	static class Delegate extends AbstractObservableValueContractDelegate {
-		private Object valueType = new Object();
+		private final Object valueType = new Object();
 
 		@Override
 		public IObservableValue createObservableValue(Realm realm) {

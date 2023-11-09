@@ -38,21 +38,21 @@ import org.eclipse.ui.texteditor.BasicTextEditorActionContributor;
  * visible when a readme editor is active. Otherwise, they are invisible.
  */
 public class ReadmeEditorActionBarContributor extends BasicTextEditorActionContributor {
-	private EditorAction action1;
+	private final EditorAction action1;
 
-	private RetargetAction action2;
+	private final RetargetAction action2;
 
-	private LabelRetargetAction action3;
+	private final LabelRetargetAction action3;
 
-	private EditorAction handler2;
+	private final EditorAction handler2;
 
-	private EditorAction handler3;
+	private final EditorAction handler3;
 
-	private EditorAction handler4;
+	private final EditorAction handler4;
 
-	private EditorAction handler5;
+	private final EditorAction handler5;
 
-	private DirtyStateContribution dirtyStateContribution;
+	private final DirtyStateContribution dirtyStateContribution;
 
 	class EditorAction extends Action {
 		private Shell shell;

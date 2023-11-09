@@ -41,7 +41,7 @@ public class DecoratingObservableListTest {
 	}
 
 	static class Delegate extends AbstractObservableCollectionContractDelegate<Object> {
-		private Object elementType = Object.class;
+		private final Object elementType = Object.class;
 
 		@Override
 		public IObservableCollection<Object> createObservableCollection(Realm realm,

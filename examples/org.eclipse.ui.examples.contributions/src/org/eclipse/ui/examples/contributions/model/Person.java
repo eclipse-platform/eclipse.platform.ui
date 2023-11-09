@@ -21,7 +21,7 @@ package org.eclipse.ui.examples.contributions.model;
  */
 public class Person {
 
-	private int id;
+	private final int id;
 	private String surname;
 	private String givenname;
 	private boolean admin = false;

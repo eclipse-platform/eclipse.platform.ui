@@ -23,7 +23,6 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import org.eclipse.core.commands.common.HandleObjectManager;
-import org.eclipse.core.commands.common.NamedHandleObject;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.ListenerList;
 
@@ -38,8 +37,8 @@ import org.eclipse.core.runtime.ListenerList;
  * @see CommandManager#getCommand(String)
  * @since 3.1
  */
-public final class CommandManager extends HandleObjectManager implements
-		ICategoryListener, ICommandListener, IParameterTypeListener {
+public final class CommandManager extends HandleObjectManager<Command>
+		implements ICategoryListener, ICommandListener, IParameterTypeListener {
 
 	/**
 	 * A listener that forwards incoming execution events to execution listeners
@@ -305,9 +304,9 @@ public final class CommandManager extends HandleObjectManager implements
 
 			// Add an execution listener to every command.
 			executionListener = new ExecutionListener();
-			final Iterator<NamedHandleObject> commandItr = handleObjectsById.values().iterator();
+			final Iterator<Command> commandItr = handleObjectsById.values().iterator();
 			while (commandItr.hasNext()) {
-				final Command command = (Command) commandItr.next();
+				final Command command = commandItr.next();
 				command.addExecutionListener(executionListener);
 			}
 
@@ -475,7 +474,7 @@ public final class CommandManager extends HandleObjectManager implements
 	 * @since 3.2
 	 */
 	public Command[] getAllCommands() {
-		return (Command[]) handleObjectsById.values().toArray(new Command[handleObjectsById.size()]);
+		return handleObjectsById.values().toArray(new Command[handleObjectsById.size()]);
 	}
 
 	/**
@@ -521,7 +520,7 @@ public final class CommandManager extends HandleObjectManager implements
 	public Command getCommand(final String commandId) {
 		checkId(commandId);
 
-		Command command = (Command) handleObjectsById.get(commandId);
+		Command command = handleObjectsById.get(commandId);
 		if (command == null) {
 			command = new Command(commandId);
 			command.shouldFireEvents = shouldCommandFireEvents;
@@ -584,7 +583,7 @@ public final class CommandManager extends HandleObjectManager implements
 	 * @since 3.2
 	 */
 	public Command[] getDefinedCommands() {
-		return (Command[]) definedHandleObjects.toArray(new Command[definedHandleObjects.size()]);
+		return definedHandleObjects.toArray(new Command[definedHandleObjects.size()]);
 	}
 
 	/**
@@ -802,9 +801,9 @@ public final class CommandManager extends HandleObjectManager implements
 			executionListeners = null;
 
 			// Remove the execution listener to every command.
-			final Iterator<NamedHandleObject> commandItr = handleObjectsById.values().iterator();
+			final Iterator<Command> commandItr = handleObjectsById.values().iterator();
 			while (commandItr.hasNext()) {
-				final Command command = (Command) commandItr.next();
+				final Command command = commandItr.next();
 				command.removeExecutionListener(executionListener);
 			}
 			executionListener = null;
@@ -833,9 +832,9 @@ public final class CommandManager extends HandleObjectManager implements
 		}
 
 		// Now, set-up the handlers on all of the existing commands.
-		final Iterator<NamedHandleObject> commandItr = handleObjectsById.values().iterator();
+		final Iterator<Command> commandItr = handleObjectsById.values().iterator();
 		while (commandItr.hasNext()) {
-			final Command command = (Command) commandItr.next();
+			final Command command = commandItr.next();
 			final String commandId = command.getId();
 			final Object value = handlersByCommandId.get(commandId);
 			if (value instanceof IHandler) {

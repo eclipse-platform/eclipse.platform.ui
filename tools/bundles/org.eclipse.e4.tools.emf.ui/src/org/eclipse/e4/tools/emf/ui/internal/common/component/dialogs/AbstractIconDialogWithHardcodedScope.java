@@ -71,14 +71,14 @@ import org.eclipse.swt.widgets.Text;
  */
 public abstract class AbstractIconDialogWithHardcodedScope extends SaveDialogBoundsSettingsDialog {
 	private TableViewer viewer;
-	private IProject project;
-	private Map<IFile, Image> icons = Collections.synchronizedMap(new HashMap<>());
+	private final IProject project;
+	private final Map<IFile, Image> icons = Collections.synchronizedMap(new HashMap<>());
 	private ResourceSearchScope searchScope = ResourceSearchScope.PROJECT;
 
 	protected Messages Messages;
 	private Text textSearch;
 	private String value;
-	private IEclipseContext context;
+	private final IEclipseContext context;
 
 	public AbstractIconDialogWithHardcodedScope(Shell parentShell, IEclipseContext context) {
 		super(parentShell);
@@ -192,7 +192,7 @@ public abstract class AbstractIconDialogWithHardcodedScope extends SaveDialogBou
 
 		textSearch.addModifyListener(new ModifyListener() {
 			private IconMatchCallback callback;
-			private Timer timer = new Timer(true);
+			private final Timer timer = new Timer(true);
 			private TimerTask task;
 
 			@Override
@@ -274,7 +274,7 @@ public abstract class AbstractIconDialogWithHardcodedScope extends SaveDialogBou
 
 	private class IconMatchCallback {
 		private volatile boolean cancel;
-		private IObservableList<IFile> list;
+		private final IObservableList<IFile> list;
 
 		private IconMatchCallback(IObservableList<IFile> list) {
 			this.list = list;
@@ -293,8 +293,8 @@ public abstract class AbstractIconDialogWithHardcodedScope extends SaveDialogBou
 		private final StringMatcher matcherGif;
 		private final StringMatcher matcherJpg;
 		private final StringMatcher matcherPng;
-		private IEclipseContext context;
-		private ResourceSearchScope searchScope;
+		private final IEclipseContext context;
+		private final ResourceSearchScope searchScope;
 
 		public SearchThread(IconMatchCallback callback, String pattern, IProject project, IEclipseContext context, ResourceSearchScope searchScope) {
 			this.context = context;

@@ -57,7 +57,7 @@ public class MockPart extends EventManager implements IExecutableExtension {
 
 	private Image titleImage;
 
-	private DisposeListener disposeListener = e -> MockPart.this.widgetDisposed();
+	private final DisposeListener disposeListener = e -> MockPart.this.widgetDisposed();
 
 	public CallHistory getCallHistory() {
 		return callTrace;

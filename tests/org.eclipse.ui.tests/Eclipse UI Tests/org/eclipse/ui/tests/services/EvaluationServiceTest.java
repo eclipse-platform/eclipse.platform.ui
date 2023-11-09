@@ -580,7 +580,7 @@ public class EvaluationServiceTest extends UITestCase {
 	}
 
 	static class ActivePartIdExpression extends Expression {
-		private String partId;
+		private final String partId;
 
 		public ActivePartIdExpression(String id) {
 			partId = id;

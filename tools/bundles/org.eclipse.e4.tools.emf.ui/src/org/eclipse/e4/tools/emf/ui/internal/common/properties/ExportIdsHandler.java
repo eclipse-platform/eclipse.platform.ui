@@ -18,8 +18,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Named;
-
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -63,6 +61,8 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 
+import jakarta.inject.Named;
+
 /**
  * This handler exports all Id values within the application model to a file for
  * static reference. Currently the location of this file is fixed to be in the
@@ -79,10 +79,10 @@ public class ExportIdsHandler {
 	}
 
 	static class ExportIdDialog extends TitleAreaDialog {
-		private Messages messages;
-		private IObservableList<?> list;
-		private IResourcePool pool;
-		private JavaClass clazz;
+		private final Messages messages;
+		private final IObservableList<?> list;
+		private final IResourcePool pool;
+		private final JavaClass clazz;
 		private CheckboxTableViewer viewer;
 		private Text textClassName;
 
@@ -322,9 +322,9 @@ public class ExportIdsHandler {
 	}
 
 	private static class Entry implements Comparable<Entry> {
-		private MApplicationElement object;
-		private String idFieldKey;
-		private String elementId;
+		private final MApplicationElement object;
+		private final String idFieldKey;
+		private final String elementId;
 
 		public Entry(MApplicationElement object, String idFieldKey, String elementId) {
 			this.object = object;

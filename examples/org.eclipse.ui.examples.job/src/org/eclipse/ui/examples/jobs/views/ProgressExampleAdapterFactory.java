@@ -18,7 +18,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 
 public class ProgressExampleAdapterFactory implements IAdapterFactory {
-	private SlowElementAdapter slowElementAdapter = new SlowElementAdapter();
+	private final SlowElementAdapter slowElementAdapter = new SlowElementAdapter();
 
 	@Override
 	public <T> T getAdapter(Object object, Class<T> type) {

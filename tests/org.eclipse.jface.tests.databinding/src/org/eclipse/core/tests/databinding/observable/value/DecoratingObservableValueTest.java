@@ -33,7 +33,7 @@ public class DecoratingObservableValueTest {
 	}
 
 	static class Delegate extends AbstractObservableValueContractDelegate {
-		private Object valueType = Object.class;
+		private final Object valueType = Object.class;
 
 		@Override
 		public IObservableValue<?> createObservableValue(Realm realm) {

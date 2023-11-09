@@ -35,8 +35,8 @@ Export-Package: org.eclipse.e4.ui.tests.model.test,
  org.eclipse.e4.ui.tests.model.test.impl,
  org.eclipse.e4.ui.tests.model.test.util
 Bundle-ActivationPolicy: lazy
-Import-Package: javax.annotation,
- javax.inject;version="1.0.0",
+Import-Package: jakarta.annotation,
+ jakarta.inject,
  org.osgi.service.event
 Eclipse-BundleShape: dir
 Automatic-Module-Name: org.eclipse.e4.ui.tests

@@ -17,10 +17,6 @@ package org.eclipse.e4.tools.emf.ui.internal.wbm;
 
 import java.io.IOException;
 
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -43,6 +39,10 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.osgi.framework.FrameworkUtil;
+
+import jakarta.annotation.PreDestroy;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 public class ApplicationModelEditor extends ModelEditor {
 
@@ -93,7 +93,7 @@ public class ApplicationModelEditor extends ModelEditor {
 	 * Listen for changes on the resource being edited. Will close the part if
 	 * the resource was deleted or the containing project was closed.
 	 */
-	private IResourceChangeListener listener = new IResourceChangeListener() {
+	private final IResourceChangeListener listener = new IResourceChangeListener() {
 		@Override
 		public void resourceChanged(IResourceChangeEvent event) {
 

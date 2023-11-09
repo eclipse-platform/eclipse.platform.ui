@@ -112,7 +112,7 @@ public class RadioGroup {
 		}
 	}
 
-	private SelectionListener selectionListener = new SelectionListener() {
+	private final SelectionListener selectionListener = new SelectionListener() {
 		@Override
 	public void widgetDefaultSelected(SelectionEvent e) {
 			widgetSelected(e);
@@ -150,7 +150,7 @@ public class RadioGroup {
 		}
 	};
 
-	private List<VetoableSelectionListener> widgetChangeListeners = new LinkedList<>();
+	private final List<VetoableSelectionListener> widgetChangeListeners = new LinkedList<>();
 
 	protected boolean fireWidgetChangeSelectionEvent(SelectionEvent e) {
 		for (VetoableSelectionListener listener : widgetChangeListeners) {
@@ -222,7 +222,7 @@ public class RadioGroup {
 	}
 
 
-	private List<SelectionListener> widgetSelectedListeners = new ArrayList<>();
+	private final List<SelectionListener> widgetSelectedListeners = new ArrayList<>();
 
 	protected void fireWidgetSelectedEvent(SelectionEvent e) {
 		for (SelectionListener listener : widgetSelectedListeners) {
@@ -536,19 +536,22 @@ public class RadioGroup {
 	}
 
 	/**
-	 * Selects the item at the given zero-relative index in the receiver.
-	 * If the item at the index was already selected, it remains selected.
-	 * The current selection is first cleared, then the new item is selected.
-	 * Indices that are out of range are ignored.
+	 * Selects the item at the given zero-relative index in the receiver. If the
+	 * item at the index was already selected, it remains selected. The current
+	 * selection is first cleared, then the new item is selected. Indices that are
+	 * out of range are ignored.
 	 *
 	 * @param index the index of the item to select
 	 *
-	 * @exception SWTException <ul>
-	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 * </ul>
-	 * @see List#deselectAll()
-	 * @see List#select(int)
+	 * @exception SWTException
+	 *                         <ul>
+	 *                         <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                         disposed</li>
+	 *                         <li>ERROR_THREAD_INVALID_ACCESS - if not called from
+	 *                         the thread that created the receiver</li>
+	 *                         </ul>
+	 * @see org.eclipse.swt.widgets.List#deselectAll()
+	 * @see org.eclipse.swt.widgets.List#select(int)
 	 */
 	public void setSelection (int index) {
 		if (index < 0 || index > buttons.length - 1) {

@@ -14,12 +14,15 @@
 
 package org.eclipse.e4.core.commands.internal;
 
-import org.eclipse.core.commands.AbstractHandler;
+import java.lang.ref.WeakReference;
+import org.eclipse.core.commands.AbstractHandlerWithState;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.HandlerEvent;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.commands.IObjectWithState;
 import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.State;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.e4.core.commands.ExpressionContext;
 import org.eclipse.e4.core.commands.internal.HandlerServiceImpl.ExecutionContexts;
@@ -33,13 +36,15 @@ import org.eclipse.e4.core.di.annotations.Execute;
 /**
  * Provide an IHandler to delegate calls to.
  */
-public class HandlerServiceHandler extends AbstractHandler {
+public class HandlerServiceHandler extends AbstractHandlerWithState {
 
 	private static final String FAILED_TO_FIND_HANDLER_DURING_EXECUTION = "Failed to find handler during execution"; //$NON-NLS-1$
 	private static final String HANDLER_MISSING_EXECUTE_ANNOTATION = " handler is missing @Execute"; //$NON-NLS-1$
 	private static final Object missingExecute = new Object();
 
 	protected final String commandId;
+	// Remove state from currentStateHandler when it goes out of scope
+	private WeakReference<IObjectWithState> currentStateHandler = new WeakReference<IObjectWithState>(null);
 
 	public HandlerServiceHandler(String commandId) {
 		this.commandId = commandId;
@@ -54,6 +59,7 @@ public class HandlerServiceHandler extends AbstractHandler {
 			return super.isEnabled();
 		}
 		Object handler = HandlerServiceImpl.lookUpHandler(executionContext, commandId);
+		switchHandler(handler);
 		if (handler == null) {
 			setBaseEnabled(false);
 			return super.isEnabled();
@@ -73,6 +79,7 @@ public class HandlerServiceHandler extends AbstractHandler {
 			return;
 		}
 		Object handler = HandlerServiceImpl.lookUpHandler(executionContext, commandId);
+		switchHandler(handler);
 		if (handler == null) {
 			return;
 		}
@@ -124,6 +131,7 @@ public class HandlerServiceHandler extends AbstractHandler {
 		ExecutionContexts contexts = HandlerServiceImpl.peek();
 		if (contexts != null) {
 			Object handler = HandlerServiceImpl.lookUpHandler(contexts.context, commandId);
+			switchHandler(handler);
 			if (handler instanceof IHandler) {
 				return ((IHandler) handler).isHandled();
 			}
@@ -142,6 +150,7 @@ public class HandlerServiceHandler extends AbstractHandler {
 		}
 
 		Object handler = HandlerServiceImpl.lookUpHandler(executionContext, commandId);
+		switchHandler(handler);
 		if (handler == null) {
 			return null;
 		}
@@ -188,4 +197,74 @@ public class HandlerServiceHandler extends AbstractHandler {
 	public String toString() {
 		return this.getClass().getSimpleName() + "(\"" + commandId + "\")"; //$NON-NLS-1$//$NON-NLS-2$
 	}
+
+	@Override
+	public void addState(String stateId, State state) {
+		super.addState(stateId, state);
+		IObjectWithState handler = lookUpHandlerWithState();
+		if (handler != null) {
+			handler.addState(stateId, state);
+		}
+	}
+
+	@Override
+	public void removeState(String stateId) {
+		IObjectWithState handler = lookUpHandlerWithState();
+		if (handler != null) {
+			handler.removeState(stateId);
+		}
+		super.removeState(stateId);
+	}
+
+	@Override
+	public void handleStateChange(State state, Object oldValue) {
+	}
+
+	@Override
+	public void dispose() {
+		switchHandler(null);
+		super.dispose();
+	}
+
+	private IObjectWithState lookUpHandlerWithState() {
+		ExecutionContexts contexts = HandlerServiceImpl.peek();
+		if (contexts == null) {
+			return null;
+		}
+		Object handler = HandlerServiceImpl.lookUpHandler(contexts.context, commandId);
+		switchHandler(handler);
+		if (!(handler instanceof IObjectWithState)) {
+			return null;
+		}
+		if (handler instanceof IHandler) {
+			if (!((IHandler) handler).isHandled()) {
+				return null;
+			}
+		}
+		return (IObjectWithState) handler;
+	}
+
+	private void switchHandler(Object handler) {
+		IObjectWithState typed;
+		if (handler instanceof IObjectWithState) {
+			typed = (IObjectWithState) handler;
+		} else {
+			typed = null;
+		}
+
+		IObjectWithState oldHandler = currentStateHandler.get();
+		if (oldHandler == typed) {
+			return;
+		}
+		currentStateHandler = new WeakReference<>(typed);
+		for (String id : getStateIds()) {
+			if (oldHandler != null) {
+				oldHandler.removeState(id);
+			}
+			if (typed != null) {
+				typed.addState(id, getState(id));
+			}
+		}
+	}
+
 }

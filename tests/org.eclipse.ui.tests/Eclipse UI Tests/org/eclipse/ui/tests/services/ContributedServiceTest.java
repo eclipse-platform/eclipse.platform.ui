@@ -95,7 +95,7 @@ public class ContributedServiceTest {
 	}
 
 	private static class TempLevelFactory extends AbstractServiceFactory {
-		private int level;
+		private final int level;
 
 		public TempLevelFactory(int l) {
 			level = l;

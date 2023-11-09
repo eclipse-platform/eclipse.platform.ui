@@ -133,10 +133,10 @@ public class Snippet007ColorLabelProvider {
 			MALE, FEMALE
 		}
 
-		private String name;
+		private final String name;
 		private Gender gender;
 
-		private PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
+		private final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
 		Person(String name, Gender gender) {
 			this.name = name;
@@ -165,9 +165,9 @@ public class Snippet007ColorLabelProvider {
 	}
 
 	static class ColorLabelProvider extends ObservableMapLabelProvider implements ITableColorProvider {
-		private Color maleColor;
-		private Color femaleColor;
-		private List<Person> persons;
+		private final Color maleColor;
+		private final Color femaleColor;
+		private final List<Person> persons;
 
 		ColorLabelProvider(IObservableMap<?, ?>[] attributes, Display display, List<Person> persons) {
 			super(attributes);

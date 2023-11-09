@@ -14,8 +14,8 @@
 
 package org.eclipse.e4.ui.workbench.addons.splitteraddon;
 
+import jakarta.inject.Inject;
 import java.util.List;
-import javax.inject.Inject;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -36,7 +36,7 @@ import org.osgi.service.event.Event;
  */
 public class SplitterAddon {
 
-	private static final String DISABLE_SPLITTER_ADDON = "DisableSplitterAddon";
+	private static final String DISABLE_SPLITTER_ADDON = "DisableSplitterAddon"; //$NON-NLS-1$
 
 	@Inject
 	EModelService ms;

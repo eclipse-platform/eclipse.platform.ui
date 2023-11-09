@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class WindowDropTarget extends WorkbenchWindowDropTarget {
 
-	private int side;
+	private final int side;
 
 	public WindowDropTarget(IWorkbenchWindowProvider provider, int side) {
 		super(provider);

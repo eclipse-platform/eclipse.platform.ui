@@ -1034,8 +1034,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 	}
 
 	static String getBundle(IProject project) {
-		final IFile f = project.getFile("/META-INF/MANIFEST.MF"); //$NON-NLS-1$
-
+		final IFile f = PDEProject.getManifest(project);
 		if (f != null && f.exists()) {
 			try (final InputStream s = f.getContents();
 					BufferedReader r = new BufferedReader(new InputStreamReader(s));) {

@@ -49,7 +49,7 @@ public class Snippet024TableViewerExploreNewAPI {
 	}
 
 	protected abstract class AbstractEditingSupport extends EditingSupport {
-		private TextCellEditor editor;
+		private final TextCellEditor editor;
 
 		public AbstractEditingSupport(TableViewer viewer) {
 			super(viewer);

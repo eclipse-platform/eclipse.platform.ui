@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.w3c.dom.css.CSSPrimitiveValue;
 
 public class SWTResourceRegistryKeyFactoryTest extends CSSSWTHelperTestCase {
-	private SWTResourceRegistryKeyFactory factory = new SWTResourceRegistryKeyFactory();
+	private final SWTResourceRegistryKeyFactory factory = new SWTResourceRegistryKeyFactory();
 
 	@Test
 	void testCreateKeyWhenFontProperty() {

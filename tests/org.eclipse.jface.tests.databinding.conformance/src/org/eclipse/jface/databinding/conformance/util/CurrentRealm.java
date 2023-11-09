@@ -29,7 +29,7 @@ import org.eclipse.core.databinding.observable.Realm;
  */
 public class CurrentRealm extends Realm {
 	private boolean current;
-	private List<Runnable> queue = new LinkedList<>();
+	private final List<Runnable> queue = new LinkedList<>();
 
 	public CurrentRealm() {
 		this(false);

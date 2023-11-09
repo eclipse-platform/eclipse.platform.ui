@@ -192,7 +192,7 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 			}
 			if (!requiredImportPacks.isEmpty()) {
 				for (final String i : requiredImportPacks) {
-					// javax.annotation;version="1.0.0";resolution:=optional
+					// jakarta.annotation;version="[2.1.0,3.0.0)";resolution:=optional
 					final String[] parts = i.split(";"); //$NON-NLS-1$
 					final VersionRange r = findVersionRange(parts);
 					final boolean optional = isOptional(parts);
@@ -228,18 +228,18 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 	}
 
 	// public static void main(String[] args) {
-	// findVersionRange("javax.annotation;version=\"1.0.0\";resolution:=optional".split(";"));
+	// findVersionRange("jakarta.annotation;version=\"[2.1.0,3.0.0)\";resolution:=optional".split(";"));
 	// }
 
 	protected Set<String> getRequiredBundles() {
 		final Set<String> rv = new HashSet<>();
-		//		rv.add("javax.inject"); //$NON-NLS-1$
+		//		rv.add("jakarta.inject"); //$NON-NLS-1$
 		return rv;
 	}
 
 	protected Set<String> getImportedPackages() {
 		final Set<String> rv = new HashSet<>();
-		rv.add("javax.inject;version=\"1.0.0\""); //$NON-NLS-1$
+		rv.add("jakarta.inject;version=\"[2.0.0,3.0.0)\""); //$NON-NLS-1$
 		return rv;
 	}
 

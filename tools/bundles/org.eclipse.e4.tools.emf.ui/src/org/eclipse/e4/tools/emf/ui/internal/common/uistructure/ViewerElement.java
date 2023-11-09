@@ -16,8 +16,6 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.uistructure;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
@@ -32,6 +30,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+
+import jakarta.inject.Inject;
 
 /**
  * A viewer with buttons.

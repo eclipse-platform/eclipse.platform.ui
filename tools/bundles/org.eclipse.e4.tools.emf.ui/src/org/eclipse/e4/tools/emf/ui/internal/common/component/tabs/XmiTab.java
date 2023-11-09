@@ -15,9 +15,6 @@
 
 package org.eclipse.e4.tools.emf.ui.internal.common.component.tabs;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -50,6 +47,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 
 public class XmiTab extends Composite {
 

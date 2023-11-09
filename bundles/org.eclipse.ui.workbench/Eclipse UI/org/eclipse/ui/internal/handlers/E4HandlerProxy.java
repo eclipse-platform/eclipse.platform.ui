@@ -14,9 +14,9 @@
 
 package org.eclipse.ui.internal.handlers;
 
+import jakarta.inject.Named;
 import java.util.Collections;
 import java.util.Map;
-import javax.inject.Named;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -24,7 +24,9 @@ import org.eclipse.core.commands.HandlerEvent;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.IHandler2;
 import org.eclipse.core.commands.IHandlerListener;
+import org.eclipse.core.commands.IObjectWithState;
 import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.State;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -50,7 +52,7 @@ import org.eclipse.ui.menus.UIElement;
  * @since 3.5
  *
  */
-public class E4HandlerProxy implements IHandler2, IHandlerListener, IElementUpdater {
+public class E4HandlerProxy implements IHandler2, IHandlerListener, IElementUpdater, IObjectWithState {
 	public HandlerActivation activation;
 	private final Command command;
 	private final IHandler handler;
@@ -193,6 +195,36 @@ public class E4HandlerProxy implements IHandler2, IHandlerListener, IElementUpda
 		}
 		builder.append("]"); //$NON-NLS-1$
 		return builder.toString();
+	}
+
+	@Override
+	public void addState(String id, State state) {
+		if (handler instanceof IObjectWithState) {
+			((IObjectWithState) handler).addState(id, state);
+		}
+	}
+
+	@Override
+	public State getState(String stateId) {
+		if (handler instanceof IObjectWithState) {
+			return ((IObjectWithState) handler).getState(stateId);
+		}
+		return null;
+	}
+
+	@Override
+	public String[] getStateIds() {
+		if (handler instanceof IObjectWithState) {
+			return ((IObjectWithState) handler).getStateIds();
+		}
+		return new String[0];
+	}
+
+	@Override
+	public void removeState(String stateId) {
+		if (handler instanceof IObjectWithState) {
+			((IObjectWithState) handler).removeState(stateId);
+		}
 	}
 
 }

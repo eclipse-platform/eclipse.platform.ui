@@ -182,7 +182,7 @@ public interface IPageLayout {
 	 * @since 2.0
 	 * @deprecated discontinued support for fast views
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2023-12")
 	float DEFAULT_FASTVIEW_RATIO = 0.3f;
 
 	/**
@@ -225,7 +225,7 @@ public interface IPageLayout {
 	 * @since 2.0
 	 * @deprecated discontinued support for fast views
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2023-12")
 	void addFastView(String viewId);
 
 	/**
@@ -240,7 +240,7 @@ public interface IPageLayout {
 	 * @since 2.0
 	 * @deprecated discontinued support for fast views
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2023-12")
 	void addFastView(String viewId, float ratio);
 
 	/**
@@ -433,7 +433,7 @@ public interface IPageLayout {
 	 *
 	 * @deprecated this always returns -1 as of Eclipse 2.1
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2023-12")
 	int getEditorReuseThreshold();
 
 	/**
@@ -444,7 +444,7 @@ public interface IPageLayout {
 	 *
 	 * @deprecated this method has no effect, as of Eclipse 2.1
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2023-12")
 	void setEditorReuseThreshold(int openEditors);
 
 	/**

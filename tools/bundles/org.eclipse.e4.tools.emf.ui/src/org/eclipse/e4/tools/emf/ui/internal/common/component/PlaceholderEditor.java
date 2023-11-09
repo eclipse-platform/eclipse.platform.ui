@@ -14,8 +14,6 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import javax.inject.Inject;
-
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.conversion.Converter;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -59,6 +57,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+
+import jakarta.inject.Inject;
 
 public class PlaceholderEditor extends AbstractComponentEditor<MPlaceholder> {
 	private Composite composite;
@@ -198,14 +198,14 @@ public class PlaceholderEditor extends AbstractComponentEditor<MPlaceholder> {
 			t.setLayoutData(gd);
 
 			final UpdateValueStrategy<String, MUIElement> t2m = new UpdateValueStrategy<>();
-			t2m.setConverter(new Converter<String, MUIElement>(String.class, MUIElement.class) {
+			t2m.setConverter(new Converter<>(String.class, MUIElement.class) {
 				@Override
 				public MUIElement convert(String fromObject) {
 					return null;
 				}
 			});
 			final UpdateValueStrategy<MUIElement, String> m2t = new UpdateValueStrategy<>();
-			m2t.setConverter(new Converter<MUIElement, String>(MUIElement.class, String.class) {
+			m2t.setConverter(new Converter<>(MUIElement.class, String.class) {
 
 				@Override
 				public String convert(MUIElement fromObject) {

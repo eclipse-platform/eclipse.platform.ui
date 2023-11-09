@@ -193,7 +193,7 @@ public class AbstractTextZoomHandlerTest {
 
 	private static class TestMultiPageEditorPart extends MultiPageEditorPart {
 
-		private IEditorPart child;
+		private final IEditorPart child;
 
 		public TestMultiPageEditorPart(IEditorPart child) {
 			this.child= child;

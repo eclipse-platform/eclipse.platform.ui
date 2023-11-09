@@ -23,7 +23,7 @@ import org.eclipse.ui.forms.widgets.*;
  * Preferences - Java - Code Generation - Code and Comments
  */
 public class ScrolledPropertiesPage extends FormPage {
-	private ScrolledPropertiesBlock block;
+	private final ScrolledPropertiesBlock block;
 	public ScrolledPropertiesPage(FormEditor editor) {
 		super(editor, "fourth", "Master Details");
 		block = new ScrolledPropertiesBlock(this);

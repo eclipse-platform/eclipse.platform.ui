@@ -37,10 +37,10 @@ import org.osgi.framework.ServiceReference;
 
 public class ContributionClassDialog extends FilteredContributionDialog {
 
-	private MApplicationElement contribution;
-	private EditingDomain editingDomain;
-	private EStructuralFeature feature;
-	private Messages Messages;
+	private final MApplicationElement contribution;
+	private final EditingDomain editingDomain;
+	private final EStructuralFeature feature;
+	private final Messages Messages;
 
 	public ContributionClassDialog(Shell parentShell, IEclipseContext context, EditingDomain editingDomain, MApplicationElement contribution, EStructuralFeature feature, Messages Messages) {
 		super(parentShell, context);

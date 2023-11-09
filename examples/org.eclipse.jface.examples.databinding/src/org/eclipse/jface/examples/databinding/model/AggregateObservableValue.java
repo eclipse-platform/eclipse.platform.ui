@@ -27,15 +27,15 @@ import org.eclipse.core.databinding.observable.value.IValueChangeListener;
  */
 public class AggregateObservableValue extends AbstractObservableValue<Object> {
 
-	private IObservableValue<Object>[] observableValues;
+	private final IObservableValue<Object>[] observableValues;
 
-	private String delimiter;
+	private final String delimiter;
 
 	private boolean updating = false;
 
 	private String currentValue;
 
-	private IValueChangeListener<Object> listener = event -> {
+	private final IValueChangeListener<Object> listener = event -> {
 		if (!updating) {
 			fireValueChange(Diffs.createValueDiff(currentValue, doGetValue()));
 		}

@@ -30,8 +30,8 @@ public class MoveBoxOperation extends BoxOperation {
 	/*
 	 * The point the box should move to/from.
 	 */
-	private Point origin;
-	private Point target;
+	private final Point origin;
+	private final Point target;
 
 	public MoveBoxOperation(String label, IUndoContext context, Box box, Canvas canvas, Point newOrigin) {
 		super(label, context, null, box, canvas);

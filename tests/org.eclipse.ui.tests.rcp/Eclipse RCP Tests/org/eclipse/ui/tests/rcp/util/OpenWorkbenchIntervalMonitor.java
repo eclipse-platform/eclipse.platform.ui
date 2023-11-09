@@ -25,8 +25,8 @@ import org.eclipse.ui.tests.harness.util.RCPTestWorkbenchAdvisor;
  */
 public class OpenWorkbenchIntervalMonitor extends RCPTestWorkbenchAdvisor {
 
-	private PerformanceMeter startupMeter;
-	private PerformanceMeter shutdownMeter;
+	private final PerformanceMeter startupMeter;
+	private final PerformanceMeter shutdownMeter;
 
 	public OpenWorkbenchIntervalMonitor(PerformanceMeter startupMeter, PerformanceMeter shutdownMeter) {
 		super(2);

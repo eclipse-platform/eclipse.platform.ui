@@ -35,8 +35,8 @@ public class FoldingStrategy implements IReconcilingStrategy, IReconcilingStrate
 	private IDocument document;
 	private String oldDocument;
 	private ProjectionViewer projectionViewer;
-	private List<Annotation> oldAnnotations = new ArrayList<>();
-	private List<Position> oldPositions = new ArrayList<>();
+	private final List<Annotation> oldAnnotations = new ArrayList<>();
+	private final List<Position> oldPositions = new ArrayList<>();
 
 	@Override
 	public void setDocument(IDocument document) {

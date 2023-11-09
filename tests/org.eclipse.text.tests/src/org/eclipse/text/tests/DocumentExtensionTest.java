@@ -116,11 +116,11 @@ public class DocumentExtensionTest {
 
 	static class TestDocumentListener implements IDocumentListener {
 
-		private IDocument fDocument1;
-		private List<TestDocumentEvent> fTrace1;
+		private final IDocument fDocument1;
+		private final List<TestDocumentEvent> fTrace1;
 		private TestDocumentEvent fExpected1;
 
-		private List<TestDocumentEvent> fTrace2;
+		private final List<TestDocumentEvent> fTrace2;
 		private TestDocumentEvent fExpected2;
 
 		private boolean fPopped= false;

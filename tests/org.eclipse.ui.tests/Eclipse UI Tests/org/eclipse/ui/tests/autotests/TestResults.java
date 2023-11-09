@@ -23,7 +23,7 @@ import org.eclipse.ui.IMemento;
  * @since 3.1
  */
 public class TestResults {
-	private Map<String, TestResultFilter> results = new HashMap<>();
+	private final Map<String, TestResultFilter> results = new HashMap<>();
 	private static final String ATT_NAME = "name";
 	private static final String ATT_TEST = "test";
 

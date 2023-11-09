@@ -360,7 +360,7 @@ public class UtilTest {
 		public static final String VARIABLE = "arbitraryVariable";
 		public static final String VALUE = "arbitraryValue";
 
-		private Map<String, String> sourceState = new HashMap<>(1);
+		private final Map<String, String> sourceState = new HashMap<>(1);
 
 		public TestSourceProvider() {
 			super();

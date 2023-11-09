@@ -21,9 +21,9 @@ package org.eclipse.e4.ui.workbench.addons.minmax;
 
 import static java.util.Collections.singletonList;
 
+import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
-import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -65,7 +65,7 @@ import org.osgi.service.event.Event;
  */
 public class MinMaxAddon {
 
-	private static final String DISABLE_MINMAX_ADDON = "DisableMinMaxAddon";
+	private static final String DISABLE_MINMAX_ADDON = "DisableMinMaxAddon"; //$NON-NLS-1$
 
 	private static final String MIN_MAXIMIZEABLE_CHILDREN_AREA_TAG = IPresentationEngine.MIN_MAXIMIZEABLE_CHILDREN_AREA_TAG;
 

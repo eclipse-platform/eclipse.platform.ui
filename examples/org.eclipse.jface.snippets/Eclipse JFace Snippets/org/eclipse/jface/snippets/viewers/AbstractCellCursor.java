@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Listener;
 public abstract class AbstractCellCursor extends Canvas {
 
 	private ViewerCell[] cells = new ViewerCell[0];
-	private ColumnViewer viewer;
+	private final ColumnViewer viewer;
 	private int activationTime = 0;
 
 	/**

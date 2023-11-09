@@ -52,7 +52,7 @@ import org.eclipse.search2.internal.ui.text.PositionTracker;
 public class LineAnnotationManagerTest {
 
 	private LineBasedFileSearch fLineQuery;
-	private AnnotationTypeLookup fAnnotationTypeLookup= EditorsUI.getAnnotationTypeLookup();
+	private final AnnotationTypeLookup fAnnotationTypeLookup= EditorsUI.getAnnotationTypeLookup();
 
 	@ClassRule
 	public static JUnitSourceSetup fgJUnitSource= new JUnitSourceSetup();

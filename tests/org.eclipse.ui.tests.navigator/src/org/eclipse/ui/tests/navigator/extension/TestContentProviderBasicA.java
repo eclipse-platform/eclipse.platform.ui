@@ -9,7 +9,7 @@ import org.eclipse.jface.viewers.Viewer;
  */
 public class TestContentProviderBasicA implements ITreeContentProvider {
 
-	private Object[] children = new Object[] { new TreeContentA("child3"), new TreeContentA("child1") };
+	private final Object[] children = new Object[] { new TreeContentA("child3"), new TreeContentA("child1") };
 
 	/*
 	 * (non-Javadoc)
@@ -78,7 +78,7 @@ public class TestContentProviderBasicA implements ITreeContentProvider {
 }
 
 class TreeContentA {
-	private String name;
+	private final String name;
 
 	/**
 	 * 

@@ -40,7 +40,7 @@ import org.eclipse.ui.forms.widgets.Section;
  *
  */
 public class ScrolledPropertiesBlock extends MasterDetailsBlock {
-	private FormPage page;
+	private final FormPage page;
 	public ScrolledPropertiesBlock(FormPage page) {
 		this.page = page;
 	}

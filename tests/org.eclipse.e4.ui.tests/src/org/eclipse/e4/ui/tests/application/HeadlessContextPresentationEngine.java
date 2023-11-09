@@ -14,13 +14,13 @@
 
 package org.eclipse.e4.ui.tests.application;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
@@ -62,7 +62,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 	private EventHandler activeChildHandler;
 	private EventHandler toBeRenderedHandler;
 
-	private Map<MUIElement, List<MPlaceholder>> renderedPlaceholders = new HashMap<>();
+	private final Map<MUIElement, List<MPlaceholder>> renderedPlaceholders = new HashMap<>();
 
 	private boolean createContributions = true;
 

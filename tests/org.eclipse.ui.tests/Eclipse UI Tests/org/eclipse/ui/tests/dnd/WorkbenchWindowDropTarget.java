@@ -23,7 +23,7 @@ import org.eclipse.ui.internal.WorkbenchPage;
  */
 public abstract class WorkbenchWindowDropTarget implements TestDropLocation {
 
-	private IWorkbenchWindowProvider window;
+	private final IWorkbenchWindowProvider window;
 
 	@Override
 	public abstract String toString();

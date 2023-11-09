@@ -382,15 +382,17 @@ public class ModalContext {
 							// other thread).
 							new InvocationTargetException(null).printStackTrace();
 						}
-						if (throwable instanceof InvocationTargetException) {
-							throw (InvocationTargetException) throwable;
-						} else if (throwable instanceof InterruptedException) {
-							throw (InterruptedException) throwable;
+						if (throwable instanceof InvocationTargetException e) {
+							throw e;
+						} else if (throwable instanceof InterruptedException e) {
+							throw e;
 						} else if (throwable instanceof OperationCanceledException) {
 							// See 1GAN3L5: ITPUI:WIN2000 - ModalContext
 							// converts OperationCancelException into
 							// InvocationTargetException
-							throw new InterruptedException(throwable.getMessage());
+							InterruptedException interruptedException = new InterruptedException(throwable.getMessage());
+							interruptedException.initCause(throwable);
+							throw interruptedException;
 						} else {
 							throw new InvocationTargetException(throwable);
 						}

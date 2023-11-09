@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Shell;
 
 public class TestActionDependent extends Action implements IAction {
 
-	private Shell shell;
+	private final Shell shell;
 
 	public TestActionDependent(Shell aShell, String isValid) {
 		super("Dependent Action: " + isValid);

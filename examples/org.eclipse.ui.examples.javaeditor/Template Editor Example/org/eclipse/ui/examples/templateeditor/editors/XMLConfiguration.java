@@ -34,7 +34,7 @@ public class XMLConfiguration extends TextSourceViewerConfiguration {
 	private XMLDoubleClickStrategy doubleClickStrategy;
 	private XMLTagScanner tagScanner;
 	private XMLScanner scanner;
-	private ColorManager colorManager;
+	private final ColorManager colorManager;
 
 	public XMLConfiguration(ColorManager colorManager) {
 		this.colorManager= colorManager;

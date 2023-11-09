@@ -27,7 +27,7 @@ public class CloseTestWindowsRule extends ExternalResource {
 
 	private boolean enabled = true;
 
-	private List<IWorkbenchWindow> testWindows;
+	private final List<IWorkbenchWindow> testWindows;
 
 	private TestWindowListener windowListener;
 

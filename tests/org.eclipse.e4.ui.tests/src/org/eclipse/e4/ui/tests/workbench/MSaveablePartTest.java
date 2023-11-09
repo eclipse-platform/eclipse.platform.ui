@@ -18,7 +18,7 @@ package org.eclipse.e4.ui.tests.workbench;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;

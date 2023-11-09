@@ -1,12 +1,12 @@
 package org.eclipse.e4.tools.compat.internal;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.log.ILoggerProvider;
 import org.eclipse.e4.core.services.log.Logger;
 import org.osgi.framework.FrameworkUtil;
+
+import jakarta.inject.Inject;
 
 @SuppressWarnings("restriction")
 public class DefaultLoggerProvider implements ILoggerProvider {

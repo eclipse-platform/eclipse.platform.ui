@@ -40,9 +40,9 @@ public class Snippet047VirtualLazyTreeViewer {
 
 	private long fGlobalChildrenLoaded = 0;
 
-	private TreeViewer fViewer;
+	private final TreeViewer fViewer;
 
-	private Text fText;
+	private final Text fText;
 
 	private class MyContentProvider implements ILazyTreeContentProvider {
 
@@ -67,15 +67,15 @@ public class Snippet047VirtualLazyTreeViewer {
 	}
 
 	public class Node {
-		private int fChildCount;
+		private final int fChildCount;
 
 		public int fChildrenLoaded;
 
 		private Node[] fChildren;
 
-		private int fCounter;
+		private final int fCounter;
 
-		private Node fParent;
+		private final Node fParent;
 
 		public Node(int counter, int childCount, Node parent) {
 			fCounter = counter;

@@ -202,8 +202,8 @@ public class DetailObservableSetTest extends AbstractDefaultRealmTestCase {
 	}
 
 	static class FactoryStub implements IObservableFactory {
-		private Realm realm;
-		private Object elementType;
+		private final Realm realm;
+		private final Object elementType;
 
 		FactoryStub(Realm realm, Object elementType) {
 			this.realm = realm;

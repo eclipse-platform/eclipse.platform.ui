@@ -44,7 +44,7 @@ import org.junit.Test;
 public class NestedResourcesTests {
 
 	private static final int TIMEOUT = 2000;
-	private Set<IProject> testProjects = new HashSet<>();
+	private final Set<IProject> testProjects = new HashSet<>();
 
 	@Test
 	public void testProjectHierarchy() throws Exception {

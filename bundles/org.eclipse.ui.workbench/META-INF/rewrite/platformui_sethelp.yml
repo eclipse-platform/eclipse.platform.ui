@@ -1,0 +1,9 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.eclipse.ui.PlatformUISetHelp
+displayName: Replace calls of PlatformUI.getWorkbench().getHelpSystem() with PlatformUI.getWorkbench().getHelpSystem().setHelp(...) with e4 safe PlatformUI.setHelp(...) variant
+recipeList:
+  - org.openrewrite.java.SimplifyMethodChain:
+      methodPatternChain: ['org.eclipse.ui.PlatformUI getWorkbench()', 'org.eclipse.ui.IWorkbench getHelpSystem()', 'org.eclipse.ui.help.IWorkbenchHelpSystem setHelp(..)']
+      newMethodName: setHelp
+      matchOverrides: false

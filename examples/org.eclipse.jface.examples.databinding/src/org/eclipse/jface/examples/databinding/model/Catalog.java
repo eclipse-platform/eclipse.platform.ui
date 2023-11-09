@@ -28,7 +28,7 @@ public class Catalog extends ModelObject {
 
 	private Account[] accounts = new Account[0];
 
-	private List<Signon> signons = new ArrayList<>();
+	private final List<Signon> signons = new ArrayList<>();
 
 	public List<Signon> getSignons() {
 		return signons;

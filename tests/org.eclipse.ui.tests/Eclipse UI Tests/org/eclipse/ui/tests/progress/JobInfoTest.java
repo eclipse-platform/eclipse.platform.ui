@@ -53,7 +53,7 @@ public class JobInfoTest {
 	 */
 	static final int YIELDING = 0x40;
 
-	private List<JobInfo> jobinfos = new ArrayList<>();
+	private final List<JobInfo> jobinfos = new ArrayList<>();
 
 	@Before
 	public void setUp() throws Exception {

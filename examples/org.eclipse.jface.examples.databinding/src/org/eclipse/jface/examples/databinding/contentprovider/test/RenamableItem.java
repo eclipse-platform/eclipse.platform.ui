@@ -28,7 +28,7 @@ public class RenamableItem {
 	}
 
 	private String name;
-	private List<Listener> listeners = new ArrayList<>();
+	private final List<Listener> listeners = new ArrayList<>();
 
 	public RenamableItem() {
 		name = "RenamableItem"; //$NON-NLS-1$

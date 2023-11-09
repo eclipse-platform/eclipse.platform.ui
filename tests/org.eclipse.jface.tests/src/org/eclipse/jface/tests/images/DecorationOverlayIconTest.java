@@ -100,7 +100,7 @@ public class DecorationOverlayIconTest {
 	}
 
 	private static class SimpleImageDescriptor extends ImageDescriptor {
-		private String pretendFileName;
+		private final String pretendFileName;
 
 		public SimpleImageDescriptor(String pretendFileName) {
 			this.pretendFileName = pretendFileName;

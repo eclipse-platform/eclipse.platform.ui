@@ -19,9 +19,6 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.conversion.Converter;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -74,6 +71,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 
 public abstract class MenuItemEditor<M extends MMenuItem> extends AbstractComponentEditor<M> {
 
@@ -265,7 +265,7 @@ public abstract class MenuItemEditor<M extends MMenuItem> extends AbstractCompon
 					E4Properties.selected(getEditingDomain()).observeDetail(getMaster()));
 
 			final UpdateValueStrategy<Boolean, ItemType> t2m = new UpdateValueStrategy<>();
-			t2m.setConverter(new Converter<Boolean, ItemType>(boolean.class, ItemType.class) {
+			t2m.setConverter(new Converter<>(boolean.class, ItemType.class) {
 
 				@Override
 				public ItemType convert(Boolean fromObject) {
@@ -273,7 +273,7 @@ public abstract class MenuItemEditor<M extends MMenuItem> extends AbstractCompon
 				}
 			});
 			final UpdateValueStrategy<ItemType, Boolean> m2t = new UpdateValueStrategy<>();
-			m2t.setConverter(new Converter<ItemType, Boolean>(ItemType.class, boolean.class) {
+			m2t.setConverter(new Converter<>(ItemType.class, boolean.class) {
 
 				@Override
 				public Boolean convert(ItemType fromObject) {

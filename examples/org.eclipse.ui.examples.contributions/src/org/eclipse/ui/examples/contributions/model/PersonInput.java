@@ -24,7 +24,7 @@ import org.eclipse.ui.IPersistableElement;
  * @since 3.3
  */
 public class PersonInput implements IEditorInput {
-	private int index;
+	private final int index;
 
 	public PersonInput(int i) {
 		index = i;

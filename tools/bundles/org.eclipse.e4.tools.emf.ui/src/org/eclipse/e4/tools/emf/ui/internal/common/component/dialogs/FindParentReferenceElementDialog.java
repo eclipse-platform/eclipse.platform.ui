@@ -86,7 +86,7 @@ public class FindParentReferenceElementDialog extends SaveDialogBoundsSettingsDi
 	private ComboViewer eClassViewer;
 	private Text searchText;
 	private EClass selectedContainer;
-	private ClassContributionCollector collector;
+	private final ClassContributionCollector collector;
 
 	/** Remember of classes that can be used for a fragment definition. */
 	private static List<EClass> extendableClasses = null;

@@ -367,7 +367,6 @@ public interface CSSEngine {
 	 *
 	 * @param node
 	 * @param applyStylesToChildNodes
-	 * @throws IOException
 	 */
 	void applyDefaultStyleDeclaration(Object node, boolean applyStylesToChildNodes);
 

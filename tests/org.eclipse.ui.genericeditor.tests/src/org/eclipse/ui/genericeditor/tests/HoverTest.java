@@ -127,7 +127,7 @@ public class HoverTest extends AbstratGenericEditorTest {
 			marker.setAttribute(MarkerResolutionGenerator.FIXME, true);
 			AbstractInformationControlManager manager= triggerCompletionAndRetrieveInformationControlManager();
 			Object hoverData= getHoverData(manager);
-			assertTrue(hoverData instanceof Map);
+			assertTrue(""+hoverData, hoverData instanceof Map);
 			assertTrue(((Map<?, ?>) hoverData).containsValue(Collections.singletonList(marker)));
 			assertTrue(((Map<?, ?>) hoverData).containsValue(AlrightyHoverProvider.LABEL));
 			assertFalse(((Map<?, ?>) hoverData).containsValue(HelloHoverProvider.LABEL));
