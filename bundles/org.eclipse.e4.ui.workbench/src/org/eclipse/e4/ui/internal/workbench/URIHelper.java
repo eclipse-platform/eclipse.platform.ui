@@ -111,7 +111,7 @@ public class URIHelper {
 	 * @param uri
 	 *            a possible Platform URI
 	 * @return true if the given string is not {@code null} and starts with
-	 *         {@value #PLATFORM_SCHEMA}; false otherwise
+	 *         {@code "platform:/"}; false otherwise
 	 */
 	public static boolean isPlatformURI(String uri) {
 		return uri != null && uri.startsWith(PLATFORM_SCHEMA);
@@ -120,10 +120,9 @@ public class URIHelper {
 	/**
 	 * Helper method which checks if given String represents a Bundleclass URI.
 	 *
-	 * @param uri
-	 *            a possible Bundleclass URI
+	 * @param uri a possible Bundleclass URI
 	 * @return true if the given string is not {@code null} and starts with
-	 *         {@value #BUNDLECLASS_SCHEMA}; false otherwise
+	 *         {@code "bundleclass://"}. false otherwise
 	 */
 	public static boolean isBundleClassUri(String uri) {
 		if (uri != null && uri.startsWith(BUNDLECLASS_SCHEMA)) {

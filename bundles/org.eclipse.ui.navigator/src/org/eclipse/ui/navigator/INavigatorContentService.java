@@ -20,7 +20,7 @@ import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISaveablesSource;
 
@@ -379,14 +379,13 @@ public interface INavigatorContentService {
 	INavigatorFilterService getFilterService();
 
 	/**
-	 * The sorter service provides the appropriate sorter based on the current
-	 * items being sorted. By default, the CommonViewer uses
-	 * {@link CommonViewerSorter} which delegates to this service. Clients do
-	 * not need to provide their own {@link ViewerSorter} unless they wish to
-	 * override this functionality.
+	 * The sorter service provides the appropriate sorter based on the current items
+	 * being sorted. By default, the CommonViewer uses {@link CommonViewerSorter}
+	 * which delegates to this service. Clients do not need to provide their own
+	 * {@link ViewerComparator} unless they wish to override this functionality.
 	 *
 	 * @return An {@link INavigatorSorterService} that can provide
-	 *         {@link ViewerSorter} based on the context of the parent.
+	 *         {@link ViewerComparator} based on the context of the parent.
 	 */
 	INavigatorSorterService getSorterService();
 

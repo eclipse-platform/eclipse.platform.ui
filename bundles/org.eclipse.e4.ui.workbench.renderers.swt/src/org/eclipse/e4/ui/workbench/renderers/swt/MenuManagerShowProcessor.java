@@ -116,8 +116,7 @@ public class MenuManagerShowProcessor implements IMenuListener2 {
 	}
 
 	/**
-	 * HashMap key for storage of {@link MDynamicMenuContribution} elements used
-	 * in {@link #processDynamicElements(MMenu, MenuManager)}
+	 * HashMap key for storage of {@link MDynamicMenuContribution} elements
 	 */
 	protected static final String DYNAMIC_ELEMENT_STORAGE_KEY = MenuManagerShowProcessor.class
 			.getSimpleName() + ".dynamicElements"; //$NON-NLS-1$

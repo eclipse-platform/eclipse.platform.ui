@@ -1082,7 +1082,7 @@ public class TextViewer extends Viewer implements
 	private final class ViewerState {
 		/** The position tracking the selection. */
 		private Position[] fSelections;
-		/** <code>true</code> if {@link #fSelection} was originally backwards. */
+		/** <code>true</code> if {@link #fSelections} was originally backwards. */
 		private boolean fReverseSelection;
 		/** <code>true</code> if the selection has been updated while in redraw(off) mode. */
 		private boolean fSelectionSet;
@@ -1091,7 +1091,7 @@ public class TextViewer extends Viewer implements
 		/** The pixel offset of the stable line measured from the client area. */
 		private int fStablePixel;
 
-		/** The position updater for {@link #fSelection} and {@link #fStableLine}. */
+		/** The position updater for {@link #fSelections} and {@link #fStableLine}. */
 		private IPositionUpdater fUpdater;
 		/** The document that the position updater and the positions are registered with. */
 		private IDocument fUpdaterDocument;

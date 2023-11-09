@@ -75,7 +75,7 @@ public class ToolControlRenderer extends SWTPartRenderer {
 	/**
 	 * The state ID for a toggle state understood by the system.
 	 *
-	 * @see RegistryToggleState.STATE_ID
+	 * see org.eclipse.ui.handlers.RegistryToggleState.STATE_ID
 	 */
 	public static final String STATE_ID = "org.eclipse.ui.commands.toggleState"; //$NON-NLS-1$
 

@@ -5501,10 +5501,11 @@ public class WorkbenchPage implements IWorkbenchPage {
 	}
 
 	/**
-	 * Call {@link #firePartDeactivated(MPart)} if the passed part is the currently
-	 * active part according to the part service. This method should only be called
-	 * in the case of workbench shutdown, where E4 does not fire deactivate
-	 * listeners on the active part.
+	 * Fires
+	 * {@link org.eclipse.ui.IPartListener2#partDeactivated(IWorkbenchPartReference)}
+	 * if the passed part is the currently active part according to the part
+	 * service. This method should only be called in the case of workbench shutdown,
+	 * where E4 does not fire deactivate listeners on the active part.
 	 */
 	public void firePartDeactivatedIfActive(MPart part) {
 		if (partService.getActivePart() == part) {

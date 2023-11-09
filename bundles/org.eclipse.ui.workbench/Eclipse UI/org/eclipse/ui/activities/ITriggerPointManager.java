@@ -30,9 +30,7 @@ import java.util.Set;
 public interface ITriggerPointManager {
 
 	/**
-	 * Constant representing the id of an unknown trigger point. Used by clients of
-	 * {@link WorkbenchActivityHelper#allowUseOf(Object)} for trigger point
-	 * determination logic.
+	 * Constant representing the id of an unknown trigger point.
 	 */
 	String UNKNOWN_TRIGGER_POINT_ID = "org.eclipse.ui.internal.UnknownTriggerPoint"; //$NON-NLS-1$
 
