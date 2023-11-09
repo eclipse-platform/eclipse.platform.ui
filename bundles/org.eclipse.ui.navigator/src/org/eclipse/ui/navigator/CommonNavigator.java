@@ -134,7 +134,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 
 	/**
 	 * <p>
-	 * Used to track changes to the {@link #isLinkingEnabled}&nbsp;property.
+	 * Used to track changes to {@link #isLinkingEnabled()}.
 	 * </p>
 	 *
 	 * Make sure this does not conflict with anything in IWorkbenchPartConstants.

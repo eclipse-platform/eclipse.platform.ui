@@ -68,7 +68,7 @@ public final class WorkbenchActivityHelper {
 	 *         enablement.
 	 * @see #allowUseOf(ITriggerPoint, Object)
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2024-03")
 	public static boolean allowUseOf(Object object) {
 		return allowUseOf(PlatformUI.getWorkbench().getActivitySupport().getTriggerPointManager()
 				.getTriggerPoint(ITriggerPointManager.UNKNOWN_TRIGGER_POINT_ID), object);

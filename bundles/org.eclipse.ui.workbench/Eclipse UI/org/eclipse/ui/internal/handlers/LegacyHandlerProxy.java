@@ -80,9 +80,6 @@ public final class LegacyHandlerProxy extends AbstractHandler {
 		}
 	}
 
-	/**
-	 * @see IHandler#execute(Map)
-	 */
 	@Override
 	public Object execute(Map parameters) throws ExecutionException {
 		if (loadHandler()) {
@@ -92,9 +89,6 @@ public final class LegacyHandlerProxy extends AbstractHandler {
 		return null;
 	}
 
-	/**
-	 * @see IHandler#getAttributeValuesByName()
-	 */
 	@Override
 	public Map getAttributeValuesByName() {
 		if (loadHandler()) {

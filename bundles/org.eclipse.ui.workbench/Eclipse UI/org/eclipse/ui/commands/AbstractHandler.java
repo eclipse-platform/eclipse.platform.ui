@@ -40,7 +40,7 @@ import org.eclipse.core.commands.IHandlerAttributes;
  * @noreference This class is scheduled for deletion.
  * @noextend This class is not intended to be extended by clients.
  */
-@Deprecated
+@Deprecated(forRemoval = true, since = "2024-03")
 @SuppressWarnings({ "unchecked" })
 public abstract class AbstractHandler extends org.eclipse.core.commands.AbstractHandler implements IHandler {
 

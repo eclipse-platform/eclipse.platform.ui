@@ -811,30 +811,6 @@ public interface IWorkbenchRegistryConstants {
 	String EXTENSION_VIEW_ACTIONS = PlatformUI.PLUGIN_ID + '.' + PL_VIEW_ACTIONS;
 
 	/**
-	 * The constant for the position attribute corresponding to
-	 * {@link SOrder#POSITION_AFTER}.
-	 */
-	String POSITION_AFTER = "after"; //$NON-NLS-1$
-
-	/**
-	 * The constant for the position attribute corresponding to
-	 * {@link SOrder#POSITION_BEFORE}.
-	 */
-	String POSITION_BEFORE = "before"; //$NON-NLS-1$
-
-	/**
-	 * The constant for the position attribute corresponding to
-	 * {@link SOrder#POSITION_END}.
-	 */
-	String POSITION_END = "end"; //$NON-NLS-1$
-
-	/**
-	 * The constant for the position attribute corresponding to
-	 * {@link SOrder#POSITION_START}.
-	 */
-	String POSITION_START = "start"; //$NON-NLS-1$
-
-	/**
 	 * The action style for drop-down menus.
 	 */
 	String STYLE_PULLDOWN = "pulldown"; //$NON-NLS-1$

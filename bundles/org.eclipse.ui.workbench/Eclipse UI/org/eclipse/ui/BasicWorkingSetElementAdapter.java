@@ -87,7 +87,6 @@ public final class BasicWorkingSetElementAdapter implements IWorkingSetElementAd
 	 * @see org.eclipse.ui.IWorkingSetElementAdapter#adaptElements(org.eclipse.ui.IWorkingSet,
 	 *      org.eclipse.core.runtime.IAdaptable[])
 	 * @see org.eclipse.core.runtime.IAdapterManager#getAdapter(Object, String)
-	 * @see org.osgi.service.packageadmin.PackageAdmin#getExportedPackage(String)
 	 */
 	@Override
 	public IAdaptable[] adaptElements(IWorkingSet ws, IAdaptable[] elements) {
