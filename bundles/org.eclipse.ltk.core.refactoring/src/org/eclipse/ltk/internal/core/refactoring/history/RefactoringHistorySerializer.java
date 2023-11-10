@@ -41,6 +41,7 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
  */
 public final class RefactoringHistorySerializer implements IRefactoringHistoryListener {
 
+	@SuppressWarnings("incomplete-switch")
 	@Override
 	public void historyNotification(final RefactoringHistoryEvent event) {
 		Assert.isNotNull(event);

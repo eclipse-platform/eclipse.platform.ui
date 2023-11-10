@@ -46,7 +46,6 @@ import org.eclipse.ui.internal.util.Util;
  * @noreference This class is scheduled for deletion.
  */
 @Deprecated
-@SuppressWarnings("rawtypes")
 public final class Priority implements Comparable {
 
 	/**

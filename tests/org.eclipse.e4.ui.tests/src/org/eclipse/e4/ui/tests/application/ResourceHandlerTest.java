@@ -54,6 +54,7 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.util.tracker.ServiceTracker;
 
 public class ResourceHandlerTest {
+	@SuppressWarnings("rawtypes")
 	private ServiceTracker locationTracker;
 
 	private MApplication application;
@@ -70,7 +71,7 @@ public class ResourceHandlerTest {
 				// ignore this. It should never happen as we have tested the
 				// above format.
 			}
-			locationTracker = new ServiceTracker(context, filter, null);
+			locationTracker = new ServiceTracker<>(context, filter, null);
 			locationTracker.open();
 		}
 		return (Location) locationTracker.getService();

@@ -425,6 +425,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		}
 	}
 
+	@SuppressWarnings("incomplete-switch")
 	@Override
 	public void verifyKey(VerifyEvent event) {
 

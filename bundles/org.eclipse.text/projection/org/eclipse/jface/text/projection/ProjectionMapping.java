@@ -167,6 +167,7 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 	 * @throws BadLocationException if the index is not valid on the master
 	 *         document
 	 */
+	@SuppressWarnings("incomplete-switch")
 	private int findFragmentIndex(int offset, int extensionDirection) throws BadLocationException {
 		try {
 

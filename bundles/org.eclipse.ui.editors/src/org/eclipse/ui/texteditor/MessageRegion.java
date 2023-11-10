@@ -116,6 +116,7 @@ class MessageRegion {
 	 *            show the title.
 	 * @see IMessageProvider
 	 */
+	@SuppressWarnings("incomplete-switch")
 	public void updateText(String newMessage, int newType) {
 		Image newImage = null;
 		boolean showingError = false;

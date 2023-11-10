@@ -167,7 +167,6 @@ public class InlinedAnnotationSupport {
 			compute();
 		}
 
-		@SuppressWarnings("boxing")
 		private void compute() {
 			startOffset= getInclusiveTopIndexStartOffset();
 			endOffset= getExclusiveBottomIndexEndOffset();
@@ -221,7 +220,6 @@ public class InlinedAnnotationSupport {
 		 * @return <code>true</code> if the given offset is in visible lines and <code>false</code>
 		 *         otherwise.
 		 */
-		@SuppressWarnings("boxing")
 		boolean isInVisibleLines(int documentOffset) {
 			if (endOffset == null) {
 				Display display= fViewer.getTextWidget().getDisplay();

@@ -101,7 +101,6 @@ public class Bug566936TreeViewerTest {
 			return "Column " + tree.getColumnOrder()[columnIndex] + " => " + element;
 		}
 
-		@SuppressWarnings("rawtypes")
 		@Override
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof List list) {

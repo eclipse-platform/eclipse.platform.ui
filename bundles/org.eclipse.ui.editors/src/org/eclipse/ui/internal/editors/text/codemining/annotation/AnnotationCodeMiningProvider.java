@@ -186,7 +186,6 @@ public class AnnotationCodeMiningProvider extends AbstractCodeMiningProvider
 	}
 
 	@Override
-	@SuppressWarnings("boxing")
 	public @Nullable Integer getLine(Annotation annotation) {
 		Integer offset= getOffset(annotation);
 		if (offset == null) {
@@ -201,7 +200,6 @@ public class AnnotationCodeMiningProvider extends AbstractCodeMiningProvider
 	}
 
 	@Override
-	@SuppressWarnings("boxing")
 	public @Nullable Integer getOffset(Annotation annotation) {
 		final Position position= getAnnotationModel().getPosition(annotation);
 		if (position == null) {
@@ -274,7 +272,6 @@ public class AnnotationCodeMiningProvider extends AbstractCodeMiningProvider
 		return result.toList();
 	}
 
-	@SuppressWarnings("boxing")
 	private @Nullable AbstractCodeMining createCodeMining(Annotation annotation) {
 		final Integer lineNumber= getLine(annotation);
 
