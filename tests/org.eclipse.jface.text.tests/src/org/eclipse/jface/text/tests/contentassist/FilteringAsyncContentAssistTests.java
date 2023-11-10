@@ -651,7 +651,6 @@ public class FilteringAsyncContentAssistTests {
 		}
 	}
 
-	@SuppressWarnings("boxing")
 	private static boolean isSubstringFoundOrderedInString(String subString, String string) {
 		int lastIndex = 0;
 		subString = subString.toLowerCase();

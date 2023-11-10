@@ -196,6 +196,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 		this.createContributions = createContributions;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Object createGui(MUIElement element, Object parentWidget,
 			IEclipseContext parentContext) {

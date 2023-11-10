@@ -126,6 +126,7 @@ public abstract class AbstractTabDescriptor implements ITabDescriptor,
 	 *
 	 * @return the list of section descriptors for the tab.
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	public List getSectionDescriptors() {
 		return sectionDescriptors;

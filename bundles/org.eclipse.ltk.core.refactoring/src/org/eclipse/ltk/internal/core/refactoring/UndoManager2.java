@@ -39,6 +39,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 public class UndoManager2 implements IUndoManager {
 
 	private class OperationHistoryListener implements IOperationHistoryListener {
+		@SuppressWarnings("incomplete-switch")
 		@Override
 		public void historyNotification(OperationHistoryEvent event) {
 			IUndoableOperation op= event.getOperation();

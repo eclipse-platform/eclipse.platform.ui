@@ -176,6 +176,7 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation implements IQuickFi
 	 *             annotation with a visible presentation should implement
 	 *             {@link org.eclipse.jface.text.source.IAnnotationPresentation}
 	 */
+	@SuppressWarnings("incomplete-switch")
 	@Deprecated
 	protected void initialize() {
 		IMarker marker= getMarker();

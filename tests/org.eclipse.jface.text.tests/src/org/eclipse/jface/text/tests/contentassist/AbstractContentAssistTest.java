@@ -166,6 +166,7 @@ public class AbstractContentAssistTest {
 		processEvents();
 	}
 
+	@SuppressWarnings("incomplete-switch")
 	protected void emulatePressArrowKey(int keyCode) {
 		switch (keyCode) {
 		case SWT.ARROW_LEFT:

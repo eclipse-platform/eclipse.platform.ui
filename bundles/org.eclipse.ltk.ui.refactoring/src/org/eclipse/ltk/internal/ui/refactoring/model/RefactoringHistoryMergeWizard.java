@@ -57,6 +57,7 @@ public abstract class RefactoringHistoryMergeWizard extends RefactoringHistoryWi
 	/** Workspace change listener */
 	private class WorkspaceChangeListener implements IResourceChangeListener {
 
+		@SuppressWarnings("incomplete-switch")
 		@Override
 		public void resourceChanged(final IResourceChangeEvent event) {
 			final IResourceDelta delta= event.getDelta();

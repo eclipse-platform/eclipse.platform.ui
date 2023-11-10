@@ -186,6 +186,7 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 		return decorateImage(image, element);
 	}
 
+	@SuppressWarnings("incomplete-switch")
 	@Override
 	public String getText(Object element) {
 		if (element instanceof RefactoringHistoryEntry) {

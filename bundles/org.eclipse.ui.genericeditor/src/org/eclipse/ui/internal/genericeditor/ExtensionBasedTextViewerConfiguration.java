@@ -405,7 +405,7 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 							@Override
 							protected IInformationControl doCreateInformationControl(Shell parent) {
 								return new DefaultInformationControl(parent);
-							};
+							}
 						};
 			} else {
 				return new CompositeInformationControlCreator(new ArrayList<>(this.currentHovers.keySet()));

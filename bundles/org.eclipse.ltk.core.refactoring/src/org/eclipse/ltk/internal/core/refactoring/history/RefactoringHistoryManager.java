@@ -639,6 +639,7 @@ public final class RefactoringHistoryManager {
 			return result.toString();
 		}
 
+		@SuppressWarnings("incomplete-switch")
 		private static String getReplacement(char c) {
 			// Encode special XML characters into the equivalent character references.
 			// The first five are defined by default for all XML documents.

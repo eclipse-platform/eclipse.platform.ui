@@ -837,7 +837,6 @@ public final class E4MigrationTool {
 		}
 	}
 
-	@SuppressWarnings("unused")
 	private void visitPerspectiveBar(final IMemento memento) {
 		// Ignore.
 	}

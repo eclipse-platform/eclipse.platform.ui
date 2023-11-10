@@ -200,7 +200,6 @@ public class MarkerAnnotationPreferences {
 	 * @since 3.0
 	 */
 	private static void checkAccess() throws IllegalStateException {
-		@SuppressWarnings("boxing")
 		boolean calledByEditorsUI= StackWalker
 				.getInstance().walk(
 						s -> s.anyMatch(

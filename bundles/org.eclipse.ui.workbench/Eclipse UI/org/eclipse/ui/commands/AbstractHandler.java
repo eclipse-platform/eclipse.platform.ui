@@ -98,7 +98,6 @@ public abstract class AbstractHandler extends org.eclipse.core.commands.Abstract
 	 * @param handlerEvent the event describing changes to this instance. Must not
 	 *                     be <code>null</code>.
 	 */
-	@SuppressWarnings("rawtypes")
 	@Override
 	@Deprecated
 	protected void fireHandlerChanged(HandlerEvent handlerEvent) {
@@ -133,7 +132,6 @@ public abstract class AbstractHandler extends org.eclipse.core.commands.Abstract
 	/**
 	 * @see org.eclipse.core.commands.AbstractHandler
 	 */
-	@SuppressWarnings("rawtypes")
 	@Deprecated
 	protected void fireHandlerChanged(final org.eclipse.ui.commands.HandlerEvent handlerEvent) {
 		if (handlerEvent == null) {

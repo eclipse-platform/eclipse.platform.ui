@@ -902,6 +902,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		return null;
 	}
 
+	@SuppressWarnings("incomplete-switch")
 	private void performHistoryNotification(final OperationHistoryEvent event) {
 		RefactoringDescriptor descriptor= getRefactoringDescriptor(event.getOperation());
 		if (descriptor != null) {

@@ -245,7 +245,6 @@ public class ViewerItemsLimitTest extends UITestCase {
 		assertEquals(expLabel, node.getLabel());
 	}
 
-	@SuppressWarnings("boxing")
 	private String calculateExpandableLabel(Object data, int realInputSize) {
 		ExpandableNode node = (ExpandableNode) data;
 		int remaining = realInputSize - node.getOffset();
