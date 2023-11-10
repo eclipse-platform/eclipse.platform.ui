@@ -14,6 +14,7 @@
 package org.eclipse.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -103,20 +104,19 @@ public abstract class WorkspaceModifyOperation implements IRunnableWithProgress,
 	@Override
 	public synchronized final void run(IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException {
-		final InvocationTargetException[] iteHolder = new InvocationTargetException[1];
+		AtomicReference<InvocationTargetException> rethrownInvocationTargetException = new AtomicReference<>();
+		AtomicReference<InterruptedException> rethrownInterruptedException = new AtomicReference<>();
 		try {
 			IWorkspaceRunnable workspaceRunnable = pm -> {
 				try {
 					execute(pm);
 				} catch (InvocationTargetException e1) {
-					// Pass it outside the workspace runnable
-					iteHolder[0] = e1;
+					rethrownInvocationTargetException.set(e1);
 				} catch (InterruptedException e2) {
-					// Re-throw as OperationCanceledException, which will be
-					// caught and re-thrown as InterruptedException below.
-					throw new OperationCanceledException(e2.getMessage());
+					rethrownInterruptedException.set(e2);
 				}
-				// CoreException and OperationCanceledException are propagated
+				// CoreException and unchecked exceptions (e.g. OperationCanceledException) are
+				// propagated to the outer catch
 			};
 			// if we are in the UI thread, make sure we use progress monitor
 			// that spins event loop to allow processing of pending asyncExecs
@@ -137,9 +137,13 @@ public abstract class WorkspaceModifyOperation implements IRunnableWithProgress,
 			interruptedException.initCause(e);
 			throw interruptedException;
 		}
-		// Re-throw the InvocationTargetException, if any occurred
-		if (iteHolder[0] != null) {
-			throw iteHolder[0];
+
+		// Re-throw any exceptions caught while running the IWorkspaceRunnable
+		if (rethrownInvocationTargetException.get() != null) {
+			throw rethrownInvocationTargetException.get();
+		}
+		if (rethrownInterruptedException.get() != null) {
+			throw rethrownInterruptedException.get();
 		}
 	}
 	@Override
