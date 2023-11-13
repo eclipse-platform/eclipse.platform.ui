@@ -333,11 +333,11 @@ public class CopyProjectAction extends SelectionListenerAction {
 
 		// to enable this command there must be one project selected and nothing
 		// else
-		List selectedResources = getSelectedResources();
+		List<? extends IResource> selectedResources = getSelectedResources();
 		if (selectedResources.size() != 1) {
 			return false;
 		}
-		IResource source = (IResource) selectedResources.get(0);
+		IResource source = selectedResources.get(0);
 		if (source instanceof IProject && ((IProject) source).isOpen()) {
 			return true;
 		}

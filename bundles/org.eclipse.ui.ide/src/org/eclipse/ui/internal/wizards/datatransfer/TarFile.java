@@ -93,15 +93,15 @@ public class TarFile implements AutoCloseable {
 	 *
 	 * @return enumeration of all files in the archive
 	 */
-	public Enumeration entries() {
-		return new Enumeration() {
+	public Enumeration<TarEntry> entries() {
+		return new Enumeration<>() {
 			@Override
 			public boolean hasMoreElements() {
 				return (curEntry != null);
 			}
 
 			@Override
-			public Object nextElement() {
+			public TarEntry nextElement() {
 				TarEntry oldEntry = curEntry;
 				try {
 					curEntry = entryEnumerationStream.getNextEntry();

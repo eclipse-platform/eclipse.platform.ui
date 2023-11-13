@@ -21,7 +21,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 
-public class TableComparator extends ViewerComparator implements Comparator {
+public class TableComparator extends ViewerComparator implements Comparator<TableComparator> {
 
 	public static final int MAX_DEPTH = 4;
 
@@ -258,7 +258,7 @@ public class TableComparator extends ViewerComparator implements Comparator {
 	}
 
 	@Override
-	public int compare(Object o1, Object o2) {
+	public int compare(TableComparator o1, TableComparator o2) {
 		return compare(null, o1, o2);
 	}
 
