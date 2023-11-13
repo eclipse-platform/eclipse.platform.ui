@@ -18,6 +18,7 @@ package org.eclipse.ui.dialogs;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
@@ -83,7 +84,7 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
 	// initial value stores
 	private String initialContainerFieldValue;
 
-	protected java.util.List selectedTypes = new ArrayList();
+	protected List<Object> selectedTypes = new ArrayList<>();
 
 	// widgets
 	private Text containerNameField;
@@ -313,7 +314,7 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
 	 * @return a list of resources currently selected for export (element type:
 	 *         <code>IResource</code>)
 	 */
-	protected java.util.List getSelectedResources() {
+	protected List getSelectedResources() {
 		return this.selectionGroup.getAllCheckedListItems();
 	}
 
@@ -365,7 +366,7 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
 	 * Returns a collection of the currently-specified resource types for use by the
 	 * type selection dialog.
 	 */
-	protected java.util.List getTypesToImport() {
+	protected List getTypesToImport() {
 
 		return selectedTypes;
 	}
@@ -417,7 +418,7 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
 
 		Object[] newSelectedTypes = dialog.getResult();
 		if (newSelectedTypes != null) { // ie.- did not press Cancel
-			this.selectedTypes = new ArrayList(newSelectedTypes.length);
+			this.selectedTypes = new ArrayList<>(newSelectedTypes.length);
 			this.selectedTypes.addAll(Arrays.asList(newSelectedTypes));
 
 			setupSelectionsBasedOnSelectedTypes();

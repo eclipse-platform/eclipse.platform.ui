@@ -40,9 +40,9 @@ public class TarLeveledStructureProvider implements
 
 	private TarEntry root = new TarEntry("/");//$NON-NLS-1$
 
-	private Map children;
+	private Map<TarEntry, List<TarEntry>> children;
 
-	private Map directoryEntryCache = new HashMap();
+	private Map<IPath, TarEntry> directoryEntryCache = new HashMap<>();
 
 	private int stripLevel;
 
@@ -67,7 +67,7 @@ public class TarLeveledStructureProvider implements
 	 * @return The element represented by this pathname (it may have already existed)
 	 */
 	protected TarEntry createContainer(IPath pathname) {
-		TarEntry existingEntry = (TarEntry) directoryEntryCache.get(pathname);
+		TarEntry existingEntry = directoryEntryCache.get(pathname);
 		if (existingEntry != null) {
 			return existingEntry;
 		}
@@ -81,10 +81,10 @@ public class TarLeveledStructureProvider implements
 		TarEntry newEntry = new TarEntry(pathname.toString());
 		newEntry.setFileType(TarEntry.DIRECTORY);
 		directoryEntryCache.put(pathname, newEntry);
-		List childList = new ArrayList();
+		List<TarEntry> childList = new ArrayList<>();
 		children.put(newEntry, childList);
 
-		List parentChildList = (List) children.get(parent);
+		List<TarEntry> parentChildList = children.get(parent);
 		parentChildList.add(newEntry);
 		return newEntry;
 	}
@@ -98,11 +98,11 @@ public class TarLeveledStructureProvider implements
 		if (pathname.segmentCount() == 1) {
 			parent = root;
 		} else {
-			parent = (TarEntry) directoryEntryCache.get(pathname
+			parent = directoryEntryCache.get(pathname
 					.removeLastSegments(1));
 		}
 
-		List childList = (List) children.get(parent);
+		List<TarEntry> childList = children.get(parent);
 		childList.add(entry);
 	}
 
@@ -112,7 +112,7 @@ public class TarLeveledStructureProvider implements
 			initialize();
 		}
 
-		return ((List) children.get(element));
+		return children.get(element);
 	}
 
 	@Override
@@ -194,10 +194,10 @@ public class TarLeveledStructureProvider implements
 	 * specified source file.
 	 */
 	protected void initialize() {
-		children = new HashMap(1000);
+		children = new HashMap<>(1000);
 
-		children.put(root, new ArrayList());
-		Enumeration entries = tarFile.entries();
+		children.put(root, new ArrayList<>());
+		Enumeration<?> entries = tarFile.entries();
 		while (entries.hasMoreElements()) {
 			TarEntry entry = (TarEntry) entries.nextElement();
 			IPath path = IPath.fromOSString(entry.getName()).addTrailingSeparator();

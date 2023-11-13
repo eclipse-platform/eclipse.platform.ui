@@ -74,9 +74,9 @@ public class ImportOperation extends WorkspaceModifyOperation {
 
 	private IContainer destinationContainer;
 
-	private List selectedFiles;
+	private List<?> selectedFiles;
 
-	private List rejectedFiles;
+	private List<IPath> rejectedFiles;
 
 	private IImportStructureProvider provider;
 
@@ -232,11 +232,11 @@ public class ImportOperation extends WorkspaceModifyOperation {
 	 * @param policy on of the POLICY constants defined in the
 	 * class.
 	 */
-	void collectExistingReadonlyFiles(IPath sourceStart, List sources, ArrayList noOverwrite,
-			ArrayList overwriteReadonly, int policy, IProgressMonitor monitor) {
+	void collectExistingReadonlyFiles(IPath sourceStart, List<?> sources, ArrayList<IPath> noOverwrite,
+			ArrayList<IPath> overwriteReadonly, int policy, IProgressMonitor monitor) {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-		Iterator sourceIter = sources.iterator();
+		Iterator<?> sourceIter = sources.iterator();
 		IPath sourceRootPath = null;
 
 		if (this.source != null) {
@@ -269,7 +269,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
 				if (policy != POLICY_FORCE_OVERWRITE) {
 					if (this.overwriteState == OVERWRITE_NONE
 							|| !queryOverwrite(newDestinationPath)) {
-						noOverwrite.add(folder);
+						noOverwrite.add(folder.getFullPath());
 						continue;
 					}
 				}
@@ -284,7 +284,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
 					if (!queryOverwriteFile(file, policy)) {
 						noOverwrite.add(file.getFullPath());
 					} else if (file.isReadOnly()) {
-						overwriteReadonly.add(file);
+						overwriteReadonly.add(file.getFullPath());
 					}
 				}
 			}
@@ -457,8 +457,8 @@ public class ImportOperation extends WorkspaceModifyOperation {
 	 * @param files source files
 	 * @return list of rejected files as absolute paths. Object type IPath.
 	 */
-	ArrayList getRejectedFiles(IStatus multiStatus, IFile[] files) {
-		ArrayList filteredFiles = new ArrayList();
+	ArrayList<IPath> getRejectedFiles(IStatus multiStatus, IFile[] files) {
+		ArrayList<IPath> filteredFiles = new ArrayList<>();
 
 		IStatus[] status = multiStatus.getChildren();
 		for (int i = 0; i < status.length; i++) {
@@ -635,9 +635,9 @@ public class ImportOperation extends WorkspaceModifyOperation {
 	 *   (element type: <code>Object</code>)
 	 * @exception OperationCanceledException if canceled
 	 */
-	void importFileSystemObjects(List filesToImport, IProgressMonitor monitor) throws CoreException {
+	void importFileSystemObjects(List<?> filesToImport, IProgressMonitor monitor) throws CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, filesToImport.size());
-		Iterator filesEnum = filesToImport.iterator();
+		Iterator<?> filesEnum = filesToImport.iterator();
 		while (filesEnum.hasNext()) {
 			SubMonitor iterationMonitor = subMonitor.split(1);
 			Object fileSystemObject = filesEnum.next();
@@ -762,7 +762,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
 
 		int childPolicy = importFolder(fileSystemObject, policy, subMonitor.split(10));
 		if (childPolicy != POLICY_SKIP_CHILDREN) {
-			List children = provider.getChildren(fileSystemObject);
+			List<?> children = provider.getChildren(fileSystemObject);
 			SubMonitor loopMonitor = subMonitor.split(90).setWorkRemaining(children.size());
 			for (Object child : children) {
 				importRecursivelyFrom(child, childPolicy, loopMonitor.split(1));
@@ -879,7 +879,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
 	 * @param existingFiles existing files to validate
 	 * @return list of rejected files as absolute paths. Object type IPath.
 	 */
-	ArrayList validateEdit(List<IFile> existingFiles) {
+	ArrayList<IPath> validateEdit(List<IPath> existingFiles) {
 
 		if (existingFiles.size() > 0) {
 			IFile[] files = existingFiles
@@ -895,7 +895,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
 			if(!status.isOK()){
 				//If just a single status reject them all
 				errorTable.add(status);
-				ArrayList filteredFiles = new ArrayList();
+				ArrayList<IPath> filteredFiles = new ArrayList<>();
 
 				for (IFile file : files) {
 					filteredFiles.add(file.getFullPath());
@@ -904,7 +904,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
 			}
 
 		}
-		return new ArrayList();
+		return new ArrayList<>();
 	}
 
 	/**
@@ -914,9 +914,9 @@ public class ImportOperation extends WorkspaceModifyOperation {
 	 *
 	 * @param sourceFiles files to validate
 	 */
-	void validateFiles(List sourceFiles, IProgressMonitor monitor) {
-		ArrayList noOverwrite = new ArrayList();
-		ArrayList overwriteReadonly = new ArrayList();
+	void validateFiles(List<?> sourceFiles, IProgressMonitor monitor) {
+		ArrayList<IPath> noOverwrite = new ArrayList<>();
+		ArrayList<IPath> overwriteReadonly = new ArrayList<>();
 
 		collectExistingReadonlyFiles(destinationPath, sourceFiles, noOverwrite, overwriteReadonly, POLICY_DEFAULT,
 				monitor);

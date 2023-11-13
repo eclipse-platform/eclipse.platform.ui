@@ -121,7 +121,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 	 * Set of variable names currently in use. Used when warning the user that
 	 * the currently selected name is already in use by another variable.
 	 */
-	private Set namesInUse;
+	private Set<String> namesInUse;
 
 	/**
 	 * The current validation status. Its value can be one of the following:<ul>

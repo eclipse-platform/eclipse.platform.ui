@@ -102,7 +102,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 	 * @param collectedResources list of collected resources
 	 * @param container          container to collect working set elements for
 	 */
-	private void addWorkingSetElements(List collectedResources, IContainer container) {
+	private void addWorkingSetElements(List<IResource> collectedResources, IContainer container) {
 		IPath containerPath = container.getFullPath();
 
 		for (IAdaptable adaptable : workingSet.getElements()) {
@@ -111,7 +111,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 			if (resource != null) {
 				IPath resourcePath = resource.getFullPath();
 				if (containerPath.isPrefixOf(resourcePath)) {
-					collectedResources.add(adaptable);
+					collectedResources.add(resource);
 				}
 			}
 		}
@@ -233,7 +233,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 	 * @param checkedResources the output, list of checked resources
 	 * @param container        the container to collect checked resources in
 	 */
-	private void findCheckedResources(List checkedResources, IContainer container) {
+	private void findCheckedResources(List<IResource> checkedResources, IContainer container) {
 		IResource[] resources = null;
 		try {
 			resources = container.members();
@@ -261,7 +261,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 	 */
 	@Override
 	public void finish() {
-		ArrayList<IAdaptable> resources = new ArrayList<>(10);
+		ArrayList<IResource> resources = new ArrayList<>(10);
 		findCheckedResources(resources, (IContainer) tree.getInput());
 		if (workingSet == null) {
 			IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();

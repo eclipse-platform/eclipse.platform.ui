@@ -117,7 +117,7 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 		}
 
 
-		final Collection runnables = new ArrayList();
+		final Collection<Runnable> runnables = new ArrayList<>();
 		processDelta(delta, runnables);
 
 		if (runnables.isEmpty()) {
@@ -144,10 +144,10 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 	/**
 	 * Run all of the runnables that are the widget updates
 	 */
-	private void runUpdates(Collection runnables) {
-		Iterator runnableIterator = runnables.iterator();
+	private void runUpdates(Collection<Runnable> runnables) {
+		Iterator<Runnable> runnableIterator = runnables.iterator();
 		while(runnableIterator.hasNext()){
-			((Runnable)runnableIterator.next()).run();
+			runnableIterator.next().run();
 		}
 
 	}
@@ -155,7 +155,7 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 	/**
 	 * Process a resource delta. Add any runnables
 	 */
-	private void processDelta(IResourceDelta delta, Collection runnables) {
+	private void processDelta(IResourceDelta delta, Collection<Runnable> runnables) {
 		//he widget may have been destroyed
 		// by the time this is run. Check for this and do nothing if so.
 		Control ctrl = viewer.getControl();

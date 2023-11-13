@@ -374,7 +374,7 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 		if (result == null)
 			return null;
 
-		List resultToReturn = new ArrayList();
+		List<Object> resultToReturn = new ArrayList<>();
 
 		for (Object element : result) {
 			if (element instanceof IResource) {

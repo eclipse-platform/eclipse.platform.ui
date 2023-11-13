@@ -44,7 +44,7 @@ public class FileStoreStructureProvider implements IImportStructureProvider {
 					new NullProgressMonitor()));
 		} catch (CoreException exception) {
 			logException(exception);
-			return new ArrayList();
+			return new ArrayList<>();
 		}
 	}
 

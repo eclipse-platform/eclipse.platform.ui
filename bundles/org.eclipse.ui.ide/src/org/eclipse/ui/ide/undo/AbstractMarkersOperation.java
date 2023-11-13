@@ -48,7 +48,7 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 
 	IMarker[] markers;
 
-	Map[] attributes;
+	Map<String, Object>[] attributes;
 
 	/**
 	 * Create an AbstractMarkersOperation by specifying a combination of markers
@@ -68,8 +68,9 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	 *            the name used to describe the operation
 	 */
 	AbstractMarkersOperation(IMarker[] markers,
-			IMarkerSnapshot[] markerDescriptions, Map attributes, String name) {
+			IMarkerSnapshot[] markerDescriptions, Map<String, Object> attributes, String name) {
 		super(name);
+		Map<String, Object> typedAttributes = attributes;
 		this.markers = markers;
 		this.attributes = null;
 		// If there is more than one marker, create an array with a copy
@@ -81,12 +82,12 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 			if (markers.length > 1) {
 				this.attributes = new Map[markers.length];
 				for (int i = 0; i < markers.length; i++) {
-					Map copiedAttributes = new HashMap();
-					copiedAttributes.putAll(attributes);
+					Map<String, Object> copiedAttributes = new HashMap<>();
+					copiedAttributes.putAll(typedAttributes);
 					this.attributes[i] = copiedAttributes;
 				}
 			} else {
-				this.attributes = new Map[] { attributes };
+				this.attributes = new Map[] { typedAttributes };
 			}
 		}
 		setMarkerDescriptions(markerDescriptions);
@@ -169,13 +170,13 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 		int markerWork = work / markers.length;
 		for (int i = 0; i < markers.length; i++) {
 			if (mergeAttributes) {
-				Map oldAttributes = markers[i].getAttributes();
+				Map<String, Object> oldAttributes = markers[i].getAttributes();
 				int increment = markerWork / attributes[i].size();
-				Map replacedAttributes = new HashMap();
+				Map<String, Object> replacedAttributes = new HashMap<>();
 
-				for (Iterator iter = attributes[i].keySet().iterator(); iter
+				for (Iterator<String> iter = attributes[i].keySet().iterator(); iter
 						.hasNext();) {
-					String key = (String) iter.next();
+					String key = iter.next();
 					Object val = attributes[i].get(key);
 					markers[i].setAttribute(key, val);
 					replacedAttributes.put(key, oldAttributes.get(key));
@@ -184,7 +185,7 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 				attributes[i] = replacedAttributes;
 			} else {
 				// replace all of the attributes
-				Map oldAttributes = markers[i].getAttributes();
+				Map<String, Object> oldAttributes = markers[i].getAttributes();
 				markers[i].setAttributes(attributes[i]);
 				attributes[i] = oldAttributes;
 			}

@@ -651,8 +651,8 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 
 		saveWidgetValues();
 
-		Iterator resourcesEnum = getSelectedResources().iterator();
-		List fileSystemObjects = new ArrayList();
+		Iterator<?> resourcesEnum = getSelectedResources().iterator();
+		List<Object> fileSystemObjects = new ArrayList<>();
 		while (resourcesEnum.hasNext()) {
 			fileSystemObjects.add(((FileSystemElement) resourcesEnum.next())
 					.getFileSystemObject());
@@ -850,7 +850,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 	/**
 	 *  Import the resources with extensions as specified by the user
 	 */
-	protected boolean importResources(List fileSystemObjects) {
+	protected boolean importResources(List<Object> fileSystemObjects) {
 		ImportOperation operation;
 
 		boolean shouldImportTopLevelFoldersRecursively = selectionGroup.isEveryItemChecked() &&
@@ -922,7 +922,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 			return true;
 		}
 
-		Iterator itr = selectedTypes.iterator();
+		Iterator<Object> itr = selectedTypes.iterator();
 		while (itr.hasNext()) {
 			if (extension.equalsIgnoreCase((String) itr.next())) {
 				return true;
@@ -1110,7 +1110,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 	protected void setupSelectionsBasedOnSelectedTypes() {
 		ProgressMonitorDialog dialog = new ProgressMonitorJobsDialog(
 				getContainer().getShell());
-		final Map selectionMap = new Hashtable();
+		final Map<Object, List<Object>> selectionMap = new Hashtable<>();
 
 		final IElementFilter filter = new IElementFilter() {
 
@@ -1120,7 +1120,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 				if (files == null) {
 					throw new InterruptedException();
 				}
-				Iterator filesList = files.iterator();
+				Iterator<?> filesList = files.iterator();
 				while (filesList.hasNext()) {
 					if (monitor.isCanceled()) {
 						throw new InterruptedException();
@@ -1146,10 +1146,10 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 			private void checkFile(Object fileElement) {
 				MinimizedFileSystemElement file = (MinimizedFileSystemElement) fileElement;
 				if (isExportableExtension(file.getFileNameExtension())) {
-					List elements = new ArrayList();
+					List<Object> elements = new ArrayList<>();
 					FileSystemElement parent = file.getParent();
 					if (selectionMap.containsKey(parent)) {
-						elements = (List) selectionMap.get(parent);
+						elements = selectionMap.get(parent);
 					}
 					elements.add(file);
 					selectionMap.put(parent, elements);
@@ -1249,7 +1249,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 			return false;
 		}
 
-		List resourcesToExport = selectionGroup.getAllWhiteCheckedItems();
+		List<?> resourcesToExport = selectionGroup.getAllWhiteCheckedItems();
 		if (resourcesToExport.isEmpty()){
 			setMessage(null);
 			setErrorMessage(DataTransferMessages.FileImport_noneSelected);

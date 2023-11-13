@@ -79,11 +79,11 @@ public class SelectFilesOperation implements IRunnableWithProgress {
 
 		if (isContainer) {
 			boolean haveChildOrFile = false;
-			List children = provider.getChildren(fileSystemObject);
+			List<?> children = provider.getChildren(fileSystemObject);
 			if (children == null) {
-				children = new ArrayList(1);
+				children = new ArrayList<>(1);
 			}
-			Iterator childrenEnum = children.iterator();
+			Iterator<?> childrenEnum = children.iterator();
 			while (childrenEnum.hasNext()) {
 				if (createElement(createdElement, childrenEnum.next()) != null) {
 					haveChildOrFile = true;

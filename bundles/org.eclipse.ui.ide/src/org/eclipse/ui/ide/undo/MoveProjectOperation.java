@@ -119,7 +119,7 @@ public class MoveProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 			throws CoreException {
 		projectLocation = moveProject(getProject(), projectLocation, monitor);
 		// nothing was overwritten
-		setResourceDescriptions(new IResourceSnapshot[0]);
+		setResourceDescriptions(new IResourceSnapshot<?>[0]);
 	}
 
 	@Override

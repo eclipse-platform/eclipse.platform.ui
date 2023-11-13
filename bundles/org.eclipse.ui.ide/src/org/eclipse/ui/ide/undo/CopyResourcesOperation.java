@@ -174,7 +174,7 @@ public class CopyResourcesOperation extends
 
 		// Reset resource descriptions to the just overwritten resources
 		setResourceDescriptions(overwrittenResources
-				.toArray(new IResourceSnapshot[overwrittenResources.size()]));
+				.toArray(new IResourceSnapshot<?>[overwrittenResources.size()]));
 
 		// Reset the target resources to refer to the resources in their new
 		// location.
@@ -195,7 +195,7 @@ public class CopyResourcesOperation extends
 		WorkspaceUndoUtil.delete(resources, subMonitor.split(1), uiInfo, true);
 		// then restoring any overwritten by the previous copy...
 		WorkspaceUndoUtil.recreate(resourceDescriptions, subMonitor.split(1), uiInfo);
-		setResourceDescriptions(new IResourceSnapshot[0]);
+		setResourceDescriptions(new IResourceSnapshot<?>[0]);
 		// then setting the target resources back to the original ones.
 		// Note that the destination paths never changed since they
 		// are not used during undo.
@@ -212,7 +212,7 @@ public class CopyResourcesOperation extends
 				update = true;
 				factory.delete(resource);
 			}
-			for (IResourceSnapshot resourceDescription : resourceDescriptions) {
+			for (IResourceSnapshot<? extends IResource> resourceDescription : resourceDescriptions) {
 				if (resourceDescription != null) {
 					update = true;
 					IResource resource = resourceDescription.createResourceHandle();
@@ -246,7 +246,7 @@ public class CopyResourcesOperation extends
 			markInvalid();
 			return getErrorStatus(UndoMessages.CopyResourcesOperation_NotAllowedDueToDataLoss);
 		}
-		for (IResourceSnapshot snapshotResourceDescription : snapshotResourceDescriptions) {
+		for (IResourceSnapshot<? extends IResource> snapshotResourceDescription : snapshotResourceDescriptions) {
 			if (!snapshotResourceDescription.verifyExistence(true)) {
 				markInvalid();
 				return getErrorStatus(UndoMessages.CopyResourcesOperation_NotAllowedDueToDataLoss);
@@ -273,7 +273,7 @@ public class CopyResourcesOperation extends
 	 */
 	private void setOriginalResources(IResource[] originals) {
 		originalResources = originals;
-		snapshotResourceDescriptions = new IResourceSnapshot[originals.length];
+		snapshotResourceDescriptions = new IResourceSnapshot<?>[originals.length];
 		for (int i = 0; i < originals.length; i++) {
 			snapshotResourceDescriptions[i] = ResourceSnapshotFactory.fromResource(originals[i]);
 		}
