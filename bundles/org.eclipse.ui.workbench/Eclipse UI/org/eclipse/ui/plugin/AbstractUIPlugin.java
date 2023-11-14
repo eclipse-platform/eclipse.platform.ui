@@ -158,14 +158,14 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 * @see #getImageRegistry
 	 */
 	protected ImageRegistry createImageRegistry() {
-
-		// If we are in the UI Thread use that
-		if (Display.getCurrent() != null) {
-			return new ImageRegistry(Display.getCurrent());
-		}
-
+		// Use display of workbench if available
 		if (PlatformUI.isWorkbenchRunning()) {
 			return new ImageRegistry(PlatformUI.getWorkbench().getDisplay());
+		}
+
+		// Otherwise use display of the current thread if available
+		if (Display.getCurrent() != null) {
+			return new ImageRegistry(Display.getCurrent());
 		}
 
 		// Invalid thread access if it is not the UI Thread
