@@ -52,6 +52,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.dialogs.SearchPattern;
 import org.eclipse.ui.dialogs.StyledStringHighlighter;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.themes.ITheme;
 
 /**
@@ -163,7 +164,7 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 	private Map<EditorReference, String> generateColumnLabelTexts(List<EditorReference> editorReferences) {
 		Map<EditorReference, String> editorReferenceLabelTexts = new HashMap<>(editorReferences.size());
 		Map<String, List<EditorReference>> collisionsMap = editorReferences.stream()
-				.collect(Collectors.groupingBy(r -> r.getName()));
+				.collect(Collectors.groupingBy(r -> Util.safeString(r.getTitle())));
 
 		for (Entry<String, List<EditorReference>> groupedEditorReferences : collisionsMap.entrySet()) {
 			if (groupedEditorReferences.getValue().size() == 1) {
