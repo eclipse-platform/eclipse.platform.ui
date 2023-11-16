@@ -128,8 +128,7 @@ public abstract class AbstractComponentEditor<M> {
 	}
 
 	protected void setElementId(Object element) {
-		if (getEditor().isAutoCreateElementId() && element instanceof MApplicationElement) {
-			final MApplicationElement el = (MApplicationElement) element;
+		if (getEditor().isAutoCreateElementId() && element instanceof MApplicationElement el) {
 			if (el.getElementId() == null || el.getElementId().trim().length() == 0) {
 				el.setElementId(Util.getDefaultElementId(((EObject) getMaster().getValue()).eResource(), el,
 						getEditor().getProject()));
@@ -161,11 +160,22 @@ public abstract class AbstractComponentEditor<M> {
 	 */
 	public Image getImageFromIconURI(MUILabel element) {
 
+		return getImageFromIconURI(element.getIconURI(), shouldBeGrey(element));
+	}
+
+	/**
+	 * Get the image described in element if this is a MUILabel
+	 *
+	 * @param iconUri     of the element in tree to be displayed
+	 * @param greyVersion if the icon should be grayed out
+	 * @return image of element if iconUri is not empty (returns bad image if bad
+	 *         URI), else returns null
+	 */
+	protected Image getImageFromIconURI(String iconUri, boolean greyVersion) {
+
 		Image img = null;
 		// Returns only an image if there is a non empty Icon URI
-		final String iconUri = element.getIconURI();
 		if (iconUri != null && iconUri.trim().length() > 0) {
-			final boolean greyVersion = shouldBeGrey(element);
 			// Is this image already loaded ?
 			img = getImage(iconUri, greyVersion);
 			if (img == null) {
@@ -182,12 +192,12 @@ public abstract class AbstractComponentEditor<M> {
 	}
 
 	/** @return true if the image of this element should be displayed in grey */
-	private boolean shouldBeGrey(Object element) {
+	protected boolean shouldBeGrey(Object element) {
 		// It is grey if a MUIElement is not visible or not rendered
 		// It is not grey if this is not a MUIElement or if it is rendered and
 		// visible.
-		return element instanceof MUIElement
-				&& !(((MUIElement) element).isToBeRendered() && ((MUIElement) element).isVisible());
+		return element instanceof MUIElement uiElement
+				&& !(uiElement.isToBeRendered() && (uiElement.isVisible()));
 	}
 
 	/**
@@ -236,8 +246,8 @@ public abstract class AbstractComponentEditor<M> {
 	public Image getImage(Object element, String key) {
 		Image result = null;
 
-		if (element instanceof MUILabel) {
-			result = getImageFromIconURI((MUILabel) element);
+		if (element instanceof MUILabel label) {
+			result = getImageFromIconURI(label);
 		}
 
 		if (result == null) {
