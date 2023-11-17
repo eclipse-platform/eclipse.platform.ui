@@ -31,6 +31,9 @@ import org.eclipse.jface.text.IDocument;
  * of the file is reached. In this case the token returns <code>true</code> when calling
  * <code>isEOF</code>.
  *
+ * Originally since unknown version, but moved to org.eclipse.text in 3.14
+ *
+ * @since 3.14
  * @see IRule
  */
 public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {

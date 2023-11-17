@@ -22,6 +22,9 @@ import org.eclipse.core.runtime.Assert;
  * A specific single line rule which stipulates that the start
  * and end sequence occur within a single word, as defined by a word detector.
  *
+ * Originally since unknown version, but moved to org.eclipse.text in 3.14
+ *
+ * @since 3.14
  * @see IWordDetector
  */
 public class WordPatternRule extends SingleLineRule {

@@ -16,6 +16,9 @@ package org.eclipse.jface.text.rules;
 
 /**
  * A token to be returned by a rule.
+ * Originally since unknown version, but moved to org.eclipse.text in 3.14
+ *
+ * @since 3.14
  */
 public interface IToken {
 

@@ -55,8 +55,10 @@ import org.eclipse.jface.text.TypedRegion;
  * The cached positions may be accessed through {@link #getPositions()}.
  * </p>
  *
+ * Originally since 3.1, but moved to org.eclipse.text in 3.14
+ *
  * @see IPartitionTokenScanner
- * @since 3.1
+ * @since 3.14
  */
 public class FastPartitioner implements IDocumentPartitioner, IDocumentPartitionerExtension, IDocumentPartitionerExtension2, IDocumentPartitionerExtension3 {
 

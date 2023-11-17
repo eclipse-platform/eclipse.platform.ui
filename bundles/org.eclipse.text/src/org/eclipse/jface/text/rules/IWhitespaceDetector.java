@@ -18,6 +18,9 @@ package org.eclipse.jface.text.rules;
  * Defines the interface by which <code>WhitespaceRule</code>
  * determines whether a given character is to be considered
  * whitespace in the current context.
+ * Originally since unknown version, but moved to org.eclipse.text in 3.14
+ *
+ * @since 3.14
  */
 public interface IWhitespaceDetector {
 

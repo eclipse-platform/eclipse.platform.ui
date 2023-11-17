@@ -19,6 +19,10 @@ package org.eclipse.jface.text.rules;
  * A specific configuration of a single line rule
  * whereby the pattern begins with a specific sequence but
  * is only ended by a line delimiter.
+ * 
+ * Originally since unknown version, but moved to org.eclipse.text in 3.14
+ *
+ * @since 3.14
  */
 public class EndOfLineRule extends SingleLineRule {
 

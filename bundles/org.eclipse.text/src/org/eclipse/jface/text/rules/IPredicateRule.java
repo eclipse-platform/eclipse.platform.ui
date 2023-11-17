@@ -20,8 +20,10 @@ package org.eclipse.jface.text.rules;
  * token after having successfully detected content. This token is called success token.
  * Also, it also returns a token indicating that this rule has not been successful.
  *
+ * Originally since 2.0, but moved to org.eclipse.text in 3.14
+ *
+ * @since 3.14
  * @see ICharacterScanner
- * @since 2.0
  */
 public interface IPredicateRule extends IRule {
 

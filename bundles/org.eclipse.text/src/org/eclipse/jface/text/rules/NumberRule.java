@@ -19,6 +19,9 @@ import org.eclipse.core.runtime.Assert;
 
 /**
  * An implementation of <code>IRule</code> detecting a numerical value.
+ * Originally since unknown version, but moved to org.eclipse.text in 3.14
+ *
+ * @since 3.14
  */
 public class NumberRule implements IRule {
 
