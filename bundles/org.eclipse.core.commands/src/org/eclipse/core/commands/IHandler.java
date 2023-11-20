@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Niklas Kellner  - Named Handler API
  *******************************************************************************/
 package org.eclipse.core.commands;
 
@@ -90,4 +91,18 @@ public interface IHandler {
 	 *            performed.
 	 */
 	void removeHandlerListener(IHandlerListener handlerListener);
+
+	/**
+	 * Return the label for this handler. The handler can implement this method to
+	 * provide a more dynamic label according to the actual action that is
+	 * performed. When returning null, callers may instead use the invoking command
+	 * label or a generic label.
+	 *
+	 * @return name of the Handler, can be null
+	 *
+	 * @since 3.11
+	 */
+	default String getHandlerLabel() {
+		return null;
+	}
 }

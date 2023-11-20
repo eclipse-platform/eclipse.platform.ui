@@ -15,6 +15,8 @@
 package org.eclipse.ui.internal;
 
 import java.util.Map;
+import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.commands.IObjectWithState;
 import org.eclipse.e4.core.commands.internal.HandlerServiceHandler;
 import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -42,4 +44,15 @@ public class WorkbenchHandlerServiceHandler extends HandlerServiceHandler implem
 		}
 	}
 
+	@Override
+	public String getHandlerLabel() {
+
+		IObjectWithState handler = currentStateHandler.get();
+
+		if (handler instanceof IHandler namedHandler) {
+			return namedHandler.getHandlerLabel();
+		}
+
+		return null;
+	}
 }

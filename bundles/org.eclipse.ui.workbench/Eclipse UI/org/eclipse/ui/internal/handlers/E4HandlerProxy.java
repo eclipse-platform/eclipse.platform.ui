@@ -226,4 +226,9 @@ public class E4HandlerProxy implements IHandler2, IHandlerListener, IElementUpda
 		}
 	}
 
+	@Override
+	public String getHandlerLabel() {
+		return handler.getHandlerLabel();
+	}
+
 }
