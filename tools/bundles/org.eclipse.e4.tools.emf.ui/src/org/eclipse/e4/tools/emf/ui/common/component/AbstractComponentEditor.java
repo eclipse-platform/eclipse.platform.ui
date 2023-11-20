@@ -268,7 +268,6 @@ public abstract class AbstractComponentEditor<M> {
 		return result;
 	}
 
-	@SuppressWarnings("resource")
 	private static URL findPlatformImage(String uri) {
 		// SEVERAL CASES are possible here :
 		// * uri = platform:/plugin/myplugin/icons/image.gif
