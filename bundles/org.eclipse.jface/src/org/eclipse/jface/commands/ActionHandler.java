@@ -14,12 +14,15 @@
  *******************************************************************************/
 package org.eclipse.jface.commands;
 
+import java.util.Optional;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.HandlerEvent;
 import org.eclipse.core.commands.IHandlerListener;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.widgets.Event;
 
@@ -167,5 +170,10 @@ public final class ActionHandler extends AbstractHandler {
 		buffer.append(')');
 
 		return buffer.toString();
+	}
+
+	@Override
+	public String getHandlerLabel() {
+		return Optional.of(action).map(IAction::getText).map(LegacyActionTools::removeAcceleratorText).orElse(null);
 	}
 }

@@ -24,7 +24,10 @@ import jakarta.inject.Inject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.IStateListener;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.State;
@@ -54,6 +57,7 @@ import org.eclipse.e4.ui.services.help.EHelpService;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.menus.IMenuStateIds;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolItem;
@@ -120,11 +124,10 @@ public class HandledContributionItem extends AbstractContributionItem {
 	}
 
 	/**
-	 * This method seems to be necessary for calls via reflection when called
-	 * with MHandledItem parameter.
+	 * This method seems to be necessary for calls via reflection when called with
+	 * MHandledItem parameter.
 	 *
-	 * @param item
-	 *            The model item
+	 * @param item The model item
 	 */
 	public void setModel(MHandledItem item) {
 		setModel((MItem) item);
@@ -148,10 +151,8 @@ public class HandledContributionItem extends AbstractContributionItem {
 				WorkbenchSWTActivator.trace(Policy.DEBUG_MENUS_FLAG, "command: " + parmCmd, null); //$NON-NLS-1$
 			}
 			if (parmCmd == null) {
-				logger.error(
-						"Unable to generate the parameterized " + "command with the id \"" + cmdId + "\" with the " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-								+ parameters
-								+ " parameter(s). Model details: " + getModel());//$NON-NLS-1$
+				logger.error("Unable to generate the parameterized " + "command with the id \"" + cmdId + "\" with the " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						+ parameters + " parameter(s). Model details: " + getModel());//$NON-NLS-1$
 				return;
 			}
 
@@ -169,6 +170,8 @@ public class HandledContributionItem extends AbstractContributionItem {
 			} else if (radioState != null) {
 				radioState.addListener(stateListener);
 			}
+
+			parmCmd.getCommand().addCommandListener(event -> Display.getDefault().asyncExec(() -> update()));
 		}
 	}
 
@@ -264,8 +267,7 @@ public class HandledContributionItem extends AbstractContributionItem {
 				if (mnemonics != null && !mnemonics.isEmpty()) {
 					int idx = text.indexOf(mnemonics);
 					if (idx != -1) {
-						text = text.substring(0, idx) + '&'
-								+ text.substring(idx);
+						text = text.substring(0, idx) + '&' + text.substring(idx);
 					}
 				}
 			}
@@ -307,6 +309,7 @@ public class HandledContributionItem extends AbstractContributionItem {
 		item.setToolTipText(tooltip);
 		item.setSelection(getModel().isSelected());
 		item.setEnabled(getModel().isEnabled());
+
 	}
 
 	private String getToolTipText(boolean attachKeybinding) {
@@ -316,6 +319,8 @@ public class HandledContributionItem extends AbstractContributionItem {
 			generateCommand();
 			parmCmd = getModel().getWbCommand();
 		}
+
+		text = legacyActionLabelSupport(text, parmCmd);
 
 		if (parmCmd != null && text == null) {
 			try {
@@ -330,6 +335,12 @@ public class HandledContributionItem extends AbstractContributionItem {
 			text = text + " (" + sequence.format() + ')'; //$NON-NLS-1$
 		}
 		return text;
+	}
+
+	private String legacyActionLabelSupport(String text, ParameterizedCommand command) {
+
+		return java.util.Optional.of(command).map(ParameterizedCommand::getCommand).map(Command::getHandler)
+				.map(IHandler::getHandlerLabel).filter(Objects::nonNull).orElse(text);
 	}
 
 	@Override
@@ -389,7 +400,7 @@ public class HandledContributionItem extends AbstractContributionItem {
 
 	@Override
 	protected void handleHelpRequest() {
-		if(helpService==null)
+		if (helpService == null)
 			return;
 		String helpContextId = getModel().getPersistedState().get(EHelpService.HELP_CONTEXT_ID);
 		if (helpContextId != null) {

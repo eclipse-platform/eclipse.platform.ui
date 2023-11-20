@@ -15,6 +15,8 @@
 package org.eclipse.ui.menus;
 
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -494,6 +496,9 @@ public class CommandContributionItem extends ContributionItem {
 		MenuItem item = (MenuItem) widget;
 
 		String text = label;
+
+		text = legacyActionLabelSupport(text);
+
 		if (text == null) {
 			if (command != null) {
 				try {
@@ -535,11 +540,20 @@ public class CommandContributionItem extends ContributionItem {
 		}
 	}
 
+	private String legacyActionLabelSupport(String text) {
+		return Optional.of(command).map(ParameterizedCommand::getCommand).map(Command::getHandler)
+				.map(IHandler::getHandlerLabel).filter(Objects::nonNull)
+				.orElse(text);
+	}
+
 	private void updateToolItem() {
 		ToolItem item = (ToolItem) widget;
 
 		String text = label;
-		String tooltip = label;
+
+		text = legacyActionLabelSupport(text);
+
+		String tooltip = text;
 
 		if (text == null) {
 			if (command != null) {
@@ -579,6 +593,8 @@ public class CommandContributionItem extends ContributionItem {
 		Button item = (Button) widget;
 
 		String text = label;
+		text = legacyActionLabelSupport(text);
+
 		if (text == null) {
 			if (command != null) {
 				try {
