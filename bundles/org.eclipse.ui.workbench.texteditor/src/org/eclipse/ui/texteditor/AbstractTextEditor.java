@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -154,6 +155,7 @@ import org.eclipse.jface.text.ITextViewerExtension8;
 import org.eclipse.jface.text.ITextViewerExtension8.EnrichMode;
 import org.eclipse.jface.text.IUndoManager;
 import org.eclipse.jface.text.IUndoManagerExtension;
+import org.eclipse.jface.text.MultiTextSelection;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TabsToSpacesConverter;
@@ -291,7 +293,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	protected static final String TAG_SELECTION_OFFSET= "selectionOffset"; //$NON-NLS-1$
 
 	/**
-	 * Tag used in the {@link IMemento} when saving and restoring the editor's selection length.
+	 * Tag used in the {@link IMemento} when saving and restoring the editor's
+	 * selection length.
 	 *
 	 * @see #saveState(IMemento)
 	 * @see #restoreState(IMemento)
@@ -7049,9 +7052,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	@Override
 	public void saveState(IMemento memento) {
 		ISelection selection= doGetSelection();
-		if (selection instanceof ITextSelection) {
-			memento.putInteger(TAG_SELECTION_OFFSET, ((ITextSelection)selection).getOffset());
-			memento.putInteger(TAG_SELECTION_LENGTH, ((ITextSelection)selection).getLength());
+		if (selection instanceof IMultiTextSelection multiSelect && multiSelect.getRegions().length > 1) {
+			for (int i = 0; i < multiSelect.getRegions().length; i++) {
+				memento.putInteger(TAG_SELECTION_OFFSET + i, multiSelect.getRegions()[i].getOffset());
+				memento.putInteger(TAG_SELECTION_LENGTH + i, multiSelect.getRegions()[i].getLength());
+			}
+
+		} else if (selection instanceof ITextSelection singleSelect) {
+			memento.putInteger(TAG_SELECTION_OFFSET, singleSelect.getOffset());
+			memento.putInteger(TAG_SELECTION_LENGTH, singleSelect.getLength());
 		}
 		final StyledText textWidget= fSourceViewer.getTextWidget();
 		memento.putInteger(TAG_SELECTION_TOP_PIXEL, textWidget.getTopPixel());
@@ -7068,6 +7077,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 3.3
 	 */
 	protected boolean containsSavedState(IMemento memento) {
+		if (memento.getInteger(TAG_SELECTION_OFFSET + "0") != null) { //$NON-NLS-1$
+			return true;
+		}
 		return memento.getInteger(TAG_SELECTION_OFFSET) != null && memento.getInteger(TAG_SELECTION_LENGTH) != null;
 	}
 
@@ -7080,15 +7092,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 3.3
 	 */
 	protected void doRestoreState(IMemento memento) {
-		Integer offset= memento.getInteger(TAG_SELECTION_OFFSET);
-		if (offset == null)
+		ISelection savedSelection = readSelectionFromMemento(memento);
+		if (savedSelection == null) {
 			return;
-
-		Integer length= memento.getInteger(TAG_SELECTION_LENGTH);
-		if (length == null)
-			return;
-
-		doSetSelection(new TextSelection(offset.intValue(), length.intValue()));
+		}
+		doSetSelection(savedSelection);
 
 		final StyledText textWidget= fSourceViewer.getTextWidget();
 
@@ -7099,6 +7107,40 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		Integer horizontalPixel= memento.getInteger(TAG_SELECTION_HORIZONTAL_PIXEL);
 		if (horizontalPixel != null)
 			textWidget.setHorizontalPixel(horizontalPixel.intValue());
+	}
+
+	@SuppressWarnings("boxing")
+	private ISelection readSelectionFromMemento(IMemento memento) {
+		if (memento.getInteger(TAG_SELECTION_OFFSET + "0") != null) { //$NON-NLS-1$
+			LinkedList<IRegion> regions = new LinkedList<>();
+			int regionCounter = 0;
+			while (memento.getInteger(TAG_SELECTION_OFFSET + regionCounter) != null) {
+				Integer offset = memento.getInteger(TAG_SELECTION_OFFSET + regionCounter);
+				if (offset == null) {
+					continue;
+				}
+
+				Integer length = memento.getInteger(TAG_SELECTION_LENGTH + regionCounter);
+				if (length == null) {
+					continue;
+				}
+				regions.add(new Region(offset, length));
+				regionCounter++;
+			}
+			return new MultiTextSelection(getDocumentProvider().getDocument(getEditorInput()),
+					regions.toArray(new IRegion[0]));
+		} else {
+			Integer offset = memento.getInteger(TAG_SELECTION_OFFSET);
+			if (offset == null) {
+				return null;
+			}
+
+			Integer length = memento.getInteger(TAG_SELECTION_LENGTH);
+			if (length == null) {
+				return null;
+			}
+			return new TextSelection(offset, length);
+		}
 	}
 
 	@Override
