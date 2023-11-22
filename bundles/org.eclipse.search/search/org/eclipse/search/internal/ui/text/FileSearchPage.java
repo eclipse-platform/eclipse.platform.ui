@@ -276,6 +276,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		ITextFileBuffer textFileBuffer = textFileBufferManager.getTextFileBuffer(resource.getFullPath(),
 				LocationKind.IFILE);
 		return Arrays.stream(resource.getWorkspace().getRoot().findFilesForLocationURI(resource.getLocationURI())) //
+				.filter(aFile -> aFile.getProject().isAccessible()) // Check the project is Open
 				.min(Comparator.comparingInt(aFile -> aFile.getFullPath().segments().length)) //
 				.filter(aFile -> {
 					ITextFileBuffer buffer = textFileBufferManager.getTextFileBuffer(aFile.getFullPath(),
