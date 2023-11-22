@@ -102,7 +102,7 @@
             project="org.eclipse.ui"/>
         <operand
             xsi:type="predicates:NamePredicate"
-            pattern=".*\.tests.*|org\.eclipse\.ui\.dynamicCode"/>
+            pattern=".*\.test.*|.*\.tests.*|org\.eclipse\.ui\.dynamicCode"/>
       </predicate>
     </workingSet>
     <workingSet
