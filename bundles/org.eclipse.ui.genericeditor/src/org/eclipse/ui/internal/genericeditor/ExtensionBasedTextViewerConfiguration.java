@@ -199,10 +199,13 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		PresentationReconcilerRegistry registry = GenericEditorPlugin.getDefault().getPresentationReconcilerRegistry();
 		List<IPresentationReconciler> reconciliers = registry.getPresentationReconcilers(sourceViewer, editor,
 				getContentTypes(sourceViewer.getDocument()));
-		if (!reconciliers.isEmpty()) {
+		if (reconciliers.isEmpty()) {
+			return super.getPresentationReconciler(sourceViewer);
+		}
+		if (reconciliers.size() == 1) {
 			return reconciliers.get(0);
 		}
-		return super.getPresentationReconciler(sourceViewer);
+		return new CompositePresentationReconciler(reconciliers);
 	}
 
 	void watchDocument(IDocument document) {
