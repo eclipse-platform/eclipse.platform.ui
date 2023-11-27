@@ -398,6 +398,31 @@ public class TreeViewer extends AbstractTreeViewer {
 	}
 
 	/**
+	 * @since 3.33
+	 */
+	@Override
+	final protected void createItems(Widget widget, Object[] elements) {
+		TreeItem parent = ((TreeItem) widget);
+		if (1 == 0) {
+			// old implementation
+			// For performance insert every item at index 0 (in reverse order):
+			for (int i = elements.length - 1; i >= 0; i--) {
+				createTreeItem(widget, elements[i], 0);
+			}
+		} else {
+			// batch implementation
+			parent.setItemCount(elements.length);
+			TreeItem[] items = parent.getItems();
+			for (int i = elements.length - 1; i >= 0; i--) {
+				Object element = elements[i];
+				TreeItem item = items[i];
+				updateItem(item, element);
+				updatePlus(item, element);
+			}
+		}
+	}
+
+	/**
 	 * For a TreeViewer with a tree with the VIRTUAL style bit set, replace the
 	 * given parent's child at index with the given element. If the given parent
 	 * is this viewer's input or an empty tree path, this will replace the root
@@ -1150,9 +1175,7 @@ public class TreeViewer extends AbstractTreeViewer {
 			item.dispose();
 
 			// create children on parent
-			for (Object element : children) {
-				createTreeItem(parent, element, -1);
-			}
+			createItems(parent, children);
 
 			// If we've expanded but still have not reached the limit
 			// select new expandable node, so user can click through
