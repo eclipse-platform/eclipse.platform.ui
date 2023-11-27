@@ -46,6 +46,7 @@ import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
@@ -362,8 +363,9 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 		// Optimize for the empty case
 		if (items.length == 0) {
-			for (Object element : elements) {
-				createTreeItem(widget, element, -1);
+			// For performance insert every item at index 0 (in reverse order):
+			for (int i = elements.length - 1; i >= 0; i--) {
+				createTreeItem(widget, elements[i], 0);
 			}
 			return;
 		}
@@ -846,8 +848,9 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 				} else {
 					children = getSortedChildren(parentElement);
 				}
-				for (Object element : children) {
-					createTreeItem(widget, element, -1);
+				// For performance insert every item at index 0 (in reverse order):
+				for (int i = children.length - 1; i >= 0; i--) {
+					createTreeItem(widget, children[i], 0);
 				}
 			}
 		} finally {
@@ -856,16 +859,16 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	}
 
 	/**
-	 * Creates a single item for the given parent and synchronizes it with the
-	 * given element.
+	 * Creates a single item for the given parent and synchronizes it with the given
+	 * element. The fastest way to insert many items is documented in
+	 * {@link TreeItem#TreeItem(Tree,int,int)}
 	 *
-	 * @param parent
-	 *            the parent widget
-	 * @param element
-	 *            the element
-	 * @param index
-	 *            if non-negative, indicates the position to insert the item
-	 *            into its parent
+	 * @param parent  the parent widget
+	 * @param element the element
+	 * @param index   if non-negative, indicates the position to insert the item
+	 *                into its parent
+	 * @see org.eclipse.swt.widgets.TreeItem#TreeItem(org.eclipse.swt.widgets.Tree,
+	 *      int, int)
 	 */
 	protected void createTreeItem(Widget parent, Object element, int index) {
 		Item item = newItem(parent, SWT.NULL, index);
@@ -1831,6 +1834,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 				return;
 			}
 			createChildren(widget, false);
+			// XXX for performance widget should be expanded after expanding children:
 			if (widget instanceof Item) {
 				setExpanded((Item) widget, true);
 			}
@@ -1844,6 +1848,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 					}
 				}
 			}
+			// XXX expanding here fails on linux
 		}
 	}
 
