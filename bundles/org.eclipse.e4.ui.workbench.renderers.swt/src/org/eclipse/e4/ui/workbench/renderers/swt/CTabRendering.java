@@ -400,8 +400,12 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 						|| Objects.equals(outerKeylineColor, parent.getBackground())
 						? 0
 						: 1);
-		points[index++] = margin;
-		points[index++] = bottomY;
+
+		if (active) {
+			points[index++] = margin;
+			points[index++] = bottomY;
+		}
+
 		points[index++] = startX;
 		points[index++] = bottomY;
 
@@ -418,15 +422,6 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 			points[index++] = parentSize.x - 1 - margin;
 			points[index++] = bottomY;
 		}
-
-		points[index++] = parentSize.x - 1 - margin;
-		points[index++] = parentSize.y - 1;
-
-		points[index++] = points[0];
-		points[index++] = parentSize.y - 1;
-
-		points[index++] = points[0];
-		points[index++] = points[1];
 
 		int[] tmpPoints = new int[index];
 		System.arraycopy(points, 0, tmpPoints, 0, index);
