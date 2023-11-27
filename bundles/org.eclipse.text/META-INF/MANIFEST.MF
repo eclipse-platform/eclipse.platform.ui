@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.text
-Bundle-Version: 3.13.200.qualifier
+Bundle-Version: 3.14.0.qualifier
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: 
@@ -12,6 +12,8 @@ Export-Package:
  org.eclipse.jface.text.source; text="split"; mandatory:="text",
  org.eclipse.jface.text.templates; text="split"; mandatory:="text",
  org.eclipse.text.edits,
+ org.eclipse.text.html,
+ org.eclipse.text.readers,
  org.eclipse.text.templates,
  org.eclipse.text.undo
 Require-Bundle: 

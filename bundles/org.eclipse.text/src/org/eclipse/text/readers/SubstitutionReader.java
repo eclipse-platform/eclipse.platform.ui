@@ -11,7 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.internal.text.html;
+package org.eclipse.text.readers;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -23,9 +23,10 @@ import java.io.Reader;
  * only the one passed into the computation routine.
  * <p>
  * Moved into this package from <code>org.eclipse.jface.internal.text.revisions</code>.</p>
- * @deprecated Please use org.eclipse.text.readers.SubstitutionReader
+ *
+ * @since 3.14
  */
-public abstract class SubstitutionTextReader extends SingleCharReader {
+public abstract class SubstitutionReader extends SingleCharacterReader {
 
 	protected static final String LINE_DELIM= System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -43,7 +44,7 @@ public abstract class SubstitutionTextReader extends SingleCharReader {
 	private int fIndex;
 
 
-	protected SubstitutionTextReader(Reader reader) {
+	protected SubstitutionReader(Reader reader) {
 		fReader= reader;
 		fBuffer= new StringBuilder();
 		fIndex= 0;
