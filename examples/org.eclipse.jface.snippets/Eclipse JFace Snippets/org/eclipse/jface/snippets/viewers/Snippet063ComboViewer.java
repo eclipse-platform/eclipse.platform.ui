@@ -33,7 +33,6 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * A simple ComboViewer to demonstrate usage
- *
  */
 
 public class Snippet063ComboViewer {

@@ -40,7 +40,6 @@ import org.junit.runners.JUnit4;
 /**
  * @since 3.6
  * @author Prakash G.R.
- *
  */
 @RunWith(JUnit4.class)
 public class ProgressViewTests extends ProgressTestCase {

@@ -88,8 +88,6 @@ public class DialogSettingsTest {
 
 	/**
 	 * Helper method to fill a DialogSettings object to be checked later by check.
-	 *
-	 * @param memento
 	 */
 	private static void fill(IDialogSettings dialogSettings) {
 		dialogSettings.put("booleanKey", true);
@@ -106,9 +104,6 @@ public class DialogSettingsTest {
 
 	/**
 	 * Helper method to check if the values set by fill are still there.
-	 *
-	 * @param dialogSettings
-	 *
 	 */
 	protected void check(IDialogSettings dialogSettings) {
 		assertTrue(dialogSettings.getBoolean("booleanKey"));

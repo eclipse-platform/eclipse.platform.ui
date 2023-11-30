@@ -48,7 +48,6 @@ import org.eclipse.swt.widgets.Shell;
  * column
  *
  * @author Tom Schindl &lt;tom.schindl@bestsolution.at&gt;
- *
  */
 public class Snippet043TreeViewerKeyboardEditing {
 	public Snippet043TreeViewerKeyboardEditing(final Shell shell) {

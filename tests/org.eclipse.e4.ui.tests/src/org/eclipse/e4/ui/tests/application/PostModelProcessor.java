@@ -18,9 +18,6 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 
-/**
- *
- */
 public class PostModelProcessor extends AbstractModelProcessorImpl {
 	@Inject
 	@Named("fragment.contributedWindow")

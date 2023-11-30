@@ -185,18 +185,12 @@ public class ViewTests extends DynamicTestCase {
 
 	}
 
-	/**
-	 * @param category
-	 */
 	private void testCategoryProperties(IViewCategory desc) {
 		assertNotNull(desc.getId());
 		assertNotNull(desc.getLabel());
 		assertEquals(1, desc.getViews().length);
 	}
 
-	/**
-	 * @param desc
-	 */
 	private void testViewProperties(IViewDescriptor desc) {
 		assertNotNull(desc.getId());
 		assertNotNull(desc.getLabel());

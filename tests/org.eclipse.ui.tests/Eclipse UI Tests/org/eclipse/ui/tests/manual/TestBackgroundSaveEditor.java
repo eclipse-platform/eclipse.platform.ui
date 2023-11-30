@@ -55,7 +55,6 @@ import org.eclipse.ui.progress.IJobRunnable;
 
 /**
  * @since 3.3
- *
  */
 public class TestBackgroundSaveEditor extends EditorPart implements ISaveablesSource {
 

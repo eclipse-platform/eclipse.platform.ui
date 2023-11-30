@@ -43,7 +43,6 @@ import org.junit.runners.JUnit4;
 
 /**
  * @since 3.5
- *
  */
 @RunWith(JUnit4.class)
 public class NewPropertySheetHandlerTest extends AbstractPropertySheetTest {
@@ -77,7 +76,6 @@ public class NewPropertySheetHandlerTest extends AbstractPropertySheetTest {
 	 * {@link org.eclipse.ui.tests.propertysheet.TestNewPropertySheetHandler#getShowInContext(org.eclipse.core.commands.ExecutionEvent)}
 	 * .
 	 *
-	 * @throws ExecutionException
 	 * @throws PartInitException
 	 *             StructuredSelection.EMPTY,
 	 */
@@ -98,9 +96,6 @@ public class NewPropertySheetHandlerTest extends AbstractPropertySheetTest {
 	 * Test method for
 	 * {@link org.eclipse.ui.tests.propertysheet.TestNewPropertySheetHandler#getShowInContext(org.eclipse.core.commands.ExecutionEvent)}
 	 * .
-	 *
-	 * @throws ExecutionException
-	 * @throws PartInitException
 	 */
 	@Test
 	public final void testGetShowInContextFromAShowInSource()
@@ -140,9 +135,6 @@ public class NewPropertySheetHandlerTest extends AbstractPropertySheetTest {
 	 * Test method for
 	 * {@link org.eclipse.ui.tests.propertysheet.TestNewPropertySheetHandler#getShowInContext(org.eclipse.core.commands.ExecutionEvent)}
 	 * .
-	 *
-	 * @throws ExecutionException
-	 * @throws PartInitException
 	 */
 	@Test
 	public final void testGetShowInContextWithNoShowInSource()
@@ -199,9 +191,6 @@ public class NewPropertySheetHandlerTest extends AbstractPropertySheetTest {
 	 * Test method for
 	 * {@link org.eclipse.ui.tests.propertysheet.TestNewPropertySheetHandler#findPropertySheet(org.eclipse.core.commands.ExecutionEvent, org.eclipse.ui.views.properties.PropertyShowInContext)}
 	 * .
-	 *
-	 * @throws ExecutionException
-	 * @throws PartInitException
 	 */
 	@Test
 	public final void testFindPropertySheetWithoutActivePart()
@@ -221,9 +210,6 @@ public class NewPropertySheetHandlerTest extends AbstractPropertySheetTest {
 	 * Test method for
 	 * {@link org.eclipse.ui.tests.propertysheet.TestNewPropertySheetHandler#findPropertySheet(org.eclipse.core.commands.ExecutionEvent, org.eclipse.ui.views.properties.PropertyShowInContext)}
 	 * .
-	 *
-	 * @throws ExecutionException
-	 * @throws PartInitException
 	 */
 	@Test
 	public final void testFindPropertySheetWithOtherSheetActive()
@@ -245,9 +231,6 @@ public class NewPropertySheetHandlerTest extends AbstractPropertySheetTest {
 	 * Test method for
 	 * {@link org.eclipse.ui.tests.propertysheet.TestNewPropertySheetHandler#findPropertySheet(org.eclipse.core.commands.ExecutionEvent, org.eclipse.ui.views.properties.PropertyShowInContext)}
 	 * .
-	 *
-	 * @throws ExecutionException
-	 * @throws PartInitException
 	 */
 	@Test
 	public final void testFindPropertySheetWithSPVActive()
@@ -269,9 +252,6 @@ public class NewPropertySheetHandlerTest extends AbstractPropertySheetTest {
 	 * Test method for
 	 * {@link org.eclipse.ui.tests.propertysheet.TestNewPropertySheetHandler#findPropertySheet(org.eclipse.core.commands.ExecutionEvent, org.eclipse.ui.views.properties.PropertyShowInContext)}
 	 * .
-	 *
-	 * @throws ExecutionException
-	 * @throws PartInitException
 	 */
 	@Test
 	public final void testFindPropertySheetWithPinnedPSandSPVActive()
@@ -295,9 +275,6 @@ public class NewPropertySheetHandlerTest extends AbstractPropertySheetTest {
 	 * Test method for
 	 * {@link org.eclipse.ui.tests.propertysheet.TestNewPropertySheetHandler#findPropertySheet(org.eclipse.core.commands.ExecutionEvent, org.eclipse.ui.views.properties.PropertyShowInContext)}
 	 * .
-	 *
-	 * @throws ExecutionException
-	 * @throws PartInitException
 	 */
 	@Test
 	public final void testFindPropertySheetWithUnpinnedPSandSPVActive()

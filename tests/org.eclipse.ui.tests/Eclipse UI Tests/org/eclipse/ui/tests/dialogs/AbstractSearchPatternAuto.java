@@ -53,11 +53,6 @@ public abstract class AbstractSearchPatternAuto {
 
 	/**
 	 * Generates strings data for match test cases.
-	 *
-	 * @param startChar
-	 * @param endChar
-	 * @param length
-	 * @param resource
 	 */
 	protected static void generateResourcesTestCases(char startChar, char endChar, int length, String resource) {
 		for (char ch = startChar; ch <= endChar; ch++) {

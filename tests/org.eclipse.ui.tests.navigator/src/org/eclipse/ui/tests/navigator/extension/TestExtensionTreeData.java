@@ -94,9 +94,6 @@ public class TestExtensionTreeData {
 		return toString.toString();
 	}
 
-	/**
-	 * @return
-	 */
 	public IFile getFile() {
 		return container;
 	}

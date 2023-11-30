@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.Text;
 /**
  * 
  * Selector= label Text
- * 
  */
 public class SWTTypeSelectorTest {
 

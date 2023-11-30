@@ -19,7 +19,6 @@ import org.eclipse.jface.tests.viewers.ViewerComparatorTest.TeamMember;
 
 /**
  * @since 3.2
- *
  */
 public class ComparatorModelChange {
 	private final int fKind;

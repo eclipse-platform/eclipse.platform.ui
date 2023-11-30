@@ -30,7 +30,6 @@ import org.junit.Test;
 
 /**
  * @since 1.0
- *
  */
 public class DuplexingObservableValueTest extends AbstractDefaultRealmTestCase {
 	private IObservableList<String> list;

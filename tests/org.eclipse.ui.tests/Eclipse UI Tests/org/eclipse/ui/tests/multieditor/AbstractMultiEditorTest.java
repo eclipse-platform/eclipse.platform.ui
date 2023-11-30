@@ -121,7 +121,6 @@ public class AbstractMultiEditorTest {
 
 	/**
 	 * Set up to catch any editor initialization exceptions.
-	 *
 	 */
 	private void setupErrorListener() {
 		final ILog log = WorkbenchPlugin.getDefault().getLog();
@@ -150,8 +149,6 @@ public class AbstractMultiEditorTest {
 	 * @param testProject
 	 *            the project to create the files in
 	 * @return the editor input used to open the multieditor
-	 * @throws CoreException
-	 * @throws IOException
 	 */
 	private MultiEditorInput generateEditorInput(String[] simpleFiles,
 			IProject testProject) throws CoreException, IOException {
@@ -174,7 +171,6 @@ public class AbstractMultiEditorTest {
 	 * @param projectName
 	 *            the name of the project to create
 	 * @return the newly opened project
-	 * @throws CoreException
 	 */
 	private static IProject findOrCreateProject(String projectName)
 			throws CoreException {
@@ -214,7 +210,6 @@ public class AbstractMultiEditorTest {
 	 * the innerChildren.
 	 *
 	 * @since 3.1
-	 *
 	 */
 	public static class EditorErrorListener implements ILogListener {
 

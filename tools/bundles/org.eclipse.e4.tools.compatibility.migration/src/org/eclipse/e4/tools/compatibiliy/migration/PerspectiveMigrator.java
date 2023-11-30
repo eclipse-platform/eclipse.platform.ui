@@ -30,7 +30,6 @@ import org.eclipse.ui.internal.IWorkbenchConstants;
  * and apply 3.x and e4 perspectives.
  *
  * @since 1.0
- *
  */
 @SuppressWarnings("restriction")
 public final class PerspectiveMigrator{

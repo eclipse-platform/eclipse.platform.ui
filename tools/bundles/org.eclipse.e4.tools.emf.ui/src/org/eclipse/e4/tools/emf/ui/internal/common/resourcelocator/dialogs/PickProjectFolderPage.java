@@ -38,7 +38,6 @@ import org.eclipse.swt.widgets.Label;
  * Wizard page to select a project folder
  *
  * @author Steven Spungin
- *
  */
 public class PickProjectFolderPage extends WizardPage {
 

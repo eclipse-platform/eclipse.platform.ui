@@ -28,7 +28,6 @@ import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
  * {@link org.eclipse.ui.views.markers.WorkbenchMarkerResolution}
  *
  * @since 3.2
- *
  */
 public class TestResolutionGenerator implements IMarkerResolutionGenerator2 {
 

@@ -44,7 +44,6 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Shows how to reveal columns when they are navigated.
- *
  */
 public class Snippet058CellNavigationIn34 {
 
@@ -281,9 +280,6 @@ public class Snippet058CellNavigationIn34 {
 				new Person("Hendrik", "Still", "hendrik.still@vogella.com", "M") };
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display();
 

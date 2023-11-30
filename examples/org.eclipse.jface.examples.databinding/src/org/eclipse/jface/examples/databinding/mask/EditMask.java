@@ -268,8 +268,6 @@ public class EditMask {
 
 	/**
 	 * JavaBeans boilerplate code...
-	 *
-	 * @param listener
 	 */
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		propertyChangeSupport.addPropertyChangeListener(listener);
@@ -277,9 +275,6 @@ public class EditMask {
 
 	/**
 	 * JavaBeans boilerplate code...
-	 *
-	 * @param propertyName
-	 * @param listener
 	 */
 	public void addPropertyChangeListener(String propertyName,
 			PropertyChangeListener listener) {
@@ -288,8 +283,6 @@ public class EditMask {
 
 	/**
 	 * JavaBeans boilerplate code...
-	 *
-	 * @param listener
 	 */
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		propertyChangeSupport.removePropertyChangeListener(listener);
@@ -297,9 +290,6 @@ public class EditMask {
 
 	/**
 	 * JavaBeans boilerplate code...
-	 *
-	 * @param propertyName
-	 * @param listener
 	 */
 	public void removePropertyChangeListener(String propertyName,
 			PropertyChangeListener listener) {

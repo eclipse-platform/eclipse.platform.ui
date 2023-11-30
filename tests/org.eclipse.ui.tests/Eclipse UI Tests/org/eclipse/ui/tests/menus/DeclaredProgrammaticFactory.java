@@ -26,9 +26,6 @@ public class DeclaredProgrammaticFactory extends ExtensionContributionFactory {
 	}
 
 	static class MyItem extends ActionContributionItem {
-		/**
-		 *
-		 */
 		public MyItem() {
 			super(new Action("MyItem") {
 				@Override

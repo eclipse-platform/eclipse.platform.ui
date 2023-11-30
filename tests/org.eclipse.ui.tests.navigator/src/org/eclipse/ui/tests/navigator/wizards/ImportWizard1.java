@@ -22,7 +22,6 @@ import org.eclipse.ui.IWorkbench;
  * Does nothing. Used to test the Capability-awareness of the <b>commonWizard</b> extension.
  *
  * @since 3.2
- *
  */
 public class ImportWizard1 extends Wizard implements IImportWizard {
 

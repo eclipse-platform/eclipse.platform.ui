@@ -20,7 +20,6 @@ import org.eclipse.ui.tests.session.WorkbenchSessionTest;
 
 /**
  * @since 3.5
- *
  */
 public class StatusHandlerConfigurationSuite extends WorkbenchSessionTest {
 

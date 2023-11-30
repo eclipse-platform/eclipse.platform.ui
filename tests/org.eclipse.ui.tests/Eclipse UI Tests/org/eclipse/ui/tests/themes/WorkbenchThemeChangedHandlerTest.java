@@ -47,7 +47,6 @@ import org.osgi.service.event.Event;
 
 /**
  * @since 3.5
- *
  */
 public class WorkbenchThemeChangedHandlerTest {
 	@Test

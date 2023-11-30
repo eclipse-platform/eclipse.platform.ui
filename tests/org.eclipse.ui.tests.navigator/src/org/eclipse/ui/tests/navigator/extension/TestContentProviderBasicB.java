@@ -5,7 +5,6 @@ import org.eclipse.jface.viewers.Viewer;
 
 /**
  * @since 3.3
- *
  */
 public class TestContentProviderBasicB implements ITreeContentProvider {
 
@@ -80,9 +79,6 @@ public class TestContentProviderBasicB implements ITreeContentProvider {
 class TreeContentB {
 	private final String name;
 
-	/**
-	 * 
-	 */
 	public TreeContentB(String name) {
 		this.name = name;
 	}

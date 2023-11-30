@@ -32,7 +32,6 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 
 /**
  * @author Jonas Helming
- *
  */
 public class FragmentExtractHelper {
 

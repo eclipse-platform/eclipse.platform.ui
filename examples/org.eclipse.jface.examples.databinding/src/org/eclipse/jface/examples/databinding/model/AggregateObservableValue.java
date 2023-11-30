@@ -23,7 +23,6 @@ import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 
 /**
  * @since 3.2
- *
  */
 public class AggregateObservableValue extends AbstractObservableValue<Object> {
 
@@ -41,10 +40,6 @@ public class AggregateObservableValue extends AbstractObservableValue<Object> {
 		}
 	};
 
-	/**
-	 * @param observableValues
-	 * @param delimiter
-	 */
 	public AggregateObservableValue(IObservableValue<Object>[] observableValues,
 			String delimiter) {
 		this.observableValues = observableValues;

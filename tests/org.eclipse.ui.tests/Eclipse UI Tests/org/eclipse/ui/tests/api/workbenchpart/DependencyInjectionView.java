@@ -36,7 +36,6 @@ import jakarta.inject.Inject;
 
 /**
  * @since 3.4
- *
  */
 public class DependencyInjectionView extends ViewPart {
 

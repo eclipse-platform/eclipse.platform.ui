@@ -37,10 +37,6 @@ public class DragOperations {
 	 * <p>
 	 * This method should eventually replace the original one once the Workbench has been updated
 	 * to handle Views and Editors without distincton.
-	 *
-	 * @param part
-	 * @param target
-	 * @param wholeFolder
 	 */
 	public static void drag(IWorkbenchPart part, TestDropLocation target,
 			boolean wholeFolder) {
@@ -58,9 +54,6 @@ public class DragOperations {
 
 	/**
 	 * Returns the name of the given editor
-	 *
-	 * @param editor
-	 * @return
 	 */
 	public static String getName(IEditorPart editor) {
 		IWorkbenchPage page = editor.getSite().getPage();
@@ -88,10 +81,6 @@ public class DragOperations {
 		return DragOperations.getPoint(getDisplayBounds(pane), side);
 	}
 
-	/**
-	 * @param page
-	 * @param side
-	 */
 	public static Point getPointInEditorArea(WorkbenchPage page, int side) {
 //        return DragOperations.getPoint(DragUtil.getDisplayBounds(page
 //                .getEditorPresentation().getLayoutPart().getControl()), side);
@@ -130,20 +119,10 @@ public class DragOperations {
 		return "center";
 	}
 
-	/**
-	 * @param targetPart
-	 * @return
-	 */
 	public static String getName(IViewPart targetPart) {
 		return targetPart.getTitle();
 	}
 
-	/**
-	 *
-	 *
-	 * @param page
-	 * @return
-	 */
 	public static String getLayoutDescription(WorkbenchPage page) {
 		StringBuilder buf = new StringBuilder();
 

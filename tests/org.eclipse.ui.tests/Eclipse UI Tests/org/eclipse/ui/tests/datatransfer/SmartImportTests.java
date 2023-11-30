@@ -72,7 +72,6 @@ import org.junit.runners.JUnit4;
 
 /**
  * @since 3.12
- *
  */
 @RunWith(JUnit4.class)
 public class SmartImportTests extends UITestCase {
@@ -162,9 +161,6 @@ public class SmartImportTests extends UITestCase {
 		}
 	}
 
-	/**
-	 * @param dialog
-	 */
 	private Button getFinishButton(Control control) {
 		if (control instanceof Button b && b.getText().equals(IDialogConstants.FINISH_LABEL)) {
 			return b;

@@ -29,9 +29,6 @@ import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.tests.api.MockWorkbenchPart;
 
 public class MockViewPart5 extends MockWorkbenchPart implements IViewPart {
-	/**
-	 *
-	 */
 	public static final String PART_CONTEXT_ID = "org.eclipse.ui.tests.contexts.ViewPart";
 
 	public static String ID = "org.eclipse.ui.tests.contexts.MockViewPart5";

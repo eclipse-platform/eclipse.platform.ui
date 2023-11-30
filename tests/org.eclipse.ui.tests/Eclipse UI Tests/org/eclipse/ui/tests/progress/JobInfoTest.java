@@ -134,13 +134,6 @@ public class JobInfoTest {
 		}
 	}
 
-	/**
-	 * @param user
-	 * @param system
-	 * @param jobstate
-	 * @param counter
-	 * @return
-	 */
 	private int createAndAddJobInfos(boolean user, boolean system, int jobstate, int counter) {
 		TestJob job;
 		JobInfo ji;

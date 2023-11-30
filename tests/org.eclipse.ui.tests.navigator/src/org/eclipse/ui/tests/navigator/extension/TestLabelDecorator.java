@@ -21,9 +21,6 @@ import org.eclipse.ui.PlatformUI;
 
 public class TestLabelDecorator implements ILabelDecorator {
 
-	/**
-	 *
-	 */
 	public TestLabelDecorator() {
 
 	}

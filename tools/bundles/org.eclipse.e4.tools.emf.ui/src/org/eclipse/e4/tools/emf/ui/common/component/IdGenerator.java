@@ -29,7 +29,6 @@ import org.eclipse.swt.widgets.Control;
  * Auto generates an id based on another field's current value.
  *
  * @author Steven Spungin
- *
  */
 public class IdGenerator {
 
@@ -44,9 +43,6 @@ public class IdGenerator {
 	 * Bind must be called AFTER the master observable value is set in order to
 	 * properly initialize.
 	 *
-	 * @param master
-	 * @param ebpLabel
-	 * @param evpId
 	 * @param control
 	 *            Optional control.
 	 */
@@ -110,9 +106,6 @@ public class IdGenerator {
 
 	/**
 	 * Strips all illegal id characters, and lower cases each word.
-	 *
-	 * @param value
-	 * @return
 	 */
 	protected static String trimToLowercase(String value) {
 		final String[] parts = value.split("\\s+"); //$NON-NLS-1$

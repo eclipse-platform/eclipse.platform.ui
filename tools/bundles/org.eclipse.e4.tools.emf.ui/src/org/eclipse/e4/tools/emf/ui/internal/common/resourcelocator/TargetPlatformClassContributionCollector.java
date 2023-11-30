@@ -21,7 +21,6 @@ import java.util.regex.Pattern;
  * Uses FilterEx for bundle, package, and location filtering
  *
  * @author Steven Spungin
- *
  */
 public class TargetPlatformClassContributionCollector extends TargetPlatformContributionCollector {
 

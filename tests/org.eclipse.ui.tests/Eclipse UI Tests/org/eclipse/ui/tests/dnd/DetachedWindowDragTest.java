@@ -28,7 +28,6 @@ import org.eclipse.ui.tests.autotests.AbstractTestLogger;
  * 'Detached'.
  * <p>
  * @since 3.1
- *
  */
 public class DetachedWindowDragTest	extends DragTest {
 

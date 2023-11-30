@@ -32,7 +32,6 @@ import org.junit.Test;
  * This simulates the CDT usage of the CNF.
  *
  * @since 3.3
- *
  */
 public class CdtTest extends NavigatorTestBase {
 

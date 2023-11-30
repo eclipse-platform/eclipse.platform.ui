@@ -35,9 +35,6 @@ public class TestList extends TestBrowser {
 		browser.open(TestElement.createModel(3, 10));
 	}
 
-	/**
-	 *
-	 */
 	@Override
 	protected void viewerFillMenuBar(MenuManager mgr) {
 	}

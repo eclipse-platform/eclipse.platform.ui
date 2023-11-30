@@ -41,7 +41,6 @@ public class ResizeTest extends BasicPerformanceTest {
 
 	/**
 	 * Create a new instance of the receiver.
-	 * @param factory
 	 */
 	public ResizeTest(TestWidgetFactory factory) {
 		this(factory, NONE, factory.getName() + " setSize");
@@ -51,9 +50,6 @@ public class ResizeTest extends BasicPerformanceTest {
 
 	/**
 	 * Create a new instance of the receiver.
-	 * @param factory
-	 * @param tagging
-	 * @param tag
 	 */
 	public ResizeTest(TestWidgetFactory factory, int tagging,
 			String tag) {

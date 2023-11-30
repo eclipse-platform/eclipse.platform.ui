@@ -45,7 +45,6 @@ import org.eclipse.swt.custom.CaretListener;
 *
 * This Reconciler Strategy is an example for how to override the default highlight strategy.
 * It will highlight closing and opening tag names that match the current word the user is on.
-*
 */
 public class HighlightStrategy implements IReconcilingStrategy, IReconcilingStrategyExtension, CaretListener, IPreferenceChangeListener {
 

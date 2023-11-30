@@ -251,8 +251,6 @@ public class SizeCacheTest {
 	/**
 	 * This does automatic test to make sure that cached size of control is the
 	 * same as calculated size with different given hints
-	 *
-	 * @param inner
 	 */
 	private void checkCacheSize(Control inner) {
 		update();

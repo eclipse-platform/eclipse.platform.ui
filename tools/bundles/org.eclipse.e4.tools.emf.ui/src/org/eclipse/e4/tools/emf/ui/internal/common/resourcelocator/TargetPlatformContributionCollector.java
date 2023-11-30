@@ -83,7 +83,6 @@ import org.w3c.dom.NodeList;
  * contents.
  *
  * @author Steven Spungin
- *
  */
 @SuppressWarnings("restriction")
 public abstract class TargetPlatformContributionCollector extends ClassContributionCollector {
@@ -281,7 +280,6 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 	 *
 	 * @param force
 	 *            true to force reload the cache
-	 * @param providerStatusCallback
 	 */
 	private void reloadCache(boolean force, final IProviderStatusCallback providerStatusCallback) {
 		if (cacheEntry.isEmpty() || force) {

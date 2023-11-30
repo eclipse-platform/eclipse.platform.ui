@@ -32,9 +32,6 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
-/**
- *
- */
 public class MenuManagerRendererTest {
 
 	@Rule

@@ -143,7 +143,6 @@ public class TiledEditor extends MultiEditor {
 	}
 
 	/*
-	 *
 	 */
 	@Override
 	protected int getIndex(IEditorPart editor) {

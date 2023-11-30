@@ -68,14 +68,10 @@ import org.junit.runners.MethodSorters;
 
 /**
  * @since 3.3
- *
  */
 @RunWith(JUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class EvaluationServiceTest extends UITestCase {
-	/**
-	 *
-	 */
 	private static final String CHECK_HANDLER_ID = "org.eclipse.ui.tests.services.checkHandler";
 	private static final String CONTEXT_ID1 = "org.eclipse.ui.command.contexts.evaluationService1";
 

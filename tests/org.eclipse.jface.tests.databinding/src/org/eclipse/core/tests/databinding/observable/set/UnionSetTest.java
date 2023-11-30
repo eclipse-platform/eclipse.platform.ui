@@ -25,8 +25,6 @@ import org.eclipse.jface.databinding.conformance.ObservableCollectionContractTes
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.TestCollection;
 
-/**
- */
 public class UnionSetTest {
 	public static void addConformanceTest(TestCollection suite) {
 		suite.addTest(ObservableCollectionContractTest.class, new Delegate());

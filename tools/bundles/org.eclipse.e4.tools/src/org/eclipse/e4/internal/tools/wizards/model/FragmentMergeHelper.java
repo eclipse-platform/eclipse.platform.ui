@@ -29,7 +29,6 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  * Helper to merge two Fragments Files into one.
  *
  * @author Jonas
- *
  */
 public class FragmentMergeHelper {
 
@@ -70,8 +69,6 @@ public class FragmentMergeHelper {
 
 	/**
 	 * Replaces imports by elements which got imported.
-	 *
-	 * @param targetFragments
 	 */
 	private static void consolidateImports(MModelFragments targetFragments) {
 		final List<MModelFragment> fragments = targetFragments.getFragments();

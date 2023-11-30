@@ -20,7 +20,6 @@ import org.eclipse.jface.text.codemining.LineHeaderCodeMining;
 
 /**
  * Abstract class for class name mining.
- *
  */
 public abstract class AbstractClassCodeMining extends LineHeaderCodeMining {
 

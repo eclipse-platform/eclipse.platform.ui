@@ -112,7 +112,6 @@ public class ComboScenarios extends ScenariosTestCase {
 	 *
 	 * @return the combo's items (String[]), which is the same thing as the
 	 *         Viewer's labels
-	 *
 	 */
 	protected List<String> getComboContent() {
 		String[] elements = combo.getItems();
@@ -149,7 +148,6 @@ public class ComboScenarios extends ScenariosTestCase {
 	 *
 	 * This test does not deal with null values, empty content, changed content,
 	 * property change of content elements, etc.
-	 *
 	 */
 	@Test
 	public void test_ROCombo_Scenario03_vanilla() {

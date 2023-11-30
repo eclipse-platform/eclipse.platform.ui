@@ -71,8 +71,6 @@ public class TableViewerRefreshTest extends ViewerTest {
 
 	/**
 	 * Test the time for doing a refresh.
-	 *
-	 * @throws Throwable
 	 */
 	public void testRefresh() throws Throwable {
 		openBrowser();
@@ -91,8 +89,6 @@ public class TableViewerRefreshTest extends ViewerTest {
 
 	/**
 	 * Test the time for doing a refresh.
-	 *
-	 * @throws Throwable
 	 */
 	public void testRefreshSorted() throws Throwable {
 		openBrowser();
@@ -112,8 +108,6 @@ public class TableViewerRefreshTest extends ViewerTest {
 
 	/**
 	 * Test the time for doing a refresh.
-	 *
-	 * @throws Throwable
 	 */
 	public void testRefreshPreSorted() throws Throwable {
 		openBrowser();
@@ -137,8 +131,6 @@ public class TableViewerRefreshTest extends ViewerTest {
 
 	/**
 	 * Test the time for doing a refresh.
-	 *
-	 * @throws Throwable
 	 */
 	public void testUpdate() throws Throwable {
 		openBrowser();

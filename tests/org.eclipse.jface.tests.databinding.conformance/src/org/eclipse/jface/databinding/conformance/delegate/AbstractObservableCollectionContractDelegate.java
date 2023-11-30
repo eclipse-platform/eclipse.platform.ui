@@ -32,7 +32,6 @@ public abstract class AbstractObservableCollectionContractDelegate<E> extends Ab
 	 * {@link IObservableCollectionContractDelegate#createObservableCollection(Realm, int)}
 	 * .
 	 *
-	 * @param realm
 	 * @return observable
 	 */
 	@Override

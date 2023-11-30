@@ -132,7 +132,6 @@ import org.eclipse.ui.internal.e4.compatibility.ModeledPageLayoutUtils;
  *  
  *
  * @since 1.0
- *
  */
 @SuppressWarnings("restriction")
 public final class E4MigrationTool {

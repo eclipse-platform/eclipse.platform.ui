@@ -39,7 +39,6 @@ import org.eclipse.swt.widgets.TableColumn;
  * This snippet represents usage of the ComboBoxCell-Editor
  *
  * @author Tom Schindl &lt;tom.schindl@bestsolution.at&gt;
- *
  */
 public class Snippet027ComboBoxCellEditors {
 	public static class MyModel {
@@ -107,9 +106,6 @@ public class Snippet027ComboBoxCellEditors {
 		return elements;
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display();
 		Shell shell = new Shell(display);

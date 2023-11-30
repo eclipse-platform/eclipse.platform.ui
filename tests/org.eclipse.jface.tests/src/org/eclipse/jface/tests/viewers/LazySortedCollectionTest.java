@@ -87,9 +87,6 @@ public class LazySortedCollectionTest {
 	 * Computes the entries that are expected to lie in the given range. The result
 	 * is sorted.
 	 *
-	 * @param start
-	 * @param length
-	 * @return
 	 * @since 3.1
 	 */
 	private Object[] computeExpectedElementsInRange(int start, int length) {
@@ -173,9 +170,6 @@ public class LazySortedCollectionTest {
 	 * if the result was unexpected. Assumes that the "elements" array was initially
 	 * added and that nothing has been added or removed since.
 	 *
-	 * @param start
-	 * @param length
-	 * @param sorted
 	 * @since 3.1
 	 */
 	private Object[] queryRange(int start, int length, boolean sorted) {

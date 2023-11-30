@@ -29,7 +29,6 @@ import org.eclipse.jface.viewers.Viewer;
 
 /**
  * @since 3.2
- *
  */
 public abstract class ViewerComparatorTest extends ViewerTestCase {
 	protected String UI = "UI";
@@ -86,8 +85,6 @@ public abstract class ViewerComparatorTest extends ViewerTestCase {
 
 		/**
 		 * Fires a model changed event to all listeners.
-		 *
-		 * @param change
 		 */
 		public void fireModelChanged(ComparatorModelChange change) {
 			for (IComparatorModelListener listener : fListeners) {

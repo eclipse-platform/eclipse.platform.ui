@@ -36,7 +36,6 @@ import org.eclipse.swt.widgets.Text;
  * pressed. A result of Dialog.Ok is ensured to have at least 1 selected item.
  *
  * @author Steven Spungin
- *
  */
 public class TitleAreaFilterDialog extends TitleAreaDialog {
 
@@ -93,10 +92,6 @@ public class TitleAreaFilterDialog extends TitleAreaDialog {
 	/**
 	 * Default returns true if string value contains the filterText, and it is
 	 * case insensitive.
-	 *
-	 * @param element
-	 * @param filterText
-	 * @return
 	 */
 	protected boolean isFiltered(Object element, String filterText) {
 		filterText = filterText.toLowerCase();

@@ -24,7 +24,6 @@ import org.eclipse.jface.text.codemining.ICodeMiningProvider;
 
 /**
  * Class reference mining.
- *
  */
 public class ClassReferenceCodeMining extends AbstractClassCodeMining {
 

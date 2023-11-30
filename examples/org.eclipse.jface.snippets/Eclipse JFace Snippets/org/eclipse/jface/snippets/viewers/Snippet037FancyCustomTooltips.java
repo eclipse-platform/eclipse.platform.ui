@@ -37,7 +37,6 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Explore JFace custom tooltips drawing.
- *
  */
 
 public class Snippet037FancyCustomTooltips {
@@ -77,9 +76,6 @@ public class Snippet037FancyCustomTooltips {
 		}
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		final Display display = new Display();
 		Shell shell = new Shell(display);

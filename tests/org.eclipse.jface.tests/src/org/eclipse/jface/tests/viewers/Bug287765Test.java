@@ -33,7 +33,6 @@ import org.junit.Test;
 
 /**
  * @since 3.4
- *
  */
 public class Bug287765Test {
 	private TreeViewer treeViewer;

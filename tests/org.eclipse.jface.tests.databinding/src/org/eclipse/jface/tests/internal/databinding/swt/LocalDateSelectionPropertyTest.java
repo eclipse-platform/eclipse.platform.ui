@@ -27,8 +27,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.DateTime;
 import org.junit.Test;
 
-/**
- */
 public class LocalDateSelectionPropertyTest extends AbstractSWTTestCase {
 	@Test
 	public void testSetInObservable() {

@@ -25,7 +25,6 @@ import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
 
 /**
  * @since 3.2
- *
  */
 public class PropertyActionProvider extends CommonActionProvider {
 

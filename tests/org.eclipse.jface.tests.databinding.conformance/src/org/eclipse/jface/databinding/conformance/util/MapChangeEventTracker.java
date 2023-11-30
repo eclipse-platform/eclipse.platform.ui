@@ -52,7 +52,6 @@ public class MapChangeEventTracker<K, V> implements IMapChangeListener<K, V> {
 	/**
 	 * Convenience method to register a new listener.
 	 *
-	 * @param observable
 	 * @return tracker
 	 */
 	public static <K, V> MapChangeEventTracker<K, V> observe(IObservableMap<K, V> observable) {

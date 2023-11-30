@@ -39,7 +39,6 @@ import org.eclipse.ui.tests.navigator.m12.model.ResourceWrapper;
 
 /**
  * @since 3.3
- *
  */
 public class TestPipelineProvider extends ResourceWrapperContentProvider {
 
@@ -90,11 +89,6 @@ public class TestPipelineProvider extends ResourceWrapperContentProvider {
 		return null;
 	}
 
-	/**
-	 * @param elements2
-	 * @param anInput
-	 * @param id
-	 */
 	private void _track(Map map, Object key, String id) {
 		if (key instanceof ResourceWrapper) {
 			key = ((ResourceWrapper)key).getResource();

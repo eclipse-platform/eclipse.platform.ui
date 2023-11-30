@@ -16,7 +16,6 @@ package org.eclipse.jface.tests.databinding.scenarios;
 
 /**
  * @since 3.2
- *
  */
 public class CustomBeanModelType<T> {
 
@@ -26,34 +25,20 @@ public class CustomBeanModelType<T> {
 
 	private final Class<T> type;
 
-	/**
-	 * @param object
-	 * @param propertyName
-	 * @param type
-	 */
 	public CustomBeanModelType(T object, String propertyName, Class<T> type) {
 		this.object = object;
 		this.propertyName = propertyName;
 		this.type = type;
 	}
 
-	/**
-	 * @return
-	 */
 	public String getPropertyName() {
 		return propertyName;
 	}
 
-	/**
-	 * @return
-	 */
 	public T getObject() {
 		return object;
 	}
 
-	/**
-	 * @return
-	 */
 	public Class<T> getType() {
 		return type;
 	}

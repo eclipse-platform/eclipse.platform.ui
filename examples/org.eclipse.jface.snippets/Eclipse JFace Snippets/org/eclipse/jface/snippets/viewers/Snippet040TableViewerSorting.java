@@ -38,7 +38,6 @@ import org.eclipse.swt.widgets.Table;
  * Example usage of ViewerComparator in tables to allow sorting
  *
  * @author Tom Schindl &lt;tom.schindl@bestsolution.at&gt;
- *
  */
 public class Snippet040TableViewerSorting {
 
@@ -284,9 +283,6 @@ public class Snippet040TableViewerSorting {
 		protected abstract int doCompare(Viewer viewer, Object e1, Object e2);
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display();
 

@@ -47,14 +47,11 @@ import org.junit.Test;
 
 /**
  * @since 3.2
- *
  */
 public class DetailObservableSetTest extends AbstractDefaultRealmTestCase {
 	/**
 	 * Asserts the use case of specifying null on construction for the detail
 	 * type of the detail set.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testElementTypeNull() throws Exception {
@@ -79,8 +76,6 @@ public class DetailObservableSetTest extends AbstractDefaultRealmTestCase {
 
 	/**
 	 * Asserts that you can't change the type across multiple inner observables.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testElementTypeNotNull() throws Exception {

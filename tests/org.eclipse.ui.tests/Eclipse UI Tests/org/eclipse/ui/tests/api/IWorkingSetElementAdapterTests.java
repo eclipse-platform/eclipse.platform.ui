@@ -27,7 +27,6 @@ import org.junit.Test;
  * Tests BasicWorkingSetElementAdapter.
  *
  * @since 3.5
- *
  */
 public class IWorkingSetElementAdapterTests {
 

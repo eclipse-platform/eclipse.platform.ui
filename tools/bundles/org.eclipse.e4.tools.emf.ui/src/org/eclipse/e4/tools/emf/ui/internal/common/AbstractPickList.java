@@ -46,7 +46,6 @@ import org.eclipse.swt.widgets.Table;
  * A composite widget containing a combo for picking items, a list with
  * selectable items, and action buttons for modifying the list.
  * </p>
- *
  */
 public abstract class AbstractPickList extends Composite {
 

@@ -508,7 +508,6 @@ public class ModelEditor implements IGotoObject {
 	}
 
 	/**
-	 * @param tabItem
 	 * @return The index of the tab item. Should never return -1.
 	 */
 	public static int getTabIndex(CTabItem tabItem) {
@@ -1373,9 +1372,6 @@ public class ModelEditor implements IGotoObject {
 
 	/**
 	 * Register a class to use to create an editor for a given key
-	 *
-	 * @param ley
-	 * @param clazz
 	 */
 	private void registerEditor(String key, Class<? extends AbstractComponentEditor<?>> clazz) {
 		editorsClasses.put(key, clazz);
@@ -1383,9 +1379,6 @@ public class ModelEditor implements IGotoObject {
 
 	/**
 	 * Register directly a created editor for a given key
-	 *
-	 * @param instanceClassName
-	 * @param clazz
 	 */
 	private void registerEditor(String key, AbstractComponentEditor<?> editor) {
 		editors.put(key, editor);
@@ -2035,7 +2028,6 @@ public class ModelEditor implements IGotoObject {
 	 * @param target   the target object where instance should be pasted of dropped
 	 * @param instance the instance of object to be pasted or dropped
 	 * @param isIndex  if true, means that target is an object in a container
-	 * @return
 	 */
 	private boolean isValidTarget(Object target, Object instance, boolean isIndex) {
 		if (target instanceof MElementContainer<?>) {

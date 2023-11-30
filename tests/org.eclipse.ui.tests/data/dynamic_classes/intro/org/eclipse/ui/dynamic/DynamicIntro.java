@@ -21,9 +21,6 @@ import org.eclipse.ui.part.IntroPart;
  */
 public class DynamicIntro extends IntroPart {
 
-	/**
-	 *
-	 */
 	public DynamicIntro() {
 		super();
 	}

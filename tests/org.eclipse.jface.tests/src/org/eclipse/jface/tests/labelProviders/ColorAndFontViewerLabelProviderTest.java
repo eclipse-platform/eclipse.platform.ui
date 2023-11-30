@@ -38,7 +38,6 @@ import org.junit.Test;
  * IViewerLabelProvider.
  *
  * @since 3.3
- *
  */
 public class ColorAndFontViewerLabelProviderTest extends CompositeLabelProviderTest {
 

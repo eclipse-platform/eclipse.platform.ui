@@ -363,9 +363,6 @@ public class StructuredContentProviderTest {
 		return addRemoveComposite;
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = Display.getDefault();
 		realm = DisplayRealm.getRealm(display);

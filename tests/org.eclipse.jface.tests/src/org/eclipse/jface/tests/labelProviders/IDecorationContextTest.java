@@ -33,7 +33,6 @@ import org.junit.Test;
  * org.eclipse.jface.snippets.viewers.Snippet010OwnerDraw.java
  *
  * @since 3.4
- *
  */
 public class IDecorationContextTest {
 

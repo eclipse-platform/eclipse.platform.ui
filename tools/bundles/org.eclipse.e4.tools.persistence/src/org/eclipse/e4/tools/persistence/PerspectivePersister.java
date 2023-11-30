@@ -403,8 +403,6 @@ public final class PerspectivePersister {
 
 	/**
 	 * Activates all editors in the given editor area once to initialize them.
-	 *
-	 * @param editorArea
 	 */
 	private static void activateEditors(MArea editorArea) {
 		final EPartService partService = CommonUtil.getEPartService();

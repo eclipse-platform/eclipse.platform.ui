@@ -56,7 +56,6 @@ import org.junit.Test;
  * simple example of setting the weights to 50,50 may not end up with the child
  * controls not being equally sized because the available area may not be
  * equally divisible amongst its children.
- *
  */
 public class MSashTest {
 	protected IEclipseContext appContext;

@@ -28,9 +28,6 @@ public class HeavyNullImageDecorator implements ILabelDecorator {
 	 */
 	public static boolean fail = false;
 
-	/**
-	 *
-	 */
 	public HeavyNullImageDecorator() {
 	}
 

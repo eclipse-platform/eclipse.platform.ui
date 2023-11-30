@@ -31,7 +31,6 @@ import org.junit.Test;
 
 /**
  * @since 3.3
- *
  */
 public class Bug200558Test extends ViewerTestCase {
 

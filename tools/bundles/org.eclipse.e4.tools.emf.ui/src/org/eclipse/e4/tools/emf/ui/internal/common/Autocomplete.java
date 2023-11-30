@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Combo;
 /**
  *
  * @author Steven Spungin
- *
  */
 public class Autocomplete {
 

@@ -25,9 +25,6 @@ import org.eclipse.ui.part.EditorPart;
  */
 public class DynamicEditor extends EditorPart {
 
-	/**
-	 *
-	 */
 	public DynamicEditor() {
 		super();
 	}

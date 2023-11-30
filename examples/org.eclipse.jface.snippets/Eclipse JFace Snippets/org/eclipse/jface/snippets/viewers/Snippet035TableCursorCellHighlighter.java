@@ -43,7 +43,6 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * Example usage of none mandatory interfaces of ITableFontProvider and
  * ITableColorProvider
- *
  */
 public class Snippet035TableCursorCellHighlighter {
 
@@ -185,9 +184,6 @@ public class Snippet035TableCursorCellHighlighter {
 		return elements;
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display();
 

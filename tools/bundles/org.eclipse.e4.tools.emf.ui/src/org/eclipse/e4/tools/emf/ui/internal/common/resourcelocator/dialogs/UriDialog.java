@@ -18,7 +18,6 @@ package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs;
  * An interface for a URI Dialog
  *
  * @author Steven Spungin
- *
  */
 public interface UriDialog {
 

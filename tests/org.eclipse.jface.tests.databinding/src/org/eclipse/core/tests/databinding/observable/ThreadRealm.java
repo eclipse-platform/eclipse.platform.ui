@@ -35,8 +35,6 @@ public class ThreadRealm extends Realm {
 
 	/**
 	 * Initializes the realm.
-	 *
-	 * @param thread
 	 */
 	public synchronized void init(Thread thread) {
 		if (thread == null) {
@@ -66,8 +64,6 @@ public class ThreadRealm extends Realm {
 
 	/**
 	 * Queues the provided <code>runnable</code>.
-	 *
-	 * @param runnable
 	 */
 	@Override
 	public void asyncExec(Runnable runnable) {

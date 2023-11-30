@@ -36,7 +36,6 @@ import org.eclipse.swt.widgets.Display;
  * class, as placeholders are used.
  *
  * @author "Steven Spungin"
- *
  */
 public class BundleImageCache {
 
@@ -60,7 +59,6 @@ public class BundleImageCache {
 	/**
 	 * Creates the image, and tracks it for a bulk dispose operation.
 	 *
-	 * @param path
 	 * @return the {@link Image}
 	 */
 	public Image create(String path) {
@@ -78,7 +76,6 @@ public class BundleImageCache {
 	/**
 	 * Uses IResourcePool to obtain image. Does not track object.
 	 *
-	 * @param key
 	 * @return The {@link Image}
 	 */
 	public Image loadFromKey(String key) {

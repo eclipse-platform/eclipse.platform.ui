@@ -43,9 +43,6 @@ public interface IObservableContractDelegate {
 	/**
 	 * Invokes an operation to set the stale state of the provided
 	 * <code>observable</code>.
-	 *
-	 * @param observable
-	 * @param stale
 	 */
 	public void setStale(IObservable observable, boolean stale);
 
@@ -63,8 +60,6 @@ public interface IObservableContractDelegate {
 	 * resulting in an observable event. There is no guaranteed as to the state
 	 * of the observable when invoked. The observable could be disposed to
 	 * assert the proper behavior of dispose.
-	 *
-	 * @param observable
 	 */
 	public void change(IObservable observable);
 }

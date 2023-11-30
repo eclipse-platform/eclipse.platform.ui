@@ -409,8 +409,6 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 		/**
 		 * The pattern string for which this filter should select elements in
 		 * the viewer.
-		 *
-		 * @param patternString
 		 */
 		public void setPattern(String patternString) {
 
@@ -429,7 +427,6 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 		 * Take the given filter text and break it down into words using a
 		 * BreakIterator.
 		 *
-		 * @param text
 		 * @return an array of words
 		 */
 		private String[] getWords(String text) {

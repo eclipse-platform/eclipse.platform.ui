@@ -78,9 +78,6 @@ public class LabelProviderTest {
 
 	private final IObservableValue<RenamableItem> selectedRenamable;
 
-	/**
-	 *
-	 */
 	public LabelProviderTest() {
 
 		// Create shell
@@ -142,9 +139,6 @@ public class LabelProviderTest {
 				LayoutConstants.getMargins()).generateLayout(shell);
 	}
 
-	/**
-	 * @param currentSelection
-	 */
 	protected void rename(final RenamableItem currentSelection) {
 		InputDialog inputDialog = new InputDialog(
 				shell,
@@ -154,16 +148,10 @@ public class LabelProviderTest {
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	protected RenamableItem getCurrentSelection() {
 		return selectedRenamable.getValue();
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		final Display display = Display.getDefault();
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {

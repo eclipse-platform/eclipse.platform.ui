@@ -314,7 +314,6 @@ public final class ObjectContributionTest extends UITestCase {
 	 *
 	 * @param commandIds the command ids that should appear in the menu
 	 * @param selection  the selection on which to contribute object contributions
-	 * @throws PartInitException
 	 */
 	public void assertPopupMenus(String name, String[] commandIds,
 			final ISelection selection, Class<?> selectionType, boolean existance) throws PartInitException {

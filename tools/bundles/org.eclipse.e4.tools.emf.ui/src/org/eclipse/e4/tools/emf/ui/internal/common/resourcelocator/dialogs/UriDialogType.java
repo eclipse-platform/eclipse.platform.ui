@@ -18,7 +18,6 @@ package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs;
  * Enum of various URI Dialog Types
  *
  * @author Steven Spungin
- *
  */
 public enum UriDialogType {
 	BUNDLECLASS, ICON

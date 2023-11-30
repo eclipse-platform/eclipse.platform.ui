@@ -856,9 +856,6 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 	 * Verify whether or not the imported project is in the current workspace
 	 * location (i.e. copy projects was true) or in another workspace location
 	 * (i.e. copy projects was false).
-	 *
-	 * @param inWorkspace
-	 * @param project
 	 */
 	private void verifyProjectInWorkspace(final boolean inWorkspace,
 			final IProject project, String[] fileList, boolean isListFiles) {

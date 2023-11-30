@@ -23,7 +23,6 @@ import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 
 /**
  * @since 3.3
- *
  */
 public class TestLabelProviderBlank extends TestStyledLabelProvider {
 

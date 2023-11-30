@@ -39,7 +39,6 @@ import org.junit.Test;
 
 /**
  * @since 3.3
- *
  */
 public class DecorationSchedulerRaceConditionTest extends NavigatorTestBase {
 

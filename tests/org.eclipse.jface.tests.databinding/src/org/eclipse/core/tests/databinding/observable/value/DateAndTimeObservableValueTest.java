@@ -30,7 +30,6 @@ import org.junit.Test;
 
 /**
  * @since 1.0
- *
  */
 public class DateAndTimeObservableValueTest extends
 		AbstractDefaultRealmTestCase {

@@ -55,7 +55,6 @@ public class ChangeEventTracker implements IChangeListener {
 	/**
 	 * Convenience method to register a new listener.
 	 *
-	 * @param observable
 	 * @return tracker
 	 */
 	public static ChangeEventTracker observe(IObservable observable) {

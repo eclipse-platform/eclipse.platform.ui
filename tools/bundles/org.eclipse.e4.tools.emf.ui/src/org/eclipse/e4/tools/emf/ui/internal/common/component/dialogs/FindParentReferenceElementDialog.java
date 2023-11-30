@@ -276,8 +276,6 @@ public class FindParentReferenceElementDialog extends SaveDialogBoundsSettingsDi
 	 * This method returns classes that have extensible fields It rejects
 	 * eClasses having only transientData and persistedState for instance Result
 	 * is cached in a singleton for each dialog instances...
-	 *
-	 * @return
 	 */
 	private List<EClass> getExtendableClasses() {
 		if (extendableClasses == null) {

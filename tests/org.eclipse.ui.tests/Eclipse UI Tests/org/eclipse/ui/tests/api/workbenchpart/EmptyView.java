@@ -23,9 +23,6 @@ public class EmptyView extends ViewPart {
 
 	public static String ID = "org.eclipse.ui.tests.workbenchpart.EmptyView";
 
-	/**
-	 *
-	 */
 	public EmptyView() {
 		super();
 	}

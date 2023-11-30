@@ -39,7 +39,6 @@ import org.eclipse.ui.tests.commands.ActiveActionSetExpression;
 
 /**
  * @since 3.3
- *
  */
 public class MenuBuilder {
 	private static AbstractContributionFactory viewMenuAddition = null;

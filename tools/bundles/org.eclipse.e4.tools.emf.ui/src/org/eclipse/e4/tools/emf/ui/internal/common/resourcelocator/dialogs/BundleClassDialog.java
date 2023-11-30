@@ -47,7 +47,6 @@ import org.osgi.framework.FrameworkUtil;
  * A dialog for creating, editing, replacing, or removing a bundleclass.
  *
  * @author Steven Spungin
- *
  */
 public class BundleClassDialog extends Dialog implements UriDialog {
 	private Text txtUri;

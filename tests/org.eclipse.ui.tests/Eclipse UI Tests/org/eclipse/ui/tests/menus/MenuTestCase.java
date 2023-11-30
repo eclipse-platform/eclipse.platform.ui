@@ -36,15 +36,11 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  * updated if necessary.
  *
  * @since 3.3
- *
  */
 public class MenuTestCase extends UITestCase {
 
 	protected static final String TEST_CONTRIBUTIONS_CACHE_ID = "org.eclipse.ui.tests.IfYouChangeMe.FixTheTests";
 
-	/**
-	 * @param testName
-	 */
 	public MenuTestCase(String testName) {
 		super(testName);
 	}

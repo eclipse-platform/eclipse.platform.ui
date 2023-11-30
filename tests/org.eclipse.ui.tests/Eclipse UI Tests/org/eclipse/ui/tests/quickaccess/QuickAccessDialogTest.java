@@ -109,7 +109,6 @@ public class QuickAccessDialogTest {
 
 	/**
 	 * Tests that the shell opens when the command is activated
-	 * @throws Exception
 	 */
 	@Test
 	public void testOpenByCommand() throws Exception {

@@ -42,7 +42,6 @@ import org.eclipse.swt.widgets.Table;
 
 /**
  * Example of a different focus cell rendering with a simply focus border
- *
  */
 public class Snippet036FocusBorderCellHighlighter {
 
@@ -164,9 +163,6 @@ public class Snippet036FocusBorderCellHighlighter {
 		return elements;
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display();
 

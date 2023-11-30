@@ -65,9 +65,6 @@ public final class ViewUtils {
 		return false;
 	}
 
-	/**
-	 *
-	 */
 	protected ViewUtils() {
 		//no-op
 	}

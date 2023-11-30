@@ -28,7 +28,6 @@ import org.junit.runners.JUnit4;
  * MarkerViewTests are the tests for the marker view.
  *
  * @since 3.4
- *
  */
 @RunWith(JUnit4.class)
 public class MarkerViewTests extends UITestCase {
