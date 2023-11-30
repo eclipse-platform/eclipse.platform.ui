@@ -24,15 +24,20 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.viewers.internal.ExpandableNode;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
@@ -1118,7 +1123,7 @@ public class TreeViewer extends AbstractTreeViewer {
 	}
 
 	@Override
-	void handleExpandableNodeClicked(Widget w) {
+	void handleExpandableNodeClicked(Widget w, boolean expandAll) {
 		if (!(w instanceof Item item)) {
 			return;
 		}
@@ -1129,10 +1134,11 @@ public class TreeViewer extends AbstractTreeViewer {
 		}
 
 		Object[] sortedChildren = expNode.getRemainingElements();
-		Object[] children = applyItemsLimit(data, sortedChildren);
-		if (children.length == 0) {
+		if (sortedChildren.length == 0) {
 			return;
 		}
+
+		Object[] children = expandAll ? sortedChildren : applyItemsLimit(data, sortedChildren);
 
 		boolean oldBusy = isBusy();
 		Tree tree = getTree();
@@ -1188,5 +1194,40 @@ public class TreeViewer extends AbstractTreeViewer {
 			return null;
 		}
 		return items[length - 1].getData();
+	}
+
+	@Override
+	void handleKeySelection(KeyEvent e) {
+		if (e.keyCode == SWT.KEYPAD_MULTIPLY || e.keyCode == SWT.KEYPAD_ADD || e.keyCode == SWT.ARROW_RIGHT) {
+			if (e.widget instanceof Tree table) {
+				TreeItem[] selection = tree.getSelection();
+				if (selection.length != 1) {
+					return;
+				}
+				handleExpandableNodeClicked(selection[0], false);
+			}
+		}
+	}
+
+	@Override
+	void handleMenuSelection(MenuEvent e, Menu popupMenu) {
+		if (tree.getSelection().length != 1) {
+			return;
+		}
+		TreeItem selectedItem = tree.getSelection()[0];
+		if (!selectedItem.isDisposed() && selectedItem.getData() instanceof ExpandableNode) {
+			MenuItem[] items = popupMenu.getItems();
+			for (int i = 0; i < items.length; i++) {
+				items[i].dispose();
+			}
+			MenuItem newItem = new MenuItem(popupMenu, SWT.NONE);
+			newItem.setText(JFaceResources.getString("ExpandableNode.showAllRemaining")); //$NON-NLS-1$
+			newItem.addListener(SWT.Selection, (selEvent) -> {
+				if (!selectedItem.isDisposed() && selectedItem.getData() instanceof ExpandableNode) {
+					handleExpandableNodeClicked(selectedItem, true);
+				}
+			});
+		}
+
 	}
 }

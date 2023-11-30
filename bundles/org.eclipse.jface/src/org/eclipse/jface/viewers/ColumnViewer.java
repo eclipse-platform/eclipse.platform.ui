@@ -31,6 +31,9 @@ import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.viewers.internal.ExpandableNode;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
@@ -38,6 +41,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -120,6 +124,15 @@ public abstract class ColumnViewer extends StructuredViewer {
 			};
 			control.addMouseListener(mouseListener);
 		}
+		control.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if ((getControl() == null) || getControl().isDisposed()) {
+					return;
+				}
+				handleKeySelection(e);
+			}
+		});
 	}
 
 	/**
@@ -648,7 +661,9 @@ public abstract class ColumnViewer extends StructuredViewer {
 
 		if (cell != null) {
 			if (cell.getElement() instanceof ExpandableNode) {
-				handleExpandableNodeClicked(cell.getItem());
+				if (e.button == SWT.KeyDown) {
+					handleExpandableNodeClicked(cell.getItem(), false);
+				}
 			} else {
 				triggerEditorActivationEvent(new ColumnViewerEditorActivationEvent(cell, e));
 			}
@@ -882,7 +897,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 	 *
 	 * @param cell selected on click
 	 */
-	void handleExpandableNodeClicked(Widget cell) {
+	void handleExpandableNodeClicked(Widget cell, boolean expandAll) {
 		// default implementation does nothing. Actual viewers can decide how to
 		// populate remaining elements.
 	}
@@ -1026,7 +1041,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 	@Override
 	protected void handleDoubleSelect(SelectionEvent event) {
 		if (event.item != null && event.item.getData() instanceof ExpandableNode) {
-			handleExpandableNodeClicked(event.item);
+			handleExpandableNodeClicked(event.item, false);
 			// we do not want client listeners to be notified for this item.
 			return;
 		}
@@ -1087,5 +1102,21 @@ public abstract class ColumnViewer extends StructuredViewer {
 		}
 		// by default return given selection.
 		return selection;
+	}
+	/**
+	 * Handle keyboard key selection.
+	 * @param e Key event
+	 */
+	void handleKeySelection(KeyEvent e) {
+	}
+
+	/**
+	 * Handle pop up menu selection.
+	 *
+	 * @param e
+	 * @param popupMenu
+	 *
+	 */
+	void handleMenuSelection(MenuEvent e, Menu popupMenu) {
 	}
 }
