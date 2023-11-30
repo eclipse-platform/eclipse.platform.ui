@@ -85,7 +85,6 @@ public class CreateChangeOperation implements IWorkspaceRunnable {
 	 *  and less than or equal {@link RefactoringStatus#FATAL}.
 	 *  The standard value from which on a condition check should is to be interpreted as
 	 *  failed can be accessed via {@link RefactoringCore#getConditionCheckingFailedSeverity()}.
-	 *
 	 */
 	public CreateChangeOperation(CheckConditionsOperation operation, int checkFailedSeverity) {
 		Assert.isNotNull(operation);

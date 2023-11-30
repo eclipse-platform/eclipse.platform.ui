@@ -31,7 +31,6 @@ import org.eclipse.jface.viewers.ViewerCell;
  * overriding {@link #update(ViewerCell)}.
  *
  * @since 1.3
- *
  */
 public class ObservableMapCellLabelProvider extends CellLabelProvider {
 

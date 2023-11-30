@@ -92,7 +92,6 @@ public class InlinedAnnotationSupport {
 
 	/**
 	 * Class to update {@link GlyphMetrics} width style for {@link LineContentAnnotation}.
-	 *
 	 */
 	private class UpdateStylesWidth implements ITextPresentationListener {
 
@@ -129,7 +128,6 @@ public class InlinedAnnotationSupport {
 
 	/**
 	 * Class to track start/end offset of visible lines.
-	 *
 	 */
 	private class VisibleLines implements IViewportListener, IDocumentListener, ControlListener {
 
@@ -567,7 +565,6 @@ public class InlinedAnnotationSupport {
 	 *
 	 * @param style the style of Font widget to get.
 	 * @return the receiver's font according the specified <code>style</code>
-	 *
 	 */
 	Font getFont(int style) {
 		StyledText styledText= fViewer != null ? fViewer.getTextWidget() : null;

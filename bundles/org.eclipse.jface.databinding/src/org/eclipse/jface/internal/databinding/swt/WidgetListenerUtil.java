@@ -21,14 +21,8 @@ import org.eclipse.swt.widgets.Widget;
 
 /**
  * @since 3.4
- *
  */
 public class WidgetListenerUtil {
-	/**
-	 * @param widget
-	 * @param event
-	 * @param listener
-	 */
 	public static void asyncAddListener(final Widget widget, final int event,
 			final Listener listener) {
 		if (widget == null)
@@ -47,11 +41,6 @@ public class WidgetListenerUtil {
 		}
 	}
 
-	/**
-	 * @param widget
-	 * @param event
-	 * @param listener
-	 */
 	public static void asyncRemoveListener(final Widget widget,
 			final int event, final Listener listener) {
 		if (widget == null)

@@ -417,8 +417,6 @@ public abstract class ColumnViewerEditor {
 
 	/**
 	 * Enable the editor by mouse down
-	 *
-	 * @param event
 	 */
 	void handleEditorActivationEvent(ColumnViewerEditorActivationEvent event) {
 
@@ -684,8 +682,6 @@ public abstract class ColumnViewerEditor {
 	 *
 	 * @param row Row to search from
 	 * @return Top-left-most cell in the viewer
-	 *
-	 *
 	 */
 	private ViewerCell getFirstCell(ViewerRow row) {
 		ViewerRow rowAbove = row.getNeighbor(ViewerRow.ABOVE, false);
@@ -707,8 +703,6 @@ public abstract class ColumnViewerEditor {
 	 *
 	 * @param row Row to search from
 	 * @return bottom-right-most cell in the viewer
-	 *
-	 *
 	 */
 	private ViewerCell getLastCell(ViewerRow row) {
 		ViewerRow rowBelow = row.getNeighbor(ViewerRow.BELOW, false);
@@ -756,7 +750,6 @@ public abstract class ColumnViewerEditor {
 	 * @return the cell currently holding the focus if no cell has the focus or
 	 *         the viewer implementation doesn't support <code>null</code> is
 	 *         returned
-	 *
 	 */
 	public ViewerCell getFocusCell() {
 		return null;

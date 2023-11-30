@@ -418,7 +418,6 @@ public class JFaceResources {
 
 	/**
 	 * Initialize default images in JFace's image registry.
-	 *
 	 */
 	private static void initializeDefaultImages() {
 
@@ -475,7 +474,6 @@ public class JFaceResources {
 	 *            image is relative to
 	 * @param fallbackPath
 	 *            the path relative to the fallback {@link Class}
-	 *
 	 */
 	private static final void declareImage(Object bundle, String key, String path, Class<?> fallback,
 			String fallbackPath) {

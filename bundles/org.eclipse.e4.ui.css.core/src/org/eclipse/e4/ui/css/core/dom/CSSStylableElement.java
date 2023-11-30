@@ -25,53 +25,39 @@ public interface CSSStylableElement extends Element {
 
 	/**
 	 * Return the native widget wrapped (SWT widget, Swing Component...)
-	 *
-	 * @return
 	 */
 	public Object getNativeWidget();
 
 	/**
 	 * Return the id of the native widget. This method is used to manage CSS
 	 * style like this input#MyId{....}.
-	 *
-	 * @return
 	 */
 	public String getCSSId();
 
 	/**
 	 * Return the class of the native widget. This method is used to manage CSS
 	 * style like this .blueClass {...}.
-	 *
-	 * @return
 	 */
 	public String getCSSClass();
 
 	/**
 	 * Return the inline style of the native widget.
-	 *
-	 * @return
 	 */
 	public String getCSSStyle();
 
 	/**
 	 * Return the default {@link CSSStyleDeclaration} of the native widget.
-	 *
-	 * @return
 	 */
 	public CSSStyleDeclaration getDefaultStyleDeclaration(String pseudoE);
 
 	/**
 	 * Copy all default style declarations defined into
 	 * <code>stylableElement</code>.
-	 *
-	 * @param stylableElement
 	 */
 	public void copyDefaultStyleDeclarations(CSSStylableElement stylableElement);
 
 	/**
 	 * Set the default {@link CSSStyleDeclaration} of the native widget.
-	 *
-	 * @param defaultStyleDeclaration
 	 */
 	public void setDefaultStyleDeclaration(String pseudoE,
 			CSSStyleDeclaration defaultStyleDeclaration);
@@ -79,9 +65,6 @@ public interface CSSStylableElement extends Element {
 	/**
 	 * Return true if <code>s</code> is pseudo instance (ex :focus) and false
 	 * otherwise.
-	 *
-	 * @param s
-	 * @return
 	 */
 	public abstract boolean isPseudoInstanceOf(String s);
 
@@ -91,8 +74,6 @@ public interface CSSStylableElement extends Element {
 	 * BackgroundColor) for a special state (without manage listener like
 	 * focus). For instance SWT CTabFolder#setSelectionBackground (Color color)
 	 * is method which set background Color when a CTabItem is selected.
-	 *
-	 * @return
 	 */
 	public String[] getStaticPseudoInstances();
 
@@ -103,24 +84,17 @@ public interface CSSStylableElement extends Element {
 	 * BackgroundColor) for a special state (without manage listener like
 	 * focus). For instance SWT CTabFolder#setSelectionBackground (Color color)
 	 * is method which set background color when a CTabItem is selected.
-	 *
-	 * @param s
-	 * @return
 	 */
 	public boolean isStaticPseudoInstance(String s);
 
 	/**
 	 * Call-back method called when styles are applied to the all children nodes
 	 * of the native widget
-	 *
-	 * @param nodes
 	 */
 	public void onStylesApplied(NodeList nodes);
 
 	/**
 	 * Return the {@link CSSExtendedProperties} of the native widget.
-	 *
-	 * @return
 	 */
 	public CSSExtendedProperties getStyle();
 

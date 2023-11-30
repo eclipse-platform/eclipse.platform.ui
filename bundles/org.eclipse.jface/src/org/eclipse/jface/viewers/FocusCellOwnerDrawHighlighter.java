@@ -34,7 +34,6 @@ import org.eclipse.swt.widgets.Listener;
  * cell.
  *
  * @since 3.3
- *
  */
 public class FocusCellOwnerDrawHighlighter extends FocusCellHighlighter {
 	private boolean removeNonFocusedSelectionInformation;

@@ -31,24 +31,14 @@ import org.eclipse.jface.action.ToolBarContributionItem;
  */
 public class ToolBarContributionItem2 extends ToolBarContributionItem {
 
-	/**
-	 *
-	 */
 	public ToolBarContributionItem2() {
 		super();
 	}
 
-	/**
-	 * @param toolBarManager
-	 */
 	public ToolBarContributionItem2(IToolBarManager toolBarManager) {
 		super(toolBarManager);
 	}
 
-	/**
-	 * @param toolBarManager
-	 * @param id
-	 */
 	public ToolBarContributionItem2(IToolBarManager toolBarManager, String id) {
 		super(toolBarManager, id);
 	}

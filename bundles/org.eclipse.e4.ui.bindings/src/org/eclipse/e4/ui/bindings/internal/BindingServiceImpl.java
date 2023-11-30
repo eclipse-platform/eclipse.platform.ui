@@ -35,9 +35,6 @@ import org.eclipse.jface.bindings.keys.KeyBinding;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.ParseException;
 
-/**
- *
- */
 public class BindingServiceImpl implements EBindingService {
 
 	static final String USER_TYPE = "user"; //$NON-NLS-1$

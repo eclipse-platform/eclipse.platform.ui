@@ -1848,7 +1848,6 @@ public final class BindingManager extends HandleObjectManager<Scheme>
 	 *            Currently ignored.
 	 * @param type
 	 *            The type to look for.
-	 *
 	 */
 	public void removeBindings(final TriggerSequence sequence,
 			final String schemeId, final String contextId, final String locale,

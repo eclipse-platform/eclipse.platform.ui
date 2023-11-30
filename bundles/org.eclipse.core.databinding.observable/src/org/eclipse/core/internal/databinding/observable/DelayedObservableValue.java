@@ -95,8 +95,6 @@ public class DelayedObservableValue<T> extends AbstractObservableValue<T>
 	 * once there have been no value changes in the observable for
 	 * <code>delay</code> milliseconds.
 	 *
-	 * @param delayMillis
-	 * @param observable
 	 * @throws IllegalArgumentException
 	 *             if <code>updateEventType</code> is an incorrect type.
 	 */

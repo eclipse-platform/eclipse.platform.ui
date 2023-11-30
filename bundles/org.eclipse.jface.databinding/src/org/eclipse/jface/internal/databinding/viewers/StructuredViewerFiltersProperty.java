@@ -30,7 +30,6 @@ import org.eclipse.jface.viewers.ViewerFilter;
  * @param <S> type of the source object
  *
  * @since 3.3
- *
  */
 public class StructuredViewerFiltersProperty<S extends StructuredViewer> extends ViewerSetProperty<S, ViewerFilter> {
 	@Override

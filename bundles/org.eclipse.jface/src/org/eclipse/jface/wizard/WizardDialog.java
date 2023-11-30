@@ -329,7 +329,6 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 	 * {@inheritDoc}
 	 *
 	 * @see #setModal(boolean)
-	 *
 	 */
 	@Override
 	public void setShellStyle(int newShellStyle) {
@@ -725,7 +724,6 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 	/**
 	 * Creates the container that holds all pages.
 	 *
-	 * @param parent
 	 * @return Composite
 	 */
 	private Composite createPageContainer(Composite parent) {
@@ -926,7 +924,6 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 	 * Notifies page changing listeners and returns result of page changing
 	 * processing to the sender.
 	 *
-	 * @param eventType
 	 * @return <code>true</code> if page changing listener completes
 	 *         successfully, <code>false</code> otherwise
 	 */
@@ -1014,7 +1011,6 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 	 * restored after the long-running operation completes executing. Any
 	 * attempt to change the UI state of the wizard in the long-running
 	 * operation will be nullified when original UI state is restored.
-	 *
 	 */
 	@Override
 	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable)
@@ -1230,8 +1226,6 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 
 	/**
 	 * Update the receiver for the new page.
-	 *
-	 * @param page
 	 */
 	private void updateForPage(IWizardPage page) {
 		// ensure this page belongs to the current wizard

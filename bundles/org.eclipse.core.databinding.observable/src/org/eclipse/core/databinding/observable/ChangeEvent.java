@@ -20,13 +20,9 @@ package org.eclipse.core.databinding.observable;
  * that occurred.
  *
  * @since 1.0
- *
  */
 public class ChangeEvent extends ObservableEvent {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = -3241193109844979384L;
 	static final Object TYPE = new Object();
 

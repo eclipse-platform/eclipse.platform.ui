@@ -994,8 +994,6 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 	 * Sets whether to use a custom tab background (reusing tab colors and
 	 * gradients), or default one from plain CTabFolder (using widget background
 	 * color).
-	 *
-	 * @param drawCustomTabContentBackground
 	 */
 	@Override
 	public void setDrawCustomTabContentBackground(boolean drawCustomTabContentBackground) {
@@ -1004,10 +1002,6 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 
 	/**
 	 * Draws tab content background, deriving the colors from the tab colors.
-	 *
-	 * @param gc
-	 * @param bounds
-	 * @param state
 	 */
 	private void drawCustomBackground(GC gc, Rectangle bounds, int state) {
 		boolean selected = (state & SWT.SELECTED) != 0;

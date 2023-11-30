@@ -346,7 +346,6 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * Create the new elements in the parent widget. If the child already exists it
 	 * will be refreshed to handle potential changes within its children.
 	 *
-	 * @param widget
 	 * @param elements Sorted list of elements to add.
 	 */
 	private void createAddedElements(Widget widget, Object[] elements) {
@@ -453,8 +452,6 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	/**
 	 * See if element is the data of one of the elements in items.
 	 *
-	 * @param items
-	 * @param element
 	 * @return <code>true</code> if the element matches.
 	 */
 	private boolean itemExists(Item[] items, Object element) {
@@ -498,7 +495,6 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *            if the element is a root element or the sorter is not a
 	 *            {@link TreePathViewerSorter}
 	 * @return the index to use when inserting the element.
-	 *
 	 */
 
 	private int insertionPosition(Item[] items, ViewerComparator comparator,
@@ -545,7 +541,6 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * @param currentSize
 	 *            the current size of the collection
 	 * @return the index to use when inserting the element.
-	 *
 	 */
 
 	/**
@@ -1978,10 +1973,6 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	/**
 	 * Update the structure and recurse. Items are updated in updateChildren, as
 	 * needed.
-	 *
-	 * @param widget
-	 * @param element
-	 * @param updateLabels
 	 */
 	/* package */void internalRefreshStruct(Widget widget, Object element,
 			boolean updateLabels) {
@@ -3353,7 +3344,6 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	}
 
 	/**
-	 * @param widget
 	 * @return if the given widget's children has an expandable node at the end.
 	 */
 	boolean hasLimitedChildrenItems(Widget widget) {

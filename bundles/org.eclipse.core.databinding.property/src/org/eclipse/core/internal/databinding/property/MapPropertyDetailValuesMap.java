@@ -39,16 +39,11 @@ import org.eclipse.core.internal.databinding.identity.IdentityMap;
  *            type of the elements in the list, being the type of the value of
  *            the detail property
  * @since 3.3
- *
  */
 public class MapPropertyDetailValuesMap<S, K, V, T> extends MapProperty<S, K, T> {
 	private final IMapProperty<S, K, V> masterProperty;
 	private final IValueProperty<? super V, T> detailProperty;
 
-	/**
-	 * @param masterProperty
-	 * @param detailProperty
-	 */
 	public MapPropertyDetailValuesMap(IMapProperty<S, K, V> masterProperty,
 			IValueProperty<? super V, T> detailProperty) {
 		this.masterProperty = masterProperty;

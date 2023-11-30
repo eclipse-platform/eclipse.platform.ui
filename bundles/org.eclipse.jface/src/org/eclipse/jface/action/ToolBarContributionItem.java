@@ -137,7 +137,6 @@ public class ToolBarContributionItem extends ContributionItem implements IToolBa
 	 *
 	 * @return <code>true</code> if the item is disposed; <code>false</code>
 	 *         otherwise.
-	 *
 	 */
 	private final boolean checkDisposed() {
 		if (disposed) {

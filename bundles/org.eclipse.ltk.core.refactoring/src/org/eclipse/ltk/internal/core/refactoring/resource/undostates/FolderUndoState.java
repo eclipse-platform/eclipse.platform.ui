@@ -36,7 +36,6 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
  * This class is not intended to be instantiated or used by clients.
  *
  * @since 3.4
- *
  */
 public class FolderUndoState extends ContainerUndoState {
 

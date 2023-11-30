@@ -4578,7 +4578,6 @@ public class TextViewer extends Viewer implements
 	 * @param wholeWord <code>true</code> if matches must be whole words, <code>false</code> otherwise
 	 * @param regExSearch <code>true</code> if <code>findString</code> is a regular expression, <code>false</code> otherwise
 	 * @return the model offset of the first match
-	 *
 	 */
 	protected int findAndSelect(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, boolean regExSearch) {
 		if (fTextWidget == null)

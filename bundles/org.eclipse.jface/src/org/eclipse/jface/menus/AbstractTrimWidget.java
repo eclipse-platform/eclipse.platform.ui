@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.ToolBar;
  * This class is intended to be the base for any trim contributions.
  * </p>
  * @since 3.2
- *
  */
 public abstract class AbstractTrimWidget implements IWidget {
 	/**

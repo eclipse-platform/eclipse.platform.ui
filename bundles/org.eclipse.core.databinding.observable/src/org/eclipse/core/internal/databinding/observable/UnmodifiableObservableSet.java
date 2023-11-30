@@ -39,9 +39,6 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 public class UnmodifiableObservableSet<E> extends DecoratingObservableSet<E> {
 	private Set<E> unmodifiableSet;
 
-	/**
-	 * @param decorated
-	 */
 	public UnmodifiableObservableSet(IObservableSet<E> decorated) {
 		super(decorated, false);
 

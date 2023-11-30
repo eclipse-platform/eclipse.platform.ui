@@ -40,7 +40,6 @@ public interface ISharedTextColors {
 	/**
 	 * Tells this object to dispose all its managed objects- Note that colors do not need dispose
 	 * anymore
-	 *
 	 */
 	default void dispose() {
 		// nothing to do anymore as colors do not require disposal

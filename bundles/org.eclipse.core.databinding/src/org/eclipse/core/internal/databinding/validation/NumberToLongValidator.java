@@ -28,9 +28,6 @@ public class NumberToLongValidator extends NumberToNumberValidator {
 	private static final Long MIN = Long.valueOf(Long.MIN_VALUE);
 	private static final Long MAX = Long.valueOf(Long.MAX_VALUE);
 
-	/**
-	 * @param converter
-	 */
 	public NumberToLongValidator(NumberToLongConverter converter) {
 		super(converter, MIN, MAX);
 	}

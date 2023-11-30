@@ -24,10 +24,6 @@ public class StringToCharacterConverter implements IConverter<Object, Character>
 
 	private final boolean primitiveTarget;
 
-	/**
-	 *
-	 * @param primitiveTarget
-	 */
 	public StringToCharacterConverter(boolean primitiveTarget) {
 		this.primitiveTarget = primitiveTarget;
 	}
@@ -72,7 +68,6 @@ public class StringToCharacterConverter implements IConverter<Object, Character>
 	}
 
 	/**
-	 * @param primitive
 	 * @return converter
 	 */
 	public static StringToCharacterConverter toCharacter(boolean primitive) {

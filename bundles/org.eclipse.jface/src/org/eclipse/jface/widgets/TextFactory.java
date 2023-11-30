@@ -60,7 +60,6 @@ import org.eclipse.swt.widgets.Text;
  * </p>
  *
  * @since 3.18
- *
  */
 public final class TextFactory extends AbstractControlFactory<TextFactory, Text> {
 
@@ -72,7 +71,6 @@ public final class TextFactory extends AbstractControlFactory<TextFactory, Text>
 	 * Creates a new TextFactory with the given style and text. Refer to
 	 * {@link Text#Text(Composite, int)} for possible styles.
 	 *
-	 * @param style
 	 * @return a new TextFactory instance
 	 *
 	 * @see Text#Text(Composite, int)

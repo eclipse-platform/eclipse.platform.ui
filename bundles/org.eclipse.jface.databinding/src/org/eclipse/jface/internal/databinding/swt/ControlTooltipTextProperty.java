@@ -18,7 +18,6 @@ import org.eclipse.swt.widgets.Control;
 
 /**
  * @since 3.3
- *
  */
 public class ControlTooltipTextProperty extends WidgetStringValueProperty<Control> {
 	@Override

@@ -25,7 +25,6 @@ import org.eclipse.e4.ui.workbench.Selector;
  * subclass this and override the 'select' method in order to define custom filters.
  *
  * @since 1.1
- *
  */
 public class ElementMatcher implements Selector {
 	private String id = null;
@@ -39,7 +38,6 @@ public class ElementMatcher implements Selector {
 	 *            The class specification of the desired element
 	 * @param tag
 	 *            A tag which must be specified on the desired element
-	 *
 	 */
 	public ElementMatcher(String id, Class<?> clazz, String tag) {
 		this.id = id;
@@ -58,7 +56,6 @@ public class ElementMatcher implements Selector {
 	 *            The class specification of the desired element
 	 * @param tagsToMatch
 	 *            A list of tags which must <b>all</b> be specified on the desired element
-	 *
 	 */
 	public ElementMatcher(String id, Class<?> clazz, List<String> tagsToMatch) {
 		this.id = id;

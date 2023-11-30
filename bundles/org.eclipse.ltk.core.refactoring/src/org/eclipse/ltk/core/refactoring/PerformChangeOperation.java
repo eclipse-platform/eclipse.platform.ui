@@ -105,7 +105,6 @@ public class PerformChangeOperation implements IWorkspaceRunnable {
 	 *
 	 * @return <code>true</code> if the change execution failed;
 	 *  <code>false</code> otherwise
-	 *
 	 */
 	public boolean changeExecutionFailed() {
 		return fChangeExecutionFailed;

@@ -35,7 +35,6 @@ import org.eclipse.swt.graphics.Image;
  * implementing additional mixin interfaces for colors, fonts etc.
  *
  * @since 1.1
- *
  */
 public class ObservableMapLabelProvider extends LabelProvider implements ITableLabelProvider {
 

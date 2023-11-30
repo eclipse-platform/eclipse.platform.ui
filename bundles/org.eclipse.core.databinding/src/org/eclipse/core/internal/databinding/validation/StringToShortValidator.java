@@ -23,9 +23,6 @@ public class StringToShortValidator extends AbstractStringToNumberValidator {
 	private static final Short MIN = Short.valueOf(Short.MIN_VALUE);
 	private static final Short MAX = Short.valueOf(Short.MAX_VALUE);
 
-	/**
-	 * @param converter
-	 */
 	public StringToShortValidator(NumberFormatConverter<?, ?> converter) {
 		super(converter, MIN, MAX);
 	}

@@ -39,7 +39,6 @@ import org.eclipse.swt.widgets.TreeColumn;
  * keyboard-accessible way.
  *
  * @since 3.5
- *
  */
 public class ConfigureColumns {
 
@@ -71,7 +70,6 @@ public class ConfigureColumns {
 
 	/**
 	 * NON-API - This class is internal.
-	 *
 	 */
 	static class ConfigureColumnsDialog extends Dialog {
 
@@ -111,9 +109,6 @@ public class ConfigureColumns {
 		 * in 3.5. Creates a new dialog for configuring columns of the given
 		 * column viewer. The column viewer must have an underlying {@link Tree}
 		 * or {@link Table}, other controls are not supported.
-		 *
-		 * @param shellProvider
-		 * @param table
 		 */
 		public ConfigureColumnsDialog(IShellProvider shellProvider, Table table) {
 			this(shellProvider, (Control) table);
@@ -124,18 +119,11 @@ public class ConfigureColumns {
 		 * in 3.5. Creates a new dialog for configuring columns of the given
 		 * column viewer. The column viewer must have an underlying {@link Tree}
 		 * or {@link Table}, other controls are not supported.
-		 *
-		 * @param shellProvider
-		 * @param tree
 		 */
 		public ConfigureColumnsDialog(IShellProvider shellProvider, Tree tree) {
 			this(shellProvider, (Control) tree);
 		}
 
-		/**
-		 * @param shellProvider
-		 * @param control
-		 */
 		private ConfigureColumnsDialog(IShellProvider shellProvider, Control control) {
 			super(shellProvider);
 			this.targetControl = control;
@@ -182,10 +170,6 @@ public class ConfigureColumns {
 			return result;
 		}
 
-		/**
-		 * @param c
-		 * @return
-		 */
 		private Image getColumnImage(Item item) {
 			if (item instanceof TableColumn) {
 				return ((TableColumn) item).getImage();
@@ -195,9 +179,6 @@ public class ConfigureColumns {
 			return null;
 		}
 
-		/**
-		 * @return
-		 */
 		private int[] getColumnOrder() {
 			if (targetControl instanceof Table) {
 				return ((Table) targetControl).getColumnOrder();
@@ -207,10 +188,6 @@ public class ConfigureColumns {
 			return new int[0];
 		}
 
-		/**
-		 * @param c
-		 * @return
-		 */
 		private boolean getMoveable(Item item) {
 			if (item instanceof TableColumn) {
 				return ((TableColumn) item).getMoveable();
@@ -220,10 +197,6 @@ public class ConfigureColumns {
 			return false;
 		}
 
-		/**
-		 * @param c
-		 * @return
-		 */
 		private boolean getResizable(Item item) {
 			if (item instanceof TableColumn) {
 				return ((TableColumn) item).getResizable();
@@ -302,10 +275,6 @@ public class ConfigureColumns {
 			return composite;
 		}
 
-		/**
-		 * @param table
-		 * @param up
-		 */
 		protected void handleMove(Table table, boolean up) {
 			int index = table.getSelectionIndex();
 			int newIndex = index + (up ? -1 : 1);
@@ -329,10 +298,6 @@ public class ConfigureColumns {
 			label.setText(string);
 		}
 
-		/**
-		 * @param item
-		 * @return
-		 */
 		private String getColumnName(Item item) {
 			String result = ""; //$NON-NLS-1$
 			if (item instanceof TableColumn) {
@@ -349,10 +314,6 @@ public class ConfigureColumns {
 			return result;
 		}
 
-		/**
-		 * @param item
-		 * @return
-		 */
 		private int getColumnWidth(Item item) {
 			if (item instanceof TableColumn) {
 				return ((TableColumn) item).getWidth();
@@ -362,9 +323,6 @@ public class ConfigureColumns {
 			return 0;
 		}
 
-		/**
-		 * @return
-		 */
 		private Item[] getViewerColumns() {
 			if (targetControl instanceof Table) {
 				return ((Table) targetControl).getColumns();
@@ -396,10 +354,6 @@ public class ConfigureColumns {
 			super.okPressed();
 		}
 
-		/**
-		 * @param column
-		 * @param width
-		 */
 		private void setColumnWidth(Item item, int width) {
 			if (item instanceof TableColumn) {
 				((TableColumn) item).setWidth(width);
@@ -408,9 +362,6 @@ public class ConfigureColumns {
 			}
 		}
 
-		/**
-		 * @param columnOrder
-		 */
 		private void setColumnOrder(int[] order) {
 			if (targetControl instanceof Table) {
 				((Table) targetControl).setColumnOrder(order);

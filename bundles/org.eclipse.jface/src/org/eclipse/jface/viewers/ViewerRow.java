@@ -34,7 +34,6 @@ import org.eclipse.swt.widgets.Widget;
  * concrete implementation for the underlying widget
  *
  * @since 3.3
- *
  */
 public abstract class ViewerRow implements Cloneable {
 

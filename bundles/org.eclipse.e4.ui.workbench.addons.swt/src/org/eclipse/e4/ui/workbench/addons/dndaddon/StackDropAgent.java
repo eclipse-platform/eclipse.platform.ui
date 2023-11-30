@@ -41,9 +41,6 @@ public class StackDropAgent extends DropAgent {
 	private MPartStack dropStack;
 	private CTabFolder dropCTF;
 
-	/**
-	 * @param manager
-	 */
 	public StackDropAgent(DnDManager manager) {
 		super(manager);
 	}
@@ -109,9 +106,6 @@ public class StackDropAgent extends DropAgent {
 	/**
 	 * Static helper to get visible items without using member variables in this
 	 * stateful Agent.
-	 *
-	 * @param dropCTF
-	 * @return
 	 */
 	private static List<CTabItem> getVisibleItems(CTabFolder dropCTF) {
 		return Stream.of(dropCTF.getItems())
@@ -122,11 +116,6 @@ public class StackDropAgent extends DropAgent {
 	/**
 	 * Static helper to compute the visual rectangles to drop, without using
 	 * member variables in this stateful Agent.
-	 *
-	 * @param dropCTF
-	 * @param visibleItems
-	 * @param tabArea
-	 * @return
 	 */
 	private static ArrayList<Rectangle> getItemRects(CTabFolder dropCTF, List<CTabItem> visibleItems,
 			Rectangle tabArea) {
@@ -252,10 +241,6 @@ public class StackDropAgent extends DropAgent {
 		return true;
 	}
 
-	/**
-	 * @param dragElement
-	 * @param dropIndex
-	 */
 	private void dock(MUIElement dragElement, int dropIndex) {
 
 		List<CTabItem> vItems = getVisibleItems(dropCTF);
@@ -402,9 +387,6 @@ public class StackDropAgent extends DropAgent {
 		}
 	}
 
-	/**
-	 * @param dragElement
-	 */
 	private void showFrame(MUIElement dragElement) {
 		CTabFolder ctf = (CTabFolder) dropStack.getWidget();
 		CTabItem[] items = ctf.getItems();

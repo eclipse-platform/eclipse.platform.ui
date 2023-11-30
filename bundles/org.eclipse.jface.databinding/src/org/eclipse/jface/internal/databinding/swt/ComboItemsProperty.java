@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.Combo;
 
 /**
  * @since 3.3
- *
  */
 public class ComboItemsProperty extends ControlStringListProperty<Combo> {
 	@Override

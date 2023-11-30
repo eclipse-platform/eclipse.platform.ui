@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.List;
 
 /**
  * @since 3.3
- *
  */
 public class ListItemsProperty extends ControlStringListProperty<List> {
 	@Override

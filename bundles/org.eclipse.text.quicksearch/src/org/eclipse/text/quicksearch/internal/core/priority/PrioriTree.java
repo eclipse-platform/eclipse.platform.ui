@@ -140,7 +140,6 @@ public class PrioriTree extends DefaultPriorityFunction {
 
 	/**
 	 * Ensure that this node has a child for a given segment string. If no node exists yet, create it.
-	 * @param segment
 	 * @return {@link PrioriTree} the existing or newly created child, never null.
 	 */
 	private PrioriTree ensureChild(String segment) {
@@ -178,7 +177,6 @@ public class PrioriTree extends DefaultPriorityFunction {
 
 	/**
 	 * Locate tree node corresponding to a given path.
-	 * @param path
 	 * @return The node or null if no corresponding node exists in the tree.
 	 */
 	private PrioriTree lookup(IPath path) {
@@ -194,7 +192,6 @@ public class PrioriTree extends DefaultPriorityFunction {
 
 	/**
 	 * Fetch the child for the corresponding segment String.
-	 * @param segment
 	 * @return The child or null if there is no such child.
 	 */
 	private PrioriTree getChild(String segment) {

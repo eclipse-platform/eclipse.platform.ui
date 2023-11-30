@@ -67,7 +67,6 @@ public class ColorFieldEditor extends FieldEditor {
 	 * @param window
 	 *            the window to create a GC on for calculation.
 	 * @return Point The image size
-	 *
 	 */
 	protected Point computeImageSize(Control window) {
 		// Make the image height as high as a corresponding character. This

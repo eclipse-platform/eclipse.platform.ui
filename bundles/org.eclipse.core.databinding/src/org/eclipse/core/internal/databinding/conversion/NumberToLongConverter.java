@@ -24,11 +24,6 @@ import java.text.Format;
  * @since 1.0
  */
 public class NumberToLongConverter extends NumberToNumberConverter<Long> {
-	/**
-	 * @param numberFormat
-	 * @param fromType
-	 * @param primitive
-	 */
 	public NumberToLongConverter(Format numberFormat, Class<?> fromType, boolean primitive) {
 		super(numberFormat, fromType, (primitive) ? Long.TYPE : Long.class);
 	}

@@ -25,15 +25,9 @@ import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 
-/**
- *
- */
 abstract class DropAgent {
 	protected DnDManager dndManager;
 
-	/**
-	 * @param manager
-	 */
 	public DropAgent(DnDManager manager) {
 		dndManager = manager;
 	}

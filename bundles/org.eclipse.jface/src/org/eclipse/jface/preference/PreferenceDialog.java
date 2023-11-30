@@ -87,7 +87,6 @@ import org.eclipse.swt.widgets.Tree;
 public class PreferenceDialog extends TrayDialog implements IPreferencePageContainer, IPageChangeProvider {
 	/**
 	 * Layout for the page container.
-	 *
 	 */
 	private class PageLayout extends Layout {
 		@Override

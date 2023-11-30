@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @deprecated use SubMonitor instead
  *
  *             TODO mark for deletion
- *
  */
 @Deprecated
 final class FastProgressReporter {

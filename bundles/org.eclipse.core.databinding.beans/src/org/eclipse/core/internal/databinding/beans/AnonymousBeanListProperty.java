@@ -26,17 +26,12 @@ import org.eclipse.core.databinding.property.list.IListProperty;
  * @param <S> type of the source object
  * @param <E> type of the elements in the list
  * @since 3.3
- *
  */
 public class AnonymousBeanListProperty<S, E> extends DelegatingListProperty<S, E> {
 	private final String propertyName;
 
 	private Map<Class<S>, IListProperty<S, E>> delegates;
 
-	/**
-	 * @param propertyName
-	 * @param elementType
-	 */
 	public AnonymousBeanListProperty(String propertyName, Class<E> elementType) {
 		super(elementType);
 		this.propertyName = propertyName;

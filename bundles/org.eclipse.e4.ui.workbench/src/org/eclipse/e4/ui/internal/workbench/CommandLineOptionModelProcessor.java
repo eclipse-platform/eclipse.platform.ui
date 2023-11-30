@@ -28,7 +28,6 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
  * <code>E4Workbench.FORCED_PERSPECTIVE_ID</code>.
  *
  * Might evaluate more keys in the future
- *
  */
 public class CommandLineOptionModelProcessor {
 	@Inject

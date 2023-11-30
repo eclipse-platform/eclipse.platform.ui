@@ -118,12 +118,8 @@ import org.osgi.service.event.EventHandler;
  *
  * Style bits for the underlying CTabFolder can be set via the
  * IPresentation.STYLE_OVERRIDE_KEY key
- *
  */
 public class StackRenderer extends LazyStackRenderer {
-	/**
-	 *
-	 */
 	private static final String THE_PART_KEY = "thePart"; //$NON-NLS-1$
 
 	/**
@@ -327,8 +323,6 @@ public class StackRenderer extends LazyStackRenderer {
 
 	/**
 	 * Handles changes in tags
-	 *
-	 * @param event
 	 */
 	@Inject
 	@Optional
@@ -794,9 +788,6 @@ public class StackRenderer extends LazyStackRenderer {
 		tabFolder.setMRUVisible(actualMRUValue);
 	}
 
-	/**
-	 * @param tabFolder
-	 */
 	private void addTopRight(CTabFolder tabFolder) {
 		Composite trComp = new Composite(tabFolder, SWT.NONE);
 		RowLayout rl = new RowLayout();
@@ -1233,9 +1224,6 @@ public class StackRenderer extends LazyStackRenderer {
 	 * Shows a popup dialog with the list of editors availavle in a given
 	 * {@link CTabFolder}. By default the popup origin will be located close to the
 	 * chevron location.
-	 *
-	 * @param stack
-	 * @param tabFolder
 	 */
 	public void showAvailableItems(MElementContainer<?> stack, CTabFolder tabFolder) {
 		showAvailableItems(stack, tabFolder, false);
@@ -1247,8 +1235,6 @@ public class StackRenderer extends LazyStackRenderer {
 	 * horizontally; otherwise, the dialog origin is placed at chevron location. he
 	 * dialog is placed at
 	 *
-	 * @param stack
-	 * @param tabFolder
 	 * @param forceCenter center the dialog if true
 	 */
 	public void showAvailableItems(MElementContainer<?> stack, CTabFolder tabFolder, boolean forceCenter) {
@@ -1380,9 +1366,6 @@ public class StackRenderer extends LazyStackRenderer {
 		adjustTopRight(tabFolder);
 	}
 
-	/**
-	 * @param item
-	 */
 	protected void showMenu(ToolItem item) {
 		MPart part = (MPart) item.getData(THE_PART_KEY);
 		if (part == null) {
@@ -1521,8 +1504,6 @@ public class StackRenderer extends LazyStackRenderer {
 	/**
 	 *
 	 * Detaches the currently selected part
-	 *
-	 * @param menu
 	 */
 	private void detachActivePart(final Menu menu) {
 		MPart selectedPart = (MPart) menu.getData(STACK_SELECTED_PART);
@@ -1541,8 +1522,6 @@ public class StackRenderer extends LazyStackRenderer {
 	/**
 	 *
 	 * Closes the currently selected part
-	 *
-	 * @param menu
 	 */
 	private void closePart(final Menu menu) {
 		MPart selectedPart = (MPart) menu.getData(STACK_SELECTED_PART);

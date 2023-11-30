@@ -29,16 +29,11 @@ import org.eclipse.core.databinding.property.map.SimpleMapProperty;
  * @param <V>
  *            type of the values in the map
  * @since 3.3
- *
  */
 public final class SelfMapProperty<K, V> extends SimpleMapProperty<Map<K, V>, K, V> {
 	private final Object keyType;
 	private final Object valueType;
 
-	/**
-	 * @param keyType
-	 * @param valueType
-	 */
 	public SelfMapProperty(Object keyType, Object valueType) {
 		this.keyType = keyType;
 		this.valueType = valueType;

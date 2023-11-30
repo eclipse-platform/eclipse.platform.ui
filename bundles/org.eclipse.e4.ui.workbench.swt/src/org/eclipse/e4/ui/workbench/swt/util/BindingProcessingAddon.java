@@ -149,9 +149,6 @@ public class BindingProcessingAddon {
 		}
 	}
 
-	/**
-	 * @param bindingTable
-	 */
 	private void defineBindingTable(MBindingTable bindingTable) {
 		Assert.isNotNull(
 				bindingTable.getBindingContext(),
@@ -169,10 +166,6 @@ public class BindingProcessingAddon {
 		}
 	}
 
-	/**
-	 * @param bindingTable
-	 * @param binding
-	 */
 	private void defineBinding(BindingTable bindingTable, Context bindingContext, MKeyBinding binding) {
 		Binding keyBinding = createBinding(bindingContext,
 				binding.getCommand(), binding.getParameters(),

@@ -33,9 +33,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-/**
- *
- */
 public class SplitDropAgent2 extends DropAgent {
 	private static final int TOLERANCE = 35;
 

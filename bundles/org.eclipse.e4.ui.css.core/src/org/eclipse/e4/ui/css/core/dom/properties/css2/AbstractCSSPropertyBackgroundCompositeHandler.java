@@ -24,7 +24,6 @@ import org.w3c.dom.css.CSSValue;
  *
  * @version 1.0.0
  * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- *
  */
 public abstract class AbstractCSSPropertyBackgroundCompositeHandler extends
 		AbstractCSSPropertyCompositeHandler {

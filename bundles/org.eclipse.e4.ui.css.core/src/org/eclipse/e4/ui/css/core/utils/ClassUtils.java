@@ -20,9 +20,6 @@ public class ClassUtils {
 
 	/**
 	 * Return the simple name of Class <code>c</code>.
-	 *
-	 * @param c
-	 * @return
 	 */
 	public static String getSimpleName(Class<?> c) {
 		String name = c.getName();
@@ -36,9 +33,6 @@ public class ClassUtils {
 
 	/**
 	 * Return the package name of Class <code>c</code>.
-	 *
-	 * @param c
-	 * @return
 	 */
 	public static String getPackageName(Class<?> c) {
 		String name = c.getName();

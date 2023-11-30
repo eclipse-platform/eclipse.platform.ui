@@ -44,7 +44,6 @@ public final class ValueCommonSteps {
 		 * from-end of the binding.
 		 *
 		 * @see DataBindingContext#bindValue
-		 * @param from
 		 * @return next step
 		 */
 		<F> Step from(IObservableValue<F> from);
@@ -63,7 +62,6 @@ public final class ValueCommonSteps {
 		 * one will configure that from-end of the binding.
 		 *
 		 * @see DataBindingContext#bindValue
-		 * @param to
 		 * @return next step
 		 */
 		WriteConfigStep<F, T, ?> to(IObservableValue<T> to);
@@ -77,7 +75,6 @@ public final class ValueCommonSteps {
 	 */
 	public interface ValueUntypedTo<F> extends Step {
 		/**
-		 * @param to
 		 * @return TODO
 		 */
 		<T> WriteConfigStep<F, T, ?> to(IObservableValue<T> to);
@@ -101,7 +98,6 @@ public final class ValueCommonSteps {
 		 * validator on the to-from direction on the resulting binding.
 		 *
 		 * @see UpdateValueStrategy#setAfterConvertValidator
-		 * @param validator
 		 * @return next step
 		 */
 		THIS validateAfterConvert(IValidator<? super T> validator);
@@ -111,7 +107,6 @@ public final class ValueCommonSteps {
 		 * validator for the to-from direction on the resulting binding.
 		 *
 		 * @see UpdateValueStrategy#setBeforeSetValidator
-		 * @param validator
 		 * @return next step
 		 */
 		THIS validateBeforeSet(IValidator<? super T> validator);

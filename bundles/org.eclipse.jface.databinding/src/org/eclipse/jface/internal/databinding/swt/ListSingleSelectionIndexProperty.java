@@ -19,13 +19,9 @@ import org.eclipse.swt.widgets.List;
 
 /**
  * @since 3.3
- *
  */
 public class ListSingleSelectionIndexProperty extends
 		SingleSelectionIndexProperty<List> {
-	/**
-	 *
-	 */
 	public ListSingleSelectionIndexProperty() {
 		super(new int[] { SWT.Selection, SWT.DefaultSelection });
 	}

@@ -24,7 +24,6 @@ import org.eclipse.swt.widgets.Widget;
  * @param <S> type of the source object
  *
  * @since 3.3
- *
  */
 public class WidgetTextWithEventsProperty<S extends Widget> extends WidgetDelegatingValueProperty<S, String> {
 	private final int[] events;
@@ -32,9 +31,6 @@ public class WidgetTextWithEventsProperty<S extends Widget> extends WidgetDelega
 	private IValueProperty<S, String> styledText;
 	private IValueProperty<S, String> text;
 
-	/**
-	 * @param events
-	 */
 	public WidgetTextWithEventsProperty(int[] events) {
 		super(String.class);
 		this.events = checkEvents(events);

@@ -31,7 +31,6 @@ import org.eclipse.swt.widgets.Event;
  * ColumnViewers.
  *
  * @since 3.3
- *
  */
 public class ColumnViewerToolTipSupport extends DefaultToolTip {
 	private ColumnViewer viewer;

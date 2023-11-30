@@ -28,11 +28,6 @@ public interface IElementProvider {
 	 * <code>element</code> can be the w3c Element. The provider should check
 	 * that the supplied widgets/objects are compatible with the provided CSS
 	 * Engine.
-	 *
-	 * @param element
-	 * @param engine
-	 *
-	 * @return
 	 */
 	public Element getElement(Object element, CSSEngine engine);
 

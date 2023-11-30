@@ -29,9 +29,6 @@ public class NumberToShortValidator extends NumberToNumberValidator {
 	private static final Short MIN = Short.valueOf(Short.MIN_VALUE);
 	private static final Short MAX = Short.valueOf(Short.MAX_VALUE);
 
-	/**
-	 * @param converter
-	 */
 	public NumberToShortValidator(NumberToShortConverter converter) {
 		super(converter, MIN, MAX);
 	}

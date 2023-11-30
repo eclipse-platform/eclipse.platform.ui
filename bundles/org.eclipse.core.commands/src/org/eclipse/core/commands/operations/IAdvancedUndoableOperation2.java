@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.IStatus;
  * </p>
  *
  * @since 3.3
- *
  */
 public interface IAdvancedUndoableOperation2 {
 	/**

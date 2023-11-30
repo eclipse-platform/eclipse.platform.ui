@@ -28,7 +28,6 @@ import org.w3c.dom.Node;
 
 /**
  * {@link CSSStylableElement} implementation which wrap SWT {@link Shell}.
- *
  */
 public class ShellElement extends CompositeElement {
 

@@ -74,11 +74,6 @@ import org.eclipse.swt.widgets.Display;
 
 		/**
 		 * Create a new collector.
-		 *
-		 * @param taskName
-		 * @param subTask
-		 * @param work
-		 * @param monitor
 		 */
 		public Collector(String taskName, String subTask, double work,
 				IProgressMonitor monitor) {
@@ -90,8 +85,6 @@ import org.eclipse.swt.widgets.Display;
 
 		/**
 		 * Set the task name
-		 *
-		 * @param name
 		 */
 		public void setTaskName(String name) {
 			this.taskName = name;
@@ -99,7 +92,6 @@ import org.eclipse.swt.widgets.Display;
 
 		/**
 		 * Add worked to the work.
-		 * @param workedIncrement
 		 */
 		public void worked(double workedIncrement) {
 			this.worked = this.worked + workedIncrement;
@@ -107,7 +99,6 @@ import org.eclipse.swt.widgets.Display;
 
 		/**
 		 * Set the subTask name.
-		 * @param subTaskName
 		 */
 		public void subTask(String subTaskName) {
 			this.subTask = subTaskName;
@@ -173,8 +164,6 @@ import org.eclipse.swt.widgets.Display;
 	/**
 	 * Clears the collector object used to accumulate work and subtask calls if
 	 * it matches the given one.
-	 *
-	 * @param collectorToClear
 	 */
 	private synchronized void clearCollector(Collector collectorToClear) {
 		// Check if the accumulator is still using the given collector.
@@ -186,9 +175,6 @@ import org.eclipse.swt.widgets.Display;
 
 	/**
 	 * Creates a collector object to accumulate work and subtask calls.
-	 *
-	 * @param subTask
-	 * @param work
 	 */
 	private void createCollector(String taskName, String subTask, double work) {
 		collector = new Collector(taskName, subTask, work,

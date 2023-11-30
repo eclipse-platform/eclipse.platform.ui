@@ -184,7 +184,6 @@ public class MessageDialog extends IconAndMessageDialog {
 	 *                           bar
 	 * @param defaultIndex       the index in the button label array of the default
 	 *                           button
-	 *
 	 */
 	public MessageDialog(Shell parentShell, String dialogTitle, Image dialogTitleImage, String dialogMessage,
 			int dialogImageType, String[] dialogButtonLabels, int defaultIndex) {

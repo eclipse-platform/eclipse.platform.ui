@@ -24,16 +24,12 @@ import org.eclipse.swt.widgets.Spinner;
  * @param <S> type of the source object
  *
  * @since 3.3
- *
  */
 public class WidgetMinimumProperty<S extends Control> extends WidgetDelegatingValueProperty<S, Integer> {
 	private IValueProperty<Scale, Integer> scale;
 	private IValueProperty<Slider, Integer> slider;
 	private IValueProperty<Spinner, Integer> spinner;
 
-	/**
-	 *
-	 */
 	public WidgetMinimumProperty() {
 		super(Integer.TYPE);
 	}

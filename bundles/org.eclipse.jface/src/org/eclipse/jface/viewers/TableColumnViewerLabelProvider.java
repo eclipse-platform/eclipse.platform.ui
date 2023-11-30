@@ -24,7 +24,6 @@ package org.eclipse.jface.viewers;
  * @see ITableLabelProvider
  * @see ITableColorProvider
  * @see ITableFontProvider
- *
  */
 public class TableColumnViewerLabelProvider extends WrappedViewerLabelProvider {
 

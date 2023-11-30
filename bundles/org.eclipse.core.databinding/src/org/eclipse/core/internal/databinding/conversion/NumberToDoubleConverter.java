@@ -26,11 +26,6 @@ import java.text.Format;
  */
 public class NumberToDoubleConverter extends NumberToNumberConverter<Double> {
 
-	/**
-	 * @param numberFormat
-	 * @param fromType
-	 * @param primitive
-	 */
 	public NumberToDoubleConverter(Format numberFormat, Class<?> fromType, boolean primitive) {
 		super(numberFormat, fromType, (primitive) ? Double.TYPE : Double.class);
 	}

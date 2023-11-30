@@ -84,10 +84,6 @@ public class ListDelegatingValueObservableList<S, T extends S, E> extends Abstra
 
 	private IStaleListener staleListener = staleEvent -> fireStale();
 
-	/**
-	 * @param masterList
-	 * @param valueProperty
-	 */
 	public ListDelegatingValueObservableList(IObservableList<T> masterList,
 			DelegatingValueProperty<S, E> valueProperty) {
 		super(masterList.getRealm());

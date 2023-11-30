@@ -601,9 +601,6 @@ public class TitleAreaDialog extends TrayDialog {
 
 	/**
 	 * Show the new message and image.
-	 *
-	 * @param newMessage
-	 * @param newImage
 	 */
 	private void showMessage(String newMessage, Image newImage, String newImageTooltip) {
 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=249915
@@ -717,8 +714,6 @@ public class TitleAreaDialog extends TrayDialog {
 	/**
 	 * Reset the attachment of the workArea to now attach to top as the top
 	 * control.
-	 *
-	 * @param top
 	 */
 	private void resetWorkAreaAttachments(Control top) {
 		FormData childData = new FormData();

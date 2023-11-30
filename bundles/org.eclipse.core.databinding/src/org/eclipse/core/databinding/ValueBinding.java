@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.Status;
 
 /**
  * @since 1.0
- *
  */
 class ValueBinding<M, T> extends Binding {
 	private final UpdateValueStrategy<? super T, ? extends M> targetToModel;
@@ -131,8 +130,6 @@ class ValueBinding<M, T> extends Binding {
 	 * Incorporates the provided <code>newStats</code> into the
 	 * <code>multieStatus</code>.
 	 *
-	 * @param multiStatus
-	 * @param newStatus
 	 * @return <code>true</code> if the update should proceed
 	 */
 	/* package */boolean mergeStatus(MultiStatus multiStatus, IStatus newStatus) {

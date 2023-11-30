@@ -727,7 +727,6 @@ public abstract class Dialog extends Window {
 	 *
 	 * @param container
 	 *            the potential parent
-	 * @param control
 	 * @return boolean <code>true</code> if control is a child of container
 	 */
 	private boolean isContained(Control container, Control control) {
@@ -1058,7 +1057,6 @@ public abstract class Dialog extends Window {
 	/**
 	 * Get the default font for this type of control.
 	 *
-	 * @param control
 	 * @return the default font
 	 */
 	private static Font getDefaultFont(Control control) {

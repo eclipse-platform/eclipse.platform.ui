@@ -20,7 +20,6 @@ import org.eclipse.core.resources.IMarker;
  * underlying resource.
  *
  * @see IMarker#getAttribute(java.lang.String)
- *
  */
 public final class NameAttribute {
 

@@ -35,7 +35,6 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Displays information about the product.
- *
  */
 public class AboutDialogE4 extends TrayDialog {
 

@@ -74,11 +74,6 @@ public class MapDetailValueObservableMap<K, M, E> extends
 		addStaleDetailObservable((IObservableValue<E>) staleEvent.getObservable());
 	};
 
-	/**
-	 * @param masterMap
-	 * @param observableValueFactory
-	 * @param detailValueType
-	 */
 	public MapDetailValueObservableMap(
 			IObservableMap<K, M> masterMap,
 			IObservableFactory<? super M, IObservableValue<E>> observableValueFactory,

@@ -185,8 +185,6 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 
 			/**
 			 * Run the runnable as an asyncExec if we are already open.
-			 *
-			 * @param runnable
 			 */
 			private void runAsync(final Runnable runnable) {
 
