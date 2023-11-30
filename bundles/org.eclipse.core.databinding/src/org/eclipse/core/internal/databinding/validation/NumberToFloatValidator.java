@@ -28,9 +28,6 @@ public class NumberToFloatValidator extends NumberToNumberValidator {
 	private static final Float MIN = Float.valueOf(Float.MIN_VALUE);
 	private static final Float MAX = Float.valueOf(Float.MAX_VALUE);
 
-	/**
-	 * @param converter
-	 */
 	public NumberToFloatValidator(NumberToFloatConverter converter) {
 		super(converter, MIN, MAX);
 	}

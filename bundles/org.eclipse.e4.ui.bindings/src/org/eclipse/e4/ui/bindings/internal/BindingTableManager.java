@@ -149,10 +149,6 @@ public class BindingTableManager {
 		return result;
 	}
 
-	/**
-	 * @param currentResult
-	 * @return
-	 */
 	private boolean isMostActiveScheme(Binding currentResult) {
 		if (activeSchemeIds == null || activeSchemeIds.length < 2) {
 			return true;
@@ -236,9 +232,6 @@ public class BindingTableManager {
 		return bindings;
 	}
 
-	/**
-	 * @param activeSchemeIds
-	 */
 	public void setActiveSchemes(String[] activeSchemeIds) {
 		this.activeSchemeIds = activeSchemeIds;
 		BindingTable.BEST_SEQUENCE.setActiveSchemes(activeSchemeIds);

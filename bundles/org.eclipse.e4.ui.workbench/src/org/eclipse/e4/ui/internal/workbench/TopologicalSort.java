@@ -177,9 +177,6 @@ public abstract class TopologicalSort<T, ID> {
 		return results;
 	}
 
-	/**
-	 * @param objects
-	 */
 	private void addAll(T[] objects) {
 		// first build up the list of object ids actually being considered
 		for (T o : objects) {

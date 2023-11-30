@@ -23,7 +23,6 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
  *
  * @param <E>
  *            the type of elements in this collection
- *
  */
 public interface ISWTObservableList<E> extends ISWTObservable, IObservableList<E> {
 

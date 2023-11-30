@@ -41,7 +41,6 @@ import org.eclipse.core.databinding.property.list.SimpleListProperty;
  * @param <E>
  *            type of the elements in the list
  * @since 1.2
- *
  */
 public class SimplePropertyObservableList<S, E> extends AbstractObservableList<E>
 		implements IPropertyObservable<SimpleListProperty<S, E>> {
@@ -57,11 +56,6 @@ public class SimplePropertyObservableList<S, E> extends AbstractObservableList<E
 	private List<E> cachedList;
 	private boolean stale;
 
-	/**
-	 * @param realm
-	 * @param source
-	 * @param property
-	 */
 	public SimplePropertyObservableList(Realm realm, S source, SimpleListProperty<S, E> property) {
 		super(realm);
 		this.source = source;

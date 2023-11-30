@@ -24,16 +24,12 @@ import org.eclipse.swt.widgets.List;
  * @param <S> type of the source object
  *
  * @since 3.3
- *
  */
 public class WidgetItemsProperty<S extends Control> extends WidgetDelegatingListProperty<S, String> {
 	private IListProperty<S, String> cCombo;
 	private IListProperty<S, String> combo;
 	private IListProperty<S, String> list;
 
-	/**
-	 *
-	 */
 	public WidgetItemsProperty() {
 		super(String.class);
 	}

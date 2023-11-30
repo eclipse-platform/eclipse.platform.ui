@@ -24,7 +24,6 @@ import org.eclipse.core.databinding.observable.IObservablesListener;
  *            the type of elements in the set being observed
  *
  * @since 1.0
- *
  */
 @FunctionalInterface
 public interface ISetChangeListener<E> extends IObservablesListener {

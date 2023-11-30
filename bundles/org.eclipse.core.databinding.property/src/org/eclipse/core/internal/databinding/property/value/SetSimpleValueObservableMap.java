@@ -51,10 +51,6 @@ public class SetSimpleValueObservableMap<S, K extends S, V> extends ComputedObse
 
 	private boolean updating;
 
-	/**
-	 * @param keySet
-	 * @param valueProperty
-	 */
 	public SetSimpleValueObservableMap(IObservableSet<K> keySet,
 			SimpleValueProperty<S, V> valueProperty) {
 		super(keySet, valueProperty.getValueType());

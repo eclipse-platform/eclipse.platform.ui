@@ -524,7 +524,6 @@ public class KeyBindingDispatcher {
 	 * @param keySequence
 	 *            The key sequence to check for a perfect match; must never be
 	 *            <code>null</code>.
-	 * @param context2
 	 * @return <code>true</code> if there is a perfect match; <code>false</code>
 	 *         otherwise.
 	 */
@@ -532,11 +531,6 @@ public class KeyBindingDispatcher {
 		return getExecutableMatches(keySequence, context2).size() == 1;
 	}
 
-	/**
-	 * @param keySequence
-	 * @param context2
-	 * @return
-	 */
 	private Collection<Binding> getExecutableMatches(KeySequence keySequence, IEclipseContext context2) {
 		Binding binding = getBindingService().getPerfectMatch(keySequence);
 		if (binding != null) {
@@ -551,11 +545,6 @@ public class KeyBindingDispatcher {
 		return Collections.emptySet();
 	}
 
-	/**
-	 * @param potentialKeyStrokes
-	 * @param event
-	 * @return
-	 */
 	public boolean press(List<KeyStroke> potentialKeyStrokes, Event event) {
 		KeySequence errorSequence = null;
 		Collection<Binding> errorMatch = null;

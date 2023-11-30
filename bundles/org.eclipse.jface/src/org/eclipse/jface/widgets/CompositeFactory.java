@@ -31,7 +31,6 @@ import org.eclipse.swt.widgets.Layout;
  * </ul>
  *
  * @since 3.18
- *
  */
 public final class CompositeFactory extends AbstractCompositeFactory<CompositeFactory, Composite> {
 
@@ -43,7 +42,6 @@ public final class CompositeFactory extends AbstractCompositeFactory<CompositeFa
 	 * Creates a new CompositeFactory with the given style. Refer to
 	 * {@link Composite#Composite(Composite, int)} for possible styles.
 	 *
-	 * @param style
 	 * @return a new CompositeFactory instance
 	 */
 	public static CompositeFactory newComposite(int style) {

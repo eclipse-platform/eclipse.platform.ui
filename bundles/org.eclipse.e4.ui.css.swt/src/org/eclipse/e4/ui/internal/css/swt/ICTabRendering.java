@@ -55,8 +55,6 @@ public interface ICTabRendering {
 	 * Sets whether to use a custom tab background (reusing tab colors and
 	 * gradients), or default one from plain CTabFolder (using widget background
 	 * color).
-	 *
-	 * @param drawCustomTabContentBackground
 	 */
 	void setDrawCustomTabContentBackground(boolean drawCustomTabContentBackground);
 }

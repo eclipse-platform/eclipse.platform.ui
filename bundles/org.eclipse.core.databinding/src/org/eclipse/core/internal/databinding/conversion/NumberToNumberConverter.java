@@ -80,7 +80,6 @@ public abstract class NumberToNumberConverter<T extends Number> extends Converte
 	/**
 	 * Invoked when the number should converted.
 	 *
-	 * @param number
 	 * @return number if conversion was successfule, <code>null</code> if the
 	 *         number was out of range
 	 */

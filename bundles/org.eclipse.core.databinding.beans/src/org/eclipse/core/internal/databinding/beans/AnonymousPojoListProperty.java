@@ -27,7 +27,6 @@ import org.eclipse.core.databinding.property.list.IListProperty;
  * @param <E> type of the elements in the list
  *
  * @since 3.3
- *
  */
 public class AnonymousPojoListProperty<S, E> extends DelegatingListProperty<S, E> {
 	private final String propertyName;

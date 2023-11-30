@@ -20,9 +20,6 @@ public interface IURIResolver {
 
 	/**
 	 * Return the uri resolved.
-	 *
-	 * @param uri
-	 * @return
 	 */
 	public String resolve(String uri);
 }

@@ -265,7 +265,6 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable {
 	/**
 	 * Return default image if returnMissingImageOnError is true.
 	 *
-	 * @param device
 	 * @return Image or <code>null</code>
 	 */
 	private Image createDefaultImage(boolean returnMissingImageOnError,

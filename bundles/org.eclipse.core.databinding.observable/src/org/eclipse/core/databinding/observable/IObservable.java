@@ -37,7 +37,6 @@ package org.eclipse.core.databinding.observable;
  *              interface.
  *
  * @since 1.0
- *
  */
 public interface IObservable {
 

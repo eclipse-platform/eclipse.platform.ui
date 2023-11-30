@@ -24,7 +24,6 @@ import org.eclipse.search.ui.text.Match;
 
 /**
  * Element representing a line in a file
- *
  */
 public class LineElement {
 

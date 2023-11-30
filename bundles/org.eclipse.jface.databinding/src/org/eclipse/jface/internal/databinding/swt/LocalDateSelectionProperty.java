@@ -20,11 +20,7 @@ import org.eclipse.jface.databinding.swt.WidgetValueProperty;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.DateTime;
 
-/**
- */
 public class LocalDateSelectionProperty extends WidgetValueProperty<DateTime, LocalDate> {
-	/**
-	 */
 	public LocalDateSelectionProperty() {
 		super(SWT.Selection);
 	}

@@ -32,7 +32,6 @@ import org.eclipse.swt.graphics.Image;
 /**
  * NON-API - Generic viewer label provider.
  * @since 1.1
- *
  */
 public class ViewerLabelProvider implements IViewerLabelProvider,
 		ILabelProvider {

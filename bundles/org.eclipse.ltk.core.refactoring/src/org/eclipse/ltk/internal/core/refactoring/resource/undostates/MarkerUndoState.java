@@ -28,7 +28,6 @@ import org.eclipse.core.resources.IResource;
  * This class is not intended to be instantiated or used by clients.
  *
  * @since 3.4
- *
  */
 public class MarkerUndoState {
 

@@ -37,7 +37,6 @@ import org.eclipse.core.runtime.Status;
  * can be called directly if an aggregated status result is only needed once.
  *
  * @since 1.0
- *
  */
 public final class AggregateValidationStatus extends ComputedValue<IStatus> {
 	/**

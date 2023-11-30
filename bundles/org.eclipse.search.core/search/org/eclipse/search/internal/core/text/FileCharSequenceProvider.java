@@ -25,9 +25,6 @@ import org.eclipse.core.runtime.content.IContentDescription;
 
 import org.eclipse.core.resources.IFile;
 
-/**
- *
- */
 public class FileCharSequenceProvider {
 
 	/**

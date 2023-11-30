@@ -41,7 +41,6 @@ import org.eclipse.swt.widgets.Shell;
  *            which declares the type of the elements in the
  *            {@link AbstractSelectionDialog}.
  * @since 3.11
- *
  */
 public abstract class AbstractSelectionDialog<T> extends TrayDialog {
 	// the final collection of selected elements

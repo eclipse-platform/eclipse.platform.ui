@@ -38,12 +38,6 @@ public class CSSSerializer {
 	 * stored into the <code>writer</code>. If
 	 * <code>serializeChildNodes</code> is true, the method will serialize too
 	 * the child nodes of the <code>element</code>.
-	 *
-	 * @param writer
-	 * @param engine
-	 * @param element
-	 * @param serializeChildNodes
-	 * @throws IOException
 	 */
 	public void serialize(Writer writer, CSSEngine engine, Object element, boolean serializeChildNodes) throws IOException {
 		serialize(writer, engine, element, serializeChildNodes, null);
@@ -57,13 +51,6 @@ public class CSSSerializer {
 	 * the child nodes of the <code>element</code>. The
 	 * {@link CSSSerializerConfiguration} <code>configuration</code> is used
 	 * to generate selector with condition like Text[style='SWT.MULTI'].
-	 *
-	 * @param writer
-	 * @param engine
-	 * @param element
-	 * @param serializeChildNodes
-	 * @param configuration
-	 * @throws IOException
 	 */
 	public void serialize(Writer writer, CSSEngine engine, Object element, boolean serializeChildNodes, CSSSerializerConfiguration configuration) throws IOException {
 		Map<String, CSSStyleDeclaration> selectors = new HashMap<>();
@@ -98,14 +85,6 @@ public class CSSSerializer {
 	 * to generate selector with condition like Text[style='SWT.MULTI'].
 	 *
 	 * Map of <code>selectors</code> contains the selector already built.
-	 *
-	 * @param writer
-	 * @param engine
-	 * @param element
-	 * @param serializeChildNodes
-	 * @param selectors
-	 * @param configuration
-	 * @throws IOException
 	 */
 	protected void serialize(Writer writer, CSSEngine engine, Object element, boolean serializeChildNodes, Map<String, CSSStyleDeclaration> selectors,
 			CSSSerializerConfiguration configuration) throws IOException {
@@ -147,11 +126,6 @@ public class CSSSerializer {
 
 	/**
 	 * Generate start selector.
-	 *
-	 * @param writer
-	 * @param selectorName
-	 * @param firstSelector
-	 * @throws IOException
 	 */
 	protected void startSelector(Writer writer, String selectorName, boolean firstSelector) throws IOException {
 		if (firstSelector == false) {
@@ -162,10 +136,6 @@ public class CSSSerializer {
 
 	/**
 	 * Generate end selector.
-	 *
-	 * @param writer
-	 * @param selectorName
-	 * @throws IOException
 	 */
 	protected void endSelector(Writer writer, String selectorName) throws IOException {
 		writer.write("\n}");
@@ -173,11 +143,6 @@ public class CSSSerializer {
 
 	/**
 	 * Generate CSS Property.
-	 *
-	 * @param writer
-	 * @param propertyName
-	 * @param propertyValue
-	 * @throws IOException
 	 */
 	private void property(Writer writer, String propertyName, String propertyValue) throws IOException {
 		writer.write("\n\t" + propertyName + ":" + propertyValue + ";");

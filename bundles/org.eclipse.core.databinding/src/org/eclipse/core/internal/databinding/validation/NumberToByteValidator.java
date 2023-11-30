@@ -26,9 +26,6 @@ import org.eclipse.core.internal.databinding.conversion.StringToNumberParser;
  * @since 1.0
  */
 public class NumberToByteValidator extends NumberToNumberValidator {
-	/**
-	 * @param converter
-	 */
 	public NumberToByteValidator(NumberToByteConverter converter) {
 		super(converter, Byte.MIN_VALUE, Byte.MAX_VALUE);
 	}

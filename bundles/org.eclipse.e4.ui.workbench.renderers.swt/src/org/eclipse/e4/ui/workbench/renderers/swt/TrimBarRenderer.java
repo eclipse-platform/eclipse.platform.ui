@@ -38,9 +38,6 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
-/**
- *
- */
 public class TrimBarRenderer extends SWTPartRenderer {
 	private MApplication application;
 

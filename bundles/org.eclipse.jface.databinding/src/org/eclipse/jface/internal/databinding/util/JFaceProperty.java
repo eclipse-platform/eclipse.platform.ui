@@ -99,11 +99,6 @@ public class JFaceProperty<S, T> extends SimpleValueProperty<S, T> {
 		}
 	}
 
-	/**
-	 * @param fieldName
-	 * @param property
-	 * @param clazz
-	 */
 	public JFaceProperty(String fieldName, String property, Class<?> clazz) {
 		this.property = property;
 		// Create all the necessary method ahead of time to ensure they are

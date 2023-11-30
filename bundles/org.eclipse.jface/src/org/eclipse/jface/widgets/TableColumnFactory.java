@@ -59,7 +59,6 @@ import org.eclipse.swt.widgets.TableColumn;
  * </p>
  *
  * @since 3.18
- *
  */
 public final class TableColumnFactory extends AbstractItemFactory<TableColumnFactory, TableColumn, Table> {
 
@@ -71,7 +70,6 @@ public final class TableColumnFactory extends AbstractItemFactory<TableColumnFac
 	 * Creates a new TableColumnFactory with the given style. Refer to
 	 * {@link TableColumn#TableColumn(Table, int)} for possible styles.
 	 *
-	 * @param style
 	 * @return a new TableColumnFactory instance
 	 */
 	public static TableColumnFactory newTableColumn(int style) {

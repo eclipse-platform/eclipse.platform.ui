@@ -44,7 +44,6 @@ public class StyledString implements CharSequence {
 	/**
 	 * A styler will be asked to apply its styles to one ore more ranges in the
 	 * {@link StyledString}.
-	 *
 	 */
 	public static abstract class Styler {
 

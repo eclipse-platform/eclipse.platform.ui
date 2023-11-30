@@ -41,7 +41,6 @@ import org.eclipse.core.runtime.Assert;
  * @param <V>
  *            type of the values in the inner observable map
  * @since 1.1
- *
  */
 public class DetailObservableMap<M, K, V> extends ObservableMap<K, V>implements IObserving {
 	private boolean updating = false;
@@ -79,10 +78,6 @@ public class DetailObservableMap<M, K, V> extends ObservableMap<K, V>implements 
 	 * @param detailFactory
 	 *            observable factory that creates IObservableMap instances given
 	 *            the current value of master observable value
-	 * @param master
-	 * @param keyType
-	 * @param valueType
-	 *
 	 */
 	public DetailObservableMap(
 			IObservableFactory<? super M, IObservableMap<K, V>> detailFactory,

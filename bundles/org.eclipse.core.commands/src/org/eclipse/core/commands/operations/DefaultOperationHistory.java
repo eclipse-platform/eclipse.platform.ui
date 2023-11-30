@@ -154,7 +154,6 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 * An operation that is "absorbing" all other operations while it is open.
 	 * When this is not null, other operations added or executed are added to
 	 * this composite.
-	 *
 	 */
 	private ICompositeOperation openComposite;
 
@@ -222,7 +221,6 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 *
 	 * @param approver
 	 *            the IOperationApprover to be added as an approver.
-	 *
 	 */
 
 	@Override
@@ -334,9 +332,6 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 	/**
 	 * Perform the redo. All validity checks have already occurred.
-	 *
-	 * @param monitor
-	 * @param operation
 	 */
 	private IStatus doRedo(IProgressMonitor monitor, IAdaptable info, IUndoableOperation operation)
 			throws ExecutionException {
@@ -394,9 +389,6 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 	/**
 	 * Perform the undo. All validity checks have already occurred.
-	 *
-	 * @param monitor
-	 * @param operation
 	 */
 	private IStatus doUndo(IProgressMonitor monitor, IAdaptable info, IUndoableOperation operation)
 			throws ExecutionException {

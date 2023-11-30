@@ -23,19 +23,12 @@ import org.eclipse.swt.widgets.Widget;
 
 /**
  * @since 3.3
- *
  */
 public class StyledTextTextProperty extends WidgetStringValueProperty<StyledText> {
-	/**
-	 *
-	 */
 	public StyledTextTextProperty() {
 		this(null);
 	}
 
-	/**
-	 * @param events
-	 */
 	public StyledTextTextProperty(int[] events) {
 		super(checkEvents(events), staleEvents(events));
 	}

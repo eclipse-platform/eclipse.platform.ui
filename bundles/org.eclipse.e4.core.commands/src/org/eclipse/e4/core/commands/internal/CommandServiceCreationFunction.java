@@ -21,9 +21,6 @@ import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.osgi.service.component.annotations.Component;
 
-/**
- *
- */
 @Component(service = IContextFunction.class, property = "service.context.key=org.eclipse.e4.core.commands.ECommandService")
 public class CommandServiceCreationFunction extends ContextFunction {
 	/**
@@ -48,7 +45,6 @@ public class CommandServiceCreationFunction extends ContextFunction {
 	}
 
 	/**
-	 * @param context
 	 * @return the topmost "root" context
 	 */
 	private IEclipseContext getRootContext(IEclipseContext context) {

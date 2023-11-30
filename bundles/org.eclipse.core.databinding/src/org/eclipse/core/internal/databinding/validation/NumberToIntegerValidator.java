@@ -28,9 +28,6 @@ public class NumberToIntegerValidator extends NumberToNumberValidator {
 	private static final Integer MIN = Integer.valueOf(Integer.MIN_VALUE);
 	private static final Integer MAX = Integer.valueOf(Integer.MAX_VALUE);
 
-	/**
-	 * @param converter
-	 */
 	public NumberToIntegerValidator(NumberToIntegerConverter converter) {
 		super(converter, MIN, MAX);
 	}

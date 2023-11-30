@@ -56,7 +56,6 @@ public class ViewerComparator {
 	/**
 	 * Creates a new {@link ViewerComparator}, which uses the default comparator
 	 * to sort strings.
-	 *
 	 */
 	public ViewerComparator(){
 		this(null);

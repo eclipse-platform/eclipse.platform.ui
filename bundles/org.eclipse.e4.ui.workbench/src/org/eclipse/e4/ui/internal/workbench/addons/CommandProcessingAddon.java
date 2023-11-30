@@ -70,11 +70,7 @@ public class CommandProcessingAddon {
 	private ICommandManagerListener cmListener;
 
 	/**
-	 * @param cmd
-	 * @param modelService
-	 * @param categoryModel
 	 * @return a command model element
-	 * @throws NotDefinedException
 	 */
 	public static MCommand createCommand(Command cmd, EModelService modelService,
 			final MCategory categoryModel) throws NotDefinedException {

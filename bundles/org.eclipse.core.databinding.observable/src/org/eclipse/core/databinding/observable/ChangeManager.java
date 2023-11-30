@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.ListenerList;
  * {@link AbstractObservable} and {@link ChangeSupport}.
  *
  * @since 1.0
- *
  */
 /* package */class ChangeManager {
 
@@ -121,21 +120,12 @@ import org.eclipse.core.runtime.ListenerList;
 		}
 	}
 
-	/**
-	 *
-	 */
 	protected void firstListenerAdded() {
 	}
 
-	/**
-	 *
-	 */
 	protected void lastListenerRemoved() {
 	}
 
-	/**
-	 *
-	 */
 	public void dispose() {
 		listenerLists = null;
 		listenerTypes = null;

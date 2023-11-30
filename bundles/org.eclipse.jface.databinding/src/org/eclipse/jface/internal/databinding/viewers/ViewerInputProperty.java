@@ -26,7 +26,6 @@ import org.eclipse.jface.viewers.Viewer;
  * @param <T> type of the value of the property
  *
  * @since 3.3
- *
  */
 public class ViewerInputProperty<S, T> extends ViewerValueProperty<S, T> {
 	private final Object valueType;

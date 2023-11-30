@@ -33,7 +33,6 @@ import org.eclipse.swt.widgets.Widget;
  * @param <S> type of the source object
  *
  * @since 3.3
- *
  */
 public class WidgetTextProperty<S extends Widget> extends WidgetDelegatingValueProperty<S, String> {
 	private IValueProperty<S, String> button;
@@ -48,9 +47,6 @@ public class WidgetTextProperty<S extends Widget> extends WidgetDelegatingValueP
 	private IValueProperty<S, String> text;
 	private IValueProperty<S, String> group;
 
-	/**
-	 *
-	 */
 	public WidgetTextProperty() {
 		super(String.class);
 	}

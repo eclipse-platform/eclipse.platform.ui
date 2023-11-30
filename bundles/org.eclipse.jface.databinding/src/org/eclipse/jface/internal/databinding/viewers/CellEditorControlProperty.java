@@ -23,7 +23,6 @@ import org.eclipse.swt.widgets.Control;
 
 /**
  * @since 3.3
- *
  */
 public class CellEditorControlProperty extends SimpleValueProperty<CellEditor, Control> {
 	@Override

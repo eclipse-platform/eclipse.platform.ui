@@ -27,9 +27,6 @@ public class StringToFloatValidator extends AbstractStringToNumberValidator {
 	private static final Float MIN = Float.valueOf(-Float.MAX_VALUE);
 	private static final Float MAX = Float.valueOf(Float.MAX_VALUE);
 
-	/**
-	 * @param converter
-	 */
 	public StringToFloatValidator(NumberFormatConverter<?, ?> converter) {
 		super(converter, MIN, MAX);
 	}

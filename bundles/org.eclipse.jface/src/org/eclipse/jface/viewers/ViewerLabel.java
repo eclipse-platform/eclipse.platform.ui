@@ -264,8 +264,6 @@ public class ViewerLabel {
 
 	/**
 	 * Set whether or not there are any decorations pending.
-	 *
-	 * @param hasPendingDecorations
 	 */
 	void setHasPendingDecorations(boolean hasPendingDecorations) {
 		this.hasPendingDecorations = hasPendingDecorations;

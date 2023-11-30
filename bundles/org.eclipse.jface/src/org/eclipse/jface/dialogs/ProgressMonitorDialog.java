@@ -524,7 +524,6 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 	 * Decrements the nesting depth of running operations.
 	 *
 	 * @since 3.0
-	 *
 	 */
 	protected void decrementNestingDepth() {
 		nestingDepth--;

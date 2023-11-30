@@ -29,7 +29,6 @@ import org.eclipse.swt.widgets.TreeItem;
  * keyboard
  *
  * @since 3.3
- *
  */
 public class TreeViewerFocusCellManager extends SWTFocusCellManager {
 	private static final CellNavigationStrategy TREE_NAVIGATE = new CellNavigationStrategy() {

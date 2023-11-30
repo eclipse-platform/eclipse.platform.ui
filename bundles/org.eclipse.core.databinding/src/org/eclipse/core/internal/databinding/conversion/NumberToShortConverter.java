@@ -24,11 +24,6 @@ import java.text.Format;
  * @since 1.0
  */
 public class NumberToShortConverter extends NumberToNumberConverter<Short> {
-	/**
-	 * @param numberFormat
-	 * @param fromType
-	 * @param primitive
-	 */
 	public NumberToShortConverter(Format numberFormat, Class<?> fromType, boolean primitive) {
 		super(numberFormat, fromType, (primitive) ? Short.TYPE : Short.class);
 	}

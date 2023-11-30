@@ -23,10 +23,6 @@ public interface IResourceLocator extends IURIResolver {
 
 	/**
 	 * Return {@link InputStream} from the <code>uri</code>.
-	 *
-	 * @param uri
-	 * @return
-	 * @throws Exception
 	 */
 	public InputStream getInputStream(String uri) throws Exception;
 

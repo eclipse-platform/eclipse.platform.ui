@@ -52,7 +52,6 @@ public final class SpinnerFactory extends AbstractControlFactory<SpinnerFactory,
 	 * Creates a new SpinnerFactory with the given style. Refer to
 	 * {@link Spinner#Spinner(Composite, int)} for possible styles.
 	 *
-	 * @param style
 	 * @return a new SpinnerFactory instance
 	 */
 	public static SpinnerFactory newSpinner(int style) {

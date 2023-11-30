@@ -285,7 +285,6 @@ public class ProjectionSupport {
 	 * Enables projection mode. If not yet done, installs the projection ruler
 	 * column in the viewer's vertical ruler and installs a painter that
 	 * indicate the locations of collapsed regions.
-	 *
 	 */
 	protected void doEnableProjection() {
 
@@ -348,7 +347,6 @@ public class ProjectionSupport {
 	 * @param viewer the viewer
 	 * @param required the required class of the adapter
 	 * @return the adapter or <code>null</code>
-	 *
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(ISourceViewer viewer, Class<T> required) {

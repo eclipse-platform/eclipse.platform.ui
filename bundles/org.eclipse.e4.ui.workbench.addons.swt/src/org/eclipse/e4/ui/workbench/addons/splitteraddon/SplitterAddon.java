@@ -49,8 +49,6 @@ public class SplitterAddon {
 
 	/**
 	 * Handles changes in tags
-	 *
-	 * @param event
 	 */
 	@Inject
 	@Optional
@@ -92,7 +90,6 @@ public class SplitterAddon {
 	/**
 	 * Finds the CompositePart containing the given part (if any)
 	 *
-	 * @param part
 	 * @return The MCompositePart or 'null' if none is found
 	 */
 	public static MCompositePart findContainingCompositePart(MPart part) {

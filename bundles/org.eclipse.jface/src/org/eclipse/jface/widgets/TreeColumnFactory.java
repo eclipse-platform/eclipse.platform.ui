@@ -59,7 +59,6 @@ import org.eclipse.swt.widgets.TreeColumn;
  * </p>
  *
  * @since 3.18
- *
  */
 public final class TreeColumnFactory extends AbstractItemFactory<TreeColumnFactory, TreeColumn, Tree> {
 
@@ -71,7 +70,6 @@ public final class TreeColumnFactory extends AbstractItemFactory<TreeColumnFacto
 	 * Creates a new TreeColumnFactory with the given style. Refer to
 	 * {@link TreeColumn#TreeColumn(Tree, int)} for possible styles.
 	 *
-	 * @param style
 	 * @return a new TreeColumnFactory instance
 	 */
 	public static TreeColumnFactory newTreeColumn(int style) {

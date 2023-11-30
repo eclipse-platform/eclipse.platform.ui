@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Scale;
 
 /**
  * {@link CSSStylableElement} implementation which wrap SWT {@link Scale}.
- *
  */
 public class ScaleElement extends ControlElement {
 

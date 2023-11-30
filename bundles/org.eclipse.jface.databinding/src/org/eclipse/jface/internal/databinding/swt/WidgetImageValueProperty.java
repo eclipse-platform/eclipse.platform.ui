@@ -23,7 +23,6 @@ import org.eclipse.swt.widgets.Widget;
  * @param <S> type of the source object
  *
  * @since 3.3
- *
  */
 public abstract class WidgetImageValueProperty<S extends Widget> extends WidgetValueProperty<S, Image> {
 	@Override

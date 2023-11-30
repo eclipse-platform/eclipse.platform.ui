@@ -16,9 +16,6 @@ package org.eclipse.jface.internal.text.link.contentassist;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
 
-/**
- *
- */
 public interface IProposalListener {
 
 	/**

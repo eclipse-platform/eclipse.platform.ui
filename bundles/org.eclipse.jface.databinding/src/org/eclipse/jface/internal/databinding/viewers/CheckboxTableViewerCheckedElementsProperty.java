@@ -31,9 +31,6 @@ import org.eclipse.jface.viewers.ICheckable;
  */
 public class CheckboxTableViewerCheckedElementsProperty<S extends ICheckable, E>
 		extends CheckboxViewerCheckedElementsProperty<S, E> {
-	/**
-	 * @param elementType
-	 */
 	public CheckboxTableViewerCheckedElementsProperty(Object elementType) {
 		super(elementType);
 	}

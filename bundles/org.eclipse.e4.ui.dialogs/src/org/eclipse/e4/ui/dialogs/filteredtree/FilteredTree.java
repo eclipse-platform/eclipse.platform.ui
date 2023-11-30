@@ -126,7 +126,6 @@ public class FilteredTree extends Composite {
 	 * @param parent
 	 *            the parent <code>Composite</code>
 	 * @see #init(int, PatternFilter)
-	 *
 	 */
 	protected FilteredTree(Composite parent) {
 		super(parent, SWT.NONE);
@@ -153,9 +152,6 @@ public class FilteredTree extends Composite {
 
 	/**
 	 * Create the filtered tree's controls. Subclasses should override.
-	 *
-	 * @param parent
-	 * @param treeStyle
 	 */
 	protected void createControl(Composite parent, int treeStyle) {
 		GridLayout layout = new GridLayout();
@@ -246,7 +242,6 @@ public class FilteredTree extends Composite {
 	/**
 	 * Return the first item in the tree that matches the filter pattern.
 	 *
-	 * @param items
 	 * @return the first matching TreeItem
 	 */
 	private TreeItem getFirstMatchingItem(TreeItem[] items) {
@@ -265,7 +260,6 @@ public class FilteredTree extends Composite {
 
 	/**
 	 * Create the refresh job for the receiver.
-	 *
 	 */
 	private void createRefreshJob() {
 		refreshJob = doCreateRefreshJob();
@@ -350,10 +344,6 @@ public class FilteredTree extends Composite {
 			 * Returns true if the job should be canceled (because of timeout or
 			 * actual cancellation).
 			 *
-			 * @param items
-			 * @param monitor
-			 * @param cancelTime
-			 * @param numItemsLeft
 			 * @return true if canceled
 			 */
 			private boolean recursiveExpand(TreeItem[] items, IProgressMonitor monitor, long cancelTime,
@@ -430,7 +420,6 @@ public class FilteredTree extends Composite {
 			/**
 			 * Return the count of treeItem and it's children to infinite depth.
 			 *
-			 * @param treeItem
 			 * @return int
 			 */
 			private int itemCount(TreeItem treeItem) {
@@ -578,8 +567,6 @@ public class FilteredTree extends Composite {
 
 	/**
 	 * Set the text in the filter control.
-	 *
-	 * @param string
 	 */
 	protected void setFilterText(String string) {
 		if (filterText != null) {
@@ -657,7 +644,6 @@ public class FilteredTree extends Composite {
 
 	/**
 	 * Select all text in the filter text field.
-	 *
 	 */
 	protected void selectAll() {
 		if (filterText != null) {
@@ -736,14 +722,9 @@ public class FilteredTree extends Composite {
 	 * any change to the tree. See bug 187200.
 	 *
 	 * @since 3.3
-	 *
 	 */
 	class NotifyingTreeViewer extends TreeViewer {
 
-		/**
-		 * @param parent
-		 * @param style
-		 */
 		public NotifyingTreeViewer(Composite parent, int style) {
 			super(parent, style);
 		}

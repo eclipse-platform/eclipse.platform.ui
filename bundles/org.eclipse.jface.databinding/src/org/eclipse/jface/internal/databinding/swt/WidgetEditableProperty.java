@@ -25,16 +25,12 @@ import org.eclipse.swt.widgets.Text;
  * @param <S> type of the source object
  *
  * @since 3.3
- *
  */
 public class WidgetEditableProperty<S extends Control> extends WidgetDelegatingValueProperty<S, Boolean> {
 	IValueProperty<Text, Boolean> text;
 	IValueProperty<CCombo, Boolean> ccombo;
 	IValueProperty<StyledText, Boolean> styledText;
 
-	/**
-	 *
-	 */
 	public WidgetEditableProperty() {
 		super(Boolean.TYPE);
 	}

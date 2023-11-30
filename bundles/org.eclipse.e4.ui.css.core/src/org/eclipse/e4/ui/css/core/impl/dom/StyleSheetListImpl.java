@@ -41,8 +41,6 @@ public class StyleSheetListImpl implements StyleSheetList {
 
 	/**
 	 * Add {@link StyleSheet} to the collection of style sheets
-	 *
-	 * @param styleSheet
 	 */
 	public void addStyleSheet(StyleSheet styleSheet) {
 		if (styleSheets == null) {

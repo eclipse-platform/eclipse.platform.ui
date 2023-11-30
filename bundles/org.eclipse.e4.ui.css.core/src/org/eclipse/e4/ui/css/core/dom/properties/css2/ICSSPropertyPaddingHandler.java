@@ -29,11 +29,6 @@ public interface ICSSPropertyPaddingHandler extends ICSSPropertyHandler {
 	 * A shorthand property for setting all four paddings in one declaration.
 	 * Available values are
 	 * {padding-top, padding-right, padding-bottom, padding-left}
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	//TODO support in future values {inherit}
 	public void applyCSSPropertyPadding(Object element, CSSValue value,
@@ -41,12 +36,6 @@ public interface ICSSPropertyPaddingHandler extends ICSSPropertyHandler {
 
 	/**
 	 * Sets the top padding. Available values are {length}
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	//TODO support in future values {auto, %, inherit}
 	public void applyCSSPropertyPaddingTop(Object element,
@@ -55,12 +44,6 @@ public interface ICSSPropertyPaddingHandler extends ICSSPropertyHandler {
 
 	/**
 	 * Sets the right padding. Available values are {length}
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	//TODO support in future values {auto, %, inherit}
 	public void applyCSSPropertyPaddingRight(Object element,
@@ -69,12 +52,6 @@ public interface ICSSPropertyPaddingHandler extends ICSSPropertyHandler {
 
 	/**
 	 * Sets the bottom padding. Available values are {length}
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	//TODO support in future values {auto, %, inherit}
 	public void applyCSSPropertyPaddingBottom(Object element,
@@ -83,12 +60,6 @@ public interface ICSSPropertyPaddingHandler extends ICSSPropertyHandler {
 
 	/**
 	 * Sets the left padding. Available values are {length}
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	//TODO support in future values {auto, %, inherit}
 	public void applyCSSPropertyPaddingLeft(Object element, CSSValue value,

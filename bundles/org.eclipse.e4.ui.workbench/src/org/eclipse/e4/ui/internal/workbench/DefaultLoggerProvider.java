@@ -21,9 +21,6 @@ import org.eclipse.e4.core.services.log.ILoggerProvider;
 import org.eclipse.e4.core.services.log.Logger;
 import org.osgi.framework.FrameworkUtil;
 
-/**
- *
- */
 public class DefaultLoggerProvider implements ILoggerProvider {
 	@Inject
 	private IEclipseContext context;

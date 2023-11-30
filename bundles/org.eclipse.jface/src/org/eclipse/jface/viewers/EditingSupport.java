@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.Assert;
  * EditingSupport is the abstract superclass of the support for cell editing.
  *
  * @since 3.3
- *
  */
 public abstract class EditingSupport {
 

@@ -252,9 +252,6 @@ public class ProgressServiceImpl implements IProgressService {
 	/**
 	 * Show the busy cursor while the runnable is running. Schedule a job to
 	 * replace it with a progress dialog.
-	 *
-	 * @param dialogWaitRunnable
-	 * @param dialog
 	 */
 	private void busyCursorWhile(Runnable dialogWaitRunnable,
 			ProgressMonitorJobsDialog dialog) {

@@ -68,10 +68,6 @@ public class MenuManagerHideProcessor implements IMenuListener2 {
 	/**
 	 * Process dynamic menu contributions provided by
 	 * {@link MDynamicMenuContribution} application model elements
-	 *
-	 * @param menu
-	 * @param menuModel
-	 *
 	 */
 	private void processDynamicElements(final MenuManager menuManager, Menu menu, final MMenu menuModel) {
 		// We need to make a copy of the dynamic items which need to be removed

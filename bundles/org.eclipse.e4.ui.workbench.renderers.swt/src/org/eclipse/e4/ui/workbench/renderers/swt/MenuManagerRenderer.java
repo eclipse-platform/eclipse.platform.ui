@@ -248,9 +248,6 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 	}
 
 
-	/**
-	 * @param event
-	 */
 	private void updateLabelOfMenu(Event event) {
 		String attName = (String) event.getProperty(UIEvents.EventTags.ATTNAME);
 		MMenu model = (MMenu) event.getProperty(UIEvents.EventTags.ELEMENT);
@@ -268,10 +265,6 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		}
 	}
 
-	/**
-	 * @param event
-	 * @param element
-	 */
 	private void handleLabelOfMenuItem(Event event, Object element) {
 		String attName = (String) event.getProperty(UIEvents.EventTags.ATTNAME);
 
@@ -428,9 +421,6 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		return newMenu;
 	}
 
-	/**
-	 * @param menuModel
-	 */
 	public void cleanUp(MMenu menuModel) {
 		for (MMenuElement childElement : menuModel.getChildren()) {
 			if (childElement instanceof MMenu) {
@@ -484,11 +474,6 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		}
 	}
 
-	/**
-	 * @param menuModel
-	 * @param isMenuBar
-	 * @param isPopup
-	 */
 	public void processContributions(MMenu menuModel, String elementId, boolean isMenuBar, boolean isPopup) {
 		if (elementId == null) {
 			return;
@@ -504,10 +489,6 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		}
 	}
 
-	/**
-	 * @param menuModel
-	 * @param toContribute
-	 */
 	private void generateContributions(MMenu menuModel, ArrayList<MMenuContribution> toContribute, boolean menuBar) {
 		HashSet<String> existingMenuIds = new HashSet<>();
 		HashSet<String> existingSeparatorNames = new HashSet<>();
@@ -540,9 +521,6 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 	}
 
 	/**
-	 * @param menuModel
-	 * @param manager
-	 * @param menuContribution
 	 * @return true if the menuContribution was processed
 	 */
 	private boolean processAddition(MMenu menuModel, final MenuManager manager, MMenuContribution menuContribution,
@@ -614,8 +592,6 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 	/**
 	 * Ensure when a menu contribution is removed, if it contains nested menus,
 	 * their contributions are also removed.
-	 *
-	 * @param menuModel
 	 */
 	private void removeMenuContribution(final MMenu menuModel) {
 		clearModelToContribution(menuModel, modelToContribution.get(menuModel));
@@ -671,10 +647,6 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		}
 	}
 
-	/**
-	 * @param parentManager
-	 * @param menuModel
-	 */
 	private void processMenu(MenuManager parentManager, MMenu menuModel) {
 		MenuManager menuManager = getManager(menuModel);
 		if (menuManager == null) {
@@ -696,10 +668,6 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		}
 	}
 
-	/**
-	 * @param menuManager
-	 * @param childME
-	 */
 	/* package */ void modelProcessSwitch(MenuManager menuManager, MMenuElement childME) {
 		if (!childME.isToBeRendered()) {
 			return;
@@ -731,10 +699,6 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		}
 	}
 
-	/**
-	 * @param parentManager
-	 * @param itemModel
-	 */
 	private void processRenderedItem(MenuManager parentManager, MMenuItem itemModel) {
 		IContributionItem ici = getContribution(itemModel);
 		if (ici != null) {
@@ -775,10 +739,6 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		linkModelToContribution(itemModel, ici);
 	}
 
-	/**
-	 * @param menuManager
-	 * @param itemModel
-	 */
 	private void processSeparator(MenuManager menuManager, MMenuSeparator itemModel) {
 		IContributionItem ici = getContribution(itemModel);
 		if (ici != null) {
@@ -801,10 +761,6 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		linkModelToContribution(itemModel, marker);
 	}
 
-	/**
-	 * @param parentManager
-	 * @param itemModel
-	 */
 	private void processDirectItem(MenuManager parentManager, MDirectMenuItem itemModel) {
 		IContributionItem ici = getContribution(itemModel);
 		if (ici != null) {
@@ -819,10 +775,6 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		linkModelToContribution(itemModel, ci);
 	}
 
-	/**
-	 * @param menuManager
-	 * @param itemModel
-	 */
 	private void processDynamicMenuContribution(MenuManager menuManager, MDynamicMenuContribution itemModel) {
 		IContributionItem ici = getContribution(itemModel);
 		if (ici != null) {
@@ -834,10 +786,6 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		linkModelToContribution(itemModel, ci);
 	}
 
-	/**
-	 * @param parentManager
-	 * @param itemModel
-	 */
 	private void processHandledItem(MenuManager parentManager, MHandledMenuItem itemModel) {
 		IContributionItem ici = getContribution(itemModel);
 		if (ici != null) {
@@ -966,10 +914,6 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		return super.getContext(el);
 	}
 
-	/**
-	 * @param menuManager
-	 * @param menuModel
-	 */
 	public void reconcileManagerToModel(MenuManager menuManager, MMenu menuModel) {
 		List<MMenuElement> modelChildren = menuModel.getChildren();
 
@@ -1112,11 +1056,6 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		}
 	}
 
-	/**
-	 * @param menuManager
-	 * @param element
-	 * @param evalContext
-	 */
 	public static void updateVisibility(MenuManager menuManager, MMenuElement element, ExpressionContext evalContext) {
 		boolean current = element.isVisible();
 		boolean visible = true;
@@ -1142,10 +1081,6 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 	/**
 	 * Clean dynamic menu contributions provided by
 	 * {@link MDynamicMenuContribution} application model elements
-	 *
-	 * @param menuManager
-	 * @param menuModel
-	 * @param dump
 	 */
 	public void removeDynamicMenuContributions(MenuManager menuManager, MMenu menuModel, List<MMenuElement> dump) {
 		removeMenuContributions(menuModel, dump);
@@ -1168,9 +1103,6 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 	/**
 	 * Remove all dynamic contribution items and their model for the MenuManager
 	 * specified.
-	 *
-	 * @param menuManager
-	 * @param menuModel
 	 */
 	@SuppressWarnings("unchecked")
 	public void removeDynamicMenuContributions(MenuManager menuManager, MMenu menuModel) {

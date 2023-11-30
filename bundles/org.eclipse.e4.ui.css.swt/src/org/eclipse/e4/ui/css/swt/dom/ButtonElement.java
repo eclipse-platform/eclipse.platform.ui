@@ -25,7 +25,6 @@ import org.eclipse.swt.widgets.Button;
 
 /**
  * {@link CSSStylableElement} implementation which wrap SWT {@link Button}.
- *
  */
 public class ButtonElement extends ControlElement {
 

@@ -30,18 +30,12 @@ import org.eclipse.core.databinding.property.map.SimpleMapProperty;
  * @param <V> type of the values in the map
  *
  * @since 3.3
- *
  */
 public class PojoMapProperty<S, K, V> extends SimpleMapProperty<S, K, V> {
 	private final PropertyDescriptor propertyDescriptor;
 	private final Class<K> keyType;
 	private final Class<V> valueType;
 
-	/**
-	 * @param propertyDescriptor
-	 * @param keyType
-	 * @param valueType
-	 */
 	public PojoMapProperty(PropertyDescriptor propertyDescriptor, Class<K> keyType, Class<V> valueType) {
 		this.propertyDescriptor = propertyDescriptor;
 		this.keyType = keyType;

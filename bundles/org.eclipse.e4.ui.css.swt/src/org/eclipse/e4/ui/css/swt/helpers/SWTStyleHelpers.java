@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.Widget;
  *
  * @version 1.0.0
  * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- *
  */
 public class SWTStyleHelpers {
 
@@ -39,8 +38,6 @@ public class SWTStyleHelpers {
 	/**
 	 * Return SWT style constant <code>style</code> as String. Each SWT style
 	 * are separate with <code>separator</code> String.
-	 *
-	 * @param style
 	 */
 	public static String getSWTWidgetStyleAsString(int style, String separator) {
 		if (style == 0) {
@@ -766,10 +763,6 @@ public class SWTStyleHelpers {
 	 * Add SWT String <code>style</code> to the {@link StringBuilder}
 	 * <cod>swtStyles</code> and separate it with <code>separator</code>
 	 * String.
-	 *
-	 * @param swtStyles
-	 * @param style
-	 * @param separator
 	 */
 	private static void addSWTStyle(StringBuilder swtStyles, String style,
 			String separator) {

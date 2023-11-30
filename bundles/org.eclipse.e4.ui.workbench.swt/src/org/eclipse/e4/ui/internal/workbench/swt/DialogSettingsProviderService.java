@@ -31,7 +31,6 @@ import org.osgi.service.event.EventHandler;
 
 /**
  * Provides access to DialogSettingsProvider objects.
- *
  */
 public final class DialogSettingsProviderService {
 

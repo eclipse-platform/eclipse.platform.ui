@@ -44,15 +44,11 @@ public interface CSSParser {
 	 *
 	 * @param source
 	 *            style sheet.
-	 * @return
-	 * @throws IOException
 	 */
 	public CSSStyleSheet parseStyleSheet(InputSource source) throws IOException;
 
 	/**
 	 * Set the parent {@link CSSStyleSheet}.
-	 *
-	 * @param parentStyleSheet
 	 */
 	public void setParentStyleSheet(CSSStyleSheet parentStyleSheet);
 
@@ -62,8 +58,6 @@ public interface CSSParser {
 	 *
 	 * @param source
 	 *            style declaration.
-	 * @return
-	 * @throws IOException
 	 */
 	public CSSStyleDeclaration parseStyleDeclaration(InputSource source)
 			throws IOException;
@@ -71,10 +65,6 @@ public interface CSSParser {
 	/**
 	 * Parse CSS <code>source</code> style declaration with SAC {@link Parser}
 	 * and update the <code>styleDecelaration</code>.
-	 *
-	 * @param styleDeclaration
-	 * @param source
-	 * @throws IOException
 	 */
 	public void parseStyleDeclaration(CSSStyleDeclaration styleDeclaration,
 			InputSource source) throws IOException;
@@ -85,8 +75,6 @@ public interface CSSParser {
 	 *
 	 * @param source
 	 *            CSS value.
-	 * @return
-	 * @throws IOException
 	 */
 	public CSSValue parsePropertyValue(InputSource source) throws IOException;
 
@@ -96,18 +84,12 @@ public interface CSSParser {
 	 *
 	 * @param source
 	 *            CSS rule.
-	 * @return
-	 * @throws IOException
 	 */
 	public CSSRule parseRule(InputSource source) throws IOException;
 
 	/**
 	 * Parse CSS <code>source</code> selectors value with SAC {@link Parser}
 	 * and return {@link SelectorList} instance.
-	 *
-	 * @param source
-	 * @return
-	 * @throws IOException
 	 */
 	public SelectorList parseSelectors(InputSource source) throws IOException;
 
@@ -116,37 +98,27 @@ public interface CSSParser {
 	/**
 	 * Set the SAC {@link DocumentHandlerFactory} factory to get SAC
 	 * {@link ExtendedDocumentHandler} handler used by SAC {@link Parser}.
-	 *
-	 * @param documentHandlerFactory
 	 */
 	public void setDocumentHandlerFactory(
 			DocumentHandlerFactory documentHandlerFactory);
 
 	/**
 	 * Get the SAC {@link ConditionFactory} used by SAC {@link Parser}.
-	 *
-	 * @return
 	 */
 	public ConditionFactory getConditionFactory();
 
 	/**
 	 * Set the SAC {@link ConditionFactory} used by SAC {@link Parser}.
-	 *
-	 * @param conditionFactory
 	 */
 	public void setConditionFactory(ConditionFactory conditionFactory);
 
 	/**
 	 * Get the SAC {@link SelectorFactory} used by SAC {@link Parser}.
-	 *
-	 * @return
 	 */
 	public SelectorFactory getSelectorFactory();
 
 	/**
 	 * Set the SAC {@link SelectorFactory} used by SAC {@link Parser}.
-	 *
-	 * @param selectorFactory
 	 */
 	public void setSelectorFactory(SelectorFactory selectorFactory);
 

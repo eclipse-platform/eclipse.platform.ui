@@ -177,7 +177,6 @@ public class PreferenceConverter {
 
 	/**
 	 * Helper method to construct a point from the given string.
-	 * @param value
 	 * @return Point
 	 */
 	private static Point basicGetPoint(String value) {
@@ -190,7 +189,6 @@ public class PreferenceConverter {
 
 	/**
 	 *  Helper method to construct a rectangle from the given string.
-	 * @param value
 	 * @return Rectangle
 	 */
 	private static Rectangle basicGetRectangle(String value) {

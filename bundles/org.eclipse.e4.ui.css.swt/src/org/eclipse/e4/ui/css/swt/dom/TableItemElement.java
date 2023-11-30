@@ -25,7 +25,6 @@ import org.eclipse.swt.widgets.TableItem;
 
 /**
  * {@link CSSStylableElement} implementation which wrap SWT {@link TableItem}.
- *
  */
 public class TableItemElement extends ItemElement {
 

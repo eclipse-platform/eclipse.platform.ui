@@ -52,7 +52,6 @@ public class EventLoopProgressMonitor extends ProgressMonitorWrapper {
 
 	/**
 	 * Constructs a new instance of the receiver and forwards to monitor.
-	 * @param monitor
 	 */
 	public EventLoopProgressMonitor(IProgressMonitor monitor) {
 		super(monitor);

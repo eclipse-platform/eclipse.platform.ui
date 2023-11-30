@@ -37,7 +37,6 @@ import org.eclipse.core.runtime.Status;
  * @param <M>
  *            the type of the elements in the list on the model side
  * @since 1.0
- *
  */
 public class ListBinding<M, T> extends Binding {
 
@@ -244,9 +243,6 @@ public class ListBinding<M, T> extends Binding {
 	/**
 	 * Merges the provided <code>newStatus</code> into the
 	 * <code>multiStatus</code>.
-	 *
-	 * @param multiStatus
-	 * @param newStatus
 	 */
 	/* package */void mergeStatus(MultiStatus multiStatus, IStatus newStatus) {
 		if (!newStatus.isOK()) {

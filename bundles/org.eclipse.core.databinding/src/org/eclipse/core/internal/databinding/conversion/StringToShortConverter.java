@@ -83,8 +83,6 @@ public class StringToShortConverter extends NumberFormatConverter<Object, Short>
 	}
 
 	/**
-	 * @param numberFormat
-	 * @param primitive
 	 * @return to Short converter with the provided numberFormat
 	 */
 	public static StringToShortConverter toShort(Format numberFormat,

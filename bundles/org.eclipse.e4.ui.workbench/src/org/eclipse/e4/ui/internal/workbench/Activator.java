@@ -161,7 +161,6 @@ public class Activator implements BundleActivator, DebugOptionsListener {
 	/**
 	 * @param level
 	 *            one from {@code LogService} constants
-	 * @param message
 	 * @see LogService#LOG_ERROR
 	 * @see LogService#LOG_WARNING
 	 * @see LogService#LOG_INFO
@@ -177,8 +176,6 @@ public class Activator implements BundleActivator, DebugOptionsListener {
 	/**
 	 * @param level
 	 *            one from {@code LogService} constants
-	 * @param message
-	 * @param exception
 	 * @see LogService#LOG_ERROR
 	 * @see LogService#LOG_WARNING
 	 * @see LogService#LOG_INFO

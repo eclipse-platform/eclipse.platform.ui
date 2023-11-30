@@ -32,7 +32,6 @@ import org.eclipse.core.internal.databinding.IdentitySet;
  * @noextend This class is not intended to be subclassed by clients.
  *
  * @since 1.0
- *
  */
 public class ObservablesManager {
 

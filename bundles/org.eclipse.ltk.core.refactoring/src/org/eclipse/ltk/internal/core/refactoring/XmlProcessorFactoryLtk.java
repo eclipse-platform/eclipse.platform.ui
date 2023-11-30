@@ -74,7 +74,6 @@ public class XmlProcessorFactoryLtk {
 	 * external entities. The builder is not thread safe.
 	 *
 	 * @return javax.xml.parsers.DocumentBuilder
-	 * @throws ParserConfigurationException
 	 */
 	public static DocumentBuilder createDocumentBuilderWithErrorOnDOCTYPE() throws ParserConfigurationException {
 		return DOCUMENT_BUILDER_FACTORY_ERROR_ON_DOCTYPE.newDocumentBuilder();

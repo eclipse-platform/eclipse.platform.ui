@@ -134,7 +134,6 @@ public abstract class ComputedSet<E> extends AbstractObservableSet<E> {
 	 *
 	 * @param realm
 	 *            the realm
-	 *
 	 */
 	public ComputedSet(Realm realm) {
 		this(realm, null);
@@ -174,7 +173,6 @@ public abstract class ComputedSet<E> extends AbstractObservableSet<E> {
 	 * <p>
 	 * The IChangeListener is attached to every dependency.
 	 * </p>
-	 *
 	 */
 	private class PrivateInterface implements Runnable, IChangeListener,
 			IStaleListener {

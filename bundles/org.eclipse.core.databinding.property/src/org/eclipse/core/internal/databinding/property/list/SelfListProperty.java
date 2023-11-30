@@ -27,14 +27,10 @@ import org.eclipse.core.databinding.property.list.SimpleListProperty;
  * @param <E>
  *            type of the elements in the list
  * @since 3.3
- *
  */
 public class SelfListProperty<E> extends SimpleListProperty<List<E>, E> {
 	private final Object elementType;
 
-	/**
-	 * @param elementType
-	 */
 	public SelfListProperty(Object elementType) {
 		this.elementType = elementType;
 	}

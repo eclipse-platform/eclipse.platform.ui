@@ -22,7 +22,6 @@ import org.w3c.dom.css.CSSValue;
  *
  * @version 1.0.0
  * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- *
  */
 public class CSSBorderPropertiesHelpers {
 
@@ -49,9 +48,6 @@ public class CSSBorderPropertiesHelpers {
 	/**
 	 * Update <code>borderProperties</code> instance with border-style
 	 * <code>value</code>.
-	 *
-	 * @param borderProperties
-	 * @param value
 	 */
 	public static void updateCSSPropertyBorderStyle(CSSBorderProperties borderProperties, CSSValue value) {
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
@@ -62,9 +58,6 @@ public class CSSBorderPropertiesHelpers {
 	/**
 	 * Update <code>borderProperties</code> instance with border-color
 	 * <code>value</code>.
-	 *
-	 * @param borderProperties
-	 * @param value
 	 */
 	public static void updateCSSPropertyBorderColor(CSSBorderProperties borderProperties, CSSValue value) {
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
@@ -75,9 +68,6 @@ public class CSSBorderPropertiesHelpers {
 	/**
 	 * Update <code>borderProperties</code> instance with border-width
 	 * <code>value</code>.
-	 *
-	 * @param borderProperties
-	 * @param value
 	 */
 	public static void updateCSSPropertyBorderWidth(CSSBorderProperties borderProperties, CSSValue value) {
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {

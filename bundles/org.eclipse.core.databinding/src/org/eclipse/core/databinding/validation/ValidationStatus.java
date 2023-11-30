@@ -24,17 +24,12 @@ import org.eclipse.core.runtime.Status;
  * Convenience class for creating status objects.
  *
  * @since 3.3
- *
  */
 public class ValidationStatus extends Status {
 
 	/**
 	 * Creates a new validation status with the given severity, message, and
 	 * exception.
-	 *
-	 * @param severity
-	 * @param message
-	 * @param exception
 	 */
 	private ValidationStatus(int severity, String message, Throwable exception) {
 		super(severity, Policy.JFACE_DATABINDING, IStatus.OK, message, exception);
@@ -42,9 +37,6 @@ public class ValidationStatus extends Status {
 
 	/**
 	 * Creates a new validation status with the given severity and message.
-	 *
-	 * @param severity
-	 * @param message
 	 */
 	private ValidationStatus(int severity, String message) {
 		super(severity, Policy.JFACE_DATABINDING,IStatus.OK, message, null);
@@ -127,7 +119,6 @@ public class ValidationStatus extends Status {
 
 	/**
 	 * Equality is based upon instance equality rather than identity.
-	 *
 	 */
 	@Override
 	public boolean equals(Object obj) {

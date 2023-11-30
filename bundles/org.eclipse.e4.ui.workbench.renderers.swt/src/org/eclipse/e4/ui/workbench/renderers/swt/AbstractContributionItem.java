@@ -103,16 +103,10 @@ public abstract class AbstractContributionItem extends ContributionItem {
 	 */
 	private boolean logged = false;
 
-	/**
-	 *
-	 */
 	public AbstractContributionItem() {
 		super();
 	}
 
-	/**
-	 * @param id
-	 */
 	public AbstractContributionItem(String id) {
 		super(id);
 	}
@@ -401,7 +395,6 @@ public abstract class AbstractContributionItem extends ContributionItem {
 	}
 
 	/**
-	 * @param event
 	 * @return whether the event was a drop down on a toolitem
 	 */
 	protected boolean dropdownEvent(Event event) {
@@ -451,13 +444,9 @@ public abstract class AbstractContributionItem extends ContributionItem {
 		}
 	}
 
-	/**
-	 * @param event
-	 */
 	protected abstract void executeItem(Event event);
 
 	/**
-	 * @param event
 	 * @return if the item can be executed
 	 */
 	protected abstract boolean canExecuteItem(Event event);
@@ -484,9 +473,6 @@ public abstract class AbstractContributionItem extends ContributionItem {
 		return menuItemListener;
 	}
 
-	/**
-	 *
-	 */
 	protected void handleHelpRequest() {
 		if (helpService == null)
 			return;
@@ -495,9 +481,6 @@ public abstract class AbstractContributionItem extends ContributionItem {
 			helpService.displayHelp(helpContextId);
 	}
 
-	/**
-	 * @param event
-	 */
 	protected abstract void handleWidgetDispose(Event event);
 
 	protected void updateVisible() {

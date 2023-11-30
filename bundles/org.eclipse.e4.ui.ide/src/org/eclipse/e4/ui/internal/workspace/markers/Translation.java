@@ -61,7 +61,6 @@ public final class Translation {
 	/**
 	 * Retrieves the value of the {@link IMarker#MESSAGE} attribute of the marker.
 	 *
-	 * @param marker
 	 * @return the optional result
 	 */
 	public Optional<String> message(IMarker marker) {
@@ -81,7 +80,6 @@ public final class Translation {
 	 * Retrieves the value of Translation#NAME_ATTRIBUTE if the marker has it.
 	 * Otherwise use the name of the resource.
 	 *
-	 * @param marker
 	 * @return the optional result
 	 */
 	public Optional<String> name(IMarker marker) {

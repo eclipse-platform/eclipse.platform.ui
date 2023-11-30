@@ -35,14 +35,10 @@ import org.eclipse.jface.viewers.StructuredViewer;
  * @param <E> type of the elements in the set
  *
  * @since 3.3
- *
  */
 public abstract class CheckboxViewerCheckedElementsProperty<S extends ICheckable, E> extends ViewerSetProperty<S, E> {
 	private final Object elementType;
 
-	/**
-	 * @param elementType
-	 */
 	public CheckboxViewerCheckedElementsProperty(Object elementType) {
 		this.elementType = elementType;
 	}

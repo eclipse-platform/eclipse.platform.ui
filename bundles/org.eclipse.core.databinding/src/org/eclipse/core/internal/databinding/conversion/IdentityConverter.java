@@ -27,18 +27,11 @@ public class IdentityConverter implements IConverter<Object, Object> {
 
 	private Class<?> toType;
 
-	/**
-	 * @param type
-	 */
 	public IdentityConverter(Class<?> type) {
 		this.fromType = type;
 		this.toType = type;
 	}
 
-	/**
-	 * @param fromType
-	 * @param toType
-	 */
 	public IdentityConverter(Class<?> fromType, Class<?> toType) {
 		this.fromType = fromType;
 		this.toType = toType;
@@ -79,8 +72,6 @@ public class IdentityConverter implements IConverter<Object, Object> {
 	/**
 	 * (Non-API) isPrimitiveTypeMatchedWithBoxed.
 	 *
-	 * @param sourceClass
-	 * @param toClass
 	 * @return true if sourceClass and toType are matched primitive/boxed types
 	 */
 	public boolean isPrimitiveTypeMatchedWithBoxed(Class<?> sourceClass, Class<?> toClass) {

@@ -236,7 +236,6 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 	 * projects and searches will report for both inner and outer resources. The
 	 * filter mentioned only eliminates duplicates that are not from the innermost
 	 * nested project owning the file.
-	 * 
 	 */
 	@Override
 	public synchronized void elementsChanged(Object[] updatedElements) {

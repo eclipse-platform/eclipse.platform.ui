@@ -20,7 +20,6 @@ import org.eclipse.jface.viewers.CheckboxTableViewer;
  * @param <E> type of the elements in the updated viewer
  *
  * @since 3.3
- *
  */
 public class CheckboxTableViewerUpdater<E> extends TableViewerUpdater<E> {
 	private final CheckboxTableViewer checkboxViewer;

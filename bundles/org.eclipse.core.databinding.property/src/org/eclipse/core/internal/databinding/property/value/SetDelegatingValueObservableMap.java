@@ -168,10 +168,6 @@ public class SetDelegatingValueObservableMap<S, K extends S, V> extends Abstract
 
 	private IStaleListener staleListener = staleEvent -> fireStale();
 
-	/**
-	 * @param keySet
-	 * @param valueProperty
-	 */
 	public SetDelegatingValueObservableMap(IObservableSet<K> keySet,
 			DelegatingValueProperty<S, V> valueProperty) {
 		super(keySet.getRealm());

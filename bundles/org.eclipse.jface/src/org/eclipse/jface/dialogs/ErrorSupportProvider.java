@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.Control;
 /**
  * A ErrorSupportProvider defines the area to be shown in an error dialog for extra support information.
  * @since 3.3
- *
  */
 public abstract class ErrorSupportProvider {
 

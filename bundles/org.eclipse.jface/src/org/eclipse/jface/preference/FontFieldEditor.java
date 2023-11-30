@@ -79,8 +79,6 @@ public class FontFieldEditor extends FieldEditor {
 
 		/**
 		 * Constructor for the previewer.
-		 * @param s
-		 * @param parent
 		 */
 		public DefaultPreviewer(String s, Composite parent) {
 			string = s;
@@ -104,7 +102,6 @@ public class FontFieldEditor extends FieldEditor {
 
 		/**
 		 * Set the font to display with
-		 * @param fontData
 		 */
 		public void setFont(FontData[] fontData) {
 			if (font != null) {

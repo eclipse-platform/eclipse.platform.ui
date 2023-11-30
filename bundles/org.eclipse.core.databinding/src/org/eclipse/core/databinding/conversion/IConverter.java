@@ -27,7 +27,6 @@ import java.util.function.Function;
  * @noimplement This interface is not intended to be implemented by clients.
  *              Clients should subclass {@link Converter}.
  * @since 1.0
- *
  */
 public interface IConverter<F, T> {
 

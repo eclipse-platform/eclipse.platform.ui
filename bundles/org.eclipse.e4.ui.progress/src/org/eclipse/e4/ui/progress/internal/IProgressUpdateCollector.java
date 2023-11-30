@@ -27,7 +27,6 @@ public interface IProgressUpdateCollector {
 
 	/**
 	 * Refresh the elements.
-	 * @param elements
 	 */
 	void refresh(Object[] elements);
 
