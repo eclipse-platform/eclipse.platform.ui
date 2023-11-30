@@ -65,7 +65,6 @@ import org.eclipse.ui.internal.views.properties.PropertiesMessages;
  * This viewer also supports the optional categorization of the first level
  * <code>IPropertySheetEntry</code> s by using instances of
  * <code>PropertySheetCategory</code>.
- *
  */
 /* package */
 class PropertySheetViewer extends Viewer {
@@ -843,7 +842,6 @@ class PropertySheetViewer extends Viewer {
 
 	/**
 	 * Update the status line based on the data of item.
-	 * @param item
 	 */
 	protected void updateStatusLine(Widget item) {
 		setMessage(null);

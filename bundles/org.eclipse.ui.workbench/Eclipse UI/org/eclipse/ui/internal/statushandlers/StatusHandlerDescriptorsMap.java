@@ -88,7 +88,6 @@ class StatusHandlerDescriptorsMap {
 	 * Returns status handler descriptors whose prefixes are the most specific for
 	 * given pluginId.
 	 *
-	 * @param pluginId
 	 * @return handler descriptors list
 	 */
 	public List getHandlerDescriptors(String pluginId) {

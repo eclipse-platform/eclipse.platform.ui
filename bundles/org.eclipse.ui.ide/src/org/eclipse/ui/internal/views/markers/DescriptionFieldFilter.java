@@ -26,7 +26,6 @@ import org.eclipse.ui.views.markers.internal.ProblemFilter;
  * DescriptionFieldFilter is the filter for descriptions.
  *
  * @since 3.4
- *
  */
 public class DescriptionFieldFilter extends CompatibilityFieldFilter {
 

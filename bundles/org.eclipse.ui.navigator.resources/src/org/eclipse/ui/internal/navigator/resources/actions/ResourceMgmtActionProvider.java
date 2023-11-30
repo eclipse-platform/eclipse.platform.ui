@@ -59,7 +59,6 @@ import org.eclipse.ui.navigator.ICommonMenuConstants;
 
 /**
  * @since 3.2
- *
  */
 public class ResourceMgmtActionProvider extends CommonActionProvider {
 

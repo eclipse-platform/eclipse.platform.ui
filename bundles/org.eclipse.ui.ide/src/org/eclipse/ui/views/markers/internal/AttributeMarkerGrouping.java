@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
  * markerAttributeGrouping extension.
  *
  * @since 3.2
- *
  */
 public class AttributeMarkerGrouping {
 
@@ -48,7 +47,6 @@ public class AttributeMarkerGrouping {
 
 	/**
 	 * Create a new instance of the receiver from element.
-	 * @param element
 	 */
 	public AttributeMarkerGrouping(IConfigurationElement element) {
 
@@ -96,8 +94,6 @@ public class AttributeMarkerGrouping {
 
 	/**
 	 * Add markerGroup to the list of referenced groups.
-	 *
-	 * @param markerGroup
 	 */
 	public void addGroup(MarkerGroup markerGroup) {
 		groups.add(markerGroup);

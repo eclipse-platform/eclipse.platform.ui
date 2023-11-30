@@ -93,7 +93,6 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 		/**
 		 * Return the objects related to the type.
 		 *
-		 * @param type
 		 * @return the objects related to the type
 		 */
 		public IEditorDescriptor[] getRelatedObjects(IContentType type) {
@@ -114,7 +113,6 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 		/**
 		 * Return the objects related to the filename
 		 *
-		 * @param fileName
 		 * @return the objects related to the filename
 		 */
 		public IEditorDescriptor[] getRelatedObjects(String fileName) {
@@ -183,8 +181,6 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 	/**
 	 * Return an instance of the receiver. Adds listeners into the extension
 	 * registry for dynamic UI purposes.
-	 *
-	 * @param contentTypeManager
 	 */
 	public EditorRegistry(IContentTypeManager contentTypeManager) {
 		super();
@@ -209,7 +205,6 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 	 *                          plugin file and built by the registry reader)
 	 * @param extensions        Collection of file extensions the editor applies to
 	 * @param filenames         Collection of filenames the editor applies to
-	 * @param contentTypeVector
 	 * @param bDefault          Indicates whether the editor should be made the
 	 *                          default editor and hence appear first inside a
 	 *                          FileEditorMapping
@@ -776,8 +771,6 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 	 * @param editorTable The editor table containing the defined editors.
 	 * @param reader      Reader containing the preferences content for the
 	 *                    resources.
-	 *
-	 * @throws WorkbenchException
 	 */
 	public void readResources(Map<String, IEditorDescriptor> editorTable, Reader reader) throws WorkbenchException {
 		XMLMemento memento = XMLMemento.createReadRoot(reader);
@@ -834,11 +827,6 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 		}
 	}
 
-	/**
-	 * @param children
-	 * @param editorTable
-	 * @return
-	 */
 	private List<IEditorDescriptor> getEditorDescriptors(IMemento[] children,
 			Map<String, IEditorDescriptor> editorTable) {
 		if (children == null || children.length == 0) {
@@ -1423,9 +1411,6 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 	 * This method is temporary and exists only to back us off of the
 	 * soon-to-be-removed IContentTypeManager.IRelatedRegistry API.
 	 *
-	 * @param type
-	 * @param fileName
-	 * @param registry
 	 * @return the related objects
 	 */
 	private IEditorDescriptor[] findRelatedObjects(IContentType type, String fileName, RelatedRegistry registry) {
@@ -1607,8 +1592,6 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 	}
 
 	/**
-	 * @param contentType
-	 * @param editor
 	 * @return whether the association between content-type and editor was defined
 	 *         in user space
 	 */
@@ -1617,10 +1600,6 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 				&& this.contentTypeToEditorMappingsFromUser.get(contentType).contains(editor);
 	}
 
-	/**
-	 * @param contentType
-	 * @param editor
-	 */
 	public void removeUserAssociation(IContentType contentType, IEditorDescriptor editor) {
 		if (this.contentTypeToEditorMappingsFromUser.containsKey(contentType)) {
 			this.contentTypeToEditorMappingsFromUser.get(contentType).remove(editor);
@@ -1628,10 +1607,6 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 		saveAssociations();
 	}
 
-	/**
-	 * @param contentType
-	 * @param selectedEditor
-	 */
 	public void addUserAssociation(IContentType contentType, IEditorDescriptor selectedEditor) {
 		if (!this.contentTypeToEditorMappingsFromUser.containsKey(contentType)) {
 			this.contentTypeToEditorMappingsFromUser.put(contentType, new LinkedHashSet<>());

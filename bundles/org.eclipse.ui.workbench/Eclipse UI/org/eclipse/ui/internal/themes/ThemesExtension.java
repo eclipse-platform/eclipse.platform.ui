@@ -23,7 +23,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * @since 3.5
- *
  */
 public class ThemesExtension implements IThemesExtension {
 	public static final String DEFAULT_CATEGORY_ID = "org.eclipse.ui.themes.CssTheme"; //$NON-NLS-1$

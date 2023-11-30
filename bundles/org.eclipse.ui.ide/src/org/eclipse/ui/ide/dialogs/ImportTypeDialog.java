@@ -52,7 +52,6 @@ import org.eclipse.ui.internal.ide.dialogs.RelativePathVariableGroup;
  * linked resources, and/or creating virtual folders.
  * @noextend This class is not intended to be subclassed by clients.
  * @since 3.6
- *
  */
 public class ImportTypeDialog extends TrayDialog {
 
@@ -132,10 +131,6 @@ public class ImportTypeDialog extends TrayDialog {
 		this(shell, selectAppropriateMask(dropOperation, names, target), RelativePathVariableGroup.getPreferredVariable(names, target));
 	}
 
-	/**
-	 * @param parentShell
-	 * @param operationMask
-	 */
 	private ImportTypeDialog(Shell parentShell, int operationMask, String preferredVariable) {
 		super(parentShell);
 
@@ -479,7 +474,6 @@ public class ImportTypeDialog extends TrayDialog {
 	 * Select the most appropriate mode that should be used for the dialog given
 	 * the items dropped on the container, the container type, and the drop operation.
 	 *
-	 * @param dropOperation
 	 * @param resources
 	 * 		The list of items that were dragged
 	 * @param target
@@ -499,7 +493,6 @@ public class ImportTypeDialog extends TrayDialog {
 	 * Select the most appropriate mode that should be used for the dialog given
 	 * the items dropped on the container, the container type, and the drop operation.
 	 *
-	 * @param dropOperation
 	 * @param names
 	 * 		The list of items that were dragged
 	 * @param target

@@ -36,7 +36,6 @@ public class AboutTextManager {
 	/**
 	 * Scan the contents of the about text
 	 *
-	 * @param aboutText
 	 * @return AboutItem
 	 */
 	public static AboutItem scan(String aboutText) {

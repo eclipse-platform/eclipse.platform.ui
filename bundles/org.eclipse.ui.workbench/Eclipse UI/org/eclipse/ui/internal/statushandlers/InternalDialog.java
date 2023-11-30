@@ -144,10 +144,6 @@ public class InternalDialog extends TrayDialog {
 
 	private Map<Object, Object> dialogState;
 
-	/**
-	 * @param dialogState
-	 * @param modal
-	 */
 	public InternalDialog(final Map<Object, Object> dialogState, boolean modal) {
 		super(ProgressManagerUtil.getDefaultParent());
 		this.dialogState = dialogState;
@@ -276,7 +272,6 @@ public class InternalDialog extends TrayDialog {
 	 * This function checks if the dialog is modal.
 	 *
 	 * @return true if the dialog is modal, false otherwise
-	 *
 	 */
 	public boolean isModal() {
 		return ((getShellStyle() & SWT.APPLICATION_MODAL) == SWT.APPLICATION_MODAL);
@@ -378,7 +373,6 @@ public class InternalDialog extends TrayDialog {
 	/**
 	 * Toggles the unfolding of the details area. This is triggered by the user
 	 * pressing the details button.
-	 *
 	 */
 	private boolean toggleDetailsArea() {
 		boolean opened = false;
@@ -654,9 +648,6 @@ public class InternalDialog extends TrayDialog {
 
 	/**
 	 * Hide the button if hide is <code>true</code>.
-	 *
-	 * @param button
-	 * @param hide
 	 */
 	private void hideButton(Button button, boolean hide) {
 		((GridData) button.getLayoutData()).exclude = hide;

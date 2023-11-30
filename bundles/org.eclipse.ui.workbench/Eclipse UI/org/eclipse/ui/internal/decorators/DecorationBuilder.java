@@ -69,8 +69,6 @@ public class DecorationBuilder implements IDecoration {
 
 	/**
 	 * Set the value of the definition we are currently working on.
-	 *
-	 * @param definition
 	 */
 	void setCurrentDefinition(LightweightDecoratorDefinition definition) {
 		this.currentDefinition = definition;
@@ -166,8 +164,6 @@ public class DecorationBuilder implements IDecoration {
 
 	/**
 	 * Apply the previously calculates result to the receiver.
-	 *
-	 * @param result
 	 */
 	void applyResult(DecorationResult result) {
 		prefixes.addAll(result.getPrefixes());

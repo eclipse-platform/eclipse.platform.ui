@@ -279,8 +279,6 @@ public class FilteredTree extends Composite {
 	 *
 	 * @deprecated As of 3.116, replaced by
 	 *             {@link #FilteredTree(Composite, int, PatternFilter, boolean, boolean)}
-	 *
-	 *
 	 */
 	@Deprecated
 	public FilteredTree(Composite parent, int treeStyle, PatternFilter filter) {
@@ -307,7 +305,6 @@ public class FilteredTree extends Composite {
 	 * @since 3.5
 	 * @deprecated As of 3.116, replaced by
 	 *             {@link #FilteredTree(Composite, int, PatternFilter, boolean, boolean)}
-	 *
 	 */
 	@Deprecated
 	public FilteredTree(Composite parent, int treeStyle, PatternFilter filter, boolean useNewLook) {
@@ -424,7 +421,6 @@ public class FilteredTree extends Composite {
 	/**
 	 * Return the first item in the tree that matches the filter pattern.
 	 *
-	 * @param items
 	 * @return the first matching TreeItem
 	 */
 	private TreeItem getFirstMatchingItem(TreeItem[] items) {
@@ -443,7 +439,6 @@ public class FilteredTree extends Composite {
 
 	/**
 	 * Create the refresh job for the receiver.
-	 *
 	 */
 	private void createRefreshJob() {
 		refreshJob = doCreateRefreshJob();
@@ -528,10 +523,6 @@ public class FilteredTree extends Composite {
 			 * Returns true if the job should be canceled (because of timeout or actual
 			 * cancellation).
 			 *
-			 * @param items
-			 * @param monitor
-			 * @param cancelTime
-			 * @param numItemsLeft
 			 * @return true if canceled
 			 */
 			private boolean recursiveExpand(TreeItem[] items, IProgressMonitor monitor, long cancelTime,
@@ -613,7 +604,6 @@ public class FilteredTree extends Composite {
 			/**
 			 * Return the count of treeItem and it's children to infinite depth.
 			 *
-			 * @param treeItem
 			 * @return int
 			 */
 			private int itemCount(TreeItem treeItem) {
@@ -882,7 +872,6 @@ public class FilteredTree extends Composite {
 
 	/**
 	 * Select all text in the filter text field.
-	 *
 	 */
 	protected void selectAll() {
 		if (filterText != null) {
@@ -940,7 +929,6 @@ public class FilteredTree extends Composite {
 	 * change to the tree. See bug 187200.
 	 *
 	 * @since 3.3
-	 *
 	 */
 	class NotifyingTreeViewer extends TreeViewer {
 

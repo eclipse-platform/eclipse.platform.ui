@@ -39,7 +39,6 @@ import org.eclipse.ui.internal.ide.Policy;
  * This class is not intended to be instantiated or used by clients.
  *
  * @since 3.3
- *
  */
 public class WorkspaceUndoMonitor {
 

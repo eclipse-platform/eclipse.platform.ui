@@ -36,7 +36,6 @@ public abstract class BrandingProperties {
 	 *
 	 * @param value          the absolute or relative path
 	 * @param definingBundle bundle to be used for relative paths (may be null)
-	 * @return
 	 */
 	public static URL getUrl(String value, Bundle definingBundle) {
 		try {
@@ -59,7 +58,6 @@ public abstract class BrandingProperties {
 	 *
 	 * @param value          the absolute or relative path
 	 * @param definingBundle bundle to be used for relative paths (may be null)
-	 * @return
 	 */
 	public static ImageDescriptor getImage(String value, Bundle definingBundle) {
 		URL url = getUrl(value, definingBundle);

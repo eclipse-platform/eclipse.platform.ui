@@ -38,9 +38,6 @@ class StatusHandlerProductBindingDescriptor implements IPluginContribution {
 
 	private String handlerId;
 
-	/**
-	 * @param configElement
-	 */
 	public StatusHandlerProductBindingDescriptor(IConfigurationElement configElement) {
 		super();
 		id = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID);

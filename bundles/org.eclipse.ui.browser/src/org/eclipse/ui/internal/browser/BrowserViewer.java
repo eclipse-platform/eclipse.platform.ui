@@ -338,9 +338,6 @@ public class BrowserViewer extends Composite {
 			locationListener.locationChanged(null);
 	}
 
-	/**
-	 *
-	 */
 	private void addBrowserListeners() {
 		if (browser==null) return;
 		// respond to ExternalBrowserInstance StatusTextEvents events by
@@ -641,9 +638,6 @@ public class BrowserViewer extends Composite {
 			browser.stop();
 	}
 
-	/**
-	 *
-	 */
 	private boolean navigate(String url) {
 		Trace.trace(Trace.FINER, "Navigate: " + url); //$NON-NLS-1$
 		if (url != null && url.equals(getURL())) {
@@ -738,9 +732,6 @@ public class BrowserViewer extends Composite {
 		}
 	}
 
-	/**
-	 *
-	 */
 	private void dispose(DisposeEvent event) {
 		showToolbar = false;
 

@@ -128,10 +128,6 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 
 	/**
 	 * Create an instance of the receiver.
-	 *
-	 * @param parentShell
-	 * @param mng
-	 * @param selection
 	 */
 	public PropertyDialog(Shell parentShell, PreferenceManager mng, ISelection selection) {
 		super(parentShell, mng);

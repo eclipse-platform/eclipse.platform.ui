@@ -78,7 +78,6 @@ public final class ColumnLayoutData {
 	}
 	/**
 	 * The default constructor.
-	 *
 	 */
 	public ColumnLayoutData() {
 	}

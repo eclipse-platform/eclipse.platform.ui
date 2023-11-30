@@ -50,7 +50,6 @@ import org.eclipse.osgi.util.NLS;
  * anything in-between non-alphanumeric characters) and searches the document highlighting all like words.
  *
  * E.g. if your file contains "t^he dog in the bog" and you leave your caret at ^ you will get both instances of 'the' highlighted.
- *
  */
 public class DefaultWordHighlightStrategy implements IReconcilingStrategy, IReconcilingStrategyExtension, IPreferenceChangeListener {
 

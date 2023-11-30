@@ -86,7 +86,6 @@ import org.eclipse.ui.wizards.IWizardRegistry;
  *
  * This class also takes care of refreshing these links when the user switches
  * the perspective.
- *
  */
 public final class EmptyWorkspaceHelper {
 

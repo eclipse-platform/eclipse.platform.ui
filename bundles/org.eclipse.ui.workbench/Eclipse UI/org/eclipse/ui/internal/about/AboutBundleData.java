@@ -203,7 +203,6 @@ public class AboutBundleData extends AboutData {
 		 * A user presentable multi-line text description of the how the bundle is
 		 * signed.
 		 *
-		 * @param bundle
 		 * @return a description of the how the bundle is signed.
 		 */
 		String getSigningDetails(Bundle bundle);

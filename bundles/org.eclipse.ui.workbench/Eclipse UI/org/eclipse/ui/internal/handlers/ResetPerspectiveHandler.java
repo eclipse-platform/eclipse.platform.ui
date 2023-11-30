@@ -35,7 +35,6 @@ import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 
 /**
  * @since 3.5
- *
  */
 public class ResetPerspectiveHandler extends AbstractHandler {
 

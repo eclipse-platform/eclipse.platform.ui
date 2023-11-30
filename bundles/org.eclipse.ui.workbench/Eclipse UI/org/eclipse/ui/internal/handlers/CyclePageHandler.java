@@ -47,13 +47,9 @@ import org.eclipse.ui.part.WorkbenchPart;
  * of pages.
  *
  * @since 3.4
- *
  */
 public class CyclePageHandler extends FilteredTableBaseHandler {
 
-	/**
-	 *
-	 */
 	private static final String K_PAGE = "page"; //$NON-NLS-1$
 	/**
 	 * The character limit before text is truncated.

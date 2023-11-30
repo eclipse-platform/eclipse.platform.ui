@@ -925,7 +925,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 *
 	 * @param w     the parent window
 	 * @param input the page input
-	 * @throws WorkbenchException
 	 */
 	public WorkbenchPage(WorkbenchWindow w, IAdaptable input) throws WorkbenchException {
 		super();
@@ -1550,8 +1549,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 	/**
 	 * Enables or disables listener notifications. This is used to delay listener
 	 * notifications until the end of a public method.
-	 *
-	 * @param shouldDefer
 	 */
 	private void deferUpdates(boolean shouldDefer) {
 		if (shouldDefer) {
@@ -3808,7 +3805,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * succeeded or not.
 	 *
 	 * @param saveable the saveable part to save
-	 * @param part
 	 * @param confirm  whether the user should be prompted for confirmation of the
 	 *                 save request
 	 * @param closing  whether the part will be closed after the save operation has
@@ -3937,8 +3933,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * contribution but whose contributing bundle is no longer available. In order
 	 * to allow it to behave correctly within the environment (for Close, Reset...)
 	 * we turn it into a 'custom' perspective on its first activation.
-	 *
-	 * @return
 	 */
 	private PerspectiveDescriptor fixOrphanPerspective(MPerspective mperspective) {
 		PerspectiveRegistry reg = (PerspectiveRegistry) PlatformUI.getWorkbench().getPerspectiveRegistry();
@@ -4097,7 +4091,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 	}
 
 	/**
-	 * @param perspective
 	 * @return never null
 	 */
 	private MPerspective createPerspective(IPerspectiveDescriptor perspective) {
@@ -5502,9 +5495,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 		persp.getTags().addAll(newWizards);
 	}
 
-	/**
-	 *
-	 */
 	public void resetToolBarLayout() {
 		ICoolBarManager2 mgr = (ICoolBarManager2) legacyWindow.getCoolBarManager2();
 		mgr.resetItemOrder();
@@ -5515,8 +5505,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * active part according to the part service. This method should only be called
 	 * in the case of workbench shutdown, where E4 does not fire deactivate
 	 * listeners on the active part.
-	 *
-	 * @param part
 	 */
 	public void firePartDeactivatedIfActive(MPart part) {
 		if (partService.getActivePart() == part) {

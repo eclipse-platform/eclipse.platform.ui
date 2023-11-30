@@ -41,7 +41,6 @@ import org.eclipse.ui.views.markers.internal.MarkerTypesModel;
  * This class is not intended to be subclassed by clients.
  *
  * @since 3.3
- *
  */
 abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 
@@ -103,7 +102,6 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	 *            the progress monitor to use for the delete
 	 * @throws CoreException
 	 *             propagates any CoreExceptions thrown from the resources API
-	 *
 	 */
 	protected void deleteMarkers(int work, IProgressMonitor monitor)
 			throws CoreException {
@@ -160,7 +158,6 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	 *            considered to be a replacement of the previous attributes.
 	 * @throws CoreException
 	 *             propagates any CoreExceptions thrown from the resources API
-	 *
 	 */
 	protected void updateMarkers(int work, IProgressMonitor monitor,
 			boolean mergeAttributes) throws CoreException {
@@ -382,7 +379,6 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	 *
 	 * @return the status indicating the projected outcome of deleting the
 	 *         markers.
-	 *
 	 */
 	protected IStatus getMarkerDeletionStatus() {
 		if (markersExist()) {
@@ -400,7 +396,6 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	 *
 	 * @return the status indicating the projected outcome of creating the
 	 *         markers.
-	 *
 	 */
 	protected IStatus getMarkerCreationStatus() {
 		if (!resourcesExist()) {
@@ -420,7 +415,6 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	 *
 	 * @return the status indicating the projected outcome of updating the
 	 *         markers.
-	 *
 	 */
 	protected IStatus getMarkerUpdateStatus() {
 		if (!markersExist()) {

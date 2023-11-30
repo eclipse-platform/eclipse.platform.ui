@@ -31,7 +31,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * The registry of status handlers extensions.
  *
  * @since 3.3
- *
  */
 public class StatusHandlerRegistry implements IExtensionChangeHandler {
 
@@ -135,7 +134,6 @@ public class StatusHandlerRegistry implements IExtensionChangeHandler {
 	 * Returns a list of handler descriptors which should be used for statuses with
 	 * given plugin id.
 	 *
-	 * @param pluginId
 	 * @return list of handler descriptors
 	 */
 	public List getHandlerDescriptors(String pluginId) {

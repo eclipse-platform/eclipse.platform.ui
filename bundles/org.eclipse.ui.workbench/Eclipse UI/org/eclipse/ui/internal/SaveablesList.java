@@ -121,8 +121,6 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	/**
 	 * returns true if the given key was added for the first time
 	 *
-	 * @param referenceMap
-	 * @param key
 	 * @return true if the ref count of the given key is now 1
 	 */
 	private boolean incrementRefCount(Map<Saveable, Integer> referenceMap, Saveable key) {
@@ -168,7 +166,6 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	/**
 	 * returns true if the given key has been removed
 	 *
-	 * @param key
 	 * @return true if the ref count of the given key was 1
 	 */
 	private boolean decrementRefCount(Saveable key) {
@@ -359,8 +356,6 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 
 	/**
 	 * Updates the set of non-part saveables sources.
-	 *
-	 * @param source
 	 */
 	private void updateNonPartSource(ISaveablesSource source) {
 		Saveable[] saveables = source.getSaveables();
@@ -371,10 +366,6 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 		}
 	}
 
-	/**
-	 * @param source
-	 * @param modelArray
-	 */
 	private void removeModels(Object source, Saveable[] modelArray) {
 		List<Saveable> removed = new ArrayList<>();
 		for (Saveable model : modelArray) {
@@ -388,10 +379,6 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 		}
 	}
 
-	/**
-	 * @param source
-	 * @param modelArray
-	 */
 	private void addModels(Object source, Saveable[] modelArray) {
 		List<Saveable> added = new ArrayList<>();
 		for (Saveable model : modelArray) {
@@ -405,9 +392,6 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 		}
 	}
 
-	/**
-	 * @param event
-	 */
 	private void fireModelLifecycleEvent(SaveablesLifecycleEvent event) {
 		for (ISaveablesLifecycleListener listener : listeners) {
 			listener.handleLifecycleEvent(event);
@@ -425,8 +409,6 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	 * <p>
 	 * Listeners should ignore all other event types, including PRE_CLOSE. There is
 	 * no guarantee that listeners are notified before models are closed.
-	 *
-	 * @param listener
 	 */
 	public void addModelLifecycleListener(ISaveablesLifecycleListener listener) {
 		listeners.add(listener);
@@ -435,19 +417,12 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	/**
 	 * Removes the given listener from the list of listeners. Has no effect if the
 	 * given listener is not contained in the list.
-	 *
-	 * @param listener
 	 */
 	public void removeModelLifecycleListener(ISaveablesLifecycleListener listener) {
 		listeners.remove(listener);
 	}
 
 	/**
-	 * @param partsToClose
-	 * @param addNonPartSources
-	 * @param save
-	 * @param window
-	 * @param saveOptions
 	 * @return the post close info to be passed to postClose
 	 */
 	public Object preCloseParts(List<IWorkbenchPart> partsToClose, boolean addNonPartSources, boolean save,
@@ -465,9 +440,6 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	}
 
 	/**
-	 * @param partsToClose
-	 * @param save
-	 * @param window
 	 * @return the post close info to be passed to postClose
 	 */
 	public Object preCloseParts(List<IWorkbenchPart> partsToClose, boolean save, final IWorkbenchWindow window) {
@@ -571,9 +543,6 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	}
 
 	/**
-	 * @param window
-	 * @param modelsClosing
-	 * @param canCancel
 	 * @return true if the user canceled
 	 */
 	private boolean promptForSavingIfNecessary(final IWorkbenchWindow window, Set<Saveable> modelsClosing,
@@ -608,10 +577,6 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 				: promptForSaving(modelsToSave, shellProvider, window, canCancel, false, saveOptionMap);
 	}
 
-	/**
-	 * @param modelsClosing
-	 * @param modelsDecrementing
-	 */
 	private void fillModelsClosing(Set<Saveable> modelsClosing, Map<Saveable, Integer> modelsDecrementing) {
 		for (Entry<Saveable, Integer> entry : modelsDecrementing.entrySet()) {
 			Saveable model = entry.getKey();
@@ -821,7 +786,6 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	 * @param runnableContext a runnable context that will be used to provide a
 	 *                        progress monitor while the save is taking place.
 	 *                        Clients can use a workbench window for this.
-	 * @param blockUntilSaved
 	 * @return <code>true</code> if the operation was canceled
 	 */
 	public boolean saveModels(final List<Saveable> finalModels, final IShellProvider shellProvider,
@@ -857,9 +821,6 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 		private Set<Saveable> modelsClosing = new HashSet<>();
 	}
 
-	/**
-	 * @param postCloseInfoObject
-	 */
 	public void postClose(Object postCloseInfoObject) {
 		PostCloseInfo postCloseInfo = (PostCloseInfo) postCloseInfoObject;
 		List<Saveable> removed = new ArrayList<>();
@@ -900,16 +861,10 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 		}
 	}
 
-	/**
-	 * @param part
-	 */
 	public void postOpen(IWorkbenchPart part) {
 		addModels(part, getSaveables(part));
 	}
 
-	/**
-	 * @param part
-	 */
 	public void dirtyChanged(IWorkbenchPart part) {
 		Saveable[] saveables = getSaveables(part);
 		if (saveables.length > 0) {
@@ -921,7 +876,6 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	/**
 	 * For testing purposes. Not to be called by clients.
 	 *
-	 * @param model
 	 * @return never null
 	 */
 	public Object[] testGetSourcesForModel(Saveable model) {

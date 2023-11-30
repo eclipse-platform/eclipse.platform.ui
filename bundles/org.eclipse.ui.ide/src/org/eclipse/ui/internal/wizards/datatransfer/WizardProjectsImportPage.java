@@ -122,7 +122,6 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 
 	/**
 	 * @since 3.5
-	 *
 	 */
 	private final class ProjectLabelProvider extends LabelProvider implements IColorProvider{
 
@@ -148,7 +147,6 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 
 	/**
 	 * Class declared public only for test suite.
-	 *
 	 */
 	public class ProjectRecord {
 		File projectSystemFile;
@@ -169,8 +167,6 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 
 		/**
 		 * Create a record for a project based on the info in the file.
-		 *
-		 * @param file
 		 */
 		ProjectRecord(File file) {
 			projectSystemFile = file;
@@ -395,7 +391,6 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 
 	/**
 	 * Creates a new project creation wizard page.
-	 *
 	 */
 	public WizardProjectsImportPage() {
 		this("wizardExternalProjectsPage", null, null); //$NON-NLS-1$
@@ -403,8 +398,6 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 
 	/**
 	 * Create a new instance of the receiver.
-	 *
-	 * @param pageName
 	 */
 	public WizardProjectsImportPage(String pageName) {
 		this(pageName,null, null);
@@ -413,9 +406,6 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 	/**
 	 * More (many more) parameters.
 	 *
-	 * @param pageName
-	 * @param initialPath
-	 * @param currentSelection
 	 * @since 3.5
 	 */
 	public WizardProjectsImportPage(String pageName,String initialPath,
@@ -460,9 +450,6 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 
 	}
 
-	/**
-	 * @param workArea
-	 */
 	private void createWorkingSetGroup(Composite workArea) {
 		WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
 		String[] workingSetIds = Arrays.stream(registry.getNewPageWorkingSetDescriptors())
@@ -527,8 +514,6 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 
 	/**
 	 * Create the checkbox list for the found projects.
-	 *
-	 * @param workArea
 	 */
 	private void createProjectsList(Composite workArea) {
 
@@ -603,8 +588,6 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 
 	/**
 	 * Create the selection buttons in the listComposite.
-	 *
-	 * @param listComposite
 	 */
 	private void createSelectionButtons(Composite listComposite) {
 		Composite buttonsComposite = new Composite(listComposite, SWT.NONE);
@@ -854,8 +837,6 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 	/**
 	 * Update the list of projects based on path. Method declared public only
 	 * for test suite.
-	 *
-	 * @param path
 	 */
 	public void updateProjectsList(final String path) {
 		updateProjectsListAndPreventFocusLostHandling(path, false);
@@ -1084,8 +1065,6 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 	/**
 	 * Collect the list of .project files that are under directory into files.
 	 *
-	 * @param files
-	 * @param directory
 	 * @param directoriesVisited
 	 *            Set of canonical paths of directories, used as recursion guard
 	 * @param nestedProjects
@@ -1157,7 +1136,6 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 	/**
 	 * Collect the list of .project files that are under directory into files.
 	 *
-	 * @param files
 	 * @param monitor
 	 * 		The monitor to report to
 	 * @return boolean <code>true</code> if the operation was completed.
@@ -1341,9 +1319,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 	/**
 	 * Create the project described in record.
 	 *
-	 * @param record
 	 * @return status of the creation
-	 * @throws InterruptedException
 	 */
 	private IStatus createExistingProject(final ProjectRecord record, IProgressMonitor mon)
 			throws InterruptedException {

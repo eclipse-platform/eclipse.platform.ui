@@ -447,10 +447,6 @@ public class MenuHelper {
 		return getIconURI(descriptor, workbench);
 	}
 
-	/**
-	 * @param item
-	 * @param disabledIconURI
-	 */
 	public static void setDisabledIconURI(MToolItem item, String disabledIconURI) {
 		item.getTransientData().put(IPresentationEngine.DISABLED_ICON_IMAGE_KEY, disabledIconURI);
 	}

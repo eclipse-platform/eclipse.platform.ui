@@ -33,7 +33,6 @@ import org.eclipse.ui.internal.dialogs.DialogUtil;
  * Open a new editor on the active editor's input.
  *
  * @since 3.4
- *
  */
 public class NewEditorHandler extends AbstractHandler {
 

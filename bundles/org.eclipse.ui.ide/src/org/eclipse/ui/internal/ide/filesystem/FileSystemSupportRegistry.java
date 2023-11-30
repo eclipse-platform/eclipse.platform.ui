@@ -44,7 +44,6 @@ import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
 
 /**
  * @since 3.2
- *
  */
 public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 
@@ -130,9 +129,6 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 
 	/**
 	 * Process the extension and register the result with the tracker.
-	 *
-	 * @param tracker
-	 * @param extension
 	 */
 	private void processExtension(IExtensionTracker tracker, IExtension extension) {
 		for (IConfigurationElement configElement : extension.getConfigurationElements()) {
@@ -147,7 +143,6 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 	/**
 	 * Return a new FileSystemContribution.
 	 *
-	 * @param element
 	 * @return FileSystemContribution or <code>null</code> if there is an
 	 *         exception.
 	 */

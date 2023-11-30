@@ -490,8 +490,6 @@ public class DeleteResourceAction extends SelectionListenerAction {
 
 	/**
 	 * Schedule a job to delete the resources to delete.
-	 *
-	 * @param resourcesToDelete
 	 */
 	private void scheduleDeleteJob(final List<? extends IResource> resourcesToDelete) {
 		// use a non-workspace job with a runnable inside so we can avoid

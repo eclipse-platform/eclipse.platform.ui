@@ -31,7 +31,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * @since 3.102.0
- *
  */
 public class MenuFactoryGenerator {
 	private MApplication application;

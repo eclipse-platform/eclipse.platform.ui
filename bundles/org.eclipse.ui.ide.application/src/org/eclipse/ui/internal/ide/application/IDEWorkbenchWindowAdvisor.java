@@ -259,8 +259,6 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
 	/**
 	 * Hooks the listeners needed on the window
-	 *
-	 * @param configurer
 	 */
 	private void hookTitleUpdateListeners(IWorkbenchWindowConfigurer configurer) {
 		// hook up the listeners to update the window title

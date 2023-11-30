@@ -203,8 +203,6 @@ public class LogEntry extends AbstractEntry {
 
 	/**
 	 * Processes a given line from the log file
-	 * @param line
-	 * @throws ParseException
 	 */
 	public void processEntry(String line) throws ParseException {
 		//!ENTRY <pluginID> <severity> <code> <date>
@@ -262,7 +260,6 @@ public class LogEntry extends AbstractEntry {
 
 	/**
 	 * Adds the given token to the given buffer, adding a space as needed
-	 * @param buffer
 	 * @param token
 	 *
 	 * @since 3.6
@@ -276,9 +273,7 @@ public class LogEntry extends AbstractEntry {
 
 	/**
 	 * Processes the given sub-entry from the log
-	 * @param line
 	 * @return the depth of the sub-entry
-	 * @throws ParseException
 	 */
 	public int processSubEntry(String line) throws ParseException {
 		//!SUBENTRY <depth> <pluginID> <severity> <code> <date>
@@ -334,7 +329,6 @@ public class LogEntry extends AbstractEntry {
 	/**
 	 * Sets the stack to the given stack value.
 	 * No validation is performed on the new value.
-	 * @param stack
 	 */
 	void setStack(String stack) {
 		this.stack = stack;
@@ -343,7 +337,6 @@ public class LogEntry extends AbstractEntry {
 	/**
 	 * Sets the message to the given message value.
 	 * No validation is performed on the new value
-	 * @param message
 	 */
 	void setMessage(String message) {
 		this.message = message;
@@ -351,7 +344,6 @@ public class LogEntry extends AbstractEntry {
 
 	/**
 	 * Process the given status and sub-statuses to fill this entry
-	 * @param status
 	 */
 	private void processStatus(IStatus status, LogSession session) {
 		pluginId = status.getPlugin();

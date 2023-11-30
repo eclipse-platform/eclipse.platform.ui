@@ -1749,9 +1749,6 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 		return true;
 	}
 
-	/**
-	 *
-	 */
 	private void initializeWorkbenchImages() {
 		StartupThreading.runWithoutExceptions(new StartupRunnable() {
 			@Override
@@ -2184,11 +2181,6 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 		return result;
 	}
 
-	/**
-	 * @param id
-	 * @param rootContext
-	 * @return
-	 */
 	private MBindingContext searchContexts(String id, List<MBindingContext> rootContext) {
 		for (MBindingContext context : rootContext) {
 			if (context.getElementId().equals(id)) {
@@ -2216,8 +2208,6 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	}
 
 	/**
-	 * @param bindingTables
-	 * @param id
 	 * @return true if this BT already exists
 	 */
 	private boolean contains(List<MBindingTable> bindingTables, String id) {
@@ -3453,8 +3443,6 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	 *
 	 * @param menuIds          The identifiers of the menu that is now showing; must
 	 *                         not be <code>null</code>.
-	 * @param localSelection
-	 * @param localEditorInput
 	 */
 	public void addShowingMenus(final Set menuIds, final ISelection localSelection, final ISelection localEditorInput) {
 		menuSourceProvider.addShowingMenus(menuIds, localSelection, localEditorInput);
@@ -3471,8 +3459,6 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	 *
 	 * @param menuIds          The identifiers of the menu that is now hidden; must
 	 *                         not be <code>null</code>.
-	 * @param localSelection
-	 * @param localEditorInput
 	 */
 	public void removeShowingMenus(final Set menuIds, final ISelection localSelection,
 			final ISelection localEditorInput) {

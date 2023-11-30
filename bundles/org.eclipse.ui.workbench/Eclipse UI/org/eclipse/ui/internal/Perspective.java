@@ -29,9 +29,6 @@ import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 
-/**
- *
- */
 public class Perspective {
 
 	private final PerspectiveDescriptor descriptor;

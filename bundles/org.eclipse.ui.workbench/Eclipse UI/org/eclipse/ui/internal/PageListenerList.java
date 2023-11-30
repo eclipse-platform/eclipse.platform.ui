@@ -41,11 +41,6 @@ public class PageListenerList extends EventManager {
 
 	/**
 	 * Calls a page listener with associated performance event instrumentation
-	 *
-	 * @param runnable
-	 * @param listener
-	 * @param page
-	 * @param description
 	 */
 	private void fireEvent(SafeRunnable runnable, IPageListener listener, IWorkbenchPage page, String description) {
 		String label = null;// for debugging

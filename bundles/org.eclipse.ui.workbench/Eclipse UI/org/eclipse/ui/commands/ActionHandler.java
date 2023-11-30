@@ -78,7 +78,6 @@ public final class ActionHandler extends AbstractHandler {
 	 * <code>Object</code>.
 	 *
 	 * This map is always null if there are no IHandlerListeners registered.
-	 *
 	 */
 	private Map attributeValuesByName;
 
@@ -150,7 +149,6 @@ public final class ActionHandler extends AbstractHandler {
 	 * property change listener from the underlying action.
 	 *
 	 * @since 3.1
-	 *
 	 */
 	private void detachListener() {
 		this.action.removePropertyChangeListener(propertyChangeListener);
@@ -212,7 +210,6 @@ public final class ActionHandler extends AbstractHandler {
 	 *
 	 * @return A map of the attribute values indexed by the attribute name. The
 	 *         attributes names are strings, but the values can by any object.
-	 *
 	 */
 	private Map getAttributeValuesByNameFromAction() {
 		Map map = new HashMap();

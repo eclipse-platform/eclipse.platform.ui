@@ -37,10 +37,6 @@ public class StickyViewDescriptor implements IStickyViewDescriptor, IPluginContr
 	public static final String STICKY_FOLDER_RIGHT = "stickyFolderRight"; //$NON-NLS-1$
 
 
-	/**
-	 * @param element
-	 * @throws CoreException
-	 */
 	public StickyViewDescriptor(IConfigurationElement element) throws CoreException {
 		this.configurationElement = element;
 		id = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID);

@@ -78,7 +78,6 @@ public class NavigatorPlugin extends AbstractUIPlugin {
 
 		/**
 		 * Creates a Job which offloads the logging work into a non-UI thread.
-		 *
 		 */
 		public LogJob() {
 			super(CommonNavigatorMessages.LoggingJob);
@@ -161,10 +160,6 @@ public class NavigatorPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Record an error against this plugin's log.
-	 *
-	 * @param aCode
-	 * @param aMessage
-	 * @param anException
 	 */
 	public static void logError(int aCode, String aMessage,
 			Throwable anException) {
@@ -175,11 +170,6 @@ public class NavigatorPlugin extends AbstractUIPlugin {
 	/**
 	 *
 	 * Record a message against this plugin's log.
-	 *
-	 * @param severity
-	 * @param aCode
-	 * @param aMessage
-	 * @param exception
 	 */
 	public static void log(int severity, int aCode, String aMessage,
 			Throwable exception) {
@@ -189,8 +179,6 @@ public class NavigatorPlugin extends AbstractUIPlugin {
 	/**
 	 *
 	 * Record a status against this plugin's log.
-	 *
-	 * @param aStatus
 	 */
 	public static void log(IStatus aStatus) {
 		//getDefault().getLog().log(aStatus);
@@ -217,7 +205,6 @@ public class NavigatorPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * @param selection
 	 * @return an evaluation context
 	 */
 	public static IEvaluationContext getEvalContext(Object selection) {
@@ -249,8 +236,6 @@ public class NavigatorPlugin extends AbstractUIPlugin {
 	/**
 	 * Safely evaluation an expression, logging appropriately on error
 	 *
-	 * @param expression
-	 * @param scope
 	 * @return the EvaluationResult
 	 */
 	public static EvaluationResult safeEvaluate(Expression expression, IEvaluationContext scope) {
@@ -264,10 +249,6 @@ public class NavigatorPlugin extends AbstractUIPlugin {
 	/**
 	 * Create a status associated with this plugin.
 	 *
-	 * @param severity
-	 * @param aCode
-	 * @param aMessage
-	 * @param exception
 	 * @return A status configured with this plugin's id and the given parameters.
 	 */
 	public static IStatus createStatus(int severity, int aCode,
@@ -278,9 +259,6 @@ public class NavigatorPlugin extends AbstractUIPlugin {
 
 	/**
 	 *
-	 * @param aCode
-	 * @param aMessage
-	 * @param exception
 	 * @return A status configured with this plugin's id and the given parameters.
 	 */
 	public static IStatus createErrorStatus(int aCode, String aMessage,

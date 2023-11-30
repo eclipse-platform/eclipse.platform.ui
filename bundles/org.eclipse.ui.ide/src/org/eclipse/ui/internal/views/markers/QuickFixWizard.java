@@ -39,7 +39,6 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  * QuickFixWizard is the wizard for quick fixes.
  *
  * @since 3.4
- *
  */
 class QuickFixWizard extends Wizard {
 

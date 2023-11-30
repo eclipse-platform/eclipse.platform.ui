@@ -37,9 +37,6 @@ public class TriggerPointManager implements ITriggerPointManager, IExtensionChan
 
 	private HashMap<String, AbstractTriggerPoint> triggerMap = new HashMap<>();
 
-	/**
-	 *
-	 */
 	public TriggerPointManager() {
 		super();
 		triggerMap.put(ITriggerPointManager.UNKNOWN_TRIGGER_POINT_ID, new AbstractTriggerPoint() {

@@ -22,8 +22,6 @@ import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard;
 
-/**
- */
 public class ResourcePerspective implements IPerspectiveFactory {
 
 	/**

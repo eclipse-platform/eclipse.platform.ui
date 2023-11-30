@@ -32,7 +32,6 @@ import org.eclipse.ui.views.markers.MarkerItem;
  * MarkerCompletionField is the class that specifies the completion entry.
  *
  * @since 3.4
- *
  */
 public class MarkerCompletionField extends MarkerField {
 
@@ -42,8 +41,6 @@ public class MarkerCompletionField extends MarkerField {
 
 		/**
 		 * Create a new instance of the receiver.
-		 *
-		 * @param viewer
 		 */
 		public CompletionEditingSupport(ColumnViewer viewer) {
 			super(viewer);
@@ -132,7 +129,6 @@ public class MarkerCompletionField extends MarkerField {
 	/**
 	 * Return the constant that indicates whether or not the receiver is done
 	 *
-	 * @param item
 	 * @return 1 if it is done, 0 if it not and -1 if it cannot be determined.
 	 */
 	private int getDoneConstant(MarkerItem item) {
@@ -158,7 +154,6 @@ public class MarkerCompletionField extends MarkerField {
 	/**
 	 * Get the image for item.
 	 *
-	 * @param element
 	 * @return Image
 	 */
 	private Image getImage(Object element) {

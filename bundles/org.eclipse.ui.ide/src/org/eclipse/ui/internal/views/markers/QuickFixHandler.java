@@ -55,16 +55,11 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  * QuickFixHandler is the command handler for the quick fix dialog.
  *
  * @since 3.4
- *
  */
 public class QuickFixHandler extends MarkerViewHandler {
 
 	private static class QuickFixWizardDialog extends WizardDialog {
 
-		/**
-		 * @param parentShell
-		 * @param newWizard
-		 */
 		public QuickFixWizardDialog(Shell parentShell, IWizard newWizard) {
 			super(parentShell, newWizard);
 			setShellStyle(SWT.CLOSE | SWT.MAX | SWT.TITLE | SWT.BORDER

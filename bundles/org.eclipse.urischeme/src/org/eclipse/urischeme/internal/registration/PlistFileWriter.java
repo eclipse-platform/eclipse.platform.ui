@@ -98,7 +98,6 @@ public class PlistFileWriter {
 	 *
 	 * @see <a href= "https://tools.ietf.org/html/rfc3986#section-3.1">Uniform
 	 *      Resource Identifier (URI): Generic Syntax</a>
-	 *
 	 */
 	public void addScheme(String scheme, String schemeDescription) {
 		// check precondition
@@ -153,7 +152,6 @@ public class PlistFileWriter {
 	 *
 	 * @see <a href=
 	 *      "https://tools.ietf.org/html/rfc3986#section-3.1">https://tools.ietf.org/html/rfc3986#section-3.1</a>
-	 *
 	 */
 	public void removeScheme(String scheme) {
 		Util.assertUriSchemeIsLegal(scheme);
@@ -174,7 +172,6 @@ public class PlistFileWriter {
 	 *
 	 * @param writer The Writer to which the xml should be written to, e.g.
 	 *               {@link BufferedWriter}
-	 *
 	 */
 	public void writeTo(Writer writer) {
 		boolean hasDict = false;

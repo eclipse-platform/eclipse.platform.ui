@@ -77,9 +77,6 @@ public class StatusUtil {
 	 * Returns a localized message describing the given exception. If the given
 	 * exception does not have a localized message, this returns the string "An
 	 * error occurred".
-	 *
-	 * @param exception
-	 * @return
 	 */
 	public static String getLocalizedMessage(Throwable exception) {
 		String message = exception.getLocalizedMessage();
@@ -102,10 +99,6 @@ public class StatusUtil {
 	/**
 	 * Creates a new Status based on the original status, but with a different
 	 * message
-	 *
-	 * @param originalStatus
-	 * @param newMessage
-	 * @return
 	 */
 	public static IStatus newStatus(IStatus originalStatus, String newMessage) {
 		return new Status(originalStatus.getSeverity(), originalStatus.getPlugin(), originalStatus.getCode(),

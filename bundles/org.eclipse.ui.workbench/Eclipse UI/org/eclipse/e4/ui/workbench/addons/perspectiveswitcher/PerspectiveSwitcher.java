@@ -327,7 +327,6 @@ public class PerspectiveSwitcher {
 	/**
 	 * Validates if the event should be processed by this component returns true
 	 *
-	 * @param event
 	 * @param perspectiveStack
 	 *            Indicates if the event should be evaluated for a perspective
 	 *            stack or a perspective
@@ -349,21 +348,9 @@ public class PerspectiveSwitcher {
 		return false;
 	}
 
-	/**
-	 *
-	 */
 	protected Point downPos = null;
-	/**
-	 *
-	 */
 	protected ToolItem dragItem = null;
-	/**
-	 *
-	 */
 	protected boolean dragging = false;
-	/**
-	 *
-	 */
 	protected Shell dragShell = null;
 
 	private void track(MouseEvent e) {

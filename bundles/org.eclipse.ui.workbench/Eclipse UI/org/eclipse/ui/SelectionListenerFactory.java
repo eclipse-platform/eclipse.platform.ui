@@ -98,7 +98,6 @@ import org.eclipse.ui.internal.PartSelectionListener;
  * </pre>
  *
  * @since 3.117
- *
  */
 public class SelectionListenerFactory {
 
@@ -108,7 +107,6 @@ public class SelectionListenerFactory {
 	 *
 	 * Clients do not have to implement this model. For usage information see the
 	 * javadoc of {@link SelectionListenerFactory}.
-	 *
 	 */
 	public interface ISelectionModel {
 
@@ -154,7 +152,6 @@ public class SelectionListenerFactory {
 
 	/**
 	 * Static class to hold the predicates for this factory.
-	 *
 	 */
 	public static class Predicates {
 
@@ -233,7 +230,6 @@ public class SelectionListenerFactory {
 		 * Empty selections can be used to clear the UI but often the UI is left as it
 		 * is. Use with care.
 		 * </p>
-		 *
 		 */
 		public static Predicate<ISelectionModel> emptySelection = model -> model.getCurrentSelection() != null
 				&& !model.getCurrentSelection().isEmpty();
@@ -284,7 +280,6 @@ public class SelectionListenerFactory {
 		 * A part will broadcast its selection again when it gets focus. This can cause
 		 * unneeded reactions on selections that the listener already has.
 		 * </p>
-		 *
 		 */
 		public static Predicate<ISelectionModel> alreadyDelivered = model -> !(Objects
 				.equals(model.getCurrentSelectionPart(), model.getLastDeliveredSelectionPart())
@@ -410,7 +405,6 @@ public class SelectionListenerFactory {
 	 *
 	 * @see Predicates#alreadyDelivered
 	 * @see Predicates#targetPartVisible
-	 *
 	 */
 	public static ISelectionListener createVisibleListener(IWorkbenchPart part, ISelectionListener listener,
 			Predicate<ISelectionModel> additionalPredicate) {

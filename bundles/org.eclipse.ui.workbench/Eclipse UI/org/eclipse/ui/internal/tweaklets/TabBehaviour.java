@@ -33,7 +33,6 @@ import org.eclipse.ui.internal.tweaklets.Tweaklets.TweakKey;
 
 /**
  * @since 3.3
- *
  */
 public abstract class TabBehaviour {
 
@@ -43,17 +42,8 @@ public abstract class TabBehaviour {
 		Tweaklets.setDefault(TabBehaviour.KEY, new TabBehaviourMRU());
 	}
 
-	/**
-	 *
-	 * @return
-	 */
 	public abstract boolean alwaysShowPinAction();
 
-	/**
-	 *
-	 * @param page
-	 * @return
-	 */
 	public abstract IEditorReference findReusableEditor(WorkbenchPage page);
 
 	public abstract IEditorReference reuseInternalEditor(WorkbenchPage page, Object manager, Object editorPresentation,
@@ -61,46 +51,27 @@ public abstract class TabBehaviour {
 
 	/**
 	 * Does nothing by default. Can be overridden by subclasses.
-	 *
-	 * @param editorReuseGroup
-	 * @param showMultipleEditorTabs
 	 */
 	public void setPreferenceVisibility(Composite editorReuseGroup, Button showMultipleEditorTabs) {
 	}
 
-	/**
-	 * @return
-	 */
 	public boolean autoPinOnDirty() {
 		return false;
 	}
 
-	/**
-	 * @return
-	 */
 	public boolean isPerTabHistoryEnabled() {
 		return false;
 	}
 
-	/**
-	 * @param originalMatchFlags
-	 * @return
-	 */
 	public int getReuseEditorMatchFlags(int originalMatchFlags) {
 		return originalMatchFlags;
 	}
 
-	/**
-	 * @return
-	 */
 	public int getEditorReuseThreshold() {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		return store.getInt(IPreferenceConstants.REUSE_EDITORS);
 	}
 
-	/**
-	 * @return
-	 */
 	public boolean enableMRUTabVisibility() {
 		return true;
 	}

@@ -62,7 +62,6 @@ public class DecoratorRegistryReader extends RegistryReader {
 	 * Return the DecoratorDefinition defined by element or <code>null</code> if it
 	 * cannot be determined.
 	 *
-	 * @param element
 	 * @return DecoratorDefinition
 	 */
 	DecoratorDefinition getDecoratorDefinition(IConfigurationElement element) {

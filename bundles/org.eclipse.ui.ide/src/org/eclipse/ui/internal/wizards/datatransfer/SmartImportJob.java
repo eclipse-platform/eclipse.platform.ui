@@ -61,7 +61,6 @@ import org.eclipse.ui.wizards.datatransfer.ProjectConfigurator;
  * point to add support for more project kinds.
  *
  * @since 3.12
- *
  */
 public class SmartImportJob extends Job {
 
@@ -143,7 +142,6 @@ public class SmartImportJob extends Job {
 	 * Sets the directories that have been detected by preliminary detection and that
 	 * user has selected to import. Those will be imported and configured in any case.
 	 * This does not impact output of {@link #getImportProposals(IProgressMonitor)}
-	 * @param directories
 	 */
 	public void setDirectoriesToImport(Set<File> directories) {
 		this.directoriesToImport = directories;
@@ -154,7 +152,6 @@ public class SmartImportJob extends Job {
 	 * Projects UNDER those directories may be imported, but never project directly
 	 * in one of those directories.
 	 * This does not impact output of {@link #getImportProposals(IProgressMonitor)}
-	 * @param directories
 	 */
 	public void setExcludedDirectories(Set<File> directories) {
 		this.excludedDirectories = directories;
@@ -163,8 +160,6 @@ public class SmartImportJob extends Job {
 	/**
 	 * Adds a listener to be notified of progress (detection/configuration of
 	 * sub-projects)
-	 *
-	 * @param listener
 	 */
 	public void setListener(RecursiveImportListener listener) {
 		this.listener = listener;
@@ -536,11 +531,7 @@ public class SmartImportJob extends Job {
 	}
 
 	/**
-	 * @param directory
-	 * @param workingSets
 	 * @param refreshMode One {@link IResource#BACKGROUND_REFRESH} for background refresh, or {@link IResource#NONE} for immediate refresh
-	 * @return
-	 * @throws Exception
 	 */
 	private IProject toExistingOrNewProject(File directory, IProgressMonitor progressMonitor, int refreshMode) throws CouldNotImportProjectException {
 		try {
@@ -655,7 +646,6 @@ public class SmartImportJob extends Job {
 
 	/**
 	 *
-	 * @param monitor
 	 * @return the proposals for the import operation.
 	 */
 	public Map<File, List<ProjectConfigurator>> getImportProposals(IProgressMonitor monitor) {
@@ -720,8 +710,6 @@ public class SmartImportJob extends Job {
 	 * Sets whether the job should look for nested projects. This value is
 	 * ignored if consumer specifies directories to import via
 	 * {@link #setDirectoriesToImport(Set)}.
-	 *
-	 * @param detectNestedProjects
 	 */
 	public void setDetectNestedProjects(boolean detectNestedProjects) {
 		this.deepChildrenDetection = detectNestedProjects;

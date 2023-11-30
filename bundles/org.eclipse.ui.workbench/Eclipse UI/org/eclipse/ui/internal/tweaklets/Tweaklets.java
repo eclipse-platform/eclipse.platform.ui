@@ -27,16 +27,12 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * @since 3.3
- *
  */
 public class Tweaklets {
 
 	public static class TweakKey {
 		Class<?> tweakClass;
 
-		/**
-		 * @param tweakClass
-		 */
 		public TweakKey(Class<?> tweakClass) {
 			this.tweakClass = tweakClass;
 		}
@@ -79,18 +75,10 @@ public class Tweaklets {
 		return result;
 	}
 
-	/**
-	 * @param definition
-	 * @return
-	 */
 	private static Object getDefault(TweakKey definition) {
 		return defaults.get(definition);
 	}
 
-	/**
-	 * @param definition
-	 * @return
-	 */
 	private static Object createTweaklet(TweakKey definition) {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor("org.eclipse.ui.internalTweaklets"); //$NON-NLS-1$

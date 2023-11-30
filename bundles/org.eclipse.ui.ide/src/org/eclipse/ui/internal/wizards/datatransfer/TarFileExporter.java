@@ -77,8 +77,6 @@ public class TarFileExporter implements IFileExporter {
 	/**
 	 *	Write the contents of the file to the tar archive.
 	 *
-	 *	@param entry
-	 *	@param contents
 	 *  @exception java.io.IOException
 	 *  @exception org.eclipse.core.runtime.CoreException
 	 */

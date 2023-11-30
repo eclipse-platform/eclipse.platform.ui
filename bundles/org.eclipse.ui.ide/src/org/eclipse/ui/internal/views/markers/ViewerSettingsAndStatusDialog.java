@@ -43,9 +43,6 @@ public abstract class ViewerSettingsAndStatusDialog extends ViewSettingsDialog {
 	private Text messageArea;
 	private Composite msgParent;
 
-	/**
-	 * @param parentShell
-	 */
 	public ViewerSettingsAndStatusDialog(Shell parentShell) {
 		super(parentShell);
 	}
@@ -89,22 +86,14 @@ public abstract class ViewerSettingsAndStatusDialog extends ViewSettingsDialog {
 		return dialogArea;
 	}
 
-	/**
-	 * @param dialogArea
-	 */
 	protected abstract Control createDialogContentArea(Composite dialogArea);
 
-	/**
-	 *
-	 */
 	protected void initializeDialog() {
 		handleStatusUdpate(IStatus.INFO, getDefaultMessage());
 	}
 
 	/**
 	 * Create message area.
-	 *
-	 * @param parent
 	 */
 	Control createMessageArea(Composite parent) {
 		msgParent = new Composite(parent, SWT.BORDER);
@@ -129,8 +118,6 @@ public abstract class ViewerSettingsAndStatusDialog extends ViewSettingsDialog {
 
 	/**
 	 * Display the message and an appropriate icon.
-	 *
-	 * @param status
 	 */
 	protected void handleStatusUdpate(IStatus status) {
 		handleStatusUdpate(status.getSeverity(), status.getMessage());
@@ -138,9 +125,6 @@ public abstract class ViewerSettingsAndStatusDialog extends ViewSettingsDialog {
 
 	/**
 	 * Display the message and an appropriate icon.
-	 *
-	 * @param message
-	 * @param severity
 	 */
 	protected void handleStatusUdpate(int severity, String message) {
 		Image image = null;
@@ -182,27 +166,18 @@ public abstract class ViewerSettingsAndStatusDialog extends ViewSettingsDialog {
 		}
 	}
 
-	/**
-	 * @param image
-	 */
 	protected void setMessageImage(Image image) {
 		if (imageLabel != null) {
 			imageLabel.setImage(image);
 		}
 	}
 
-	/**
-	 * @param messgage
-	 */
 	protected void setMessageText(String messgage) {
 		if (messageArea != null) {
 			messageArea.setText(messgage);
 		}
 	}
 
-	/**
-	 *
-	 */
 	protected Image getMessageImage() {
 		if (imageLabel != null) {
 			imageLabel.getImage();
@@ -210,8 +185,6 @@ public abstract class ViewerSettingsAndStatusDialog extends ViewSettingsDialog {
 		return null;
 	}
 
-	/**
-	 */
 	protected String getMessageText() {
 		if (messageArea != null) {
 			return messageArea.getText();
@@ -219,10 +192,6 @@ public abstract class ViewerSettingsAndStatusDialog extends ViewSettingsDialog {
 		return null;
 	}
 
-	/**
-	 *
-	 * @param visible
-	 */
 	protected void handleMessageAreaVisibility(boolean visible) {
 		if (msgParent == null || msgParent.isDisposed()) {
 			return;
@@ -257,20 +226,14 @@ public abstract class ViewerSettingsAndStatusDialog extends ViewSettingsDialog {
 		return JFaceResources.getString("StringFieldEditor.errorMessage"); //$NON-NLS-1$
 	}
 
-	/**
-	 */
 	protected Image getInfoImage() {
 		return JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_INFO);
 	}
 
-	/**
-	 */
 	protected Image getWarningImage() {
 		return JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_WARNING);
 	}
 
-	/**
-	 */
 	protected Image getErrorImage() {
 		return JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_ERROR);
 	}

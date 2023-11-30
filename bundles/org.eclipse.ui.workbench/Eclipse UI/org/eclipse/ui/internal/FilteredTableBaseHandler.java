@@ -82,7 +82,6 @@ import org.eclipse.ui.model.PerspectiveLabelProvider;
  *
  * @see AbstractTableInformationControl and CycleBaseHandler
  * @since 4.6.2
- *
  */
 
 public abstract class FilteredTableBaseHandler extends AbstractHandler implements IExecutableExtension {
@@ -340,7 +339,6 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 	 * {@link FocusListener} for active controls. When the focus event is complete,
 	 * the listener check if focus is still on one of the active components. If not,
 	 * closes the dialog.
-	 *
 	 */
 	private FocusAdapter fAdapter = new FocusAdapter() {
 		@Override
@@ -362,8 +360,6 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 
 	/**
 	 * Sets the dialog's location on the screen.
-	 *
-	 * @param dialog
 	 */
 	protected void setDialogLocation(final Shell dialog, IWorkbenchPart activePart) {
 		Display display = dialog.getDisplay();
@@ -824,8 +820,6 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 	/**
 	 * Sets the label provider for the only column visible in the table. Subclasses
 	 * can override this method to style the table, using a StyledCellLabelProvider.
-	 *
-	 * @param tableViewerColumn
 	 */
 	protected void setLabelProvider(TableViewerColumn tableViewerColumn) {
 		tableViewerColumn.setLabelProvider(getColumnLabelProvider());

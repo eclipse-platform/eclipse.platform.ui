@@ -20,7 +20,6 @@ import org.eclipse.ui.views.markers.MarkerItem;
 
 /**
  * @since 3.4
- *
  */
 public class MarkerIDField extends MarkerField {
 

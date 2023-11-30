@@ -21,7 +21,6 @@ package org.eclipse.ui.internal;
  * By implementing 'isApplicableTo' method, a contributor can tell the manager
  * to skip it if the object is of the desired type, but its other properties do
  * not match additional requirements imposed by the contributor.
- *
  */
 
 public interface IObjectContributor {

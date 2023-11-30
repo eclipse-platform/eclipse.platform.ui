@@ -23,7 +23,6 @@ import org.osgi.service.component.annotations.Component;
 
 /**
  * @since 3.5
- *
  */
 @Component
 public class ColorAndFontProviderImpl implements IColorAndFontProvider {

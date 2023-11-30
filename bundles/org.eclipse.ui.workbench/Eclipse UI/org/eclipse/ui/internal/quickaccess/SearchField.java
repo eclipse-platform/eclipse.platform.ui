@@ -121,7 +121,6 @@ public class SearchField {
 
 	/**
 	 * Compute the best binding for the command and sets the trigger
-	 *
 	 */
 	protected void updateQuickAccessTriggerSequence() {
 		triggerSequence = bindingService.getBestActiveBindingFor(QUICK_ACCESS_COMMAND_ID);

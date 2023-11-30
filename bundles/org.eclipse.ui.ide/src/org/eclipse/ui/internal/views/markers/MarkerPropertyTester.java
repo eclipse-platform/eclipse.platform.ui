@@ -25,7 +25,6 @@ import org.eclipse.ui.actions.SimpleWildcardTester;
  *
  * @since 3.5
  * @author Prakash G.R.
- *
  */
 public class MarkerPropertyTester extends PropertyTester {
 

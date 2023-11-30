@@ -23,7 +23,6 @@ import org.osgi.service.log.LogLevel;
  * This class is used to prevent superfluous logging of the same message.
  *
  * @since 3.5
- *
  */
 public class LogThrottle {
 

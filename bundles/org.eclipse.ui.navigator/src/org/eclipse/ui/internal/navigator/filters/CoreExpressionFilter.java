@@ -23,7 +23,6 @@ import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 
 /**
  * @since 3.2
- *
  */
 public class CoreExpressionFilter extends ViewerFilter {
 

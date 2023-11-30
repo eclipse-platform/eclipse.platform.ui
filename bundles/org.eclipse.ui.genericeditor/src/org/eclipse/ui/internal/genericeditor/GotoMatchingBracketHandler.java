@@ -21,7 +21,6 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * Go to matching bracket handler.
- *
  */
 public class GotoMatchingBracketHandler extends AbstractHandler {
 

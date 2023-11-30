@@ -20,14 +20,12 @@ import org.eclipse.ui.views.markers.MarkerItem;
 /**
  * MarkerSupportItem is the internal abstract superclass of the markerSupport {@link MarkerItem}.
  * @since 3.4
- *
  */
 abstract class MarkerSupportItem extends MarkerItem {
 
 	/**
 	 * Get the String value of the attribute in the enclosed marker.
 	 *
-	 * @param attribute
 	 * @param defaultValue
 	 *            the defaultValue if the value is not set
 	 * @return String

@@ -65,7 +65,6 @@ import org.eclipse.ui.views.markers.internal.Util;
  * QuickFixPage is a page for the quick fixes of a marker.
  *
  * @since 3.4
- *
  */
 public class QuickFixPage extends WizardPage {
 
@@ -166,7 +165,6 @@ public class QuickFixPage extends WizardPage {
 	/**
 	 * Create the table buttons for the receiver.
 	 *
-	 * @param control
 	 * @return {@link Composite}
 	 */
 	private Composite createTableButtons(Composite control) {
@@ -207,9 +205,6 @@ public class QuickFixPage extends WizardPage {
 		return buttonComposite;
 	}
 
-	/**
-	 * @param control
-	 */
 	private void createResolutionsList(Composite control) {
 		resolutionsList = new TableViewer(control, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL);
 		resolutionsList.setContentProvider(ArrayContentProvider.getInstance());
@@ -263,8 +258,6 @@ public class QuickFixPage extends WizardPage {
 
 	/**
 	 * Create the table that shows the markers.
-	 *
-	 * @param control
 	 */
 	private void createMarkerTable(Composite control) {
 		markersTable = CheckboxTableViewer.newCheckList(control, SWT.BORDER | SWT.V_SCROLL | SWT.SINGLE);

@@ -73,7 +73,6 @@ import org.eclipse.ui.services.ISourceProviderService;
 
 /**
  * @since 3.5
- *
  */
 public class LegacyHandlerService implements IHandlerService {
 
@@ -462,10 +461,6 @@ public class LegacyHandlerService implements IHandlerService {
 		}
 	}
 
-	/**
-	 * @param context
-	 * @param staticContext
-	 */
 	private void populateSnapshot(IEvaluationContext context, IEclipseContext staticContext) {
 		IEvaluationContext ctxPtr = context;
 		while (ctxPtr != null && !(ctxPtr instanceof ExpressionContext)) {

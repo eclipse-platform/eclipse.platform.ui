@@ -127,8 +127,6 @@ public class TypeFilteringDialog extends SelectionDialog {
 
 	/**
 	 * Add the currently-specified extensions to result.
-	 *
-	 * @param result
 	 */
 	private void addUserDefinedEntries(List<String> result) {
 		StringTokenizer tokenizer = new StringTokenizer(userDefinedText.getText(), TYPE_DELIMITER);

@@ -23,7 +23,6 @@ import org.eclipse.core.expressions.IEvaluationContext;
  * instance of this expression is provided.
  *
  * @since 3.3
- *
  */
 public final class AlwaysEnabledExpression extends Expression {
 

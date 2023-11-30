@@ -112,8 +112,6 @@ public final class PropertyListenerList {
 	/**
 	 * Adds a listener which will be notified when the given property changes
 	 *
-	 * @param propertyId
-	 * @param newListener
 	 * @since 3.1
 	 */
 	private void addInternal(String propertyId, IPropertyMapListener newListener) {

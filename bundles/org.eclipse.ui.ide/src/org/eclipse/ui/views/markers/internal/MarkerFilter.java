@@ -38,7 +38,6 @@ import org.eclipse.ui.PlatformUI;
 /**
  * MarkerFilter is the class that defines a filter on markers in a
  * MarkerView.
- *
  */
 public class MarkerFilter implements Cloneable {
 
@@ -168,7 +167,6 @@ public class MarkerFilter implements Cloneable {
 	 * Subclasses should override to determine if the given marker passes the
 	 * filter.
 	 *
-	 * @param marker
 	 * @return <code>true</code> if the marker passes the filter and
 	 *         <code>false</code> otherwise
 	 */
@@ -239,7 +237,6 @@ public class MarkerFilter implements Cloneable {
 	/**
 	 * Returns the set of projects that contain the given set of resources.
 	 *
-	 * @param resources
 	 * @return IProject[]
 	 */
 	static IProject[] getProjects(IResource[] resources) {
@@ -275,7 +272,6 @@ public class MarkerFilter implements Cloneable {
 	/**
 	 * Return whether or not the receiver would select the marker.
 	 *
-	 * @param marker
 	 * @return boolean
 	 */
 	public boolean select(ConcreteMarker marker) {
@@ -425,8 +421,6 @@ public class MarkerFilter implements Cloneable {
 
 	/**
 	 * Sets the focused resources.
-	 *
-	 * @param resources
 	 */
 	public void setFocusResource(IResource[] resources) {
 		focusResources = resources;
@@ -510,8 +504,6 @@ public class MarkerFilter implements Cloneable {
 
 	/**
 	 * Restore the state in the memento.
-	 *
-	 * @param memento
 	 */
 	public final void restoreState(IMemento memento) {
 		resetState();
@@ -521,8 +513,6 @@ public class MarkerFilter implements Cloneable {
 	/**
 	 * Restore the state of the receiver in the supplied settings. This is kept
 	 * for backwards compatibility with 3.1 dialog settings.
-	 *
-	 * @param settings
 	 */
 	public void restoreFilterSettings(IDialogSettings settings) {
 		resetState();
@@ -591,8 +581,6 @@ public class MarkerFilter implements Cloneable {
 
 	/**
 	 * Set the selected types based on the value.
-	 *
-	 * @param selectedTypesValue
 	 */
 	void generateSelectedTypes(String selectedTypesValue) {
 		selectedTypes.clear();
@@ -610,7 +598,6 @@ public class MarkerFilter implements Cloneable {
 	/**
 	 * Find the markerType matching typeName
 	 *
-	 * @param typeName
 	 * @return MarkerType
 	 */
 	MarkerType findMarkerType(String typeName) {
@@ -619,8 +606,6 @@ public class MarkerFilter implements Cloneable {
 
 	/**
 	 * Restore the state of the receiver in the supplied settings.
-	 *
-	 * @param memento
 	 */
 	protected void restoreFilterSettings(IMemento memento) {
 		String setting = memento.getString(TAG_ENABLED);
@@ -688,8 +673,6 @@ public class MarkerFilter implements Cloneable {
 
 	/**
 	 * Save the filter settings for the receiver.
-	 *
-	 * @param settings
 	 */
 	public void saveFilterSettings(IMemento settings) {
 		settings.putString(TAG_ENABLED, String.valueOf(enabled));
@@ -728,7 +711,6 @@ public class MarkerFilter implements Cloneable {
 	 * Make a clone of the receiver.
 	 *
 	 * @return MarkerFilter
-	 * @throws CloneNotSupportedException
 	 */
 	public MarkerFilter makeClone() throws CloneNotSupportedException {
 		return (MarkerFilter) this.clone();

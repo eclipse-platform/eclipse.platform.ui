@@ -36,7 +36,6 @@ import org.eclipse.ui.wizards.datatransfer.ProjectConfigurator;
  * .project)
  *
  * @since 3.12
- *
  */
 public class EclipseProjectConfigurator implements ProjectConfigurator {
 

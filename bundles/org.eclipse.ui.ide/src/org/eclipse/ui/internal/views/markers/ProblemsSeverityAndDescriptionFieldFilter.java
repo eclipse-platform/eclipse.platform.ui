@@ -24,7 +24,6 @@ import org.eclipse.ui.views.markers.internal.ProblemFilter;
  * view.
  *
  * @since 3.4
- *
  */
 public class ProblemsSeverityAndDescriptionFieldFilter extends
 		SeverityAndDescriptionFieldFilter {

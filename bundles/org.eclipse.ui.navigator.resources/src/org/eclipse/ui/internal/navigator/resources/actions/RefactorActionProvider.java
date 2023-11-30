@@ -25,7 +25,6 @@ import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 
 /**
  * @since 3.2
- *
  */
 public class RefactorActionProvider extends CommonActionProvider {
 

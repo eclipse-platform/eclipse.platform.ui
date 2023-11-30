@@ -49,7 +49,6 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
  * chosen.
  *
  * @since 3.2
- *
  */
 public abstract class ImportExportPage extends WorkbenchWizardSelectionPage {
 	protected static final String DIALOG_SETTING_SECTION_NAME = "ImportExportPage."; //$NON-NLS-1$
@@ -109,8 +108,6 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage {
 
 		/**
 		 * Create the categorized tree viewer.
-		 *
-		 * @param parent
 		 */
 		private void createFilteredTree(Composite parent) {
 			// Create a FilteredTree for the categories and wizards
@@ -160,8 +157,6 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage {
 
 		/**
 		 * Layout for the given control.
-		 *
-		 * @param control
 		 */
 		private void layoutTopControl(Control control) {
 			GridData data = new GridData(GridData.FILL_BOTH);
@@ -219,8 +214,6 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage {
 	/**
 	 * Method to call when an item in one of the lists is double-clicked. Shows the
 	 * first page of the selected wizard or expands a collapsed tree.
-	 *
-	 * @param event
 	 */
 	protected void treeDoubleClicked(DoubleClickEvent event) {
 		ISelection selection = event.getViewer().getSelection();
@@ -407,7 +400,6 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage {
 	/**
 	 * When Finish is pressed, write widget values to the dialog store so that they
 	 * will persist into the next invocation of the wizard page.
-	 *
 	 */
 	public void saveWidgetValues() {
 		// do nothing by default - subclasses should override
@@ -434,8 +426,6 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage {
 
 	/**
 	 * Set the tree viewer that is used for this wizard selection page.
-	 *
-	 * @param viewer
 	 */
 	protected void setTreeViewer(TreeViewer viewer) {
 		treeViewer = viewer;

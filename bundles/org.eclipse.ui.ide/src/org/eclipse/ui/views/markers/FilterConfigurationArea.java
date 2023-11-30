@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Control;
  * FilterConfigurationArea is the area that the user can configure a filter in.
  *
  * @since 3.4
- *
  */
 public abstract class FilterConfigurationArea {
 

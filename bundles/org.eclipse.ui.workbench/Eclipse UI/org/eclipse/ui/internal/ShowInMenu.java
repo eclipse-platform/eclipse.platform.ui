@@ -256,7 +256,6 @@ public class ShowInMenu extends ContributionItem implements IWorkbenchContributi
 	/**
 	 * Return the appropriate command contribution item for the parameter.
 	 *
-	 * @param viewDescriptor
 	 * @return the show in command contribution item
 	 */
 	protected IContributionItem getContributionItem(IViewDescriptor viewDescriptor) {

@@ -25,7 +25,6 @@ import org.eclipse.ui.internal.util.Util;
 
 /**
  * @since 3.4
- *
  */
 public class BindingElement extends ModelElement {
 
@@ -42,17 +41,10 @@ public class BindingElement extends ModelElement {
 	private Image image;
 	private Boolean conflict;
 
-	/**
-	 * @param kc
-	 */
 	public BindingElement(KeyController kc) {
 		super(kc);
 	}
 
-	/**
-	 * @param b
-	 * @param model
-	 */
 	public void init(Binding b, ContextModel model) {
 		setCommandInfo(b.getParameterizedCommand());
 		setTrigger(b.getTriggerSequence());
@@ -61,9 +53,6 @@ public class BindingElement extends ModelElement {
 		setModelObject(b);
 	}
 
-	/**
-	 * @param bindingCommand
-	 */
 	private void setCommandInfo(ParameterizedCommand bindingCommand) {
 		setId(bindingCommand.getId());
 		try {
@@ -84,9 +73,6 @@ public class BindingElement extends ModelElement {
 		setConflict(Boolean.FALSE);
 	}
 
-	/**
-	 * @param cmd
-	 */
 	public void init(ParameterizedCommand cmd) {
 		setCommandInfo(cmd);
 		setTrigger(null);
@@ -192,10 +178,6 @@ public class BindingElement extends ModelElement {
 		controller.firePropertyChange(this, PROP_CONFLICT, old, conflict);
 	}
 
-	/**
-	 * @param binding
-	 * @param contextModel
-	 */
 	public void fill(KeyBinding binding, ContextModel contextModel) {
 		setCommandInfo(binding.getParameterizedCommand());
 		setTrigger(binding.getTriggerSequence());
@@ -204,9 +186,6 @@ public class BindingElement extends ModelElement {
 		setModelObject(binding);
 	}
 
-	/**
-	 * @param parameterizedCommand
-	 */
 	public void fill(ParameterizedCommand parameterizedCommand) {
 		setCommandInfo(parameterizedCommand);
 		setTrigger(null);

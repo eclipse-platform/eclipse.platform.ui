@@ -37,7 +37,6 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
  * @since 3.4
- *
  */
 public class RelativePathVariableGroup {
 
@@ -69,7 +68,6 @@ public class RelativePathVariableGroup {
 	}
 
 	/**
-	 * @param variableGroup
 	 * @return the control
 	 */
 	public Control createContents(Composite variableGroup) {
@@ -129,9 +127,6 @@ public class RelativePathVariableGroup {
 		return variableGroup;
 	}
 
-	/**
-	 *
-	 */
 	public void setupVariableContent() {
 		IPathVariableManager pathVariableManager;
 		if (content.getResource() != null)
@@ -174,9 +169,6 @@ public class RelativePathVariableGroup {
 		}
 	}
 
-	/**
-	 * @param var
-	 */
 	public void selectVariable(String var) {
 		String[] items = variableCombo.getItems();
 		for (int i = 0; i < items.length; i++) {
@@ -190,18 +182,12 @@ public class RelativePathVariableGroup {
 		content.setVariable(items[0]);
 	}
 
-	/**
-	 * @param b
-	 */
 	public void setEnabled(boolean b) {
 		variableCheckbox.setEnabled(b);
 		variableCombo.setEnabled(variableCheckbox.getSelection() && variableCheckbox.isEnabled());
 		setupVariableCheckboxToolTip();
 	}
 
-	/**
-	 * @param b
-	 */
 	public void setSelection(boolean b) {
 		variableCheckbox.setSelection(b);
 		setupVariableCheckboxToolTip();
@@ -338,9 +324,6 @@ public class RelativePathVariableGroup {
 		return getPreferredVariable(paths, target);
 	}
 
-	/**
-	 * @return
-	 */
 	public boolean getSelection() {
 		return variableCheckbox.getSelection();
 	}

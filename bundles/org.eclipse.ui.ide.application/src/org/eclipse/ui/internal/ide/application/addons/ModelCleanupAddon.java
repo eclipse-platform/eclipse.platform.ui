@@ -110,10 +110,6 @@ public class ModelCleanupAddon {
 		cleanHiddenCompatibilityEditors();
 	}
 
-	/**
-	 * @param app
-	 * @param uiSync
-	 */
 	private void cleanUnavailablePartDescriptors(MApplication app, UISynchronize uiSync) {
 		// make copies of the lists for thread safety
 		List<MPartDescriptor> descriptors = new ArrayList<>(app.getDescriptors());

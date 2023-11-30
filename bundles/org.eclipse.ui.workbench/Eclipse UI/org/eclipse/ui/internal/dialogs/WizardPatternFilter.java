@@ -23,7 +23,6 @@ import org.eclipse.ui.dialogs.PatternFilter;
  * string and keywords
  *
  * @since 3.2
- *
  */
 public class WizardPatternFilter extends PatternFilter {
 	/**

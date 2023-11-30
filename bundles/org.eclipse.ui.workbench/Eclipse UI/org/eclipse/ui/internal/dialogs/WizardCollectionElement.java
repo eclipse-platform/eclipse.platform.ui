@@ -72,8 +72,6 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
 	/**
 	 * Creates a new <code>WizardCollectionElement</code>. Parent can be null.
 	 *
-	 * @param element
-	 * @param parent
 	 * @since 3.1
 	 */
 	public WizardCollectionElement(IConfigurationElement element, WizardCollectionElement parent) {
@@ -431,7 +429,6 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
 	 * @param viewerFilter    the ViewerFilter
 	 * @param inputCollection collection to filter
 	 * @return inputCollection, modified copy of inputCollection or null
-	 *
 	 */
 	static WizardCollectionElement filter(Viewer viewer, ViewerFilter viewerFilter,
 			WizardCollectionElement inputCollection) {

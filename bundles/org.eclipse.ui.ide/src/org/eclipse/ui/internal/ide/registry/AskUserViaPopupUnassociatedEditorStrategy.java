@@ -25,7 +25,6 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
  * @since 3.12
- *
  */
 public class AskUserViaPopupUnassociatedEditorStrategy implements IUnassociatedEditorStrategy {
 

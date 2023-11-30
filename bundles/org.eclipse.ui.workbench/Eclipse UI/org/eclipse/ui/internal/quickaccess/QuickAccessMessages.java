@@ -19,7 +19,6 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * @since 3.2
- *
  */
 public class QuickAccessMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.quickaccess.messages"; //$NON-NLS-1$

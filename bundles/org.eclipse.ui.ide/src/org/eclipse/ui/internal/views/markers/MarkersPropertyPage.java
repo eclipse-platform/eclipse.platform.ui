@@ -56,7 +56,6 @@ import org.eclipse.ui.views.markers.internal.Util;
  * MarkersPropertyPage is the property page for a marker.
  *
  * @since 3.4
- *
  */
 public class MarkersPropertyPage extends PropertyPage {
 
@@ -129,8 +128,6 @@ public class MarkersPropertyPage extends PropertyPage {
 
 	/**
 	 * Method createCreationTimeArea.
-	 *
-	 * @param parent
 	 */
 	private void createCreationTimeArea(Composite parent) {
 		Label label = new Label(parent, SWT.NONE);
@@ -216,8 +213,6 @@ public class MarkersPropertyPage extends PropertyPage {
 
 	/**
 	 * Create the attributes area for editing a task
-	 *
-	 * @param parent
 	 */
 	private void createTaskAttributes(Composite parent) {
 		Label label = new Label(parent, SWT.NONE);
@@ -258,8 +253,6 @@ public class MarkersPropertyPage extends PropertyPage {
 
 	/**
 	 * Create the attributes area for problems
-	 *
-	 * @param parent
 	 */
 	private void createProblemAttributes(Composite parent) {
 		new Label(parent, SWT.NONE).setText(MarkerMessages.propertiesDialog_severityLabel);

@@ -26,7 +26,6 @@ import org.eclipse.urischeme.ISchemeInformation;
 
 /**
  * Windows OS specific handling of schemes
- *
  */
 public class RegistrationWindows implements IOperatingSystemRegistration {
 	IRegistryWriter registryWriter;
@@ -76,7 +75,6 @@ public class RegistrationWindows implements IOperatingSystemRegistration {
 	 *
 	 * @param schemes The schemes that should be checked for registrations.
 	 * @return the registered schemes.
-	 * @throws Exception
 	 */
 	@Override
 	public List<ISchemeInformation> getSchemesInformation(Collection<IScheme> schemes) throws Exception {

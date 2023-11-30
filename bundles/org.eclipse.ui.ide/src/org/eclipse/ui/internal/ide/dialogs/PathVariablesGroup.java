@@ -478,8 +478,6 @@ public class PathVariablesGroup {
 	/**
 	 * Automatically save the path variable list when new variables
 	 * are added, changed, or removed by the user.
-	 * @param value
-	 *
 	 */
 	public void setSaveVariablesOnChange(boolean value) {
 		saveVariablesOnChange = value;
@@ -634,7 +632,6 @@ public class PathVariablesGroup {
 
 	/**
 	 * Converts the ${PARENT-COUNT-VAR} format to "VAR/../../" format
-	 * @param value
 	 * @return the converted value
 	 */
 	private String removeParentVariable(String value) {
@@ -756,16 +753,12 @@ public class PathVariablesGroup {
 	 * defined variables, selects the item corresponding to the given variable
 	 * (selects the first item if <code>null</code> is provided) and updates
 	 * the enabled state for the Add/Remove/Edit buttons.
-	 *
 	 */
 	private void updateWidgetState() {
 		variableTable.refresh();
 		updateEnabledState();
 	}
 
-	/**
-	 * @param resource
-	 */
 	public void setResource(IResource resource) {
 		currentResource = resource;
 		if (resource != null)

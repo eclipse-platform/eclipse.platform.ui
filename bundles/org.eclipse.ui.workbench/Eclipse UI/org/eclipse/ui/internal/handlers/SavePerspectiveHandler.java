@@ -36,7 +36,6 @@ import org.eclipse.ui.internal.registry.PerspectiveRegistry;
  * @author Prakash G.R.
  *
  * @since 3.7
- *
  */
 public class SavePerspectiveHandler extends AbstractHandler {
 

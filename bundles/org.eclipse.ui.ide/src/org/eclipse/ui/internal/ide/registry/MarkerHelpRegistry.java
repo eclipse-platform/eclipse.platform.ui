@@ -149,9 +149,6 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 		}
 	}
 
-	/**
-	 *
-	 */
 	public MarkerHelpRegistry() {
 		helpQueries = new HashMap<>();
 		resolutionQueries = new LinkedHashMap<>();
@@ -245,9 +242,6 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 	 * Return whether or not this configuration element has a resolution for the
 	 * marker.
 	 *
-	 * @param marker
-	 * @param element
-	 * @param generator
 	 * @return boolean <code>true</code> if there is a resolution.
 	 */
 	private boolean hasResolution(IMarker marker, IConfigurationElement element, IMarkerResolutionGenerator generator) {

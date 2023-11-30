@@ -106,8 +106,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 
 	/**
 	 * Create the buttons at the top of the preference page.
-	 *
-	 * @param composite
 	 */
 	protected void createSettings(Composite composite) {
 		createShowUserDialogPref(composite);
@@ -118,8 +116,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 
 	/**
 	 * Create the widget for the user dialog preference.
-	 *
-	 * @param composite
 	 */
 	protected void createShowUserDialogPref(Composite composite) {
 		showUserDialogButton = new Button(composite, SWT.CHECK);
@@ -131,8 +127,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 
 	/**
 	 * Create the widget for the heap status preference.
-	 *
-	 * @param composite
 	 */
 	protected void createHeapStatusPref(Composite composite) {
 		showHeapStatusButton = new Button(composite, SWT.CHECK);
@@ -145,8 +139,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 
 	/**
 	 * Create the widget for the max number of elements in the view
-	 *
-	 * @param composite
 	 */
 	protected void createLargeViewLimitPref(Composite composite) {
 		Composite groupComposite = new Composite(composite, SWT.LEFT);
@@ -482,8 +474,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 
 	/**
 	 * Show or hide the heap status based on selection.
-	 *
-	 * @param selection
 	 */
 	private void updateHeapStatus(boolean selection) {
 		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();

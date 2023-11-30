@@ -198,8 +198,6 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 		return items[insertIndex];
 	}
 
-	/**
-	 */
 	/* package */static void processActionSets(List<PluginActionSet> pluginActionSets, WorkbenchWindow window) {
 		// Process the action sets in two passes. On the first pass the
 		// pluginActionSetBuilder
@@ -218,8 +216,6 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 		}
 	}
 
-	/**
-	 */
 	protected void processAdjunctContributions() {
 		// Contribute the adjunct contributions.
 		for (ActionSetContribution contribution : adjunctContributions) {

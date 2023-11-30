@@ -99,9 +99,6 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage {
 		return PreferencesMessages.WizardPreferencesExportPage1_choose;
 	}
 
-	/**
-	 * @param composite
-	 */
 	@Override
 	protected void createTransferArea(Composite composite) {
 		createTransfersList(composite);
@@ -148,7 +145,6 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage {
 	}
 
 	/**
-	 * @param transfers
 	 * @return <code>true</code> if the transfer was successful, and
 	 *         <code>false</code> otherwise
 	 */

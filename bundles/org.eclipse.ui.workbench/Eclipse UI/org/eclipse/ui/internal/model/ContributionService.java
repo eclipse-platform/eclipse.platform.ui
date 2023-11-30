@@ -22,9 +22,6 @@ public class ContributionService implements IContributionService {
 
 	private WorkbenchAdvisor advisor;
 
-	/**
-	 * @param advisor
-	 */
 	public ContributionService(WorkbenchAdvisor advisor) {
 		this.advisor = advisor;
 	}

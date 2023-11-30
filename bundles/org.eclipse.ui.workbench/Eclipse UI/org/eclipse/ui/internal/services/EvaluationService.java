@@ -49,7 +49,6 @@ import org.eclipse.ui.services.IEvaluationService;
 
 /**
  * @since 3.3
- *
  */
 public final class EvaluationService implements IEvaluationService {
 	public static final String DEFAULT_VAR = "org.eclipse.ui.internal.services.EvaluationService.default_var"; //$NON-NLS-1$

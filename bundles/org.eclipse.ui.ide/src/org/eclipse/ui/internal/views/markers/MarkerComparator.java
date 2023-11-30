@@ -27,7 +27,6 @@ import org.eclipse.ui.views.markers.MarkerItem;
  * a specific content provider.
  *
  * @since 3.4
- *
  */
 class MarkerComparator implements Comparator<MarkerItem> {
 
@@ -65,8 +64,6 @@ class MarkerComparator implements Comparator<MarkerItem> {
 	/**
 	 * Compare the two objects to see if they have the same category value
 	 *
-	 * @param object1
-	 * @param object2
 	 * @return int
 	 * @see Comparable#compareTo(Object)
 	 */
@@ -100,8 +97,6 @@ class MarkerComparator implements Comparator<MarkerItem> {
 	/**
 	 * Compare the two objects by various fields
 	 *
-	 * @param item0
-	 * @param item1
 	 * @return int
 	 */
 	public int compareFields(MarkerItem item0, MarkerItem item1) {
@@ -129,8 +124,6 @@ class MarkerComparator implements Comparator<MarkerItem> {
 	/**
 	 * Switch the priority of the field from ascending to descending or vice
 	 * versa.
-	 *
-	 * @param field
 	 */
 	public void reversePriority(MarkerField field) {
 		if (descendingFields.remove(field)) {
@@ -141,8 +134,6 @@ class MarkerComparator implements Comparator<MarkerItem> {
 
 	/**
 	 * Set field to be the first sort field.
-	 *
-	 * @param field
 	 */
 	void setPrimarySortField(MarkerField field) {
 		if (fields[0] == field) {
@@ -165,8 +156,6 @@ class MarkerComparator implements Comparator<MarkerItem> {
 
 	/**
 	 * Restore the receiver's state from memento.
-	 *
-	 * @param memento
 	 */
 	void restore(IMemento memento) {
 		if (memento == null) {
@@ -197,8 +186,6 @@ class MarkerComparator implements Comparator<MarkerItem> {
 
 	/**
 	 * Save the current sort field in the memento.
-	 *
-	 * @param memento
 	 */
 	void saveState(IMemento memento) {
 		memento.putString(PRIMARY_SORT_FIELD_TAG, MarkerSupportInternalUtilities.getId(fields[0]));

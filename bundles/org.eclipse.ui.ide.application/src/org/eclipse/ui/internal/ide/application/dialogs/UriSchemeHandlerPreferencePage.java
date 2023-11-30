@@ -83,7 +83,6 @@ import org.eclipse.urischeme.IUriSchemeExtensionReader;
 /**
  * This page contributes to URL handler for URISchemes in preference page of
  * General section
- *
  */
 public class UriSchemeHandlerPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -471,7 +470,6 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 		 * to operating system are consolidated here
 		 *
 		 * @return the supported and registered URI schemes of this instance of eclipse
-		 * @throws Exception
 		 */
 		private Collection<UiSchemeInformation> retrieveSchemeInformationList() {
 			Collection<UiSchemeInformation> returnList = new ArrayList<>();

@@ -237,7 +237,6 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	/**
 	 * Get the orientation of the editor.
 	 *
-	 * @param editor
 	 * @return int the orientation flag
 	 * @see SWT#RIGHT_TO_LEFT
 	 * @see SWT#LEFT_TO_RIGHT

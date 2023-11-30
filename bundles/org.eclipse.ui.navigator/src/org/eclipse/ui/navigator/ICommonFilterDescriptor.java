@@ -20,14 +20,12 @@ package org.eclipse.ui.navigator;
  * @since 3.2
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
- *
  */
 public interface ICommonFilterDescriptor {
 
 	/**
 	 *
 	 * @return An identifier used to determine whether the filter is visible.
-	 *
 	 */
 	String getId();
 

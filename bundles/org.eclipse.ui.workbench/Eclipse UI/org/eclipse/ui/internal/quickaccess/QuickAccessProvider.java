@@ -71,7 +71,6 @@ public abstract class QuickAccessProvider {
 	 * input.
 	 *
 	 * @param filter  user input
-	 * @param monitor
 	 * @return this provider's elements
 	 */
 	public QuickAccessElement[] getElements(String filter, IProgressMonitor monitor) {

@@ -26,7 +26,6 @@ import org.eclipse.ui.navigator.INavigatorContentDescriptor;
  * The NCD/object association is tracked using the NavigatorContentService.rememberContribution().
  *
  * @since 3.2
- *
  */
 public class ContributorTrackingSet extends LinkedHashSet {
 
@@ -39,8 +38,6 @@ public class ContributorTrackingSet extends LinkedHashSet {
 
 	/**
 	 * Construct a tracking set.
-	 *
-	 * @param aContentService
 	 */
 	public ContributorTrackingSet(NavigatorContentService aContentService) {
 		contentService = aContentService;
@@ -48,9 +45,6 @@ public class ContributorTrackingSet extends LinkedHashSet {
 
 	/**
 	 * Construct a tracking set.
-	 *
-	 * @param aContentService
-	 * @param elements
 	 */
 	public ContributorTrackingSet(NavigatorContentService aContentService, Object[] elements) {
 
@@ -108,9 +102,6 @@ public class ContributorTrackingSet extends LinkedHashSet {
 		firstClassContributor = theFirstClassContributor;
 	}
 
-	/**
-	 * @param contents
-	 */
 	public void setContents(Object[] contents) {
 		super.clear();
 		if(contents != null)

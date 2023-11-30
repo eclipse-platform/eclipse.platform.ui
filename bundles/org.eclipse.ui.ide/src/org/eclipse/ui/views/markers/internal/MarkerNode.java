@@ -17,7 +17,6 @@ package org.eclipse.ui.views.markers.internal;
 /**
  * The MarkerNode class is the class that handles category nodes and
  * concrete markers.
- *
  */
 public abstract class MarkerNode {
 

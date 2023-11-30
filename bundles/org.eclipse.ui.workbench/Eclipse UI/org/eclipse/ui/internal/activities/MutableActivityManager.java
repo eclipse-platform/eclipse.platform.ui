@@ -107,8 +107,6 @@ public final class MutableActivityManager extends AbstractActivityManager
 
 	/**
 	 * Create a new instance of this class using the platform extension registry.
-	 *
-	 * @param triggerPointAdvisor
 	 */
 	public MutableActivityManager(ITriggerPointAdvisor triggerPointAdvisor) {
 		this(triggerPointAdvisor, new ExtensionActivityRegistry(Platform.getExtensionRegistry()));
@@ -522,11 +520,6 @@ public final class MutableActivityManager extends AbstractActivityManager
 
 	/**
 	 * Updates all the listeners to changes in the state.
-	 *
-	 * @param activityManagerChanged
-	 * @param activityEventsByActivityId
-	 * @param deltaActivityIds
-	 * @param previouslyEnabledActivityIds
 	 */
 	private void updateListeners(boolean activityManagerChanged, Map<String, ActivityEvent> activityEventsByActivityId,
 			Set<String> deltaActivityIds, Set<String> previouslyEnabledActivityIds) {
@@ -563,10 +556,6 @@ public final class MutableActivityManager extends AbstractActivityManager
 		updateExpressionEnabledActivities(id, previouslyEnabledActivityIds);
 	}
 
-	/**
-	 * @param id
-	 * @param previouslyEnabledActivityIds
-	 */
 	private void updateExpressionEnabledActivities(String id, Set<String> previouslyEnabledActivityIds) {
 		Set<String> deltaActivityIds = new HashSet<>();
 		deltaActivityIds.add(id);

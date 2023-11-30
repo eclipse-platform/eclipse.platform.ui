@@ -38,7 +38,6 @@ import org.eclipse.ui.contexts.IContextService;
  * </p>
  *
  * @since 3.2
- *
  */
 public class SlaveContextService implements IContextService {
 

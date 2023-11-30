@@ -30,7 +30,6 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  * Provides a text label and icon for Working Sets.
- *
  */
 public class WorkingSetsLabelProvider implements ILabelProvider {
 

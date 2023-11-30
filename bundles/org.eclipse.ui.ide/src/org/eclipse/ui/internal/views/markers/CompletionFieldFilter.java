@@ -23,7 +23,6 @@ import org.eclipse.ui.views.markers.internal.ProblemFilter;
  * CompletionFieldFilter is the field filter for marker fields.
  *
  * @since 3.4
- *
  */
 public class CompletionFieldFilter extends CompatibilityFieldFilter {
 
