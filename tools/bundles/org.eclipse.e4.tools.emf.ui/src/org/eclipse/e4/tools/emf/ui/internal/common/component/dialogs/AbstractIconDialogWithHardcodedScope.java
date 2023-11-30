@@ -67,7 +67,6 @@ import org.eclipse.swt.widgets.Text;
  * modifying model.
  *
  * @author Steven Spungin
- *
  */
 public abstract class AbstractIconDialogWithHardcodedScope extends SaveDialogBoundsSettingsDialog {
 	private TableViewer viewer;

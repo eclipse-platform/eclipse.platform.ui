@@ -79,7 +79,6 @@ public class OverrideTestsTabItem implements ITabItem {
 	}
 
 	/*
-	 *
 	 */
 	public void setSelected(boolean newSelected) {
 		this.selected = newSelected;

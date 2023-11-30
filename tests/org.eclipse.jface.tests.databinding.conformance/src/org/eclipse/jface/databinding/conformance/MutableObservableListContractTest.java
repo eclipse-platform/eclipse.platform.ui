@@ -53,9 +53,6 @@ public class MutableObservableListContractTest extends
 
 	private IObservableList list;
 
-	/**
-	 * @param delegate
-	 */
 	public MutableObservableListContractTest(
 			IObservableCollectionContractDelegate delegate) {
 		super(delegate);

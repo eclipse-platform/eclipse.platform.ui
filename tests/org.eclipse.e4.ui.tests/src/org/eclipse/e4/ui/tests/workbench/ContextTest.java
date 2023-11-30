@@ -28,9 +28,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- *
- */
 public class ContextTest {
 	private static final String WINDOW_ID = "org.eclipse.ui.contexts.window";
 	private static final String DIALOG_ID = "org.eclipse.ui.contexts.dialog";

@@ -480,8 +480,6 @@ public class IPartServiceTest extends UITestCase {
 	/**
 	 * Tests that both a part hidden and a part closed event are sent when
 	 * a part is closed
-	 *
-	 * @throws Throwable
 	 */
 	@Test
 	public void testPartHiddenBeforeClosing() throws Throwable {

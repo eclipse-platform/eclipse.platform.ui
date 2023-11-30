@@ -20,7 +20,6 @@ import org.eclipse.core.commands.ExecutionException;
 
 /**
  * @since 3.3
- *
  */
 public class HelloDHandler extends AbstractHandler {
 

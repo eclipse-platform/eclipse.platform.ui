@@ -60,7 +60,6 @@ import org.junit.runners.JUnit4;
  * Tests for the large file associations preference added for bug 577289.
  *
  * @since 3.5
- *
  */
 @RunWith(JUnit4.class)
 public class LargeFileLimitsPreferenceHandlerTest extends UITestCase {

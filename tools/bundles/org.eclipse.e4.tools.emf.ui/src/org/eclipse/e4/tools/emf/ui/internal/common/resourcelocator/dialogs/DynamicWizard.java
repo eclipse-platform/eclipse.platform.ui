@@ -26,7 +26,6 @@ import org.eclipse.jface.wizard.WizardPage;
  * private in the base class...
  *
  * @author Steven Spungin
- *
  */
 public class DynamicWizard extends Wizard {
 
@@ -72,8 +71,6 @@ public class DynamicWizard extends Wizard {
 
 	/**
 	 * Override the message on the first page if specified
-	 *
-	 * @param page
 	 */
 	private void updateMessage() {
 		if (E.notEmpty(message) && pages.size() > 0) {
@@ -114,8 +111,6 @@ public class DynamicWizard extends Wizard {
 
 	/**
 	 * Overrides the message of the first page if not <em>empty</em>
-	 *
-	 * @param message
 	 */
 	public void setMessage(String message) {
 		this.message = message;

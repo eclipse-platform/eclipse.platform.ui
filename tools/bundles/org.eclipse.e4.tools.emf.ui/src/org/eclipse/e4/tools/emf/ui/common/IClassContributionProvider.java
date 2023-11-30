@@ -71,8 +71,6 @@ public interface IClassContributionProvider {
 
 		/**
 		 * Sets the bundles to filter on
-		 *
-		 * @param filterBundles
 		 */
 		public void setBundles(List<String> filterBundles) {
 			bundles = filterBundles;
@@ -96,8 +94,6 @@ public interface IClassContributionProvider {
 
 		/**
 		 * Sets the installed project locations to filter on
-		 *
-		 * @param locations
 		 */
 		public void setLocations(List<String> locations) {
 			this.locations = locations;
@@ -109,8 +105,6 @@ public interface IClassContributionProvider {
 
 		/**
 		 * Sets the scope for the search.
-		 *
-		 * @param searchScope
 		 */
 		public void setSearchScope(EnumSet<ResourceSearchScope> searchScope) {
 			this.searchScope = searchScope;
@@ -119,8 +113,6 @@ public interface IClassContributionProvider {
 		/**
 		 * Include plain old java projects, resource projects, and others in
 		 * searches. No manifest required.
-		 *
-		 * @param includeNonBundles
 		 */
 		public void setIncludeNonBundles(boolean includeNonBundles) {
 			this.includeNonBundles = includeNonBundles;

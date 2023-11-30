@@ -30,7 +30,6 @@ import org.eclipse.ui.dialogs.PropertyPage;
  * capability
  *
  * @since 3.3
- *
  */
 public class TableResizePropertyPage extends PropertyPage {
 

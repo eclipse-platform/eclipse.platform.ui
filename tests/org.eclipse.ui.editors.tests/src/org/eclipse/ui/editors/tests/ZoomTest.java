@@ -45,7 +45,6 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 /**
  * @since 3.11
- *
  */
 public class ZoomTest {
 

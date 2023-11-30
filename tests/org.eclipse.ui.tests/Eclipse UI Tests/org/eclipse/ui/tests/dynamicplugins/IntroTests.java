@@ -98,10 +98,6 @@ public class IntroTests extends DynamicTestCase {
 		}
 	}
 
-	/**
-	 * @param desc
-	 * @throws CoreException
-	 */
 	private void testIntroProperties(IIntroDescriptor desc) throws CoreException {
 		assertNotNull(desc.getId());
 		try {

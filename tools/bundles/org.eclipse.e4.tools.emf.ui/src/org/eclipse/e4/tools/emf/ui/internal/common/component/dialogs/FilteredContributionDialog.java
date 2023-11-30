@@ -94,7 +94,6 @@ import org.eclipse.swt.widgets.Text;
  * Includes a filter text box, scope options, and filter options.
  *
  * @author Steven Spungin
- *
  */
 public abstract class FilteredContributionDialog extends SaveDialogBoundsSettingsDialog {
 
@@ -898,8 +897,6 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 	 * The function, through user intervention, may find a way to resolve the
 	 * file and return a resolution.
 	 *
-	 * @param file
-	 * @param installLocation
 	 * @return The original file, a fixed-up (copied or referred) file, or null.
 	 */
 	protected IFile checkResourceAccessible(final IFile file, String installLocation) {
@@ -1061,7 +1058,6 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 	/**
 	 * Searches the directory for a manifest and parses the symbolic name.
 	 *
-	 * @param rootDirectory
 	 * @return the id of the bundle if existing
 	 */
 	public static String getBundle(String rootDirectory) {

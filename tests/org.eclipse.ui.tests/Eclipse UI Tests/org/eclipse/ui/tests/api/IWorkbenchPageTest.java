@@ -1367,8 +1367,6 @@ public class IWorkbenchPageTest extends UITestCase {
 	/**
 	 * Tests that a close will fall back to the default if the view returns
 	 * ISaveable2.DEFAULT.
-	 *
-	 * @throws Throwable
 	 */
 	@Test
 	public void testCloseWithSaveNeeded() throws Throwable {
@@ -1418,8 +1416,6 @@ public class IWorkbenchPageTest extends UITestCase {
 	/**
 	 * Tests that a close will fall back to the default if the view returns
 	 * ISaveable2.DEFAULT.
-	 *
-	 * @throws Throwable
 	 */
 	@Test
 	public void testSaveEffectsSharedModel() throws Throwable {
@@ -1941,7 +1937,6 @@ public class IWorkbenchPageTest extends UITestCase {
 	/**
 	 * Return whether or not the editor exists in the current page.
 	 *
-	 * @param editor
 	 * @return boolean
 	 */
 	private boolean hasEditor(IEditorPart editor) {
@@ -1957,7 +1952,6 @@ public class IWorkbenchPageTest extends UITestCase {
 	/**
 	 * Return whether or not the view exists in the current page.
 	 *
-	 * @param editor
 	 * @return boolean
 	 */
 	private boolean hasView(IViewPart view) {
@@ -2012,7 +2006,6 @@ public class IWorkbenchPageTest extends UITestCase {
 	/**
 	 * Test the VIEW_CREATE parameter for showView. Ensures that the created
 	 * view is not the active part.
-	 *
 	 */
 	@Test
 	public void testView_CREATE1() throws PartInitException {
@@ -2785,8 +2778,6 @@ public class IWorkbenchPageTest extends UITestCase {
 	/**
 	 * Create and hide a single editor, and check it is reflected in the
 	 * editor references.  Check that close still works.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	@Ignore
@@ -2810,8 +2801,6 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * Create and remove 2 editors.  Check that the removed editor
 	 * is not returned in the list of references.  Check that
 	 * close still works.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	@Ignore
@@ -2858,8 +2847,6 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * Create 2 editors and hide one.  When added back and then closed, there
 	 * should only be one editor.  Adding back the closed editor should
 	 * generate a log message and not effect the list of editors.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	@Ignore
@@ -2893,8 +2880,6 @@ public class IWorkbenchPageTest extends UITestCase {
 	/**
 	 * Create 2 editors, and remove and show one of them.  Trying to
 	 * add it a second time should not effect the list of editor references.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	@Ignore
@@ -2927,8 +2912,6 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * Create 2 editors that effect the Content Outline view.  Make
 	 * sure that hiding and showing the active editor effects the
 	 * outline view.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	@Ignore
@@ -2969,8 +2952,6 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * Create one editor.  Make sure hiding and showing it effects
 	 * the outline view, and that when hidden the outline view
 	 * reflects the default page.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	@Ignore
@@ -3019,8 +3000,6 @@ public class IWorkbenchPageTest extends UITestCase {
 	/**
 	 * Create one editor.  Make sure hiding the editor updates
 	 * the window title.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	@Ignore
@@ -3069,8 +3048,6 @@ public class IWorkbenchPageTest extends UITestCase {
 	/**
 	 * Create one editor.  Make sure hiding the editor that is the active part
 	 * causes another part to become active.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	@Ignore
@@ -3112,8 +3089,6 @@ public class IWorkbenchPageTest extends UITestCase {
 	/**
 	 * Create a java editor.  Make a change.  Validate the enabled state
 	 * of some commands.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	@Ignore
@@ -3339,8 +3314,6 @@ public class IWorkbenchPageTest extends UITestCase {
 	/**
 	 * Create and hide a single editor in a new window.  Close the window.
 	 * Make sure there are no editor errors.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	@Ignore

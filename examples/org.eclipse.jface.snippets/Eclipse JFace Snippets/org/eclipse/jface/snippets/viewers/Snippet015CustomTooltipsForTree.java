@@ -71,9 +71,6 @@ public class Snippet015CustomTooltipsForTree {
 		}
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		final Display display = new Display ();
 		Shell shell = new Shell (display);

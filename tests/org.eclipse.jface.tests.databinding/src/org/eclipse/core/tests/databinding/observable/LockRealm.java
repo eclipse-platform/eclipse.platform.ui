@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * @since 3.2
- *
  */
 public class LockRealm extends Realm {
 
@@ -70,9 +69,6 @@ public class LockRealm extends Realm {
 		job.schedule();
 	}
 
-	/**
-	 * @param runnable
-	 */
 	private void enqueue(Runnable runnable) {
 		synchronized (queue) {
 			queue.addLast(runnable);

@@ -56,8 +56,6 @@ public class WizardProgressMonitorTest {
 	 * IRunnableWithProgress) method. If they are not cleared in between runs, they
 	 * end up spilling over to the successive call and causes flickering of text in
 	 * the label.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testProgressLabelsClearedBug271530() throws Exception {
@@ -167,8 +165,6 @@ public class WizardProgressMonitorTest {
 	 * #getProgressMonitorPart method and returns a monitor without the stop button
 	 * will fail gracefully. That is, the runnable will run as expected. See
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=287887#c57
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testProgressMonitorWithoutStopButtonBug287887() throws Exception {

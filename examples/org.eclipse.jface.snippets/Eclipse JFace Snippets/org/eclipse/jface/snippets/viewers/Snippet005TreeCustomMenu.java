@@ -34,7 +34,6 @@ import org.eclipse.swt.widgets.TreeColumn;
 
 /**
  * Customized context menu based on TreeItem-Selection
- *
  */
 public class Snippet005TreeCustomMenu {
 	private static class MyContentProvider implements ITreeContentProvider {

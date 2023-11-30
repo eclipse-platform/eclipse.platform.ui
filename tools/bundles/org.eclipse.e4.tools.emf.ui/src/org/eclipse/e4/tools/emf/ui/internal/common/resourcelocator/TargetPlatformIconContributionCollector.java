@@ -23,7 +23,6 @@ import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.Contributio
  * Uses FilterEx for bundle, package, and location filtering
  *
  * @author Steven Spungin
- *
  */
 public class TargetPlatformIconContributionCollector extends TargetPlatformContributionCollector {
 

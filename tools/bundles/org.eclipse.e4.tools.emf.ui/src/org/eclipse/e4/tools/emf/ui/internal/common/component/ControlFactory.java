@@ -118,7 +118,6 @@ import org.eclipse.swt.widgets.Text;
  * moved in AbstractComponentEditor and the code would be really simplified
  * because all parameters in static functions are already defined in
  * AbstractComponentEditor
- *
  */
 public class ControlFactory {
 	public static final String COPY_HANDLER = ControlFactory.class.getName() + ".COPY_HANDLER"; //$NON-NLS-1$
@@ -389,12 +388,6 @@ public class ControlFactory {
 
 	/**
 	 *
-	 * @param parent
-	 * @param label
-	 * @param master
-	 * @param context
-	 * @param textProp
-	 * @param modelProp
 	 * @param warningText
 	 *            Non null warningText means that a warning with this non-null text
 	 *            will be shown when the field is left empty
@@ -409,12 +402,6 @@ public class ControlFactory {
 
 	/**
 	 *
-	 * @param parent
-	 * @param label
-	 * @param master
-	 * @param context
-	 * @param textProp
-	 * @param modelProp
 	 * @param decorationText
 	 *            Non null decorationText means that a message with this non-null
 	 *            text will be shown when the field is left empty
@@ -423,7 +410,6 @@ public class ControlFactory {
 	 *            Supported types: FieldDecorationRegistry.DEC_ERROR,
 	 *            FieldDecorationRegistry.DEC_WARNING,
 	 *            FieldDecorationRegistry.DEC_INFORMATION
-	 *
 	 */
 	public static <M> void createTextField(Composite parent, String label, String tooltip, IObservableValue<M> master,
 			EMFDataBindingContext context, IWidgetValueProperty<Text, String> textProp,

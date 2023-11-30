@@ -33,9 +33,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class WizardTest {
-	/**
-	 *
-	 */
 	protected static final int NUM_PAGES = 3;
 
 	static boolean DID_FINISH = false; //accessed from this test AND wizard

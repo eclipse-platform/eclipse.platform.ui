@@ -17,7 +17,6 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * Message class for the undo example.
- *
  */
 public class UndoExampleMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ui.examples.undo.messages";//$NON-NLS-1$

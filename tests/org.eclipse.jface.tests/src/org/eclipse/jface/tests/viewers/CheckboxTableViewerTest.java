@@ -399,7 +399,6 @@ public class CheckboxTableViewerTest extends TableViewerTest {
 	/**
 	 * Invokes the appropriate asserts to verify the state of a TestElement.
 	 *
-	 * @param te
 	 * @param viewer the viewer <code>te</code> is in.
 	 * @param shift  the shift parameter being used
 	 */
@@ -412,7 +411,6 @@ public class CheckboxTableViewerTest extends TableViewerTest {
 	 * Invokes the appropriate asserts to verify the state of a TestElement's
 	 * associated TableItem
 	 *
-	 * @param te
 	 * @param item  the item representing <code>te</code>
 	 * @param shift the shift parameter being used
 	 */

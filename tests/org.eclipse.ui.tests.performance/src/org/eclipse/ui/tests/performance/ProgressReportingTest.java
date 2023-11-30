@@ -67,8 +67,6 @@ public class ProgressReportingTest extends BasicPerformanceTest {
 
 	/**
 	 * Create a new instance of the receiver.
-	 *
-	 * @param testName
 	 */
 	public ProgressReportingTest(String testName) {
 		super(testName);
@@ -80,9 +78,6 @@ public class ProgressReportingTest extends BasicPerformanceTest {
 		super.doSetUp();
 	}
 
-	/**
-	 * @param newRunInBackgroundSetting
-	 */
 	private void setRunInBackground(boolean newRunInBackgroundSetting) {
 		setPreference(WorkbenchPlugin.getDefault().getPreferenceStore(), IPreferenceConstants.RUN_IN_BACKGROUND,
 				newRunInBackgroundSetting);

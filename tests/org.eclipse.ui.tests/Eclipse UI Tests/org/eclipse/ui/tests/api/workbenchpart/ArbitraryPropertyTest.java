@@ -38,14 +38,8 @@ import org.junit.Test;
  * @since 3.0
  */
 public class ArbitraryPropertyTest {
-	/**
-	 *
-	 */
 	private static final String EDITOR_ID = "org.eclipse.ui.tests.TitleTestEditor";
 
-	/**
-	 *
-	 */
 	private static final String USER_PROP = "org.eclipse.ui.test.user";
 
 	static final String VIEW_ID = "org.eclipse.ui.tests.workbenchpart.OverriddenTitleView";
@@ -146,8 +140,6 @@ public class ArbitraryPropertyTest {
 
 			/**
 			 * {@inheritDoc}
-			 *
-			 * @throws CoreException
 			 */
 			@Override
 			public IStorage getStorage() throws CoreException {

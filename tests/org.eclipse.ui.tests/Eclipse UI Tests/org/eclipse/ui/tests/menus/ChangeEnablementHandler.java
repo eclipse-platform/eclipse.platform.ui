@@ -28,7 +28,6 @@ import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * @since 3.3
- *
  */
 public class ChangeEnablementHandler extends AbstractHandler {
 	private static final String CONTEXT_ID = "org.eclipse.ui.menus.contexts.test2";
@@ -54,9 +53,6 @@ public class ChangeEnablementHandler extends AbstractHandler {
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	private IContextManagerListener getContextListener() {
 		if (fContextManagerListener == null) {
 			fContextManagerListener = contextManagerEvent -> {

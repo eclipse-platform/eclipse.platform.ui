@@ -33,7 +33,6 @@ import org.eclipse.ui.texteditor.MarkerUtilities;
  * The ProblemsViewPerformanceTest is a test of population of the problems view.
  *
  * @since 3.2
- *
  */
 public class ProblemsViewPerformanceTest extends BasicPerformanceTest {
 
@@ -43,8 +42,6 @@ public class ProblemsViewPerformanceTest extends BasicPerformanceTest {
 
 	/**
 	 * Create a new instance of the receiver.
-	 *
-	 * @param testName
 	 */
 	public ProblemsViewPerformanceTest(String testName) {
 		super(testName);

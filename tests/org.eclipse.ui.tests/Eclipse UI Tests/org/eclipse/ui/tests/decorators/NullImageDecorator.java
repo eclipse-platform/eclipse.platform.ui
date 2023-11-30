@@ -27,9 +27,6 @@ public class NullImageDecorator implements ILightweightLabelDecorator {
 	 */
 	public static boolean fail = false;
 
-	/**
-	 *
-	 */
 	public NullImageDecorator() {
 	}
 

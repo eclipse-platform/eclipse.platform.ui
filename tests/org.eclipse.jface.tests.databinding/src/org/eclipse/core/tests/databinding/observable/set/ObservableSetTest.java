@@ -70,10 +70,6 @@ public class ObservableSetTest {
 	}
 
 	private static class ObservableSetStub extends ObservableSet<String> {
-		/**
-		 * @param wrappedSet
-		 * @param elementType
-		 */
 		protected ObservableSetStub(Realm realm, Set<String> wrappedSet, Object elementType) {
 			super(realm, wrappedSet, elementType);
 		}

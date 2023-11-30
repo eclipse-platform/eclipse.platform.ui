@@ -25,15 +25,12 @@ import org.eclipse.core.runtime.IPath;
  * Converts the given install location into a bundle.
  *
  * @author Steven Spungin
- *
  */
 public class BundleConverter {
 
 	/**
 	 *
-	 * @param installLocation
 	 * @return The bundleId of the bundle, or null if not converted
-	 * @throws Exception
 	 */
 	public static String convertProjectToBundle(String installLocation, IWorkspace workspace) throws Exception {
 		IPath project = IPath.fromOSString(installLocation);

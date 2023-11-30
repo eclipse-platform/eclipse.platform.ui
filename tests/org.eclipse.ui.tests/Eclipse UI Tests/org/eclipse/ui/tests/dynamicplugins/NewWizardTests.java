@@ -52,9 +52,6 @@ public class NewWizardTests extends DynamicTestCase {
 		}
 	}
 
-	/**
-	 * @param wizard
-	 */
 	private void testNewWizardProperties(IWizardDescriptor wizard) {
 		assertNotNull(wizard.getId());
 		assertNotNull(wizard.getDescription());

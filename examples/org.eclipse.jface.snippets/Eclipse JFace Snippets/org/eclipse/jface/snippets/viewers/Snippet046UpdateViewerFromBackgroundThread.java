@@ -38,7 +38,6 @@ import org.eclipse.swt.widgets.TableColumn;
  * Example how to update a viewer from a long running task
  *
  * @author Tom Schindl &lt;tom.schindl@bestsolution.at&gt;
- *
  */
 public class Snippet046UpdateViewerFromBackgroundThread {
 	private static Image[] images;
@@ -158,9 +157,6 @@ public class Snippet046UpdateViewerFromBackgroundThread {
 		return elements;
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display();
 

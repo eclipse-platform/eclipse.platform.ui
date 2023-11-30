@@ -28,7 +28,6 @@ import org.junit.Test;
  * Test case to assert proper styles have been set for ProgressIndicator.
  *
  * @since 3.4
- *
  */
 public class ProgressIndicatorStyleTest {
 

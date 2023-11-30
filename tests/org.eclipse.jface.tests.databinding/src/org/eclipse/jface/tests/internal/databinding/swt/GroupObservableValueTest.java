@@ -35,8 +35,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- */
 public class GroupObservableValueTest extends ObservableDelegateTest {
 	private Delegate delegate;
 	private IObservableValue observable;

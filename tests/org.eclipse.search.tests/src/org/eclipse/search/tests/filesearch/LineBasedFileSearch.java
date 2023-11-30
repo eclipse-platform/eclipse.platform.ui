@@ -39,8 +39,6 @@ import org.eclipse.search.internal.ui.text.FileSearchQuery;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.FileTextSearchScope;
 
-/**
- */
 public class LineBasedFileSearch extends FileSearchQuery  {
 
 

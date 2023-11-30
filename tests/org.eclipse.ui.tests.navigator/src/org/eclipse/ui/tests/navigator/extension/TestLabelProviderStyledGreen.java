@@ -22,7 +22,6 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * @since 3.3
- *
  */
 public class TestLabelProviderStyledGreen extends TestStyledLabelProvider {
 	public static TestLabelProviderStyledGreen instance;

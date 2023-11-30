@@ -29,7 +29,6 @@ import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 /**
  * @since 3.3
- *
  */
 public class ExplicitlyBusyView extends ViewPart {
 

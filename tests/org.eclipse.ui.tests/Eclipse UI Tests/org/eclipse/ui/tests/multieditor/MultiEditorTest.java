@@ -155,8 +155,6 @@ public class MultiEditorTest extends UITestCase {
 	 * Test: this test involves opening the tiled editor on 2 files, changing
 	 * the focus from the first file to the second file, and closing the tiled
 	 * editor.
-	 *
-	 * @throws Throwable
 	 */
 	@Test
 	public void testOpenTestFile() throws Throwable {
@@ -435,7 +433,6 @@ public class MultiEditorTest extends UITestCase {
 	 * @param projectName
 	 *            the name of the project to create
 	 * @return the newly opened project
-	 * @throws CoreException
 	 */
 	private IProject findOrCreateProject(String projectName)
 			throws CoreException {
@@ -467,7 +464,6 @@ public class MultiEditorTest extends UITestCase {
 	 * @param input
 	 *            the editor input with multiple files
 	 * @return the MultiEditor
-	 * @throws PartInitException
 	 */
 	private IEditorPart openAndValidateEditor(IWorkbenchPage page,
 			MultiEditorInput input) throws PartInitException {
@@ -503,7 +499,6 @@ public class MultiEditorTest extends UITestCase {
 
 	/**
 	 * Set up to catch any editor initialization exceptions.
-	 *
 	 */
 	private void setupErrorListener() {
 		final ILog log = WorkbenchPlugin.getDefault().getLog();
@@ -532,8 +527,6 @@ public class MultiEditorTest extends UITestCase {
 	 * @param testProject
 	 *            the project to create the files in
 	 * @return the editor input used to open the multieditor
-	 * @throws CoreException
-	 * @throws IOException
 	 */
 	private MultiEditorInput generateEditorInput(String[] simpleFiles,
 			IProject testProject) throws CoreException, IOException {
@@ -578,7 +571,6 @@ public class MultiEditorTest extends UITestCase {
 	 * the innerChildren.
 	 *
 	 * @since 3.1
-	 *
 	 */
 	public static class EditorErrorListener implements ILogListener {
 

@@ -131,8 +131,6 @@ public abstract class ViewerTestCase {
 
 	/**
 	 * Pauses execution of the current thread
-	 *
-	 * @param millis
 	 */
 	protected static void sleep(long millis) {
 		try {

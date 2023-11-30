@@ -33,8 +33,6 @@ import org.eclipse.jface.databinding.conformance.util.SetChangeEventTracker;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- */
 public class MutableObservableSetContractTest extends
 		MutableObservableCollectionContractTest {
 	private final IObservableCollectionContractDelegate delegate;
@@ -196,10 +194,6 @@ public class MutableObservableSetContractTest extends
 	 * <li>Source of the event is the provided <code>set</code>.
 	 * <li>The set change event is fired after the change event.</li>
 	 * </ul>
-	 *
-	 * @param runnable
-	 * @param methodName
-	 * @param set
 	 */
 	private void assertSetChangeEventFired(Runnable runnable,
 			String methodName, IObservableSet set) {
@@ -232,11 +226,6 @@ public class MutableObservableSetContractTest extends
 
 	/**
 	 * Asserts the set diff entry for an add operation.
-	 *
-	 * @param runnable
-	 * @param methodName
-	 * @param set
-	 * @param element
 	 */
 	private void assertAddDiffEntry(Runnable runnable, String methodName,
 			IObservableSet set, Object element) {
@@ -256,11 +245,6 @@ public class MutableObservableSetContractTest extends
 
 	/**
 	 * Asserts the set diff entry for a remove operation.
-	 *
-	 * @param runnable
-	 * @param methodName
-	 * @param set
-	 * @param element
 	 */
 	private void assertRemoveDiffEntry(Runnable runnable, String methodName,
 			IObservableSet set, Object element) {

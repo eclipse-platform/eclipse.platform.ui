@@ -133,9 +133,6 @@ public class SWTUtil {
 	}
 
 	/**
-	 * @param rgb1
-	 * @param rgb2
-	 * @param ratio
 	 * @return the RGB object
 	 */
 	public static RGB mix(RGB rgb1, RGB rgb2, double ratio) {

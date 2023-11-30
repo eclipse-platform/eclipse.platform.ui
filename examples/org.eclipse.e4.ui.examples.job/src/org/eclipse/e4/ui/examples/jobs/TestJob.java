@@ -61,8 +61,6 @@ public class TestJob extends Job {
 	 *            Whether the job should fail
 	 * @param indeterminate
 	 *            Whether the job should report indeterminate progress
-	 * @param rescheduleWait
-	 * @param reschedule
 	 */
 	public TestJob(long duration, boolean lock, boolean failure,
 			boolean indeterminate, boolean reschedule, long rescheduleWait) {

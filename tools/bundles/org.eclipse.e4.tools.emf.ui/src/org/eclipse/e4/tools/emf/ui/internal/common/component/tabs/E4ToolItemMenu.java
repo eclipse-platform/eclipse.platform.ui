@@ -37,7 +37,6 @@ import org.eclipse.swt.widgets.ToolItem;
  * set by querying the handler when the menu is opened.
  *
  * @author Steven Spungin
- *
  */
 public class E4ToolItemMenu {
 

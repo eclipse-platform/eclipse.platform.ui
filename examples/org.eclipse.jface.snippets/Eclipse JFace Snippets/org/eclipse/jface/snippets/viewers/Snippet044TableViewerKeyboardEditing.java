@@ -39,7 +39,6 @@ import org.eclipse.swt.widgets.Table;
  * Demonstrates how to use keyboard-editing support in a TableViewer
  *
  * @author Tom Schindl &lt;tom.schindl@bestsolution.at&gt;
- *
  */
 public class Snippet044TableViewerKeyboardEditing {
 
@@ -147,9 +146,6 @@ public class Snippet044TableViewerKeyboardEditing {
 		return elements;
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display();
 

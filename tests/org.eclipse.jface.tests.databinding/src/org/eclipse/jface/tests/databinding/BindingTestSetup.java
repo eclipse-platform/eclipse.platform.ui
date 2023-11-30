@@ -26,7 +26,6 @@ import org.junit.runner.Description;
 
 /**
  * @since 3.2
- *
  */
 public class BindingTestSetup extends TestWatcher {
 

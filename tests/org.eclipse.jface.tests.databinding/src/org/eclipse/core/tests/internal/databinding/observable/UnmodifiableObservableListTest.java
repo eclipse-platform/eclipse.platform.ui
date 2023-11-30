@@ -137,10 +137,6 @@ public class UnmodifiableObservableListTest extends
 	}
 
 	private static class MutableObservableList extends ObservableList {
-		/**
-		 * @param wrappedList
-		 * @param elementType
-		 */
 		public MutableObservableList(List wrappedList, Object elementType) {
 			super(wrappedList, elementType);
 		}

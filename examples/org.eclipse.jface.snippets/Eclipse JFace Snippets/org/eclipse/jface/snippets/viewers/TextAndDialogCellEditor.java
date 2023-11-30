@@ -32,7 +32,6 @@ import org.eclipse.swt.widgets.Text;
  * A CellEditor that is a blending of DialogCellEditor and TextCellEditor. The
  * user can either type directly into the Text or use the button to open a
  * Dialog for editing the cell's value.
- *
  */
 public class TextAndDialogCellEditor extends DialogCellEditor {
 

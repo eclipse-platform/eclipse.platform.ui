@@ -155,8 +155,6 @@ public class IAggregateWorkingSetTest extends UITestCase {
 	 * </pre>
 	 *
 	 * All we have to do to emulate stack overflow is to create a working set based on this IMemento.
-	 *
-	 * @throws Throwable
 	 */
 	@Test
 	public void testWorkingSetCycle() throws Throwable {
@@ -190,7 +188,6 @@ public class IAggregateWorkingSetTest extends UITestCase {
 
 	/**
 	 * Tests cleanup of the cycle from an aggregate working set.
-	 * @throws Throwable
 	 */
 	@Test
 	public void testCycleCleanup() throws Throwable {

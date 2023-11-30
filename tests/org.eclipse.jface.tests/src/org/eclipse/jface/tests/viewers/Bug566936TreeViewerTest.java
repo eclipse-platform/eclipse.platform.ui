@@ -36,7 +36,6 @@ import org.eclipse.swt.widgets.Tree;
 
 /**
  * Example for https://bugs.eclipse.org/bugs/show_bug.cgi?id=566936
- *
  */
 public class Bug566936TreeViewerTest {
 
@@ -199,9 +198,6 @@ public class Bug566936TreeViewerTest {
 		return elements;
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display();
 

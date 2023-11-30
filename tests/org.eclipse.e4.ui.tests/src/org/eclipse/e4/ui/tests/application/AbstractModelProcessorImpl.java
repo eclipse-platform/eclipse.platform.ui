@@ -24,9 +24,6 @@ import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MBasicFactory;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 
-/**
- *
- */
 public abstract class AbstractModelProcessorImpl {
 	@Inject
 	@Named("app.base")

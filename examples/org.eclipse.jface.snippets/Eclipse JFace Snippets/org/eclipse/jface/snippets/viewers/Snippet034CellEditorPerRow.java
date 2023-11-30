@@ -39,7 +39,6 @@ import org.eclipse.swt.widgets.Table;
  * for 3.3 and above please use the new EditingSupport class
  *
  * @author Tom Schindl &lt;tom.schindl@bestsolution.at&gt;
- *
  */
 public class Snippet034CellEditorPerRow {
 	private class MyEditingSupport extends EditingSupport {
@@ -152,9 +151,6 @@ public class Snippet034CellEditorPerRow {
 		return elements;
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display();
 		Shell shell = new Shell(display);

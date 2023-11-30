@@ -35,9 +35,6 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
  * A form editor that has several pages but only one stable header.
  */
 public class SingleHeaderEditor extends SharedHeaderFormEditor {
-	/**
-	 *
-	 */
 	public SingleHeaderEditor() {
 	}
 

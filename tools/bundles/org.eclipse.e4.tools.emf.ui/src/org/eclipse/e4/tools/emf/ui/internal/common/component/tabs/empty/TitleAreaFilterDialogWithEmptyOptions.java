@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.Shell;
  * excluding, and selecting empty values.
  *
  * @author Steven Spungin
- *
  */
 public class TitleAreaFilterDialogWithEmptyOptions extends TitleAreaFilterDialog {
 	private Button btnExcludeEmptyValues;

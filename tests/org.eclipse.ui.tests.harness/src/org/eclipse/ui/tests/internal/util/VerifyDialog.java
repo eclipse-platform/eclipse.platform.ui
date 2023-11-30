@@ -238,7 +238,6 @@ public class VerifyDialog extends TitleAreaDialog {
 	 * Can't open the verification dialog without a specified
 	 * test dialog, this simply returns a failure and prevents
 	 * opening.  Should use open(Dialog) instead.
-	 *
 	 */
 	@Override
 	public int open() {

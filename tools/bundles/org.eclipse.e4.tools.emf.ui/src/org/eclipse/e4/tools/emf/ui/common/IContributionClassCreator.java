@@ -29,7 +29,6 @@ public interface IContributionClassCreator {
 	/**
 	 * Called to determine if the EClass is supported by the contribution
 	 *
-	 * @param element
 	 * @return <code>true</code> if supported
 	 */
 	public boolean isSupported(EClass element);
@@ -41,9 +40,6 @@ public interface IContributionClassCreator {
 	 * @param contribution
 	 *            the {@link MContribution} element to be created and
 	 *            subsequently opened in the editor
-	 * @param domain
-	 * @param project
-	 * @param shell
 	 */
 	public void createOpen(MContribution contribution, EditingDomain domain, IProject project, Shell shell);
 }

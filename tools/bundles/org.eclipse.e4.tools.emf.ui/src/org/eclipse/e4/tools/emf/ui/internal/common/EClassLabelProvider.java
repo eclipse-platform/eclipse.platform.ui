@@ -22,7 +22,6 @@ import org.eclipse.jface.viewers.LabelProvider;
  * Uses the default editor for the EClass to calculate the label
  *
  * @author Steven Spungin
- *
  */
 public class EClassLabelProvider extends LabelProvider {
 	private final ModelEditor editor;

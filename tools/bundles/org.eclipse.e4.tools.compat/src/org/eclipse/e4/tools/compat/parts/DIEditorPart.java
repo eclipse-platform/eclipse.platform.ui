@@ -43,8 +43,6 @@ import org.eclipse.ui.part.EditorPart;
  * class is supposed to be sub classed by clients.
  *
  * @author Jonas
- *
- * @param <C>
  */
 public abstract class DIEditorPart<C> extends EditorPart implements IDirtyProviderService {
 	private IEclipseContext context;

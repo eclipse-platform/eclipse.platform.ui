@@ -40,7 +40,6 @@ import junit.framework.TestSuite;
  * from method to method.
  *
  * @since 3.2
- *
  */
 public class Bug108033Test extends TestCase {
 

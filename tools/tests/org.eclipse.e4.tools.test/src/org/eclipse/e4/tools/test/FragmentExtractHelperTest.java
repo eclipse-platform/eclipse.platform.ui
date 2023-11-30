@@ -50,7 +50,6 @@ import org.junit.Test;
 
 /**
  * @author Jonas
- *
  */
 public class FragmentExtractHelperTest {
 
@@ -361,10 +360,6 @@ public class FragmentExtractHelperTest {
 		assertEquals(1, part2.getBindingContexts().size());
 	}
 
-	/**
-	 * @return
-	 *
-	 */
 	private MHandledItem createHandledItem() {
 		final MHandledItem handledItem = MMenuFactory.INSTANCE.createHandledMenuItem();
 		handledItem.setElementId(HANDLER1ID);

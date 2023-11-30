@@ -22,7 +22,6 @@ import org.junit.runners.Suite.SuiteClasses;
 
 /**
  * Test Suite for the org.eclipse.text plug-in
- *
  */
 @RunWith(Suite.class)
 @SuiteClasses({

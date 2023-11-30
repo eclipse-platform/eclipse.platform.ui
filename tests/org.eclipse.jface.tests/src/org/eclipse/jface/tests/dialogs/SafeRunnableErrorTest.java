@@ -25,7 +25,6 @@ import org.junit.Test;
  * hand.
  *
  * @since 3.4
- *
  */
 public class SafeRunnableErrorTest {
 

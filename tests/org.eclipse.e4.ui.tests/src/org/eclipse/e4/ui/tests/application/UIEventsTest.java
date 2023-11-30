@@ -81,17 +81,9 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 			eventBroker.subscribe(this.topic, attListener);
 		}
 
-		/**
-		 * @param b
-		 * @param string
-		 */
 		protected void assertTrue(boolean b, String string) {
 		}
 
-		/**
-		 * @param attId
-		 * @return
-		 */
 		protected int getAttIndex(String attId) {
 			for (int i = 0; i < attIds.length; i++) {
 				if (attIds[i].equals(attId))
@@ -344,10 +336,6 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		assertFalse(seen[0]);
 	}
 
-	/**
-	 * @param allTesters
-	 * @param tester
-	 */
 	private void checkForFailures(EventTester[] allTesters, EventTester tester) {
 		ensureAllSet(tester);
 		ensureNoCrossTalk(allTesters, tester);
@@ -356,8 +344,6 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 	/**
 	 * Ensures that no events were picked up from topics other than the one we
 	 * expect to see changes in.
-	 *
-	 * @param tester
 	 */
 	private void ensureNoCrossTalk(EventTester[] allTesters, EventTester skipMe) {
 		List<EventTester> badTesters = new ArrayList<>();
@@ -376,9 +362,6 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		}
 	}
 
-	/**
-	 * @param tester
-	 */
 	private void ensureAllSet(EventTester tester) {
 		String[] unfiredIds = tester.getAttIds(false);
 		if (unfiredIds.length > 0) {
@@ -390,9 +373,6 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		}
 	}
 
-	/**
-	 * @param allTesters
-	 */
 	private void reset(EventTester[] allTesters) {
 		for (EventTester t : allTesters) {
 			t.reset();

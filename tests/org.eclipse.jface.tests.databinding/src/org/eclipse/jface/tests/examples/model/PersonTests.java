@@ -26,7 +26,6 @@ import org.junit.Test;
 
 /**
  * @since 3.2
- *
  */
 public class PersonTests {
 	@Test

@@ -77,8 +77,6 @@ public class ListViewerRefreshTest {
 	/**
 	 * Asserts the ability to refresh without a selection and preserve the scrolled
 	 * to position.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testNoSelectionRefresh() throws Exception {
@@ -98,8 +96,6 @@ public class ListViewerRefreshTest {
 	/**
 	 * Asserts the ability to refresh with a selection and preserve the scrolled to
 	 * position.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testSelectionRefresh() throws Exception {
@@ -124,9 +120,6 @@ public class ListViewerRefreshTest {
 
 	/**
 	 * Runs the runnable and displays the description.
-	 *
-	 * @param description
-	 * @param runnable
 	 */
 	private void run(String description, Runnable runnable) {
 		runnable.run();

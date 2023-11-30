@@ -2159,8 +2159,6 @@ public class ModelAssemblerFragmentOrderingTests {
 	 * imports Menu 0.0 from fragment2
 	 * <p>
 	 * fragment2 contributes Menu0.0, Menu 0.2 and MenuItem 0.0.1
-	 *
-	 *
 	 */
 	@Test
 	public void testMenuAndItemsInFragmentsWithImports() {

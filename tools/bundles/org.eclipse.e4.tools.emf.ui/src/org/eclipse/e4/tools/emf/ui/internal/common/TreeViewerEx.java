@@ -33,7 +33,6 @@ import org.eclipse.swt.widgets.Composite;
  * Adds additional functionality to TreeViewer
  *
  * @author Steven Spungin
- *
  */
 public class TreeViewerEx extends TreeViewer {
 

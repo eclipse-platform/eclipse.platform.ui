@@ -41,10 +41,6 @@ public class ObservablesTest extends AbstractDefaultRealmTestCase {
 	}
 
 	private static class ObservableListStub extends ObservableList<Object> {
-		/**
-		 * @param wrappedList
-		 * @param elementType
-		 */
 		protected ObservableListStub(List<Object> wrappedList, Object elementType) {
 			super(wrappedList, elementType);
 		}

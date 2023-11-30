@@ -23,7 +23,6 @@ import org.eclipse.emf.edit.domain.EditingDomain;
  * editors that display EObjects.
  *
  * @author Steven Spungin
- *
  */
 public interface IViewEObjects {
 

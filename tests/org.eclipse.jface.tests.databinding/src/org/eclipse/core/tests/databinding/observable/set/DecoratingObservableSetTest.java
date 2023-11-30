@@ -31,7 +31,6 @@ import org.eclipse.jface.databinding.conformance.util.TestCollection;
 
 /**
  * @since 3.2
- *
  */
 public class DecoratingObservableSetTest {
 	public static void addConformanceTest(TestCollection suite) {

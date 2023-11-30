@@ -24,7 +24,6 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * @since 3.3
- *
  */
 public abstract class TreeTest extends ViewerTest {
 
@@ -32,8 +31,6 @@ public abstract class TreeTest extends ViewerTest {
 
 	/**
 	 * Create a new instance of the receiver.
-	 * @param testName
-	 * @param tagging
 	 */
 	public TreeTest(String testName, int tagging) {
 		super(testName, tagging);
@@ -41,7 +38,6 @@ public abstract class TreeTest extends ViewerTest {
 
 	/**
 	 * Create a new instance of the receiver.
-	 * @param testName
 	 */
 	public TreeTest(String testName) {
 		super(testName);
@@ -60,7 +56,6 @@ public abstract class TreeTest extends ViewerTest {
 
 	/**
 	 * Create the tree viewer
-	 * @return
 	 */
 	protected TreeViewer createTreeViewer(Shell shell) {
 		return new TreeViewer(shell);

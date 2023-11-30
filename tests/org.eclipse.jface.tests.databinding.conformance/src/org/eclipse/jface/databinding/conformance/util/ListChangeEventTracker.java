@@ -55,7 +55,6 @@ public class ListChangeEventTracker<E> implements IListChangeListener<E> {
 	/**
 	 * Convenience method to register a new listener.
 	 *
-	 * @param observable
 	 * @return tracker
 	 */
 	public static <E> ListChangeEventTracker<E> observe(IObservableList<E> observable) {

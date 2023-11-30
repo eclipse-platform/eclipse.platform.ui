@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 /**
  * TestJobRule is a scheduling rules that makes all jobs sequential.
- *
  */
 public class TestJobRule implements ISchedulingRule {
 	private final int jobOrder;
@@ -43,7 +42,6 @@ public class TestJobRule implements ISchedulingRule {
 
 	/**
 	 * Return the order of this rule.
-	 * @return
 	 */
 	public int getJobOrder() {
 		return jobOrder;

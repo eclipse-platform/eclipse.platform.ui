@@ -24,9 +24,6 @@ import org.junit.Assert;
  */
 public final class ImageTests {
 
-	/**
-	 *
-	 */
 	private ImageTests() {
 		super();
 	}

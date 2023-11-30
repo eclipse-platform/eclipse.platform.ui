@@ -97,8 +97,6 @@ public class MarkerSupportTests extends DynamicTestCase {
 	/**
 	 * Return whether or not there is a hierarchy for the dynamic type or if it
 	 * is using the default.
-	 *
-	 * @return
 	 */
 	private boolean hasHierarchy() {
 		return MarkerSupportRegistry.getInstance().getSorterFor(
@@ -122,8 +120,6 @@ public class MarkerSupportTests extends DynamicTestCase {
 
 	/**
 	 * Return whether or not there is a filter for the dynamic category
-	 *
-	 * @return
 	 */
 	private boolean hasCategory() {
 		return MarkerSupportRegistry.getInstance().getCategory(
@@ -132,9 +128,6 @@ public class MarkerSupportTests extends DynamicTestCase {
 
 	/**
 	 * Return whether or not there is a filter for id.
-	 *
-	 * @param id
-	 * @return
 	 */
 	private boolean hasFilter(String id) {
 		Iterator<ProblemFilter> filters = MarkerSupportRegistry.getInstance()

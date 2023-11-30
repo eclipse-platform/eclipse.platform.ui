@@ -59,7 +59,6 @@ import org.xml.sax.SAXException;
 /**
  * Checks that plugin.xml of specified bundles is valid and referred classes can
  * be accessed
- *
  */
 @SuppressWarnings("restriction")
 public class PluginWalkerTest {
@@ -170,12 +169,6 @@ public class PluginWalkerTest {
 
 	/**
 	 * Parses the plugin.xml file and provides access to its content
-	 *
-	 * @param bundle
-	 * @return
-	 * @throws SAXException
-	 * @throws IOException
-	 * @throws ParserConfigurationException
 	 */
 	private static Document getDocument(Bundle bundle) throws SAXException, IOException, ParserConfigurationException {
 		Document doc = null;

@@ -32,7 +32,6 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * A snippet to demonstrate a dialog with image buttons.
- *
  */
 public class Snippet057FileImageDescriptors {
 	private ImageRegistry registry;

@@ -46,7 +46,6 @@ import org.osgi.framework.FrameworkUtil;
  * Test loading a directory full of images.
  *
  * @since 3.4
- *
  */
 public class FileImageDescriptorTest {
 

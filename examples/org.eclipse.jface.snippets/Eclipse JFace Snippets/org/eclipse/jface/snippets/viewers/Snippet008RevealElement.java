@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.TableColumn;
 
 /**
  * Scroll a Viewer 99th element
- *
  */
 public class Snippet008RevealElement {
 
@@ -72,9 +71,6 @@ public class Snippet008RevealElement {
 		return elements;
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display ();
 		Shell shell = new Shell(display);

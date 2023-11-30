@@ -92,9 +92,6 @@ public class SaveableMockViewPart extends MockViewPart implements
 		saveAsToggle.setSelection(saveAsAllowed);
 	}
 
-	/**
-	 * @param selection
-	 */
 	protected void setAdapt(boolean selection) {
 		this.adapt = selection;
 	}

@@ -144,8 +144,6 @@ public class ModelAssemblerTests {
 
 	/**
 	 * Test the handling of a fragment contribution with no elements to merge.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testFragments_emptyFragment() throws Exception {
@@ -165,8 +163,6 @@ public class ModelAssemblerTests {
 
 	/**
 	 * Tests that fragments are correctly contributed to the application model.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testFragments_workingFragment() throws Exception {
@@ -248,8 +244,6 @@ public class ModelAssemblerTests {
 	 * Tests that fragments configured to be always merged are correctly
 	 * contributed to the application model, even if the model already contains
 	 * the contributed element.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testFragments_existingXMIID_ignoreExists() throws Exception {
@@ -354,7 +348,6 @@ public class ModelAssemblerTests {
 	 *
 	 * @throws Exception
 	 *             if anything went wrong during the test
-	 *
 	 */
 	@Test
 	public void testModelProcessingOrder() throws Exception {
@@ -397,8 +390,6 @@ public class ModelAssemblerTests {
 	/**
 	 * Tests that pre-processors running from a non-persisted state that are
 	 * marked as "always" are executed.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testPreProcessor_nonPersistedState_always() throws Exception {
@@ -411,8 +402,6 @@ public class ModelAssemblerTests {
 	/**
 	 * Tests that pre-processors running from a persisted state that are marked
 	 * as "always" are executed.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testPreProcessor_persistedState_always() throws Exception {
@@ -425,8 +414,6 @@ public class ModelAssemblerTests {
 	/**
 	 * Tests that pre-processors running from a non-persisted state and marked
 	 * as "initial" are executed.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testPreProcessor_nonPersistedState_initial() throws Exception {
@@ -439,8 +426,6 @@ public class ModelAssemblerTests {
 	/**
 	 * Tests that pre-processors running from a persisted state and marked as
 	 * "initial" are not executed.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testPreProcessor_persistedState_initial() throws Exception {
@@ -452,8 +437,6 @@ public class ModelAssemblerTests {
 	/**
 	 * Tests the execution of post-processors that should always be applied,
 	 * running from a persisted state.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testPostProcessor_persistedState_always() throws Exception {
@@ -466,8 +449,6 @@ public class ModelAssemblerTests {
 	/**
 	 * Tests the execution of post-processors that should always be applied,
 	 * running from a non-persisted state.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testPostProcessor_nonPersistedState_always() throws Exception {
@@ -480,8 +461,6 @@ public class ModelAssemblerTests {
 	/**
 	 * Tests the execution of post-processors running from a non-persisted state
 	 * declared to be applied as "initial".
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testPostProcessor_NonPersistedState_initial() throws Exception {
@@ -494,8 +473,6 @@ public class ModelAssemblerTests {
 	/**
 	 * Processors running from a persisted state declared to be applied as
 	 * "initial" should not be run.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testPostProcessor_persistedState_initial() throws Exception {
@@ -507,8 +484,6 @@ public class ModelAssemblerTests {
 	/**
 	 * Test handling of processor contribution without any processor class. A
 	 * warning should be logged in such cases.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testProcessor_noProcessor() throws Exception {
@@ -529,8 +504,6 @@ public class ModelAssemblerTests {
 	/**
 	 * Tests a contribution containing an nonexistent processor class. A warning
 	 * should be logged in such cases.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testProcessor_processorNotFound() throws Exception {
@@ -554,8 +527,6 @@ public class ModelAssemblerTests {
 	 * Tests a processor contribution that adds to the context an element with
 	 * an id that does not exist in the application model. A warning should be
 	 * logged, but the processors should still be executed.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testProcessor_wrongAppId() throws Exception {

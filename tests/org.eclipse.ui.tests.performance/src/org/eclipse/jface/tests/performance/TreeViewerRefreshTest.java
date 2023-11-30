@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * The TreeViewerRefreshTest is the refresh test for
  * tree viewers.
- *
  */
 public class TreeViewerRefreshTest extends ViewerTest {
 
@@ -48,7 +47,6 @@ public class TreeViewerRefreshTest extends ViewerTest {
 
 	/**
 	 * Test the time for doing a refresh.
-	 * @throws Throwable
 	 */
 	public void testRefresh() throws Throwable {
 		openBrowser();

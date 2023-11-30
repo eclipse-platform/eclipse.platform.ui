@@ -39,7 +39,6 @@ import org.junit.runners.JUnit4;
 
 /**
  * @since 3.5
- *
  */
 @RunWith(JUnit4.class)
 public class SaveablesListTest extends UITestCase {
