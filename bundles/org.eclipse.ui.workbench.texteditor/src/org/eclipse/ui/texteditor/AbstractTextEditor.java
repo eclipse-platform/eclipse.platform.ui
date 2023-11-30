@@ -3398,6 +3398,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		// Disable orientation switching until we fully support it.
 		styledText.addListener(SWT.OrientationChange, event -> event.doit = false);
 
+		if (getPreferenceStore() != null) {
+			// We're managing our appearance from our preferences. Disable CSS styling.
+			// The CSS engine does set the editor preferences on theme switches, so we
+			// will pick up changes.
+			styledText.setData("org.eclipse.e4.ui.css.disabled", Boolean.TRUE); //$NON-NLS-1$
+		}
+
+		
 		if (getHelpContextId() != null)
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(styledText, getHelpContextId());
 
