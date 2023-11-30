@@ -22,6 +22,7 @@ import org.eclipse.text.readers.SingleCharacterReader;
  *
  * @deprecated Please use SingleCharacterReader
  */
+@Deprecated
 public abstract class SingleCharReader extends SingleCharacterReader {
 
 }

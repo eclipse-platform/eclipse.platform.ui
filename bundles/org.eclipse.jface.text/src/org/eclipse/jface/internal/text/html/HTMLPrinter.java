@@ -23,8 +23,7 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
-import org.eclipse.text.html.CoreHTMLPrinter;
-import org.eclipse.text.html.CoreRGB;
+import org.eclipse.text.html.BaseHTMLPrinter;
 
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
@@ -37,7 +36,7 @@ import org.eclipse.jface.text.DefaultInformationControl;
  * Moved into this package from <code>org.eclipse.jface.internal.text.revisions</code>.</p>
  */
 public class HTMLPrinter {
-	private static final CoreHTMLPrinter CORE= new CoreHTMLPrinter();
+	private static final BaseHTMLPrinter CORE= new BaseHTMLPrinter();
 
 	static {
 		final Display display= Display.getDefault();
@@ -63,16 +62,16 @@ public class HTMLPrinter {
 		JFaceResources.getColorRegistry().addListener(event -> cacheColors(display));
 	}
 
-	private static CoreRGB fromRGB(RGB val) {
-		return new CoreRGB(val.red, val.green, val.blue);
+	private static org.eclipse.text.html.RGB fromRGB(RGB val) {
+		return new org.eclipse.text.html.RGB(val.red, val.green, val.blue);
 	}
 	private static void cacheColors(Display display) {
-		CoreRGB bg= fromRGB(JFaceColors.getInformationViewerBackgroundColor(display).getRGB());
-		CoreRGB fg= fromRGB(JFaceColors.getInformationViewerForegroundColor(display).getRGB());
+		org.eclipse.text.html.RGB bg= fromRGB(JFaceColors.getInformationViewerBackgroundColor(display).getRGB());
+		org.eclipse.text.html.RGB fg= fromRGB(JFaceColors.getInformationViewerForegroundColor(display).getRGB());
 		Color hyperlinkText= JFaceColors.getHyperlinkText(display);
 		Color activeHyperlinkText= JFaceColors.getActiveHyperlinkText(display);
-		CoreRGB link= hyperlinkText == null ? null : fromRGB(hyperlinkText.getRGB());
-		CoreRGB alink= activeHyperlinkText == null ? null : fromRGB(activeHyperlinkText.getRGB());
+		org.eclipse.text.html.RGB link= hyperlinkText == null ? null : fromRGB(hyperlinkText.getRGB());
+		org.eclipse.text.html.RGB alink= activeHyperlinkText == null ? null : fromRGB(activeHyperlinkText.getRGB());
 		CORE.setColors(bg, fg, link, alink);
 	}
 
@@ -88,7 +87,7 @@ public class HTMLPrinter {
 	 * @see #addPreFormatted(StringBuilder, String) for rendering with an {@link HTML2TextReader}
 	 */
 	public static String convertToHTMLContent(String content) {
-		return CoreHTMLPrinter.convertToHTMLContent(content);
+		return BaseHTMLPrinter.convertToHTMLContent(content);
 	}
 
 	/**
@@ -107,11 +106,11 @@ public class HTMLPrinter {
 	 * @since 3.7
 	 */
 	public static String convertToHTMLContentWithWhitespace(String content) {
-		return CoreHTMLPrinter.convertToHTMLContentWithWhitespace(content);
+		return BaseHTMLPrinter.convertToHTMLContentWithWhitespace(content);
 	}
 
 	public static String read(Reader rd) {
-		return CoreHTMLPrinter.read(rd);
+		return BaseHTMLPrinter.read(rd);
 	}
 
 	/**
@@ -478,6 +477,6 @@ public class HTMLPrinter {
 	public static String convertTopLevelFont(String styles, FontData fontData) {
 		boolean bold= (fontData.getStyle() & SWT.BOLD) != 0;
 		boolean italic= (fontData.getStyle() & SWT.ITALIC) != 0;
-		return CoreHTMLPrinter.convertTopLevelFont(styles, bold, italic, fontData.getHeight(), fontData.getName());
+		return BaseHTMLPrinter.convertTopLevelFont(styles, bold, italic, fontData.getHeight(), fontData.getName());
 	}
 }
