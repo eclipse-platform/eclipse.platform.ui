@@ -26,12 +26,12 @@ import org.eclipse.core.runtime.Platform;
  *
  * @since 3.14
  */
-public class CoreHTMLPrinter {
+public class BaseHTMLPrinter {
 
-	private static volatile CoreRGB DEFAULT_BG_COLOR_RGB= new CoreRGB(255, 255, 225); // CoreRGB value of info bg color on WindowsXP
-	private static volatile CoreRGB DEFAULT_FG_COLOR_RGB= new CoreRGB(0, 0, 0); // CoreRGB value of info fg color on WindowsXP
-	private static volatile CoreRGB DEFAULT_LINK_COLOR_RGB= new CoreRGB(0, 0, 255); // dark blue
-	private static volatile CoreRGB DEFAULT_ACTIVE_LINK_COLOR_RGB= new CoreRGB(0, 0, 128); // light blue
+	private static volatile RGB DEFAULT_BG_COLOR_RGB= new RGB(255, 255, 225); // CoreRGB value of info bg color on WindowsXP
+	private static volatile RGB DEFAULT_FG_COLOR_RGB= new RGB(0, 0, 0); // CoreRGB value of info fg color on WindowsXP
+	private static volatile RGB DEFAULT_LINK_COLOR_RGB= new RGB(0, 0, 255); // dark blue
+	private static volatile RGB DEFAULT_ACTIVE_LINK_COLOR_RGB= new RGB(0, 0, 128); // light blue
 
 	private static final String UNIT; // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=155993
 	static {
@@ -39,20 +39,20 @@ public class CoreHTMLPrinter {
 	}
 
 
-	private CoreRGB bgColor;
-	private CoreRGB fgColor;
-	private CoreRGB linkColor;
-	private CoreRGB alinkColor;
+	private RGB bgColor;
+	private RGB fgColor;
+	private RGB linkColor;
+	private RGB alinkColor;
 	
-	public CoreHTMLPrinter() {
+	public BaseHTMLPrinter() {
 		this(DEFAULT_BG_COLOR_RGB, DEFAULT_FG_COLOR_RGB, DEFAULT_LINK_COLOR_RGB, DEFAULT_ACTIVE_LINK_COLOR_RGB);
 	}
 	
-	public CoreHTMLPrinter(CoreRGB bg, CoreRGB fg, CoreRGB link, CoreRGB alink) {
+	public BaseHTMLPrinter(RGB bg, RGB fg, RGB link, RGB alink) {
 		setColors(bg, fg, link, alink);
 	}
 	
-	public void setColors(CoreRGB bg, CoreRGB fg, CoreRGB link, CoreRGB alink) {
+	public void setColors(RGB bg, RGB fg, RGB link, RGB alink) {
 		this.bgColor = bg;
 		this.fgColor = fg;
 		this.linkColor = link;
@@ -139,7 +139,7 @@ public class CoreHTMLPrinter {
 	 * @param bgRGB Background-Color
 	 * @param styleSheet Stylesheet
 	 */
-	public void insertPageProlog(StringBuilder buffer, int position, CoreRGB fgRGB, CoreRGB bgRGB, String styleSheet) {
+	public void insertPageProlog(StringBuilder buffer, int position, RGB fgRGB, RGB bgRGB, String styleSheet) {
 		if (fgRGB == null)
 			fgRGB= this.fgColor;
 		if (bgRGB == null)
@@ -164,7 +164,7 @@ public class CoreHTMLPrinter {
 	 * @param bgRGB Background-Color
 	 *
 	 */
-	private void appendColors(StringBuilder pageProlog, CoreRGB fgRGB, CoreRGB bgRGB) {
+	private void appendColors(StringBuilder pageProlog, RGB fgRGB, RGB bgRGB) {
 		pageProlog.append("<body text=\""); //$NON-NLS-1$
 		appendColor(pageProlog, fgRGB);
 		pageProlog.append("\" bgcolor=\""); //$NON-NLS-1$
@@ -179,7 +179,7 @@ public class CoreHTMLPrinter {
 	 * @param rgb RGB-Value
 	 *
 	 */
-	private void appendColor(StringBuilder buffer, CoreRGB rgb) {
+	private void appendColor(StringBuilder buffer, RGB rgb) {
 		buffer.append('#');
 		appendAsHexString(buffer, rgb.red);
 		appendAsHexString(buffer, rgb.green);
@@ -241,7 +241,7 @@ public class CoreHTMLPrinter {
 	 * @param bgRGB Background-Color
 	 *
 	 */
-	private void appendStyleSheet(StringBuilder buffer, String styleSheet, CoreRGB fgRGB, CoreRGB bgRGB) {
+	private void appendStyleSheet(StringBuilder buffer, String styleSheet, RGB fgRGB, RGB bgRGB) {
 		if (styleSheet == null)
 			return;
 

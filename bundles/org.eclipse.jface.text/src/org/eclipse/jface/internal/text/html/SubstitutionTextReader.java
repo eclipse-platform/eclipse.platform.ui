@@ -25,6 +25,7 @@ import java.io.Reader;
  * Moved into this package from <code>org.eclipse.jface.internal.text.revisions</code>.</p>
  * @deprecated Please use org.eclipse.text.readers.SubstitutionReader
  */
+@Deprecated
 public abstract class SubstitutionTextReader extends SingleCharReader {
 
 	protected static final String LINE_DELIM= System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$

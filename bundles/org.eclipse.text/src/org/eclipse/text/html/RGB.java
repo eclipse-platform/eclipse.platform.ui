@@ -36,7 +36,7 @@ import java.io.*;
  * @since 3.14
  */
 
-public final class CoreRGB implements Serializable {
+public final class RGB implements Serializable {
 
 	/**
 	 * the red component of the RGB
@@ -67,7 +67,7 @@ public final class CoreRGB implements Serializable {
  *    <li>ERROR_INVALID_ARGUMENT - if the red, green or blue argument is not between 0 and 255</li>
  * </ul>
  */
-public CoreRGB(int red, int green, int blue) {
+public RGB(int red, int green, int blue) {
 	if ((red > 255) || (red < 0) ||
 		(green > 255) || (green < 0) ||
 		(blue > 255) || (blue < 0))
@@ -90,9 +90,9 @@ public CoreRGB(int red, int green, int blue) {
 *    the saturation or brightness is not between 0 and 1</li>
 * </ul>
 *
-* @since 3.2
+* @since 3.14
 */
-public CoreRGB(float hue, float saturation, float brightness) {
+public RGB(float hue, float saturation, float brightness) {
 	if (hue < 0 || hue > 360 || saturation < 0 || saturation > 1 ||
 		brightness < 0 || brightness > 1) {
 		throw new IllegalArgumentException("Argument not valid"); //$NON-NLS-1$
@@ -157,7 +157,7 @@ public CoreRGB(float hue, float saturation, float brightness) {
  *             </ul>
  * @see #RGB(float, float, float)
  *
- * @since 3.2
+ * @since 3.14
  */
 public float[] getHSB() {
 	float r = red / 255f;
@@ -198,7 +198,7 @@ public float[] getHSB() {
 @Override
 public boolean equals(Object object) {
 	if (object == this) return true;
-	if (!(object instanceof CoreRGB rgb)) return false;
+	if (!(object instanceof RGB rgb)) return false;
 	return (rgb.red == this.red) && (rgb.green == this.green) && (rgb.blue == this.blue);
 }
 
