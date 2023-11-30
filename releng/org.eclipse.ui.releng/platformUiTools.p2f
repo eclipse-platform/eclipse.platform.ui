@@ -147,9 +147,19 @@
             <repository location='https://spotbugs.github.io/eclipse-latest'/>
         </repositories>
     </iu>
-    <iu id='org.eclipse.wst.xml_ui.feature.feature.group' name='XML Editor UI' version='0.0.0'>
+    <iu id='org.eclipse.tm4e.feature.feature.group' name='TextMate' version='0.0.0'>
         <repositories size='1'>
-            <repository location='https://download.eclipse.org/webtools/repository/latest/'/>
+            <repository location='https://download.eclipse.org/tm4e/releases/latest/'/>
+        </repositories>
+    </iu>
+    <iu id='org.eclipse.tm4e.language_pack.feature.feature.group' name='TextMate Language Pack' version='0.0.0'>
+        <repositories size='1'>
+            <repository location='https://download.eclipse.org/tm4e/releases/latest/'/>
+        </repositories>
+    </iu>
+    <iu id='de.jcup.basheditor.feature.group' name='Schell script editor' version='0.0.0'>
+        <repositories size='1'>
+            <repository location='https://de-jcup.github.io/update-site-eclipse-bash-editor/update-site'/>
         </repositories>
     </iu>
     <iu id='zipeditor.feature.group' name='ZipEditor' version='0.0.0'>
@@ -164,12 +174,12 @@
     </iu>
     <iu id='org.eclipse.swt.tools.feature.feature.group' name='SWT Tools' version='0.0.0'>
         <repositories size='1'>
-            <repository location='https://download.eclipse.org/eclipse/updates/4.30-I-builds'/>
+            <repository location='https://download.eclipse.org/eclipse/updates/4.31-I-builds'/>
         </repositories>
     </iu>
     <iu id='org.eclipse.equinox.executable.feature.group' name='Eclipse platform launcher executables' version='0.0.0'>
         <repositories size='1'>
-            <repository location='https://download.eclipse.org/eclipse/updates/4.30-I-builds'/>
+            <repository location='https://download.eclipse.org/eclipse/updates/4.31-I-builds'/>
         </repositories>
     </iu>
   </ius>
