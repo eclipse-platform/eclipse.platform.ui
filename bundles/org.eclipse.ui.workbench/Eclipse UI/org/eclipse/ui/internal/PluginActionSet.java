@@ -84,8 +84,6 @@ public class PluginActionSet implements IActionSet {
 		}
 	}
 
-	/**
-	 */
 	/* package */ActionSetActionBars getBars() {
 		return bars;
 	}

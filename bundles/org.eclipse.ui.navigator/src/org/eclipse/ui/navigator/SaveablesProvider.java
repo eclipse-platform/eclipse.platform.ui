@@ -30,7 +30,6 @@ import org.eclipse.ui.services.IDisposable;
  * implement {@link IAdaptable}.
  *
  * @since 3.2
- *
  */
 public abstract class SaveablesProvider implements IDisposable {
 
@@ -38,7 +37,6 @@ public abstract class SaveablesProvider implements IDisposable {
 
 	/**
 	 * Creates a new saveable model provider. May only be called by subclasses.
-	 *
 	 */
 	protected SaveablesProvider() {
 	}

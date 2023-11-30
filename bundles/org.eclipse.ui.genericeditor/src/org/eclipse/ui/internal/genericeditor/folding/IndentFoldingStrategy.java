@@ -335,7 +335,6 @@ public class IndentFoldingStrategy implements IReconcilingStrategy, IReconciling
 	 *
 	 * @param lineContent        line content.
 	 * @param lastLineForKeyword last line for the given keyword.
-	 * @return
 	 */
 	private LineState getLineState(String lineContent, Integer lastLineForKeyword) {
 		if (lineStartsWithKeyword == null) {
@@ -410,7 +409,6 @@ public class IndentFoldingStrategy implements IReconcilingStrategy, IReconciling
 	 * @param additions     annoation to add
 	 * @param line          the line index
 	 * @param endLineNumber the end line number
-	 * @throws BadLocationException
 	 */
 	private void updateAnnotation(List<Annotation> modifications, List<FoldingAnnotation> deletions,
 			List<FoldingAnnotation> existing, Map<Annotation, Position> additions, int line, Integer endLineNumber)

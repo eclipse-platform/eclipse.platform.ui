@@ -50,7 +50,6 @@ import org.eclipse.ui.part.PluginTransfer;
  * @see CommonDropAdapterAssistant
  * @see CommonViewer
  * @since 3.2
- *
  */
 public final class CommonDragAdapter extends DragSourceAdapter {
 

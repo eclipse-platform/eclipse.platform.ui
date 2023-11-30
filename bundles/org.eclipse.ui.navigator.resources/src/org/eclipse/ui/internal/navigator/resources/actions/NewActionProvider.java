@@ -54,7 +54,6 @@ import org.eclipse.ui.wizards.IWizardRegistry;
  * </ul>
  *
  * @since 3.2
- *
  */
 public class NewActionProvider extends CommonActionProvider {
 

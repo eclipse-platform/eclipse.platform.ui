@@ -199,8 +199,6 @@ public abstract class WizardHandler extends AbstractHandler implements IElementU
 		/**
 		 * Sets the id of the category of wizards to show or <code>null</code> to show
 		 * all categories.
-		 *
-		 * @param id
 		 */
 		public void setCategoryId(String id) {
 			categoryId = id;
@@ -267,8 +265,6 @@ public abstract class WizardHandler extends AbstractHandler implements IElementU
 
 	/**
 	 * This is the execution of the handler to open a wizard dialog.
-	 *
-	 * @param event
 	 */
 	protected abstract void executeHandler(ExecutionEvent event);
 

@@ -22,7 +22,6 @@ import org.eclipse.ui.views.markers.internal.MarkerTypesModel;
  * The DeltaMarkerEntry is the class that wraps an {@link IMarkerDelta} for testing.
  *
  * @since 3.6
- *
  */
 class DeltaMarkerEntry extends MarkerEntry {
 
@@ -30,8 +29,6 @@ class DeltaMarkerEntry extends MarkerEntry {
 
 	/**
 	 * Create a new instance of the receiver.
-	 * @param markerDelta
-	 *
 	 */
 	public DeltaMarkerEntry(IMarkerDelta markerDelta) {
 		super(markerDelta.getMarker());

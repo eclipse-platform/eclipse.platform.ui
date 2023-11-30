@@ -264,7 +264,6 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 
 	/**
 	 * Validate the receiver and update the status with the result.
-	 *
 	 */
 	protected void updateOKStatus() {
 		if (!fIsEmpty) {

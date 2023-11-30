@@ -49,7 +49,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * progress job or jobs that are finished awaiting user input.
  *
  * @since 3.2
- *
  */
 public class DetailedProgressViewer extends AbstractProgressViewer {
 
@@ -413,7 +412,6 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 
 	/**
 	 * Cancel the current selection
-	 *
 	 */
 	public void cancelSelection() {
 
@@ -421,7 +419,6 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 
 	/**
 	 * Set focus on the current selection.
-	 *
 	 */
 	public void setFocus() {
 		Control[] children = control.getChildren();

@@ -54,9 +54,6 @@ public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferen
 
 	/**
 	 * Create a new instance of the receiver.
-	 *
-	 * @param id
-	 * @param configurationElement
 	 */
 	public WorkbenchPreferenceExtensionNode(String id, IConfigurationElement configurationElement) {
 		super(id);

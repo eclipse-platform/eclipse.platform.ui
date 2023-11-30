@@ -26,7 +26,6 @@ import org.eclipse.core.resources.IMarker;
  * selected marker.
  *
  * @since 3.4
- *
  */
 public class EditablePropertyTester extends PropertyTester {
 

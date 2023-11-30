@@ -24,7 +24,6 @@ import org.eclipse.ui.IMarkerResolution2;
  * WorkbenchMarkerResolution is the resolution that can be grouped
  * with others that are similar to allow multi selection.
  * @since 3.2
- *
  */
 public abstract class WorkbenchMarkerResolution implements IMarkerResolution2 {
 

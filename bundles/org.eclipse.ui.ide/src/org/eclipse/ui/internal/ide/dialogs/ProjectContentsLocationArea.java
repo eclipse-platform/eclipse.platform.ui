@@ -51,13 +51,11 @@ import org.osgi.framework.FrameworkUtil;
  * of locations using URIs.
  *
  * @since 3.2
- *
  */
 public class ProjectContentsLocationArea {
 	/**
 	 * IErrorMessageReporter is an interface for type that allow message
 	 * reporting.
-	 *
 	 */
 	public interface IErrorMessageReporter {
 		/**
@@ -69,7 +67,6 @@ public class ProjectContentsLocationArea {
 		 * @param infoOnly
 		 *            the message is an informational message, but the dialog
 		 *            cannot continue
-		 *
 		 */
 		public void reportError(String errorMessage, boolean infoOnly);
 	}
@@ -102,10 +99,6 @@ public class ProjectContentsLocationArea {
 
 	/**
 	 * Create a new instance of the receiver.
-	 *
-	 * @param reporter
-	 * @param composite
-	 * @param startProject
 	 */
 	public ProjectContentsLocationArea(IErrorMessageReporter reporter,
 			Composite composite, IProject startProject) {
@@ -118,8 +111,6 @@ public class ProjectContentsLocationArea {
 
 	/**
 	 * Set the project to base the contents off of.
-	 *
-	 * @param existingProject
 	 */
 	public void setExistingProject(IProject existingProject) {
 		projectName = existingProject.getName();
@@ -128,9 +119,6 @@ public class ProjectContentsLocationArea {
 
 	/**
 	 * Create a new instance of a ProjectContentsLocationArea.
-	 *
-	 * @param reporter
-	 * @param composite
 	 */
 	public ProjectContentsLocationArea(IErrorMessageReporter reporter, Composite composite) {
 		errorReporter = reporter;
@@ -141,9 +129,6 @@ public class ProjectContentsLocationArea {
 
 	/**
 	 * Create the contents of the receiver.
-	 *
-	 * @param composite
-	 * @param defaultEnabled
 	 */
 	private void createContents(Composite composite, boolean defaultEnabled) {
 
@@ -199,9 +184,6 @@ public class ProjectContentsLocationArea {
 
 	/**
 	 * Create the area for user entry.
-	 *
-	 * @param composite
-	 * @param defaultEnabled
 	 */
 	private void createUserEntryArea(Composite composite, boolean defaultEnabled) {
 		// location label
@@ -241,8 +223,6 @@ public class ProjectContentsLocationArea {
 
 	/**
 	 * Create the file system selection area.
-	 *
-	 * @param composite
 	 */
 	private void createFileSystemSelection(Composite composite) {
 
@@ -280,8 +260,6 @@ public class ProjectContentsLocationArea {
 
 	/**
 	 * Set the enablement state of the receiver.
-	 *
-	 * @param enabled
 	 */
 	private void setUserAreaEnabled(boolean enabled) {
 
@@ -363,8 +341,6 @@ public class ProjectContentsLocationArea {
 
 	/**
 	 * Update the location field based on the selected path.
-	 *
-	 * @param selectedPath
 	 */
 	private void updateLocationField(String selectedPath) {
 		locationPathField.setText(TextProcessor.process(selectedPath));

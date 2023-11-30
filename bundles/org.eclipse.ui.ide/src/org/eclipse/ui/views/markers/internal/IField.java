@@ -18,7 +18,6 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * IField is the definition of fields for marker views.
- *
  */
 public interface IField {
 
@@ -43,21 +42,17 @@ public interface IField {
 	Image getColumnHeaderImage();
 
 	/**
-	 * @param obj
 	 * @return The String value of the object for this particular field to be displayed to the user.
 	 */
 	String getValue(Object obj);
 
 	/**
-	 * @param obj
 	 * @return The image value of the object for this particular field to be displayed to the user
 	 * or <code>null</code>.
 	 */
 	Image getImage(Object obj);
 
 	/**
-	 * @param obj1
-	 * @param obj2
 	 * @return Either:
 	 * <ul>
 	 *  <li>a negative number if the value of obj1 is less than the value of obj2 for this field.
@@ -88,7 +83,6 @@ public interface IField {
 
 	/**
 	 * Set whether or not the receiver is showing.
-	 * @param showing
 	 */
 	void setShowing(boolean showing);
 

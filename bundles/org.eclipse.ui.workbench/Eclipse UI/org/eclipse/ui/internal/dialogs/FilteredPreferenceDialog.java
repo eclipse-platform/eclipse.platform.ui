@@ -92,14 +92,8 @@ import org.osgi.service.prefs.BackingStoreException;
  */
 public abstract class FilteredPreferenceDialog extends PreferenceDialog implements IWorkbenchPreferenceContainer {
 
-	/**
-	 *
-	 */
 	private static final int PAGE_MULTIPLIER = 9;
 
-	/**
-	 *
-	 */
 	private static final int INCREMENT = 10;
 
 	protected class PreferenceFilteredTree extends FilteredTree {
@@ -128,8 +122,6 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 		/**
 		 * Add an additional, optional filter to the viewer. If the filter text is
 		 * cleared, this filter will be removed from the TreeViewer.
-		 *
-		 * @param filter
 		 */
 		protected void addFilter(ViewerFilter filter) {
 			viewerFilter = filter;
@@ -250,8 +242,6 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 
 	/**
 	 * Set the content and label providers for the treeViewer
-	 *
-	 * @param treeViewer
 	 */
 	protected void setContentAndLabelProviders(TreeViewer treeViewer) {
 		if (hasAtMostOnePage()) {
@@ -314,8 +304,6 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 
 	/**
 	 * Show only the supplied ids.
-	 *
-	 * @param filteredIds
 	 */
 	public void showOnly(String[] filteredIds) {
 		if (!hasAtMostOnePage()) {
@@ -723,8 +711,6 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 	/**
 	 * <code>true</code> if upon clearing the filter field, the list of pages should
 	 * not be reset to all property or preference pages.
-	 *
-	 * @param b
 	 */
 	public void setLocked(boolean b) {
 		this.locked = b;

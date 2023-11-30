@@ -59,7 +59,6 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * @since 3.4
- *
  */
 public class KeyController {
 	private static final String DELIMITER = ","; //$NON-NLS-1$
@@ -259,10 +258,6 @@ public class KeyController {
 		});
 	}
 
-	/**
-	 * @param oldScheme
-	 * @param newScheme
-	 */
 	protected void changeScheme(SchemeElement oldScheme, SchemeElement newScheme) {
 		if (newScheme == null || newScheme.getModelObject() == fBindingManager.getActiveScheme()) {
 			return;
@@ -308,11 +303,6 @@ public class KeyController {
 		}
 	}
 
-	/**
-	 * @param activeBinding
-	 * @param oldSequence
-	 * @param keySequence
-	 */
 	public void updateTrigger(BindingElement activeBinding, KeySequence oldSequence, KeySequence keySequence) {
 		if (activeBinding == null) {
 			return;
@@ -409,7 +399,6 @@ public class KeyController {
 	 *
 	 * @param actionSets <code>true</code> to filter action set contexts
 	 * @param internal   <code>false</code> to filter internal contexts
-	 *
 	 */
 	public void filterContexts(boolean actionSets, boolean internal) {
 		contextModel.filterContexts(actionSets, internal);
@@ -417,8 +406,6 @@ public class KeyController {
 
 	/**
 	 * Sets the bindings to default.
-	 *
-	 * @param bindingService
 	 */
 	public void setDefaultBindings(IBindingService bindingService) {
 		// Fix the scheme in the local changes.

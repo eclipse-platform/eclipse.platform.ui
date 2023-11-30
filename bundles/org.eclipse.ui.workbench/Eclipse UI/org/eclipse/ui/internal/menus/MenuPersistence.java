@@ -58,10 +58,6 @@ final public class MenuPersistence extends RegistryPersistence {
 			.compareToIgnoreCase(c2.getContributor().getName());
 	private Pattern contributorFilter;
 
-	/**
-	 * @param application
-	 * @param appContext
-	 */
 	public MenuPersistence(MApplication application, IEclipseContext appContext) {
 		this.application = application;
 		this.appContext = appContext;

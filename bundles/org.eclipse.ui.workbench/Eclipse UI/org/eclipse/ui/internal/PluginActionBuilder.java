@@ -519,7 +519,6 @@ public abstract class PluginActionBuilder extends RegistryReader {
 	 * These are log messages that should be ignored by RCP apps when using the IDE
 	 * plugins.
 	 *
-	 * @param msg
 	 * @since 3.3
 	 */
 	private static void ideLog(String msg) {

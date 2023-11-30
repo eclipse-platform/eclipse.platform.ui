@@ -20,9 +20,6 @@ import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.TransferData;
-/**
- *
- */
 public class WebBrowserViewDropAdapter extends DropTargetAdapter {
 	/**
 	 * The view to which this drop support has been added.

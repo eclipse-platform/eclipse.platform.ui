@@ -86,9 +86,6 @@ import org.osgi.service.prefs.BackingStoreException;
 public class NavigatorContentService implements IExtensionActivationListener,
 		IMementoAware, INavigatorContentService {
 
-	/**
-	 *
-	 */
 	public static final String WIDGET_KEY = "org.eclipse.ui.navigator"; //$NON-NLS-1$
 
 	private static final NavigatorContentDescriptorManager CONTENT_DESCRIPTOR_REGISTRY = NavigatorContentDescriptorManager
@@ -611,7 +608,6 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 *            The element to use in the query
 	 * @param toLoadIfNecessary
 	 *            True will force the load of the extension, False will not
-	 * @param computeOverrides
 	 * @return The set of {@link INavigatorContentExtension}s that are
 	 *         <i>visible</i> and <i>active</i> for this content service and
 	 *         have a <b>triggerPoints</b> expression that is <i>enabled</i> for
@@ -658,13 +654,6 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		return extractDescriptorInstances(enabledDescriptors, toLoadIfNecessary);
 	}
 
-	/**
-	 *
-	 *
-	 * @param firstClassSource
-	 * @param source
-	 * @param element
-	 */
 	public void rememberContribution(INavigatorContentDescriptor source,
 			INavigatorContentDescriptor firstClassSource, Object element) {
 		/*
@@ -701,7 +690,6 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	}
 
 	/**
-	 * @param element
 	 * @return the remembered NavigatorContentDescriptor
 	 */
 	public NavigatorContentDescriptor getContribution(Object element)
@@ -744,9 +732,6 @@ public class NavigatorContentService implements IExtensionActivationListener,
 			return src;
 		return (NavigatorContentDescriptor) structuredViewerManager.getData(element);
 	}
-	/**
-	 *
-	 */
 	public static final boolean CONSIDER_OVERRIDES = true;
 
 	/**
@@ -859,7 +844,6 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	/**
 	 * Returns the remembered data (the NavigatorContentDescriptor) associated with
 	 * an object in the viewer. This can be used to test an object's presence in the viewer.
-	 * @param element
 	 * @return the object stored as data in the viewer
 	 */
 	public Object getViewerElementData(Object element) {
@@ -882,7 +866,6 @@ public class NavigatorContentService implements IExtensionActivationListener,
 
 	/**
 	 *
-	 * @param aDescriptorKey
 	 * @param toLoadIfNecessary
 	 *            True if the extension should be loaded if it is not already.
 	 * @return The instance of the extension for the given descriptor key.
@@ -1034,7 +1017,6 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * Not API as of 3.3.
 	 *
 	 * @return The extension state service for this content service.
-	 *
 	 */
 	public NavigatorExtensionStateService getExtensionStateService() {
 		if (navigatorExtensionStateService == null) {

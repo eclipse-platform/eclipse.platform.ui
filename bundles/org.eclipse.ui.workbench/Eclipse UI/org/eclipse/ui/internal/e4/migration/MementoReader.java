@@ -33,7 +33,6 @@ public class MementoReader {
 	}
 
 	/**
-	 * @param attribute
 	 * @return value or false when attribute not found
 	 */
 	protected boolean getBoolean(String attribute) {

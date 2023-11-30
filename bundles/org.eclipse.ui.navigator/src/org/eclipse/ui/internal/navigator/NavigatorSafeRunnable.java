@@ -21,7 +21,6 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * @since 3.5
- *
  */
 public abstract class NavigatorSafeRunnable extends SafeRunnable {
 
@@ -29,29 +28,19 @@ public abstract class NavigatorSafeRunnable extends SafeRunnable {
 	protected IConfigurationElement _element;
 	protected Object _object;
 
-	/**
-	 *
-	 */
 	public NavigatorSafeRunnable() {
 		super();
 	}
 
-	/**
-	 * @param message
-	 */
 	public NavigatorSafeRunnable(String message) {
 		_message = message;
 	}
 
-	/**
-	 * @param element
-	 */
 	public NavigatorSafeRunnable(IConfigurationElement element) {
 		_element = element;
 	}
 
 	/**
-	 * @param element
 	 * @param object
 	 *            an object to provide additional context
 	 */

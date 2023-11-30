@@ -1387,7 +1387,6 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 *
 	 * @param templates an array of template data
 	 * @param contextId the contextId
-	 *
 	 */
 	private void moveTemplates(TemplatePersistenceData[] templates, String contextId) {
 		for (TemplatePersistenceData template : templates) {
@@ -1404,7 +1403,6 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 *
 	 * @param templates an array of template data
 	 * @param contextId the context id
-	 *
 	 */
 	private void copyTemplates(TemplatePersistenceData[] templates, String contextId) {
 		TemplatePersistenceData[] newTemplates= new TemplatePersistenceData[templates.length];

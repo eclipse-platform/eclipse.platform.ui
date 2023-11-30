@@ -124,8 +124,6 @@ public final class ResourceEncodingFieldEditor extends AbstractEncodingFieldEdit
 
 	/**
 	 * Set the label text and the resource we are editing.
-	 * @param labelText
-	 * @param charsetResource
 	 * @since 3.3
 	 */
 	private void setLabelAndResource(String labelText, IResource charsetResource) {

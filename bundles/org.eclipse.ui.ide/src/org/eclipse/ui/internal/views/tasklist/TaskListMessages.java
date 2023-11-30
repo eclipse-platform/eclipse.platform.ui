@@ -17,7 +17,6 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * TaskListMessages are the messages used in the TaskList.
- *
  */
 public class TaskListMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.views.tasklist.messages";//$NON-NLS-1$

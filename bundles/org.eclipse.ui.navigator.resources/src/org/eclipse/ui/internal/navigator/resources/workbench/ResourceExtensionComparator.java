@@ -32,7 +32,6 @@ public class ResourceExtensionComparator extends ResourceComparator {
 	/**
 	 * Construct a sorter that uses the name of the resource as its sorting
 	 * criteria.
-	 *
 	 */
 	public ResourceExtensionComparator() {
 		super(ResourceComparator.NAME);

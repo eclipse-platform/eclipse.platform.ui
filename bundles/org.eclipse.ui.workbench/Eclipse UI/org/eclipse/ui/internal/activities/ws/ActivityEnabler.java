@@ -192,7 +192,6 @@ public class ActivityEnabler {
 		 *
 		 * @param checked The set of checked elements in the viewer.
 		 * @param element The checked element.
-		 *
 		 */
 		private void handleRequiredActivities(Set<?> checked, Object element) {
 			Object[] requiredActivities = null;

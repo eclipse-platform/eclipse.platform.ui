@@ -22,7 +22,6 @@ import org.eclipse.ui.views.markers.internal.ProblemFilter;
  * {@link ProblemFilter}.
  *
  * @since 3.4
- *
  */
 public class CompatibilityMarkerFieldFilterGroup extends MarkerFieldFilterGroup {
 

@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * This class is not intended to be subclassed by clients.
  *
  * @since 3.3
- *
  */
 abstract class AbstractCreateResourcesOperation extends
 		AbstractResourcesOperation {

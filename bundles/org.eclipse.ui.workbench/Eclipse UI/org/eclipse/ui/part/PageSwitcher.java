@@ -28,7 +28,6 @@ import org.eclipse.ui.internal.handlers.CyclePageHandler;
  * abstract methods, and then instantiate their page switcher once.
  *
  * @since 3.4
- *
  */
 public abstract class PageSwitcher {
 

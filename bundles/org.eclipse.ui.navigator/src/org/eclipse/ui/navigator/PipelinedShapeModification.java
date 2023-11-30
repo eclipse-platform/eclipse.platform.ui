@@ -33,7 +33,6 @@ import java.util.Set;
  *
  *
  * @since 3.2
- *
  */
 public final class PipelinedShapeModification {
 

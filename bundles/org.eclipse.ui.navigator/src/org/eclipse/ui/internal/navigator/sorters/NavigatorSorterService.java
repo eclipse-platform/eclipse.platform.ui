@@ -31,7 +31,6 @@ import org.eclipse.ui.navigator.INavigatorSorterService;
  * Provides a default implementation of {@link INavigatorSorterService}.
  *
  * @since 3.2
- *
  */
 public class NavigatorSorterService implements INavigatorSorterService, VisibilityListener  {
 

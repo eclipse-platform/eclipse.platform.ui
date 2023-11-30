@@ -16,7 +16,6 @@ package org.eclipse.ui.internal.keys.model;
 
 /**
  * @since 3.4
- *
  */
 public class ModelElement {
 

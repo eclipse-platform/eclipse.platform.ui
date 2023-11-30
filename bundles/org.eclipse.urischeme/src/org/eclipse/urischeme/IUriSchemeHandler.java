@@ -16,7 +16,6 @@ package org.eclipse.urischeme;
 /**
  * This interface belongs to extension point
  * org.eclipse.core.runtime.uriSchemeHandlers.
- *
  */
 public interface IUriSchemeHandler {
 

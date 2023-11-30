@@ -368,7 +368,6 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 	 * Gets the shell of the managed dialog.
 	 *
 	 * @return Shell or null
-	 *
 	 */
 	public Shell getShell() {
 		if (this.dialog == null)

@@ -49,8 +49,6 @@ public class ResourceFilterEditDialog extends SelectionDialog {
 
 	/**
 	 * Set the container resource to be edited.
-	 *
-	 * @param container
 	 */
 	public void setContainer(IContainer container) {
 		resourceFilterGroup.setContainer(container);

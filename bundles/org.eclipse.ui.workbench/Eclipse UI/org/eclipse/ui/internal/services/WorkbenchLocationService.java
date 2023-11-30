@@ -23,7 +23,6 @@ import org.eclipse.ui.services.IDisposable;
 
 /**
  * @since 3.4
- *
  */
 public class WorkbenchLocationService implements IWorkbenchLocationService, IDisposable {
 

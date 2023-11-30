@@ -40,8 +40,6 @@ public class HasFileWithSuffixRecursivelyExpression extends Expression {
 
 	/**
 	 * Build expression with a suffix.
-	 *
-	 * @param suffix
 	 */
 	public HasFileWithSuffixRecursivelyExpression(String suffix) {
 		this.suffix = suffix;
@@ -50,8 +48,6 @@ public class HasFileWithSuffixRecursivelyExpression extends Expression {
 	/**
 	 * Build expression retrieving the suffix as the 'suffix' attribute on the
 	 * provided {@link IConfigurationElement}.
-	 *
-	 * @param element
 	 */
 	public HasFileWithSuffixRecursivelyExpression(IConfigurationElement element) {
 		this(element.getAttribute("suffix")); //$NON-NLS-1$

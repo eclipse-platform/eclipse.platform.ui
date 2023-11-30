@@ -37,7 +37,6 @@ import org.eclipse.ui.services.IServiceLocator;
  * @author Prakash G.R.
  *
  * @since 3.5
- *
  */
 public class DynamicMenuContributionItem extends ContributionItem {
 
@@ -52,7 +51,6 @@ public class DynamicMenuContributionItem extends ContributionItem {
 	 * @param id              - Id of the menu item
 	 * @param locator         - The Service Locator
 	 * @param dynamicAddition - The Configuration Element defined in the plugin.xml
-	 *
 	 */
 	public DynamicMenuContributionItem(String id, IServiceLocator locator, IConfigurationElement dynamicAddition) {
 		super(id);

@@ -30,7 +30,6 @@ import org.eclipse.ui.internal.preferences.WorkbenchPreferenceExtensionNode;
  * matching string.
  *
  * @since 3.2
- *
  */
 public class PreferencePatternFilter extends PatternFilter {
 

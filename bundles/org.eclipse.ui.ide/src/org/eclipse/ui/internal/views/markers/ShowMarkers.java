@@ -26,15 +26,11 @@ import org.eclipse.ui.ide.IDE;
 
 /**
  * @since 3.4
- *
  */
 final class ShowMarkers extends OpenAndLinkWithEditorHelper {
 
 	private final IWorkbenchPartSite partSite;
 
-	/**
-	 * @param viewer
-	 */
 	ShowMarkers(StructuredViewer viewer, IWorkbenchPartSite partSite) {
 		super(viewer);
 		this.partSite = partSite;

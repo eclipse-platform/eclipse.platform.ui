@@ -59,9 +59,6 @@ public class Theme extends EventManager implements ITheme {
 
 	private IPropertyChangeListener propertyListener;
 
-	/**
-	 * @param descriptor
-	 */
 	public Theme(IThemeDescriptor descriptor) {
 		themeRegistry = ((ThemeRegistry) WorkbenchPlugin.getDefault().getThemeRegistry());
 		this.descriptor = descriptor;

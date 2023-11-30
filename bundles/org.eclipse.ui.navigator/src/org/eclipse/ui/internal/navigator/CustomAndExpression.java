@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.SafeRunner;
 /**
  * Create an AND-type core expression from an IConfigurationElement of arbitrary
  * name.
- *
  */
 public class CustomAndExpression extends Expression {
 

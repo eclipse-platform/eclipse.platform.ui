@@ -60,10 +60,6 @@ public class EditorRegistryReader extends RegistryReader {
 		return false;
 	}
 
-	/**
-	 * @param element
-	 * @return
-	 */
 	private boolean readEditorContentTypeBinding(IConfigurationElement element) {
 		IEditorDescriptor descriptor = null;
 		String editorId = element.getAttribute(IWorkbenchRegistryConstants.ATT_EDITOR_ID);
@@ -149,10 +145,6 @@ public class EditorRegistryReader extends RegistryReader {
 		return true;
 	}
 
-	/**
-	 * @param editorRegistry
-	 * @param element
-	 */
 	public void readElement(EditorRegistry editorRegistry, IConfigurationElement element) {
 		this.editorRegistry = editorRegistry;
 		readElement(element);

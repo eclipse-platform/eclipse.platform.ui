@@ -49,8 +49,6 @@ public class LinkedResourcesPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 	private Label topLabel;
 
-	/**
-	 */
 	public static String PREF_ID = "org.eclipse.ui.preferencePages.LinkedResources"; //$NON-NLS-1$
 
 	private PathVariablesGroup pathVariablesGroup;
@@ -147,8 +145,6 @@ public class LinkedResourcesPreferencePage extends PreferencePage implements
 
 	/**
 	 * Create a composite that contains the line delimiter controls
-	 *
-	 * @param parent
 	 */
 	private void createLineSeparatorEditorControls(Composite parent){
 		Composite lineComposite = new Composite(parent,SWT.NONE);

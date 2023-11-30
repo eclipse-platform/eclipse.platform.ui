@@ -598,9 +598,6 @@ public class ImportOperation extends WorkspaceModifyOperation {
 
 	/**
 	 * Reuse the file attributes set in the import.
-	 *
-	 * @param targetResource
-	 * @param fileObject
 	 */
 	private void setResourceAttributes(IFile targetResource, Object fileObject) {
 
@@ -641,7 +638,6 @@ public class ImportOperation extends WorkspaceModifyOperation {
 	 *
 	 * @param filesToImport the list of file system objects to import
 	 *   (element type: <code>Object</code>)
-	 * @throws CoreException
 	 * @exception OperationCanceledException if canceled
 	 */
 	void importFileSystemObjects(List filesToImport, IProgressMonitor monitor) throws CoreException {
@@ -676,7 +672,6 @@ public class ImportOperation extends WorkspaceModifyOperation {
 	 * @param folderObject the file system container object to be imported
 	 * @param policy determines how the folder object and children are imported
 	 * @return the policy to use to import the folder's children
-	 * @throws CoreException
 	 */
 	int importFolder(Object folderObject, int policy, IProgressMonitor monitor) throws CoreException {
 		IContainer containerResource;
@@ -739,8 +734,6 @@ public class ImportOperation extends WorkspaceModifyOperation {
 	 * "C:\foo\bar\file.txt" to "VAR\file.txt" granted that the relativeVariable
 	 * is "VAR" and points to "C:\foo\bar\").
 	 *
-	 * @param location
-	 * @param resource
 	 * @return an URI that was made relative to a variable
 	 */
 	private IPath createRelativePath(IPath location, IResource resource) {
@@ -763,7 +756,6 @@ public class ImportOperation extends WorkspaceModifyOperation {
 	 *
 	 * @param fileSystemObject the file system object to be imported
 	 * @param policy determines how the file system object and children are imported
-	 * @throws CoreException
 	 * @exception OperationCanceledException if canceled
 	 */
 	void importRecursivelyFrom(Object fileSystemObject, int policy, IProgressMonitor mon) throws CoreException {

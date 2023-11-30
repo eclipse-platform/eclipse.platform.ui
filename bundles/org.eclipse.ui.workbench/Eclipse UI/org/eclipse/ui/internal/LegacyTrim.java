@@ -31,7 +31,6 @@ import org.eclipse.ui.menus.IWorkbenchWidget;
 
 /**
  * @since 3.5
- *
  */
 public class LegacyTrim {
 

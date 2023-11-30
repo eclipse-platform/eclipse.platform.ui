@@ -52,7 +52,6 @@ public interface IMarkerImageProvider {
 	 *
 	 * @param marker The marker to get an image path for.
 	 * @return String
-	 *
 	 */
 	public String getImagePath(IMarker marker);
 }

@@ -63,7 +63,6 @@ import org.eclipse.ui.forms.events.IExpansionListener;
  * </p>
  *
  * @since 3.10
- *
  */
 public final class SectionFactory extends AbstractCompositeFactory<SectionFactory, Section> {
 

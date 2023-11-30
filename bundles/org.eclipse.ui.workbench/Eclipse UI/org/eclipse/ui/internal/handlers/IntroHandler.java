@@ -28,7 +28,6 @@ import org.eclipse.ui.internal.intro.IntroMessages;
  * @author Prakash G.R.
  *
  * @since 3.7
- *
  */
 public class IntroHandler extends AbstractHandler {
 

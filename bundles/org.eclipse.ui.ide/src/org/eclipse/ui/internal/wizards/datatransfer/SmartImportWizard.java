@@ -58,23 +58,17 @@ import org.osgi.framework.FrameworkUtil;
  * {@link ProjectConfigurator}
  *
  * @since 3.12
- *
  */
 public class SmartImportWizard extends Wizard implements IImportWizard {
 
 	/**
 	 * Expands an archive onto provided filesystem directory
 	 * @since 3.12
-	 *
 	 */
 	private static final class ExpandArchiveIntoFilesystemOperation implements IRunnableWithProgress {
 		private File archive;
 		private File destination;
 
-		/**
-		 * @param archive
-		 * @param destination
-		 */
 		private ExpandArchiveIntoFilesystemOperation(File archive, File destination) {
 			this.archive = archive;
 			this.destination = destination;
@@ -145,9 +139,6 @@ public class SmartImportWizard extends Wizard implements IImportWizard {
 	 */
 	private File directoryToImport;
 
-	/**
-	 *
-	 */
 	public SmartImportWizard() {
 		super();
 		setNeedsProgressMonitor(true);
@@ -165,8 +156,6 @@ public class SmartImportWizard extends Wizard implements IImportWizard {
 
 	/**
 	 * Sets the initial directory or archive to import in workspace.
-	 *
-	 * @param directoryOrArchive
 	 */
 	public void setInitialImportSource(File directoryOrArchive) {
 		this.initialSelection = directoryOrArchive;
@@ -174,8 +163,6 @@ public class SmartImportWizard extends Wizard implements IImportWizard {
 
 	/**
 	 * Sets the initial selected working sets for the wizard
-	 *
-	 * @param workingSets
 	 */
 	public void setInitialWorkingSets(Set<IWorkingSet> workingSets) {
 		this.initialWorkingSets = workingSets;

@@ -25,7 +25,6 @@ import org.eclipse.osgi.service.datalocation.Location;
 /**
  *
  * Interface for file handling. E.g. read and write files.
- *
  */
 public interface IFileProvider {
 

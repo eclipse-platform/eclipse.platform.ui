@@ -82,8 +82,6 @@ public class NestedProjectsProblemsModel {
 	 * Removes element from the cache and then fix the parent hierarchy for removed
 	 * elements (remove from cache if no problem remain under node, or re-compute
 	 * and propagate new highest severity)
-	 *
-	 * @param toRemove
 	 */
 	private void removeFromCache(Set<IResource> toRemove) {
 		Set<IContainer> dirtyLeafContainers = new LinkedHashSet<>();
@@ -203,7 +201,6 @@ public class NestedProjectsProblemsModel {
 
 	/**
 	 *
-	 * @param resource
 	 * @return the severity of problem to display on the resource. It is the maximum
 	 *         severity of all children resources, including those from nested
 	 *         projects. In case no problem is found for the resource and its

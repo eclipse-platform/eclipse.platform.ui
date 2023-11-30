@@ -309,9 +309,6 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		return super.performOk();
 	}
 
-	/**
-	 *
-	 */
 	private void showRestartDialog() {
 		if (new MessageDialog(null, WorkbenchMessages.ThemeChangeWarningTitle, null,
 				WorkbenchMessages.ThemeChangeWarningText, MessageDialog.NONE, 2,

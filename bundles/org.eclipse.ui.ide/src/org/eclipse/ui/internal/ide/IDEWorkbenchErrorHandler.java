@@ -257,16 +257,6 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 
 	private static class FatalErrorDialog extends InternalErrorDialog {
 
-		/**
-		 * @param parentShell
-		 * @param dialogTitle
-		 * @param dialogTitleImage
-		 * @param dialogMessage
-		 * @param detail
-		 * @param dialogImageType
-		 * @param dialogButtonLabels
-		 * @param defaultIndex
-		 */
 		public FatalErrorDialog(Shell parentShell, String dialogTitle,
 				Image dialogTitleImage, String dialogMessage, Throwable detail,
 				int dialogImageType, String[] dialogButtonLabels,

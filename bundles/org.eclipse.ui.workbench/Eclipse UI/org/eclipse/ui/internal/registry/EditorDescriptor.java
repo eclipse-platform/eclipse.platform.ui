@@ -99,9 +99,6 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable, 
 	/**
 	 * Create a new instance of an editor descriptor. Limited to internal framework
 	 * calls.
-	 *
-	 * @param element
-	 * @param id2
 	 */
 	/* package */ EditorDescriptor(String id2, IConfigurationElement element) {
 		setID(id2);
@@ -575,8 +572,6 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable, 
 
 	/**
 	 * Set the receivers program.
-	 *
-	 * @param newProgram
 	 */
 	/* package */void setProgram(Program newProgram) {
 

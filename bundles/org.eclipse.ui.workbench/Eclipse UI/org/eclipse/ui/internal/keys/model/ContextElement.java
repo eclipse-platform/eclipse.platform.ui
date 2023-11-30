@@ -19,13 +19,9 @@ import org.eclipse.core.commands.contexts.Context;
 
 /**
  * @since 3.4
- *
  */
 public class ContextElement extends ModelElement {
 
-	/**
-	 * @param kc
-	 */
 	public ContextElement(KeyController kc) {
 		super(kc);
 	}

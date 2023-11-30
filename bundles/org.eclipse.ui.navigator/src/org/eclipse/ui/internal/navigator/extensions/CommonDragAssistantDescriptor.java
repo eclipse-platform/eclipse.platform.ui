@@ -25,7 +25,6 @@ import org.eclipse.ui.navigator.CommonDragAdapterAssistant;
  * viewer.
  *
  * @since 3.2
- *
  */
 public final class CommonDragAssistantDescriptor implements IViewerExtPtConstants {
 

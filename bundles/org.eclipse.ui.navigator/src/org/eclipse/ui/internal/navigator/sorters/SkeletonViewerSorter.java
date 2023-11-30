@@ -18,7 +18,6 @@ import org.eclipse.jface.viewers.ViewerSorter;
 
 /**
  * @since 3.2
- *
  */
 public class SkeletonViewerSorter extends ViewerSorter {
 

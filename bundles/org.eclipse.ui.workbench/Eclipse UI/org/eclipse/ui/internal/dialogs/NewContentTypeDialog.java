@@ -44,9 +44,6 @@ public class NewContentTypeDialog extends TitleAreaDialog {
 	private IContentTypeManager manager;
 	private ControlDecoration decorator;
 
-	/**
-	 * @param parentShell
-	 */
 	protected NewContentTypeDialog(Shell parentShell, IContentTypeManager manager, IContentType parent) {
 		super(parentShell);
 		this.manager = manager;

@@ -263,8 +263,6 @@ public class AboutPluginsPage extends ProductInfoPage {
 		this.message = message;
 	}
 
-	/**
-	 */
 	protected void handleSigningInfoPressed() {
 		if (signingArea == null) {
 			signingArea = new BundleSigningInfo();
@@ -557,9 +555,6 @@ public class AboutPluginsPage extends ProductInfoPage {
 		}
 	}
 
-	/**
-	 *
-	 */
 	private void handleColumnsPressed() {
 		ConfigureColumns.forTable(vendorInfo.getTable(), this);
 	}
@@ -629,7 +624,6 @@ class TableComparator extends ViewerComparator {
 	}
 
 	/**
-	 * @param data
 	 * @return a sort value depending on the signed state
 	 */
 	private int getSignedSortValue(AboutBundleData data) {

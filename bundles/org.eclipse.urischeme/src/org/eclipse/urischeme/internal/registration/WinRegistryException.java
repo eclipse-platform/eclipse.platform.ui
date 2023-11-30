@@ -14,7 +14,6 @@ package org.eclipse.urischeme.internal.registration;
 /**
  * Exception class for handling exceptions occurring while accessing windows
  * registry
- *
  */
 public class WinRegistryException extends Exception {
 

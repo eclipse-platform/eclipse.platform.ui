@@ -83,10 +83,6 @@ public class UserFiltersTab extends CustomizationTab {
 
 	private ArrayList<UserFilter> userFiltersWorkingCopy;
 
-	/**
-	 * @param parent
-	 * @param commonViewer
-	 */
 	@SuppressWarnings("unchecked")
 	public UserFiltersTab(Composite parent, CommonViewer commonViewer) {
 		super(parent, commonViewer.getNavigatorContentService());

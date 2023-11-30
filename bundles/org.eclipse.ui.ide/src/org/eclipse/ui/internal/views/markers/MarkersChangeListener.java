@@ -81,7 +81,6 @@ class MarkersChangeListener implements IResourceChangeListener {
 
 	/**
 	 * Checks if the workspace is building
-	 *
 	 */
 	boolean workspaceBuilding() {
 		return preBuildTime > 0;
@@ -162,7 +161,6 @@ class MarkersChangeListener implements IResourceChangeListener {
 
 	/**
 	 * Handle marker change event
-	 * @param event
 	 */
 	private void handleMarkerChange(IResourceChangeEvent event) {
 		builder.getUpdateScheduler().scheduleUpdate();
@@ -185,8 +183,6 @@ class MarkersChangeListener implements IResourceChangeListener {
 	 *
 	 * Note : this method of updating is NOT used and tested yet and has holes
 	 * but left out SOLELY for further investigation(*).
-	 *
-	 * @param event
 	 */
 	private void handleIncrementalChange(IResourceChangeEvent event) {
 		IMarkerDelta[] markerDeltas = event.findMarkerDeltas(null, true);
@@ -236,7 +232,6 @@ class MarkersChangeListener implements IResourceChangeListener {
 	}
 
 	/**
-	 * @param event
 	 * @return true if the marker delta has a change in an applicable marker
 	 *         type else false.
 	 */
@@ -256,9 +251,6 @@ class MarkersChangeListener implements IResourceChangeListener {
 
 	/**
 	 * Helper to {@link #hasApplicableTypes(IResourceChangeEvent)}
-	 *
-	 * @param types
-	 * @param typeId
 	 */
 	private boolean isApplicableType(String[] types, String typeId) {
 		for (String type : types) {
@@ -491,10 +483,6 @@ class MarkerUpdateScheduler {
 
 	private MarkerUpdateTimer updateTimer;
 
-	/**
-	 * @param view
-	 * @param builder
-	 */
 	public MarkerUpdateScheduler(ExtendedMarkersView view, CachedMarkerBuilder builder) {
 		this.view = view;
 		this.builder = builder;
@@ -604,9 +592,6 @@ class MarkerUpdateScheduler {
 
 	/**
 	 * Schedule only an UI update
-	 *
-	 * @param delay
-	 *
 	 */
 	void scheduleUIUpdate(long delay) {
 		uiUpdateJob = view.scheduleUpdate(delay);
@@ -614,7 +599,6 @@ class MarkerUpdateScheduler {
 
 	/**
 	 * Cancel any marker update if pending.
-	 *
 	 */
 	void cancelUpdate() {
 		builder.cancelUpdate();
@@ -622,7 +606,6 @@ class MarkerUpdateScheduler {
 
 	/**
 	 * Cancel any UI update if pending.
-	 *
 	 */
 	void cancelQueuedUIUpdates() {
 		view.cancelQueuedUpdates();

@@ -55,9 +55,6 @@ import org.eclipse.ui.internal.util.Util;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
-/**
- *
- */
 public abstract class WorkbenchPartReference implements IWorkbenchPartReference, ISizeProvider {
 
 	/**
@@ -427,9 +424,6 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 		// To be implemented by subclasses
 	}
 
-	/**
-	 *
-	 */
 	private void doDisposePart() {
 		if (legacyPart != null) {
 			fireInternalPropertyChange(INTERNAL_PROPERTY_CLOSED);

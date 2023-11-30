@@ -26,7 +26,6 @@ import org.eclipse.ui.navigator.CommonViewer;
 /**
  * Hides project if it is shown nested in some other location
  * @author mistria
- *
  */
 public class HideTopLevelProjectIfNested extends ViewerFilter {
 

@@ -20,7 +20,6 @@ import org.eclipse.ui.PlatformUI;
  * workbench plugin. There is no separate help for the Common Navigator.
  *
  * @since 3.2
- *
  */
 public interface INavigatorHelpContextIds {
 

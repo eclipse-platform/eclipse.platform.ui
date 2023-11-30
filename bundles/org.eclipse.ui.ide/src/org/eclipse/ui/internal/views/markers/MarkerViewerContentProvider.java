@@ -21,7 +21,6 @@ import org.eclipse.jface.viewers.Viewer;
  * The ContentProvider to the TreeViewer used in Markers View.
  *
  * @since 3.6
- *
  */
 class MarkerViewerContentProvider implements ITreeContentProvider {
 
@@ -29,9 +28,6 @@ class MarkerViewerContentProvider implements ITreeContentProvider {
 	private Object input;
 	private final ExtendedMarkersView markersView;
 
-	/**
-	 * @param extendedMarkersView
-	 */
 	public MarkerViewerContentProvider(ExtendedMarkersView extendedMarkersView) {
 		this.markersView = extendedMarkersView;
 	}
@@ -65,7 +61,6 @@ class MarkerViewerContentProvider implements ITreeContentProvider {
 	/**
 	 * Get the children limited by the marker limits.
 	 *
-	 * @param children
 	 * @return Object[]
 	 */
 	private Object[] getLimitedChildren(Object[] children) {

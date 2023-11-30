@@ -29,7 +29,6 @@ import org.eclipse.ui.internal.preferences.WorkbenchSettingsTransfer;
  * settings.
  *
  * @since 3.3
- *
  */
 public class WorkbenchLayoutSettingsTransfer extends WorkbenchSettingsTransfer {
 
@@ -90,7 +89,6 @@ public class WorkbenchLayoutSettingsTransfer extends WorkbenchSettingsTransfer {
 	 * Create the parent directories for the workbench layout file and then return
 	 * the File.
 	 *
-	 * @param newWorkspaceRoot
 	 * @return File the new layout file. Return <code>null</code> if the file cannot
 	 *         be created.
 	 */
@@ -113,7 +111,6 @@ public class WorkbenchLayoutSettingsTransfer extends WorkbenchSettingsTransfer {
 	/**
 	 * Return the workbench settings location for the new root
 	 *
-	 * @param newWorkspaceRoot
 	 * @return IPath or <code>null</code> if it can't be determined.
 	 */
 	@Override

@@ -29,7 +29,6 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * preferences.
  *
  * @since 3.110
- *
  */
 public class PreferencesSettingsTransfer extends WorkbenchSettingsTransfer {
 

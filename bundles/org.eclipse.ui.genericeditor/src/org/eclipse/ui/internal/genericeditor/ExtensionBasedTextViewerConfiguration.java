@@ -416,8 +416,6 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 	/**
 	 * Set content-types that will be considered is no content-type can be deduced
 	 * from the document (eg document is not backed by a FileBuffer)
-	 * 
-	 * @param contentTypes
 	 */
 	public void setFallbackContentTypes(Set<IContentType> contentTypes) {
 		this.fallbackContentTypes = (contentTypes == null ? Set.of() : contentTypes);

@@ -33,9 +33,6 @@ import org.eclipse.ui.quickaccess.QuickAccessElement;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 
-/**
- *
- */
 public class QuickAccessExtensionManager {
 
 	private static final String EXTENSION_POINT_ID = PlatformUI.PLUGIN_ID + '.'

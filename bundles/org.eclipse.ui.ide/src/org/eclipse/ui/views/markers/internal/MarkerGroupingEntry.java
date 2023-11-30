@@ -23,7 +23,6 @@ import org.eclipse.ui.internal.views.markers.MarkerSupportInternalUtilities;
  * extension.
  *
  * @since 3.2
- *
  */
 public class MarkerGroupingEntry {
 
@@ -36,7 +35,6 @@ public class MarkerGroupingEntry {
 
 	/**
 	 * Create a new instance of the receiver from element.
-	 * @param element
 	 */
 	public MarkerGroupingEntry(IConfigurationElement element) {
 		label = element.getAttribute(MarkerSupportRegistry.LABEL);
@@ -46,7 +44,6 @@ public class MarkerGroupingEntry {
 
 	/**
 	 * Create a new instance of the receiver with just a label.
-	 * @param label
 	 */
 	public MarkerGroupingEntry(String label) {
 		this.label = label;
@@ -75,8 +72,6 @@ public class MarkerGroupingEntry {
 
 	/**
 	 * Set the group for the receiver.
-	 *
-	 * @param group
 	 */
 	public void setGroup(MarkerGroup group) {
 		markerGroup = group;

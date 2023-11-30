@@ -25,7 +25,6 @@ import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 /**
  * TasksView is the ide view for showing tasks.
  * @since 3.4
- *
  */
 public class TasksView extends MarkerSupportView {
 

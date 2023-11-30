@@ -22,7 +22,6 @@ import org.eclipse.ui.PlatformUI;
  * This interface contains constants only; it is not intended to be implemented
  * or extended.
  * </p>
- *
  */
 /*package*/interface IPropertiesHelpContextIds {
 	public static final String PREFIX = PlatformUI.PLUGIN_ID + "."; //$NON-NLS-1$

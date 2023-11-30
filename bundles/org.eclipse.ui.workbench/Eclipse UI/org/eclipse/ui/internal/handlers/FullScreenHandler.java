@@ -50,7 +50,6 @@ import org.eclipse.ui.keys.IBindingService;
  * Handler, which enables a full screen mode.
  *
  * @since 3.5
- *
  */
 public class FullScreenHandler extends AbstractHandler {
 

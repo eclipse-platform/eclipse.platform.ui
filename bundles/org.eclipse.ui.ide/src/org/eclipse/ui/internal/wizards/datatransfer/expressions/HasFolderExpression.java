@@ -51,8 +51,6 @@ public class HasFolderExpression extends Expression {
 	/**
 	 * Build expression retrieving the suffix as the 'path' attribute on the
 	 * provided {@link IConfigurationElement}.
-	 *
-	 * @param element
 	 */
 	public HasFolderExpression(IConfigurationElement element) {
 		this(element.getAttribute("path")); //$NON-NLS-1$

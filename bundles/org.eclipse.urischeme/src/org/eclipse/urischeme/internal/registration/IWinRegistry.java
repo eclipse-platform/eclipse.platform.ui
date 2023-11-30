@@ -14,7 +14,6 @@ package org.eclipse.urischeme.internal.registration;
  * Wraps Windows Registry to read and write values. Can only be used for Keys
  * below HKEY_CURRENT_USER. The Windows Registry code has been tested in JAVA
  * 8,Java 9 and Java 10 versions
- *
  */
 public interface IWinRegistry {
 
@@ -24,9 +23,6 @@ public interface IWinRegistry {
 	 * of some other type exists, it will be overwritten, with the new String value.
 	 *
 	 * @param key       below HKEY_CURRENT_USER
-	 * @param attribute
-	 * @param value
-	 * @throws WinRegistryException
 	 */
 	void setValueForKey(String key, String attribute, String value) throws WinRegistryException;
 
@@ -35,9 +31,7 @@ public interface IWinRegistry {
 	 * attribute do not exist, or if the type of the attribute is not String.
 	 *
 	 * @param key       below HKEY_CURRENT_USER
-	 * @param attribute
 	 * @return attribute value
-	 * @throws WinRegistryException
 	 */
 	String getValueForKey(String key, String attribute) throws WinRegistryException;
 

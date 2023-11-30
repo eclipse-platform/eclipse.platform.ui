@@ -21,7 +21,6 @@ import org.eclipse.ui.internal.navigator.NavigatorPlugin;
  * <b>org.eclipse.ui.navigator.navigatorContent</b> extension point.
  *
  * @since 3.2
- *
  */
 public class NavigatorContentRegistryReader extends RegistryReader implements
 		INavigatorContentExtPtConstants {

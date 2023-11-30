@@ -85,9 +85,6 @@ public class CommonNavigatorActionGroup extends ActionGroup implements IMementoA
 		makeActions();
 	}
 
-	/**
-	 *
-	 */
 	private void makeActions() {
 		FrameList frameList = commonViewer.getFrameList();
 		backAction = new BackAction(frameList);

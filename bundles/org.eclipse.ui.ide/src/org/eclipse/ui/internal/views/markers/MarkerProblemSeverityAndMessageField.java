@@ -25,7 +25,6 @@ import org.eclipse.ui.views.markers.MarkerItem;
  * MarkerSeverityAndMessageField is the field for severity and messages.
  *
  * @since 3.4
- *
  */
 public class MarkerProblemSeverityAndMessageField extends
 		MarkerDescriptionField {
@@ -43,7 +42,6 @@ public class MarkerProblemSeverityAndMessageField extends
 	/**
 	 * Return the image for the receiver.
 	 *
-	 * @param item
 	 * @return Image or <code>null</code>
 	 */
 	private Image getImage(MarkerItem item) {

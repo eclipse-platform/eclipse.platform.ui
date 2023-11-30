@@ -32,7 +32,6 @@ import org.osgi.framework.Bundle;
  * update.
  *
  * @since 3.6
- *
  */
 class MarkerUpdateJob extends Job {
 
@@ -40,9 +39,6 @@ class MarkerUpdateJob extends Job {
 	private boolean clean;
 	private long lastUpdateTime = -1;
 
-	/**
-	 * @param builder
-	 */
 	MarkerUpdateJob(CachedMarkerBuilder builder) {
 		super(MarkerMessages.MarkerView_searching_for_markers);
 		this.builder = builder;
@@ -57,8 +53,6 @@ class MarkerUpdateJob extends Job {
 
 	/**
 	 * gather all markers needed by the view.
-	 *
-	 * @param monitor
 	 */
 	void buildMarkers(IProgressMonitor monitor) {
 		//check for cancellation before we start
@@ -102,7 +96,6 @@ class MarkerUpdateJob extends Job {
 
 	/**
 	 * Collect the markers starting clean, all over again.
-	 * @param markerEntries
 	 */
 	boolean clean(Collection<MarkerEntry> markerEntries, IProgressMonitor monitor) {
 		MarkerContentGenerator generator = builder.getGenerator();
@@ -175,7 +168,6 @@ class MarkerUpdateJob extends Job {
  * complete it schedules the an UI update
  *
  * @since 3.6
- *
  */
 class SortingJob extends MarkerUpdateJob {
 	public SortingJob(CachedMarkerBuilder builder) {

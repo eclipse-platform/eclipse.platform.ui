@@ -493,7 +493,6 @@ public class CopyFilesAndFoldersOperation {
 	 * "C:\foo\bar\file.txt" to "VAR\file.txt" granted that the relativeVariable
 	 * is "VAR" and points to "C:\foo\bar\").
 	 *
-	 * @param locationURI
 	 * @return an URI that was made relative to a variable
 	 */
 	private URI createRelativePath(URI locationURI, IResource resource) {
@@ -700,7 +699,6 @@ public class CopyFilesAndFoldersOperation {
 	 * Build the collection of fileStores that map to fileNames. If any of them
 	 * cannot be found then match then return <code>null</code>.
 	 *
-	 * @param uris
 	 * @return IFileStore[]
 	 */
 	private IFileStore[] buildFileStores(URI[] uris) {
@@ -836,7 +834,6 @@ public class CopyFilesAndFoldersOperation {
 	 * Build the collection of fileStores that map to fileNames. If any of them
 	 * cannot be found then match then return null.
 	 *
-	 * @param fileNames
 	 * @return IFileStore[]
 	 */
 	private IFileStore[] buildFileStores(final String[] fileNames) {
@@ -854,8 +851,6 @@ public class CopyFilesAndFoldersOperation {
 
 	/**
 	 * Report that a file info could not be found.
-	 *
-	 * @param fileName
 	 */
 	private void reportFileInfoNotFound(final String fileName) {
 

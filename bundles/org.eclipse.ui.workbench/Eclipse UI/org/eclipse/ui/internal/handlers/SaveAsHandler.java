@@ -31,7 +31,6 @@ import org.eclipse.ui.internal.WorkbenchPage;
  * </p>
  *
  * @since 3.7
- *
  */
 public class SaveAsHandler extends AbstractSaveHandler {
 

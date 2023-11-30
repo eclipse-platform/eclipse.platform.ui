@@ -462,9 +462,6 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 		// do nothing
 	}
 
-	/**
-	 *
-	 */
 	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);

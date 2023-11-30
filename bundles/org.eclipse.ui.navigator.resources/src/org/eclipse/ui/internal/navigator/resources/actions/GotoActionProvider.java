@@ -24,7 +24,6 @@ import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 
 /**
  * @since 3.3
- *
  */
 public class GotoActionProvider extends CommonActionProvider {
 

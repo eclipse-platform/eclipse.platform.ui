@@ -30,8 +30,6 @@ public interface IFileExporter {
 	/**
 	 * Do all required cleanup now that we are finished with the
 	 * currently-open file.
-	 *
-	 * @throws IOException
 	 */
 	public void finished() throws IOException;
 
@@ -47,11 +45,6 @@ public interface IFileExporter {
 
 	/**
 	 * Write the passed resource to the current archive
-	 *
-	 * @param resource
-	 * @param destinationPath
-	 * @throws IOException
-	 * @throws CoreException
 	 */
 	public void write(IFile resource, String destinationPath)
 		throws IOException, CoreException;

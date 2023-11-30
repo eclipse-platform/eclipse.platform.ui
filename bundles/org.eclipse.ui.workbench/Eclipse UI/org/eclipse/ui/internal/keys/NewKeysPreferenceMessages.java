@@ -22,7 +22,6 @@ import org.eclipse.osgi.util.NLS;
  * Messages used in the New Keys Preference page.
  *
  * @since 3.2
- *
  */
 public class NewKeysPreferenceMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.keys.NewKeysPreferencePage";//$NON-NLS-1$

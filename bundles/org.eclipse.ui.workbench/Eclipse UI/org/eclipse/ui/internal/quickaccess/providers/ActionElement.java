@@ -23,7 +23,6 @@ import org.eclipse.ui.quickaccess.QuickAccessElement;
 
 /**
  * @since 3.3
- *
  */
 public class ActionElement extends QuickAccessElement {
 

@@ -42,9 +42,6 @@ public class AutoRegisterSchemeHandlersJob extends Job {
 	private IUriSchemeExtensionReader testExtensionReader;
 	private IOperatingSystemRegistration testOsRegistration;
 
-	/**
-	 *
-	 */
 	public AutoRegisterSchemeHandlersJob() {
 		// all defaults for lazy init NOT on UI thread
 		this(null, null, null);

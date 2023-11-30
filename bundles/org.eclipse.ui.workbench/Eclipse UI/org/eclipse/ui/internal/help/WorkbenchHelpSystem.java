@@ -154,7 +154,6 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 	/**
 	 * Table for tracing registered context ids. This is used only for debugging
 	 * purposes.
-	 *
 	 */
 	private Hashtable<String, StackTraceElement> registeredIDTable;
 

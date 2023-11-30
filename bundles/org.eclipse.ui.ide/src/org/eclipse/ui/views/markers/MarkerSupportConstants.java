@@ -18,7 +18,6 @@ package org.eclipse.ui.views.markers;
  * MarkerSupportConstants is a static class that supplies commonly used constants.
  *
  * @since 3.4
- *
  */
 public class MarkerSupportConstants {
 
