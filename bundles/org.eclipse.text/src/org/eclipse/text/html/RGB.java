@@ -41,17 +41,17 @@ public final class RGB implements Serializable {
 	/**
 	 * the red component of the RGB
 	 */
-	public int red;
+	public final int red;
 
 	/**
 	 * the green component of the RGB
 	 */
-	public int green;
+	public final int green;
 
 	/**
 	 * the blue component of the RGB
 	 */
-	public int blue;
+	public final int blue;
 
 	static final long serialVersionUID = 3258415023461249074L;
 
