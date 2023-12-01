@@ -135,6 +135,7 @@ import org.eclipse.jface.util.BidiUtils;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.window.Window;
@@ -145,8 +146,11 @@ import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.DeviceData;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
@@ -849,12 +853,34 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 		Image background = null;
 		if (splashLoc != null) {
 			try (InputStream input = new BufferedInputStream(new FileInputStream(splashLoc))) {
-				background = new Image(display, input);
+				background = getImage(display, input);
 			} catch (SWTException | IOException e) {
 				StatusManager.getManager().handle(StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, e));
 			}
 		}
 		return background;
+	}
+
+	private static Image getImage(Display display, InputStream input) {
+		Image image = new Image(display, input);
+
+		if (Util.isMac()) {
+			/*
+			 * Due to a bug in MacOS Sonoma
+			 * (https://github.com/eclipse-platform/eclipse.platform.swt/issues/772) ,Splash
+			 * Screen gets flipped.As a workaround the image is flipped and returned.
+			 */
+			if (System.getProperty("os.version").startsWith("14")) { //$NON-NLS-1$ //$NON-NLS-2$
+				GC gc = new GC(image);
+				Transform tr = new Transform(display);
+				tr.setElements(1, 0, 0, -1, 0, 0);
+				gc.setTransform(tr);
+				gc.drawImage(image, 0, -(image.getBounds().height));
+				tr.dispose();
+				gc.dispose();
+			}
+		}
+		return image;
 	}
 
 	/**
