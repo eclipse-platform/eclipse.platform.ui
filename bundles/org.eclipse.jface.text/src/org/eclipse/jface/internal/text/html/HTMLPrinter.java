@@ -23,7 +23,7 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
-import org.eclipse.text.html.BaseHTMLPrinter;
+import org.eclipse.text.html.HTMLBuilder;
 
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
@@ -36,7 +36,7 @@ import org.eclipse.jface.text.DefaultInformationControl;
  * Moved into this package from <code>org.eclipse.jface.internal.text.revisions</code>.</p>
  */
 public class HTMLPrinter {
-	private static final BaseHTMLPrinter CORE= new BaseHTMLPrinter();
+	private static final HTMLBuilder CORE= new HTMLBuilder();
 
 	static {
 		final Display display= Display.getDefault();
@@ -87,7 +87,7 @@ public class HTMLPrinter {
 	 * @see #addPreFormatted(StringBuilder, String) for rendering with an {@link HTML2TextReader}
 	 */
 	public static String convertToHTMLContent(String content) {
-		return BaseHTMLPrinter.convertToHTMLContent(content);
+		return HTMLBuilder.convertToHTMLContent(content);
 	}
 
 	/**
@@ -106,11 +106,11 @@ public class HTMLPrinter {
 	 * @since 3.7
 	 */
 	public static String convertToHTMLContentWithWhitespace(String content) {
-		return BaseHTMLPrinter.convertToHTMLContentWithWhitespace(content);
+		return HTMLBuilder.convertToHTMLContentWithWhitespace(content);
 	}
 
 	public static String read(Reader rd) {
-		return BaseHTMLPrinter.read(rd);
+		return HTMLBuilder.read(rd);
 	}
 
 	/**
@@ -477,6 +477,6 @@ public class HTMLPrinter {
 	public static String convertTopLevelFont(String styles, FontData fontData) {
 		boolean bold= (fontData.getStyle() & SWT.BOLD) != 0;
 		boolean italic= (fontData.getStyle() & SWT.ITALIC) != 0;
-		return BaseHTMLPrinter.convertTopLevelFont(styles, bold, italic, fontData.getHeight(), fontData.getName());
+		return HTMLBuilder.convertTopLevelFont(styles, bold, italic, fontData.getHeight(), fontData.getName());
 	}
 }

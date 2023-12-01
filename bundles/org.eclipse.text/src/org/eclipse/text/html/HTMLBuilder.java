@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.Platform;
  *
  * @since 3.14
  */
-public class BaseHTMLPrinter {
+public class HTMLBuilder {
 
 	private static volatile RGB DEFAULT_BG_COLOR_RGB= new RGB(255, 255, 225); // CoreRGB value of info bg color on WindowsXP
 	private static volatile RGB DEFAULT_FG_COLOR_RGB= new RGB(0, 0, 0); // CoreRGB value of info fg color on WindowsXP
@@ -44,11 +44,11 @@ public class BaseHTMLPrinter {
 	private RGB linkColor;
 	private RGB alinkColor;
 	
-	public BaseHTMLPrinter() {
+	public HTMLBuilder() {
 		this(DEFAULT_BG_COLOR_RGB, DEFAULT_FG_COLOR_RGB, DEFAULT_LINK_COLOR_RGB, DEFAULT_ACTIVE_LINK_COLOR_RGB);
 	}
 	
-	public BaseHTMLPrinter(RGB bg, RGB fg, RGB link, RGB alink) {
+	public HTMLBuilder(RGB bg, RGB fg, RGB link, RGB alink) {
 		setColors(bg, fg, link, alink);
 	}
 	
