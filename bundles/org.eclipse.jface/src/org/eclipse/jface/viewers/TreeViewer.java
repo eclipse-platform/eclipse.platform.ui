@@ -1154,19 +1154,18 @@ public class TreeViewer extends AbstractTreeViewer {
 				createTreeItem(parent, element, -1);
 			}
 
-			// If we've expanded but still have not reached the limit
-			// select new expandable node, so user can click through
-			// to the end
+			// reset the selection. client's selection listener should not be triggered.
+			// there was only one selection on Expandable Node.
+			Item[] curSel = tree.getSelection();
+			if (curSel.length == 1) {
+				tree.deselect((TreeItem) curSel[0]);
+			}
+
+			// Scroll to the last element, so user can see what's expanded
+			// end continue expanding if needed
 			Object lastElement = getLastElement(parent);
-			if (lastElement instanceof ExpandableNode node) {
-				setSelection(new StructuredSelection(node), true);
-			} else {
-				// reset the selection. client's selection listener should not be triggered.
-				// there was only one selection on Expandable Node.
-				Item[] curSel = tree.getSelection();
-				if (curSel.length == 1) {
-					tree.deselect((TreeItem) curSel[0]);
-				}
+			if (lastElement instanceof ExpandableNode) {
+				reveal(lastElement);
 			}
 		} finally {
 			tree.setRedraw(true);
