@@ -39,7 +39,6 @@ import org.osgi.service.prefs.Preferences;
 
 /**
  * Loads, caches and stores dialog settings on a per bundle basis.
- *
  */
 public final class DialogSettingsProvider implements IDialogSettingsProvider {
 

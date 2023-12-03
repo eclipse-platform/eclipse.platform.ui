@@ -35,7 +35,6 @@ import org.akrogen.tkui.css.core.serializers.CSSSerializerConfiguration;
  * 
  * @version 1.0.0
  * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public abstract class AbstractCSSEditor {
 
@@ -59,8 +58,6 @@ public abstract class AbstractCSSEditor {
 
 	/**
 	 * Return CSS Engine configured.
-	 * 
-	 * @return
 	 */
 	protected CSSEngine getCSSEngine() {
 		if (engine == null) {
@@ -94,8 +91,6 @@ public abstract class AbstractCSSEditor {
 	/**
 	 * Apply Styles comming from <code>getStyleSheetContent()</code> method to
 	 * implement <code>widget</code>.
-	 * 
-	 * @param widget
 	 */
 	protected void applyStyles(Object widget) {
 		try {
@@ -139,8 +134,6 @@ public abstract class AbstractCSSEditor {
 	/**
 	 * Fill the TextArea which store the style sheet content with the
 	 * <code>stream</code> content.
-	 * 
-	 * @param stream
 	 */
 	protected void fillTextareaWithStyleSheetContent(InputStream stream) {
 		try {
@@ -222,8 +215,6 @@ public abstract class AbstractCSSEditor {
 
 	/**
 	 * Display CSS Engine error
-	 * 
-	 * @param e
 	 */
 	protected void handleExceptions(Exception e) {
 		e.printStackTrace();
@@ -243,87 +234,63 @@ public abstract class AbstractCSSEditor {
 
 	/**
 	 * Create Instance of CSS Engine
-	 * 
-	 * @return
 	 */
 	protected abstract CSSEngine createCSSEngine();
 
 	/**
 	 * Return true if HTML selector must be used and false if Native Widget
 	 * Selector must be used.
-	 * 
-	 * @return
 	 */
 	protected abstract boolean isHTMLSelector();
 
 	/**
 	 * Return Native Widget Element provider.
-	 * 
-	 * @return
 	 */
 	protected abstract IElementProvider getNativeWidgetElementProvider();
 
 	/**
 	 * Return HTML Element provider.
-	 * 
-	 * @return
 	 */
 	protected abstract IElementProvider getHTMLElementProvider();
 
 	/**
 	 * Return style sheet content.
-	 * 
-	 * @return
 	 */
 	protected abstract String getStyleSheetContent();
 
 	/**
 	 * Set style sheet content.
-	 * 
-	 * @param content
 	 */
 	protected abstract void setStyleSheetContent(String content);
 
 	/**
 	 * Set CSS Engine status.
-	 * 
-	 * @param status
 	 */
 	protected abstract void setCSSEngineStatuts(String status);
 
 	/**
 	 * Return true if Styles must be applied to the fully Window and false
 	 * otherwise.
-	 * 
-	 * @return
 	 */
 	protected abstract boolean mustApplyStylesToWindow();
 
 	/**
 	 * Get Window Native Widget.
-	 * 
-	 * @return
 	 */
 	protected abstract Object getWindowNativeWidget();
 
 	/**
 	 * Get Left Panel Native widget.
-	 * 
-	 * @return
 	 */
 	protected abstract Object getLeftPanelNativeWidget();
 
 	/**
 	 * Return CSS Serializer configuration for Native Widget.
-	 * 
-	 * @return
 	 */
 	protected abstract CSSSerializerConfiguration getCSSNativeWidgetSerializerConfiguration();
 
 	/**
 	 * Return CSS Serializer configuration for HTML.
-	 * 
-	 * @return
 	 */
 	protected CSSSerializerConfiguration getCSSHTMLSerializerConfiguration() {
 		return CSSHTMLSerializerConfiguration.INSTANCE;
@@ -331,22 +298,16 @@ public abstract class AbstractCSSEditor {
 
 	/**
 	 * Return selection index of CSS files widget.
-	 * 
-	 * @return
 	 */
 	protected abstract int getCSSFilesWidgetSelectionIndex();
 
 	/**
 	 * Return item count of CSS files widget.
-	 * 
-	 * @return
 	 */
 	protected abstract int getCSSFilesWidgetItemCount();
 
 	/**
 	 * Select item of CSS files widget at <code>index</code>.
-	 * 
-	 * @param index
 	 */
 	protected abstract void selectCSSFilesWidget(int index);
 
@@ -357,8 +318,6 @@ public abstract class AbstractCSSEditor {
 
 	/**
 	 * Add item of CSS files widget.
-	 * 
-	 * @param item
 	 */
 	protected abstract void addItemCSSFilesWidget(String item);
 

@@ -49,9 +49,6 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class StateTest {
 
-	/**
-	 *
-	 */
 	private static final String TEXT_HELLO = "hello";
 
 	private static final class ObjectStateHandler extends

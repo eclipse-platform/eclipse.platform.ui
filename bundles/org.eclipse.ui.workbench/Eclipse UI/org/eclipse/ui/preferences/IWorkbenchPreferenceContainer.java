@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.jobs.Job;
  * specific preferences support.
  *
  * @since 3.1
- *
  */
 public interface IWorkbenchPreferenceContainer {
 

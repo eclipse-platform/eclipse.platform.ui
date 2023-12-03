@@ -28,10 +28,6 @@ import org.eclipse.jface.viewers.Viewer;
 public class ViewerObservableListDecorator<E> extends DecoratingObservableList<E> implements IViewerObservableList<E> {
 	private final Viewer viewer;
 
-	/**
-	 * @param decorated
-	 * @param viewer
-	 */
 	public ViewerObservableListDecorator(IObservableList<E> decorated, Viewer viewer) {
 		super(decorated, true);
 		this.viewer = viewer;

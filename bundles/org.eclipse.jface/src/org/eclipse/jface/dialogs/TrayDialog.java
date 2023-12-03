@@ -193,7 +193,6 @@ public abstract class TrayDialog extends Dialog {
 	 *
 	 * @param container
 	 *            the potential parent
-	 * @param control
 	 * @return boolean <code>true</code> if control is a child of container
 	 */
 	private boolean isContained(Control container, Control control) {

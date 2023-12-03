@@ -50,8 +50,6 @@ public class ImportTest {
 
 	/**
 	 * Test case for Bug 430052 - [CSS] Imported rules cannot be overridden
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	void testOverrideImportedRule() throws Exception {

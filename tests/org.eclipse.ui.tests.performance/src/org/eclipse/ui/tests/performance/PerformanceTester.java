@@ -26,9 +26,6 @@ final class PerformanceTester {
 
 	protected PerformanceMeter fPerformanceMeter;
 
-	/**
-	 * @param testCase
-	 */
 	public PerformanceTester(TestCase testCase) {
 		Performance performance= Performance.getDefault();
 		fPerformanceMeter= performance.createPerformanceMeter(performance.getDefaultScenarioId(testCase));
@@ -144,7 +141,6 @@ final class PerformanceTester {
 
 	/**
 	 * Set a degradation comment for the current meter.
-	 * @param string
 	 */
 	public void setDegradationComment(String string) {
 		Performance.getDefault().setComment(

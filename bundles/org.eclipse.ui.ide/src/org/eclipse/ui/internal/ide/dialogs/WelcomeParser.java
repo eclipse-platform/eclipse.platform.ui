@@ -332,10 +332,6 @@ public class WelcomeParser extends DefaultHandler {
 
 	/**
 	 * Creates a new welcome parser.
-	 *
-	 * @throws ParserConfigurationException
-	 * @throws SAXException
-	 * @throws FactoryConfigurationError
 	 */
 	public WelcomeParser() throws ParserConfigurationException, SAXException, FactoryConfigurationError {
 		@SuppressWarnings("restriction")

@@ -172,7 +172,6 @@ public class ZoomTestCase extends UITestCase {
 	 * Asserts that the given part is zoomed. If the part is null, asserts
 	 * that no parts are zoomed.
 	 *
-	 * @param part
 	 * @since 3.1
 	 */
 	protected void assertZoomed(IWorkbenchPart part) {
@@ -189,7 +188,6 @@ public class ZoomTestCase extends UITestCase {
 	/**
 	 * Asserts that the given part is active.
 	 *
-	 * @param part
 	 * @since 3.1
 	 */
 	protected void assertActive(IWorkbenchPart part) {

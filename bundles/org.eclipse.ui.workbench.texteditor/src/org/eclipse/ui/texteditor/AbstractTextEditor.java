@@ -1740,7 +1740,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 * {@inheritDoc}
 		 * <p>
 		 * Subclasses may extend this method.</p>
-		 *
 		 */
 		@Override
 		public void dispose() {
@@ -2276,6 +2275,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 	/** The width of the vertical ruler. */
 	protected static final int VERTICAL_RULER_WIDTH= 12;
+
+	private static final String DISABLE_CSS = "org.eclipse.e4.ui.css.disabled"; //$NON-NLS-1$
 
 	/**
 	 * The complete mapping between action definition IDs used by eclipse and StyledText actions.
@@ -3366,6 +3367,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		int styles= SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION;
 		fSourceViewer= createSourceViewer(parent, fVerticalRuler, styles);
+
+		// We're managing our appearance from our preferences. Disable CSS styling.
+		// The CSS engine does set the editor preferences on theme switches, so we
+		// will pick up changes.
+		fSourceViewer.getTextWidget().setData(DISABLE_CSS, Boolean.TRUE);
 
 		if (fConfiguration == null)
 			fConfiguration= new SourceViewerConfiguration();

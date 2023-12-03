@@ -27,13 +27,9 @@ import org.eclipse.core.databinding.observable.ObservableEvent;
  *            the type of value being observed
  *
  * @since 1.0
- *
  */
 public class ValueChangeEvent<T> extends ObservableEvent {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 2305345286999701156L;
 
 	static final Object TYPE = new Object();

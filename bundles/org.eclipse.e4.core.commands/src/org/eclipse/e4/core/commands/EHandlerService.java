@@ -75,7 +75,6 @@ public interface EHandlerService {
 	 *
 	 * @param commandId Must not be <code>null</code>
 	 * @param handler   Must not be <code>null</code>
-	 *
 	 */
 	public void activateHandler(String commandId, Object handler);
 

@@ -85,15 +85,6 @@ public class CheckboxTreeAndListGroup extends EventManager implements
 	 *  Create an instance of this class.  Use this constructor if you wish to specify
 	 *	the width and/or height of the combined widget (to only hardcode one of the
 	 *	sizing dimensions, specify the other dimension's value as -1)
-	 * @param parent
-	 * @param rootObject
-	 * @param treeContentProvider
-	 * @param treeLabelProvider
-	 * @param listContentProvider
-	 * @param listLabelProvider
-	 * @param style
-	 * @param width
-	 * @param height
 	 */
 	public CheckboxTreeAndListGroup(Composite parent, Object rootObject,
 			ITreeContentProvider treeContentProvider,
@@ -109,17 +100,6 @@ public class CheckboxTreeAndListGroup extends EventManager implements
 	 *  Create an instance of this class.  Use this constructor if you wish to specify
 	 *	the width and/or height of the combined widget (to only hardcode one of the
 	 *	sizing dimensions, specify the other dimension's value as -1)
-	 * @param parent
-	 * @param rootObject
-	 * @param treeContentProvider
-	 * @param treeLabelProvider
-	 * @param treeComparator
-	 * @param listContentProvider
-	 * @param listLabelProvider
-	 * @param listComparator
-	 * @param style
-	 * @param width
-	 * @param height
 	 */
 	public CheckboxTreeAndListGroup(Composite parent, Object rootObject,
 			ITreeContentProvider treeContentProvider,
@@ -639,7 +619,6 @@ public class CheckboxTreeAndListGroup extends EventManager implements
 	/**
 	 * Set the root of the widget to be new Root. Regenerate all of the tables and lists from this
 	 * value.
-	 * @param newRoot
 	 */
 	public void setRoot(Object newRoot) {
 		this.root = newRoot;

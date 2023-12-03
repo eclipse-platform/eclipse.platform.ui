@@ -675,6 +675,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ResourceInfo_type;
 	public static String ResourceInfo_location;
 	public static String ResourceInfo_location_button_tooltip;
+	public static String ResourceInfo_path_button_tooltip;
 	public static String ResourceInfo_resolvedLocation;
 	public static String ResourceInfo_size;
 	public static String ResourceInfo_bytes;

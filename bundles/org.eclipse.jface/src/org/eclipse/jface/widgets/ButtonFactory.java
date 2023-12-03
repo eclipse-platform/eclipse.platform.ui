@@ -61,7 +61,6 @@ import org.eclipse.swt.widgets.Composite;
  * </p>
  *
  * @since 3.18
- *
  */
 public final class ButtonFactory extends AbstractControlFactory<ButtonFactory, Button> {
 
@@ -73,7 +72,6 @@ public final class ButtonFactory extends AbstractControlFactory<ButtonFactory, B
 	 * Creates a new ButtonFactory with the given style. Refer to
 	 * {@link Button#Button(Composite, int)} for possible styles.
 	 *
-	 * @param style
 	 * @return a new ButtonFactory instance
 	 */
 	public static ButtonFactory newButton(int style) {

@@ -63,7 +63,6 @@ public class UIJobTest extends UITestCase {
 	 * Test to ensure that calling join() on a UIJob will block the calling
 	 * thread until the job has finished.
 	 *
-	 * @throws Exception
 	 * @since 3.1
 	 */
 	@Test

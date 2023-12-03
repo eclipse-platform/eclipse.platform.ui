@@ -79,7 +79,6 @@ import org.junit.runners.JUnit4;
 
 /**
  * @since 3.3
- *
  */
 @RunWith(JUnit4.class)
 @Ignore("broke during e4 transition and still need adjustments")

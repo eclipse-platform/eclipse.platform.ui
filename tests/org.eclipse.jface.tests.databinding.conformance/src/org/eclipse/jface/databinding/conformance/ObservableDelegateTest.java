@@ -113,7 +113,6 @@ public class ObservableDelegateTest {
 	 * Asserts that ObservableTracker.getterCalled(...) is invoked when the
 	 * provided <code>runnable</code> is invoked.
 	 *
-	 * @param runnable
 	 * @param methodName
 	 *            method name to display when displaying a message
 	 * @param observable

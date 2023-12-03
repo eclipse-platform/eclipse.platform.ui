@@ -30,7 +30,6 @@ import org.eclipse.ui.internal.WorkbenchImages;
 
 /**
  * Implementation of IFileEditorMapping.
- *
  */
 public class FileEditorMapping extends Object implements IFileEditorMapping, Cloneable {
 

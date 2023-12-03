@@ -228,7 +228,6 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 	 * realized.
 	 *
 	 * @param r the update runnable
-	 * @throws Throwable
 	 */
 	private void updateUI(final Runnable r) {
 		Shell splashShell = getSplash();

@@ -149,10 +149,6 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 		}
 	}
 
-	/**
-	 * @param part
-	 * @param description
-	 */
 	public static void setDescription(MPart part, String description) {
 		if (!(part.getWidget() instanceof Composite))
 			return;

@@ -62,7 +62,6 @@ import org.junit.runners.JUnit4;
 
 /**
  * @since 3.3
- *
  */
 @RunWith(JUnit4.class)
 public class MenuPopulationTest extends MenuTestCase {
@@ -156,9 +155,6 @@ public class MenuPopulationTest extends MenuTestCase {
 
 	}
 
-	/**
-	 * @return
-	 */
 	private boolean[] addLogger() {
 		final boolean []errorLogged = new boolean[] {false};
 		Platform.addLogListener((status, plugin) -> {

@@ -485,8 +485,6 @@ public class WorkspaceUndoUtil {
 	 * "C:\foo\bar\file.txt" to "VAR\file.txt" granted that the relativeVariable
 	 * is "VAR" and points to "C:\foo\bar\").
 	 *
-	 * @param locationURI
-	 * @param resource
 	 * @return an URI that was made relative to a variable
 	 */
 	static private URI createRelativePath(URI locationURI, String relativeVariable, IResource resource) {

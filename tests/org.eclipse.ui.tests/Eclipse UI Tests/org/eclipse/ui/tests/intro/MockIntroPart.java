@@ -41,9 +41,6 @@ public class MockIntroPart extends MockPart implements IIntroPart {
 		callTrace.add("init");
 	}
 
-	/**
-	 * @param site
-	 */
 	private void setSite(IIntroSite site) {
 		this.site = site;
 	}

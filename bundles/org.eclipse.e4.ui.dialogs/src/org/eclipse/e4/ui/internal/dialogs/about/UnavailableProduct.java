@@ -16,7 +16,6 @@ import org.osgi.framework.Bundle;
 
 /**
  * Dummy implementation if no product file / product information is available.
- *
  */
 public final class UnavailableProduct implements IProduct {
 

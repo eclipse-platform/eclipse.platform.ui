@@ -219,7 +219,6 @@ public class ShowViewDialog extends Dialog implements
 	/**
 	 * Return whether or not there are less than two views in the list.
 	 *
-	 * @param tree
 	 * @return <code>true</code> if there are less than two views in the list.
 	 */
 	private boolean hasAtMostOneView(TreeViewer tree) {

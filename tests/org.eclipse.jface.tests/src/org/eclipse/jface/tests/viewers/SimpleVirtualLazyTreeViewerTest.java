@@ -51,9 +51,6 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 	private int updateElementCallCount = 0;
 
 	private class LazyTreeContentProvider implements ILazyTreeContentProvider {
-		/**
-		 *
-		 */
 		private Object input;
 
 		@Override

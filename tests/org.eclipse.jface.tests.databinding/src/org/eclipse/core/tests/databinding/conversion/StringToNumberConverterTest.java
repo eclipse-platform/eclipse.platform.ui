@@ -210,8 +210,6 @@ public class StringToNumberConverterTest {
 	/**
 	 * Asserts a use case where the integer starts with a valid value but ends
 	 * in an unparsable format.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testInvalidInteger() throws Exception {

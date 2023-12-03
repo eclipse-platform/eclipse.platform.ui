@@ -23,7 +23,6 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * @since 3.3
- *
  */
 public class HelloEHandler extends AbstractHandler {
 

@@ -25,7 +25,6 @@ import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 /**
  * The BookmarksView is the ide view for bookmarks.
  * @since 3.4
- *
  */
 public class BookmarksView extends MarkerSupportView {
 

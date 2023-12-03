@@ -67,7 +67,6 @@ public interface IWorkbenchContextSupport {
 	 * any key bindings be default. When the given shell is active, we should not
 	 * provide any <code>EnabledSubmission</code> instances for the "In Dialogs" or
 	 * "In Windows" contexts.
-	 *
 	 */
 	int TYPE_NONE = IContextService.TYPE_NONE;
 

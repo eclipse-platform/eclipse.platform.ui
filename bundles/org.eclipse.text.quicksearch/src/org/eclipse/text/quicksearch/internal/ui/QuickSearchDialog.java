@@ -555,7 +555,6 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	/**
 	 * Create a new header which is labelled by headerLabel.
 	 *
-	 * @param parent
 	 * @return Label the label of the header
 	 */
 	private Label createHeader(Composite parent) {
@@ -593,7 +592,6 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	/**
 	 * Create the labels for the list and the progress. Return the list label.
 	 *
-	 * @param parent
 	 * @return Label
 	 */
 	private Label createLabels(Composite parent) {
@@ -1357,8 +1355,6 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 
 		/**
 		 * Adds filtered item.
-		 *
-		 * @param match
 		 */
 		public void add(LineItem match) {
 			this.items.add(match);

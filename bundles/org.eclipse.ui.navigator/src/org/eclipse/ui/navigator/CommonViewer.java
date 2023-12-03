@@ -396,7 +396,6 @@ public class CommonViewer extends TreeViewer {
 	 *
 	 * @param item the item in the tree to update
 	 * @since 3.4
-	 *
 	 */
 	public void doUpdateItem(Widget item) {
 		doUpdateItem(item, item.getData(), true);

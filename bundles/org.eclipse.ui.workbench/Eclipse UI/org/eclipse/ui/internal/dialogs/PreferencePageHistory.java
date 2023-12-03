@@ -129,7 +129,6 @@ class PreferencePageHistory {
 
 	/**
 	 * Updates the history controls.
-	 *
 	 */
 	private void updateHistoryControls() {
 		historyToolbar.update(false);
@@ -142,8 +141,6 @@ class PreferencePageHistory {
 	/**
 	 * Creates the history toolbar and initializes <code>historyToolbar</code>.
 	 *
-	 * @param historyBar
-	 * @param manager
 	 * @return the control of the history toolbar
 	 */
 	public ToolBar createHistoryControls(ToolBar historyBar, ToolBarManager manager) {
@@ -307,7 +304,6 @@ class PreferencePageHistory {
 
 	/**
 	 * Dispose the receiver and clear out the references.
-	 *
 	 */
 	public void dispose() {
 		final IHandlerService handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);

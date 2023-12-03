@@ -60,7 +60,6 @@ public final class PreferencesUtil {
 	 * @param data         The data to be applied
 	 * @param displayedIds The ids to filter to.
 	 * @param dialog       The dialog to apply to.
-	 * @param options
 	 */
 	private static void applyOptions(Object data, String[] displayedIds, FilteredPreferenceDialog dialog, int options) {
 		if (data != null) {

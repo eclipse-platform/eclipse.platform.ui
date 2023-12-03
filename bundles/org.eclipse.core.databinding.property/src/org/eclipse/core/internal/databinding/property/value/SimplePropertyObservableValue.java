@@ -34,7 +34,6 @@ import org.eclipse.core.databinding.property.value.SimpleValueProperty;
  * @param <T>
  *            type of the value of the property
  * @since 1.2
- *
  */
 public class SimplePropertyObservableValue<S, T> extends AbstractObservableValue<T>
 		implements IPropertyObservable<SimpleValueProperty<S, T>> {
@@ -47,11 +46,6 @@ public class SimplePropertyObservableValue<S, T> extends AbstractObservableValue
 
 	private INativePropertyListener<S> listener;
 
-	/**
-	 * @param realm
-	 * @param source
-	 * @param property
-	 */
 	public SimplePropertyObservableValue(Realm realm, S source,
 			SimpleValueProperty<S, T> property) {
 		super(realm);

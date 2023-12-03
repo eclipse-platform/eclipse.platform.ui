@@ -19,8 +19,6 @@ import org.eclipse.core.runtime.content.IContentType;
 
 /**
  * Compares extension so that the ones with the most "specialized" content-types are returned first.
- *
- * @param <T>
  */
 public class ContentTypeSpecializationComparator<T> implements Comparator<GenericContentTypeRelatedExtension<T>> {
 

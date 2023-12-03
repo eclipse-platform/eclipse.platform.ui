@@ -177,7 +177,6 @@ public class LightweightDecoratorManager extends ObjectContributorManager {
 	/**
 	 * Get the name of the types that a decorator is registered for.
 	 *
-	 * @param decorator
 	 * @return String[]
 	 */
 	private String[] getTargetTypes(LightweightDecoratorDefinition decorator) {

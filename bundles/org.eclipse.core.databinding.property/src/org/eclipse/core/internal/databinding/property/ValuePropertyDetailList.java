@@ -36,16 +36,11 @@ import org.eclipse.core.databinding.property.value.IValueProperty;
  *            type of the elements in the list, being the type of the value of
  *            the detail property
  * @since 3.3
- *
  */
 public class ValuePropertyDetailList<S, M, T> extends ListProperty<S, T> {
 	private final IValueProperty<S, M> masterProperty;
 	private final IListProperty<? super M, T> detailProperty;
 
-	/**
-	 * @param masterProperty
-	 * @param detailProperty
-	 */
 	public ValuePropertyDetailList(IValueProperty<S, M> masterProperty, IListProperty<? super M, T> detailProperty) {
 		this.masterProperty = masterProperty;
 		this.detailProperty = detailProperty;

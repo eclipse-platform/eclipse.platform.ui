@@ -31,12 +31,8 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Explore New API: JFace custom tooltips drawing.
- *
  */
 public class Snippet011CustomTooltips {
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		final Display display = new Display();
 		Shell shell = new Shell(display);

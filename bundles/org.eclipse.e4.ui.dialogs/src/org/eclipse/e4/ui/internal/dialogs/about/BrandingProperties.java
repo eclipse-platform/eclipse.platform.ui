@@ -39,7 +39,6 @@ public abstract class BrandingProperties {
 	 *
 	 * @param value          the absolute or relative path
 	 * @param definingBundle bundle to be used for relative paths (may be null)
-	 * @return
 	 */
 	public static Optional<URL> getUrl(String value, Bundle definingBundle) {
 		try {
@@ -63,7 +62,6 @@ public abstract class BrandingProperties {
 	 *
 	 * @param value          the absolute or relative path
 	 * @param definingBundle bundle to be used for relative paths (may be null)
-	 * @return
 	 */
 	protected static Optional<ImageDescriptor> getImage(String value, Bundle definingBundle) {
 		Optional<URL> url = getUrl(value, definingBundle);

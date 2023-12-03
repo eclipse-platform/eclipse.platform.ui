@@ -28,7 +28,6 @@ import org.eclipse.jface.viewers.Viewer;
  * @param <E> type of the elements in the set
  *
  * @since 3.3
- *
  */
 public class ViewerCheckedElementsProperty<S, E> extends DelegatingSetProperty<S, E>
 		implements IViewerSetProperty<S, E> {
@@ -36,9 +35,6 @@ public class ViewerCheckedElementsProperty<S, E> extends DelegatingSetProperty<S
 	ISetProperty<S, E> checkboxTableViewer;
 	ISetProperty<S, E> checkboxTreeViewer;
 
-	/**
-	 * @param elementType
-	 */
 	@SuppressWarnings("unchecked")
 	public ViewerCheckedElementsProperty(Object elementType) {
 		super(elementType);

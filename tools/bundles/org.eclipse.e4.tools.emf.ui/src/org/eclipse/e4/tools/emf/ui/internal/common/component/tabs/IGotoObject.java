@@ -20,7 +20,6 @@ import org.eclipse.emf.ecore.EObject;
  * This interface allows a UI object to reveal and select an EMF object.
  *
  * @author Steven Spungin
- *
  */
 public interface IGotoObject {
 	/**

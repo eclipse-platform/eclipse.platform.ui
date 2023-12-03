@@ -66,8 +66,6 @@ public class AboutText {
 
 	/**
 	 * Scan the contents of the about text
-	 *
-	 * @return
 	 */
 	private void createAboutItem() {
 		if (aboutProperty == null || aboutProperty.isEmpty()) {

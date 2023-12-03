@@ -33,7 +33,6 @@ import org.junit.rules.TestWatcher;
 
 /**
  * @since 3.3
- *
  */
 public class PipelineChainTest extends NavigatorTestBase {
 

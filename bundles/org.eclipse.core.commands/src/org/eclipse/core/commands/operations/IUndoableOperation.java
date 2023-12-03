@@ -110,7 +110,6 @@ public interface IUndoableOperation {
 	 * Dispose of the operation. This method is used when the operation is no
 	 * longer kept in the history. Implementers of this method typically
 	 * unregister any listeners.
-	 *
 	 */
 	void dispose();
 

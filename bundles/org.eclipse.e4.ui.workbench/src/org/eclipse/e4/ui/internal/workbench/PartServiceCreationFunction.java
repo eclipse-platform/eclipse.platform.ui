@@ -24,9 +24,6 @@ import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.osgi.service.component.annotations.Component;
 
-/**
- *
- */
 @Component(service = IContextFunction.class, property = "service.context.key=org.eclipse.e4.ui.workbench.modeling.EPartService")
 public class PartServiceCreationFunction extends ContextFunction {
 

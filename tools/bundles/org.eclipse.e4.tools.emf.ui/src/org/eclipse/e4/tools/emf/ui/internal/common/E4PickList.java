@@ -69,7 +69,6 @@ import org.eclipse.swt.widgets.Composite;
  * </p>
  *
  * @author Steven Spungin
- *
  */
 public class E4PickList extends AbstractPickList {
 

@@ -53,9 +53,6 @@ public class JavaPartitionScanner extends RuleBasedPartitionScanner {
 		}
 	}
 
-	/**
-	 *
-	 */
 	static class WordPredicateRule extends WordRule implements IPredicateRule {
 
 		private final IToken fSuccessToken;

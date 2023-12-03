@@ -26,10 +26,6 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class TheTestWizardDialog extends WizardDialog {
 
-	/**
-	 * @param parentShell
-	 * @param newWizard
-	 */
 	public TheTestWizardDialog(Shell parentShell, IWizard newWizard) {
 		super(parentShell, newWizard);
 		setBlockOnOpen(false);

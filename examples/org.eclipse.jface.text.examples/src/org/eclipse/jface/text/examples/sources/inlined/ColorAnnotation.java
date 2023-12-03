@@ -65,7 +65,6 @@ public class ColorAnnotation extends LineContentAnnotation {
 	/**
 	 * Format the given rgb to hexa color.
 	 *
-	 * @param rgb
 	 * @return the hexa color from the given rgb.
 	 */
 	private static String formatToRGB(RGB rgb) {
@@ -103,7 +102,6 @@ public class ColorAnnotation extends LineContentAnnotation {
 	/**
 	 * Returns the colorized square size.
 	 *
-	 * @param fontMetrics
 	 * @return the colorized square size.
 	 */
 	public static int getSquareSize(FontMetrics fontMetrics) {
@@ -113,7 +111,6 @@ public class ColorAnnotation extends LineContentAnnotation {
 	/**
 	 * Compute width of square
 	 *
-	 * @param styledText
 	 * @return the width of square
 	 */
 	private static int getSquareWidth(FontMetrics fontMetrics) {

@@ -32,15 +32,12 @@ import org.eclipse.swt.widgets.Widget;
  * @noextend this class is not intended to be subclassed by clients.
  *
  * @since 3.18
- *
  */
 @FunctionalInterface
 public interface Property<T extends Widget> {
 
 	/**
 	 * Called when the widget is created and the property should be applied.
-	 *
-	 * @param widget
 	 */
 	void apply(T widget);
 }

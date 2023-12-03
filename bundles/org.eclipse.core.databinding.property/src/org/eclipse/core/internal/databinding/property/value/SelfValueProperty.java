@@ -24,14 +24,10 @@ import org.eclipse.core.databinding.property.value.SimpleValueProperty;
  * @param <T>
  *            type of the value of the property
  * @since 3.3
- *
  */
 public final class SelfValueProperty<T> extends SimpleValueProperty<T, T> {
 	private final Object valueType;
 
-	/**
-	 * @param valueType
-	 */
 	public SelfValueProperty(Object valueType) {
 		this.valueType = valueType;
 	}

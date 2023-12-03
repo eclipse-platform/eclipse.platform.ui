@@ -27,7 +27,6 @@ import org.w3c.dom.Element;
  * point for the widgets
  *
  * {@link IElementProvider} SWT implementation to retrieve w3c Element
- *
  */
 public class FormsElementProvider implements IElementProvider {
 

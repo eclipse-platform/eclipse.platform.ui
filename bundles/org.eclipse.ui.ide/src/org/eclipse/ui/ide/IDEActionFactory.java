@@ -51,10 +51,6 @@ public final class IDEActionFactory {
 
 	private static class WorkbenchCommandAction extends CommandAction implements
 			ActionFactory.IWorkbenchAction {
-		/**
-		 * @param commandIdIn
-		 * @param window
-		 */
 		public WorkbenchCommandAction(String commandIdIn,
 				IWorkbenchWindow window) {
 			super(window, commandIdIn);

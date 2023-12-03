@@ -159,14 +159,6 @@ public class HandlerActivationTest extends UITestCase {
 		return c;
 	}
 
-	/**
-	 * @param cmd
-	 * @param handlerId
-	 * @throws ExecutionException
-	 * @throws NotDefinedException
-	 * @throws NotEnabledException
-	 * @throws NotHandledException
-	 */
 	private void assertHandlerIsExecuted(Command cmd, String handlerId)
 			throws ExecutionException, NotDefinedException,
 			NotEnabledException, NotHandledException {
@@ -177,11 +169,6 @@ public class HandlerActivationTest extends UITestCase {
 				handler.executionCount);
 	}
 
-	/**
-	 * @param contextId
-	 * @param handlerId
-	 * @param expressionInfo
-	 */
 	private void createHandlerActivation(String contextId, String handlerId,
 			String[] expressionInfo) {
 		ActiveContextExpression expression;
@@ -216,12 +203,6 @@ public class HandlerActivationTest extends UITestCase {
 		super.doTearDown();
 	}
 
-	/**
-	 * @throws ExecutionException
-	 * @throws NotDefinedException
-	 * @throws NotEnabledException
-	 * @throws NotHandledException
-	 */
 	private void doTestForBreak() throws ExecutionException,
 			NotDefinedException, NotEnabledException, NotHandledException {
 		Command cmd = commandService.getCommand(CMD_ID);
@@ -242,10 +223,6 @@ public class HandlerActivationTest extends UITestCase {
 		contextService.deactivateContext(c1);
 	}
 
-	/**
-	 * @param currentHandler
-	 * @param expression1
-	 */
 	private void makeHandler(String handler, String context,
 			ActiveContextExpression expression) {
 		IHandler currentHandler = null;

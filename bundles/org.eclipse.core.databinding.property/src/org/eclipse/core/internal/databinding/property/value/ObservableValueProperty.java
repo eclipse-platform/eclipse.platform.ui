@@ -33,7 +33,6 @@ import org.eclipse.core.databinding.property.value.SimpleValueProperty;
  * @param <T>
  *            type of the value of the property
  * @since 3.3
- *
  */
 /*
  * This class extends SimpleValueProperty rather than ValueProperty to make it
@@ -45,9 +44,6 @@ import org.eclipse.core.databinding.property.value.SimpleValueProperty;
 public class ObservableValueProperty<T> extends SimpleValueProperty<IObservableValue<T>, T> {
 	private final Object valueType;
 
-	/**
-	 * @param valueType
-	 */
 	public ObservableValueProperty(Object valueType) {
 		this.valueType = valueType;
 	}

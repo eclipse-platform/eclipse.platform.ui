@@ -34,7 +34,6 @@ import org.eclipse.swt.widgets.Text;
 /**
  * A simple TreeViewer example to demonstrate the usage of an
  * ILazyContentProvider.
- *
  */
 public class Snippet047VirtualBigTreeViewer {
 
@@ -171,9 +170,6 @@ public class Snippet047VirtualBigTreeViewer {
 		}
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 
 		Thread thread = new Thread(new Runnable() {

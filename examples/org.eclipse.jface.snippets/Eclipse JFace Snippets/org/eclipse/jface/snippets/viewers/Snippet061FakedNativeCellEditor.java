@@ -56,7 +56,6 @@ import org.eclipse.swt.widgets.TreeItem;
 
 /**
  * A simple TreeViewer to demonstrate usage
- *
  */
 public class Snippet061FakedNativeCellEditor {
 

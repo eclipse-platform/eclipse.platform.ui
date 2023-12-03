@@ -31,7 +31,6 @@ import org.eclipse.swt.graphics.Image;
  * have an attribute with the given ID, the field is disabled.
  *
  * @author Steven Spungin
- *
  */
 public class EAttributeTableViewerColumn {
 

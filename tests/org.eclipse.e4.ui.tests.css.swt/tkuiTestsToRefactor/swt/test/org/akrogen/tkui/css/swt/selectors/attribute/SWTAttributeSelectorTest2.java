@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.Shell;
  * 
  * Selector=E[foo="bar"] an E element whose "foo" attribute value is exactly
  * equal to "bar"
- * 
  */
 public class SWTAttributeSelectorTest2 {
 

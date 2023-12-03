@@ -32,9 +32,6 @@ public class WidgetVisibleProperty<S extends Widget> extends WidgetDelegatingVal
 	private IValueProperty<S, Boolean> scrollBar;
 	private IValueProperty<S, Boolean> toolTip;
 
-	/**
-	 *
-	 */
 	public WidgetVisibleProperty() {
 		super(String.class);
 	}

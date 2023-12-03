@@ -274,8 +274,6 @@ public abstract class UITestCase extends TestCase {
 
 	/**
 	 * Pauses execution of the current thread
-	 *
-	 * @param millis
 	 */
 	protected static void sleep(long millis) {
 		try {

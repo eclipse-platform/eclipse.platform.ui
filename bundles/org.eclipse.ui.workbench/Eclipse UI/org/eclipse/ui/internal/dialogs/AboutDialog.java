@@ -70,9 +70,6 @@ import org.eclipse.ui.services.IServiceLocator;
  * Displays information about the product.
  */
 public class AboutDialog extends TrayDialog {
-	/**
-	 *
-	 */
 	private static final String COPY_BUILD_ID_COMMAND = "org.eclipse.ui.ide.copyBuildIdCommand"; //$NON-NLS-1$
 
 	private static final int MAX_IMAGE_WIDTH_FOR_TEXT = 250;

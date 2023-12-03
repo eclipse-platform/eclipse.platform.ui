@@ -31,7 +31,6 @@ import org.eclipse.ui.navigator.INavigatorContentDescriptor;
  * </p>
  *
  * @since 3.2
- *
  */
 public class CommonFilterLabelProvider implements ITableLabelProvider, ILabelProvider {
 

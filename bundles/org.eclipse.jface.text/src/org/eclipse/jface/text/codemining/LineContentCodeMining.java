@@ -23,7 +23,6 @@ import org.eclipse.jface.text.Position;
  * Abstract class for line content code mining.
  *
  * @since 3.13
- *
  */
 public abstract class LineContentCodeMining extends AbstractCodeMining {
 

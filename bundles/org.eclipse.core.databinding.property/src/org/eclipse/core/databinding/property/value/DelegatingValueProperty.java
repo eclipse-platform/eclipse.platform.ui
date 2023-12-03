@@ -34,7 +34,6 @@ import org.eclipse.core.internal.databinding.property.value.SetDelegatingValueOb
  * @param <T>
  *            type of the value of the property
  * @since 1.2
- *
  */
 public abstract class DelegatingValueProperty<S, T> extends ValueProperty<S, T> {
 	private final Object valueType;

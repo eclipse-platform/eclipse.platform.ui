@@ -281,7 +281,6 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	/**
 	 * The ColorAndFontCollector collects fonts and colors without a
 	 * a color or font provider.
-	 *
 	 */
 	protected class ColorAndFontCollector {
 
@@ -865,9 +864,6 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 
 	/**
 	 * Notifies an AssociateListener of the elements that have been filtered out.
-	 *
-	 * @param rawResult
-	 * @param filteredResult
 	 */
 	private void notifyFilteredOut(Object[] rawResult, Object[] filteredResult) {
 		int rawIndex = 0;
@@ -919,7 +915,6 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * @deprecated This method is deprecated in 3.3 in favor of {@link ColumnViewer#getItemAt(org.eclipse.swt.graphics.Point)}.
 	 * Viewers who are not subclasses of {@link ColumnViewer} should consider using a
 	 * widget relative implementation like {@link ColumnViewer#getItemAt(org.eclipse.swt.graphics.Point)}.
-	 *
 	 */
 	@Deprecated
 	protected Item getItem(int x, int y) {

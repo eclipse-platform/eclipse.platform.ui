@@ -32,7 +32,6 @@ import org.eclipse.ui.PlatformUI;
  * Opens the {@link SmartImportWizard} on selected project.
  *
  * @since 3.12
- *
  */
 public class ConfigureProjectHandler extends AbstractHandler {
 

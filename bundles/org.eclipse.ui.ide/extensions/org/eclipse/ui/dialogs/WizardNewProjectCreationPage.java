@@ -291,7 +291,6 @@ public class WizardNewProjectCreationPage extends WizardPage {
 	 * @param name initial project name for this page
 	 *
 	 * @see IWorkspace#validateName(String, int)
-	 *
 	 */
 	public void setInitialProjectName(String name) {
 		if (name == null) {

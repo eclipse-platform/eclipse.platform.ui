@@ -116,8 +116,6 @@ public class ListViewerTest extends StructuredViewerTest {
 
 	/**
 	 * Asserts the ability to refresh a List that contains no selection without losing vertically scrolled state.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testRefreshBug141435() throws Exception {

@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.TableColumn;
 
 /**
  * Example usage of ITableLabelProvider using images and labels
- *
  */
 public class Snippet003TableLabelProvider {
 	private static Image[] images;
@@ -106,9 +105,6 @@ public class Snippet003TableLabelProvider {
 		return elements;
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display ();
 

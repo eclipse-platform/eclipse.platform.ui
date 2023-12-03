@@ -154,7 +154,6 @@ public class EmailAddress implements IPropertySource {
 	 * if emailAddress does not contain an userid and domain seperated by '@'.
 	 *
 	 * @param emailAddress the email address
-	 * @throws IllegalArgumentException
 	 */
 	private void setEmailAddress(String emailAddress)
 			throws IllegalArgumentException {

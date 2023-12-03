@@ -34,7 +34,6 @@ import org.eclipse.swt.widgets.Shell;
  * TextAndDialogCellEditor; othe columns use ordinary {@link TextCellEditor}s.
  *
  * @author Eric Rizzo
- *
  */
 public class Snippet062TextAndDialogCellEditor {
 
@@ -191,9 +190,6 @@ public class Snippet062TextAndDialogCellEditor {
 		return elements;
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display();
 

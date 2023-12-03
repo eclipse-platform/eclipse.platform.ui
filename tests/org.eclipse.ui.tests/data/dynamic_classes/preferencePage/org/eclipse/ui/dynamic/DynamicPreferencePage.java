@@ -27,9 +27,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
  */
 public class DynamicPreferencePage implements IWorkbenchPreferencePage {
 
-	/**
-	 *
-	 */
 	public DynamicPreferencePage() {
 		super();
 		// TODO Auto-generated constructor stub

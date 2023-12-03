@@ -339,7 +339,6 @@ public class CreateLinkedResourceGroup {
 	/**
 	 * Create the file system selection area.
 	 *
-	 * @param composite
 	 * @param enabled
 	 *            the initial enablement state.
 	 */
@@ -367,9 +366,6 @@ public class CreateLinkedResourceGroup {
 
 	/**
 	 * Create the composite for the resolved path.
-	 *
-	 * @param locationGroup
-	 * @param indent
 	 */
 	private void createResolvedPathGroup(Composite locationGroup, int indent) {
 		GridLayout layout;

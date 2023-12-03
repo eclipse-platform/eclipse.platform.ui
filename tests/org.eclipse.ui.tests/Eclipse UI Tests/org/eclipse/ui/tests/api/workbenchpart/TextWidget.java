@@ -27,16 +27,12 @@ import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
  * Basic widget wrapping an SWT Text Control.
  *
  * @since 3.3
- *
  */
 public class TextWidget extends WorkbenchWindowControlContribution {
 	public TextWidget() {
 
 	}
 
-	/**
-	 * @param id
-	 */
 	protected TextWidget(String id) {
 		super(id);
 		// TODO Auto-generated constructor stub

@@ -86,8 +86,6 @@ public abstract class AbstractPartRenderer {
 	/**
 	 * Activate the part in the hierarchy. This should either still be internal
 	 * or be a public method somewhere else.
-	 *
-	 * @param element
 	 */
 	public void activate(MPart element) {
 		IEclipseContext curContext = getContext(element);
@@ -101,7 +99,6 @@ public abstract class AbstractPartRenderer {
 	/**
 	 * Check if activating {@code element} requires that the part set the focus.
 	 *
-	 * @param element
 	 * @return true if the part requires focus
 	 */
 	protected abstract boolean requiresFocus(MPart element);
@@ -125,15 +122,12 @@ public abstract class AbstractPartRenderer {
 	 * Force the UI focus into the element if possible. This method should not
 	 * be called directly, it will be called by the IPresentationEngine#focusGui
 	 * method if the normal process used to set the focus cannot be performed.
-	 *
-	 * @param element
 	 */
 	public void forceFocus(MUIElement element) {
 		// Do nothing by default
 	}
 
 	/**
-	 * @param mElement
 	 * @return Returns the style override bits or -1 if there is no override
 	 */
 	public int getStyleOverride(MUIElement mElement) {

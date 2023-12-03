@@ -20,7 +20,6 @@ import org.eclipse.jface.examples.databinding.ModelObject;
 
 /**
  * @since 1.0
- *
  */
 public class SimpleOrder extends ModelObject {
 
@@ -55,10 +54,6 @@ public class SimpleOrder extends ModelObject {
 		this.orderNumber = orderNumber;
 	}
 
-	/**
-	 * @param i
-	 * @param date
-	 */
 	public SimpleOrder(int i, Date date) {
 		this.orderNumber = i;
 		this.date = date;

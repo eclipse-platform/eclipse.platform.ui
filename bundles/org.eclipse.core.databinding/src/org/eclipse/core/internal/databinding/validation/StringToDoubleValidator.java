@@ -23,9 +23,6 @@ public class StringToDoubleValidator extends AbstractStringToNumberValidator {
 	private static final Double MIN = Double.valueOf(-Double.MAX_VALUE);
 	private static final Double MAX = Double.valueOf(Double.MAX_VALUE);
 
-	/**
-	 * @param converter
-	 */
 	public StringToDoubleValidator(NumberFormatConverter<?, ?> converter) {
 		super(converter, MIN, MAX);
 	}

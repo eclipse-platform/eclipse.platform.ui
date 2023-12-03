@@ -34,7 +34,6 @@ import org.junit.Test;
 
 /**
  * @since 3.2
- *
  */
 public class ObservableCollectionContentProviderTest extends
 		AbstractDefaultRealmTestCase {

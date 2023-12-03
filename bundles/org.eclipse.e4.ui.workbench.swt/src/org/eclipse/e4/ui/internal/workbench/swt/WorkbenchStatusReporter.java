@@ -29,9 +29,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.osgi.framework.BundleContext;
 
-/**
- *
- */
 public class WorkbenchStatusReporter extends StatusReporter {
 
 	@Inject

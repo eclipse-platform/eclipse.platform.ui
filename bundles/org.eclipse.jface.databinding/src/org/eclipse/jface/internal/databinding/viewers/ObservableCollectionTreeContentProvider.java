@@ -103,7 +103,6 @@ public abstract class ObservableCollectionTreeContentProvider<E> implements ITre
 	 * @param collectionFactory
 	 *            observable factory that produces an IObservableList of
 	 *            children for a given parent element.
-	 * @param structureAdvisor
 	 */
 	protected ObservableCollectionTreeContentProvider(
 			IObservableFactory<? super E, ? extends IObservableCollection<E>> collectionFactory,

@@ -64,9 +64,6 @@ public final class HandlerProxy extends AbstractHandlerWithState implements IEle
 
 	private static Map<IConfigurationElement, HandlerProxy> CEToProxyMap = new HashMap<>();
 
-	/**
-	 *
-	 */
 	private static final String PROP_ENABLED = "enabled"; //$NON-NLS-1$
 
 	/**
@@ -202,9 +199,6 @@ public final class HandlerProxy extends AbstractHandlerWithState implements IEle
 		}
 	}
 
-	/**
-	 *
-	 */
 	private void registerEnablement() {
 		enablementRef = evaluationService.addEvaluationListener(enabledWhenExpression, getEnablementListener(),
 				PROP_ENABLED);

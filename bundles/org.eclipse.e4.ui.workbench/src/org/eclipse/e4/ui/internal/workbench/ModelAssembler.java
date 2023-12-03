@@ -338,7 +338,6 @@ public class ModelAssembler {
 	 *
 	 * @param extensions the list of {@link IExtension} extension elements
 	 * @param initial    <code>true</code> if running from a non-persisted state
-	 *
 	 */
 	private void processFragments(IExtension[] extensions, boolean initial) {
 		List<ModelFragmentWrapper> wrappers = new ArrayList<>();

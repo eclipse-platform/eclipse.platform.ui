@@ -27,14 +27,12 @@ import org.eclipse.swt.widgets.Widget;
 /**
  * TableViewerRow is the Table specific implementation of ViewerRow
  * @since 3.3
- *
  */
 public class TableViewerRow extends ViewerRow {
 	private TableItem item;
 
 	/**
 	 * Create a new instance of the receiver from item.
-	 * @param item
 	 */
 	TableViewerRow(TableItem item) {
 		this.item = item;

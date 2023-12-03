@@ -45,9 +45,6 @@ public class TitleTestEditor extends EditorPart {
 
 	Label cdLabel;
 
-	/**
-	 *
-	 */
 	public TitleTestEditor() {
 		super();
 	}

@@ -65,7 +65,6 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 /**
  * Minimap widget which displays scaled content of the given text editor.
- *
  */
 public class MinimapWidget {
 
@@ -349,7 +348,6 @@ public class MinimapWidget {
 
 	/**
 	 * Minimap tracker.
-	 *
 	 */
 	class MinimapTracker implements CaretListener, SelectionListener, PaintListener, MouseWheelListener {
 

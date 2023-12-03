@@ -159,7 +159,6 @@ public class ResourceTreeAndListGroup extends EventManager {
 	 * @param style               style for the composite
 	 * @param useHeightHint       If true then use the height hint to make this
 	 *                            group big enough
-	 *
 	 */
 	public ResourceTreeAndListGroup(Composite parent, Object rootObject,
 			ITreeContentProvider treeContentProvider,
@@ -671,7 +670,6 @@ public class ResourceTreeAndListGroup extends EventManager {
 	 * Return a count of the number of list items associated with a
 	 * given tree item.
 	 *
-	 * @param treeElement
 	 * @return the list item count
 	 */
 	private int getListItemsSize(Object treeElement) {

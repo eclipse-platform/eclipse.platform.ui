@@ -23,14 +23,10 @@ import org.junit.Test;
 
 /**
  * @since 3.2
- *
  */
 public class TestBug138695 {
 	static class SampleJob extends UIJob {
 
-		/**
-		 * @param name
-		 */
 		public SampleJob() {
 			super("Sample");
 		}

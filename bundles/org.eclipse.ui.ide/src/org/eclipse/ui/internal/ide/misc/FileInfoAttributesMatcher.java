@@ -67,10 +67,6 @@ public class FileInfoAttributesMatcher extends AbstractFileInfoMatcher {
 	public static String OPERATOR_MATCHES		= "matches"; //$NON-NLS-1$
 
 
-	/**
-	 * @param key
-	 * @return
-	 */
 	public static String[] getOperatorsForKey(String key) {
 		if (key.equals(KEY_NAME) || key.equals(KEY_PROPJECT_RELATIVE_PATH) || key.equals(KEY_LOCATION))
 				return new String[] {OPERATOR_MATCHES};
@@ -84,11 +80,6 @@ public class FileInfoAttributesMatcher extends AbstractFileInfoMatcher {
 		return new String[] {OPERATOR_NONE};
 	}
 
-	/**
-	 * @param key
-	 * @param operator
-	 * @return
-	 */
 	public static Class<?> getTypeForKey(String key, String operator) {
 		if (key.equals(KEY_NAME) || key.equals(KEY_PROPJECT_RELATIVE_PATH) || key.equals(KEY_LOCATION))
 			return String.class;
@@ -104,9 +95,6 @@ public class FileInfoAttributesMatcher extends AbstractFileInfoMatcher {
 		return String.class;
 	}
 
-	/**
-	 * @return
-	 */
 	public static boolean supportCreatedKey() {
 		if (Platform.getOS().equals(Platform.OS_WIN32) || Platform.getOS().equals(Platform.OS_MACOSX)) {
 			return true;
@@ -116,7 +104,6 @@ public class FileInfoAttributesMatcher extends AbstractFileInfoMatcher {
 
 	/**
 	 * @since 3.6
-	 *
 	 */
 	public static class Argument {
 		public String key = KEY_NAME;
@@ -126,10 +113,6 @@ public class FileInfoAttributesMatcher extends AbstractFileInfoMatcher {
 		public boolean regularExpression = false;
 	}
 
-	/**
-	 * @param argument
-	 * @return
-	 */
 	public static String encodeArguments(Argument argument)  {
 		return VERSION_IMPLEMENTATION + DELIMITER +
 				argument.key + DELIMITER +
@@ -140,10 +123,6 @@ public class FileInfoAttributesMatcher extends AbstractFileInfoMatcher {
 
 	}
 
-	/**
-	 * @param argument
-	 * @return
-	 */
 	public static Argument decodeArguments(String argument)  {
 		Argument result = new Argument();
 		if (argument == null)

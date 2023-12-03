@@ -28,7 +28,6 @@ import org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant;
  * methods to get hold of an instance.
  *
  * @author Remain Software - Wim Jongman
- *
  */
 public class RefactorModel {
 
@@ -46,7 +45,6 @@ public class RefactorModel {
 	 * Factory for an empty model. Use the {@link #addTextRename(String, String)} method to add one or more text
 	 * renames.
 	 *
-	 * @param pParticipant
 	 * @return the model
 	 */
 	public static RefactorModel getModel(RefactoringParticipant pParticipant) {
@@ -58,9 +56,6 @@ public class RefactorModel {
 	 * text
 	 * renames.
 	 *
-	 * @param pParticipant
-	 * @param pOldText
-	 * @param pNewText
 	 * @return the model.
 	 */
 	public static RefactorModel getModel(RefactoringParticipant pParticipant,
@@ -75,11 +70,6 @@ public class RefactorModel {
 	 * text
 	 * renames and the old and the new project.
 	 *
-	 * @param pParticipant
-	 * @param pOldText
-	 * @param pNewText
-	 * @param pOldProject
-	 * @param pNewProject
 	 * @return the model.
 	 */
 	public static RefactorModel getModel(RefactoringParticipant pParticipant,
@@ -94,8 +84,6 @@ public class RefactorModel {
 	 * Adds a text rename to be processed later. For example, if the project
 	 * name changes there can be <code>bundlclass://</code> and <code>platform:/plugin</code> changes.
 	 *
-	 * @param oldText
-	 * @param newText
 	 * @return the model
 	 */
 	public RefactorModel addTextRename(String oldText, String newText) {
@@ -159,7 +147,6 @@ public class RefactorModel {
 	/**
 	 * Delegates to the same method of the embedded RefactoringParticipant.
 	 *
-	 * @param file
 	 * @return a TextChange object
 	 * @see RefactoringParticipant#getTextChange(Object)
 	 */
@@ -177,7 +164,6 @@ public class RefactorModel {
 	/**
 	 * Sets the current 0-based index. May not be out of bounds.
 	 *
-	 * @param index
 	 * @return the model
 	 */
 	public RefactorModel setIndex(int index) {
@@ -190,8 +176,6 @@ public class RefactorModel {
 	/**
 	 * Sets the old and the new project in case of project renaming.
 	 *
-	 * @param oldProject
-	 * @param newProject
 	 * @return the model
 	 */
 	public RefactorModel setProjectRename(IProject oldProject,
@@ -206,7 +190,6 @@ public class RefactorModel {
 	/**
 	 * Sets the RefactoringParticipant.
 	 *
-	 * @param pParticipant
 	 * @return the model
 	 * @see RefactoringParticipant
 	 */

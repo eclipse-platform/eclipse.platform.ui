@@ -259,8 +259,6 @@ public class MinMaxAddon {
 
 	/**
 	 * Handles removals from the perspective
-	 *
-	 * @param event
 	 */
 
 	@Inject
@@ -310,8 +308,6 @@ public class MinMaxAddon {
 
 	/**
 	 * Handles changes of the perspective
-	 *
-	 * @param event
 	 */
 
 	@Inject
@@ -379,8 +375,6 @@ public class MinMaxAddon {
 
 	/**
 	 * Handles changes in tags
-	 *
-	 * @param event
 	 */
 
 	@Inject
@@ -424,8 +418,6 @@ public class MinMaxAddon {
 	 *
 	 * This keeps trim stacks attached to the correct perspective when a perspective is saved with a
 	 * new name.
-	 *
-	 * @param event
 	 */
 
 	@Inject
@@ -470,8 +462,6 @@ public class MinMaxAddon {
 
 	/**
 	 * Handles the event that the perspective is saved
-	 *
-	 * @param event
 	 */
 
 	@Inject
@@ -523,8 +513,6 @@ public class MinMaxAddon {
 
 	/**
 	 * Handles the event that the perspective is reset
-	 *
-	 * @param event
 	 */
 	@Inject
 	@Optional
@@ -547,8 +535,6 @@ public class MinMaxAddon {
 
 	/**
 	 * Handles the event that the perspective is opened
-	 *
-	 * @param event
 	 */
 	@Inject
 	@Optional
@@ -750,7 +736,6 @@ public class MinMaxAddon {
 	}
 
 	/**
-	 * @param element
 	 * @return The list of elements that need to be minimized during a maximize
 	 */
 	private List<MUIElement> getElementsToMinimize(MUIElement element) {
@@ -878,9 +863,6 @@ public class MinMaxAddon {
 
 	/**
 	 * Restore any currently maximized element (except the one we're in the process of maximizing
-	 *
-	 * @param element
-	 * @param win
 	 */
 	private void restoreMaximizedElement(final MUIElement element, MWindow win) {
 		MPerspective elePersp = modelService.getPerspectiveFor(element);
@@ -937,7 +919,6 @@ public class MinMaxAddon {
 
 
 	/**
-	 * @param element
 	 * @return The list of elements that need to be restored by an unzoom
 	 */
 	private List<MUIElement> getElementsToRestore(MUIElement element) {

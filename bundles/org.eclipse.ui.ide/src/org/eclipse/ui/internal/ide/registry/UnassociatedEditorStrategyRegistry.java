@@ -27,7 +27,6 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * @since 3.12
- *
  */
 public class UnassociatedEditorStrategyRegistry {
 
@@ -112,7 +111,6 @@ public class UnassociatedEditorStrategyRegistry {
 	}
 
 	/**
-	 * @param strategyId
 	 * @return Whether the specified strategy is interactive, or false is
 	 *         strategy is unknown
 	 */

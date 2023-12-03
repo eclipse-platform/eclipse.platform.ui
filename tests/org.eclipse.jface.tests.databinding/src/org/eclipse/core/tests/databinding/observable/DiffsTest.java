@@ -22,7 +22,6 @@ import org.junit.Test;
 
 /**
  * @since 3.2
- *
  */
 public class DiffsTest {
 	/**
@@ -49,7 +48,6 @@ public class DiffsTest {
 	/**
 	 * Asserts that if the {@link ValueDiff#toString()} implementation doesn't
 	 * throw a NPE if any of its properties are <code>null</code>.
-	 *
 	 */
 	@Test
 	public void test_ValueDiff() {

@@ -30,7 +30,6 @@ import org.eclipse.core.resources.IResource;
  * This class is not intended to be extended by clients.
  *
  * @since 3.4
- *
  */
 public abstract class ResourceUndoState {
 

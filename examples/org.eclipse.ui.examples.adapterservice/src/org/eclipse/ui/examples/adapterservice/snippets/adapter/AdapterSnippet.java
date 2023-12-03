@@ -24,7 +24,6 @@ import jakarta.inject.Inject;
 
 /**
  * This snippet demonstrates user of the Adapter service.
- *
  */
 @SuppressWarnings("restriction")
 public class AdapterSnippet implements IApplication{

@@ -37,7 +37,6 @@ public class ProblemImageProvider implements IMarkerImageProvider {
 	 * Returns <code>null</code> if there is no appropriate image.
 	 *
 	 * @param marker The marker to get an image path for.
-	 *
 	 */
 	@Override
 	public String getImagePath(IMarker marker) {

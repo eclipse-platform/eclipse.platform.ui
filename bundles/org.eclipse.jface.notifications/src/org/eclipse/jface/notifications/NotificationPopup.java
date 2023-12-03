@@ -54,7 +54,6 @@ public class NotificationPopup extends AbstractNotificationPopup {
 	 * method returns the same builder instance).
 	 *
 	 * @since 0.4
-	 *
 	 */
 	public static class Builder {
 

@@ -227,7 +227,6 @@ public class EditorActionBarsTest extends UITestCase {
 	 * Tests an edge case in cool bar updating when the cool bar has a single separator
 	 * and no other contents (or multiple separators and no other contents).
 	 * See bug 239945 for details.
-	 * @throws Throwable
 	 */
 	@Test
 	public void test239945() throws Throwable {

@@ -29,11 +29,6 @@ import org.eclipse.core.databinding.conversion.Converter;
 public abstract class NumberFormatConverter<F, T extends Number> extends Converter<F, T> {
 	private final Format numberFormat;
 
-	/**
-	 * @param fromType
-	 * @param toType
-	 * @param numberFormat
-	 */
 	public NumberFormatConverter(Object fromType, Object toType, Format numberFormat) {
 		super(fromType, toType);
 

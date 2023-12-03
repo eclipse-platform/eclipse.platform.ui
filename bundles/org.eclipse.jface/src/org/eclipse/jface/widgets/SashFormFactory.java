@@ -67,7 +67,6 @@ public final class SashFormFactory extends AbstractControlFactory<SashFormFactor
 	 * Creates a new SashFormFactory with the given style. Refer to
 	 * {@link SashForm#SashForm(Composite, int)} for possible styles.
 	 *
-	 * @param style
 	 * @return a new SashFormFactory instance
 	 */
 	public static SashFormFactory newSashForm(int style) {

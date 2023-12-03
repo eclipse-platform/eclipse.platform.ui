@@ -252,9 +252,6 @@ public abstract class AbstractComponentEditor<M> {
 
 	/**
 	 * Create a readable ImageDescriptor behind URI.
-	 *
-	 * @param uri
-	 * @return
 	 */
 	private ImageDescriptor getImageDescriptorFromUri(String uri) {
 		ImageDescriptor result = null;
@@ -271,7 +268,6 @@ public abstract class AbstractComponentEditor<M> {
 		return result;
 	}
 
-	@SuppressWarnings("resource")
 	private static URL findPlatformImage(String uri) {
 		// SEVERAL CASES are possible here :
 		// * uri = platform:/plugin/myplugin/icons/image.gif
@@ -375,7 +371,6 @@ public abstract class AbstractComponentEditor<M> {
 	}
 
 	/**
-	 * @param element
 	 * @return the list of actions that are populated in the import menu. Can be
 	 *         empty but is never null.
 	 */

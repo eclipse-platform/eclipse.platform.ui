@@ -24,7 +24,6 @@ import org.eclipse.ui.themes.IColorFactory;
 
 /**
  * @since 3.105
- *
  */
 public class RGBBrightnessColorFactory implements IColorFactory, IExecutableExtension {
 

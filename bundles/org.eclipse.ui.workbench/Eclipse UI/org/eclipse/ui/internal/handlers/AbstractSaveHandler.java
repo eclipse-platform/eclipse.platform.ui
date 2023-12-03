@@ -33,7 +33,6 @@ import org.eclipse.ui.internal.WorkbenchWindow;
 
 /**
  * @since 3.7
- *
  */
 public abstract class AbstractSaveHandler extends AbstractEvaluationHandler {
 

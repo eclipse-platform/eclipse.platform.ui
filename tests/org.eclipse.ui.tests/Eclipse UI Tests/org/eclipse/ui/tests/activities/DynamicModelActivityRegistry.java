@@ -41,7 +41,6 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 
 	/**
 	 * Populate definitions.
-	 *
 	 */
 	private void load() {
 		categoryDefinitions = new ArrayList<>();
@@ -60,7 +59,6 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 
 	/**
 	 * Populate the default enabled activties.
-	 *
 	 */
 	private void populateDefaultEnabledActivities() {
 		defaultEnabledActivities.add(((ActivityDefinition) activityDefinitions
@@ -73,7 +71,6 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 
 	/**
 	 * Populate the activity activity binding definitions.
-	 *
 	 */
 	private void populateActivityRequirementBindingDefinitions() {
 		activityRequirementBindingDefinitions
@@ -92,7 +89,6 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 
 	/**
 	 * Populate the activity pattern binding definitions.
-	 *
 	 */
 	private void populateActivityPatternBindingDefinitions() {
 		for (int index = 0; index < activityDefinitions.size(); index++) {
@@ -106,7 +102,6 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 
 	/**
 	 * Populate the category activity binding definitions.
-	 *
 	 */
 	private void populateCategoryActivityBindingDefinitions() {
 		int counter = 1;
@@ -134,7 +129,6 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 
 	/**
 	 * Populate the activity definitions.
-	 *
 	 */
 	private void populateActivityDefinitions() {
 		String stringToAppend = null;
@@ -148,7 +142,6 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 
 	/**
 	 * Populate the category definitions.
-	 *
 	 */
 	private void populateCategoryDefinitions() {
 		String stringToAppend = null;

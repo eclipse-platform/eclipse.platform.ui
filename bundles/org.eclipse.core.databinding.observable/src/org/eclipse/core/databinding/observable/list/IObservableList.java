@@ -96,14 +96,8 @@ public interface IObservableList<E> extends List<E>, IObservableCollection<E> {
 	 */
 	@Override <T> T[] toArray(T a[]);
 
-	/**
-	 *
-	 */
 	@Override boolean add(E o);
 
-	/**
-	 *
-	 */
 	@Override boolean remove(Object o);
 
 	/**
@@ -111,24 +105,12 @@ public interface IObservableList<E> extends List<E>, IObservableCollection<E> {
 	 */
 	@Override boolean containsAll(Collection<?> c);
 
-	/**
-	 *
-	 */
 	@Override boolean addAll(Collection<? extends E> c);
 
-	/**
-	 *
-	 */
 	@Override boolean addAll(int index, Collection<? extends E> c);
 
-	/**
-	 *
-	 */
 	@Override boolean removeAll(Collection<?> c);
 
-	/**
-	 *
-	 */
 	@Override boolean retainAll(Collection<?> c);
 
 	/**
@@ -146,9 +128,6 @@ public interface IObservableList<E> extends List<E>, IObservableCollection<E> {
 	 */
 	@Override E get(int index);
 
-	/**
-	 *
-	 */
 	@Override E set(int index, E element);
 
 	/**
@@ -177,9 +156,6 @@ public interface IObservableList<E> extends List<E>, IObservableCollection<E> {
 	 */
 	E move(int oldIndex, int newIndex);
 
-	/**
-	 *
-	 */
 	@Override E remove(int index);
 
 	/**

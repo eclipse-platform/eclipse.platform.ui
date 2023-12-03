@@ -36,9 +36,6 @@ public class LazyVirtualTableView extends VirtualTableView {
 		initElements();
 	}
 
-	/**
-	 *
-	 */
 	private void initElements() {
 		elements = new ArrayList<>();
 		for (int i = 0; i < itemCount; i++) {

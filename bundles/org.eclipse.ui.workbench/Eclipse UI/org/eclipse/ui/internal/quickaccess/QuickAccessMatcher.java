@@ -49,9 +49,6 @@ public final class QuickAccessMatcher {
 	/**
 	 * Get the existing {@link Pattern} for the given filter, or create a new one.
 	 * The generated pattern will replace whitespace with * to match all.
-	 *
-	 * @param filter
-	 * @return
 	 */
 	private Pattern getWhitespacesPattern(String filter) {
 		if (wsPattern == null || !filter.equals(wsFilter)) {
@@ -71,9 +68,6 @@ public final class QuickAccessMatcher {
 	/**
 	 * Get the existing {@link Pattern} for the given filter, or create a new one.
 	 * The generated pattern will handle '*' and '?' wildcards.
-	 *
-	 * @param filter
-	 * @return
 	 */
 	private Pattern getWildcardsPattern(String filter) {
 		// squash consecutive **** into a single *

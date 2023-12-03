@@ -25,7 +25,6 @@ package org.eclipse.core.internal.databinding;
  * @param <T>
  *            the type of the object being wrapped
  * @since 1.0
- *
  */
 public class IdentityWrapper<T> {
 
@@ -45,9 +44,6 @@ public class IdentityWrapper<T> {
 
 	final T o;
 
-	/**
-	 * @param o
-	 */
 	private IdentityWrapper(T o) {
 		this.o = o;
 	}

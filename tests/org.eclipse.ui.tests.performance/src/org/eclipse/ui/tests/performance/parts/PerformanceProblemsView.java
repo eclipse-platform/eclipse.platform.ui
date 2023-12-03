@@ -26,7 +26,6 @@ import org.eclipse.ui.internal.views.markers.ProblemsView;
  * PerformanceProblemsView is a problems view created
  * for the performance tests.
  * @since 3.2
- *
  */
 public class PerformanceProblemsView extends ProblemsView {
 

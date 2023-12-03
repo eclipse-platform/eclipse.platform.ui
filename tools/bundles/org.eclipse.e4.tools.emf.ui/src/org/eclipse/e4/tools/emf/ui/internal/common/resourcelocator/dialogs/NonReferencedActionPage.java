@@ -57,7 +57,6 @@ import org.eclipse.swt.widgets.Text;
  * actions to resolve issues.
  *
  * @author Steven Spungin
- *
  */
 public class NonReferencedActionPage extends WizardPage {
 

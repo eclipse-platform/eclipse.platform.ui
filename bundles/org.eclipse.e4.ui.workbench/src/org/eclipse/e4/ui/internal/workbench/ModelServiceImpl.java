@@ -83,9 +83,6 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.event.EventConstants;
 import org.osgi.service.event.EventHandler;
 
-/**
- *
- */
 public class ModelServiceImpl implements EModelService {
 
 	static String HOSTED_ELEMENT = "HostedElement"; //$NON-NLS-1$
@@ -381,8 +378,6 @@ public class ModelServiceImpl implements EModelService {
 	/**
 	 * Return the first element that is an instance of {@code clazz}
 	 *
-	 * @param elements
-	 * @param clazz
 	 * @return the first element that is an instanceof {@code clazz} or null
 	 */
 	private <T> T firstInstance(Collection<? super T> elements, Class<T> clazz) {
@@ -584,8 +579,6 @@ public class ModelServiceImpl implements EModelService {
 	}
 
 	/**
-	 * @param element
-	 * @param refWin
 	 * @return list of null referencing place holders
 	 */
 	public List<MPlaceholder> getNullRefPlaceHolders(MUIElement element, MWindow refWin) {
@@ -1152,9 +1145,6 @@ public class ModelServiceImpl implements EModelService {
 		}
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void setStackVisibility(MElementContainer<MUIElement> parent) {
 		if (parent == null) {
 			return;

@@ -143,8 +143,6 @@ public class ViewPartTitleTest extends UITestCase {
 	/**
 	 * Ensures that we can call ViewPart.setTitle(null) without throwing
 	 * any exceptions
-	 *
-	 * @throws Throwable
 	 */
 	@Test
 	public void testNullTitle() throws Throwable {

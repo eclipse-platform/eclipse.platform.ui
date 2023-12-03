@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2021 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,9 +14,13 @@
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474273
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 486777
+ *     Dinesh Palanisamy (ETAS GmbH) - Issue #998 Copy as path for resources
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
@@ -79,6 +83,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.ide.dialogs.ResourceEncodingFieldEditor;
@@ -147,6 +152,8 @@ public class ResourceInfoPage extends PropertyPage {
 
 	private static String LOCATION_BUTTON_TOOLTIP = IDEWorkbenchMessages.ResourceInfo_location_button_tooltip;
 
+	private static String PATH_BUTTON_TOOLTIP = IDEWorkbenchMessages.ResourceInfo_path_button_tooltip;
+
 	private static String RESOLVED_LOCATION_TITLE = IDEWorkbenchMessages.ResourceInfo_resolvedLocation;
 
 	private static String SIZE_TITLE = IDEWorkbenchMessages.ResourceInfo_size;
@@ -183,7 +190,7 @@ public class ResourceInfoPage extends PropertyPage {
 
 		Composite basicInfoComposite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
+		layout.numColumns = 4;
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		basicInfoComposite.setLayout(layout);
@@ -209,7 +216,7 @@ public class ResourceInfoPage extends PropertyPage {
 		gd.widthHint = convertWidthInCharsToPixels(MAX_VALUE_WIDTH);
 		gd.grabExcessHorizontalSpace = true;
 		gd.horizontalAlignment = GridData.FILL;
-		gd.horizontalSpan = 2;
+		gd.horizontalSpan = 3;
 		pathValueText.setLayoutData(gd);
 		pathValueText.setBackground(pathValueText.getDisplay().getSystemColor(
 				SWT.COLOR_WIDGET_BACKGROUND));
@@ -219,7 +226,7 @@ public class ResourceInfoPage extends PropertyPage {
 		typeTitle.setText(TYPE_TITLE);
 
 		Text typeValue = new Text(basicInfoComposite, SWT.LEFT | SWT.READ_ONLY);
-		GridDataFactory.swtDefaults().span(2, SWT.DEFAULT).applyTo(typeValue);
+		GridDataFactory.swtDefaults().span(3, SWT.DEFAULT).applyTo(typeValue);
 		typeValue.setText(IDEResourceInfoUtils.getTypeString(resource,
 				getContentDescription(resource)));
 		typeValue.setBackground(typeValue.getDisplay().getSystemColor(
@@ -245,7 +252,7 @@ public class ResourceInfoPage extends PropertyPage {
 			gd.grabExcessHorizontalSpace = true;
 			gd.verticalAlignment = SWT.TOP;
 			gd.horizontalAlignment = GridData.FILL;
-			gd.horizontalSpan = 2;
+			gd.horizontalSpan = 3;
 			locationComposite.setLayoutData(gd);
 
 			locationValue = new Text(locationComposite, SWT.WRAP
@@ -268,7 +275,7 @@ public class ResourceInfoPage extends PropertyPage {
 			((GridData) editButton.getLayoutData()).verticalAlignment = SWT.TOP;
 			int locationValueHeight = locationValue.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).y;
 			int editButtonHeight = editButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).y;
-			int verticalIndent = (editButtonHeight - locationValueHeight) / 2 ;
+			int verticalIndent = (editButtonHeight - locationValueHeight) / 2;
 			((GridData) locationTitle.getLayoutData()).verticalIndent = verticalIndent;
 			((GridData) locationValue.getLayoutData()).verticalIndent = verticalIndent;
 			editButton.addSelectionListener(new SelectionListener() {
@@ -299,7 +306,7 @@ public class ResourceInfoPage extends PropertyPage {
 			gd.widthHint = convertWidthInCharsToPixels(MAX_VALUE_WIDTH);
 			gd.grabExcessHorizontalSpace = true;
 			gd.horizontalAlignment = GridData.FILL;
-			gd.horizontalSpan = 2;
+			gd.horizontalSpan = 3;
 			resolvedLocationValue.setLayoutData(gd);
 			resolvedLocationValue.setBackground(resolvedLocationValue
 					.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
@@ -350,6 +357,18 @@ public class ResourceInfoPage extends PropertyPage {
 					}
 				}
 			});
+
+			Button pathCopy = new Button(basicInfoComposite, SWT.PUSH);
+			pathCopy.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_COPY));
+			pathCopy.setToolTipText(PATH_BUTTON_TOOLTIP);
+			pathCopy.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					StringSelection strSelection = new StringSelection(locationStr);
+					Clipboard systemClipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+					systemClipboard.setContents(strSelection, null);
+				}
+			});
 		}
 		if (resource.getType() == IResource.FILE) {
 			// The group for size
@@ -363,7 +382,7 @@ public class ResourceInfoPage extends PropertyPage {
 			gd.widthHint = convertWidthInCharsToPixels(MAX_VALUE_WIDTH);
 			gd.grabExcessHorizontalSpace = true;
 			gd.horizontalAlignment = GridData.FILL;
-			gd.horizontalSpan = 2;
+			gd.horizontalSpan = 3;
 			sizeValue.setLayoutData(gd);
 			sizeValue.setBackground(sizeValue.getDisplay().getSystemColor(
 					SWT.COLOR_WIDGET_BACKGROUND));
@@ -379,7 +398,7 @@ public class ResourceInfoPage extends PropertyPage {
 		timeStampValue.setBackground(timeStampValue.getDisplay()
 				.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
-		gridData.horizontalSpan = 2;
+		gridData.horizontalSpan = 3;
 		timeStampValue.setLayoutData(gridData);
 
 		return basicInfoComposite;
@@ -485,7 +504,7 @@ public class ResourceInfoPage extends PropertyPage {
 				setPermissionsSelection(previousPermissionsValue);
 			}
 		}
-		//We can't save and load the preferences for closed project
+		// We can't save and load the preferences for closed project
 		if (resource.getProject().isOpen()) {
 			encodingEditor = new ResourceEncodingFieldEditor(
 					getFieldEditorLabel(resource), composite, resource);
@@ -1049,11 +1068,11 @@ public class ResourceInfoPage extends PropertyPage {
 		};
 	}
 
-	private List/*<IResource>*/ getResourcesToVisit(IResource resource) throws CoreException {
+	private List/* <IResource> */ getResourcesToVisit(IResource resource) throws CoreException {
 		// use set for fast lookup
-		final Set/*<URI>*/ visited = new HashSet/*<URI>*/();
+		final Set/* <URI> */ visited = new HashSet/* <URI> */();
 		// use list to preserve the order of visited resources
-		final List/*<IResource>*/ toVisit = new ArrayList/*<IResource>*/();
+		final List/* <IResource> */ toVisit = new ArrayList/* <IResource> */();
 		visited.add(resource.getLocationURI());
 		resource.accept(proxy -> {
 			IResource childResource = proxy.requestResource();
@@ -1067,7 +1086,7 @@ public class ResourceInfoPage extends PropertyPage {
 		return toVisit;
 	}
 
-	private boolean shouldPerformRecursiveChanges(List/*<IResourceChange>*/ changes) {
+	private boolean shouldPerformRecursiveChanges(List/* <IResourceChange> */ changes) {
 		if (!changes.isEmpty()) {
 			StringBuilder message = new StringBuilder(IDEWorkbenchMessages.ResourceInfo_recursiveChangesSummary)
 					.append('\n');
@@ -1087,10 +1106,10 @@ public class ResourceInfoPage extends PropertyPage {
 		return false;
 	}
 
-	private void scheduleRecursiveChangesJob(final IResource resource, final List/*<IResourceChange>*/ changes) {
+	private void scheduleRecursiveChangesJob(final IResource resource, final List/* <IResourceChange> */ changes) {
 		Job.create(IDEWorkbenchMessages.ResourceInfo_recursiveChangesJobName, monitor -> {
 			try {
-				List/*<IResource>*/ toVisit = getResourcesToVisit(resource);
+				List/* <IResource> */ toVisit = getResourcesToVisit(resource);
 
 				// Prepare the monitor for the given amount of work
 				SubMonitor subMonitor = SubMonitor.convert(monitor,
@@ -1098,12 +1117,12 @@ public class ResourceInfoPage extends PropertyPage {
 						toVisit.size());
 
 				// Apply changes recursively
-				for (Iterator/*<IResource>*/ it = toVisit.iterator(); it.hasNext();) {
+				for (Iterator /* <IResource> */ it = toVisit.iterator(); it.hasNext();) {
 					SubMonitor iterationMonitor = subMonitor.split(1).setWorkRemaining(changes.size());
 					IResource childResource = (IResource) it.next();
 					iterationMonitor.subTask(NLS
 							.bind(IDEWorkbenchMessages.ResourceInfo_recursiveChangesSubTaskName,
-									childResource.getFullPath()));
+							childResource.getFullPath()));
 					for (Object change : changes) {
 						iterationMonitor.split(1);
 						((IResourceChange) change)
@@ -1147,7 +1166,7 @@ public class ResourceInfoPage extends PropertyPage {
 							new NullProgressMonitor());
 			}
 
-			List/*<IResourceChange>*/ changes = new ArrayList/*<IResourceChange>*/();
+			List/* <IResourceChange> */ changes = new ArrayList/* <IResourceChange> */();
 
 			ResourceAttributes attrs = resource.getResourceAttributes();
 			if (attrs != null) {

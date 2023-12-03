@@ -144,7 +144,6 @@ public class ShiftAction extends TextEditorAction implements IReadOnlyDependent 
 		 * Note that this implementation still honors the result returned by canDoOperation.
 		 * I.e. if the viewer is set to read-only, this method still returns false.
 		 * It covers the case in which the viewer is also writable.
-		 *
 		 */
 		ITextEditor editor= getTextEditor();
 		if (fOperationTarget == null && editor!= null && fOperationCode != -1)

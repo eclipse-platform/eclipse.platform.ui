@@ -250,7 +250,6 @@ public class PluginActivationTests {
 	 *
 	 * Also plug-ins with an activator must be activated but additional activators
 	 * should be avoided as the slow down the startup of Eclipse
-	 *
 	 */
 
 	@Test
@@ -290,7 +289,6 @@ public class PluginActivationTests {
 	 *
 	 * Also plug-ins with an activator must be activated but additional activators
 	 * should be avoided as the slow down the startup of Eclipse
-	 *
 	 */
 
 	@Test

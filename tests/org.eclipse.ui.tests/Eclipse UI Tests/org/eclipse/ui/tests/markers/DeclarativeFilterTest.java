@@ -37,8 +37,6 @@ public abstract class DeclarativeFilterTest extends UITestCase {
 
 	/**
 	 * Create a new instance of the receiver.
-	 *
-	 * @param testName
 	 */
 	public DeclarativeFilterTest(String testName) {
 		super(testName);
@@ -47,7 +45,6 @@ public abstract class DeclarativeFilterTest extends UITestCase {
 	/**
 	 * Get the filter with id.
 	 *
-	 * @param id
 	 * @return ProblemFilter
 	 */
 	protected ProblemFilter getFilter(String id) {

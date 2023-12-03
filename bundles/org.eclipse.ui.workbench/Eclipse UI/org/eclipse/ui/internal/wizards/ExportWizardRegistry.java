@@ -38,9 +38,6 @@ public class ExportWizardRegistry extends AbstractExtensionWizardRegistry {
 		return singleton;
 	}
 
-	/**
-	 *
-	 */
 	public ExportWizardRegistry() {
 		super();
 	}

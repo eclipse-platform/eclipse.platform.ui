@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,13 +20,12 @@ package org.eclipse.jface.viewers;
  * TableColumnViewerLabelProvider is the mapping from the table based providers
  * to the ViewerLabelProvider.
  *
- * @since 3.3
+ * @since 3.33
  * @see ITableLabelProvider
  * @see ITableColorProvider
  * @see ITableFontProvider
- *
  */
-class TableColumnViewerLabelProvider extends WrappedViewerLabelProvider {
+public class TableColumnViewerLabelProvider extends WrappedViewerLabelProvider {
 
 	private ITableLabelProvider tableLabelProvider;
 

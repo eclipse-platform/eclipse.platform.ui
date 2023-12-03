@@ -30,10 +30,6 @@ public class StringToByteConverter extends NumberFormatConverter<Object, Byte> {
 	private Format numberFormat;
 	private boolean primitive;
 
-	/**
-	 * @param numberFormat
-	 * @param toType
-	 */
 	private StringToByteConverter(Format numberFormat, Class<?> toType) {
 		super(String.class, toType, numberFormat);
 		primitive = toType.isPrimitive();
@@ -41,8 +37,6 @@ public class StringToByteConverter extends NumberFormatConverter<Object, Byte> {
 	}
 
 	/**
-	 * @param numberFormat
-	 * @param primitive
 	 * @return converter
 	 */
 	public static StringToByteConverter toByte(Format numberFormat, boolean primitive) {
@@ -50,7 +44,6 @@ public class StringToByteConverter extends NumberFormatConverter<Object, Byte> {
 	}
 
 	/**
-	 * @param primitive
 	 * @return converter
 	 */
 	public static StringToByteConverter toByte(boolean primitive) {

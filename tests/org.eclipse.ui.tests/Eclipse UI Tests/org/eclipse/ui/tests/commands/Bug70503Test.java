@@ -62,7 +62,6 @@ public class Bug70503Test {
 	 * The set up is a <code>RetargetAction</code> wrapped in an
 	 * <code>ActionHandler</code>. The test verifies a switch back and forth
 	 * to make sure that the updates are happening.
-	 *
 	 */
 	@Test
 	public final void testHandlerChangeCausesUpdate() {

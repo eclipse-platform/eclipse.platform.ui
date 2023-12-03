@@ -52,7 +52,6 @@ import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.Contributio
  * the icon search dialog.
  *
  * @author Steven Spungin
- *
  */
 public class ContributionDataFile implements IFile {
 

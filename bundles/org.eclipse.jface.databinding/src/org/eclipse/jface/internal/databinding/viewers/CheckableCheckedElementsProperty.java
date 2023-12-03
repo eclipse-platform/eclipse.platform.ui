@@ -36,9 +36,6 @@ import org.eclipse.jface.viewers.Viewer;
 public class CheckableCheckedElementsProperty<S extends ICheckable, E> extends SetProperty<S, E> {
 	private final Object elementType;
 
-	/**
-	 * @param elementType
-	 */
 	public CheckableCheckedElementsProperty(Object elementType) {
 		this.elementType = elementType;
 	}

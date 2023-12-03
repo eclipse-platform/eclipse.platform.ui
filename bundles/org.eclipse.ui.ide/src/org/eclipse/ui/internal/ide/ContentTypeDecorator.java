@@ -33,7 +33,6 @@ import org.eclipse.ui.internal.ide.model.WorkbenchFile;
  * Lightweight decorator for more specific file icons.
  *
  * @since 3.4
- *
  */
 public class ContentTypeDecorator implements ILightweightLabelDecorator {
 

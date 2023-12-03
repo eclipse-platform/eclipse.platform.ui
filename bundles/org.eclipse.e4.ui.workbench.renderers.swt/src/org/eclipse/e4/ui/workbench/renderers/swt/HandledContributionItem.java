@@ -132,9 +132,6 @@ public class HandledContributionItem extends AbstractContributionItem {
 		setModel((MItem) item);
 	}
 
-	/**
-	 *
-	 */
 	private void generateCommand() {
 		if (getModel().getCommand() != null && getModel().getWbCommand() == null) {
 			String cmdId = getModel().getCommand().getElementId();

@@ -24,7 +24,6 @@ import org.w3c.dom.css.CSSValueList;
  *
  * @version 1.0.0
  * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- *
  */
 public class CSS2FontPropertiesHelpers {
 
@@ -45,9 +44,6 @@ public class CSS2FontPropertiesHelpers {
 	/**
 	 * Set {@link CSS2FontProperties} <code>fontProperties</code> into
 	 * {@link CSSElementContext} context.
-	 *
-	 * @param fontProperties
-	 * @param context
 	 */
 	public static void setCSS2FontProperties(CSS2FontProperties fontProperties, CSSElementContext context) {
 		if (fontProperties == null) {
@@ -59,10 +55,6 @@ public class CSS2FontPropertiesHelpers {
 	/**
 	 * Create and return {@link CSS2FontProperties} instance from
 	 * <code>value</code>.
-	 *
-	 * @param value
-	 * @param property
-	 * @return
 	 */
 	public static CSS2FontProperties createCSS2FontProperties(CSSValue value, String property) {
 		CSS2FontProperties fontProperties = new CSS2FontPropertiesImpl();
@@ -73,10 +65,6 @@ public class CSS2FontPropertiesHelpers {
 	/**
 	 * Update the <code>property of</code> <code>fontProperties</code> instance with
 	 * the <code>value</code>.
-	 *
-	 * @param fontProperties
-	 * @param property
-	 * @param value
 	 */
 	public static void updateCSSPropertyFont(CSS2FontProperties fontProperties, String property, CSSValue value) {
 		switch (property) {
@@ -104,9 +92,6 @@ public class CSS2FontPropertiesHelpers {
 	 * Update <code>fontProperties</code> instance with the {@link CSSValue}
 	 * <code>value</code>. value can be {@link CSSPrimitiveValue} or
 	 * {@link CSSValueList}.
-	 *
-	 * @param font
-	 * @param value
 	 */
 	public static void updateCSSPropertyFontComposite(CSS2FontProperties font, CSSValue value) {
 		if (value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
@@ -124,9 +109,6 @@ public class CSS2FontPropertiesHelpers {
 
 	/**
 	 * Update CSS2FontProperties instance with font-family.
-	 *
-	 * @param font
-	 * @param value
 	 */
 	public static void updateCSSPropertyFontFamily(CSS2FontProperties font, CSSValue value) {
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
@@ -136,9 +118,6 @@ public class CSS2FontPropertiesHelpers {
 
 	/**
 	 * Update CSS2FontProperties instance with font-size.
-	 *
-	 * @param font
-	 * @param value
 	 */
 	public static void updateCSSPropertyFontSize(CSS2FontProperties font, CSSValue value) {
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
@@ -148,9 +127,6 @@ public class CSS2FontPropertiesHelpers {
 
 	/**
 	 * Update CSS2FontProperties instance with font-style.
-	 *
-	 * @param font
-	 * @param value
 	 */
 	public static void updateCSSPropertyFontStyle(CSS2FontProperties font, CSSValue value) {
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
@@ -160,9 +136,6 @@ public class CSS2FontPropertiesHelpers {
 
 	/**
 	 * Update CSS2FontProperties instance with font-weight.
-	 *
-	 * @param font
-	 * @param value
 	 */
 	public static void updateCSSPropertyFontWeight(CSS2FontProperties font, CSSValue value) {
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {

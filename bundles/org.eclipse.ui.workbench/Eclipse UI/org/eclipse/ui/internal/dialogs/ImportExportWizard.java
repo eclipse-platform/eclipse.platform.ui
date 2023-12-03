@@ -26,7 +26,6 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * wizard or the export wizard.
  *
  * @since 3.2
- *
  */
 public class ImportExportWizard extends Wizard {
 	/**
@@ -47,8 +46,6 @@ public class ImportExportWizard extends Wizard {
 
 	/**
 	 * Create an import/export wizard and show the page with the given id.
-	 *
-	 * @param pageId
 	 */
 	public ImportExportWizard(String pageId) {
 		page = pageId;

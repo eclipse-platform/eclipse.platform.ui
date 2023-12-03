@@ -74,7 +74,6 @@ class ItemDetailToolTip extends NameAndDescriptionToolTip {
 	private CustomizePerspectiveDialog dialog;
 
 	/**
-	 * @param dialog
 	 * @param tree   The tree for the tooltip to hover over
 	 */
 	ItemDetailToolTip(CustomizePerspectiveDialog dialog, TreeViewer v, Tree tree, boolean showActionSet,
@@ -325,7 +324,6 @@ class ItemDetailToolTip extends NameAndDescriptionToolTip {
 	}
 
 	/**
-	 * @param bindings
 	 * @return a String representing the key bindings in <code>bindings</code>
 	 */
 	static String keyBindingsAsString(Binding[] bindings) {

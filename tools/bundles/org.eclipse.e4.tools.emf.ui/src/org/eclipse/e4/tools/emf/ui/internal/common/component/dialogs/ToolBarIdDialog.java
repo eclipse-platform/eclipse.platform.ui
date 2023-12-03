@@ -96,7 +96,6 @@ public class ToolBarIdDialog extends AbstractIdDialog<MToolBarContribution, MToo
 	 *
 	 * TODO Check which information is most relevant for the user
 	 *
-	 * @param toolBar
 	 * @return String
 	 */
 	private String getAdditionalInfoForToolBar(MToolBar toolBar) {

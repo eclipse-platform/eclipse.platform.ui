@@ -99,8 +99,6 @@ public class CSSSWTFontHelper {
 
 	/**
 	 * Build CSS2FontProperties from SWT Font.
-	 *
-	 * @param font
 	 */
 	public static CSS2FontProperties getCSS2FontProperties(Font font) {
 		// Create CSS Font Properties
@@ -141,9 +139,6 @@ public class CSSSWTFontHelper {
 
 	/**
 	 * Return FontData from {@link CSS2FontProperties}.
-	 *
-	 * @param fontProperties
-	 * @param oldFontData
 	 */
 	public static FontData getFontData(CSS2FontProperties fontProperties, FontData oldFontData) {
 		FontData newFontData = new FontData();
@@ -223,9 +218,6 @@ public class CSSSWTFontHelper {
 
 	/**
 	 * Return SWT style Font from {@link CSS2FontProperties}.
-	 *
-	 * @param fontProperties
-	 * @param fontData
 	 */
 	public static int getSWTStyle(CSS2FontProperties fontProperties,
 			FontData fontData) {
@@ -260,8 +252,6 @@ public class CSSSWTFontHelper {
 
 	/**
 	 * Return CSS Value font-family from the widget's font, if it has a font
-	 *
-	 * @param widget
 	 */
 	public static String getFontFamily(Widget widget) {
 		return getFontFamily(getFont(widget));
@@ -269,8 +259,6 @@ public class CSSSWTFontHelper {
 
 	/**
 	 * Return CSS Value font-family from SWT Font
-	 *
-	 * @param font
 	 */
 	public static String getFontFamily(Font font) {
 		FontData fontData = getFirstFontData(font);
@@ -287,8 +275,6 @@ public class CSSSWTFontHelper {
 
 	/**
 	 * Return CSS Value font-size the widget's font, if it has a font
-	 *
-	 * @param widget
 	 */
 	public static String getFontSize(Widget widget) {
 		return getFontSize(getFont(widget));
@@ -296,8 +282,6 @@ public class CSSSWTFontHelper {
 
 	/**
 	 * Return CSS Value font-size from SWT Font
-	 *
-	 * @param font
 	 */
 	public static String getFontSize(Font font) {
 		FontData fontData = getFirstFontData(font);
@@ -313,8 +297,6 @@ public class CSSSWTFontHelper {
 
 	/**
 	 * Return CSS Value font-style from the widget's font, if it has a font
-	 *
-	 * @param widget
 	 */
 	public static String getFontStyle(Widget widget) {
 		return getFontStyle(getFont(widget));
@@ -322,8 +304,6 @@ public class CSSSWTFontHelper {
 
 	/**
 	 * Return CSS Value font-style from SWT Font
-	 *
-	 * @param font
 	 */
 	public static String getFontStyle(Font font) {
 		FontData fontData = getFirstFontData(font);

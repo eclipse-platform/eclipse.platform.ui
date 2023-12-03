@@ -252,8 +252,6 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 
 	/**
 	 * Set the selected workspace to the given String and close the dialog
-	 *
-	 * @param workspace
 	 */
 	private void workspaceSelected(String workspace) {
 		launchData.workspaceSelected(TextProcessor.deprocess(workspace));
@@ -262,8 +260,6 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 
 	/**
 	 * Removes the workspace from RecentWorkspaces
-	 *
-	 * @param workspace
 	 */
 	private void removeWorkspaceFromLauncher(String workspace) {
 		// Remove Workspace from Properties

@@ -846,7 +846,6 @@ public class ControlDecoration {
 	 * hovering in the decoration.
 	 * <p>
 	 * This message has no effect if there is no current hover.
-	 *
 	 */
 	public void hideHover() {
 		if (hover != null) {

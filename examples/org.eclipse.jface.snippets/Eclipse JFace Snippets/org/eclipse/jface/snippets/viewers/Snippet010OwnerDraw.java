@@ -69,9 +69,6 @@ public class Snippet010OwnerDraw {
 
 		/**
 		 * Create a new instance of the receiver.
-		 *
-		 * @param countryName
-		 * @param worldCupYear
 		 */
 		CountryEntry(String countryName, String englishName, String worldCupYear) {
 			name = countryName;
@@ -111,8 +108,6 @@ public class Snippet010OwnerDraw {
 
 		/**
 		 * Draw the flag in bounds.
-		 *
-		 * @param event
 		 */
 		protected void drawFlag(Event event) {
 			event.gc.setBackground(viewer.getControl().getDisplay().getSystemColor(SWT.COLOR_BLUE));
@@ -124,8 +119,6 @@ public class Snippet010OwnerDraw {
 
 		/**
 		 * Draw the cup year
-		 *
-		 * @param event
 		 */
 		private void drawCupYear(Event event) {
 			event.gc.drawText(cupYear, event.x, event.y);
@@ -134,8 +127,6 @@ public class Snippet010OwnerDraw {
 
 		/**
 		 * Draw the name of the receiver.
-		 *
-		 * @param event
 		 */
 		protected void drawName(Event event) {
 
@@ -159,9 +150,6 @@ public class Snippet010OwnerDraw {
 
 		}
 
-		/**
-		 * @return
-		 */
 		private StringBuilder getDisplayString() {
 			StringBuilder buffer = new StringBuilder();
 			buffer.append(name);
@@ -171,9 +159,6 @@ public class Snippet010OwnerDraw {
 			return buffer;
 		}
 
-		/**
-		 * @param event
-		 */
 		public void draw(Event event) {
 
 			switch (event.index) {
@@ -350,10 +335,6 @@ public class Snippet010OwnerDraw {
 		}
 	}
 
-	/**
-	 * @param i
-	 * @return
-	 */
 	private String getTitleFor(int i) {
 		switch (i) {
 		case 0:

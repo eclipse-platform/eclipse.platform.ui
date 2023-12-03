@@ -55,7 +55,6 @@ public class NewModelFilePage extends WizardPage {
 
 	/**
 	 * Constructor for SampleNewWizardPage.
-	 *
 	 */
 	public NewModelFilePage(ISelection selection, String defaultFilename) {
 		super(PAGE_NAME);

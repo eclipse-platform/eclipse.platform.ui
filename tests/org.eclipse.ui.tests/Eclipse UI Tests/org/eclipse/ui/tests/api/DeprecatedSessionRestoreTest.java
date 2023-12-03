@@ -32,7 +32,6 @@ import org.junit.Test;
 /**
  * SessionRestoreTest runs the second half of our session
  * presistance tests.
- *
  */
 public class DeprecatedSessionRestoreTest {
 

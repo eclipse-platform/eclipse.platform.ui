@@ -56,7 +56,6 @@ import org.eclipse.swt.widgets.Shell;
  * <li>a colorized square is displayed before the rgb declaration (inside the
  * line content). Here {@link ColorAnnotation} is used.</li>
  * </ul>
- *
  */
 public class InlinedAnnotationDemo {
 
@@ -211,13 +210,6 @@ public class InlinedAnnotationDemo {
 	/**
 	 * Add RGB parameter name annotation
 	 *
-	 * @param paramName
-	 * @param rgbContent
-	 * @param startIndex
-	 * @param startOffset
-	 * @param viewer
-	 * @param support
-	 * @param annotations
 	 * @return the current parsed index
 	 */
 	private static int addRGBParamNameAnnotation(String paramName, String rgbContent, int startIndex, int startOffset,
@@ -249,7 +241,6 @@ public class InlinedAnnotationDemo {
 	 *
 	 * @param input
 	 *            the rgb string color
-	 * @param device
 	 * @return the created color and null otherwise.
 	 */
 	private static Color parse(String input, Device device) {

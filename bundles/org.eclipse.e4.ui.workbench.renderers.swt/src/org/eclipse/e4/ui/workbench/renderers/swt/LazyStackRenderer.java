@@ -55,7 +55,6 @@ import org.osgi.service.event.EventHandler;
  * from being rendered, calling 'childAdded' instead. This not only saves time
  * and SWT resources but is necessary in an IDE world where we must not
  * arbitrarily cause plug-in loading.
- *
  */
 public abstract class LazyStackRenderer extends SWTPartRenderer {
 	private EventHandler lazyLoader = event -> {
@@ -97,9 +96,6 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		eventBroker.subscribe(UIEvents.ElementContainer.TOPIC_SELECTEDELEMENT, lazyLoader);
 	}
 
-	/**
-	 * @param eventBroker
-	 */
 	public void contextDisposed(IEventBroker eventBroker) {
 		eventBroker.unsubscribe(lazyLoader);
 	}

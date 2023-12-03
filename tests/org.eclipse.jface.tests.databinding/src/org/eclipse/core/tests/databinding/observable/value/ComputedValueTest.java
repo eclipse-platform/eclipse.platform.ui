@@ -34,7 +34,6 @@ import org.junit.Test;
 
 /**
  * @since 1.0
- *
  */
 public class ComputedValueTest extends AbstractDefaultRealmTestCase {
 	@Test

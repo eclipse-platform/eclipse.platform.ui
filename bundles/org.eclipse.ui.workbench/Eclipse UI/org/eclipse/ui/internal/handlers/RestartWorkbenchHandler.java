@@ -20,7 +20,6 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Provide a Handler for the Restart Workbench command.
- *
  */
 public class RestartWorkbenchHandler extends AbstractHandler {
 

@@ -25,9 +25,6 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.graphics.Point;
 
-/**
- *
- */
 public class PartDragAgent extends DragAgent {
 	public PartDragAgent(DnDManager manager) {
 		super(manager);

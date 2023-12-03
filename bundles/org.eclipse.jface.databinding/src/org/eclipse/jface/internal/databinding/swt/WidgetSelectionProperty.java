@@ -32,7 +32,6 @@ import org.eclipse.swt.widgets.Widget;
  * @param <T> type of the value of the property
  *
  * @since 3.3
- *
  */
 public final class WidgetSelectionProperty<S extends Widget, T> extends WidgetDelegatingValueProperty<S, T> {
 	private IValueProperty<S, T> button;

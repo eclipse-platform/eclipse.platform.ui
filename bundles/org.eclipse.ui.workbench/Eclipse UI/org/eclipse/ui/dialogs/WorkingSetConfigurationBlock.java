@@ -60,7 +60,6 @@ import org.eclipse.ui.internal.dialogs.SimpleWorkingSetSelectionDialog;
  * them into particular working sets.
  *
  * @since 3.4
- *
  */
 public class WorkingSetConfigurationBlock {
 

@@ -18,7 +18,6 @@ package org.eclipse.jface.viewers;
 
 /**
  * @since 3.3
- *
  */
 public abstract class FocusCellHighlighter {
 	private ColumnViewer viewer;

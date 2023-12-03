@@ -393,7 +393,6 @@ public class DecoratedField {
 	 *            <code>true</code> if the decoration should only be shown
 	 *            when the associated control has focus, <code>false</code> if
 	 *            it should always be shown.
-	 *
 	 */
 	public void addFieldDecoration(FieldDecoration decoration, int position,
 			boolean showOnFocus) {
@@ -604,7 +603,6 @@ public class DecoratedField {
 	 * @return index the index in the array of decorations that represents the
 	 * specified SWT position. If the position is not an expected position, the
 	 * index representing the top left position will be returned.
-	 *
 	 */
 	private int indexForPosition(int position) {
 		switch (position) {
@@ -627,7 +625,6 @@ public class DecoratedField {
 	 * decoration.
 	 *
 	 * @param image the image shown in the decoration.
-	 *
 	 */
 	private FormData createFormDataForIndex(int index, Image image) {
 		Assert.isTrue(index >= 0 && index < DECORATION_SLOTS,
@@ -688,7 +685,6 @@ public class DecoratedField {
 	 *
 	 * <p>
 	 * This message has no effect if there is no current hover.
-	 *
 	 */
 	public void hideHover() {
 		if (hover != null) {

@@ -51,7 +51,6 @@ import org.eclipse.ui.internal.e4.compatibility.CompatibilityView;
  * A Util for the workbench conversion.
  *
  * @since 3.3
- *
  */
 @SuppressWarnings({ "restriction" })
 public final class CommonUtil {

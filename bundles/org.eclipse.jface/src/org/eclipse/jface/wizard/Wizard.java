@@ -386,7 +386,6 @@ public abstract class Wizard implements IWizard, IShellProvider {
 	 * @param settings
 	 *            the dialog settings, or <code>null</code> if none
 	 * @see #getDialogSettings
-	 *
 	 */
 	public void setDialogSettings(IDialogSettings settings) {
 		dialogSettings = settings;

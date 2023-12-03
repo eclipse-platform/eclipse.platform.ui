@@ -21,7 +21,6 @@ import org.eclipse.e4.ui.css.core.dom.parsers.CSSParserFactory;
  *
  * @version 1.0.0
  * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- *
  */
 public class CSSParserFactoryImpl extends CSSParserFactory {
 

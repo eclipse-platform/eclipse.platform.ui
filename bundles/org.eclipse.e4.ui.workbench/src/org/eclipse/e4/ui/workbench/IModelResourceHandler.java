@@ -50,7 +50,6 @@ public interface IModelResourceHandler {
 	 *
 	 * @throws IOException
 	 *             if storing fails
-	 *
 	 */
 	public void save() throws IOException;
 

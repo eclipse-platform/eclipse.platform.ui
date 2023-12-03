@@ -82,9 +82,6 @@ public class OpenCloseTest {
 
 	/**
 	 * Test the opening and closing of a file.
-	 *
-	 * @throws CoreException
-	 *
 	 */
 	@Test
 	public void testOpenCloseFile() throws CoreException {
@@ -104,9 +101,6 @@ public class OpenCloseTest {
 
 	/**
 	 * Test opening and closing of workbench window.
-	 *
-	 * @throws WorkbenchException
-	 *
 	 */
 	@Test
 	public void testOpenCloseWorkbenchWindow() throws WorkbenchException {
@@ -120,7 +114,6 @@ public class OpenCloseTest {
 
 	/**
 	 * Test open and close of perspective.
-	 *
 	 */
 	@Test
 	public void testOpenClosePerspective() {
@@ -150,9 +143,6 @@ public class OpenCloseTest {
 
 	/**
 	 * Test open and close of view.
-	 *
-	 * @throws WorkbenchException
-	 *
 	 */
 	@Test
 	public void testOpenCloseView() throws WorkbenchException {
@@ -167,7 +157,6 @@ public class OpenCloseTest {
 
 	/**
 	 * Test open and close intro.
-	 *
 	 */
 	@Test
 	public void testOpenCloseIntro() {

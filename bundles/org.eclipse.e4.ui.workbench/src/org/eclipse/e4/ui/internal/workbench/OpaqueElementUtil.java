@@ -108,7 +108,6 @@ public class OpaqueElementUtil {
 	/**
 	 * Tests whether a element is an opaque element
 	 *
-	 * @param uiElement
 	 * @return <code>true</code> if the element is an 'opaque' element
 	 */
 	public static boolean isOpaqueElement(MUIElement uiElement) {
@@ -118,7 +117,6 @@ public class OpaqueElementUtil {
 	/**
 	 * Tests whether a menu element is an opaque menu
 	 *
-	 * @param item
 	 * @return <code>true</code> if the element is an 'opaque' menu
 	 */
 	public static boolean isOpaqueMenu(MUIElement item) {

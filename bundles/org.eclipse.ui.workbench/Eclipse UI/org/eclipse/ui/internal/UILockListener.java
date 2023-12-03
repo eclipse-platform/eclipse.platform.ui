@@ -43,8 +43,6 @@ public class UILockListener extends LockListener {
 
 		/**
 		 * Add the semaphore to the queue.
-		 *
-		 * @param element
 		 */
 		public synchronized void add(PendingSyncExec element) {
 			int newTail = increment(tail);
@@ -76,8 +74,6 @@ public class UILockListener extends LockListener {
 
 		/**
 		 * Remove the next semaphore to be woken up.
-		 *
-		 * @return
 		 */
 		public synchronized PendingSyncExec remove() {
 			if (tail == head) {
@@ -112,8 +108,6 @@ public class UILockListener extends LockListener {
 
 	/**
 	 * Create a new instance of the receiver.
-	 *
-	 * @param display
 	 */
 	public UILockListener(Display display) {
 		this.display = display;

@@ -29,7 +29,6 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  * view UI with newly updated markers.
  *
  * @since 3.6
- *
  */
 class UIUpdateJob extends WorkbenchJob {
 

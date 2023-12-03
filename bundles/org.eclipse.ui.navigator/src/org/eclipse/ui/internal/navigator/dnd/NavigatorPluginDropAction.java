@@ -26,7 +26,6 @@ import org.eclipse.ui.part.PluginTransferData;
  *
  *
  * @since 3.2
- *
  */
 public class NavigatorPluginDropAction implements IDropActionDelegate {
 

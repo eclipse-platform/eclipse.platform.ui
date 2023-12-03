@@ -107,7 +107,6 @@ import org.osgi.framework.FrameworkUtil;
  * user a basic choice of how to import (import raw, infer sub- projects...)
  *
  * @since 3.12
- *
  */
 public class SmartImportRootWizardPage extends WizardPage {
 
@@ -363,9 +362,6 @@ public class SmartImportRootWizardPage extends WizardPage {
 		this.workingSetsGroup = new WorkingSetGroup(workingSetComposite, wsSel, workingSetIds);
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createInputSelectionOptions(Composite parent) {
 		Label rootDirectoryLabel = new Label(parent, SWT.NONE);
 		rootDirectoryLabel.setText(DataTransferMessages.SmartImportWizardPage_selectRootDirectory);
@@ -539,9 +535,6 @@ public class SmartImportRootWizardPage extends WizardPage {
 
 	}
 
-	/**
-	 * @param res
-	 */
 	private Composite createProposalsGroup(Composite parent) {
 		Composite res = new Composite(parent, SWT.NONE);
 		GridLayoutFactory.fillDefaults().numColumns(2).applyTo(res);
@@ -766,8 +759,6 @@ public class SmartImportRootWizardPage extends WizardPage {
 
 	/**
 	 * Sets the initial source to import.
-	 *
-	 * @param directoryOrArchive
 	 */
 	public void setInitialImportRoot(File directoryOrArchive) {
 		this.selection = directoryOrArchive;

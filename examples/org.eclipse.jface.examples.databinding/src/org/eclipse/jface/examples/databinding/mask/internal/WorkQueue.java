@@ -25,7 +25,6 @@ import org.eclipse.swt.widgets.Listener;
 
 /**
  * @since 3.2
- *
  */
 public class WorkQueue {
 
@@ -53,9 +52,6 @@ public class WorkQueue {
 		}
 	};
 
-	/**
-	 * @param targetDisplay
-	 */
 	public WorkQueue(Display targetDisplay) {
 		d = targetDisplay;
 	}

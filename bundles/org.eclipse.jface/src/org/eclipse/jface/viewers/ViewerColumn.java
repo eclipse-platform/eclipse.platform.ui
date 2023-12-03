@@ -31,7 +31,6 @@ import org.eclipse.swt.widgets.Widget;
  * concrete subclass of {@link ViewerColumn}.
  *
  * @since 3.3
- *
  */
 public abstract class ViewerColumn {
 
@@ -83,10 +82,6 @@ public abstract class ViewerColumn {
 		setLabelProvider(labelProvider, true);
 	}
 
-	/**
-	 * @param labelProvider
-	 * @param registerListener
-	 */
 	/* package */void setLabelProvider(CellLabelProvider labelProvider,
 			boolean registerListener) {
 		if (listenerRegistered && this.labelProvider != null) {
@@ -143,17 +138,16 @@ public abstract class ViewerColumn {
 			Assert.isTrue(false, "Column " + cell.getColumnIndex() + //$NON-NLS-1$
 			" has no label provider."); //$NON-NLS-1$
 		}
-		labelProvider.update(cell);
-
-		// check if client has updated the label for this element. Otherwise use default
-		// label provided
+		// Set font and label for ExpandableNode. Client label provider should not
+		// receive it.
 		if (cell.getElement() instanceof ExpandableNode expNode) {
 			cell.setFont(JFaceResources.getFontRegistry().getItalic(JFaceResources.DEFAULT_FONT));
-			String text = cell.getText();
-			if (text.isEmpty() || text.equals(expNode.toString())) {
-				cell.setText(expNode.getLabel());
-			}
+			cell.setText(expNode.getLabel());
+			return;
 		}
+
+		labelProvider.update(cell);
+
 	}
 
 	/**

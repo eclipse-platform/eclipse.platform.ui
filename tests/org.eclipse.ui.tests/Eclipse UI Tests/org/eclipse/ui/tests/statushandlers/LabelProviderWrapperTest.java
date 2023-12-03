@@ -40,7 +40,6 @@ import org.junit.Test;
 
 /**
  * @since 3.5
- *
  */
 public class LabelProviderWrapperTest {
 

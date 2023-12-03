@@ -19,7 +19,6 @@ import org.eclipse.swt.widgets.TrayItem;
 
 /**
  * @since 3.3
- *
  */
 public class TrayItemTooltipTextProperty extends WidgetStringValueProperty<TrayItem> {
 	@Override

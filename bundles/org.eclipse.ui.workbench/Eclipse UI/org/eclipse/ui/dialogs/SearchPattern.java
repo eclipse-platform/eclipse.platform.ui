@@ -290,8 +290,6 @@ public class SearchPattern {
 	}
 
 	/**
-	 * @param text
-	 * @param prefix
 	 * @return true if text starts with given prefix, ignoring case
 	 */
 	private boolean startsWithIgnoreCase(String text, String prefix) {
@@ -307,8 +305,6 @@ public class SearchPattern {
 	}
 
 	/**
-	 * @param text
-	 * @param suffix
 	 * @return true if text ends with given suffix, ignoring case; false in other
 	 *         way
 	 */
@@ -373,7 +369,6 @@ public class SearchPattern {
 	 * @param pattern the given pattern
 	 * @param name    the given name
 	 * @return true if the pattern matches the given name, false otherwise
-	 *
 	 */
 	private boolean camelCaseMatch(String pattern, String name) {
 		if (pattern == null)

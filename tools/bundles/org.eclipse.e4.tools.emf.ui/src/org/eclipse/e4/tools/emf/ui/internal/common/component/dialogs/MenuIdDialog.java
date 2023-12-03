@@ -104,9 +104,6 @@ public class MenuIdDialog extends AbstractIdDialog<MMenuContribution, MMenu> {
 	/**
 	 * A menu may contain another {@link MMenu} as a child; we want them to be
 	 * shown as an additional entry, so we recursively dive into these elements
-	 *
-	 * @param mMenu
-	 * @param list
 	 */
 	private void performRecursiveCheck(MMenu mMenu, List<MMenu> list) {
 		List<MMenuElement> children = mMenu.getChildren();

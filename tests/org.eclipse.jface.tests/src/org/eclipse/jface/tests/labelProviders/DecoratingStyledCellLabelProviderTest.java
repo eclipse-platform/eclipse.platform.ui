@@ -61,7 +61,6 @@ import org.junit.Test;
  * org.eclipse.jface.snippets.viewers.Snippet010OwnerDraw.java
  *
  * @since 3.4
- *
  */
 public class DecoratingStyledCellLabelProviderTest extends ViewerTestCase {
 
@@ -201,9 +200,6 @@ public class DecoratingStyledCellLabelProviderTest extends ViewerTestCase {
 		};
 	}
 
-	/**
-	 * @return
-	 */
 	private ILabelDecorator getDecorator() {
 		return new TestLabelDecorator();
 	}
@@ -377,9 +373,6 @@ public class DecoratingStyledCellLabelProviderTest extends ViewerTestCase {
 
 		/**
 		 * Create a new instance of the receiver.
-		 *
-		 * @param countryName
-		 * @param worldCupYear
 		 */
 		CountryEntry(String countryName, String englishName, String worldCupYear) {
 			name = countryName;
@@ -424,8 +417,6 @@ public class DecoratingStyledCellLabelProviderTest extends ViewerTestCase {
 
 		/**
 		 * Draw the flag in bounds.
-		 *
-		 * @param event
 		 */
 		protected void drawFlag(Event event) {
 			event.gc.setBackground(fViewer.getControl().getDisplay().getSystemColor(SWT.COLOR_BLUE));
@@ -437,8 +428,6 @@ public class DecoratingStyledCellLabelProviderTest extends ViewerTestCase {
 
 		/**
 		 * Draw the cup year
-		 *
-		 * @param event
 		 */
 		private void drawCupYear(Event event) {
 			event.gc.drawText(cupYear, event.x, event.y);
@@ -447,8 +436,6 @@ public class DecoratingStyledCellLabelProviderTest extends ViewerTestCase {
 
 		/**
 		 * Draw the name of the receiver.
-		 *
-		 * @param event
 		 */
 		protected void drawName(Event event) {
 
@@ -474,9 +461,6 @@ public class DecoratingStyledCellLabelProviderTest extends ViewerTestCase {
 
 		}
 
-		/**
-		 * @return
-		 */
 		private StringBuilder getDisplayString() {
 			StringBuilder buffer = new StringBuilder();
 			buffer.append(name);
@@ -486,9 +470,6 @@ public class DecoratingStyledCellLabelProviderTest extends ViewerTestCase {
 			return buffer;
 		}
 
-		/**
-		 * @param event
-		 */
 		public void draw(Event event) {
 
 			switch (event.index) {

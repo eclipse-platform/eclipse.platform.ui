@@ -59,7 +59,6 @@ public class StaleEventTracker implements IStaleListener {
 	/**
 	 * Convenience method to register a new listener.
 	 *
-	 * @param observable
 	 * @return tracker
 	 */
 	public static StaleEventTracker observe(IObservable observable) {

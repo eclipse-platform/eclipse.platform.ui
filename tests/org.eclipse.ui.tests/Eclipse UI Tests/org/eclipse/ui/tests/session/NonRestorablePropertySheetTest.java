@@ -47,8 +47,6 @@ public class NonRestorablePropertySheetTest extends TestCase {
 
 	/**
 	 * This is the first part instantiates a bunch of property sheets
-	 *
-	 * @throws PartInitException
 	 */
 	public void test01ActivateView() throws PartInitException {
 		final IWorkbench workbench = PlatformUI.getWorkbench();
@@ -73,8 +71,6 @@ public class NonRestorablePropertySheetTest extends TestCase {
 	/**
 	 * In the second session the property sheet views with secondary ids
 	 * shouldn't be instantiated.
-	 *
-	 * @throws PartInitException
 	 */
 	public void test02SecondOpening() throws PartInitException {
 		final IWorkbench workbench = PlatformUI.getWorkbench();

@@ -31,9 +31,6 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.junit.Rule;
 import org.junit.Test;
 
-/**
- *
- */
 public class CompositePartClosingTest {
 
 	@Rule

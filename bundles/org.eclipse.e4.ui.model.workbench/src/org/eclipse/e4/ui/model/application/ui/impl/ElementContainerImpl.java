@@ -105,9 +105,6 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 			children = new EObjectContainmentWithInverseEList<>(MUIElement.class, this,
 					UiPackageImpl.ELEMENT_CONTAINER__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT) {
 
-				/**
-				 *
-				 */
 				private static final long serialVersionUID = 1L;
 
 				@Override

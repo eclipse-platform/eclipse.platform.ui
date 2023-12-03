@@ -21,11 +21,6 @@ public class StringUtils {
 	/**
 	 * Replace <b>oldString</b> occurrences with <b>newString</b> occurrences of
 	 * the String <b>line</b> and return the result.
-	 *
-	 * @param line
-	 * @param oldString
-	 * @param newString
-	 * @return
 	 */
 	public static final String replace(String line, String oldString,
 			String newString) {
@@ -52,9 +47,6 @@ public class StringUtils {
 
 	/**
 	 * Return true if String value is null or empty.
-	 *
-	 * @param value
-	 * @return
 	 */
 	public static boolean isEmpty(String value) {
 		return (value == null || value.length() < 1);

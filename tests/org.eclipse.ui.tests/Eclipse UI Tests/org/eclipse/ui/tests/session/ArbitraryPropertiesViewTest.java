@@ -55,8 +55,6 @@ public class ArbitraryPropertiesViewTest extends TestCase {
 	/**
 	 * This is the first part of a 3 part tests. First instantiate a view and
 	 * set a state.
-	 *
-	 * @throws Throwable
 	 */
 	public void test01ActivateView() throws Throwable {
 		final IWorkbench workbench = PlatformUI.getWorkbench();
@@ -75,8 +73,6 @@ public class ArbitraryPropertiesViewTest extends TestCase {
 	/**
 	 * The second session doesn't activate the view, so it should not be
 	 * instantiated.
-	 *
-	 * @throws Throwable
 	 */
 	public void test02SecondOpening() throws Throwable {
 		final IWorkbench workbench = PlatformUI.getWorkbench();
@@ -104,8 +100,6 @@ public class ArbitraryPropertiesViewTest extends TestCase {
 
 	/**
 	 * Activate the view and it's state should re-appear.
-	 *
-	 * @throws Throwable
 	 */
 	public void test03PartInstantiation() throws Throwable {
 		final IWorkbench workbench = PlatformUI.getWorkbench();

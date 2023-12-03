@@ -23,7 +23,6 @@ import org.eclipse.ui.views.markers.MarkerItem;
  * MarkerSeverityAndDescriptionField can handle severities for all markers.
  *
  * @since 3.4
- *
  */
 public class MarkerSeverityAndDescriptionField extends MarkerDescriptionField {
 
@@ -47,7 +46,6 @@ public class MarkerSeverityAndDescriptionField extends MarkerDescriptionField {
 	/**
 	 * Return the image for item.
 	 *
-	 * @param item
 	 * @return Image or <code>null</code>
 	 */
 	private Image getImage(MarkerItem item) {

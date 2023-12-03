@@ -159,9 +159,6 @@ public class InfoView extends ViewPart {
 
 	/**
 	 * Swap the 2 given elements from the model.
-	 *
-	 * @param p1
-	 * @param p2
 	 */
 	public void swap(Person p1, Person p2) {
 		List<?> elements = viewerInput;

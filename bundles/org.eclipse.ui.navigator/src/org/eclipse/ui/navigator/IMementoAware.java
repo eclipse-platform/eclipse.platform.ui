@@ -21,7 +21,6 @@ import org.eclipse.ui.IMemento;
  * the id of the content extension as a prefix.
  *
  * @since 3.2
- *
  */
 public interface IMementoAware {
 

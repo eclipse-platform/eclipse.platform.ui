@@ -16,7 +16,6 @@ import org.eclipse.urischeme.ISchemeInformation;
 
 /**
  * The pojo for holding information of a scheme w.r.t. the handling eclipse.
- *
  */
 public class SchemeInformation implements ISchemeInformation {
 
@@ -49,8 +48,6 @@ public class SchemeInformation implements ISchemeInformation {
 	/**
 	 * Sets the handled value to true if scheme is handled by current Eclipse
 	 * installation and false otherwise
-	 *
-	 * @param handled
 	 */
 	public void setHandled(boolean handled) {
 		this.handled = handled;

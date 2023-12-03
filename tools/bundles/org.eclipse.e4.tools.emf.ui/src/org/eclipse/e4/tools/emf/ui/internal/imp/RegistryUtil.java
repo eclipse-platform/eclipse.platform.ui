@@ -69,12 +69,6 @@ public class RegistryUtil {
 	public final static String HINT_EDITOR = EDITOR;
 	public final static String HINT_COMPAT_VIEW = "compatibilityView"; //$NON-NLS-1$
 
-	/**
-	 *
-	 * @param t
-	 * @param application
-	 * @param elements
-	 */
 	public static MApplicationElement[] getModelElements(Class<? extends MApplicationElement> t, String hint,
 			MApplication application, IConfigurationElement... elements) {
 
@@ -331,8 +325,6 @@ public class RegistryUtil {
 	 * Returns a list of bundle id's that have extension to the passed extension
 	 * point.
 	 *
-	 * @param registry
-	 * @param extensionPoint
 	 * @return the bundle ids as an array of Strings
 	 */
 	public static String[] getProvidingBundles(IExtensionRegistry registry, String extensionPoint, boolean isLive) {
@@ -362,8 +354,6 @@ public class RegistryUtil {
 
 	/**
 	 *
-	 * @param registry
-	 * @param struct
 	 * @return the array of {@link IConfigurationElement} objects that meets the
 	 *         passed criteria.
 	 */
@@ -396,7 +386,6 @@ public class RegistryUtil {
 	 * This will return a structure that contains the registry information we
 	 * are looking for.
 	 *
-	 * @param applicationElement
 	 * @return the structure that matches the extension registry to the passed {@link ApplicationElement}
 	 */
 	public static RegistryStruct getStruct(Class<? extends MApplicationElement> applicationElement, String hint) {

@@ -110,9 +110,6 @@ public class ObjectContributionTests extends DynamicTestCase {
 		extender.dispose();
 	}
 
-	/**
-	 * @param menu
-	 */
 	private void resetViewerMenu(MenuManager menu) {
 		menu.removeAll();
 		menu.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));

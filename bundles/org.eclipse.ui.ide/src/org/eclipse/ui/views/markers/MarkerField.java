@@ -45,7 +45,6 @@ import org.eclipse.ui.internal.views.markers.MarkerSupportInternalUtilities;
  * providers for columns in a Markers View.
  *
  * @since 3.4
- *
  */
 public abstract class MarkerField {
 

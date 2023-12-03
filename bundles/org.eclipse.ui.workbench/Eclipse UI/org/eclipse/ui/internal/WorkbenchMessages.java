@@ -28,7 +28,6 @@ import org.eclipse.osgi.util.NLS;
 /**
  * Message class for workbench messages. These messages are used throughout the
  * workbench.
- *
  */
 public class WorkbenchMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.messages";//$NON-NLS-1$

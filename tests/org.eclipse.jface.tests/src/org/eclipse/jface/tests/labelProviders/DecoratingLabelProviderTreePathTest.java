@@ -36,7 +36,6 @@ import org.junit.Test;
  * DecoratingLabelProviderTreeTest.
  *
  * @since 3.3
- *
  */
 public class DecoratingLabelProviderTreePathTest extends CompositeLabelProviderTest {
 

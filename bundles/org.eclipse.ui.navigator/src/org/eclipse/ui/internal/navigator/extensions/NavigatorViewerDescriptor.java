@@ -186,9 +186,6 @@ public final class NavigatorViewerDescriptor implements
 		return inheritBindingsFromViewer;
 	}
 
-	/**
-	 * @param inherit
-	 */
 	public void setInheritBindingsFromViewer(String inherit) {
 		inheritBindingsFromViewer = inherit;
 	}
@@ -209,9 +206,6 @@ public final class NavigatorViewerDescriptor implements
 		helpContext = context;
 	}
 
-	/**
-	 * @param binding
-	 */
 	public void setContentBinding(Binding binding) {
 		contentBinding = binding;
 	}
@@ -223,9 +217,6 @@ public final class NavigatorViewerDescriptor implements
 		return contentBinding;
 	}
 
-	/**
-	 * @param binding
-	 */
 	public void setActionBinding(Binding binding) {
 		actionBinding = binding;
 	}
@@ -237,9 +228,6 @@ public final class NavigatorViewerDescriptor implements
 		return actionBinding;
 	}
 
-	/**
-	 * @param assistants
-	 */
 	public void setDragAssistants(Set assistants) {
 		dragAssistants = assistants;
 	}

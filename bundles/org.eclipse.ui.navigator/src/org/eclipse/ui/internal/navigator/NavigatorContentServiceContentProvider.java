@@ -61,7 +61,6 @@ import org.eclipse.ui.navigator.OverridePolicy;
  * @see org.eclipse.ui.internal.navigator.NavigatorContentServiceLabelProvider
  *
  * @since 3.2
- *
  */
 public class NavigatorContentServiceContentProvider implements ITreeContentProvider, ITreePathContentProvider {
 

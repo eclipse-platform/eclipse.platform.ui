@@ -16,7 +16,6 @@ package org.eclipse.core.internal.databinding.beans;
 
 /**
  * @since 3.3
- *
  */
 public class Util {
 

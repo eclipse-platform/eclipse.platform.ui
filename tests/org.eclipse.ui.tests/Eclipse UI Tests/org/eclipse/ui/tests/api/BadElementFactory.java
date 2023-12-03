@@ -23,7 +23,6 @@ import org.eclipse.ui.IPersistableElement;
  * that working set restoration does not die if one of the factories dies.
  *
  * @since 3.4
- *
  */
 public class BadElementFactory implements IElementFactory {
 

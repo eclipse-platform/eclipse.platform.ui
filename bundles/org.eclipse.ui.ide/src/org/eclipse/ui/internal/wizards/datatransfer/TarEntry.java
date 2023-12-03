@@ -109,8 +109,6 @@ public class TarEntry implements Cloneable
 	/**
 	 * Sets the type of the file, one of FILE, LINK, SYMLINK, CHAR_DEVICE,
 	 * BLOCK_DEVICE, or DIRECTORY.
-	 *
-	 * @param type
 	 */
 	public void setFileType(int type) {
 		this.type = type;
@@ -118,8 +116,6 @@ public class TarEntry implements Cloneable
 
 	/**
 	 * Sets the mode of the file in UNIX permissions format.
-	 *
-	 * @param mode
 	 */
 	public void setMode(long mode) {
 		this.mode = mode;
@@ -127,8 +123,6 @@ public class TarEntry implements Cloneable
 
 	/**
 	 * Sets the size of the file in bytes.
-	 *
-	 * @param size
 	 */
 	public void setSize(long size) {
 		this.size = size;
@@ -137,8 +131,6 @@ public class TarEntry implements Cloneable
 	/**
 	 * Sets the modification time of the file in seconds since January
 	 * 1st 1970.
-	 *
-	 * @param time
 	 */
 	public void setTime(long time) {
 		this.time = time;

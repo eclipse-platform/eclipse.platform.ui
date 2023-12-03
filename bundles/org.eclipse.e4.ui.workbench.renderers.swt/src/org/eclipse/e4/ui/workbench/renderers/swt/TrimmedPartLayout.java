@@ -41,7 +41,6 @@ import org.eclipse.swt.widgets.Layout;
  * controls so it may not be capable of performing the calculation.
  *
  * @author emoffatt
- *
  */
 public class TrimmedPartLayout extends Layout {
 

@@ -57,7 +57,6 @@ import org.osgi.framework.BundleEvent;
  * from methods that already hold the lock.
  * </p>
  * @since 3.2
- *
  */
 public class NavigatorSaveablesService implements INavigatorSaveablesService, VisibilityListener {
 
@@ -65,9 +64,6 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 
 	private static List<NavigatorSaveablesService> instances = new ArrayList<>();
 
-	/**
-	 * @param contentService
-	 */
 	public NavigatorSaveablesService(NavigatorContentService contentService) {
 		this.contentService = contentService;
 	}
@@ -85,9 +81,6 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 		}
 	}
 
-	/**
-	 * @param event
-	 */
 	/* package */ static void bundleChanged(BundleEvent event) {
 		synchronized(instances) {
 			if (event.getType() == BundleEvent.STARTED) {
@@ -185,11 +178,6 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 	/**
 	 * Implementation note: This is not synchronized at the method level because it needs to
 	 * synchronize on "instances" first, then on "this", to avoid potential deadlock.
-	 *
-	 * @param saveablesSource
-	 * @param viewer
-	 * @param outsideListener
-	 *
 	 */
 	@Override
 	public void init(final ISaveablesSource saveablesSource,
@@ -294,7 +282,6 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 	}
 
 	/**
-	 * @param selection
 	 * @return the active saveables
 	 */
 	private Saveable[] getActiveSaveablesFromTreeSelection(
@@ -311,8 +298,6 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 	}
 
 	/**
-	 * @param selection
-	 * @param provider
 	 * @return the active saveables
 	 */
 	private Saveable[] getActiveSaveablesFromTreePathProvider(
@@ -334,8 +319,6 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 	}
 
 	/**
-	 * @param selection
-	 * @param contentProvider
 	 * @return the active saveables
 	 */
 	private Saveable[] getActiveSaveablesFromTreeProvider(
@@ -351,8 +334,6 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 	}
 
 	/**
-	 * @param element
-	 * @param contentProvider
 	 * @return the saveable, or null
 	 */
 	private Saveable findSaveable(Object element,
@@ -368,7 +349,6 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 	}
 
 	/**
-	 * @param paths
 	 * @return the saveable, or null
 	 */
 	private Saveable findSaveable(TreePath[] paths) {
@@ -382,7 +362,6 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 	}
 
 	/**
-	 * @param path
 	 * @return a saveable, or null
 	 */
 	private Saveable findSaveable(TreePath path) {
@@ -398,7 +377,6 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 	}
 
 	/**
-	 * @param element
 	 * @return the saveable associated with the given element
 	 */
 	private Saveable getSaveable(Object element) {
@@ -469,7 +447,6 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 	}
 
 	/**
-	 * @param descriptor
 	 * @return the SaveablesProvider, or null
 	 */
 	private SaveablesProvider createSaveablesProvider(NavigatorContentDescriptor descriptor) {
@@ -534,9 +511,6 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 		}
 	}
 
-	/**
-	 * @param startedBundleId
-	 */
 	private void updateSaveablesProviders(String startedBundleId) {
 		List<SaveablesProvider> result = new ArrayList<>(Arrays.asList(saveablesProviders));
 		List descriptors = inactivePluginsWithSaveablesProviders
@@ -555,9 +529,6 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 				.toArray(new SaveablesProvider[result.size()]);
 	}
 
-	/**
-	 * @param symbolicName
-	 */
 	private synchronized void handleBundleStarted(String symbolicName) {
 		if (!isDisposed()) {
 			if (inactivePluginsWithSaveablesProviders.containsKey(symbolicName)) {
@@ -566,9 +537,6 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 		}
 	}
 
-	/**
-	 * @param symbolicName
-	 */
 	private synchronized void handleBundleStopped(String symbolicName) {
 		if (!isDisposed()) {
 			recomputeSaveablesAndNotify(true, null);

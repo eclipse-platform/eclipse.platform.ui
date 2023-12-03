@@ -24,7 +24,6 @@ import org.eclipse.core.databinding.observable.IObservablesListener;
  *            the type of value being observed
  *
  * @since 1.0
- *
  */
 @FunctionalInterface
 public interface IValueChangeListener<T> extends IObservablesListener {

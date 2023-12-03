@@ -25,7 +25,6 @@ package org.eclipse.ui.navigator;
  * associated with a content extension.
  *
  * @since 3.2
- *
  */
 public interface INavigatorActivationService {
 
@@ -98,7 +97,6 @@ public interface INavigatorActivationService {
 	 * content service. Clients should persist the activation state after any
 	 * call to {@link #activateExtensions(String[], boolean)} or
 	 * {@link #deactivateExtensions(String[], boolean)}.
-	 *
 	 */
 	public void persistExtensionActivations();
 

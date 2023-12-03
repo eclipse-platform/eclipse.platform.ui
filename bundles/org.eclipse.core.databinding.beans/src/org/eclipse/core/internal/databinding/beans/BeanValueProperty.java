@@ -28,16 +28,11 @@ import org.eclipse.core.databinding.property.value.SimpleValueProperty;
  * @param <T> type of the value of the property
  *
  * @since 3.3
- *
  */
 public class BeanValueProperty<S, T> extends SimpleValueProperty<S, T> {
 	private final PropertyDescriptor propertyDescriptor;
 	private final Class<T> valueType;
 
-	/**
-	 * @param propertyDescriptor
-	 * @param valueType
-	 */
 	@SuppressWarnings("unchecked")
 	public BeanValueProperty(PropertyDescriptor propertyDescriptor, Class<T> valueType) {
 		this.propertyDescriptor = propertyDescriptor;

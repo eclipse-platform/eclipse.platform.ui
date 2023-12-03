@@ -22,9 +22,6 @@ import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.forms.examples.internal.ExamplesPlugin;
 import org.eclipse.ui.forms.widgets.*;
-/**
- *
- */
 public class PageWithSubPages extends FormPage {
 	private CTabFolder tabFolder;
 	private Text text;

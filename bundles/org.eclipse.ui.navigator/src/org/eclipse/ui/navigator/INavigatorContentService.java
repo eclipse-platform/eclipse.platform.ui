@@ -99,7 +99,6 @@ import org.eclipse.ui.ISaveablesSource;
  * @since 3.2
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
- *
  */
 public interface INavigatorContentService {
 
@@ -216,7 +215,6 @@ public interface INavigatorContentService {
 	 *         this content service.
 	 * @see INavigatorContentService For more information on what <i>active</i>
 	 *      means.
-	 *
 	 */
 	boolean isActive(String anExtensionId);
 
@@ -321,13 +319,11 @@ public interface INavigatorContentService {
 	/**
 	 * The root content providers are recalculated by this method. The attached
 	 * viewer is also refreshed as a result of this method.
-	 *
 	 */
 	void update();
 
 	/**
 	 * Release any acquired resources and instantiated content extensions.
-	 *
 	 */
 	void dispose();
 

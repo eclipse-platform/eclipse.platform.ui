@@ -56,7 +56,6 @@ import org.osgi.framework.FrameworkUtil;
 
 /**
  * @since 3.5
- *
  */
 public class InstallationDialog extends TrayDialog implements IInstallationPageContainer {
 	class ButtonManager {
@@ -144,10 +143,6 @@ public class InstallationDialog extends TrayDialog implements IInstallationPageC
 	private Map<InstallationPage, String> pageToId = new HashMap<>();
 	private Dialog modalParent;
 
-	/**
-	 * @param parentShell
-	 * @param locator
-	 */
 	public InstallationDialog(Shell parentShell, IServiceLocator locator) {
 		super(parentShell);
 		serviceLocator = locator;

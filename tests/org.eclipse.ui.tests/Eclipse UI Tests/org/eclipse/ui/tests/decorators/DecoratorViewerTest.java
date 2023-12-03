@@ -34,8 +34,6 @@ public abstract class DecoratorViewerTest extends AbstractNavigatorTest {
 
 	/**
 	 * Create a new instance of the receiver.
-	 *
-	 * @param testName
 	 */
 	public DecoratorViewerTest(String testName) {
 		super(testName);
@@ -52,10 +50,6 @@ public abstract class DecoratorViewerTest extends AbstractNavigatorTest {
 
 	/**
 	 * Test the background on the viewer.
-	 *
-	 * @throws PartInitException
-	 * @throws CoreException
-	 * @throws InterruptedException
 	 */
 	@Test
 	public void testBackground() throws PartInitException, CoreException,
@@ -86,17 +80,11 @@ public abstract class DecoratorViewerTest extends AbstractNavigatorTest {
 
 	/**
 	 * Check the background colors in the view
-	 *
-	 * @param view
 	 */
 	protected abstract void backgroundCheck(IViewPart view);
 
 	/**
 	 * Test the foreground on the viewer.
-	 *
-	 * @throws PartInitException
-	 * @throws CoreException
-	 * @throws InterruptedException
 	 */
 	@Test
 	public void testForeground() throws PartInitException, CoreException,
@@ -126,7 +114,6 @@ public abstract class DecoratorViewerTest extends AbstractNavigatorTest {
 
 	/**
 	 * Read and dispatch while updates are occuring
-	 *
 	 */
 	private void dispatchDuringUpdates(DecoratorTestPart view) {
 		view.readAndDispatchForUpdates();
@@ -135,25 +122,14 @@ public abstract class DecoratorViewerTest extends AbstractNavigatorTest {
 
 	/**
 	 * Check the foreground colors.
-	 *
-	 * @param view
 	 */
 	protected abstract void foregroundCheck(IViewPart view);
 
-	/**
-	 * @param page
-	 * @return
-	 * @throws PartInitException
-	 */
 	protected abstract IViewPart openView(IWorkbenchPage page)
 			throws PartInitException;
 
 	/**
 	 * Test the font on the viewer.
-	 *
-	 * @throws PartInitException
-	 * @throws CoreException
-	 * @throws InterruptedException
 	 */
 	@Test
 	public void testFont() throws PartInitException, CoreException,
@@ -184,8 +160,6 @@ public abstract class DecoratorViewerTest extends AbstractNavigatorTest {
 
 	/**
 	 * Check the fonts in the view
-	 *
-	 * @param view
 	 */
 	protected abstract void fontCheck(IViewPart view);
 

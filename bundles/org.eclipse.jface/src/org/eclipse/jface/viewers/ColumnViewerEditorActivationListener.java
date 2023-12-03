@@ -19,7 +19,6 @@ package org.eclipse.jface.viewers;
  * class and implement any or all of the methods
  *
  * @since 3.3
- *
  */
 public abstract class ColumnViewerEditorActivationListener {
 	/**

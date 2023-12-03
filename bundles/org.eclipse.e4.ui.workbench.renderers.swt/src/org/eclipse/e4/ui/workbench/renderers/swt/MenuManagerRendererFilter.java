@@ -144,13 +144,6 @@ public class MenuManagerRendererFilter implements Listener {
 		}
 	}
 
-	/**
-	 * @param info
-	 * @param menuModel
-	 * @param renderer
-	 * @param evalContext
-	 * @param recurse
-	 */
 	public static void collectInfo(ExpressionInfo info, final MMenu menuModel,
 			final MenuManagerRenderer renderer,
 			final IEclipseContext evalContext, boolean recurse) {
@@ -172,12 +165,6 @@ public class MenuManagerRendererFilter implements Listener {
 		}
 	}
 
-	/**
-	 * @param menuModel
-	 * @param renderer
-	 * @param menuManager
-	 * @param evalContext
-	 */
 	public static void updateElementVisibility(final MMenu menuModel,
 			MenuManagerRenderer renderer, MenuManager menuManager,
 			final IEclipseContext evalContext, final int recurseLevel,

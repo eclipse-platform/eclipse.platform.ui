@@ -31,7 +31,6 @@ import org.eclipse.ui.services.IEvaluationReference;
 
 /**
  * @since 3.3
- *
  */
 public class EvaluationReference extends RunAndTrack implements IEvaluationReference {
 	private static final int THROTTLE_MAX = 100;

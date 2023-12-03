@@ -98,14 +98,6 @@ public class ShowViewDialog extends Dialog implements ISelectionChangedListener,
 
 	/**
 	 * Constructs a new ShowViewDialog.
-	 *
-	 * @param shell
-	 * @param application
-	 * @param window
-	 * @param modelService
-	 * @param partService
-	 * @param context
-	 *
 	 */
 	public ShowViewDialog(Shell shell, MApplication application, MWindow window, EModelService modelService,
 			EPartService partService, IEclipseContext context) {
@@ -246,7 +238,6 @@ public class ShowViewDialog extends Dialog implements ISelectionChangedListener,
 	/**
 	 * Return whether or not there are less than two views in the list.
 	 *
-	 * @param tree
 	 * @return <code>true</code> if there are less than two views in the list.
 	 */
 	private boolean hasAtMostOneView(TreeViewer tree) {

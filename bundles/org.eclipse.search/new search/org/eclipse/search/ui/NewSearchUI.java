@@ -31,7 +31,6 @@ import org.eclipse.search2.internal.ui.SearchMessages;
  * A facade for access to the new search UI facilities.
  *
  * @since 3.0
- *
  */
 public class NewSearchUI {
 	/**

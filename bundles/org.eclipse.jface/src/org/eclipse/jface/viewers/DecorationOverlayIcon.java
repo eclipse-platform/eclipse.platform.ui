@@ -147,7 +147,6 @@ public class DecorationOverlayIcon extends CompositeImageDescriptor {
 
 	/**
 	 * Draw the overlays for the receiver.
-	 * @param overlaysArray
 	 */
 	private void drawOverlays(ImageDescriptor[] overlaysArray) {
 

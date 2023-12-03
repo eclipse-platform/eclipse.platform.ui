@@ -26,13 +26,11 @@ import org.eclipse.ui.menus.IMenuService;
 
 /**
  * @since 3.105
- *
  */
 public class SlaveMenuService implements IMenuService, IMenuServiceWorkaround {
 	private IMenuService parentService;
 
 	/**
-	 * @param provider
 	 * @see org.eclipse.ui.services.IServiceWithSources#addSourceProvider(org.eclipse.ui.ISourceProvider)
 	 */
 	@Override
@@ -41,7 +39,6 @@ public class SlaveMenuService implements IMenuService, IMenuServiceWorkaround {
 	}
 
 	/**
-	 * @param provider
 	 * @see org.eclipse.ui.services.IServiceWithSources#removeSourceProvider(org.eclipse.ui.ISourceProvider)
 	 */
 	@Override
@@ -50,7 +47,6 @@ public class SlaveMenuService implements IMenuService, IMenuServiceWorkaround {
 	}
 
 	/**
-	 * @param factory
 	 * @see org.eclipse.ui.menus.IMenuService#addContributionFactory(org.eclipse.ui.menus.AbstractContributionFactory)
 	 */
 	@Override
@@ -68,7 +64,6 @@ public class SlaveMenuService implements IMenuService, IMenuServiceWorkaround {
 	}
 
 	/**
-	 * @param factory
 	 * @see org.eclipse.ui.menus.IMenuService#removeContributionFactory(org.eclipse.ui.menus.AbstractContributionFactory)
 	 */
 	@Override
@@ -77,8 +72,6 @@ public class SlaveMenuService implements IMenuService, IMenuServiceWorkaround {
 	}
 
 	/**
-	 * @param mgr
-	 * @param location
 	 * @see org.eclipse.ui.menus.IMenuService#populateContributionManager(org.eclipse.jface.action.ContributionManager,
 	 *      java.lang.String)
 	 */
@@ -96,7 +89,6 @@ public class SlaveMenuService implements IMenuService, IMenuServiceWorkaround {
 	}
 
 	/**
-	 * @param mgr
 	 * @see org.eclipse.ui.menus.IMenuService#releaseContributions(org.eclipse.jface.action.ContributionManager)
 	 */
 	@Override
@@ -106,9 +98,6 @@ public class SlaveMenuService implements IMenuService, IMenuServiceWorkaround {
 
 	/**
 	 * Disposes contributions created by service for given part. See bug 537046.
-	 *
-	 * @param site
-	 * @param part
 	 */
 	@Override
 	public void clearContributions(PartSite site, MPart part) {

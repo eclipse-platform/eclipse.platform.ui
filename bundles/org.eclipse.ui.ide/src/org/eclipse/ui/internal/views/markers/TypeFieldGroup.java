@@ -28,7 +28,6 @@ import org.eclipse.ui.views.markers.internal.TableComparator;
  * TypeFieldGroup is the field used to group by type.
  *
  * @since 3.3
- *
  */
 public class TypeFieldGroup extends AbstractField {
 

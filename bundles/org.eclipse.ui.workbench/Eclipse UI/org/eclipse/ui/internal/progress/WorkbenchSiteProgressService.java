@@ -90,8 +90,6 @@ public class WorkbenchSiteProgressService implements IWorkbenchSiteProgressServi
 
 		/**
 		 * Set whether we are updating with the wait or busy cursor.
-		 *
-		 * @param cursorState
 		 */
 		void setBusy(boolean cursorState) {
 			synchronized (lock) {
@@ -141,7 +139,6 @@ public class WorkbenchSiteProgressService implements IWorkbenchSiteProgressServi
 
 	/**
 	 * Dispose the resources allocated by the receiver.
-	 *
 	 */
 	public void dispose() {
 		if (updateJob != null) {

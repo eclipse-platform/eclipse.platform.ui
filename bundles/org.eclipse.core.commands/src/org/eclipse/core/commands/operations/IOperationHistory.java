@@ -310,7 +310,6 @@ public interface IOperationHistory {
 	 *
 	 * @throws ExecutionException
 	 *             if an exception occurred during execution.
-	 *
 	 */
 	IStatus execute(IUndoableOperation operation, IProgressMonitor monitor,
 			IAdaptable info) throws ExecutionException;
@@ -425,7 +424,6 @@ public interface IOperationHistory {
 	 *
 	 * @param operation
 	 *            the operation that has changed.
-	 *
 	 */
 	void operationChanged(IUndoableOperation operation);
 
@@ -485,7 +483,6 @@ public interface IOperationHistory {
 	 *
 	 * @throws ExecutionException
 	 *             if an exception occurred during redo.
-	 *
 	 */
 	IStatus redo(IUndoContext context, IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException;

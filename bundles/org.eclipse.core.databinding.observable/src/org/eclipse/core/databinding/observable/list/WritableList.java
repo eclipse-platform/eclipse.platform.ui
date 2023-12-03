@@ -48,7 +48,6 @@ public class WritableList<E> extends ObservableList<E> {
 	/**
 	 * Creates an empty writable list in the default realm with a
 	 * <code>null</code> element type.
-	 *
 	 */
 	public WritableList() {
 		this(Realm.getDefault());

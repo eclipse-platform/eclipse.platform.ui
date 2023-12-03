@@ -19,14 +19,12 @@ import org.eclipse.jface.viewers.ViewerLabel;
  * Provides a subclass of ViewerLabel that can be re-used for multiple viewer updates.
  *
  * @since 3.2
- *
  */
 public class ReusableViewerLabel extends ViewerLabel {
 
 	private ViewerLabel original = null;
 	/**
 	 * Creates a ViewerLabel with null text and image.
-	 *
 	 */
 	public ReusableViewerLabel() {
 		super(null, null);

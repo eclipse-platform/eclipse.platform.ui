@@ -344,7 +344,6 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 	 * registered at the time this method is called are notified.
 	 *
 	 * @param manager the menu manager
-	 *
 	 */
 	private void fireAboutToHide(IMenuManager manager) {
 		for (IMenuListener listener : this.listeners) {

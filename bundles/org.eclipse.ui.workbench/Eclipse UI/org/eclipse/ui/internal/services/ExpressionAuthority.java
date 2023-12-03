@@ -282,10 +282,6 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 		sourceChanged(sourcePriority, new String[] { sourceName });
 	}
 
-	/**
-	 * @param sourcePriority
-	 * @param strings
-	 */
 	private void sourceChanged(int sourcePriority, String[] sourceNames) {
 		sourceChanged(sourcePriority);
 		sourceChanged(sourceNames);

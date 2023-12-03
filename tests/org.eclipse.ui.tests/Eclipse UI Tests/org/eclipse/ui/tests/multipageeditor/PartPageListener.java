@@ -21,7 +21,6 @@ import org.eclipse.ui.IWorkbenchPartReference;
 
 /**
  * @since 3.5
- *
  */
 public class PartPageListener implements IPartListener2, IPageChangedListener {
 

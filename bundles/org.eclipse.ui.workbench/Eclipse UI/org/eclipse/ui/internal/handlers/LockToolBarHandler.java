@@ -31,7 +31,6 @@ import org.eclipse.ui.internal.WorkbenchWindow;
  * @author Prakash G.R.
  *
  * @since 3.7
- *
  */
 public class LockToolBarHandler extends AbstractHandler {
 

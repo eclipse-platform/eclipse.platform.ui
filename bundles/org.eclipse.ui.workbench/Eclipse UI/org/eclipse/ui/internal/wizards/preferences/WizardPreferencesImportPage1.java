@@ -39,8 +39,6 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
 
 	/**
 	 * Create a new instance of the receiver with name pageName.
-	 *
-	 * @param pageName
 	 */
 	protected WizardPreferencesImportPage1(String pageName) {
 		super(pageName);
@@ -153,7 +151,6 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
 	}
 
 	/**
-	 * @param filters
 	 * @return <code>true</code> if the transfer was succesful, and
 	 *         <code>false</code> otherwise
 	 */

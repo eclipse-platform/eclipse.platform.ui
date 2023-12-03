@@ -28,7 +28,6 @@ import org.eclipse.ui.preferences.ViewSettingsDialog;
  * NewKeysPreferencePage
  *
  * @since 3.3
- *
  */
 public class KeysPreferenceFiltersDialog extends ViewSettingsDialog {
 
@@ -65,9 +64,6 @@ public class KeysPreferenceFiltersDialog extends ViewSettingsDialog {
 		return filterUncategorized;
 	}
 
-	/**
-	 * @param parentShell
-	 */
 	public KeysPreferenceFiltersDialog(Shell parentShell) {
 		super(parentShell);
 	}

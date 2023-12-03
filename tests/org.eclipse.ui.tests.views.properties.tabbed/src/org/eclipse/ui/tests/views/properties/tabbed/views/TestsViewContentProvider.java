@@ -27,9 +27,6 @@ public class TestsViewContentProvider implements ITreeContentProvider {
 
 	private final TestsView view;
 
-	/**
-	 * @param view
-	 */
 	TestsViewContentProvider(TestsView aView) {
 		this.view = aView;
 	}

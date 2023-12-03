@@ -104,11 +104,6 @@ public class IntroRegistry implements IIntroRegistry {
 		return descriptor;
 	}
 
-	/**
-	 * @param targetProductId
-	 * @param extensions
-	 * @return
-	 */
 	private String getIntroForProduct(String targetProductId, IExtension[] extensions) {
 		for (IExtension extension : extensions) {
 			IConfigurationElement[] elements = extension.getConfigurationElements();

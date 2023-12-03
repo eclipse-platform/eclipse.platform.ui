@@ -157,11 +157,6 @@ public abstract class AbstractColumnLayout extends Layout {
 	/**
 	 * Layout the scrollable based on the supplied width and area. Only increase
 	 * the size of the scrollable if increase is <code>true</code>.
-	 *
-	 * @param scrollable
-	 * @param width
-	 * @param area
-	 * @param increase
 	 */
 	private void layoutTableTree(final Scrollable scrollable, final int width,
 			final Rectangle area, final boolean increase) {
@@ -272,9 +267,6 @@ public abstract class AbstractColumnLayout extends Layout {
 	/**
 	 * Compute the area required for trim.
 	 *
-	 * @param area
-	 * @param scrollable
-	 * @param currentWidth
 	 * @return int
 	 */
 	private int computeTrim(Rectangle area, Scrollable scrollable,

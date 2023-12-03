@@ -21,7 +21,6 @@ import org.eclipse.ui.IEditorPart;
 
 /**
  * @since 3.5
- *
  */
 public class EditorActionDelegate implements IEditorActionDelegate {
 

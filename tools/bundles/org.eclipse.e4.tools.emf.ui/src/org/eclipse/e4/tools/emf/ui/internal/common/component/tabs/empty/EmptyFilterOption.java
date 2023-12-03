@@ -19,7 +19,6 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty;
  * An empty value is a null object, empty string, or empty collection.
  *
  * @author Steven Spungin
- *
  */
 public enum EmptyFilterOption {
 	/**

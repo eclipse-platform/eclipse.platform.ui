@@ -36,7 +36,6 @@ import org.eclipse.swt.widgets.Control;
  * be dynamically generated from the viewers current contents.
  *
  * @author Steven Spungin
- *
  */
 public class ComboViewerAutoComplete {
 

@@ -31,7 +31,6 @@ import org.junit.runners.JUnit4;
 /**
  * SessionRestoreTest runs the second half of our session
  * presistance tests.
- *
  */
 @RunWith(JUnit4.class)
 public class SessionRestoreTest extends UITestCase {

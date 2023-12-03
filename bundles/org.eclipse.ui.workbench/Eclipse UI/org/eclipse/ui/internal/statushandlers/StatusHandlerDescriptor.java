@@ -41,9 +41,6 @@ public class StatusHandlerDescriptor implements IPluginContribution {
 
 	private String prefix;
 
-	/**
-	 * @param configElement
-	 */
 	public StatusHandlerDescriptor(IConfigurationElement configElement) {
 		super();
 		this.configElement = configElement;

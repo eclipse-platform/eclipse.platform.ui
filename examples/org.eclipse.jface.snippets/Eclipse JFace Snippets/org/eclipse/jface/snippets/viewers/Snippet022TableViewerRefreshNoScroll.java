@@ -39,7 +39,6 @@ import org.eclipse.swt.widgets.TableItem;
  * A simple TableViewer to demonstrating how viewers could be refresh and
  * scrolling avoided in 3.2. In 3.3 implementors should consider using the
  * {@link StructuredViewer#refresh(Object, boolean)} instead.
- *
  */
 public class Snippet022TableViewerRefreshNoScroll {
 
@@ -129,9 +128,6 @@ public class Snippet022TableViewerRefreshNoScroll {
 		return elements;
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display();
 		Shell shell = new Shell(display);

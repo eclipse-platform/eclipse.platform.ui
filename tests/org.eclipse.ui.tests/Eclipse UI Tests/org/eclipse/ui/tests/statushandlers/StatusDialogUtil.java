@@ -31,7 +31,6 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  * This class parses the structure of the Shell and finds necessary widgets.
  *
  * @since 3.4
- *
  */
 public class StatusDialogUtil {
 

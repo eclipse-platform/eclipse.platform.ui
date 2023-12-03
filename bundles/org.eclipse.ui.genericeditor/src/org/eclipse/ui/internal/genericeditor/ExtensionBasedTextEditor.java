@@ -74,9 +74,6 @@ public class ExtensionBasedTextEditor extends TextEditor {
 	private List<IRegion> fPreviousSelections;
 	private ICharacterPairMatcher pairMatcher;
 
-	/**
-	 *
-	 */
 	public ExtensionBasedTextEditor() {
 		configuration = new ExtensionBasedTextViewerConfiguration(this, getPreferenceStore());
 		setSourceViewerConfiguration(configuration);

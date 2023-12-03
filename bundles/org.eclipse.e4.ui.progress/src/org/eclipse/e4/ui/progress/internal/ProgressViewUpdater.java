@@ -79,8 +79,6 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
 
 		/**
 		 * Add an add update
-		 *
-		 * @param addition
 		 */
 		void add(JobTreeElement addition) {
 			additions.add(addition);
@@ -88,8 +86,6 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
 
 		/**
 		 * Add a remove update
-		 *
-		 * @param removal
 		 */
 		void remove(JobTreeElement removal) {
 			deletions.add(removal);
@@ -97,8 +93,6 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
 
 		/**
 		 * Add a refresh update
-		 *
-		 * @param refresh
 		 */
 		void refresh(JobTreeElement refresh) {
 			refreshes.add(refresh);
@@ -171,8 +165,6 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
 
 	/**
 	 * Add the new collector to the list of collectors.
-	 *
-	 * @param newCollector
 	 */
 	void addCollector(IProgressUpdateCollector newCollector) {
 		IProgressUpdateCollector[] newCollectors = new IProgressUpdateCollector[collectors.length + 1];
@@ -183,8 +175,6 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
 
 	/**
 	 * Remove the collector from the list of collectors.
-	 *
-	 * @param provider
 	 */
 	void removeCollector(IProgressUpdateCollector provider) {
 		HashSet<IProgressUpdateCollector> newCollectors = new HashSet<>();
@@ -299,8 +289,6 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
 
 	/**
 	 * Refresh the supplied JobInfo.
-	 *
-	 * @param info
 	 */
 	public void refresh(JobInfo info) {
 
@@ -423,7 +411,6 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
 	 * Return whether or not this is the update job. This is used to determine if a
 	 * final refresh is required.
 	 *
-	 * @param job
 	 * @return boolean <code>true</true> if this is the update job
 	 */
 	boolean isUpdateJob(Job job) {

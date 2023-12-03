@@ -74,7 +74,6 @@ public class StatusEditorTest {
 	 * https://bugs.eclipse.org/bugs/attachment.cgi?bugid=320672
 	 *
 	 * No exceptions are thrown when a status editor displaying an erroneous status is activated with a mouse click.
-	 * @throws Exception
 	 */
 	@Test
 	public void doNotThrowOnActivationInStale() throws Exception {

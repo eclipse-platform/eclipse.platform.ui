@@ -39,7 +39,6 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
  *
  * E.g. if your file contains "this is a t^" and you ask for auto-completion at
  * ^ you will get 'this' as an alternative.
- *
  */
 public class DefaultContentAssistProcessor implements IContentAssistProcessor {
 

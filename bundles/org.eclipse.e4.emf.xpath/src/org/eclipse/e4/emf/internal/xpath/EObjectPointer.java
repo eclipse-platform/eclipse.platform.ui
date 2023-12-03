@@ -42,7 +42,6 @@ import org.eclipse.e4.emf.internal.xpath.helper.JXPathEObjectInfo;
  * the first element of a path or a pointer for a property value.
  * Typically there is a {@link EObjectPropertyPointer} between two EObjectPointers
  * in the chain.
- *
  */
 public class EObjectPointer extends EStructuralFeatureOwnerPointer {
 	private QName name;

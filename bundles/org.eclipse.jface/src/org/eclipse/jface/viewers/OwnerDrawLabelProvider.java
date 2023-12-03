@@ -33,7 +33,6 @@ import org.eclipse.swt.widgets.Listener;
  * </p>
  *
  * @since 3.3
- *
  */
 public abstract class OwnerDrawLabelProvider extends CellLabelProvider {
 
@@ -105,7 +104,6 @@ public abstract class OwnerDrawLabelProvider extends CellLabelProvider {
 
 	/**
 	 * Create a new instance of the receiver based on a column viewer.
-	 *
 	 */
 	public OwnerDrawLabelProvider() {
 

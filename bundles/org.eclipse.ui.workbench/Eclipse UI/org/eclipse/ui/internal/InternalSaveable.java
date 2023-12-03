@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * @since 3.3
- *
  */
 public class InternalSaveable {
 

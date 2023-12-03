@@ -482,11 +482,6 @@ public final class BindingService implements IBindingService {
 		return result;
 	}
 
-	/**
-	 * @param id
-	 * @param rootContext
-	 * @return
-	 */
 	private MBindingContext searchContexts(String id, List<MBindingContext> rootContext) {
 		for (MBindingContext context : rootContext) {
 			if (context.getElementId().equals(id)) {
@@ -518,10 +513,6 @@ public final class BindingService implements IBindingService {
 		createOrUpdateMKeyBinding(application, table, binding);
 	}
 
-	/**
-	 * @param contextId
-	 * @return
-	 */
 	private MBindingTable getMTable(String contextId) {
 		for (MBindingTable bt : application.getBindingTables()) {
 			if (bt.getBindingContext().getElementId().equals(contextId)) {

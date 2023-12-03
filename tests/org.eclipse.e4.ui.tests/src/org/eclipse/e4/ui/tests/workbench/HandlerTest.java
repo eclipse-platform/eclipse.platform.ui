@@ -140,11 +140,6 @@ public class HandlerTest {
 		assertFalse(handler.ran);
 	}
 
-	/**
-	 * @param appContext
-	 * @param commandId
-	 * @return
-	 */
 	private ParameterizedCommand getCommand(IEclipseContext appContext,
 			String commandId) {
 		ECommandService cs = appContext.get(ECommandService.class);

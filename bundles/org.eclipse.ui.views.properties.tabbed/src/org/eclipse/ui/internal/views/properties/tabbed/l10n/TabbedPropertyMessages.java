@@ -19,7 +19,6 @@ import org.eclipse.osgi.util.NLS;
  * Message Bundle class for the tabbed properties view plug-in.
  *
  * @author Anthony Hunter
- *
  */
 public final class TabbedPropertyMessages
 	extends NLS {

@@ -32,8 +32,6 @@ import org.junit.Test;
 public class AbstractStringToNumberValidatorTest {
 	/**
 	 * Test for bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=194353.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testErrorMessagesAreNotCached() throws Exception {

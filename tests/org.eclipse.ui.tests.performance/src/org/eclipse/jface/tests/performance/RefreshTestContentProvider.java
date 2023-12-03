@@ -23,7 +23,6 @@ import org.eclipse.jface.viewers.ViewerComparator;
 /**
  * The RefreshTestContentProvider is the content
  * provider for refresh tests.
- *
  */
 public class RefreshTestContentProvider implements IStructuredContentProvider {
 
@@ -52,7 +51,6 @@ public class RefreshTestContentProvider implements IStructuredContentProvider {
 	/**
 	 * Set the size of the amount we are currently displaying
 	 * to size.
-	 * @param size
 	 */
 	public void setSize(int size) {
 
@@ -80,7 +78,6 @@ public class RefreshTestContentProvider implements IStructuredContentProvider {
 	/**
 	 * Restore the elements to thier old poorly sorted
 	 * state.
-	 *
 	 */
 	public void refreshElements() {
 		for (int i = 0; i < ELEMENT_COUNT; i++) {

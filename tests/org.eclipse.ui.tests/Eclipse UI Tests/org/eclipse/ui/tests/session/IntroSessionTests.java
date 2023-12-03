@@ -31,9 +31,6 @@ public class IntroSessionTests extends TestCase {
 		return ts;
 	}
 
-	/**
-	 * @param name
-	 */
 	public IntroSessionTests(String name) {
 		super(name);
 	}

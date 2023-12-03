@@ -374,7 +374,6 @@ public class ResourceAndContainerGroup implements Listener {
 
 	/**
 	 * Sets the flag indicating whether existing resources are permitted.
-	 * @param value
 	 */
 	public void setAllowExistingResources(boolean value) {
 		allowExistingResources = value;

@@ -29,7 +29,6 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * @since 3.4
- *
  */
 public class OpenInNewWindowHandler extends AbstractHandler {
 

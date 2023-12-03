@@ -55,8 +55,6 @@ public class HasFileRecursivelyExpression extends Expression {
 	/**
 	 * Build expression retrieving the suffix as the 'filename' attribute on the
 	 * provided {@link IConfigurationElement}.
-	 *
-	 * @param element
 	 */
 	public HasFileRecursivelyExpression(IConfigurationElement element) {
 		this(element.getAttribute("filename")); //$NON-NLS-1$

@@ -128,7 +128,6 @@ public final class Category extends NamedHandleObject {
 	 *
 	 * @param categoryListener
 	 *            The listener to be removed; must not be <code>null</code>.
-	 *
 	 */
 	public final void removeCategoryListener(
 			final ICategoryListener categoryListener) {

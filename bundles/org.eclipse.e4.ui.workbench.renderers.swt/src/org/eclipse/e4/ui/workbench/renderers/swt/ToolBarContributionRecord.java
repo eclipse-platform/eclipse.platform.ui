@@ -250,9 +250,6 @@ public class ToolBarContributionRecord {
 		return true;
 	}
 
-	/**
-	 * @return
-	 */
 	private List<MToolBarElement> mergeFactoryIntoModel() {
 		Object obj = toolbarContribution.getTransientData().get(FACTORY);
 		if (!(obj instanceof IContextFunction)) {

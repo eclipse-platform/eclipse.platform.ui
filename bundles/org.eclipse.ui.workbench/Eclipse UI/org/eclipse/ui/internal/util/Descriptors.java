@@ -168,9 +168,6 @@ public final class Descriptors {
 	 * allocated and disposed as needed.
 	 *
 	 * @since 3.1
-	 *
-	 * @param item
-	 * @param descriptor
 	 */
 	public static void setImage(Item item, ImageDescriptor descriptor) {
 		callMethod(item, "setImage", descriptor, Image.class); //$NON-NLS-1$

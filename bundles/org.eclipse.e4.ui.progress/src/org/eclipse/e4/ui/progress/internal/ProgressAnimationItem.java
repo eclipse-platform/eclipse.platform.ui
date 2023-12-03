@@ -125,8 +125,6 @@ public class ProgressAnimationItem extends AnimationItem implements
 	}
 
 	/**
-	 * @param ji
-	 * @param job
 	 * @return <code>true</code> if Action or Command is executed
 	 */
 	private boolean execute(JobInfo ji, Job job) {
@@ -149,9 +147,6 @@ public class ProgressAnimationItem extends AnimationItem implements
 		return false;
 	}
 
-	/**
-	 * @param ji
-	 */
 	private void removeTopElement(JobInfo ji) {
 		JobTreeElement topElement = ji.getParent();
 		if (topElement == null) {

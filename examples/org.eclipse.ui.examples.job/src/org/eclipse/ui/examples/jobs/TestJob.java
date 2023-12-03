@@ -54,8 +54,6 @@ public class TestJob extends Job {
 	 * @param lock           Whether the job should use a workspace scheduling rule
 	 * @param failure        Whether the job should fail
 	 * @param indeterminate  Whether the job should report indeterminate progress
-	 * @param rescheduleWait
-	 * @param reschedule
 	 */
 
 	public TestJob(long duration, boolean lock, boolean failure, boolean indeterminate, boolean reschedule,

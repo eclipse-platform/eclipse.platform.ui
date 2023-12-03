@@ -467,7 +467,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	/**
 	 * Answer the element factory for an id, or <code>null</code>. if not found.
 	 *
-	 * @param targetID
 	 * @return IElementFactory
 	 */
 	public IElementFactory getElementFactory(String targetID) {
@@ -637,8 +636,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Log the throwable.
-	 *
-	 * @param t
 	 */
 	public static void log(Throwable t) {
 		getDefault().getLog().log(getStatus(t));
@@ -659,8 +656,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	/**
 	 * Create a new error from the message and the throwable.
 	 *
-	 * @param message
-	 * @param t
 	 * @return IStatus
 	 */
 	public static IStatus newError(String message, Throwable t) {
@@ -736,8 +731,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Log the status to the default log.
-	 *
-	 * @param status
 	 */
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
@@ -949,7 +942,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 * Find the orientation in the commandLineArgs. If there is no orientation
 	 * specified return SWT#NONE.
 	 *
-	 * @param commandLineArgs
 	 * @return int
 	 * @see SWT#NONE
 	 * @see SWT#RIGHT_TO_LEFT
@@ -1180,10 +1172,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 * @param display the display to parent the shell on
 	 *
 	 * @return the splash shell or <code>null</code>
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws IllegalArgumentException
-	 * @throws NumberFormatException
 	 * @see Display#setData(String, Object)
 	 * @since 3.4
 	 */

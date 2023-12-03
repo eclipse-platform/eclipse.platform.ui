@@ -122,7 +122,6 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 	 *                       manager; must not be <code>null</code>.
 	 * @param contextManager The context manager to provide context support to this
 	 *                       manager. This value must not be <code>null</code>.
-	 *
 	 */
 	public CommandManagerLegacyWrapper(final BindingManager bindingManager, final CommandManager commandManager,
 			final ContextManager contextManager) {

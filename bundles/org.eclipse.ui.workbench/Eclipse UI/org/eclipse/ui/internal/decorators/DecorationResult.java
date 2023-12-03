@@ -59,7 +59,6 @@ public class DecorationResult {
 	/**
 	 * Return whether or not any of the imageDescriptors are non-null.
 	 *
-	 * @param imageDescriptors
 	 * @return <code>true</code> if there are some non-null overlays
 	 */
 	private boolean hasOverlays(ImageDescriptor[] imageDescriptors) {
@@ -74,8 +73,6 @@ public class DecorationResult {
 	/**
 	 * Decorate the Image supplied with the overlays.
 	 *
-	 * @param image
-	 * @param manager
 	 * @return Image
 	 */
 	Image decorateWithOverlays(Image image, ResourceManager manager) {
@@ -96,7 +93,6 @@ public class DecorationResult {
 	 * public for use by the test suites and is not intended to be referenced by
 	 * other workbench internals.
 	 *
-	 * @param text
 	 * @return String
 	 */
 	public String decorateWithText(String text) {

@@ -26,7 +26,6 @@ import org.eclipse.ui.internal.dialogs.WorkbenchEditorsDialog;
  * Opens a dialog showing all open editors and the recently closed editors.
  *
  * @since 3.4
- *
  */
 public class WorkbenchEditorsHandler extends AbstractHandler {
 

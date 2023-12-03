@@ -42,8 +42,6 @@ public class OpenPreferencesAction extends Action implements ActionFactory.IWork
 	/**
 	 * Create a new <code>OpenPreferenceAction</code> and initialize it from the
 	 * given resource bundle.
-	 *
-	 * @param window
 	 */
 	public OpenPreferencesAction(IWorkbenchWindow window) {
 		super(WorkbenchMessages.OpenPreferences_text);

@@ -25,7 +25,6 @@ import org.eclipse.swt.widgets.Shell;
  * A Wizard for resolving unreferenced resources
  *
  * @author Steven Spungin
- *
  */
 public class NonReferencedResourceWizard extends DynamicWizard {
 

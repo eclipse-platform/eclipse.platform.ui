@@ -23,7 +23,6 @@ import org.eclipse.swt.widgets.Control;
 
 /**
  * @since 3.5
- *
  */
 public class DirectoryProposalContentAssistWindow extends ComboFieldAssistWindow {
 

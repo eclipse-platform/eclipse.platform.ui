@@ -41,7 +41,6 @@ import org.osgi.service.log.LogService;
  * specified {@link IEclipseContext} and additionally fires an event on the event bus.
  *
  * @author Dirk Fauth
- *
  */
 @SuppressWarnings("restriction")
 public class LocaleChangeServiceImpl implements ILocaleChangeService {

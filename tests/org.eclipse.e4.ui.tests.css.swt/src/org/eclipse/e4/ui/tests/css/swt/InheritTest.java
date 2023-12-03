@@ -97,7 +97,6 @@ public class InheritTest extends CSSSWTTestCase {
 	 *
 	 * @param styleSheet
 	 *            styles to apply
-	 * @param setCompositeBackgroundExplicitly
 	 * @return the test label
 	 */
 	private Label createTestLabel(String styleSheet,

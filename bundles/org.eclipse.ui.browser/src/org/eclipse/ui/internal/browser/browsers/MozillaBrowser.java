@@ -134,10 +134,6 @@ public class MozillaBrowser extends AbstractWebBrowser {
 		/**
 		 * On some OSes 0 is always returned by netscape -remote. It is
 		 * necessary to examine output to find out failure
-		 *
-		 * @param outputs
-		 * @param errors
-		 * @return
 		 */
 		private boolean errorsInOutput(StreamConsumer outputs,
 				StreamConsumer errors) {

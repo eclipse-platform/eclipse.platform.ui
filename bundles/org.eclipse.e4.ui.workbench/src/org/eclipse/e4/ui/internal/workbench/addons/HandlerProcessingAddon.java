@@ -39,9 +39,6 @@ public class HandlerProcessingAddon {
 
 	/**
 	 * Do initial check of handlers and their context upon creation
-	 *
-	 * @param application
-	 * @param modelService
 	 */
 	@PostConstruct
 	public void postConstruct(MApplication application, EModelService modelService) {
@@ -126,10 +123,6 @@ public class HandlerProcessingAddon {
 		}
 	}
 
-	/**
-	 * @param handler
-	 * @param context
-	 */
 	private void processActiveHandler(MHandler handler, IEclipseContext context) {
 		MCommand command = handler.getCommand();
 		if (command == null) {

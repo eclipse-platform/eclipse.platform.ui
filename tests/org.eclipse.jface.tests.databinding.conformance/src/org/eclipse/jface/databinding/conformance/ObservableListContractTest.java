@@ -40,9 +40,6 @@ public class ObservableListContractTest extends
 
 	private final IObservableCollectionContractDelegate delegate;
 
-	/**
-	 * @param delegate
-	 */
 	public ObservableListContractTest(
 			IObservableCollectionContractDelegate delegate) {
 		super(delegate);

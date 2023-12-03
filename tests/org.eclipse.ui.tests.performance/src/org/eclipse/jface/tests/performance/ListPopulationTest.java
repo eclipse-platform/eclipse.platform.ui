@@ -24,7 +24,6 @@ import org.eclipse.ui.tests.performance.BasicPerformanceTest;
 /**
  * The ListPopulationTest is the test for simple
  * SWT lists.
- *
  */
 public class ListPopulationTest extends BasicPerformanceTest {
 
@@ -77,7 +76,6 @@ public class ListPopulationTest extends BasicPerformanceTest {
 
 	/**
 	 * Test the time for adding elements using add.
-	 * @throws Throwable
 	 */
 	public void addBench(int count) throws Throwable {
 		openBrowser();
@@ -99,7 +97,6 @@ public class ListPopulationTest extends BasicPerformanceTest {
 
 	/**
 	 * Test the time for adding elements using setItem.
-	 * @throws Throwable
 	 */
 	public void setItemsBench(int count) throws Throwable {
 		openBrowser();
@@ -118,8 +115,6 @@ public class ListPopulationTest extends BasicPerformanceTest {
 
 	/**
 	 * Get count number of items.
-	 * @param count
-	 * @return
 	 */
 	private String[] getItems(int count) {
 		String[] items = new String[count];

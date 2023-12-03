@@ -26,7 +26,6 @@ import org.eclipse.jface.text.codemining.ICodeMining;
 
 /**
  * Class implementation mining provider.
- *
  */
 public class ClassImplementationsCodeMiningProvider extends AbstractCodeMiningProvider {
 

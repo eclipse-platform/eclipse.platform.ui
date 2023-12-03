@@ -29,9 +29,6 @@ public class TypeOne extends NamedObject {
 	private String text;
 	private boolean flag;
 
-	/**
-	 * @param name
-	 */
 	public TypeOne(String name, int choice, boolean flag, String text) {
 		super(name);
 		this.flag = flag;

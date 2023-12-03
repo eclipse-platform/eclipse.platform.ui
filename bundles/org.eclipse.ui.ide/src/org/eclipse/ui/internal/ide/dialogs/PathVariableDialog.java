@@ -704,16 +704,10 @@ public class PathVariableDialog extends TitleAreaDialog {
 		variableValue = userEditableString;
 	}
 
-	/**
-	 * @param resource
-	 */
 	public void setResource(IResource resource) {
 		currentResource = resource;
 	}
 
-	/**
-	 * @param location
-	 */
 	public void setLinkLocation(IPath location) {
 		String userEditableString = getPathVariableManager().convertToUserEditableFormat(location.toOSString(), operationMode == EDIT_LINK_LOCATION);
 		variableValue = userEditableString;

@@ -32,7 +32,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
  * This class is not intended to be instantiated or used by clients.
  *
  * @since 3.4
- *
  */
 abstract class AbstractResourceUndoState extends ResourceUndoState {
 

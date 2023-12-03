@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Widget;
  * @noextend this class is not intended to be subclassed by clients.
  *
  * @since 3.18
- *
  */
 public abstract class AbstractWidgetFactory<F extends AbstractWidgetFactory<?, ?, ?>, W extends Widget, P extends Widget> {
 	private Class<F> factoryClass;
@@ -39,10 +38,6 @@ public abstract class AbstractWidgetFactory<F extends AbstractWidgetFactory<?, ?
 
 	private List<Property<W>> properties = new ArrayList<>();
 
-	/**
-	 * @param factoryClass
-	 * @param widgetCreator
-	 */
 	AbstractWidgetFactory(Class<F> factoryClass, WidgetSupplier<W, P> widgetCreator) {
 		this.factoryClass = factoryClass;
 		this.widgetCreator = widgetCreator;
@@ -60,7 +55,6 @@ public abstract class AbstractWidgetFactory<F extends AbstractWidgetFactory<?, ?
 	}
 
 	/**
-	 * @param parent
 	 * @return this
 	 */
 	public final W create(P parent) {

@@ -171,8 +171,6 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 
 	/**
 	 * Deletes a list of perspectives
-	 *
-	 * @param perspToDelete
 	 */
 	public void deletePerspectives(ArrayList<IPerspectiveDescriptor> perspToDelete) {
 		for (IPerspectiveDescriptor descriptor : perspToDelete) {
@@ -304,8 +302,6 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 	 *
 	 * The id must encode the original id. id is of the form &lt;originalId&gt;.label
 	 *
-	 * @param label
-	 * @param originalDescriptor
 	 * @return the new id
 	 */
 	private String createNewId(String label, PerspectiveDescriptor originalDescriptor) {

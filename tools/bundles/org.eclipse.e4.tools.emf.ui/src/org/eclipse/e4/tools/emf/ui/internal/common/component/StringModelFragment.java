@@ -193,8 +193,6 @@ public class StringModelFragment extends AbstractComponentEditor<MStringModelFra
 	 * Returns the selectedContainer, which is the EClass behind the Extended
 	 * Element ID. It can be known thanks to the dialog or must be computed from
 	 * the ID value
-	 *
-	 * @return
 	 */
 	private EClass getSelectedContainer() {
 		if (selectedContainer != null) {
@@ -214,7 +212,6 @@ public class StringModelFragment extends AbstractComponentEditor<MStringModelFra
 	 * Returns the selectedContainer, which is the EClass behind the Extended
 	 * Element ID. It can be known thanks to the dialog or must be computed from the
 	 * ID value
-	 *
 	 */
 	public static EClass findContainerType(MStringModelFragment modelFragment) {
 		// we get the StringModelFragment. If not initialized, no search...
@@ -521,7 +518,6 @@ public class StringModelFragment extends AbstractComponentEditor<MStringModelFra
 	/**
 	 * This method will update the picklist containing the list of possible
 	 * children classes
-	 *
 	 */
 	private void updateChildrenChoice() {
 		selectedContainer = getSelectedContainer();

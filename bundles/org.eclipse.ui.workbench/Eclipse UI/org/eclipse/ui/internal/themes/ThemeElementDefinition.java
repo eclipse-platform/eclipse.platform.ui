@@ -20,7 +20,6 @@ import java.util.ResourceBundle;
 
 /**
  * @since 3.5
- *
  */
 public class ThemeElementDefinition {
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(Theme.class.getName());

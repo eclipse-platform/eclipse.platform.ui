@@ -143,9 +143,6 @@ public class WebBrowserView extends ViewPart implements
 
 	/**
 	 * Return true if the filename has a "web" extension.
-	 *
-	 * @param name
-	 * @return
 	 */
 	protected boolean isWebFile(String name) {
 		return name.endsWith("html") || name.endsWith("htm") || name.endsWith("gif") || //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

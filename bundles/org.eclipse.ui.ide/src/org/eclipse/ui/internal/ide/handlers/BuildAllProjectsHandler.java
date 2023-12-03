@@ -32,9 +32,6 @@ import org.eclipse.ui.internal.ide.actions.BuildUtilities;
  */
 public class BuildAllProjectsHandler extends AbstractHandler {
 
-	/**
-	 * @throws ExecutionException
-	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		if (isEnabled()) {

@@ -53,7 +53,6 @@ public final class Bug74990Test {
 	 *
 	 * @throws PartInitException If something goes wrong creating the part to which
 	 *                           this handler is tied.
-	 *
 	 */
 	@Test
 	public final void testPartIdSubmission() throws PartInitException {

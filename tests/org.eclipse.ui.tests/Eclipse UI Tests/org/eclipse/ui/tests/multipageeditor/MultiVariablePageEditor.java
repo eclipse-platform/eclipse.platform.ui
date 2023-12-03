@@ -118,7 +118,6 @@ public class MultiVariablePageEditor extends MultiPageEditorPart {
 
 	/**
 	 * Add a page with a composite for testing.
-	 *
 	 */
 	public void addLastPage() {
 		lastPage = new Composite(getContainer(), SWT.NONE);
@@ -129,7 +128,6 @@ public class MultiVariablePageEditor extends MultiPageEditorPart {
 
 	/**
 	 * remove the last page for testing.
-	 *
 	 */
 	public void removeLastPage() {
 		if (getPageCount() > 0) {

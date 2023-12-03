@@ -63,9 +63,6 @@ public class SashRenderer extends SWTPartRenderer {
 		forceLayout(parent);
 	}
 
-	/**
-	 * @param pscModel
-	 */
 	protected void forceLayout(MElementContainer<MUIElement> pscModel) {
 		if (processedContent != 0) {
 			return;

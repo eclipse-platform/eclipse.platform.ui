@@ -26,7 +26,6 @@ import org.eclipse.ui.IMemento;
  * @noimplement This interface is not intended to be implemented by clients.
  * @see ICommonLabelProvider
  * @see ICommonContentProvider
- *
  */
 public interface ICommonContentExtensionSite {
 

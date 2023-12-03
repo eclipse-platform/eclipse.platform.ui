@@ -49,9 +49,6 @@ public abstract class AbstractWorkingSetPulldownDelegate
 
 	private IWorkbenchWindow window;
 
-	/**
-	 *
-	 */
 	public AbstractWorkingSetPulldownDelegate() {
 		super();
 	}
@@ -106,9 +103,6 @@ public abstract class AbstractWorkingSetPulldownDelegate
 		});
 	}
 
-	/**
-	 * @param m
-	 */
 	protected abstract void fillMenu(Menu m);
 
 	/**

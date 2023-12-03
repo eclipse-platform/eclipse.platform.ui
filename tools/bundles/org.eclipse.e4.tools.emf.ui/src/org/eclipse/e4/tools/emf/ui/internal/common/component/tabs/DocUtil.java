@@ -23,7 +23,6 @@ import org.w3c.dom.Element;
  * Helper functions for working with documents.
  *
  * @author Steven Spungin
- *
  */
 @SuppressWarnings("restriction")
 public class DocUtil {

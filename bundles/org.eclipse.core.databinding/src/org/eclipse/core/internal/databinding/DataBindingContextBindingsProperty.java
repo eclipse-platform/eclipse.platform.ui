@@ -25,7 +25,6 @@ import org.eclipse.core.databinding.property.list.ListProperty;
 
 /**
  * @since 3.3
- *
  */
 public final class DataBindingContextBindingsProperty extends ListProperty<DataBindingContext, Binding> {
 	@Override

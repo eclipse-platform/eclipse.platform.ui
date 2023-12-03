@@ -23,7 +23,6 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 public class UserFileParser {
 	/**
 	 * Return the fabricated result for this example.
-	 *
 	 */
 	private static IAdaptable getFabricatedResult() {
 		// returns fabricated input.
@@ -129,7 +128,6 @@ public class UserFileParser {
 	/**
 	 * Parse the input given by the argument. For this example we do no parsing and return
 	 * a fabricated result.
-	 *
 	 */
 	public IAdaptable parse(IDocumentProvider documentProvider) {
 

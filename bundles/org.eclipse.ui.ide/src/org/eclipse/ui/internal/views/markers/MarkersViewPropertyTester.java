@@ -21,7 +21,6 @@ import org.eclipse.core.expressions.PropertyTester;
  * generator is being shown.
  *
  * @since 3.4
- *
  */
 public class MarkersViewPropertyTester extends PropertyTester {
 
@@ -62,8 +61,6 @@ public class MarkersViewPropertyTester extends PropertyTester {
 	/**
 	 * Test if the content generator in the args match the receiver.
 	 *
-	 * @param view
-	 * @param args
 	 * @return boolean
 	 */
 	private boolean testContentGenerator(ExtendedMarkersView view, Object[] args) {

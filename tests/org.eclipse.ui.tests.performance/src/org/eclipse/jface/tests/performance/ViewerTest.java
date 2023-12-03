@@ -25,7 +25,6 @@ import org.eclipse.ui.tests.performance.BasicPerformanceTest;
 
 /**
  * The LinearViewerTest is a test that tests viewers.
- *
  */
 public abstract class ViewerTest extends BasicPerformanceTest {
 

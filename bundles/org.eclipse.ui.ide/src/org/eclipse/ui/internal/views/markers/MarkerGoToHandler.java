@@ -19,7 +19,6 @@ import org.eclipse.ui.views.markers.MarkerViewHandler;
 /**
  * MarkerGoToHandler is the handler for the go to action.
  * @since 3.4
- *
  */
 public class MarkerGoToHandler extends MarkerViewHandler {
 

@@ -25,12 +25,8 @@ import org.eclipse.swt.widgets.DateTime;
 
 /**
  * @since 3.2
- *
  */
 public class DateTimeSelectionProperty extends WidgetValueProperty<DateTime, Date> {
-	/**
-	 *
-	 */
 	public DateTimeSelectionProperty() {
 		super(SWT.Selection);
 	}

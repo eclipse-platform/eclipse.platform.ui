@@ -25,7 +25,6 @@ import org.eclipse.ui.navigator.INavigatorContentService;
 
 /**
  * @since 3.2
- *
  */
 public class CommonFilterDescriptorManager {
 
@@ -49,9 +48,6 @@ public class CommonFilterDescriptorManager {
 		new CommonFilterDescriptorRegistry().readRegistry();
 	}
 
-	/**
-	 *
-	 */
 	public static final boolean FOR_UI = true;
 
 	/**
@@ -91,7 +87,6 @@ public class CommonFilterDescriptorManager {
 	}
 
 	/**
-	 * @param id
 	 * @return the CommonFilterDescriptor, if found
 	 */
 	public CommonFilterDescriptor getFilterById(String id) {

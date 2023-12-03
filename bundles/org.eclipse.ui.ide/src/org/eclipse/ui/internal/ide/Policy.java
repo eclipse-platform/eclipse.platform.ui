@@ -19,7 +19,6 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * Policy is the class for the debug arguments in the ide.
- *
  */
 public class Policy {
 

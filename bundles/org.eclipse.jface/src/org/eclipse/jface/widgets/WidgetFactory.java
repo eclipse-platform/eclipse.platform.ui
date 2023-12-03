@@ -71,7 +71,6 @@ import org.eclipse.swt.widgets.TreeColumn;
  * </p>
  *
  * @since 3.18
- *
  */
 public final class WidgetFactory {
 	private WidgetFactory() {

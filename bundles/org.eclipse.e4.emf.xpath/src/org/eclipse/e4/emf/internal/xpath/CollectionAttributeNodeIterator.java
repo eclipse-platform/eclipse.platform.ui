@@ -36,7 +36,6 @@ import org.apache.commons.jxpath.ri.model.NodePointer;
 /**
  * Combines attribute node iterators of all elements of a collection into one
  * aggregate attribute node iterator.
- *
  */
 public class CollectionAttributeNodeIterator extends CollectionNodeIterator {
 

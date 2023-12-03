@@ -45,7 +45,6 @@ import org.eclipse.swt.widgets.TableItem;
  * alternate approaches e.g. taking a screenshot of the control
  *
  * @author Tom Schindl &lt;tom.schindl@bestsolution.at&gt;
- *
  */
 public class Snippet054NativeControlsInViewers {
 
@@ -178,9 +177,6 @@ public class Snippet054NativeControlsInViewers {
 		return elements;
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display();
 

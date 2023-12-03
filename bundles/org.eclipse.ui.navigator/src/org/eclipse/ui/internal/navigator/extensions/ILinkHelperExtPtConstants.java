@@ -16,7 +16,6 @@ package org.eclipse.ui.internal.navigator.extensions;
 
 /**
  * @since 3.2
- *
  */
 public interface ILinkHelperExtPtConstants {
 

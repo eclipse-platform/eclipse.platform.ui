@@ -1,5 +1,3 @@
-/**
- */
 package org.eclipse.e4.emf.xpath.test.model.xpathtest.impl;
 
 import java.util.Collection;

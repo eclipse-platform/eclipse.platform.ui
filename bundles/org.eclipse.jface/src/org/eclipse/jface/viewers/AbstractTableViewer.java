@@ -56,7 +56,6 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 
 		/**
 		 * Create a new instance of the receiver.
-		 *
 		 */
 		public VirtualManager() {
 			addTableListener();
@@ -109,7 +108,6 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		/**
 		 * Get the element at index.Resolve it lazily if this is available.
 		 *
-		 * @param index
 		 * @return Object or <code>null</code> if it could not be found
 		 */
 		protected Object resolveElement(int index) {
@@ -124,9 +122,6 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 
 		/**
 		 * A non visible item has been added.
-		 *
-		 * @param element
-		 * @param index
 		 */
 		public void notVisibleAdded(Object element, int index) {
 
@@ -147,8 +142,6 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		/**
 		 * The elements with the given indices need to be removed from the
 		 * cache.
-		 *
-		 * @param indices
 		 */
 		public void removeIndices(int[] indices) {
 			if (indices.length == 1) {
@@ -173,9 +166,6 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		/**
 		 * The elements between the given indices (inclusive) need to be removed
 		 * from the cache.
-		 *
-		 * @param from
-		 * @param to
 		 */
 		public void removeIndicesFromTo(int from, int to) {
 			int indexAfterTo = to + 1;
@@ -189,16 +179,12 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		}
 
 		/**
-		 * @param element
 		 * @return the index of the element in the cache, or null
 		 */
 		public int find(Object element) {
 			return Arrays.asList(cachedElements).indexOf(element);
 		}
 
-		/**
-		 * @param count
-		 */
 		public void adjustCacheSize(int count) {
 			if (count == cachedElements.length) {
 				return;
@@ -240,8 +226,6 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	/**
 	 * Initialize the virtual manager to manage the virtual state if the table
 	 * is VIRTUAL. If not use the default no-op version.
-	 *
-	 * @param style
 	 */
 	private void initializeVirtualManager(int style) {
 		if ((style & SWT.VIRTUAL) == 0) {
@@ -292,7 +276,6 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	/**
 	 * Create a new TableItem at index if required.
 	 *
-	 * @param element
 	 * @param index
 	 *
 	 * @since 3.1
@@ -1489,7 +1472,6 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * @param indices the array of indices for the items to select
 	 *
 	 * @exception IllegalArgumentException - if the array of indices is null
-	 *
 	 */
 	protected abstract void doSelect(int[] indices);
 

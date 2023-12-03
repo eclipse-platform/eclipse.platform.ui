@@ -34,16 +34,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-/**
- *
- */
 public class TrimDropAgent extends DropAgent {
 	private SideValue side;
 	private MTrimBar trimBar;
 
-	/**
-	 * @param manager
-	 */
 	public TrimDropAgent(DnDManager manager) {
 		super(manager);
 	}

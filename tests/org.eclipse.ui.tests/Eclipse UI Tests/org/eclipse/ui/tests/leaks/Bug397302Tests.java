@@ -28,7 +28,6 @@ import org.junit.rules.TestWatcher;
 
 /**
  * @since 3.5
- *
  */
 public class Bug397302Tests {
 	@Rule
@@ -36,7 +35,6 @@ public class Bug397302Tests {
 
 	/**
 	 * @since 3.5
-	 *
 	 */
 	private static class TestListener implements ISourceProviderListener {
 
@@ -46,8 +44,6 @@ public class Bug397302Tests {
 			return callCount;
 		}
 
-		/**
-		 */
 		public TestListener() {
 		}
 
@@ -80,9 +76,6 @@ public class Bug397302Tests {
 			return new String[] {};
 		}
 
-		/**
-		 *
-		 */
 		public void callOut() {
 			this.fireSourceChanged(0, Collections.EMPTY_MAP);
 		}

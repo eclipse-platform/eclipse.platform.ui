@@ -213,9 +213,6 @@ public class IDEWorkbenchActivityHelper {
 		}
 	}
 
-	/**
-	 * @param projectsToUpdate
-	 */
 	private void processProjects(Set<IProject> projectsToUpdate) {
 		boolean needsUpdate = false;
 		for (IProject project : projectsToUpdate) {

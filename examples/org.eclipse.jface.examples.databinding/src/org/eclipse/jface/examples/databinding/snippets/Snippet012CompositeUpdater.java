@@ -51,10 +51,6 @@ public class Snippet012CompositeUpdater {
 		display.dispose();
 	}
 
-	/**
-	 * @param display
-	 * @return
-	 */
 	private static Shell createShell() {
 		Shell shell = new Shell();
 

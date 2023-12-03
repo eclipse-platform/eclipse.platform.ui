@@ -67,7 +67,6 @@ public class TableFontProviderTest extends StructuredViewerTest {
 
 	/**
 	 * Test that the fonts are being set.
-	 *
 	 */
 	@Test
 	public void testTableItemsFontProvider() {

@@ -21,15 +21,12 @@ import org.eclipse.emf.ecore.EObject;
  * Convenience methods for accessing EMF Objects
  *
  * @author Steven Spungin
- *
  */
 public class EmfUtil {
 	/**
 	 * Returns the EAttribute with the given name for the specified object, or
 	 * null if non-existent
 	 *
-	 * @param eObject
-	 * @param attName
 	 * @return the EAttribute with the given name for the specified object, or
 	 *         null if non-existent
 	 */
@@ -52,8 +49,6 @@ public class EmfUtil {
 	 * specified object. Returns null if the attribute is not define, or has
 	 * null as the value.
 	 *
-	 * @param eObject
-	 * @param attName
 	 * @return the EAttribute value with the given attribute name for the
 	 *         specified object, Returns null if the attribute is not defined,
 	 *         or has null as the value.
@@ -69,10 +64,6 @@ public class EmfUtil {
 	/**
 	 * Returns the EAttribute value with the given attribute name for the
 	 * specified object. Throws if the attribute is not defined.
-	 *
-	 * @param eObject
-	 * @param attName
-	 * @throws Exception
 	 */
 	static public Object getAttributeValueThrows(EObject eObject, String attName) throws Exception {
 		final EAttribute att = getAttribute(eObject, attName);

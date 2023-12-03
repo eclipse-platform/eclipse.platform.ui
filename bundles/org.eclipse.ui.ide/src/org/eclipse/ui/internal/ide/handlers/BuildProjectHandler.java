@@ -35,13 +35,9 @@ import org.eclipse.ui.part.FileEditorInput;
  * Default Handler for 'Build Project' command
  *
  * @since 4.3
- *
  */
 public class BuildProjectHandler extends AbstractHandler {
 
-	/**
-	 * @throws ExecutionException
-	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);

@@ -76,7 +76,6 @@ public class MenuAdditionCacheEntry {
 	 * Test whether the location URI is in one of the pre-defined workbench trim
 	 * areas.
 	 *
-	 * @param location
 	 * @return true if the URI is in workbench trim area.
 	 */
 	static boolean isInWorkbenchTrim(MenuLocationURI location) {
@@ -171,10 +170,6 @@ public class MenuAdditionCacheEntry {
 		processMenuChildren(menuContributions, configElement, filter);
 	}
 
-	/**
-	 * @param menuContributions
-	 * @param filter
-	 */
 	private void processMenuChildren(ArrayList<MMenuContribution> menuContributions, IConfigurationElement element,
 			String filter) {
 		IConfigurationElement[] menus = element.getChildren(IWorkbenchRegistryConstants.TAG_MENU);
@@ -236,10 +231,6 @@ public class MenuAdditionCacheEntry {
 		}
 	}
 
-	/**
-	 * @param iConfigurationElement
-	 * @return
-	 */
 	private MMenuElement createMenuCommandAddition(IConfigurationElement commandAddition) {
 		MHandledMenuItem item = MenuFactoryImpl.eINSTANCE.createHandledMenuItem();
 		item.getPersistedState().put(IWorkbench.PERSIST_STATE, Boolean.FALSE.toString());

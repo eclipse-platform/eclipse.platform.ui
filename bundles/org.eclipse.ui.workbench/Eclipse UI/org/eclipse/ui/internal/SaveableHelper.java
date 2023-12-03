@@ -165,7 +165,6 @@ public class SaveableHelper {
 	 *
 	 * @param modelSource the model source
 	 * @param window      the workbench window
-	 * @param confirm
 	 * @return <code>true</code> for continue, <code>false</code> if the operation
 	 *         was canceled or an error occurred while saving.
 	 */
@@ -306,12 +305,6 @@ public class SaveableHelper {
 		return false;
 	}
 
-	/**
-	 * @param model
-	 * @param progressMonitor
-	 * @param shellProvider
-	 * @param blockUntilSaved
-	 */
 	public static void doSaveModel(final Saveable model, IProgressMonitor progressMonitor,
 			final IShellProvider shellProvider, boolean blockUntilSaved) {
 		try {
@@ -419,7 +412,6 @@ public class SaveableHelper {
 	 * Waits for the background save job (if any) of the given saveable to complete.
 	 * This may open a progress dialog with the option to cancel.
 	 *
-	 * @param modelToSave
 	 * @return true if the user canceled.
 	 */
 	private static boolean waitForBackgroundSaveJob(final Saveable model) {
@@ -432,7 +424,6 @@ public class SaveableHelper {
 	 * Waits for the background save jobs (if any) of the given saveables to
 	 * complete. This may open a progress dialog with the option to cancel.
 	 *
-	 * @param modelsToSave
 	 * @return true if the user canceled.
 	 */
 	public static boolean waitForBackgroundSaveJobs(final List modelsToSave) {

@@ -424,7 +424,6 @@ import org.eclipse.swt.widgets.ToolItem;
 
 	/**
 	 * Hides the Cancel button and ProgressIndicator.
-	 *
 	 */
 	protected void hideProgress() {
 
@@ -588,7 +587,6 @@ import org.eclipse.swt.widgets.ToolItem;
 
 	/**
 	 * Makes the Cancel button visible.
-	 *
 	 */
 	protected void showButton() {
 		if (fToolBar != null && !fToolBar.isDisposed()) {
@@ -601,7 +599,6 @@ import org.eclipse.swt.widgets.ToolItem;
 
 	/**
 	 * Shows the Cancel button and ProgressIndicator.
-	 *
 	 */
 	protected void showProgress() {
 		if (!fProgressIsVisible && !isDisposed()) {

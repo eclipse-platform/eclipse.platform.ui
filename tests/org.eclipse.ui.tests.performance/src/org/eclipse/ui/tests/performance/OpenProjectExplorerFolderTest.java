@@ -56,7 +56,6 @@ import org.osgi.framework.Bundle;
  * Note, since this test companion "ContentDescriberForTestsOnly", simply uses
  * "sleep" to simulate computations, it only effects Elapsed Time (not CPU
  * Time).
- *
  */
 public class OpenProjectExplorerFolderTest extends PerformanceTestCase {
 	/*

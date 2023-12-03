@@ -41,9 +41,6 @@ public class DefaultWebBrowser extends AbstractWebBrowser {
 
 	/**
 	 * Creates the browser instance.
-	 *
-	 * @param support
-	 * @param id
 	 */
 	public DefaultWebBrowser(DefaultWorkbenchBrowserSupport support, String id) {
 		super(id);
@@ -118,7 +115,6 @@ public class DefaultWebBrowser extends AbstractWebBrowser {
 	/**
 	 * This method encodes the url, removes the spaces from the url and replaces the
 	 * same with <code>"%20"</code>. This method is required to fix Bug 77840.
-	 *
 	 */
 	private String urlEncodeForSpaces(char[] input) {
 		StringBuilder retu = new StringBuilder(input.length);

@@ -128,7 +128,6 @@ public class TarLeveledStructureProvider implements
 	/**
 	 * Returns the resource attributes for this file.
 	 *
-	 * @param element
 	 * @return the attributes of the file
 	 */
 	public ResourceAttributes getResourceAttributes(Object element) {

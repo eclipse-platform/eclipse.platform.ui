@@ -43,7 +43,6 @@ import org.eclipse.jface.text.source.ISourceViewerExtension2;
  * </ul>
  *
  * @since 3.23
- *
  */
 public interface ITextViewerLifecycle {
 

@@ -38,9 +38,6 @@ public class UIEventPublisher extends EContentAdapter {
 
 	private IEclipseContext context;
 
-	/**
-	 * @param e4Context
-	 */
 	public UIEventPublisher(IEclipseContext e4Context) {
 		this.context = e4Context;
 	}

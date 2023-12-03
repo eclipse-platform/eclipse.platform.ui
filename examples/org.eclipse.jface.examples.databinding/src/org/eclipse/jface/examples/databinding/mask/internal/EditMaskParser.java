@@ -28,7 +28,6 @@ public class EditMaskParser {
 
 	/**
 	 * @param editMask The complete edit mask
-	 * @throws EditMaskParseException
 	 */
 	public EditMaskParser(String editMask) throws EditMaskParseException {
 		List<EditMaskLexerAndToken> tokens = new LinkedList<>();

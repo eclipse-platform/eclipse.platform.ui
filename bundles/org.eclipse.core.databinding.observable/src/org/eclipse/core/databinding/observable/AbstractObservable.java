@@ -89,9 +89,6 @@ public abstract class AbstractObservable extends ChangeManager implements IObser
 		return disposed;
 	}
 
-	/**
-	 *
-	 */
 	@Override
 	public synchronized void dispose() {
 		if (!disposed) {
