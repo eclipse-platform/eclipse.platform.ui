@@ -24,7 +24,6 @@ public class SchemeInformation implements ISchemeInformation {
 	private boolean handled;
 	private String handlerInstanceLocation;
 
-	@SuppressWarnings("javadoc")
 	public SchemeInformation(String schemeName, String schemeDescription) {
 		this.name = schemeName;
 		this.description = schemeDescription;
@@ -53,7 +52,6 @@ public class SchemeInformation implements ISchemeInformation {
 		this.handled = handled;
 	}
 
-	@SuppressWarnings("javadoc")
 	public void setHandlerLocation(String handlerInstanceLocation) {
 		this.handlerInstanceLocation = handlerInstanceLocation;
 	}

@@ -1772,7 +1772,6 @@ public class StackRenderer extends LazyStackRenderer {
 	 * container. The tab folder may need to layout itself again if a part's toolbar
 	 * has been changed.
 	 */
-	@SuppressWarnings("javadoc")
 	public class TabStateHandler implements EventHandler {
 
 		@Override

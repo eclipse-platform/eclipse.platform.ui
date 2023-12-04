@@ -847,7 +847,7 @@ public class WelcomeEditor extends EditorPart {
 	 *
 	 * @see IEditorPart
 	 */
-	public void gotoMarker(@SuppressWarnings({ "unused", "javadoc" }) IMarker marker) {
+	public void gotoMarker(@SuppressWarnings({ "unused" }) IMarker marker) {
 		// do nothing
 	}
 
