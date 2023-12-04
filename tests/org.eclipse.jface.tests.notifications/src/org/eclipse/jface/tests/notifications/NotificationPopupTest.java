@@ -157,7 +157,7 @@ public class NotificationPopupTest {
 		return allOf(isA(Label.class), new LabelMatcher(expectedImage));
 	}
 
-	private class LabelMatcher extends BaseMatcher<Label> {
+	private static class LabelMatcher extends BaseMatcher<Label> {
 
 		String expectedText;
 		private Image expectedImage;

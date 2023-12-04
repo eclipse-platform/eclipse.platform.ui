@@ -271,7 +271,7 @@ public abstract class AbstractIconDialogWithHardcodedScope extends SaveDialogBou
 		return value;
 	}
 
-	private class IconMatchCallback {
+	private static class IconMatchCallback {
 		private volatile boolean cancel;
 		private final IObservableList<IFile> list;
 

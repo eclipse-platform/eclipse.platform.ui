@@ -325,7 +325,7 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 		}
 	}
 
-	private final class ItemLabelProvider extends LabelProvider implements ITableLabelProvider {
+	private static final class ItemLabelProvider extends LabelProvider implements ITableLabelProvider {
 
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
