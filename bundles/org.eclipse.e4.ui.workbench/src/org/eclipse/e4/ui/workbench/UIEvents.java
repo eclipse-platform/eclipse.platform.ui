@@ -401,7 +401,6 @@ public class UIEvents {
 		return eventBroker.send(topic, argMap);
 	}
 
-	@SuppressWarnings("javadoc")
 	@Deprecated
 	/**
 	 * @deprecated Subscribe to an all attribute events on a topic using the TOPIC_ALL constant directly
@@ -410,7 +409,6 @@ public class UIEvents {
 		return topic + TOPIC_SEP + ALL_SUB_TOPICS;
 	}
 
-	@SuppressWarnings("javadoc")
 	@Deprecated
 	/**
 	 * @deprecated Subscribe to an attribute event by using the TOPIC_<attribute> constant directly
@@ -419,7 +417,6 @@ public class UIEvents {
 		return topic + TOPIC_SEP + attrName + TOPIC_SEP + ALL_SUB_TOPICS;
 	}
 
-	@SuppressWarnings("javadoc")
 	@Deprecated
 	/**
 	 * @deprecated Subscribing to a particular event type on a topic attribute is not longer supported
@@ -440,7 +437,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface BindingContext {
 
 		// Topics that can be subscribed to
@@ -462,7 +458,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface BindingTable {
 
 		// Topics that can be subscribed to
@@ -482,7 +477,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface BindingTableContainer {
 
 		// Topics that can be subscribed to
@@ -502,7 +496,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface Bindings {
 
 		// Topics that can be subscribed to
@@ -520,7 +513,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface Category {
 
 		// Topics that can be subscribed to
@@ -550,7 +542,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface Command {
 
 		// Topics that can be subscribed to
@@ -592,7 +583,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface CommandParameter {
 
 		// Topics that can be subscribed to
@@ -614,7 +604,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface Handler {
 
 		// Topics that can be subscribed to
@@ -632,7 +621,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface HandlerContainer {
 
 		// Topics that can be subscribed to
@@ -650,7 +638,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface KeyBinding {
 
 		// Topics that can be subscribed to
@@ -670,7 +657,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface KeySequence {
 
 		// Topics that can be subscribed to
@@ -688,7 +674,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface Parameter {
 
 		// Topics that can be subscribed to
@@ -708,7 +693,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface PartDescriptor {
 
 		// Topics that can be subscribed to
@@ -764,7 +748,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface PartDescriptorContainer {
 
 		// Topics that can be subscribed to
@@ -783,7 +766,6 @@ public class UIEvents {
 	 * @since 1.1
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface Application {
 
 		// Topics that can be subscribed to
@@ -823,7 +805,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface ApplicationElement {
 
 		// Topics that can be subscribed to
@@ -849,7 +830,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface Contribution {
 
 		// Topics that can be subscribed to
@@ -869,7 +849,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface StringToObjectMap {
 
 		// Topics that can be subscribed to
@@ -889,7 +868,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface StringToStringMap {
 
 		// Topics that can be subscribed to
@@ -909,7 +887,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface Perspective {
 
 		// Topics that can be subscribed to
@@ -931,7 +908,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface Placeholder {
 
 		// Topics that can be subscribed to
@@ -951,7 +927,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface Part {
 
 		// Topics that can be subscribed to
@@ -990,7 +965,6 @@ public class UIEvents {
 	 * @since 1.1
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface TrimBar {
 
 		// Topics that can be subscribed to
@@ -1008,7 +982,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface TrimmedWindow {
 
 		// Topics that can be subscribed to
@@ -1026,7 +999,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface Window {
 
 		// Topics that can be subscribed to
@@ -1056,7 +1028,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface Context {
 
 		// Topics that can be subscribed to
@@ -1078,7 +1049,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface CoreExpression {
 
 		// Topics that can be subscribed to
@@ -1098,7 +1068,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface Dirtyable {
 
 		// Topics that can be subscribed to
@@ -1116,7 +1085,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface ElementContainer {
 
 		// Topics that can be subscribed to
@@ -1136,7 +1104,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface GenericTile {
 
 		// Topics that can be subscribed to
@@ -1154,7 +1121,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface GenericTrimContainer {
 
 		// Topics that can be subscribed to
@@ -1173,7 +1139,6 @@ public class UIEvents {
 	 * @since 1.5
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface ImperativeExpression {
 
 		// Topics that can be subscribed to
@@ -1191,7 +1156,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface SnippetContainer {
 
 		// Topics that can be subscribed to
@@ -1209,7 +1173,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface UIElement {
 
 		// Topics that can be subscribed to
@@ -1255,7 +1218,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface UILabel {
 
 		// Topics that can be subscribed to
@@ -1295,7 +1257,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface HandledItem {
 
 		// Topics that can be subscribed to
@@ -1317,7 +1278,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface Item {
 
 		// Topics that can be subscribed to
@@ -1339,7 +1299,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface Menu {
 
 		// Topics that can be subscribed to
@@ -1357,7 +1316,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface MenuContribution {
 
 		// Topics that can be subscribed to
@@ -1377,7 +1335,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface MenuContributions {
 
 		// Topics that can be subscribed to
@@ -1395,7 +1352,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface MenuElement {
 
 		// Topics that can be subscribed to
@@ -1413,7 +1369,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface OpaqueMenuItem {
 
 		// Topics that can be subscribed to
@@ -1431,7 +1386,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface OpaqueMenuSeparator {
 
 		// Topics that can be subscribed to
@@ -1449,7 +1403,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface OpaqueToolItem {
 
 		// Topics that can be subscribed to
@@ -1467,7 +1420,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface RenderedMenu {
 
 		// Topics that can be subscribed to
@@ -1485,7 +1437,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface RenderedMenuItem {
 
 		// Topics that can be subscribed to
@@ -1503,7 +1454,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface RenderedToolBar {
 
 		// Topics that can be subscribed to
@@ -1521,7 +1471,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface ToolBarContribution {
 
 		// Topics that can be subscribed to
@@ -1541,7 +1490,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface ToolBarContributions {
 
 		// Topics that can be subscribed to
@@ -1559,7 +1507,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface ToolItem {
 
 		// Topics that can be subscribed to
@@ -1577,7 +1524,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface TrimContribution {
 
 		// Topics that can be subscribed to
@@ -1597,7 +1543,6 @@ public class UIEvents {
 	/**
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	@SuppressWarnings("javadoc")
 	public interface TrimContributions {
 
 		// Topics that can be subscribed to

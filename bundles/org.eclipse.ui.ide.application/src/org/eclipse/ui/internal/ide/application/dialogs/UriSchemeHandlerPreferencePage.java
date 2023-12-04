@@ -101,7 +101,6 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 	private Composite handlerComposite;
 	private volatile boolean isLoading = false;
 
-	@SuppressWarnings("javadoc")
 	public UriSchemeHandlerPreferencePage() {
 		super.setDescription(UrlHandlerPreferencePage_Page_Description);
 	}

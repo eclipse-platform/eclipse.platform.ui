@@ -17,7 +17,6 @@ package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import org.eclipse.osgi.util.NLS;
 
-@SuppressWarnings("javadoc")
 public class Messages extends NLS {
 
 	public static String ToolBarManagerRenderer_MenuCloseText;

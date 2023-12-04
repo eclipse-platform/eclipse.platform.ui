@@ -22,7 +22,6 @@ import org.eclipse.urischeme.IOperatingSystemRegistration;
 import org.eclipse.urischeme.IScheme;
 import org.eclipse.urischeme.ISchemeInformation;
 
-@SuppressWarnings("javadoc")
 public class RegistrationMacOsX implements IOperatingSystemRegistration {
 
 	private static final String PLIST_PATH_SUFFIX = "/Contents/Info.plist"; //$NON-NLS-1$

@@ -39,7 +39,6 @@ public class CommandLineOptionModelProcessor {
 	@Inject
 	private EModelService modelService;
 
-	@SuppressWarnings("javadoc")
 	public void process() {
 		selectForcedPerspective();
 	}
