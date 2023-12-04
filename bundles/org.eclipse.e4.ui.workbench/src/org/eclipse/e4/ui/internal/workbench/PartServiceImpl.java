@@ -1042,6 +1042,7 @@ public class PartServiceImpl implements EPartService {
 					addToLastContainer(category, providedPart);
 				} else {
 					// add the part to the container
+					@SuppressWarnings("unchecked")
 					MElementContainer<MPartSashContainerElement> container = containers.get(0);
 					MPlaceholder placeholder = providedPart.getCurSharedRef();
 					if (placeholder == null) {

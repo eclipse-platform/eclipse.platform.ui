@@ -279,6 +279,7 @@ public class ViewWithSaveables extends ViewPart implements ISaveablesSource,
 				Diffs.createMapDiffSingleChange(
 				writableValueToElement.get(event.getSource()), event.diff.getOldValue(), event.diff.getNewValue()));
 
+		@SuppressWarnings("unchecked")
 		public DirtyObservableMap(IObservableSet knownElements) {
 			super(knownElements);
 			init();

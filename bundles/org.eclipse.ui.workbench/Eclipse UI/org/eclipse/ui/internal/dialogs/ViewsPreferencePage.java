@@ -392,7 +392,6 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		});
 	}
 
-	@SuppressWarnings("unchecked")
 	private void selectColorsAndFontsTheme(String colorAndFontThemeId) {
 		if (colorAndFontThemeId == null) {
 			colorAndFontThemeId = currentColorsAndFontsTheme.getId();

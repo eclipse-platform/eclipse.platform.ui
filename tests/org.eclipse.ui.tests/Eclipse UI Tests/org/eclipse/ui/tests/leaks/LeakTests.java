@@ -82,6 +82,7 @@ public class LeakTests extends UITestCase {
 		assertTrue("Reference not enqueued", flag);
 	}
 
+	@SuppressWarnings("unchecked")
 	private Reference createReference(ReferenceQueue queue, Object object) {
 		return new PhantomReference<>(object, queue);
 	}

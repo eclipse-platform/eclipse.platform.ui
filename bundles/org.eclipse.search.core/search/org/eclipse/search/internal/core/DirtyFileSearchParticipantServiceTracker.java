@@ -62,6 +62,7 @@ public class DirtyFileSearchParticipantServiceTracker
 			}
 		}
 		return new DirtyFileProvider() {
+			@SuppressWarnings("unchecked")
 			@Override
 			public Map<IFile, IDocument> dirtyFiles() {
 				return Collections.EMPTY_MAP;

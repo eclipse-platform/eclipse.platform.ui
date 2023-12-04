@@ -187,7 +187,6 @@ public final class ActivityCategoryPreferencePage extends PreferencePage
 	}
 
 	private class CategoryContentProvider implements IStructuredContentProvider {
-		@SuppressWarnings("unchecked")
 		@Override
 		public Object[] getElements(Object inputElement) {
 			// convert to category objects

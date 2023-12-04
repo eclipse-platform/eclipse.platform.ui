@@ -99,7 +99,6 @@ public class RGBVisibleContrastColorFactory implements IColorFactory, IExecutabl
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
 			throws CoreException {
 		if (data instanceof Hashtable) {
-			@SuppressWarnings("unchecked")
 			Hashtable<String, String> table = (Hashtable<String, String>) data;
 			fg = table.get("foreground"); //$NON-NLS-1$
 			bg = table.get("background"); //$NON-NLS-1$
