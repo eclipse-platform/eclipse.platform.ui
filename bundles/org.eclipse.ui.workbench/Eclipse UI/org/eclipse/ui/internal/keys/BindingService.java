@@ -604,7 +604,6 @@ public final class BindingService implements IBindingService {
 			keyBinding.setKeySequence(binding.getTriggerSequence().toString());
 
 			for (Object obj : parmCmd.getParameterMap().entrySet()) {
-				@SuppressWarnings({ "unchecked" })
 				Map.Entry<String, String> entry = (Map.Entry<String, String>) obj;
 
 				String paramID = entry.getKey();

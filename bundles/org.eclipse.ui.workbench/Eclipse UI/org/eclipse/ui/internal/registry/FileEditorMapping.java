@@ -91,7 +91,6 @@ public class FileEditorMapping extends Object implements IFileEditorMapping, Clo
 	/**
 	 * Clone the receiver.
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public Object clone() {
 		try {

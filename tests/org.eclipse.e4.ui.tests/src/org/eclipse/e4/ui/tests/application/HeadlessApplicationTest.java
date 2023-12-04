@@ -284,6 +284,7 @@ public abstract class HeadlessApplicationTest extends HeadlessApplicationElement
 		return "bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.HeadlessContextPresentationEngine"; //$NON-NLS-1$
 	}
 
+	@SuppressWarnings("unchecked")
 	private void processPartContributions(IEclipseContext context,
 			Resource resource) {
 		IExtensionRegistry registry = context.get(IExtensionRegistry.class);

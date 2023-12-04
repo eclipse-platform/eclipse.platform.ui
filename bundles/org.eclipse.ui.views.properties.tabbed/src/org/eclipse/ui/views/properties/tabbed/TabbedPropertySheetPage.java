@@ -616,6 +616,7 @@ public class TabbedPropertySheetPage
 	 * @param tabs tabs to dispose
 	 * @since 3.6
 	 */
+	@SuppressWarnings("unchecked")
 	protected void disposeTabs(@SuppressWarnings("rawtypes") Collection tabs) {
 		for (Iterator<TabContents> iter = tabs.iterator(); iter.hasNext();) {
 			TabContents tab = iter.next();

@@ -468,7 +468,6 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 			removePage(defaultPageRec, false);
 			defaultPageRec = null;
 		}
-		@SuppressWarnings("unchecked")
 		Map<IWorkbenchPart, PageRec> clone = (Map<IWorkbenchPart, PageRec>) ((HashMap<IWorkbenchPart, PageRec>) mapPartToRec)
 				.clone();
 		clone.values().forEach(rec -> removePage(rec, true));

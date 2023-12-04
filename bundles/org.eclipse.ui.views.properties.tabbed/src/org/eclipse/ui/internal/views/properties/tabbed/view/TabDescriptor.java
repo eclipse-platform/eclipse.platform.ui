@@ -147,6 +147,7 @@ public class TabDescriptor extends AbstractTabDescriptor {
 	 * @param target
 	 *            the section descriptor to append.
 	 */
+	@SuppressWarnings("unchecked")
 	protected boolean append(ISectionDescriptor target) {
 		if (!target.getTargetTab().equals(id)) {
 			return false;
@@ -168,6 +169,7 @@ public class TabDescriptor extends AbstractTabDescriptor {
 	 * @return <code>true</code> if the target descriptor was added to the
 	 *         descriptors list.
 	 */
+	@SuppressWarnings("unchecked")
 	private boolean insertSectionDescriptor(ISectionDescriptor target) {
 		if (target.getAfterSection().equals(TOP)) {
 			getSectionDescriptors().add(0, target);

@@ -234,7 +234,6 @@ public class ShowViewMenu extends ContributionItem {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	private CommandContributionItemParameter getItem(String viewId) {
 		MApplication application = window.getService(MApplication.class);
 		List<MPartDescriptor> descriptors = application.getDescriptors();

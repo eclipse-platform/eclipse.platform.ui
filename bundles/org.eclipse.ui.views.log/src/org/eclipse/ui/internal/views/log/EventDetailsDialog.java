@@ -492,6 +492,7 @@ public class EventDetailsDialog extends TrayDialog {
 	/**
 	 * Sets entry children (Prev-Next navigable) to top-level elements
 	 */
+	@SuppressWarnings("unchecked")
 	private void setEntryChildren() {
 		AbstractEntry[] children = getElements();
 
@@ -505,6 +506,7 @@ public class EventDetailsDialog extends TrayDialog {
 	/**
 	 * Sets entry children (Prev-Next navigable) to children of given entry
 	 */
+	@SuppressWarnings("unchecked")
 	private void setEntryChildren(AbstractEntry entry) {
 		Object[] children = entry.getChildren(entry);
 

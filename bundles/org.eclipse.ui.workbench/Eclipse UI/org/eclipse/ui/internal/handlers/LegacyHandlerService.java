@@ -96,7 +96,6 @@ public class LegacyHandlerService implements IHandlerService {
 			HashSet<HandlerActivation> activationSet = new LinkedHashSet<>();
 			IEclipseContext current = context;
 			while (current != null) {
-				@SuppressWarnings("unchecked")
 				List<HandlerActivation> handlerActivations = (List<HandlerActivation>) current
 						.getLocal(LEGACY_H_ID + commandId);
 				if (handlerActivations != null) {
@@ -177,7 +176,6 @@ public class LegacyHandlerService implements IHandlerService {
 	}
 
 	static void addHandlerActivation(HandlerActivation eActivation) {
-		@SuppressWarnings("unchecked")
 		List<HandlerActivation> handlerActivations = (List<HandlerActivation>) eActivation.context
 				.getLocal(LEGACY_H_ID + eActivation.getCommandId());
 		if (handlerActivations == null) {
@@ -194,7 +192,6 @@ public class LegacyHandlerService implements IHandlerService {
 	}
 
 	static void removeHandlerActivation(HandlerActivation eActivation) {
-		@SuppressWarnings("unchecked")
 		List<HandlerActivation> handlerActivations = (List<HandlerActivation>) eActivation.context
 				.getLocal(LEGACY_H_ID + eActivation.getCommandId());
 		if (handlerActivations == null) {

@@ -337,7 +337,6 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 	 * columns. Takes care of various enablements.
 	 */
 	void handleVisibleSelection(ISelection selection) {
-		@SuppressWarnings("unchecked")
 		List<T> selVCols = ((IStructuredSelection) selection).toList();
 		List<T> allVCols = getVisible();
 		toNonVisibleBtt.setEnabled(selVCols.size() > 0 && allVCols.size() > selVCols.size());
@@ -388,7 +387,6 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 	 */
 	void handleDownButton(Event e) {
 		IStructuredSelection selection = visibleViewer.getStructuredSelection();
-		@SuppressWarnings("unchecked")
 		List<T> selVCols = selection.toList();
 		List<T> allVCols = getVisible();
 		IColumnUpdater<T> updater = doGetColumnUpdater();
@@ -412,7 +410,6 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 	 */
 	void handleUpButton(Event e) {
 		IStructuredSelection selection = visibleViewer.getStructuredSelection();
-		@SuppressWarnings("unchecked")
 		List<T> selVCols = selection.toList();
 		List<T> allVCols = getVisible();
 		IColumnUpdater<T> updater = doGetColumnUpdater();
@@ -435,7 +432,6 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 	 */
 	void handleToVisibleButton(Event e) {
 		IStructuredSelection selection = nonVisibleViewer.getStructuredSelection();
-		@SuppressWarnings("unchecked")
 		List<T> selVCols = selection.toList();
 		getNonVisible().removeAll(selVCols);
 
@@ -465,7 +461,6 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 			return;
 		}
 		IStructuredSelection structuredSelection = visibleViewer.getStructuredSelection();
-		@SuppressWarnings("unchecked")
 		List<T> selVCols = structuredSelection.toList();
 		getVisible().removeAll(selVCols);
 		getNonVisible().addAll(selVCols);
@@ -594,7 +589,6 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 	private void updateWidth() {
 		try {
 			int width = Integer.parseInt(widthText.getText());
-			@SuppressWarnings("unchecked")
 			T data = (T) visibleViewer.getStructuredSelection().getFirstElement();
 			if (data != null) {
 				IColumnUpdater<T> updater = getColumnUpdater();

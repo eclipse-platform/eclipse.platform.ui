@@ -72,6 +72,7 @@ public abstract class AbstractTabDescriptor implements ITabDescriptor,
 		return tab;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(Object object) {
 		if (object == null) {

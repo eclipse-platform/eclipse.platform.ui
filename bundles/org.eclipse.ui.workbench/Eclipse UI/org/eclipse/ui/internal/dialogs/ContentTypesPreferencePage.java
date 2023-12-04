@@ -474,7 +474,6 @@ public class ContentTypesPreferencePage extends PreferencePage implements IWorkb
 
 	}
 
-	@SuppressWarnings("unchecked")
 	private void createFileAssociations(final Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(2, false));
