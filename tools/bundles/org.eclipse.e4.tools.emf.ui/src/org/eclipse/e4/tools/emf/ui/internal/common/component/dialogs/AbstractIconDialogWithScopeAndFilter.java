@@ -301,7 +301,7 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 		}
 	}
 
-	private class IconMatchCallback {
+	private static class IconMatchCallback {
 		private volatile boolean cancel;
 		private final IObservableList<Entry> list;
 

@@ -34,7 +34,7 @@ import org.eclipse.ui.quickaccess.QuickAccessElement;
  */
 public class OpenFilesystemQuickAccessComputer implements IQuickAccessComputerExtension {
 
-	private class FileElement extends QuickAccessElement {
+	private static class FileElement extends QuickAccessElement {
 
 		private File file;
 

@@ -51,7 +51,7 @@ import org.eclipse.ui.views.markers.internal.MarkerType;
  */
 public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 
-	private class CategoryEntry extends TypesEntry {
+	private static class CategoryEntry extends TypesEntry {
 
 		private Collection<MarkerTypeEntry> children = new ArrayList<>();
 		private String name;
@@ -102,7 +102,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 
 	}
 
-	private class MarkerTypeEntry extends TypesEntry {
+	private static class MarkerTypeEntry extends TypesEntry {
 
 		private CategoryEntry category;
 		private MarkerType markerType;

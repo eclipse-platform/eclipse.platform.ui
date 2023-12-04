@@ -1203,7 +1203,7 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 
 	}
 
-	private class FilterResourcesByLocation extends ViewerFilter {
+	private static class FilterResourcesByLocation extends ViewerFilter {
 
 		private boolean enabled;
 
@@ -1242,7 +1242,7 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 	 * <code>ResourceSelectionHistory</code> provides behavior specific to resources
 	 * - storing and restoring <code>IResource</code>s state to/from XML (memento).
 	 */
-	private class ResourceSelectionHistory extends SelectionHistory {
+	private static class ResourceSelectionHistory extends SelectionHistory {
 
 		@Override
 		protected Object restoreItemFromMemento(IMemento element) {
