@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -53,10 +53,10 @@ public class HTMLBuilder {
 	}
 	
 	public void setColors(RGB bg, RGB fg, RGB link, RGB alink) {
-		this.bgColor = bg;
-		this.fgColor = fg;
-		this.linkColor = link;
-		this.alinkColor = alink;
+		this.bgColor = bg != null ? bg : DEFAULT_BG_COLOR_RGB;
+		this.fgColor = fg != null ? fg : DEFAULT_FG_COLOR_RGB;
+		this.linkColor = link != null ? link : DEFAULT_LINK_COLOR_RGB;
+		this.alinkColor = alink != null ? alink : DEFAULT_ACTIVE_LINK_COLOR_RGB;
 	}
 
 	private static String replace(String text, char c, String s) {

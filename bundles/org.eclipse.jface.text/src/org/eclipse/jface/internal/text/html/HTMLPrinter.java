@@ -63,6 +63,11 @@ public class HTMLPrinter {
 	}
 
 	private static org.eclipse.text.html.RGB fromRGB(RGB val) {
+		// Preserve	null RGB as HTMLBuilder contains the default colors and sets them accordingly
+		// in case of null parameter passed
+		if (val == null) {
+			return null;
+		}
 		return new org.eclipse.text.html.RGB(val.red, val.green, val.blue);
 	}
 	private static void cacheColors(Display display) {
