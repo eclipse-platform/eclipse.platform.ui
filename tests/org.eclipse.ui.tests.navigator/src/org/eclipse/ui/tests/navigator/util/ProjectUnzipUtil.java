@@ -14,11 +14,10 @@
 package org.eclipse.ui.tests.navigator.util;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -107,7 +106,9 @@ public class ProjectUnzipUtil {
 							parentFile.mkdirs();
 						if (!aFile.exists())
 							aFile.createNewFile();
-						copy(zipFile.getInputStream(entry), new FileOutputStream(aFile));
+						try (InputStream in = zipFile.getInputStream(entry)) {
+							Files.write(aFile.toPath(), in.readAllBytes());
+						}
 						if (entry.getTime() > 0)
 							aFile.setLastModified(entry.getTime());
 					}
@@ -121,20 +122,6 @@ public class ProjectUnzipUtil {
 
 	private IPath computeLocation(String name) {
 		return rootLocation.append(name);
-	}
-
-	public static void copy(InputStream in, OutputStream out) throws IOException {
-		byte[] buffer = new byte[1024];
-		try {
-			int n = in.read(buffer);
-			while (n > 0) {
-				out.write(buffer, 0, n);
-				n = in.read(buffer);
-			}
-		} finally {
-			in.close();
-			out.close();
-		}
 	}
 
 	public void setRootLocation(IPath rootLocation) {

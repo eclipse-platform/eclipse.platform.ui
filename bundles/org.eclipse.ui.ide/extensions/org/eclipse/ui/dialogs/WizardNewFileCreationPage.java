@@ -356,89 +356,94 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 		final IPath containerPath = resourceGroup.getContainerFullPath();
 		IPath newFilePath = containerPath.append(resourceGroup.getResource());
 		final IFile newFileHandle = createFileHandle(newFilePath);
-		final InputStream initialContents = getInitialContents();
+		try (InputStream initialContents = getInitialContents()) {
 
-		createLinkTarget();
+			createLinkTarget();
 
-		if (linkTargetPath != null) {
-			URI resolvedPath = newFileHandle.getPathVariableManager().resolveURI(linkTargetPath);
-			try {
-				if (resolvedPath.getScheme() != null && resolvedPath.getSchemeSpecificPart() != null) {
-					IFileStore store = EFS.getStore(resolvedPath);
-					if (!store.fetchInfo().exists()) {
-						MessageDialog dlg = new MessageDialog(getContainer().getShell(),
-								IDEWorkbenchMessages.WizardNewFileCreationPage_createLinkLocationTitle, null,
-								NLS.bind(IDEWorkbenchMessages.WizardNewFileCreationPage_createLinkLocationQuestion,
-										linkTargetPath),
-								MessageDialog.QUESTION_WITH_CANCEL, 0, IDialogConstants.YES_LABEL,
-								IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL);
-						int result = dlg.open();
-						if (result == Window.OK) {
-							store.getParent().mkdir(0, new NullProgressMonitor());
-							OutputStream stream = store.openOutputStream(0, new NullProgressMonitor());
-							stream.close();
+			if (linkTargetPath != null) {
+				URI resolvedPath = newFileHandle.getPathVariableManager().resolveURI(linkTargetPath);
+				try {
+					if (resolvedPath.getScheme() != null && resolvedPath.getSchemeSpecificPart() != null) {
+						IFileStore store = EFS.getStore(resolvedPath);
+						if (!store.fetchInfo().exists()) {
+							MessageDialog dlg = new MessageDialog(getContainer().getShell(),
+									IDEWorkbenchMessages.WizardNewFileCreationPage_createLinkLocationTitle, null,
+									NLS.bind(IDEWorkbenchMessages.WizardNewFileCreationPage_createLinkLocationQuestion,
+											linkTargetPath),
+									MessageDialog.QUESTION_WITH_CANCEL, 0, IDialogConstants.YES_LABEL,
+									IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL);
+							int result = dlg.open();
+							if (result == Window.OK) {
+								store.getParent().mkdir(0, new NullProgressMonitor());
+								try (OutputStream stream = store.openOutputStream(0, new NullProgressMonitor())) {
+									// only try to open
+								}
+							}
+							if (result == 2)
+								return null;
 						}
-						if (result == 2)
-							return null;
 					}
+				} catch (CoreException | IOException e) {
+					MessageDialog.open(MessageDialog.ERROR, getContainer().getShell(),
+							IDEWorkbenchMessages.WizardNewFileCreationPage_internalErrorTitle,
+							NLS.bind(IDEWorkbenchMessages.WizardNewFileCreationPage_internalErrorMessage,
+									e.getMessage()),
+							SWT.SHEET);
+
+					return null;
 				}
-			} catch (CoreException | IOException e) {
+			}
+
+			IRunnableWithProgress op = monitor -> {
+				CreateFileOperation op1 = new CreateFileOperation(newFileHandle, linkTargetPath, initialContents,
+						IDEWorkbenchMessages.WizardNewFileCreationPage_title);
+				try {
+					// see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=219901
+					// directly execute the operation so that the undo state is
+					// not preserved. Making this undoable resulted in too many
+					// accidental file deletions.
+					op1.execute(monitor, WorkspaceUndoUtil.getUIInfoAdapter(getShell()));
+				} catch (final ExecutionException e) {
+					getContainer().getShell().getDisplay().syncExec(() -> {
+						if (e.getCause() instanceof CoreException) {
+							ErrorDialog.openError(getContainer().getShell(), // Was
+									// Utilities.getFocusShell()
+									IDEWorkbenchMessages.WizardNewFileCreationPage_errorTitle, null, // no special
+									// message
+									((CoreException) e.getCause()).getStatus());
+						} else {
+							IDEWorkbenchPlugin.log(getClass(), "createNewFile()", e.getCause()); //$NON-NLS-1$
+							MessageDialog.openError(getContainer().getShell(),
+									IDEWorkbenchMessages.WizardNewFileCreationPage_internalErrorTitle,
+									NLS.bind(IDEWorkbenchMessages.WizardNewFileCreationPage_internalErrorMessage,
+											e.getCause().getMessage()));
+						}
+					});
+				}
+			};
+			try {
+				getContainer().run(true, true, op);
+			} catch (InterruptedException e) {
+				return null;
+			} catch (InvocationTargetException e) {
+				// Execution Exceptions are handled above but we may still get
+				// unexpected runtime errors.
+				IDEWorkbenchPlugin.log(getClass(), "createNewFile()", e.getTargetException()); //$NON-NLS-1$
 				MessageDialog.open(MessageDialog.ERROR, getContainer().getShell(),
 						IDEWorkbenchMessages.WizardNewFileCreationPage_internalErrorTitle,
-						NLS.bind(IDEWorkbenchMessages.WizardNewFileCreationPage_internalErrorMessage, e.getMessage()),
+						NLS.bind(IDEWorkbenchMessages.WizardNewFileCreationPage_internalErrorMessage,
+								e.getTargetException().getMessage()),
 						SWT.SHEET);
 
 				return null;
 			}
+
+			newFile = newFileHandle;
+
+			return newFile;
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
-
-		IRunnableWithProgress op = monitor -> {
-			CreateFileOperation op1 = new CreateFileOperation(newFileHandle, linkTargetPath, initialContents,
-					IDEWorkbenchMessages.WizardNewFileCreationPage_title);
-			try {
-				// see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=219901
-				// directly execute the operation so that the undo state is
-				// not preserved. Making this undoable resulted in too many
-				// accidental file deletions.
-				op1.execute(monitor, WorkspaceUndoUtil.getUIInfoAdapter(getShell()));
-			} catch (final ExecutionException e) {
-				getContainer().getShell().getDisplay().syncExec(() -> {
-					if (e.getCause() instanceof CoreException) {
-						ErrorDialog.openError(getContainer().getShell(), // Was
-								// Utilities.getFocusShell()
-								IDEWorkbenchMessages.WizardNewFileCreationPage_errorTitle, null, // no special
-								// message
-								((CoreException) e.getCause()).getStatus());
-					} else {
-						IDEWorkbenchPlugin.log(getClass(), "createNewFile()", e.getCause()); //$NON-NLS-1$
-						MessageDialog.openError(getContainer().getShell(),
-								IDEWorkbenchMessages.WizardNewFileCreationPage_internalErrorTitle,
-								NLS.bind(IDEWorkbenchMessages.WizardNewFileCreationPage_internalErrorMessage,
-										e.getCause().getMessage()));
-					}
-				});
-			}
-		};
-		try {
-			getContainer().run(true, true, op);
-		} catch (InterruptedException e) {
-			return null;
-		} catch (InvocationTargetException e) {
-			// Execution Exceptions are handled above but we may still get
-			// unexpected runtime errors.
-			IDEWorkbenchPlugin.log(getClass(), "createNewFile()", e.getTargetException()); //$NON-NLS-1$
-			MessageDialog.open(MessageDialog.ERROR, getContainer().getShell(),
-					IDEWorkbenchMessages.WizardNewFileCreationPage_internalErrorTitle,
-					NLS.bind(IDEWorkbenchMessages.WizardNewFileCreationPage_internalErrorMessage,
-							e.getTargetException().getMessage()),
-					SWT.SHEET);
-
-			return null;
-		}
-
-		newFile = newFileHandle;
-
-		return newFile;
 	}
 
 	/**
