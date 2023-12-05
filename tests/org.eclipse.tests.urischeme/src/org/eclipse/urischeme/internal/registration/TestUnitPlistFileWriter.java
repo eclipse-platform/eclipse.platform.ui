@@ -82,7 +82,7 @@ public class TestUnitPlistFileWriter {
 		String xml = getPlistStartXmlSnippet() + "	<key>CFBundleURLTypes</key>\n" + "		<array>\n"
 				+ getSchemeXmlSnippet("other") + "		</array>\n" + "<!--comment-->\n" + getPlistEndXmlSnippet();
 
-		PlistFileWriter writer = new PlistFileWriter(new StringReader(xml));
+		PlistFileWriter writer = new PlistFileWriter(() -> new StringReader(xml));
 
 		writer.addScheme("adt", "adtScheme");
 
@@ -97,7 +97,7 @@ public class TestUnitPlistFileWriter {
 	public void doesntRemoveCommentBeforeEndArrayTag() {
 		String xml = getPlistStartXmlSnippet() + "	<key>CFBundleURLTypes</key>\n" + "		<array>\n"
 				+ getSchemeXmlSnippet("other") + "<!--comment-->" + "		</array>\n" + getPlistEndXmlSnippet();
-		PlistFileWriter writer = new PlistFileWriter(new StringReader(xml));
+		PlistFileWriter writer = new PlistFileWriter(() -> new StringReader(xml));
 
 		writer.addScheme("adt", "adtScheme");
 
@@ -183,25 +183,25 @@ public class TestUnitPlistFileWriter {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void throwsExceptionOnEmptyDocument() {
-		new PlistFileWriter(new StringReader(""));
+		new PlistFileWriter(() -> new StringReader(""));
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void throwsExceptionOnWrongPlistFile() {
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" + "<plist version=\"1.0\"/>";
-		new PlistFileWriter(new StringReader(xml));
+		new PlistFileWriter(() -> new StringReader(xml));
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void throwsExceptionOnWrongXmlFile() {
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" + "<foo/>";
-		new PlistFileWriter(new StringReader(xml));
+		new PlistFileWriter(() -> new StringReader(xml));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void throwsExceptionOnNonXmlFile() {
 		String xml = "foo bar";
-		new PlistFileWriter(new StringReader(xml));
+		new PlistFileWriter(() -> new StringReader(xml));
 	}
 
 	@Test
@@ -232,17 +232,17 @@ public class TestUnitPlistFileWriter {
 	}
 
 	private void assertXml(String xml, PlistFileWriter writer) {
-		StringWriter stringWriter = new StringWriter();
-		writer.writeTo(stringWriter);
-		assertEquals(xml, stringWriter.toString().replaceAll("\r\n", "\n"));
+		StringWriter stringWriters[] = new StringWriter[1];
+		writer.writeTo(() -> (stringWriters[0] = new StringWriter()));
+		assertEquals(xml, stringWriters[0].toString().replaceAll("\r\n", "\n"));
 	}
 
 	private PlistFileWriter getWriter() {
-		return new PlistFileWriter(new StringReader(getXml()));
+		return new PlistFileWriter(() -> new StringReader(getXml()));
 	}
 
 	private PlistFileWriter getWriterWithSchemes(String... schemes) {
-		return new PlistFileWriter(new StringReader(getXml(schemes)));
+		return new PlistFileWriter(() -> new StringReader(getXml(schemes)));
 	}
 
 	private String getXml() {
@@ -257,7 +257,7 @@ public class TestUnitPlistFileWriter {
 			}
 		}
 		return getPlistStartXmlSnippet() + "	<key>CFBundleURLTypes</key>\n" + "		<array>\n"
-				+ snippets.append("		</array>\n").append(getPlistEndXmlSnippet()).toString();
+		+ snippets.append("		</array>\n").append(getPlistEndXmlSnippet()).toString();
 	}
 
 	private String getPlistStartXmlSnippet() {
