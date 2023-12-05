@@ -164,16 +164,14 @@ public class DeleteResourceChange extends ResourceChange {
 
 	private static void saveFileIfNeeded(IFile file, IProgressMonitor pm) throws CoreException {
 		ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);
+		SubMonitor subMonitor= SubMonitor.convert(pm, 2);
 		if (buffer != null && buffer.isDirty() && buffer.isStateValidated() && buffer.isSynchronized()) {
-			SubMonitor subMonitor= SubMonitor.convert(pm, 2);
-			pm.beginTask("", 2); //$NON-NLS-1$
 			buffer.commit(subMonitor.newChild(1), false);
 			file.refreshLocal(IResource.DEPTH_ONE, subMonitor.newChild(1));
-			pm.done();
+			buffer.commit(subMonitor.newChild(1), false);
+			file.refreshLocal(IResource.DEPTH_ONE, subMonitor.newChild(1));
 		} else {
-			pm.beginTask("", 1); //$NON-NLS-1$
-			pm.worked(1);
-			pm.done();
+			subMonitor.worked(2);
 		}
 	}
 

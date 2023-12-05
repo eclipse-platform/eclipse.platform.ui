@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -135,30 +134,23 @@ public class MoveRenameResourceChange extends ResourceChange {
 	}
 
 	private Change performDestinationDelete(IResource newResource, IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask(RefactoringCoreMessages.MoveResourceChange_progress_delete_destination, 3);
-		try {
-			DeleteResourceChange deleteChange= new DeleteResourceChange(newResource.getFullPath(), true);
-			deleteChange.initializeValidationData(new SubProgressMonitor(monitor, 1));
-			RefactoringStatus deleteStatus= deleteChange.isValid(new SubProgressMonitor(monitor, 1));
-			if (!deleteStatus.hasFatalError()) {
-				return deleteChange.perform(new SubProgressMonitor(monitor, 1));
-			}
-			return null;
-		} finally {
-			monitor.done();
+		SubMonitor subMonitor= SubMonitor.convert(monitor, RefactoringCoreMessages.MoveResourceChange_progress_delete_destination, 3);
+
+		DeleteResourceChange deleteChange= new DeleteResourceChange(newResource.getFullPath(), true);
+		deleteChange.initializeValidationData(subMonitor.newChild(1));
+		RefactoringStatus deleteStatus= deleteChange.isValid(subMonitor.newChild(1));
+		if (!deleteStatus.hasFatalError()) {
+			return deleteChange.perform(subMonitor.newChild(1));
 		}
+		return null;
 	}
 
 	private void performSourceRestore(IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask(RefactoringCoreMessages.MoveResourceChange_progress_restore_source, 3);
-		try {
-			fRestoreSourceChange.initializeValidationData(new SubProgressMonitor(monitor, 1));
-			RefactoringStatus restoreStatus= fRestoreSourceChange.isValid(new SubProgressMonitor(monitor, 1));
-			if (!restoreStatus.hasFatalError()) {
-				fRestoreSourceChange.perform(new SubProgressMonitor(monitor, 1));
-			}
-		} finally {
-			monitor.done();
+		SubMonitor subMonitor= SubMonitor.convert(monitor, RefactoringCoreMessages.MoveResourceChange_progress_restore_source, 3);
+		fRestoreSourceChange.initializeValidationData(subMonitor.newChild(1));
+		RefactoringStatus restoreStatus= fRestoreSourceChange.isValid(subMonitor.newChild(1));
+		if (!restoreStatus.hasFatalError()) {
+			fRestoreSourceChange.perform(subMonitor.newChild(1));
 		}
 	}
 

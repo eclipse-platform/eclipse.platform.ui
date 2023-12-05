@@ -21,39 +21,34 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 
 /**
- * An abstract base implementation for object representing a generic change
- * to the workbench. A <code>Change</code> object is typically created by
- * calling {@link Refactoring#createChange(IProgressMonitor)}. This class should be
- * subclassed by clients wishing to provide new changes.
+ * An abstract base implementation for object representing a generic change to the workbench. A
+ * <code>Change</code> object is typically created by calling
+ * {@link Refactoring#createChange(IProgressMonitor)}. This class should be subclassed by clients
+ * wishing to provide new changes.
  * <p>
- * Changes are best executed by using a {@link PerformChangeOperation}. If clients
- * execute a change directly then the following life cycle has to be honored:</p>
+ * Changes are best executed by using a {@link PerformChangeOperation}. If clients execute a change
+ * directly then the following life cycle has to be honored:
+ * </p>
  * <ul>
- *   <li>After a single change or a tree of changes has been created, the
- *       method <code>initializeValidationData</code> has to be called.</li>
- *   <li>The method <code>isValid</code> can be used to determine if a change
- *       can still be applied to the workspace. If the method returns a {@link
- *       RefactoringStatus} with a severity of FATAL then the change has to be
- *       treated as invalid. Performing an invalid change isn't allowed and
- *       results in an unspecified result. This method can be called multiple
- *       times.
- *   <li>Then the method <code>perform</code> can be called. A disabled change
- *       must not be executed. The <code>perform</code> method can only be called
- *       once. After a change has been executed, only the method <code>dispose</code>
- *       must be called.</li>
- *   <li>the method <code>dispose</code> has to be called either after the
- *       <code>perform</code> method
- *       has been called or if a change is no longer needed. The second case
- *       for example occurs when the undo stack gets flushed and all change
- *       objects managed by the undo stack are no longer needed. The method
- *       <code>dispose</code> is typically implemented to unregister listeners
- *       registered during the
- *       method <code>initializeValidationData</code>. There is no guarantee
- *       that <code>initializeValidationData</code>, <code>isValid</code>,
- *       or <code>perform</code> has been called before <code>dispose</code>
- *       is called.
+ * <li>After a single change or a tree of changes has been created, the method
+ * <code>initializeValidationData</code> has to be called.</li>
+ * <li>The method <code>isValid</code> can be used to determine if a change can still be applied to
+ * the workspace. If the method returns a {@link RefactoringStatus} with a severity of FATAL then
+ * the change has to be treated as invalid. Performing an invalid change isn't allowed and results
+ * in an unspecified result. This method can be called multiple times.
+ * <li>Then the method <code>perform</code> can be called. A disabled change must not be executed.
+ * The <code>perform</code> method can only be called once. After a change has been executed, only
+ * the method <code>dispose</code> must be called.</li>
+ * <li>the method <code>dispose</code> has to be called either after the <code>perform</code> method
+ * has been called or if a change is no longer needed. The second case for example occurs when the
+ * undo stack gets flushed and all change objects managed by the undo stack are no longer needed.
+ * The method <code>dispose</code> is typically implemented to unregister listeners registered
+ * during the method <code>initializeValidationData</code>. There is no guarantee that
+ * <code>initializeValidationData</code>, <code>isValid</code>, or <code>perform</code> has been
+ * called before <code>dispose</code> is called.
  * </ul>
  * Here is a code snippet that can be used to execute a change:
+ *
  * <pre>
  *   Change change= createChange();
  *   try {
@@ -63,12 +58,12 @@ import org.eclipse.core.runtime.Platform;
  *
  *     if (!change.isEnabled())
  *         return;
- *     RefactoringStatus valid= change.isValid(new SubProgressMonitor(pm, 1));
+ *     RefactoringStatus valid= change.isValid(subMonitor.newChild(1));
  *     if (valid.hasFatalError())
  *         return;
- *     Change undo= change.perform(new SubProgressMonitor(pm, 1));
+ *     Change undo= change.perform(subMonitor.newChild(1));
  *     if (undo != null) {
- *        undo.initializeValidationData(new SubProgressMonitor(pm, 1));
+ *        undo.initializeValidationData(subMonitor.newChild(1));
  *        // do something with the undo object
  *     }
  *   } finally {
@@ -76,13 +71,12 @@ import org.eclipse.core.runtime.Platform;
  *   }
  * </pre>
  * <p>
- * It is important that implementors of this abstract class provide an adequate
- * implementation of <code>isValid</code> and that they provide an undo change
- * via the return value of the method <code>perform</code>. If no undo can be
- * provided then the <code>perform</code> method is allowed to return <code>null</code>. But
- * implementors should be aware that not providing an undo object for a change
- * object that is part of a larger change tree will result in the fact that for
- * the whole change tree no undo object will be present.
+ * It is important that implementors of this abstract class provide an adequate implementation of
+ * <code>isValid</code> and that they provide an undo change via the return value of the method
+ * <code>perform</code>. If no undo can be provided then the <code>perform</code> method is allowed
+ * to return <code>null</code>. But implementors should be aware that not providing an undo object
+ * for a change object that is part of a larger change tree will result in the fact that for the
+ * whole change tree no undo object will be present.
  * </p>
  * <p>
  * Changes which are returned as top-level changes (e.g. by <code>Refactoring.createChange()</code>)

@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
@@ -213,10 +212,9 @@ public class CompositeChange extends Change {
 	 */
 	@Override
 	public void initializeValidationData(IProgressMonitor pm) {
-		pm.beginTask("", fChanges.size()); //$NON-NLS-1$
+		SubMonitor subMonitor= SubMonitor.convert(pm, fChanges.size());
 		for (Change change : fChanges) {
-			change.initializeValidationData(new SubProgressMonitor(pm, 1));
-			pm.worked(1);
+			change.initializeValidationData(subMonitor.newChild(1));
 		}
 	}
 
@@ -235,17 +233,16 @@ public class CompositeChange extends Change {
 	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
 		RefactoringStatus result= new RefactoringStatus();
-		pm.beginTask("", fChanges.size()); //$NON-NLS-1$
+
+		SubMonitor subMonitor= SubMonitor.convert(pm, fChanges.size());
 		for (Iterator<Change> iter= fChanges.iterator(); iter.hasNext() && !result.hasFatalError();) {
 			Change change= iter.next();
-			if (change.isEnabled())
-				result.merge(change.isValid(new SubProgressMonitor(pm, 1)));
-			else
+			if (change.isEnabled()) {
+				result.merge(change.isValid(subMonitor.split(1)));
+			} else {
 				pm.worked(1);
-			if (pm.isCanceled())
-				throw new OperationCanceledException();
+			}
 		}
-		pm.done();
 		return result;
 	}
 
