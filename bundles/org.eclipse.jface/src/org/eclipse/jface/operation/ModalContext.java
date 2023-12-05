@@ -434,7 +434,9 @@ public class ModalContext {
 				runnable.run(progressMonitor);
 			}
 		} catch (OperationCanceledException e) {
-			throw new InterruptedException();
+			InterruptedException interruptedException = new InterruptedException(e.getLocalizedMessage());
+			interruptedException.initCause(e);
+			throw interruptedException;
 		} catch (InvocationTargetException | InterruptedException | ThreadDeath e) {
 			// Make sure to propagate ThreadDeath, or threads will never fully
 			// terminate.
