@@ -16,7 +16,7 @@ package org.eclipse.ltk.core.refactoring.resource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -122,38 +122,36 @@ public abstract class ResourceChange extends Change {
 	 */
 	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		pm.beginTask("", 2); //$NON-NLS-1$
-		try {
-			RefactoringStatus result= new RefactoringStatus();
-			IResource resource= getModifiedResource();
-			checkExistence(result, resource);
-			if (result.hasFatalError())
-				return result;
-			if (fValidationMethod == VALIDATE_DEFAULT)
-				return result;
 
-			ValidationState state= new ValidationState(resource);
-			state.checkModificationStamp(result, fModificationStamp);
-			if (result.hasFatalError())
-				return result;
-			state.checkSameReadOnly(result, fReadOnly);
-			if (result.hasFatalError())
-				return result;
-			if ((fValidationMethod & VALIDATE_NOT_READ_ONLY) != 0) {
-				state.checkReadOnly(result);
-				if (result.hasFatalError())
-					return result;
-			}
-			if ((fValidationMethod & SAVE_IF_DIRTY) != 0) {
-				state.saveIfDirty(result, fModificationStamp, new SubProgressMonitor(pm, 1));
-			}
-			if ((fValidationMethod & VALIDATE_NOT_DIRTY) != 0) {
-				state.checkDirty(result);
-			}
+		SubMonitor subMonitor= SubMonitor.convert(pm, 2);
+		RefactoringStatus result= new RefactoringStatus();
+		IResource resource= getModifiedResource();
+		checkExistence(result, resource);
+		subMonitor.worked(1);
+		if (result.hasFatalError())
 			return result;
-		} finally {
-			pm.done();
+		if (fValidationMethod == VALIDATE_DEFAULT)
+			return result;
+
+		ValidationState state= new ValidationState(resource);
+		state.checkModificationStamp(result, fModificationStamp);
+		if (result.hasFatalError())
+			return result;
+		state.checkSameReadOnly(result, fReadOnly);
+		if (result.hasFatalError())
+			return result;
+		if ((fValidationMethod & VALIDATE_NOT_READ_ONLY) != 0) {
+			state.checkReadOnly(result);
+			if (result.hasFatalError())
+				return result;
 		}
+		if ((fValidationMethod & SAVE_IF_DIRTY) != 0) {
+			state.saveIfDirty(result, fModificationStamp, subMonitor.newChild(1));
+		}
+		if ((fValidationMethod & VALIDATE_NOT_DIRTY) != 0) {
+			state.checkDirty(result);
+		}
+		return result;
 	}
 
 	/**
