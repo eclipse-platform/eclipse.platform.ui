@@ -47,8 +47,10 @@ import org.eclipse.jface.text.TypedRegion;
  * partitions in the document itself rather than maintaining its own data
  * structure.
  *
+ * Originally since 2.0 but moved to org.eclipse.text in 3.14
+ *
  * @see IPartitionTokenScanner
- * @since 2.0
+ * @since 3.14
  * @deprecated As of 3.1, replaced by {@link org.eclipse.jface.text.rules.FastPartitioner} instead
  */
 @Deprecated

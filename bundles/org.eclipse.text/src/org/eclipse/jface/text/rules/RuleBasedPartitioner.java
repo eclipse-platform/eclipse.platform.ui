@@ -46,6 +46,9 @@ import org.eclipse.jface.text.TypedRegion;
  * as their data. The partitioner remembers the document's partitions
  * in the document itself rather than maintaining its own data structure.
  *
+ * Originally since unknown version, but moved to org.eclipse.text in 3.14
+ *
+ * @since 3.14
  * @see IRule
  * @see RuleBasedScanner
  *

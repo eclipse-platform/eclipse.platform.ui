@@ -28,6 +28,9 @@ import org.eclipse.core.runtime.Assert;
  * the pattern can be constrained to begin in a certain column. The rule can also
  * be used to check whether the text to scan covers half of the pattern, i.e. contains
  * the end sequence required by the rule.
+ * Originally since unknown version, but moved to org.eclipse.text in 3.14
+ *
+ * @since 3.14
  */
 public class PatternRule implements IPredicateRule {
 

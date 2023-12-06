@@ -19,6 +19,9 @@ import org.eclipse.core.runtime.Assert;
 
 /**
  * Standard implementation of <code>IToken</code>.
+ * Originally since unknown version, but moved to org.eclipse.text in 3.14
+ *
+ * @since 3.14
  */
 public class Token implements IToken {
 

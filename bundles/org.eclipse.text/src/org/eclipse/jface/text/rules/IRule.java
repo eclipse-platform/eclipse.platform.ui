@@ -18,6 +18,9 @@ package org.eclipse.jface.text.rules;
  * Defines the interface for a rule used in the scanning of text for the purpose of document
  * partitioning or text styling.
  *
+ * Originally since unknown version, but moved to org.eclipse.text in 3.14
+ *
+ * @since 3.14
  * @see ICharacterScanner
  */
 public interface IRule {

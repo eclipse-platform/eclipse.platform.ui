@@ -23,6 +23,9 @@ import org.eclipse.core.runtime.Assert;
  * A whitespace rule uses a whitespace detector in order to find out which
  * characters are whitespace characters.
  *
+ * Originally since unknown version, but moved to org.eclipse.text in 3.14
+ *
+ * @since 3.14
  * @see IWhitespaceDetector
  */
 public class WhitespaceRule implements IRule {

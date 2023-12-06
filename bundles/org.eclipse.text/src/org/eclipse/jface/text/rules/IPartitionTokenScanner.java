@@ -25,7 +25,9 @@ import org.eclipse.jface.text.IDocument;
  * boundary. A partition token scanner can also start in the middle of a partition,
  * if it knows the type of the partition.
  *
- * @since 2.0
+ * Originally since 2.0, but moved to org.eclipse.text in 3.14
+ *
+ * @since 3.14
  */
 public interface IPartitionTokenScanner  extends ITokenScanner {
 

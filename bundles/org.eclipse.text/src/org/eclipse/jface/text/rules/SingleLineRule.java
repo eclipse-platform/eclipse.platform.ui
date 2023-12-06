@@ -20,6 +20,9 @@ package org.eclipse.jface.text.rules;
  * the pattern begins with a specific sequence and may
  * end with a specific sequence, but will not span more
  * than a single line.
+ * Originally since unknown version, but moved to org.eclipse.text in 3.14
+ *
+ * @since 3.14
  */
 public class SingleLineRule extends PatternRule {
 

@@ -26,6 +26,9 @@ import org.eclipse.core.runtime.Assert;
  * matches, but also for the generalized notion of a word in the context in which it is used. A word
  * rule uses a word detector to determine what a word is.
  *
+ * Originally since unknown version, but moved to org.eclipse.text in 3.14
+ *
+ * @since 3.14
  * @see IWordDetector
  */
 public class WordRule implements IRule {

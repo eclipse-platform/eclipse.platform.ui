@@ -18,6 +18,9 @@ package org.eclipse.jface.text.rules;
  * A rule for detecting patterns which begin with a given
  * sequence and may end with a given sequence thereby spanning
  * multiple lines.
+ * Originally since unknown version, but moved to org.eclipse.text in 3.14
+ *
+ * @since 3.14
  */
 public class MultiLineRule extends PatternRule {
 

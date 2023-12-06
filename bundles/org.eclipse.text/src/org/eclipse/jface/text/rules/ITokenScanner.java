@@ -23,8 +23,10 @@ import org.eclipse.jface.text.IDocument;
  * A scanner has state. When asked, the scanner returns the offset and the length of the
  * last found token.
  *
+ * Originally since 2.0, but moved to org.eclipse.text in 3.14
+ *
  * @see org.eclipse.jface.text.rules.IToken
- * @since 2.0
+ * @since 3.14
  */
 public interface ITokenScanner {
 

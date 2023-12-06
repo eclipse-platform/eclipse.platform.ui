@@ -23,6 +23,8 @@ import org.eclipse.jface.text.IDocument;
  * A buffered rule based scanner. The buffer always contains a section
  * of a fixed size of the document to be scanned. Completely adheres to
  * the contract of <code>RuleBasedScanner</code>.
+ * 
+ * @since 3.14
  */
 public class BufferedRuleBasedScanner extends RuleBasedScanner {
 

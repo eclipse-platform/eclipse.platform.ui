@@ -26,7 +26,9 @@ import org.eclipse.jface.text.IDocument;
  * the given content type.
  * </p>
  *
- * @since 2.0
+ * Originally since 2.0, but moved to org.eclipse.text in 3.14
+ *
+ * @since 3.14
  */
 public class RuleBasedPartitionScanner extends BufferedRuleBasedScanner implements IPartitionTokenScanner {
 

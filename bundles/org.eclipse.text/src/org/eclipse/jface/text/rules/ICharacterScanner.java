@@ -18,6 +18,9 @@ package org.eclipse.jface.text.rules;
  * Defines the interface of a character scanner used by rules.
  * Rules may request the next character or ask the character
  * scanner to unread the last read character.
+ * Originally since unknown version, but moved to org.eclipse.text in 3.14
+ *
+ * @since 3.14
  */
 public interface ICharacterScanner {
 
