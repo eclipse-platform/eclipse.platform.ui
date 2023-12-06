@@ -387,9 +387,6 @@ public class ModalContext {
 						} else if (throwable instanceof InterruptedException e) {
 							throw e;
 						} else if (throwable instanceof OperationCanceledException) {
-							// See 1GAN3L5: ITPUI:WIN2000 - ModalContext
-							// converts OperationCancelException into
-							// InvocationTargetException
 							InterruptedException interruptedException = new InterruptedException(throwable.getMessage());
 							interruptedException.initCause(throwable);
 							throw interruptedException;
