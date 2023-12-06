@@ -815,11 +815,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			fireWindowOpening();
 			configureShell(getShell(), windowContext);
 
-			try {
-				page = new WorkbenchPage(this, input);
-			} catch (WorkbenchException e) {
-				WorkbenchPlugin.log(e);
-			}
+			page = new WorkbenchPage(this, input);
 			menuOverride = new MenuOverrides(page);
 			toolbarOverride = new ToolbarOverrides(page);
 

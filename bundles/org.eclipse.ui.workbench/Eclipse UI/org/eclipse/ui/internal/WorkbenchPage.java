@@ -92,6 +92,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.UIEvents.EventTags;
+import org.eclipse.e4.ui.workbench.addons.minmax.TrimStack;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
@@ -873,13 +874,10 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 		final MToolControl minimizedStack = (MToolControl) changedObj;
 
-		// Note: The non-API type TrimStack is not imported to avoid
-		// https://bugs.eclipse.org/435521
-		if (!(minimizedStack.getObject() instanceof org.eclipse.e4.ui.workbench.addons.minmax.TrimStack))
+		if (!(minimizedStack.getObject() instanceof TrimStack))
 			return;
 
-		org.eclipse.e4.ui.workbench.addons.minmax.TrimStack ts = (org.eclipse.e4.ui.workbench.addons.minmax.TrimStack) minimizedStack
-				.getObject();
+		TrimStack ts = (TrimStack) minimizedStack.getObject();
 		if (!(ts.getMinimizedElement() instanceof MPartStack))
 			return;
 
@@ -926,7 +924,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @param w     the parent window
 	 * @param input the page input
 	 */
-	public WorkbenchPage(WorkbenchWindow w, IAdaptable input) throws WorkbenchException {
+	public WorkbenchPage(WorkbenchWindow w, IAdaptable input) {
 		super();
 		init(w, input);
 	}
