@@ -260,4 +260,19 @@
             contentType="org.eclipse.core.runtime.text">
       </reconciler>
    </extension>
+   <extension
+         point="org.eclipse.ui.ide.unassociatedEditorStrategy">
+      <strategy
+            class="org.eclipse.ui.internal.genericeditor.SystemEditorOrGenericTextEditorStrategy"
+            id="org.eclipse.ui.internal.genericeditor.systemEditorOrGenericEditor"
+            interactive="false"
+            label="%systemEditorOrGenericEditorStrategy">
+      </strategy>
+      <strategy
+            class="org.eclipse.ui.internal.genericeditor.GenericTextEditorStrategy"
+            id="org.eclipse.ui.internal.genericeditor.genericTextEditor"
+            interactive="false"
+            label="%genericEditorStrategy">
+      </strategy>
+   </extension>
 </plugin>
