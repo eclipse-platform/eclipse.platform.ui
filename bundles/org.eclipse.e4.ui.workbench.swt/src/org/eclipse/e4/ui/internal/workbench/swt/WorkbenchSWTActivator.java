@@ -38,9 +38,9 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Hashtable;
-import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.osgi.service.datalocation.Location;
@@ -266,7 +266,7 @@ public class WorkbenchSWTActivator implements BundleActivator, DebugOptionsListe
 		// However, using it causes problems in the activation order
 		// So, for now, we get it directly.
 		try {
-			return InternalPlatform.getDefault().getStateLocation(context.getBundle(), true);
+			return Platform.getStateLocation(context.getBundle());
 		} catch (IllegalStateException e) {
 			// This occurs if -data=@none is explicitly specified, so ignore
 			// this silently.

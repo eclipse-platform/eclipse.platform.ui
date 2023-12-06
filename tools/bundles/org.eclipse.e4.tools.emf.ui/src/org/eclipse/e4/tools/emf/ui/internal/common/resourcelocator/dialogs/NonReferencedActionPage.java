@@ -39,7 +39,6 @@ import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -386,7 +385,7 @@ public class NonReferencedActionPage extends WizardPage {
 			// file).getContributionData().className + ".class";
 			IPath newPath = IPath.fromOSString(path);
 			if (newPath.isEmpty() == false) {
-				CoreUtility.createFolder(project.getFolder(newPath));
+				NonReferencedResourceDialog.createFolder(project.getFolder(newPath));
 			}
 			if (className != null) {
 				newPath.append(className + ".class"); //$NON-NLS-1$
