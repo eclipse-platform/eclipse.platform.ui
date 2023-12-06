@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -255,7 +255,7 @@ public class HTMLPrinter {
 	 */
 	@Deprecated
 	public static void addPageProlog(StringBuffer buffer) {
-		runOp(buffer, (sb) -> CORE.addPageProlog(sb));
+		runOp(buffer, CORE::addPageProlog);
 	}
 
 	public static void addPageEpilog(StringBuilder buffer) {
@@ -270,7 +270,7 @@ public class HTMLPrinter {
 	 */
 	@Deprecated
 	public static void addPageEpilog(StringBuffer buffer) {
-		runOp(buffer, (sb) -> CORE.addPageEpilog(sb));
+		runOp(buffer, CORE::addPageEpilog);
 	}
 
 	/**
@@ -290,7 +290,7 @@ public class HTMLPrinter {
 	 */
 	@Deprecated
 	public static void startBulletList(StringBuffer buffer) {
-		runOp(buffer, (sb) -> CORE.startBulletList(sb));
+		runOp(buffer, CORE::startBulletList);
 	}
 
 	/**
@@ -312,7 +312,7 @@ public class HTMLPrinter {
 	 */
 	@Deprecated
 	public static void endBulletList(StringBuffer buffer) {
-		runOp(buffer, (sb) -> CORE.endBulletList(sb));
+		runOp(buffer, CORE::endBulletList);
 	}
 
 	/**
