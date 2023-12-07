@@ -32,7 +32,9 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ControlEnableState;
+import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.IPageChangeProvider;
 import org.eclipse.jface.dialogs.IPageChangedListener;
@@ -1565,5 +1567,15 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 				}
 			});
 		}
+	}
+
+	@Override
+	protected IDialogSettings getDialogBoundsSettings() {
+		String name = getClass().getSimpleName() + ".dialogBounds"; //$NON-NLS-1$
+		IDialogSettings dialogSettings = getWizard().getDialogSettings();
+		if (dialogSettings == null) {
+			return null;
+		}
+		return DialogSettings.getOrCreateSection(dialogSettings, name);
 	}
 }
