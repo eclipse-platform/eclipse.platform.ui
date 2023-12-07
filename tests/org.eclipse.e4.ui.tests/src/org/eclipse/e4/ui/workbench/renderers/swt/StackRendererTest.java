@@ -37,6 +37,7 @@ import org.eclipse.e4.ui.internal.workbench.swt.CSSConstants;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
@@ -448,6 +449,15 @@ public class StackRendererTest {
 		perspective.getTags().add("persp.editorOnboardingImageUri:" + PART_ICON);
 		perspective.getTags().add("persp.editorOnboardingCommand:Find Actions$$$STRG+3");
 
+		// "connect" the perspective with the application more or less like in
+		// productive environment
+		MPerspectiveStack perspectiveStack = ems.createModelElement(MPerspectiveStack.class);
+		perspectiveStack.getChildren().add(perspective);
+		window.getChildren().add(perspectiveStack);
+		MPlaceholder placeholder = ems.createModelElement(MPlaceholder.class);
+		placeholder.setRef(partStack);
+		perspective.getChildren().add(placeholder);
+
 		partStack.getTags().add("EditorStack");
 
 		contextRule.createAndRunWorkbench(window);
@@ -457,8 +467,7 @@ public class StackRendererTest {
 
 		context.get(EventBroker.class).send(UIEvents.UILifeCycle.PERSPECTIVE_SWITCHED, params);
 
-		Composite uiContainer = (Composite) ((StackRenderer) partStack.getRenderer()).getUIContainer(partStack);
-		CTabFolder tabFolder = (CTabFolder) ((Composite) uiContainer.getChildren()[0]).getChildren()[0];
+		CTabFolder tabFolder = (CTabFolder) partStack.getWidget();
 		assertNotNull(tabFolder.getChildren());
 		assertEquals(3, tabFolder.getChildren().length);
 
