@@ -20,6 +20,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnViewer;
@@ -196,14 +198,23 @@ public class TableViewerTest extends StructuredItemViewerTest {
 	@Test
 	public void testContains() {
 		TableViewer tViewer = (TableViewer) fViewer;
+		fViewer.getControl().update();
+		String elements = toString(tViewer);
 		// some random element.
-		assertFalse("element must not be available on the viewer", tViewer.contains(""));
+		assertFalse("random element must not be available on the viewer. All Elements: " + elements,
+				tViewer.contains(""));
 
 		// first child of root.
-		assertTrue("element must be available on the viewer", tViewer.contains(fRootElement.getFirstChild()));
+		assertTrue("first element must be available on the viewer. All Elements: " + elements,
+				tViewer.contains(fRootElement.getFirstChild()));
 
 		// last child of the root
-		assertTrue("element must be available on the viewer", tViewer.contains(fRootElement.getLastChild()));
+		assertTrue("last element must be available on the viewer. All Elements: " + elements,
+				tViewer.contains(fRootElement.getLastChild()));
 	}
 
+	String toString(TableViewer viewer) {
+		TableItem[] items = viewer.getTable().getItems();
+		return Arrays.asList(items).stream().map(item -> item.getText()).collect(Collectors.joining(",", "'", "'"));
+	}
 }

@@ -233,12 +233,16 @@ public class VirtualTableViewerTest extends TableViewerTest {
 		// Call update to make sure the viewer is in a correct state
 		// At least on MacOSX I get failures without this call
 		((TableViewer) fViewer).getControl().update();
+		assertEquals("unsorted", "0-0 name-0", getItemText(0));
 		fViewer.setComparator(new TestLabelComparator());
+		assertEquals("sorted", "0-9 name-9", getItemText(0));
+		((TableViewer) fViewer).getControl().update(); // before getFirstChild()!
 		TestElement first = fRootElement.getFirstChild();
 		first.setLabel("name-9999");
 		String newElementLabel = first.toString();
-		((TableViewer) fViewer).getControl().update();
-		assertEquals("sorted first", newElementLabel, getItemText(0));
+		assertEquals("label updated", "0-0 name-9999", newElementLabel);
+		((TableViewer) fViewer).getControl().update(); // before getItemText()!
+		assertEquals("item updated", "0-0 name-9999", getItemText(0));
 	}
 
 	@Override
