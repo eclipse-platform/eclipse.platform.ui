@@ -20,9 +20,6 @@
       name="%UiFreezeEventLogger.name"
       schema="schema/org.eclipse.ui.monitoring.logger.exsd"/>
 
-   <extension point="org.eclipse.ui.startup">
-      <startup class="org.eclipse.ui.internal.monitoring.MonitoringStartup"/>
-   </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
