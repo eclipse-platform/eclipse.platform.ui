@@ -24,7 +24,6 @@ import java.util.Properties;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.Preferences;
 
 /**
@@ -66,9 +65,7 @@ public abstract class PreferenceMutator {
 
 		String[] pluginIds = Platform.getExtensionRegistry().getNamespaces();
 		for (String pluginId : pluginIds) {
-			preferences.put(pluginId, new PluginVersionIdentifier(
-					Platform.getBundle(pluginId).getHeaders().get(
-							org.osgi.framework.Constants.BUNDLE_VERSION)));
+			preferences.put(pluginId, Platform.getBundle(pluginId).getVersion().toString());
 		}
 
 		// Export the preferences.
