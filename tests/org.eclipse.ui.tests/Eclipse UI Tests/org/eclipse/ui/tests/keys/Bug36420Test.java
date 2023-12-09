@@ -21,14 +21,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandManager;
@@ -78,9 +76,7 @@ public class Bug36420Test {
 		// of bundles
 		String[] pluginIds = Platform.getExtensionRegistry().getNamespaces();
 		for (String pluginId : pluginIds) {
-			preferences.put(pluginId, new PluginVersionIdentifier(
-					Platform.getBundle(pluginId).getHeaders().get(
-							org.osgi.framework.Constants.BUNDLE_VERSION)));
+			preferences.put(pluginId, Platform.getBundle(pluginId).getVersion().toString());
 		}
 
 		// Export the preferences.
@@ -101,10 +97,8 @@ public class Bug36420Test {
 				.getCommandManager();
 		List<KeySequence> keyBindings = manager.getCommand(commandId)
 				.getKeySequenceBindings();
-		Iterator<KeySequence> keyBindingItr = keyBindings.iterator();
 		boolean found = false;
-		while (keyBindingItr.hasNext()) {
-			KeySequence keyBinding = keyBindingItr.next();
+		for (KeySequence keyBinding : keyBindings) {
 			String currentText = keyBinding.toString();
 			if (keySequenceText.equals(currentText)) {
 				found = true;
