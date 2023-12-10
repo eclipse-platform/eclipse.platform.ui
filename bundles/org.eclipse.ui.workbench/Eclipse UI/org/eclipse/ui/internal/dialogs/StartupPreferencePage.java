@@ -15,16 +15,22 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Set;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.jface.widgets.ButtonFactory;
+import org.eclipse.jface.widgets.CompositeFactory;
+import org.eclipse.jface.widgets.LabelFactory;
+import org.eclipse.jface.widgets.TableFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -53,37 +59,37 @@ public class StartupPreferencePage extends PreferencePage implements IWorkbenchP
 	protected Control createContents(Composite parent) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IWorkbenchHelpContextIds.STARTUP_PREFERENCE_PAGE);
 
-		Composite composite = createComposite(parent);
+		Composite composite = CompositeFactory.newComposite(SWT.NONE) //
+				.layout(GridLayoutFactory.swtDefaults().margins(0, 0).create())
+				.layoutData(new GridData(SWT.FILL, SWT.FILL, true, true)) //
+				.font(parent.getFont()).create(parent);
 
+		createExtraContent(composite);
+		if (composite.getChildren().length > 0) {
+			new Label(composite, SWT.NONE); // add spacer
+		}
 		createEarlyStartupSelection(composite);
 
 		return composite;
 	}
 
-	protected Composite createComposite(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NULL);
-		GridLayout layout = new GridLayout();
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		composite.setLayout(layout);
-		GridData data = new GridData(
-				GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL);
-		composite.setLayoutData(data);
-		composite.setFont(parent.getFont());
+	protected void createExtraContent(@SuppressWarnings("unused") Composite composite) {
+		// subclasses may override
+	}
 
-		return composite;
+	protected static Button createCheckBox(String text, boolean checked, Composite composite) {
+		Button button = ButtonFactory.newButton(SWT.CHECK).text(text).font(composite.getFont()).create(composite);
+		button.setSelection(checked);
+		return button;
 	}
 
 	protected void createEarlyStartupSelection(Composite parent) {
-		Label label = new Label(parent, SWT.NONE);
-		label.setText(WorkbenchMessages.StartupPreferencePage_label);
-		label.setFont(parent.getFont());
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		label.setLayoutData(data);
-		pluginsList = new Table(parent, SWT.BORDER | SWT.CHECK | SWT.H_SCROLL | SWT.V_SCROLL);
-		data = new GridData(GridData.FILL_BOTH);
-		pluginsList.setFont(parent.getFont());
-		pluginsList.setLayoutData(data);
+		LabelFactory.newLabel(SWT.NONE).text(WorkbenchMessages.StartupPreferencePage_label) //
+				.layoutData(new GridData(SWT.FILL, SWT.CENTER, true, false)) //
+				.font(parent.getFont()).create(parent);
+		pluginsList = TableFactory.newTable(SWT.BORDER | SWT.CHECK | SWT.H_SCROLL | SWT.V_SCROLL)
+				.layoutData(new GridData(SWT.FILL, SWT.FILL, true, true)) //
+				.font(parent.getFont()).create(parent);
 		TableViewer viewer = new TableViewer(pluginsList);
 		viewer.setLabelProvider(new LabelProvider() {
 			@Override
@@ -99,7 +105,7 @@ public class StartupPreferencePage extends PreferencePage implements IWorkbenchP
 	}
 
 	private void updateCheckState() {
-		HashSet<String> disabledPlugins = new HashSet<>(Arrays.asList(workbench.getDisabledEarlyActivatedPlugins()));
+		Set<String> disabledPlugins = new HashSet<>(Arrays.asList(workbench.getDisabledEarlyActivatedPlugins()));
 		for (int i = 0; i < pluginsList.getItemCount(); i++) {
 			TableItem item = pluginsList.getItem(i);
 			String pluginId = ((ContributionInfo) item.getData()).getBundleId();
