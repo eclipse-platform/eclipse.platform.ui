@@ -21,6 +21,7 @@ package org.eclipse.jface.viewers;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.internal.ExpandableNode;
+import org.eclipse.pde.api.tools.annotations.NoExtend;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
@@ -65,8 +66,8 @@ import org.eclipse.swt.widgets.Widget;
  * @see SWT#VIRTUAL
  * @see #doFindItem(Object)
  * @see #internalRefresh(Object, boolean)
- * @noextend This class is not intended to be subclassed by clients.
  */
+@NoExtend
 public class TableViewer extends AbstractTableViewer {
 	/**
 	 * This viewer's table control.

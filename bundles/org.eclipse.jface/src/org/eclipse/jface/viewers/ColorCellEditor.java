@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
+import org.eclipse.pde.api.tools.annotations.NoExtend;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.FontMetrics;
@@ -37,8 +38,8 @@ import org.eclipse.swt.widgets.Tree;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * @noextend This class is not intended to be subclassed by clients.
  */
+@NoExtend
 public class ColorCellEditor extends DialogCellEditor {
 
 	/**

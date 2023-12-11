@@ -16,6 +16,7 @@ package org.eclipse.jface.widgets;
 
 import java.util.function.Supplier;
 
+import org.eclipse.pde.api.tools.annotations.NoExtend;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
@@ -29,10 +30,9 @@ import org.eclipse.swt.widgets.Control;
  * @param <F> factory
  * @param <C> control
  *
- * @noextend this class is not intended to be subclassed by clients.
- *
  * @since 3.18
  */
+@NoExtend
 public abstract class AbstractControlFactory<F extends AbstractControlFactory<?, ?>, C extends Control>
 		extends AbstractWidgetFactory<F, C, Composite> {
 

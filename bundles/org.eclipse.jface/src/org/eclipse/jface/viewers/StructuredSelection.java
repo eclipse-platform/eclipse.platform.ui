@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.pde.api.tools.annotations.NoExtend;
 
 /**
  * A concrete implementation of the <code>IStructuredSelection</code> interface,
@@ -29,8 +30,8 @@ import org.eclipse.jface.resource.JFaceResources;
  * <p>
  * This class is not intended to be subclassed.
  * </p>
- * @noextend This class is not intended to be subclassed by clients.
  */
+@NoExtend
 public class StructuredSelection implements IStructuredSelection {
 
 	/**

@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jface.action;
 
+import org.eclipse.pde.api.tools.annotations.NoImplement;
+
 /**
  * This interface is used by instances of <code>IContributionItem</code>
  * to determine if the values for certain properties have been overriden
@@ -23,8 +25,8 @@ package org.eclipse.jface.action;
  * </p>
  *
  * @since 2.0
- * @noimplement This interface is not intended to be implemented by clients.
  */
+@NoImplement
 public interface IContributionManagerOverrides {
 	/**
 	 * Id for the enabled property. Value is <code>"enabled"</code>.

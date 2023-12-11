@@ -18,6 +18,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.StringConverter;
+import org.eclipse.pde.api.tools.annotations.NoInstantiate;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
@@ -46,9 +47,8 @@ import org.eclipse.swt.widgets.Display;
  * </p>
  * Note: touching this class has the side effect of creating a display (static
  * initializer).
- *
- * @noinstantiate This class is not intended to be instantiated by clients.
  */
+@NoInstantiate
 public class PreferenceConverter {
 
 	/**
