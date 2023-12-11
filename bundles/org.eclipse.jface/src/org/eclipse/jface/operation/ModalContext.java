@@ -23,6 +23,8 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.ProgressMonitorWrapper;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.Policy;
+import org.eclipse.pde.api.tools.annotations.NoExtend;
+import org.eclipse.pde.api.tools.annotations.NoInstantiate;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -35,9 +37,9 @@ import org.eclipse.swt.widgets.Display;
  * <p>
  * This class is not intended to be subclassed.
  * </p>
- * @noinstantiate This class is not intended to be instantiated by clients.
- * @noextend This class is not intended to be subclassed by clients.
  */
+@NoInstantiate
+@NoExtend
 public class ModalContext {
 	/**
 	 * Indicates whether ModalContext is in debug mode; <code>false</code> by

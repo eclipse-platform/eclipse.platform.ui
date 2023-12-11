@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jface.action;
 
+import org.eclipse.pde.api.tools.annotations.NoExtend;
+
 /**
  * A group marker is a special kind of contribution item denoting
  * the beginning of a group. These groups are used to structure
@@ -23,8 +25,8 @@ package org.eclipse.jface.action;
  * This class may be instantiated; it is not intended to be
  * subclassed outside the framework.
  * </p>
- * @noextend This class is not intended to be subclassed by clients.
  */
+@NoExtend
 public class GroupMarker extends AbstractGroupMarker {
 	/**
 	 * Create a new group marker with the given name.

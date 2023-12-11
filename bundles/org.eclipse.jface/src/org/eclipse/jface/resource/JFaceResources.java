@@ -30,6 +30,8 @@ import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.pde.api.tools.annotations.NoExtend;
+import org.eclipse.pde.api.tools.annotations.NoInstantiate;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
@@ -52,10 +54,9 @@ import org.osgi.framework.FrameworkUtil;
  * <li>an image registry</li>
  * <li>a resource bundle</li>
  * </ul>
- *
- * @noinstantiate This class is not intended to be instantiated by clients.
- * @noextend This class is not intended to be subclassed by clients.
  */
+@NoInstantiate
+@NoExtend
 public class JFaceResources {
 
 	/**

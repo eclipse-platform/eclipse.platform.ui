@@ -19,6 +19,7 @@ import java.text.MessageFormat; // Not using ICU to support standalone JFace
 // scenario
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.pde.api.tools.annotations.NoExtend;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.FocusAdapter;
@@ -37,8 +38,8 @@ import org.eclipse.swt.widgets.Control;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * @noextend This class is not intended to be subclassed by clients.
  */
+@NoExtend
 public class ComboBoxCellEditor extends AbstractComboBoxCellEditor {
 
 	/**

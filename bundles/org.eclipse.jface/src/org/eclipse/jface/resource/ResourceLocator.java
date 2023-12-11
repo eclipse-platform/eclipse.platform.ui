@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.pde.api.tools.annotations.NoInstantiate;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
@@ -29,8 +30,8 @@ import org.osgi.framework.FrameworkUtil;
  * resources in bundles.
  *
  * @since 3.17
- * @noinstantiate This class is not intended to be instantiated by clients.
  */
+@NoInstantiate
 public final class ResourceLocator {
 
 	/**

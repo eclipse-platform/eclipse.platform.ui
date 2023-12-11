@@ -14,6 +14,7 @@
 package org.eclipse.jface.viewers;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.pde.api.tools.annotations.NoExtend;
 
 /**
  * Describes the width of a table column in pixels, and
@@ -21,8 +22,8 @@ import org.eclipse.core.runtime.Assert;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * @noextend This class is not intended to be subclassed by clients.
  */
+@NoExtend
 public class ColumnPixelData extends ColumnLayoutData {
 
 	/**

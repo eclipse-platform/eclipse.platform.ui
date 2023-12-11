@@ -19,6 +19,8 @@ import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.pde.api.tools.annotations.NoExtend;
+import org.eclipse.pde.api.tools.annotations.NoInstantiate;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
@@ -43,9 +45,9 @@ import org.eclipse.swt.graphics.Rectangle;
  * All methods declared on this class are static. This
  * class cannot be instantiated.
  * </p>
- * @noinstantiate This class is not intended to be instantiated by clients.
- * @noextend This class is not intended to be subclassed by clients.
  */
+@NoInstantiate
+@NoExtend
 public class StringConverter {
 
 	/**

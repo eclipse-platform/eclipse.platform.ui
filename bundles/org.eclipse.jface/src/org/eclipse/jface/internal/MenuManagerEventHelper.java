@@ -16,12 +16,14 @@ package org.eclipse.jface.internal;
 
 import org.eclipse.jface.action.IMenuListener2;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.pde.api.tools.annotations.NoInstantiate;
+import org.eclipse.pde.api.tools.annotations.NoReference;
 
 /**
  * @since 3.8.100
- * @noinstantiate This class is not intended to be instantiated by clients.
- * @noreference This class is not intended to be referenced by clients.
  */
+@NoInstantiate
+@NoReference
 public final class MenuManagerEventHelper {
 
 	private IMenuListener2 showHelper;

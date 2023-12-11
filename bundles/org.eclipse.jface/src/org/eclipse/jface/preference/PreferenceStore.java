@@ -30,6 +30,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.pde.api.tools.annotations.NoExtend;
 
 /**
  * A concrete preference store implementation based on an internal
@@ -40,8 +41,8 @@ import org.eclipse.jface.util.SafeRunnable;
  * </p>
  *
  * @see IPreferenceStore
- * @noextend This class is not intended to be subclassed by clients.
  */
+@NoExtend
 public class PreferenceStore extends EventManager implements
 		IPersistentPreferenceStore {
 

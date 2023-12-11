@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.viewers.internal.ExpandableNode;
+import org.eclipse.pde.api.tools.annotations.NoExtend;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.events.TreeListener;
@@ -65,8 +66,8 @@ import org.eclipse.swt.widgets.Widget;
  * Users setting up an editable tree with more than 1 column <b>have</b> to pass the
  * SWT.FULL_SELECTION style bit
  * </p>
- * @noextend This class is not intended to be subclassed by clients.
  */
+@NoExtend
 public class TreeViewer extends AbstractTreeViewer {
 
 	private static final String VIRTUAL_DISPOSE_KEY = Policy.JFACE

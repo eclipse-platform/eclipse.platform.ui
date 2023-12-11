@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.pde.api.tools.annotations.NoExtend;
 
 /**
  * The expandable placeholder element to be used for viewer items that represent
@@ -34,9 +35,8 @@ import org.eclipse.jface.viewers.TableViewer;
  * The node consists of a parent element, list of all children of this parent
  * and the offset to which child elements are supposed to be created and shown
  * in the viewer.
- *
- * @noextend This class is not intended to be subclassed by clients.
  */
+@NoExtend
 public class ExpandableNode {
 
 	/**

@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers.deferred;
 
+import org.eclipse.pde.api.tools.annotations.NoImplement;
 
 /**
  * Interface for a set of unordered elements that can fire change notifications.
@@ -32,8 +33,8 @@ package org.eclipse.jface.viewers.deferred;
  * </p>
  *
  * @since 3.1
- * @noimplement This interface is not intended to be implemented by clients.
  */
+@NoImplement
 public interface IConcurrentModel {
 
 	/**

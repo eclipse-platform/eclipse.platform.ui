@@ -14,6 +14,7 @@
 
 package org.eclipse.jface.action;
 
+import org.eclipse.pde.api.tools.annotations.NoImplement;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.Menu;
@@ -37,8 +38,8 @@ import org.eclipse.swt.widgets.ToolBar;
  * </p>
  *
  * @see IContributionManager
- * @noimplement This interface is not intended to be implemented by clients.
  */
+@NoImplement
 public interface IContributionItem {
 
 	/**
