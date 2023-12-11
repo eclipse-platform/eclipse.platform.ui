@@ -22,8 +22,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -152,7 +150,7 @@ public class DeleteResourceChange extends ResourceChange {
 
 			ResourceUndoState desc= ResourceUndoState.fromResource(resource);
 			if (resource instanceof IProject) {
-				((IProject) resource).delete(fDeleteContent, fForceOutOfSync, new SubProgressMonitor(pm, 10));
+				((IProject) resource).delete(fDeleteContent, fForceOutOfSync, pm.slice(10));
 			} else {
 				int updateFlags;
 				if (fForceOutOfSync) {
@@ -160,8 +158,8 @@ public class DeleteResourceChange extends ResourceChange {
 				} else {
 					updateFlags= IResource.KEEP_HISTORY;
 				}
-				resource.delete(updateFlags, new SubProgressMonitor(pm, 5));
-				desc.recordStateFromHistory(resource, new SubProgressMonitor(pm, 5));
+				resource.delete(updateFlags, pm.slice(5));
+				desc.recordStateFromHistory(resource, pm.slice(5));
 			}
 			return new UndoDeleteResourceChange(desc);
 		} finally {
@@ -173,8 +171,8 @@ public class DeleteResourceChange extends ResourceChange {
 		ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);
 		if (buffer != null && buffer.isDirty() && buffer.isStateValidated() && buffer.isSynchronized()) {
 			pm.beginTask("", 2); //$NON-NLS-1$
-			buffer.commit(new SubProgressMonitor(pm, 1), false);
-			file.refreshLocal(IResource.DEPTH_ONE, new SubProgressMonitor(pm, 1));
+			buffer.commit(pm.slice(1), false);
+			file.refreshLocal(IResource.DEPTH_ONE, pm.slice(1));
 			pm.done();
 		} else {
 			pm.beginTask("", 1); //$NON-NLS-1$

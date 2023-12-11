@@ -20,8 +20,6 @@ import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.SubProgressMonitor;
-
 import org.eclipse.jface.action.Action;
 
 import org.eclipse.ui.PlatformUI;
@@ -82,7 +80,7 @@ public final class RejectRefactoringsAction extends Action {
 						monitor.beginTask("", fProxies.length + 100); //$NON-NLS-1$
 						final RefactoringHistoryService service= RefactoringHistoryService.getInstance();
 						for (RefactoringDescriptorProxy proxy : fProxies) {
-							service.addRefactoringDescriptor(proxy, new SubProgressMonitor(monitor, 1));
+							service.addRefactoringDescriptor(proxy, monitor.slice(1));
 						}
 					} finally {
 						monitor.done();

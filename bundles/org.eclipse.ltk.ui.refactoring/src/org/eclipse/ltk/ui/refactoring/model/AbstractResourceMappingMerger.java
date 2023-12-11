@@ -396,13 +396,13 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 			monitor= new NullProgressMonitor();
 		try {
 			monitor.beginTask(RefactoringUIMessages.RefactoringModelMerger_merge_message, 200);
-//			status= aboutToPerformMerge(context, new SubProgressMonitor(monitor, 75));
+//			status= aboutToPerformMerge(context, monitor.slice(75));
 			if (status.getSeverity() != IStatus.ERROR) {
 				final IDiff[] diffs= getDiffs(context);
-				status= createMergeStatus(context, context.merge(diffs, false, new SubProgressMonitor(monitor, 100)));
+				status= createMergeStatus(context, context.merge(diffs, false, monitor.slice(100)));
 				final int code= status.getCode();
 				if (status.getSeverity() != IStatus.ERROR && code != IMergeStatus.CONFLICTS && code != IMergeStatus.INTERNAL_ERROR)
-					status= mergePerformed(context, new SubProgressMonitor(monitor, 25));
+					status= mergePerformed(context, monitor.slice(25));
 			}
 		} finally {
 			monitor.done();

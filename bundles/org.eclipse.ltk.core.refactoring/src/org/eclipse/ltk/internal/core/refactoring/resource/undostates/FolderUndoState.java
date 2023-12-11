@@ -21,8 +21,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubProgressMonitor;
-
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -92,11 +90,11 @@ public class FolderUndoState extends ContainerUndoState {
 			}
 			if (location != null) {
 				folderHandle.createLink(location,
-						IResource.ALLOW_MISSING_LOCAL, new SubProgressMonitor(
-								monitor, 100));
+						IResource.ALLOW_MISSING_LOCAL, 
+								monitor.slice(100));
 			} else {
-				folderHandle.create(false, true, new SubProgressMonitor(
-						monitor, 100));
+				folderHandle.create(false, true, 
+						monitor.slice(100));
 			}
 			if (monitor.isCanceled()) {
 				throw new OperationCanceledException();

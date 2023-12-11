@@ -16,8 +16,6 @@ package org.eclipse.ltk.core.refactoring.resource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubProgressMonitor;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 
@@ -145,7 +143,7 @@ public abstract class ResourceChange extends Change {
 					return result;
 			}
 			if ((fValidationMethod & SAVE_IF_DIRTY) != 0) {
-				state.saveIfDirty(result, fModificationStamp, new SubProgressMonitor(pm, 1));
+				state.saveIfDirty(result, fModificationStamp, pm.slice(1));
 			}
 			if ((fValidationMethod & VALIDATE_NOT_DIRTY) != 0) {
 				state.checkDirty(result);

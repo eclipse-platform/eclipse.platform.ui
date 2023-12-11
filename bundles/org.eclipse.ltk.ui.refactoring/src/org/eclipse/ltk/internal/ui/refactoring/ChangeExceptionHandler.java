@@ -122,12 +122,12 @@ public class ChangeExceptionHandler {
 		IWorkspaceRunnable runnable= monitor -> {
 			monitor.beginTask("", 11); //$NON-NLS-1$
 			try {
-				undo.initializeValidationData(new NotCancelableProgressMonitor(new SubProgressMonitor(monitor, 1)));
+				undo.initializeValidationData(new NotCancelableProgressMonitor(monitor.slice(1)));
 				if (undo.isValid(new SubProgressMonitor(monitor,1)).hasFatalError()) {
 					monitor.done();
 					return;
 				}
-				undo.perform(new SubProgressMonitor(monitor, 9));
+				undo.perform(monitor.slice(9));
 			} finally {
 				undo.dispose();
 			}

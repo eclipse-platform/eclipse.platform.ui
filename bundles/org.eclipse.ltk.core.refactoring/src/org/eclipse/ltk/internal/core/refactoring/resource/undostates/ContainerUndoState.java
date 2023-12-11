@@ -23,8 +23,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.SubProgressMonitor;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -171,7 +169,7 @@ public abstract class ContainerUndoState extends AbstractResourceUndoState {
 		if (members != null) {
 			for (AbstractResourceUndoState member : members) {
 				member.parent = parentHandle;
-				member.createResource(new SubProgressMonitor(monitor, ticks / members.size()));
+				member.createResource(monitor.slice(ticks / members.size()));
 			}
 		}
 	}
@@ -187,12 +185,12 @@ public abstract class ContainerUndoState extends AbstractResourceUndoState {
 					IPath path = resource.getFullPath().append(((FileUndoState) member).name);
 					IFile fileHandle = resource.getWorkspace().getRoot().getFile(path);
 					member.recordStateFromHistory(fileHandle,
-							new SubProgressMonitor(monitor, 100 / members.size()));
+							monitor.slice(100 / members.size()));
 				} else if (member instanceof FolderUndoState) {
 					IPath path = resource.getFullPath().append(((FolderUndoState) member).name);
 					IFolder folderHandle = resource.getWorkspace().getRoot().getFolder(path);
 					member.recordStateFromHistory(folderHandle,
-							new SubProgressMonitor(monitor, 100 / members.size()));
+							monitor.slice(100 / members.size()));
 				}
 			}
 		}

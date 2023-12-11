@@ -17,8 +17,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
-
 import org.eclipse.core.resources.IWorkspaceRunnable;
 
 /**
@@ -124,7 +122,7 @@ public class PerformRefactoringOperation implements IWorkspaceRunnable {
 				monitor= new NullProgressMonitor();
 			monitor.beginTask("", 10); //$NON-NLS-1$
 			final CreateChangeOperation create= new CreateChangeOperation(new CheckConditionsOperation(fRefactoring, fStyle), RefactoringStatus.FATAL);
-			create.run(new SubProgressMonitor(monitor, 6));
+			create.run(monitor.slice(6));
 			fPreconditionStatus= create.getConditionCheckingStatus();
 			if (fPreconditionStatus.hasFatalError()) {
 				monitor.done();
@@ -134,7 +132,7 @@ public class PerformRefactoringOperation implements IWorkspaceRunnable {
 			if (change != null) {
 				final PerformChangeOperation perform= new PerformChangeOperation(change);
 				perform.setUndoManager(RefactoringCore.getUndoManager(), fRefactoring.getName());
-				perform.run(new SubProgressMonitor(monitor, 2));
+				perform.run(monitor.slice(2));
 				fValidationStatus= perform.getValidationStatus();
 				fUndo= perform.getUndoChange();
 			}

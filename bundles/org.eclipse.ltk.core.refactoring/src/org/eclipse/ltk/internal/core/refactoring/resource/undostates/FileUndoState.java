@@ -23,8 +23,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubProgressMonitor;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFileState;
 import org.eclipse.core.resources.IResource;
@@ -147,7 +145,7 @@ public class FileUndoState extends AbstractResourceUndoState {
 				throw new OperationCanceledException();
 			}
 			if (location != null) {
-				fileHandle.createLink(location, IResource.ALLOW_MISSING_LOCAL, new SubProgressMonitor(monitor, 200));
+				fileHandle.createLink(location, IResource.ALLOW_MISSING_LOCAL, monitor.slice(200));
 			} else {
 				InputStream contents;
 				// Retrieve the contents from the file content
@@ -159,8 +157,8 @@ public class FileUndoState extends AbstractResourceUndoState {
 				} else {
 					contents= new ByteArrayInputStream(RefactoringCoreMessages.FileDescription_ContentsCouldNotBeRestored.getBytes());
 				}
-				fileHandle.create(contents, false, new SubProgressMonitor(monitor, 100));
-				fileHandle.setCharset(charset, new SubProgressMonitor(monitor, 100));
+				fileHandle.create(contents, false, monitor.slice(100));
+				fileHandle.setCharset(charset, monitor.slice(100));
 			}
 			if (monitor.isCanceled()) {
 				throw new OperationCanceledException();

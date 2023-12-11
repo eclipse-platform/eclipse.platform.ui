@@ -31,8 +31,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
-
 import org.eclipse.core.resources.IFile;
 
 import org.eclipse.core.filebuffers.FileBuffers;
@@ -427,10 +425,10 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 		IDocument result= null;
 		monitor.beginTask("", 2); //$NON-NLS-1$
 		try {
-			result= acquireDocument(new SubProgressMonitor(monitor, 1));
+			result= acquireDocument(monitor.slice(1));
 		} finally {
 			if (result != null)
-				releaseDocument(result, new SubProgressMonitor(monitor, 1));
+				releaseDocument(result, monitor.slice(1));
 		}
 		monitor.done();
 		if (result == null)
@@ -757,7 +755,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 
 		try {
 
-			document= acquireDocument(new SubProgressMonitor(monitor, 1));
+			document= acquireDocument(monitor.slice(1));
 			if (document != null) {
 				result= new Document(document.get());
 
@@ -768,7 +766,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 			throw Changes.asCoreException(exception);
 		} finally {
 			if (document != null) {
-				releaseDocument(document, new SubProgressMonitor(monitor, 1));
+				releaseDocument(document, monitor.slice(1));
 			}
 			monitor.done();
 		}
@@ -851,13 +849,13 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 		IDocument document= null;
 
 		try {
-			document= acquireDocument(new SubProgressMonitor(monitor, 1));
+			document= acquireDocument(monitor.slice(1));
 
 			final LinkedList<UndoEdit> undoList= new LinkedList<>();
 			performChanges(document, undoList, false);
 
 			if (needsSaving())
-				fBuffer.commit(new SubProgressMonitor(monitor, 1), false);
+				fBuffer.commit(monitor.slice(1), false);
 
 			return new MultiStateUndoChange(getName(), fFile, undoList.toArray(new UndoEdit[undoList.size()]), fContentStamp, fSaveMode);
 
@@ -865,7 +863,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 			throw Changes.asCoreException(exception);
 		} finally {
 			if (document != null) {
-				releaseDocument(document, new SubProgressMonitor(monitor, 1));
+				releaseDocument(document, monitor.slice(1));
 			}
 			monitor.done();
 		}

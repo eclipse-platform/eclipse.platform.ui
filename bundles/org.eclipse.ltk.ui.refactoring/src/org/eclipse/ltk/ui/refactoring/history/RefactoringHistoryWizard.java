@@ -971,7 +971,7 @@ public class RefactoringHistoryWizard extends Wizard {
 			final IRunnableWithProgress runnable= monitor -> {
 				for (int index= 0; index < fExecutedRefactorings; index++) {
 					try {
-						RefactoringCore.getUndoManager().performUndo(null, new SubProgressMonitor(monitor, 100));
+						RefactoringCore.getUndoManager().performUndo(null, monitor.slice(100));
 						if (fExecutedRefactorings > 0)
 							fExecutedRefactorings--;
 					} catch (CoreException exception) {

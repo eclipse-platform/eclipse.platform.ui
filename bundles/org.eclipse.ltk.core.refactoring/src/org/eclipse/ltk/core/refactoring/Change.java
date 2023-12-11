@@ -63,12 +63,12 @@ import org.eclipse.core.runtime.Platform;
  *
  *     if (!change.isEnabled())
  *         return;
- *     RefactoringStatus valid= change.isValid(new SubProgressMonitor(pm, 1));
+ *     RefactoringStatus valid= change.isValid(pm.slice(1));
  *     if (valid.hasFatalError())
  *         return;
- *     Change undo= change.perform(new SubProgressMonitor(pm, 1));
+ *     Change undo= change.perform(pm.slice(1));
  *     if (undo != null) {
- *        undo.initializeValidationData(new SubProgressMonitor(pm, 1));
+ *        undo.initializeValidationData(pm.slice(1));
  *        // do something with the undo object
  *     }
  *   } finally {

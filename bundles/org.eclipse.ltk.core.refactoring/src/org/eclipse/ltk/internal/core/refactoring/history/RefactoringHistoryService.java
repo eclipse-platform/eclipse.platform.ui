@@ -158,7 +158,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		try {
 			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, proxies.length);
 			for (RefactoringDescriptorProxy proxy : proxies) {
-				final RefactoringDescriptor descriptor= proxy.requestDescriptor(new SubProgressMonitor(monitor, 1));
+				final RefactoringDescriptor descriptor= proxy.requestDescriptor(monitor.slice(1));
 				if (descriptor != null) {
 					final int filter= descriptor.getFlags();
 					if ((filter | flags) == filter) {
@@ -251,32 +251,32 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 					final IFileStore history= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_HISTORY_FOLDER);
 					if (enable) {
 						final IFileStore source= history.getChild(name);
-						if (source.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 20)).exists()) {
+						if (source.fetchInfo(EFS.NONE, monitor.slice(20)).exists()) {
 							IFileStore destination= EFS.getStore(uri).getChild(NAME_HISTORY_FOLDER);
-							if (destination.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 20)).exists())
-								destination.delete(EFS.NONE, new SubProgressMonitor(monitor, 20));
-							destination.mkdir(EFS.NONE, new SubProgressMonitor(monitor, 20));
-							source.copy(destination, EFS.OVERWRITE, new SubProgressMonitor(monitor, 20));
-							source.delete(EFS.NONE, new SubProgressMonitor(monitor, 20));
+							if (destination.fetchInfo(EFS.NONE, monitor.slice(20)).exists())
+								destination.delete(EFS.NONE, monitor.slice(20));
+							destination.mkdir(EFS.NONE, monitor.slice(20));
+							source.copy(destination, EFS.OVERWRITE, monitor.slice(20));
+							source.delete(EFS.NONE, monitor.slice(20));
 						}
 					} else {
 						final IFileStore source= EFS.getStore(uri).getChild(NAME_HISTORY_FOLDER);
-						if (source.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 20)).exists()) {
+						if (source.fetchInfo(EFS.NONE, monitor.slice(20)).exists()) {
 							IFileStore destination= history.getChild(name);
-							if (destination.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 20)).exists())
-								destination.delete(EFS.NONE, new SubProgressMonitor(monitor, 20));
-							destination.mkdir(EFS.NONE, new SubProgressMonitor(monitor, 20));
-							source.copy(destination, EFS.OVERWRITE, new SubProgressMonitor(monitor, 20));
-							source.delete(EFS.NONE, new SubProgressMonitor(monitor, 20));
+							if (destination.fetchInfo(EFS.NONE, monitor.slice(20)).exists())
+								destination.delete(EFS.NONE, monitor.slice(20));
+							destination.mkdir(EFS.NONE, monitor.slice(20));
+							source.copy(destination, EFS.OVERWRITE, monitor.slice(20));
+							source.delete(EFS.NONE, monitor.slice(20));
 						}
 					}
 				} finally {
 					if (enable)
-						project.refreshLocal(IResource.DEPTH_INFINITE, new SubProgressMonitor(monitor, 30));
+						project.refreshLocal(IResource.DEPTH_INFINITE, monitor.slice(30));
 					else {
 						final IFolder folder= project.getFolder(NAME_HISTORY_FOLDER);
 						if (folder.exists())
-							folder.refreshLocal(IResource.DEPTH_INFINITE, new SubProgressMonitor(monitor, 30));
+							folder.refreshLocal(IResource.DEPTH_INFINITE, monitor.slice(30));
 					}
 				}
 			}
@@ -411,7 +411,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 				collection.add(proxy);
 				monitor.worked(1);
 			}
-			final SubProgressMonitor subMonitor= new SubProgressMonitor(monitor, 300);
+			final IProgressMonitor subMonitor= monitor.slice(300);
 			try {
 				final Set<Entry<String, Collection<RefactoringDescriptorProxy>>> entries= projects.entrySet();
 				subMonitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_deleting_refactorings, entries.size());
@@ -422,7 +422,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 						project= null;
 					final RefactoringHistoryManager manager= getManager(project);
 					if (manager != null)
-						manager.removeRefactoringDescriptors(collection.toArray(new RefactoringDescriptorProxy[collection.size()]), new SubProgressMonitor(subMonitor, 1), RefactoringCoreMessages.RefactoringHistoryService_deleting_refactorings);
+						manager.removeRefactoringDescriptors(collection.toArray(new RefactoringDescriptorProxy[collection.size()]), subMonitor.slice(1), RefactoringCoreMessages.RefactoringHistoryService_deleting_refactorings);
 					else
 						subMonitor.worked(1);
 				}
@@ -473,7 +473,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			}
 			if (!set.isEmpty()) {
 				final RefactoringDescriptorProxy[] delete= set.toArray(new RefactoringDescriptorProxy[set.size()]);
-				deleteRefactoringDescriptors(delete, new SubProgressMonitor(monitor, 300));
+				deleteRefactoringDescriptors(delete, monitor.slice(300));
 				for (RefactoringDescriptorProxy d : delete) {
 					fireRefactoringHistoryEvent(d, RefactoringHistoryEvent.DELETED);
 				}
@@ -515,17 +515,17 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			final IFileStore stateStore= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation());
 			if (NAME_WORKSPACE_PROJECT.equals(name)) {
 				final IFileStore metaStore= stateStore.getChild(NAME_HISTORY_FOLDER).getChild(name);
-				metaStore.delete(EFS.NONE, new SubProgressMonitor(monitor, 100));
+				metaStore.delete(EFS.NONE, monitor.slice(100));
 			} else {
 				final URI uri= project.getLocationURI();
 				if (uri != null && project.isAccessible()) {
 					try {
 						final IFileStore metaStore= stateStore.getChild(NAME_HISTORY_FOLDER).getChild(name);
-						metaStore.delete(EFS.NONE, new SubProgressMonitor(monitor, 20));
+						metaStore.delete(EFS.NONE, monitor.slice(20));
 						final IFileStore projectStore= EFS.getStore(uri).getChild(NAME_HISTORY_FOLDER);
-						projectStore.delete(EFS.NONE, new SubProgressMonitor(monitor, 20));
+						projectStore.delete(EFS.NONE, monitor.slice(20));
 					} finally {
-						project.refreshLocal(IResource.DEPTH_INFINITE, new SubProgressMonitor(monitor, 60));
+						project.refreshLocal(IResource.DEPTH_INFINITE, monitor.slice(60));
 					}
 				}
 			}
@@ -632,10 +632,10 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 				final String name= project.getName();
 				final RefactoringHistoryManager manager= getManager(name);
 				if (manager != null) {
-					RefactoringHistory history= manager.readRefactoringHistory(start, end, new SubProgressMonitor(monitor, 20));
+					RefactoringHistory history= manager.readRefactoringHistory(start, end, monitor.slice(20));
 					if (flags > RefactoringDescriptor.NONE) {
 						final Set<RefactoringDescriptorProxy> set= new HashSet<>();
-						filterRefactoringDescriptors(history.getDescriptors(), set, false, flags, new SubProgressMonitor(monitor, 100));
+						filterRefactoringDescriptors(history.getDescriptors(), set, false, flags, monitor.slice(100));
 						history= new RefactoringHistoryImplementation(set.toArray(new RefactoringDescriptorProxy[set.size()]));
 					}
 					return history;
@@ -666,14 +666,14 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			if (flags > RefactoringDescriptor.NONE) {
 				for (IProject project : projects) {
 					if (project.isAccessible()) {
-						final RefactoringDescriptorProxy[] proxies= getProjectHistory(project, start, end, flags, new SubProgressMonitor(monitor, 1)).getDescriptors();
-						filterRefactoringDescriptors(proxies, set, false, flags, new SubProgressMonitor(monitor, 2));
+						final RefactoringDescriptorProxy[] proxies= getProjectHistory(project, start, end, flags, monitor.slice(1)).getDescriptors();
+						filterRefactoringDescriptors(proxies, set, false, flags, monitor.slice(2));
 					}
 				}
 			} else {
 				for (IProject project : projects) {
 					if (project.isAccessible()) {
-						final RefactoringDescriptorProxy[] proxies= getProjectHistory(project, start, end, RefactoringDescriptor.NONE, new SubProgressMonitor(monitor, 3)).getDescriptors();
+						final RefactoringDescriptorProxy[] proxies= getProjectHistory(project, start, end, RefactoringDescriptor.NONE, monitor.slice(3)).getDescriptors();
 						set.addAll(Arrays.asList(proxies));
 					}
 				}
@@ -810,7 +810,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			connect();
 			final List<RefactoringDescriptor> list= new ArrayList<>(proxies.length);
 			for (RefactoringDescriptorProxy proxy : proxies) {
-				final RefactoringDescriptor descriptor= proxy.requestDescriptor(new SubProgressMonitor(monitor, 100));
+				final RefactoringDescriptor descriptor= proxy.requestDescriptor(monitor.slice(100));
 				if (descriptor != null) {
 					final int current= descriptor.getFlags();
 					if ((current | flags) == current)

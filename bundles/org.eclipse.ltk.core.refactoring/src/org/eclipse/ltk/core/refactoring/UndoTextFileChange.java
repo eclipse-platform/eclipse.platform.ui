@@ -19,8 +19,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
-
 import org.eclipse.core.resources.IFile;
 
 import org.eclipse.core.filebuffers.FileBuffers;
@@ -176,7 +174,7 @@ public class UndoTextFileChange extends Change {
 		pm.beginTask("", 2); //$NON-NLS-1$
 		ITextFileBuffer buffer= null;
 		try {
-			manager.connect(fFile.getFullPath(), LocationKind.IFILE, new SubProgressMonitor(pm, 1));
+			manager.connect(fFile.getFullPath(), LocationKind.IFILE, pm.slice(1));
 			buffer= manager.getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
 			IDocument document= buffer.getDocument();
 			ContentStamp currentStamp= ContentStamps.get(fFile, document);
@@ -210,7 +208,7 @@ public class UndoTextFileChange extends Change {
 				return new NullChange();
 		} finally {
 			if (buffer != null)
-				manager.disconnect(fFile.getFullPath(), LocationKind.IFILE, new SubProgressMonitor(pm, 1));
+				manager.disconnect(fFile.getFullPath(), LocationKind.IFILE, pm.slice(1));
 		}
 	}
 
