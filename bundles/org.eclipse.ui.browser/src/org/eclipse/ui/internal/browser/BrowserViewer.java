@@ -399,6 +399,8 @@ public class BrowserViewer extends Composite {
 		});
 
 		browser.addProgressListener(new ProgressListener() {
+			private IProgressMonitor monitor;
+
 			@Override
 			public void changed(ProgressEvent event) {
 					//System.out.println("progress: " + event.current + ", " + event.total); //$NON-NLS-1$ //$NON-NLS-2$
@@ -409,16 +411,21 @@ public class BrowserViewer extends Composite {
 
 				int percentProgress = event.current * 100 / event.total;
 				if (container != null) {
-					IProgressMonitor monitor = container.getActionBars()
-							.getStatusLineManager().getProgressMonitor();
 					if (done) {
-						monitor.done();
+						if (monitor != null) {
+							monitor.done();
+						}
 						progressWorked = 0;
+						monitor = null;
 					} else if (progressWorked == 0) {
+						IStatusLineManager statusLineManager = container.getActionBars().getStatusLineManager();
+						monitor = statusLineManager.getProgressMonitor();
 						monitor.beginTask("", event.total); //$NON-NLS-1$
 						progressWorked = percentProgress;
 					} else {
-						monitor.worked(event.current - progressWorked);
+						if (monitor != null) {
+							monitor.worked(event.current - progressWorked);
+						}
 						progressWorked = event.current;
 					}
 				}
@@ -439,9 +446,7 @@ public class BrowserViewer extends Composite {
 
 			@Override
 			public void completed(ProgressEvent event) {
-				if (container != null) {
-					IProgressMonitor monitor = container.getActionBars()
-							.getStatusLineManager().getProgressMonitor();
+				if (container != null && monitor != null) {
 					monitor.done();
 				}
 				if (showToolbar) {
