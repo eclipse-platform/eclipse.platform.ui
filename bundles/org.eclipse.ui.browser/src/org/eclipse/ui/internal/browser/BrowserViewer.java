@@ -443,6 +443,7 @@ public class BrowserViewer extends Composite {
 					IProgressMonitor monitor = container.getActionBars()
 							.getStatusLineManager().getProgressMonitor();
 					monitor.done();
+					progressWorked = 0;
 				}
 				if (showToolbar) {
 					loading = false;
@@ -897,6 +898,7 @@ public class BrowserViewer extends Composite {
 			IStatusLineManager manager = this.container.getActionBars().getStatusLineManager();
 			if (manager!=null)
 				manager.getProgressMonitor().done();
+			progressWorked = 0;
 		}
 		this.container = container;
 	}
