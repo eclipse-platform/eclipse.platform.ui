@@ -448,6 +448,7 @@ public class BrowserViewer extends Composite {
 			public void completed(ProgressEvent event) {
 				if (container != null && monitor != null) {
 					monitor.done();
+					progressWorked = 0;
 				}
 				if (showToolbar) {
 					loading = false;
@@ -900,8 +901,10 @@ public class BrowserViewer extends Composite {
 	public void setContainer(IBrowserViewerContainer container) {
 		if (container==null && this.container!=null) {
 			IStatusLineManager manager = this.container.getActionBars().getStatusLineManager();
-			if (manager!=null)
+			if (manager != null) {
 				manager.getProgressMonitor().done();
+			}
+			progressWorked = 0;
 		}
 		this.container = container;
 	}
