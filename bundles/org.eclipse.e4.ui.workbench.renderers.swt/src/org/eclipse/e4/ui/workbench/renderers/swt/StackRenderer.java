@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -120,6 +121,17 @@ import org.osgi.service.event.EventHandler;
  * IPresentation.STYLE_OVERRIDE_KEY key
  */
 public class StackRenderer extends LazyStackRenderer {
+
+	private static final String ONBOARDING_CONTAINER = "EditorStack.OnboardingContainer"; //$NON-NLS-1$
+	private static final String ONBOARDING_COMPOSITE = "EditorStack.OnboardingComposite"; //$NON-NLS-1$
+	private static final String ONBOARDING_IMAGE = "EditorStack.OnboardingImage"; //$NON-NLS-1$
+	private static final String ONBOARDING_TEXT = "EditorStack.OnboardingText"; //$NON-NLS-1$
+
+	/**
+	 * Id of a a control.
+	 */
+	private static final String ID = "id"; //$NON-NLS-1$
+
 	private static final String THE_PART_KEY = "thePart"; //$NON-NLS-1$
 
 	/**
@@ -201,10 +213,6 @@ public class StackRenderer extends LazyStackRenderer {
 
 	private boolean imageChanged;
 
-	private Composite onboardingComposite;
-	private Label onboardingText;
-	private Label onboardingImage;
-
 	List<CTabItem> getItemsToSet(MPart part) {
 		List<CTabItem> itemsToSet = new ArrayList<>();
 
@@ -249,13 +257,31 @@ public class StackRenderer extends LazyStackRenderer {
 	}
 
 	private void setOnboarding(MPerspective perspective) {
-		if (onboardingImage == null || onboardingText == null || onboardingComposite == null
-				|| onboardingComposite.isDisposed()) {
+		CTabFolder tabFolder = getEditorTabFolder(perspective);
+		if (tabFolder == null) {
 			return;
 		}
 
-		Arrays.stream(onboardingComposite.getChildren()).filter(c -> c != onboardingImage)
-				.filter(c -> c != onboardingText).forEach(Control::dispose);
+		Composite onboardingContainer = getChild(tabFolder, ONBOARDING_CONTAINER, Composite.class);
+		if (onboardingContainer == null || onboardingContainer.isDisposed()) {
+			return;
+		}
+
+		Composite onboardingComposite = getChild(onboardingContainer, ONBOARDING_COMPOSITE, Composite.class);
+		if (onboardingComposite == null || onboardingComposite.isDisposed()) {
+			return;
+		}
+
+		Label onboardingImage = getChild(onboardingComposite, ONBOARDING_IMAGE, Label.class);
+		Label onboardingText = getChild(onboardingComposite, ONBOARDING_TEXT, Label.class);
+
+		if (onboardingImage == null || onboardingImage.isDisposed() || onboardingText == null
+				|| onboardingText.isDisposed()) {
+			return;
+		}
+
+		Arrays.stream(onboardingComposite.getChildren())
+				.filter(c -> c != onboardingImage).filter(c -> c != onboardingText).forEach(Control::dispose);
 
 		String textId = "persp.editorOnboardingText:"; //$NON-NLS-1$
 		perspective.getTags().stream().filter(tag -> tag.startsWith(textId)).map(tag -> tag.substring(textId.length()))
@@ -704,13 +730,16 @@ public class StackRenderer extends LazyStackRenderer {
 	}
 
 	private void createOnboardingControls(CTabFolder tabFolder) {
-		Composite onBoarding = WidgetFactory.composite(SWT.NONE).layout(GridLayoutFactory.swtDefaults().create())
-				.background(tabFolder.getBackground()).create(tabFolder);
+		Composite onBoardingContainer = WidgetFactory.composite(SWT.NONE)
+				.layout(GridLayoutFactory.swtDefaults().create()).background(tabFolder.getBackground())
+				.create(tabFolder);
+		onBoardingContainer.setData(ID, ONBOARDING_CONTAINER);
 
-		onboardingComposite = WidgetFactory.composite(SWT.NONE).background(tabFolder.getBackground())
-				.create(onBoarding);
+		Composite onboardingComposite = WidgetFactory.composite(SWT.NONE).background(tabFolder.getBackground())
+				.create(onBoardingContainer);
 		GridDataFactory.create(GridData.VERTICAL_ALIGN_CENTER | GridData.HORIZONTAL_ALIGN_CENTER).grab(true, true)
 				.applyTo(onboardingComposite);
+		onboardingComposite.setData(ID, ONBOARDING_COMPOSITE);
 
 		GridLayoutFactory.swtDefaults().numColumns(2).equalWidth(true).spacing(10, SWT.DEFAULT)
 				.applyTo(onboardingComposite);
@@ -718,18 +747,21 @@ public class StackRenderer extends LazyStackRenderer {
 		GridDataFactory gridDataFactory = GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER)
 				.indent(SWT.DEFAULT, 10).span(2, 1);
 
-		onboardingImage = WidgetFactory.label(SWT.NONE).supplyLayoutData(gridDataFactory::create)
+		Label onboardingImage = WidgetFactory.label(SWT.NONE).supplyLayoutData(gridDataFactory::create)
 				.create(onboardingComposite);
+		onboardingImage.setData(ID, ONBOARDING_IMAGE);
 
 		Color color = JFaceResources.getColorRegistry().get(JFacePreferences.QUALIFIER_COLOR);
-		onboardingText = WidgetFactory.label(SWT.NONE).foreground(color).supplyLayoutData(gridDataFactory::create)
+		Label onboardingText = WidgetFactory.label(SWT.NONE).foreground(color).supplyLayoutData(gridDataFactory::create)
 				.create(onboardingComposite);
+		onboardingText.setData(ID, ONBOARDING_TEXT);
 
-		onBoarding.setLocation(ONBOARDING_SPACING, ONBOARDING_TOP_SPACING);
-		Consumer<ControlEvent> sizeUpdate = e -> setOnboardingControlSize(tabFolder, onBoarding, onboardingImage);
+		onBoardingContainer.setLocation(ONBOARDING_SPACING, ONBOARDING_TOP_SPACING);
+		Consumer<ControlEvent> sizeUpdate = e -> setOnboardingControlSize(tabFolder, onBoardingContainer,
+				onboardingComposite, onboardingImage);
 		tabFolder.addControlListener(ControlListener.controlResizedAdapter(sizeUpdate));
-		Consumer<CTabFolderEvent> tabCountUpdate = e -> setOnboardingControlSize(tabFolder, onBoarding,
-				onboardingImage);
+		Consumer<CTabFolderEvent> tabCountUpdate = e -> setOnboardingControlSize(tabFolder, onBoardingContainer,
+				onboardingComposite, onboardingImage);
 		tabFolder.addCTabFolder2Listener(CTabFolder2Listener.itemsCountAdapter(tabCountUpdate));
 
 		tabFolder.addDisposeListener(e -> {
@@ -740,7 +772,8 @@ public class StackRenderer extends LazyStackRenderer {
 		});
 	}
 
-	private void setOnboardingControlSize(CTabFolder tabFolder, Composite onBoarding, Label onBoardingImage) {
+	private void setOnboardingControlSize(CTabFolder tabFolder, Composite onBoarding, Composite onboardingComposite,
+			Label onBoardingImage) {
 		if (onBoarding == null || onBoarding.isDisposed() || tabFolder == null || tabFolder.isDisposed()
 				|| onBoardingImage == null || onBoardingImage.isDisposed()) {
 			return;
@@ -1880,5 +1913,23 @@ public class StackRenderer extends LazyStackRenderer {
 	@Override
 	protected boolean imageChanged() {
 		return this.imageChanged;
+	}
+
+	private CTabFolder getEditorTabFolder(MPerspective perspective) {
+		Predicate<Object> tabFolders = CTabFolder.class::isInstance;
+		Function<Object, CTabFolder> toTabFolder = CTabFolder.class::cast;
+
+		List<MPartStack> elements = modelService.findElements(perspective, null, MPartStack.class,
+				List.of("EditorStack")); //$NON-NLS-1$
+		return elements.stream().map(MUIElement::getWidget).filter(tabFolders).map(toTabFolder).findFirst()
+				.orElse(null);
+	}
+
+	private <T extends Control> T getChild(Composite parent, String id, Class<T> type) {
+		if (parent == null || parent.isDisposed()) {
+			return null;
+		}
+		return Arrays.stream(parent.getChildren()).filter(child -> id.equals(child.getData(ID)))
+				.filter(type::isInstance).map(type::cast).findFirst().orElse(null);
 	}
 }
