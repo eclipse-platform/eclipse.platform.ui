@@ -280,8 +280,8 @@ public class StackRenderer extends LazyStackRenderer {
 			return;
 		}
 
-		Arrays.stream(onboardingComposite.getChildren())
-				.filter(c -> c != onboardingImage).filter(c -> c != onboardingText).forEach(Control::dispose);
+		Arrays.stream(onboardingComposite.getChildren()).filter(c -> c != onboardingImage)
+				.filter(c -> c != onboardingText).forEach(Control::dispose);
 
 		String textId = "persp.editorOnboardingText:"; //$NON-NLS-1$
 		perspective.getTags().stream().filter(tag -> tag.startsWith(textId)).map(tag -> tag.substring(textId.length()))
@@ -730,16 +730,14 @@ public class StackRenderer extends LazyStackRenderer {
 	}
 
 	private void createOnboardingControls(CTabFolder tabFolder) {
-		Composite onBoardingContainer = WidgetFactory.composite(SWT.NONE)
+		Composite onBoardingContainer = WidgetFactory.composite(SWT.NONE).data(ID, ONBOARDING_CONTAINER)
 				.layout(GridLayoutFactory.swtDefaults().create()).background(tabFolder.getBackground())
 				.create(tabFolder);
-		onBoardingContainer.setData(ID, ONBOARDING_CONTAINER);
 
 		Composite onboardingComposite = WidgetFactory.composite(SWT.NONE).background(tabFolder.getBackground())
-				.create(onBoardingContainer);
+				.data(ID, ONBOARDING_COMPOSITE).create(onBoardingContainer);
 		GridDataFactory.create(GridData.VERTICAL_ALIGN_CENTER | GridData.HORIZONTAL_ALIGN_CENTER).grab(true, true)
 				.applyTo(onboardingComposite);
-		onboardingComposite.setData(ID, ONBOARDING_COMPOSITE);
 
 		GridLayoutFactory.swtDefaults().numColumns(2).equalWidth(true).spacing(10, SWT.DEFAULT)
 				.applyTo(onboardingComposite);
@@ -748,13 +746,11 @@ public class StackRenderer extends LazyStackRenderer {
 				.indent(SWT.DEFAULT, 10).span(2, 1);
 
 		Label onboardingImage = WidgetFactory.label(SWT.NONE).supplyLayoutData(gridDataFactory::create)
-				.create(onboardingComposite);
-		onboardingImage.setData(ID, ONBOARDING_IMAGE);
+				.data(ID, ONBOARDING_IMAGE).create(onboardingComposite);
 
 		Color color = JFaceResources.getColorRegistry().get(JFacePreferences.QUALIFIER_COLOR);
-		Label onboardingText = WidgetFactory.label(SWT.NONE).foreground(color).supplyLayoutData(gridDataFactory::create)
-				.create(onboardingComposite);
-		onboardingText.setData(ID, ONBOARDING_TEXT);
+		WidgetFactory.label(SWT.NONE).foreground(color).supplyLayoutData(gridDataFactory::create)
+				.data(ID, ONBOARDING_TEXT).create(onboardingComposite);
 
 		onBoardingContainer.setLocation(ONBOARDING_SPACING, ONBOARDING_TOP_SPACING);
 		Consumer<ControlEvent> sizeUpdate = e -> setOnboardingControlSize(tabFolder, onBoardingContainer,
