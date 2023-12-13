@@ -1,5 +1,5 @@
  /****************************************************************************
-* Copyright (c) 2000, 2018 IBM Corporation and others.
+* Copyright (c) 2000, 2023 IBM Corporation and others.
 *
 * This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License 2.0
@@ -198,7 +198,6 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 		missingNatureSeverityCombo.load();
 	}
 
-	@SuppressWarnings("restriction")
 	private void createMissingEncodingPref(Composite parent) {
 		missingEncodingSeverityCombo = new ComboFieldEditorInGrid(ResourcesPlugin.PREF_MISSING_ENCODING_MARKER_SEVERITY,
 				IDEWorkbenchMessages.IDEWorkspacePreference_UnknownEncodingSeverity,
