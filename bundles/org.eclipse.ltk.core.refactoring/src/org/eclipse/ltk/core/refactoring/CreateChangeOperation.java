@@ -16,8 +16,7 @@ package org.eclipse.ltk.core.refactoring;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
 
@@ -107,35 +106,28 @@ public class CreateChangeOperation implements IWorkspaceRunnable {
 
 	@Override
 	public void run(IProgressMonitor pm) throws CoreException {
-		if (pm == null)
-			pm= new NullProgressMonitor();
+		SubMonitor subMonitor= SubMonitor.convert(pm);
 		fChange= null;
-		try {
-			fChange= null;
-			RefactoringTickProvider rtp= fRefactoring.getRefactoringTickProvider();
-			if (fCheckConditionOperation != null) {
-				int conditionTicks= fCheckConditionOperation.getTicks(rtp);
-				int allTicks= conditionTicks + rtp.getCreateChangeTicks() + rtp.getInitializeChangeTicks();
-				pm.beginTask("", allTicks); //$NON-NLS-1$
-				pm.subTask(""); //$NON-NLS-1$
-				fCheckConditionOperation.run(new SubProgressMonitor(pm, conditionTicks));
-				RefactoringStatus status= fCheckConditionOperation.getStatus();
-				if (status != null && status.getSeverity() < fConditionCheckingFailedSeverity) {
-					fChange= fRefactoring.createChange(new SubProgressMonitor(pm, rtp.getCreateChangeTicks()));
-					fChange.initializeValidationData(new NotCancelableProgressMonitor(
-							new SubProgressMonitor(pm, rtp.getInitializeChangeTicks())));
-				} else {
-					pm.worked(rtp.getCreateChangeTicks() + rtp.getInitializeChangeTicks());
-				}
-			} else {
-				pm.beginTask("", rtp.getCreateChangeTicks() + rtp.getInitializeChangeTicks()); //$NON-NLS-1$
-				fChange= fRefactoring.createChange(new SubProgressMonitor(pm, rtp.getCreateChangeTicks()));
+		RefactoringTickProvider rtp= fRefactoring.getRefactoringTickProvider();
+		if (fCheckConditionOperation != null) {
+			int conditionTicks= fCheckConditionOperation.getTicks(rtp);
+			int allTicks= conditionTicks + rtp.getCreateChangeTicks() + rtp.getInitializeChangeTicks();
+			subMonitor.setWorkRemaining(allTicks);
+			fCheckConditionOperation.run(subMonitor.newChild(conditionTicks));
+			RefactoringStatus status= fCheckConditionOperation.getStatus();
+			if (status != null && status.getSeverity() < fConditionCheckingFailedSeverity) {
+				fChange= fRefactoring.createChange(subMonitor.newChild(rtp.getCreateChangeTicks()));
 				fChange.initializeValidationData(new NotCancelableProgressMonitor(
-					new SubProgressMonitor(pm, rtp.getInitializeChangeTicks())));
+						subMonitor.newChild(rtp.getInitializeChangeTicks())));
+			} else {
+				subMonitor.worked(rtp.getCreateChangeTicks() + rtp.getInitializeChangeTicks());
 			}
-		} finally {
-			pm.done();
+		} else {
+			subMonitor.setWorkRemaining(rtp.getCreateChangeTicks() + rtp.getInitializeChangeTicks());
+			fChange= fRefactoring.createChange(subMonitor.newChild(rtp.getCreateChangeTicks()));
+			fChange.initializeValidationData(new NotCancelableProgressMonitor(subMonitor.newChild(rtp.getInitializeChangeTicks())));
 		}
+
 	}
 
 	/**
