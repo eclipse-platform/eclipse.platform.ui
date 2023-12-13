@@ -516,8 +516,8 @@ public class BuildOrderPreferencePage extends PreferencePage implements
 	 * See IWorkbenchPreferencePage. This class does nothing with he Workbench.
 	 */
 	@Override
-	public void init(IWorkbench workbench) {
-		this.workbench = workbench;
+	public void init(IWorkbench currentWorkbench) {
+		this.workbench = currentWorkbench;
 		setPreferenceStore(PrefUtil.getInternalPreferenceStore());
 	}
 

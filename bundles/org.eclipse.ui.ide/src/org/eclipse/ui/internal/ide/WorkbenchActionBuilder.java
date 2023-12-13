@@ -83,7 +83,7 @@ import org.eclipse.ui.menus.CommandContributionItemParameter;
  */
 public class WorkbenchActionBuilder extends ActionBarAdvisor {
 
-	private final IWorkbenchWindow window;
+	private final IWorkbenchWindow workbenchWindow;
 
 	// generic actions
 	private IWorkbenchAction closeAction;
@@ -238,14 +238,14 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 	 */
 	public WorkbenchActionBuilder(IActionBarConfigurer configurer) {
 		super(configurer);
-		window = configurer.getWindowConfigurer().getWindow();
+		workbenchWindow = configurer.getWindowConfigurer().getWindow();
 	}
 
 	/**
 	 * Returns the window to which this action builder is contributing.
 	 */
 	private IWorkbenchWindow getWindow() {
-		return window;
+		return workbenchWindow;
 	}
 
 	/**
@@ -293,7 +293,7 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 					return;
 				}
 				// update the "toggled" state based on the current editor
-				ICommandService commandService = window.getService(ICommandService.class);
+				ICommandService commandService = workbenchWindow.getService(ICommandService.class);
 				commandService.refreshElements(IWorkbenchCommandConstants.WINDOW_PIN_EDITOR, null);
 			}
 
@@ -318,11 +318,11 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 		propPrefListener = event -> {
 			if (event.getProperty().equals(
 					IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
-				if (window.getShell() != null
-						&& !window.getShell().isDisposed()) {
+				if (workbenchWindow.getShell() != null
+						&& !workbenchWindow.getShell().isDisposed()) {
 					// this property change notification could be from a non-ui thread
-					window.getShell().getDisplay().asyncExec(() -> {
-						if (window.getShell() != null && !window.getShell().isDisposed()) {
+					workbenchWindow.getShell().getDisplay().asyncExec(() -> {
+						if (workbenchWindow.getShell() != null && !workbenchWindow.getShell().isDisposed()) {
 							updatePinActionToolbar();
 						}
 					});
@@ -721,7 +721,7 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 	 */
 	private void addWorkingSetBuildActions(MenuManager menu) {
 		buildWorkingSetMenu = new MenuManager(IDEWorkbenchMessages.Workbench_buildSet);
-		IContributionItem workingSetBuilds = new BuildSetMenu(window,
+		IContributionItem workingSetBuilds = new BuildSetMenu(workbenchWindow,
 				getActionBarConfigurer());
 		buildWorkingSetMenu.add(workingSetBuilds);
 		menu.add(buildWorkingSetMenu);
@@ -825,11 +825,11 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 
 		getActionBarConfigurer().getStatusLineManager().remove(statusLineItem);
 		if (pageListener != null) {
-			window.removePageListener(pageListener);
+			workbenchWindow.removePageListener(pageListener);
 			pageListener = null;
 		}
 		if (partListener != null) {
-			window.getPartService().removePartListener(partListener);
+			workbenchWindow.getPartService().removePartListener(partListener);
 			partListener = null;
 		}
 		if (prefListener != null) {
@@ -1356,8 +1356,8 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 			}
 
 			private void updateCommandEnablement(String commandId) {
-				IHandlerService handlerService = window.getService(IHandlerService.class);
-				ICommandService commandService = window.getService(ICommandService.class);
+				IHandlerService handlerService = workbenchWindow.getService(IHandlerService.class);
+				ICommandService commandService = workbenchWindow.getService(ICommandService.class);
 				if (handlerService != null && commandService != null) {
 					Command buildAllCmd = commandService.getCommand(commandId);
 					buildAllCmd.setEnabled(handlerService.getCurrentState());
@@ -1370,7 +1370,7 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 		else {
 			// Dispatch the update to be run later in the UI thread.
 			// This helps to reduce flicker if autobuild is being temporarily disabled programmatically.
-			Shell shell = window.getShell();
+			Shell shell = workbenchWindow.getShell();
 			if (shell != null && !shell.isDisposed()) {
 				shell.getDisplay().asyncExec(update);
 			}
@@ -1408,16 +1408,16 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 		toolBarManager.markDirty();
 		toolBarManager.update(false);
 		toolBarItem.update(ICoolBarManager.SIZE);
-		window.getShell().getDisplay().asyncExec(() -> {
-			if (window.getShell() != null && !window.getShell().isDisposed()) {
-				ICommandService commandService = window.getService(ICommandService.class);
+		workbenchWindow.getShell().getDisplay().asyncExec(() -> {
+			if (workbenchWindow.getShell() != null && !workbenchWindow.getShell().isDisposed()) {
+				ICommandService commandService = workbenchWindow.getService(ICommandService.class);
 				commandService.refreshElements(IWorkbenchCommandConstants.WINDOW_PIN_EDITOR, null);
 			}
 		});
 	}
 
 	private IContributionItem getPinEditorItem() {
-		return ContributionItemFactory.PIN_EDITOR.create(window);
+		return ContributionItemFactory.PIN_EDITOR.create(workbenchWindow);
 	}
 
 	private IContributionItem getUndoItem() {

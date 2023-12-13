@@ -411,30 +411,29 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
-
-		Composite dialogArea = (Composite) super.createDialogArea(parent);
-		Label l = new Label(dialogArea, SWT.NONE);
+		Composite dialogAreaComposite = (Composite) super.createDialogArea(parent);
+		Label l = new Label(dialogAreaComposite, SWT.NONE);
 		l.setText(IDEWorkbenchMessages.ResourceSelectionDialog_label);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		l.setLayoutData(data);
 
-		pattern = new Text(dialogArea, SWT.SINGLE | SWT.BORDER);
+		pattern = new Text(dialogAreaComposite, SWT.SINGLE | SWT.BORDER);
 		pattern.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		l = new Label(dialogArea, SWT.NONE);
+		l = new Label(dialogAreaComposite, SWT.NONE);
 		l.setText(IDEWorkbenchMessages.ResourceSelectionDialog_matching);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		l.setLayoutData(data);
-		resourceNames = new Table(dialogArea, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL);
+		resourceNames = new Table(dialogAreaComposite, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL);
 		data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = 12 * resourceNames.getItemHeight();
 		resourceNames.setLayoutData(data);
 
-		l = new Label(dialogArea, SWT.NONE);
+		l = new Label(dialogAreaComposite, SWT.NONE);
 		l.setText(IDEWorkbenchMessages.ResourceSelectionDialog_folders);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		l.setLayoutData(data);
 
-		folderNames = new Table(dialogArea, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		folderNames = new Table(dialogAreaComposite, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		data = new GridData(GridData.FILL_BOTH);
 		data.widthHint = 300;
 		data.heightHint = 4 * folderNames.getItemHeight();
@@ -477,7 +476,7 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 		});
 
 		if (getAllowUserToToggleDerived()) {
-			showDerivedButton = new Button(dialogArea, SWT.CHECK);
+			showDerivedButton = new Button(dialogAreaComposite, SWT.CHECK);
 			showDerivedButton.setText(IDEWorkbenchMessages.ResourceSelectionDialog_showDerived);
 			showDerivedButton.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -489,8 +488,8 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 			showDerivedButton.setSelection(getShowDerived());
 		}
 
-		applyDialogFont(dialogArea);
-		return dialogArea;
+		applyDialogFont(dialogAreaComposite);
+		return dialogAreaComposite;
 	}
 
 	/**

@@ -231,7 +231,7 @@ public class TableComparator extends ViewerComparator implements Comparator {
 		return fields;
 	}
 
-	private boolean verifyPriorities(int[] priorities) {
+	private static boolean verifyPriorities(int[] priorities) {
 		int length = priorities.length;
 		boolean[] included = new boolean[length];
 		Arrays.fill(included, false);
@@ -248,7 +248,7 @@ public class TableComparator extends ViewerComparator implements Comparator {
 		return true;
 	}
 
-	private boolean verifyDirections(int[] directions) {
+	private static boolean verifyDirections(int[] directions) {
 		for (int direction : directions) {
 			if (direction != ASCENDING && direction != DESCENDING) {
 				return false;

@@ -555,8 +555,7 @@ public class SmartImportRootWizardPage extends WizardPage {
 		tree.setContentProvider(new ITreeContentProvider() {
 			@Override
 			public Object[] getElements(Object inputElement) {
-				Map<File, ?> potentialProjects = (Map<File, ?>) inputElement;
-				return potentialProjects.keySet().toArray(new File[potentialProjects.size()]);
+				return ((Map<File, ?>) inputElement).keySet().toArray(File[]::new);
 			}
 
 			@Override

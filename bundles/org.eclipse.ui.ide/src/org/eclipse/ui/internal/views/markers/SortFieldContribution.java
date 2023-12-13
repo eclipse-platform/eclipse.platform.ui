@@ -120,14 +120,14 @@ public class SortFieldContribution extends MarkersContribution {
 			 *
 			 * @return Listener
 			 */
-			private Listener getMenuItemListener(final MarkerField field,
+			private Listener getMenuItemListener(final MarkerField markerField,
 					final ExtendedMarkersView view) {
 				return event -> {
 
 					MenuItem item = (MenuItem) event.widget;
 
 					if (item.getSelection() && view != null)
-						view.setPrimarySortField(field);
+						view.setPrimarySortField(markerField);
 				};
 			}
 		};

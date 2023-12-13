@@ -155,8 +155,8 @@ public class AnnotationCodeMiningProvider extends AbstractCodeMiningProvider
 	private @Nullable IAnnotationAccessExtension annotationAccess= null;
 
 	@Override
-	public CompletableFuture<List<? extends ICodeMining>> provideCodeMinings(ITextViewer viewer, IProgressMonitor monitor) {
-		if (!(viewer instanceof ISourceViewerExtension5)) {
+	public CompletableFuture<List<? extends ICodeMining>> provideCodeMinings(ITextViewer textViewer, IProgressMonitor monitor) {
+		if (!(textViewer instanceof ISourceViewerExtension5)) {
 			throw new IllegalArgumentException("Cannot attach to TextViewer without code mining support"); //$NON-NLS-1$
 		}
 
@@ -164,13 +164,13 @@ public class AnnotationCodeMiningProvider extends AbstractCodeMiningProvider
 			return CompletableFuture.completedFuture(Collections.emptyList());
 		}
 
-		this.viewer= viewer;
+		this.viewer= textViewer;
 
-		final IAnnotationAccess annotationAccess= getAdapter(IAnnotationAccess.class);
-		if (!(annotationAccess instanceof IAnnotationAccessExtension)) {
+		if (getAdapter(IAnnotationAccess.class) instanceof IAnnotationAccessExtension annotationAccessExtension) {
+			this.annotationAccess= annotationAccessExtension;
+		} else {
 			throw new IllegalStateException("annotationAccess must implement IAnnotationAccessExtension"); //$NON-NLS-1$
 		}
-		this.annotationAccess= (IAnnotationAccessExtension) annotationAccess;
 
 		return provideCodeMiningsInternal(monitor);
 	}

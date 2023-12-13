@@ -285,13 +285,13 @@ public class TarInputStream extends FilterInputStream
 			// We get a file called ././@LongLink which just contains
 			// the real pathname.
 			byte[] longNameData = new byte[(int) entry.getSize()];
-			int bytesread = 0;
-			while (bytesread < longNameData.length) {
-				int cur = read(longNameData, bytesread, longNameData.length - bytesread);
+			int readBytesOfEntry = 0;
+			while (readBytesOfEntry < longNameData.length) {
+				int cur = read(longNameData, readBytesOfEntry, longNameData.length - readBytesOfEntry);
 				if (cur < 0) {
 					throw new IOException("early end of stream"); //$NON-NLS-1$
 				}
-				bytesread += cur;
+				readBytesOfEntry += cur;
 			}
 
 			int pos = 0;

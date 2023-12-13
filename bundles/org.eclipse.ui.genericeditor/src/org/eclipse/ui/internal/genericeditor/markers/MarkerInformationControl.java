@@ -65,11 +65,11 @@ public class MarkerInformationControl extends AbstractInformationControl impleme
 	}
 
 	@Override
-	protected void createContent(Composite parent) {
-		parent.setLayout(new RowLayout(SWT.VERTICAL));
-		parent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-		parent.setBackgroundMode(SWT.INHERIT_DEFAULT);
-		this.parent = parent;
+	protected void createContent(Composite parentComposite) {
+		parentComposite.setLayout(new RowLayout(SWT.VERTICAL));
+		parentComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		parentComposite.setBackgroundMode(SWT.INHERIT_DEFAULT);
+		this.parent = parentComposite;
 	}
 
 	private static Image getImage(IMarker marker) {

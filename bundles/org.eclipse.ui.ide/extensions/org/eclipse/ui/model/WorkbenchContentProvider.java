@@ -67,10 +67,10 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 	}
 
 	@Override
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		super.inputChanged(viewer, oldInput, newInput);
+	public void inputChanged(Viewer newViewer, Object oldInput, Object newInput) {
+		super.inputChanged(newViewer, oldInput, newInput);
 
-		this.viewer = viewer;
+		this.viewer = newViewer;
 		IWorkspace oldWorkspace = null;
 		IWorkspace newWorkspace = null;
 

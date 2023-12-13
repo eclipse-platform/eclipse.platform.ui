@@ -16,6 +16,7 @@ package org.eclipse.ui.internal.ide.dialogs;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -109,7 +110,7 @@ public class ProjectReferencePage extends PropertyPage {
 	 * @param project the project to provide content for
 	 * @return the content provider that shows the project content
 	 */
-	protected IStructuredContentProvider getContentProvider(
+	protected static IStructuredContentProvider getContentProvider(
 			final IProject project) {
 		return new WorkbenchContentProvider() {
 			@Override
@@ -120,7 +121,7 @@ public class ProjectReferencePage extends PropertyPage {
 
 				// Collect all the projects in the workspace except the given project
 				IProject[] projects = ((IWorkspace) o).getRoot().getProjects();
-				ArrayList<IProject> referenced = new ArrayList<>(projects.length);
+				List<IProject> referenced = new ArrayList<>(projects.length);
 				boolean found = false;
 				for (IProject currentProject : projects) {
 					if (!found && currentProject.equals(project)) {
@@ -132,10 +133,10 @@ public class ProjectReferencePage extends PropertyPage {
 
 				// Add any referenced that do not exist in the workspace currently
 				try {
-					projects = project.getDescription().getReferencedProjects();
-					for (IProject project : projects) {
-						if (!referenced.contains(project)) {
-							referenced.add(project);
+					IProject[] referencedProjects = project.getDescription().getReferencedProjects();
+					for (IProject referencedProject : referencedProjects) {
+						if (!referenced.contains(referencedProject)) {
+							referenced.add(referencedProject);
 						}
 					}
 				} catch (CoreException e) {
