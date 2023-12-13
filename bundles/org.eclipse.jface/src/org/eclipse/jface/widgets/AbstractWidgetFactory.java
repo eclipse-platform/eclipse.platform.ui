@@ -113,7 +113,7 @@ public abstract class AbstractWidgetFactory<F extends AbstractWidgetFactory<?, ?
 	 *
 	 * @see Widget#setData(String, Object)
 	 *
-	 * @since 3.34
+	 * @since 3.33
 	 */
 	public F data(String key, Object value) {
 		addProperty(b -> b.setData(key, value));
