@@ -138,7 +138,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 	 * instance can be executed multiple times concurrently. This method must
 	 * not access or modify any mutable state on action class.
 	 *
-	 * @param monitor
+	 * @param mon
 	 *            a progress monitor
 	 * @return The result of the execution
 	 */

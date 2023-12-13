@@ -87,7 +87,7 @@ public class InternalDialog extends TrayDialog {
 	/**
 	 * This composite holds all components of the dialog.
 	 */
-	private Composite dialogArea;
+	private Composite dialogAreaComposite;
 	/**
 	 * This composite is initially scrolled to the 0 x 0 size. When more than one
 	 * status arrives, listArea is resized and a list is created on it to present
@@ -204,8 +204,8 @@ public class InternalDialog extends TrayDialog {
 	protected Control createDialogArea(Composite parent) {
 		createTitleArea(parent);
 		createListArea(parent);
-		dialogArea = parent;
-		Dialog.applyDialogFont(dialogArea);
+		dialogAreaComposite = parent;
+		Dialog.applyDialogFont(dialogAreaComposite);
 		return parent;
 	}
 
@@ -324,7 +324,7 @@ public class InternalDialog extends TrayDialog {
 	 * Method which should be invoked when new errors become available for display.
 	 */
 	void refresh() {
-		if (dialogArea == null || dialogArea.isDisposed()) {
+		if (dialogAreaComposite == null || dialogAreaComposite.isDisposed()) {
 			return;
 		}
 		updateTitleArea();
@@ -341,7 +341,7 @@ public class InternalDialog extends TrayDialog {
 	}
 
 	void refreshDialogSize() {
-		if (dialogArea == null || dialogArea.isDisposed()) {
+		if (dialogAreaComposite == null || dialogAreaComposite.isDisposed()) {
 			return;
 		}
 		Point newSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
@@ -357,16 +357,16 @@ public class InternalDialog extends TrayDialog {
 	 * has been disposed will have no effect.
 	 */
 	private void showDetailsArea() {
-		if (dialogArea != null && !dialogArea.isDisposed()) {
+		if (dialogAreaComposite != null && !dialogAreaComposite.isDisposed()) {
 			if (detailsManager.isOpen()) {
 				detailsManager.close();
-				detailsManager.createDetailsArea(dialogArea, getCurrentStatusAdapter());
+				detailsManager.createDetailsArea(dialogAreaComposite, getCurrentStatusAdapter());
 				dialogState.put(IStatusDialogConstants.DETAILS_OPENED, Boolean.TRUE);
 			} else {
 				toggleDetailsArea();
 				dialogState.put(IStatusDialogConstants.DETAILS_OPENED, Boolean.TRUE);
 			}
-			dialogArea.layout();
+			dialogAreaComposite.layout();
 		}
 	}
 
@@ -382,7 +382,7 @@ public class InternalDialog extends TrayDialog {
 			getButton(IDialogConstants.DETAILS_ID).setText(IDialogConstants.SHOW_DETAILS_LABEL);
 			opened = false;
 		} else {
-			detailsManager.createDetailsArea(dialogArea, getCurrentStatusAdapter());
+			detailsManager.createDetailsArea(dialogAreaComposite, getCurrentStatusAdapter());
 			getButton(IDialogConstants.DETAILS_ID).setText(IDialogConstants.HIDE_DETAILS_LABEL);
 			opened = true;
 		}
@@ -411,7 +411,7 @@ public class InternalDialog extends TrayDialog {
 		if ((opened && diffY > 0) || (!opened && diffY < 0)) {
 			getShell().setSize(new Point(windowSize.x, windowSize.y + (diffY)));
 		}
-		dialogArea.layout();
+		dialogAreaComposite.layout();
 		return opened;
 	}
 

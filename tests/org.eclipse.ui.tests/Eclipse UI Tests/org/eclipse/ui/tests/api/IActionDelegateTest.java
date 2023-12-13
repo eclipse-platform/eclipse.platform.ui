@@ -77,7 +77,7 @@ public abstract class IActionDelegateTest extends UITestCase {
 	 * Returns the last mock action delegate which was created.
 	 */
 	protected MockActionDelegate getDelegate() throws Throwable {
-		MockActionDelegate delegate = MockActionDelegate.lastDelegate;
+		MockActionDelegate delegate = MockActionDelegate.lastMockActionDelegate;
 		assertNotNull(delegate);
 		return delegate;
 	}

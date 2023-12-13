@@ -209,21 +209,21 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	 */
 
 	private void updateTargetResources() {
-		IResource[] resources = null;
+		IResource[] newResources = null;
 		if (markers == null) {
 			if (markerDescriptions != null) {
-				resources = new IResource[markerDescriptions.length];
+				newResources = new IResource[markerDescriptions.length];
 				for (int i = 0; i < markerDescriptions.length; i++) {
-					resources[i] = markerDescriptions[i].getResource();
+					newResources[i] = markerDescriptions[i].getResource();
 				}
 			}
 		} else {
-			resources = new IResource[markers.length];
+			newResources = new IResource[markers.length];
 			for (int i = 0; i < markers.length; i++) {
-				resources[i] = markers[i].getResource();
+				newResources[i] = markers[i].getResource();
 			}
 		}
-		setTargetResources(resources);
+		setTargetResources(newResources);
 	}
 
 	/*

@@ -886,8 +886,8 @@ public class CopyFilesAndFoldersOperation {
 		if (fork) {
 			WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 				@Override
-				public void execute(IProgressMonitor monitor) {
-					copyFileStores(stores, destinationPath, monitor);
+				public void execute(IProgressMonitor operationMonitor) {
+					copyFileStores(stores, destinationPath, operationMonitor);
 				}
 			};
 			try {

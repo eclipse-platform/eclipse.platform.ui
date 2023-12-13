@@ -76,9 +76,9 @@ public class ResourceFilterEditDialog extends SelectionDialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		Composite dialogArea = (Composite) super.createDialogArea(parent);
-		resourceFilterGroup.createContents(dialogArea);
-		return dialogArea;
+		Composite dialogAreaComposite = (Composite) super.createDialogArea(parent);
+		resourceFilterGroup.createContents(dialogAreaComposite);
+		return dialogAreaComposite;
 	}
 
 	@Override

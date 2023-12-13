@@ -60,7 +60,7 @@ public abstract class ResourceDescription {
 			}
 
 			@Override
-			public void createExistentResourceFromHandle(IResource resource, IProgressMonitor monitor)
+			public void createExistentResourceFromHandle(IResource unusedResource, IProgressMonitor monitor)
 					throws CoreException {
 				delegate.createExistentResourceFromHandle(monitor);
 			}
@@ -71,7 +71,8 @@ public abstract class ResourceDescription {
 			}
 
 			@Override
-			public void recordStateFromHistory(IResource resource, IProgressMonitor monitor) throws CoreException {
+			public void recordStateFromHistory(IResource unusedResource, IProgressMonitor monitor)
+					throws CoreException {
 				delegate.recordStateFromHistory(monitor);
 			}
 

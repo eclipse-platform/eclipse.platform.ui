@@ -1715,17 +1715,14 @@ class FilterCopy extends UIResourceFilterDescription {
 		if (children == null) {
 			if (getChildrenLimit() > 0) {
 				children = new LinkedList<>();
-				Object arguments = getArguments();
-				if (arguments instanceof IResourceFilterDescription[]) {
-					IResourceFilterDescription[] filters = (IResourceFilterDescription[]) arguments;
+				if (getArguments() instanceof IResourceFilterDescription[] filters) {
 					for (IResourceFilterDescription filter : filters) {
 						FilterCopy child = new FilterCopy(UIResourceFilterDescription.wrap(filter));
 						child.parent = this;
 						children.add(child);
 					}
 				}
-				if (arguments instanceof FilterCopy[]) {
-					FilterCopy[] filters = (FilterCopy[]) arguments;
+				if (getArguments() instanceof FilterCopy[] filters) {
 					if (filters != null)
 						for (FilterCopy filter : filters) {
 							FilterCopy child = filter;
@@ -1821,7 +1818,7 @@ class FilterEditDialog extends TrayDialog {
 		@Override
 		public Object getID() {return "dummy";} //$NON-NLS-1$
 		@Override
-		public void create(Composite argumentComposite, Font font) {}
+		public void create(Composite composite, Font font) {}
 		@Override
 		public void dispose() {}
 		@Override
@@ -1829,7 +1826,7 @@ class FilterEditDialog extends TrayDialog {
 		@Override
 		public String validate() {return null;}
 		@Override
-		public StyledString formatStyledText(FilterCopy filter,
+		public StyledString formatStyledText(FilterCopy filterCopy,
 				Styler fPlainStyler, Styler fBoldStyler) {return null;}
 	};
 
@@ -2290,7 +2287,7 @@ interface ICustomFilterArgumentUI {
 	/**
 	 * @return the formatted StyledText
 	 */
-	StyledString formatStyledText(FilterCopy filter, Styler fPlainStyler,
+	StyledString formatStyledText(FilterCopy filterCopy, Styler fPlainStyler,
 			Styler fBoldStyler);
 
 	/**
@@ -2996,13 +2993,13 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 	}
 
 	@Override
-	public StyledString formatStyledText(FilterCopy filter,
+	public StyledString formatStyledText(FilterCopy filterCopy,
 			Styler fPlainStyler, Styler fBoldStyler) {
-		return new StyledString(formatMultiMatcherArgument(filter), fPlainStyler);
+		return new StyledString(formatMultiMatcherArgument(filterCopy), fPlainStyler);
 	}
 
-	private String formatMultiMatcherArgument(FilterCopy filter) {
-		String argumentString = (String) filter.getArguments();
+	private String formatMultiMatcherArgument(FilterCopy filterCopy) {
+		String argumentString = (String) filterCopy.getArguments();
 		FileInfoAttributesMatcher.Argument argument = FileInfoAttributesMatcher.decodeArguments(argumentString);
 
 		StringBuilder builder = new StringBuilder();
@@ -3163,9 +3160,10 @@ class DefaultCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 	}
 
 	@Override
-	public StyledString formatStyledText(FilterCopy filter,
+	public StyledString formatStyledText(FilterCopy filterCopy,
 			Styler fPlainStyler, Styler fBoldStyler) {
-		return new StyledString(filter.getArguments() != null ? filter.getArguments().toString() :
+		return new StyledString(
+				filterCopy.getArguments() != null ? filterCopy.getArguments().toString() :
 			"", fPlainStyler); //$NON-NLS-1$
 	}
 }

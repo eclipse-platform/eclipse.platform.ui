@@ -493,8 +493,8 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 		}
 		firstCheck = false;
 		if (errorMessage == null && (workingSet == null || newText.equals(workingSet.getName()) == false)) {
-			for (IWorkingSet workingSet : PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets()) {
-				if (newText.equals(workingSet.getName())) {
+			for (IWorkingSet set : PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets()) {
+				if (newText.equals(set.getName())) {
 					errorMessage = IDEWorkbenchMessages.ResourceWorkingSetPage_warning_workingSetExists;
 				}
 			}

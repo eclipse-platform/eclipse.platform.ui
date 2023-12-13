@@ -549,8 +549,8 @@ public class RenameResourceAction extends WorkspaceAction {
 						displayError(status.getMessage());
 					} else if (!LTKLauncher.renameResource(newName, new StructuredSelection(inlinedResource))) {
 						// LTK Launcher couldn't rename the resource
-						IPath newPath = inlinedResource.getFullPath().removeLastSegments(1).append(newName);
-						runWithNewPath(newPath, inlinedResource);
+						IPath path = inlinedResource.getFullPath().removeLastSegments(1).append(newName);
+						runWithNewPath(path, inlinedResource);
 					}
 				}
 				inlinedResource = null;

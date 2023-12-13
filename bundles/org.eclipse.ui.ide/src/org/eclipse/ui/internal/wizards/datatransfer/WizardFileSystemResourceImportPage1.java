@@ -325,17 +325,17 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 	}
 
 	private Composite createAdvancedSection(Composite parent) {
-		Composite linkedResourceComposite= new Composite(parent, SWT.NONE);
-		linkedResourceComposite.setFont(parent.getFont());
-		linkedResourceComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		Composite compositeForSection= new Composite(parent, SWT.NONE);
+		compositeForSection.setFont(parent.getFont());
+		compositeForSection.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout layout= new GridLayout();
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
-		linkedResourceComposite.setLayout(layout);
+		compositeForSection.setLayout(layout);
 
 
 		// create linked resource check
-		createLinksInWorkspaceButton= new Button(linkedResourceComposite, SWT.CHECK);
+		createLinksInWorkspaceButton= new Button(compositeForSection, SWT.CHECK);
 		createLinksInWorkspaceButton.setFont(parent.getFont());
 		createLinksInWorkspaceButton.setText(DataTransferMessages.FileImport_createLinksInWorkspace);
 		createLinksInWorkspaceButton.setSelection(false);
@@ -347,12 +347,12 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 			}
 		});
 
-		Button tmp= new Button(linkedResourceComposite, SWT.CHECK);
+		Button tmp= new Button(compositeForSection, SWT.CHECK);
 		int indent = tmp.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
 		tmp.dispose();
 
 		// create virtual folders check
-		createVirtualFoldersButton= new Button(linkedResourceComposite, SWT.CHECK);
+		createVirtualFoldersButton= new Button(compositeForSection, SWT.CHECK);
 		createVirtualFoldersButton.setFont(parent.getFont());
 		createVirtualFoldersButton.setText(DataTransferMessages.FileImport_createVirtualFolders);
 		createVirtualFoldersButton.setToolTipText(DataTransferMessages.FileImport_createVirtualFoldersTooltip);
@@ -369,7 +369,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 		gridData.horizontalIndent = indent;
 		createVirtualFoldersButton.setLayoutData(gridData);
 
-		Composite relativeGroup= new Composite(linkedResourceComposite, 0);
+		Composite relativeGroup= new Composite(compositeForSection, 0);
 		gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gridData.horizontalIndent = indent;
 		relativeGroup.setFont(parent.getFont());
@@ -411,7 +411,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 		updateWidgetEnablements();
 		relativePathVariableGroup.setSelection(true);
 
-		return linkedResourceComposite;
+		return compositeForSection;
 
 	}
 

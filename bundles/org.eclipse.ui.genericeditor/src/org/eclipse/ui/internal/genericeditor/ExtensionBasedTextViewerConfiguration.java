@@ -94,7 +94,7 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 	private ITextEditor editor;
 	private Set<IContentType> resolvedContentTypes;
 	private Set<IContentType> fallbackContentTypes = Set.of();
-	private IDocument document;
+	private IDocument watchedDocument;
 
 	private GenericEditorContentAssistant contentAssistant;
 
@@ -187,8 +187,8 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		Set<IContentType> types = getContentTypes(sourceViewer.getDocument());
 		contentAssistant = new GenericEditorContentAssistant(contentAssistProcessorTracker,
 				registry.getContentAssistProcessors(sourceViewer, editor, types), types, fPreferenceStore);
-		if (this.document != null) {
-			associateTokenContentTypes(this.document);
+		if (this.watchedDocument != null) {
+			associateTokenContentTypes(this.watchedDocument);
 		}
 		watchDocument(sourceViewer.getDocument());
 		return contentAssistant;
@@ -205,16 +205,16 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		return super.getPresentationReconciler(sourceViewer);
 	}
 
-	void watchDocument(IDocument documentParam) {
-		if (document == documentParam) {
+	void watchDocument(IDocument document) {
+		if (this.watchedDocument == document) {
 			return;
 		}
-		if (document != null) {
-			document.removeDocumentPartitioningListener(this);
+		if (this.watchedDocument != null) {
+			this.watchedDocument.removeDocumentPartitioningListener(this);
 		}
 		if (document != null) {
-			document = documentParam;
-			associateTokenContentTypes(documentParam);
+			this.watchedDocument = document;
+			associateTokenContentTypes(document);
 			document.addDocumentPartitioningListener(this);
 		}
 	}

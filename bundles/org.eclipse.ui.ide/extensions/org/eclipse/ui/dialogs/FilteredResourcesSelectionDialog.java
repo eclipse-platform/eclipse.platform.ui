@@ -1036,26 +1036,26 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 					if (filenamePattern.isEmpty()) // relative patterns don't need a file name
 						filenamePattern = "**"; //$NON-NLS-1$
 
-					String containerPattern = stringPattern.substring(isMatchPrefix(stringPattern) ? 1 : 0, sep);
+					String newContainerPattern = stringPattern.substring(isMatchPrefix(stringPattern) ? 1 : 0, sep);
 
 					if (searchContainer != null) {
 						relativeContainerPattern = new SearchPattern(
 								SearchPattern.RULE_EXACT_MATCH | SearchPattern.RULE_PATTERN_MATCH);
 						relativeContainerPattern
-								.setPattern(searchContainer.getFullPath().append(containerPattern).toString());
+								.setPattern(searchContainer.getFullPath().append(newContainerPattern).toString());
 					}
 
-					if (!containerPattern.startsWith(Character.toString('*'))) {
+					if (!newContainerPattern.startsWith(Character.toString('*'))) {
 						// bug 552418 - make the search always "root less", so that users don't need to
 						// type the initial "*/"
-						if (!containerPattern.startsWith(Character.toString(IPath.SEPARATOR))) {
-							containerPattern = IPath.SEPARATOR + containerPattern;
+						if (!newContainerPattern.startsWith(Character.toString(IPath.SEPARATOR))) {
+							newContainerPattern = IPath.SEPARATOR + newContainerPattern;
 						}
-						containerPattern = '*' + containerPattern;
+						newContainerPattern = '*' + newContainerPattern;
 					}
 					this.containerPattern = new SearchPattern(SearchPattern.RULE_EXACT_MATCH
 							| SearchPattern.RULE_PREFIX_MATCH | SearchPattern.RULE_PATTERN_MATCH);
-					this.containerPattern.setPattern(containerPattern);
+					this.containerPattern.setPattern(newContainerPattern);
 				}
 				if (isMatchPrefix(stringPattern)) {
 					filenamePattern = '>' + filenamePattern;

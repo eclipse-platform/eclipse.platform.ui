@@ -207,16 +207,16 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 					IDialogConstants.SHOW_DETAILS_LABEL };
 		}
 
-		FatalErrorDialog dialog = new FatalErrorDialog(parent, title, null, // accept
+		FatalErrorDialog errorDialog = new FatalErrorDialog(parent, title, null, // accept
 				// the
 				// default
 				// window
 				// icon
 				message, detail, MessageDialog.QUESTION, labels, defaultIndex);
 		if (detail != null) {
-			dialog.setDetailButton(2);
+			errorDialog.setDetailButton(2);
 		}
-		return dialog;
+		return errorDialog;
 	}
 
 	/**
@@ -268,13 +268,13 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 		/**
 		 * Updates the dialog message
 		 *
-		 * @param message
+		 * @param newMessage
 		 *            new message
 		 */
-		public void updateMessage(String message) {
-			this.message = message;
+		public void updateMessage(String newMessage) {
+			this.message = newMessage;
 			if (messageLabel != null && !messageLabel.isDisposed()) {
-				this.messageLabel.setText(message);
+				this.messageLabel.setText(newMessage);
 				this.messageLabel.update();
 			}
 		}

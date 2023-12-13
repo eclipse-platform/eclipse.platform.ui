@@ -282,9 +282,9 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
 
 		showLinkedResources = getShowLinkedResources();
 		this.resourceGroup = new ResourceTreeAndListGroup(parent, input,
-				getResourceProvider(IResource.FOLDER | IResource.PROJECT, showLinkedResources),
+				getResourceProvider(IResource.FOLDER | IResource.PROJECT),
 				WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(),
-				getResourceProvider(IResource.FILE, showLinkedResources),
+				getResourceProvider(IResource.FILE),
 				WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(), SWT.NONE,
 				DialogUtil.inRegularFontMode(parent));
 
@@ -386,7 +386,7 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
 	 * Returns a content provider for <code>IResource</code>s that returns only
 	 * children of the given resource type.
 	 */
-	private ITreeContentProvider getResourceProvider(int resourceType, boolean showLinkedResources) {
+	private ITreeContentProvider getResourceProvider(int resourceType) {
 		return new ResourceProvider(resourceType, showLinkedResources);
 	}
 
@@ -408,10 +408,10 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
 	 */
 	protected void updateContentProviders(boolean showLinked) {
 		showLinkedResources = showLinked;
-		resourceGroup.setTreeProviders(getResourceProvider(IResource.FOLDER | IResource.PROJECT, showLinkedResources),
+		resourceGroup.setTreeProviders(getResourceProvider(IResource.FOLDER | IResource.PROJECT),
 				WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider());
 
-		resourceGroup.setListProviders(getResourceProvider(IResource.FILE, showLinkedResources),
+		resourceGroup.setListProviders(getResourceProvider(IResource.FILE),
 				WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider());
 	}
 

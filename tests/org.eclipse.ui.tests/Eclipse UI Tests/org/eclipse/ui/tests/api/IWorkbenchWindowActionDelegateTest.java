@@ -66,7 +66,7 @@ public class IWorkbenchWindowActionDelegateTest extends IActionDelegateTest {
 	 */
 	@Override
 	protected MockActionDelegate getDelegate() throws Throwable {
-		MockActionDelegate delegate = MockWorkbenchWindowActionDelegate.lastDelegate;
+		MockActionDelegate delegate = MockWorkbenchWindowActionDelegate.lastMockWorkbenchWindowActionDelegate;
 		assertNotNull(delegate);
 		return delegate;
 	}
@@ -99,7 +99,7 @@ public class IWorkbenchWindowActionDelegateTest extends IActionDelegateTest {
 	public void XXXtestDisposeWorkbenchWindowActionDelegateBug81422() {
 		String id = MockWorkbenchWindowActionDelegate.SET_ID;
 		fPage.showActionSet(id);
-		MockWorkbenchWindowActionDelegate mockWWinActionDelegate = MockWorkbenchWindowActionDelegate.lastDelegate;
+		MockWorkbenchWindowActionDelegate mockWWinActionDelegate = MockWorkbenchWindowActionDelegate.lastMockWorkbenchWindowActionDelegate;
 		// hide (from the compiler) the fact that the interfaces are implemented
 		Object mockAsObject = mockWWinActionDelegate;
 		// asserts that the mock object actually implements both interfaces mentioned in the PR

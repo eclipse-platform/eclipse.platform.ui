@@ -33,7 +33,7 @@ import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
  *	(the Cancel button) if the operation drags on for too long
  */
 public class SelectFilesOperation implements IRunnableWithProgress {
-	IProgressMonitor monitor;
+	IProgressMonitor currentMonitor;
 
 	Object root;
 
@@ -63,7 +63,7 @@ public class SelectFilesOperation implements IRunnableWithProgress {
 	 */
 	protected FileSystemElement createElement(FileSystemElement parent,
 			Object fileSystemObject) throws InterruptedException {
-		ModalContext.checkCanceled(monitor);
+		ModalContext.checkCanceled(currentMonitor);
 		boolean isContainer = provider.isFolder(fileSystemObject);
 		String elementLabel = parent == null ? provider
 				.getFullPath(fileSystemObject) : provider
@@ -73,9 +73,9 @@ public class SelectFilesOperation implements IRunnableWithProgress {
 			return null;
 		}
 
-		FileSystemElement result = new FileSystemElement(elementLabel, parent,
+		FileSystemElement createdElement = new FileSystemElement(elementLabel, parent,
 				isContainer);
-		result.setFileSystemObject(fileSystemObject);
+		createdElement.setFileSystemObject(fileSystemObject);
 
 		if (isContainer) {
 			boolean haveChildOrFile = false;
@@ -85,18 +85,18 @@ public class SelectFilesOperation implements IRunnableWithProgress {
 			}
 			Iterator childrenEnum = children.iterator();
 			while (childrenEnum.hasNext()) {
-				if (createElement(result, childrenEnum.next()) != null) {
+				if (createElement(createdElement, childrenEnum.next()) != null) {
 					haveChildOrFile = true;
 				}
 			}
 
 			if (!haveChildOrFile && parent != null) {
-				parent.removeFolder(result);
-				result = null;
+				parent.removeFolder(createdElement);
+				createdElement = null;
 			}
 		}
 
-		return result;
+		return createdElement;
 	}
 
 	/**
@@ -146,7 +146,7 @@ public class SelectFilesOperation implements IRunnableWithProgress {
 	@Override
 	public void run(IProgressMonitor monitor) throws InterruptedException {
 		try {
-			this.monitor = monitor;
+			this.currentMonitor = monitor;
 			monitor.beginTask(DataTransferMessages.DataTransfer_scanningMatching, IProgressMonitor.UNKNOWN);
 			result = createElement(null, root);
 			if (result == null) {

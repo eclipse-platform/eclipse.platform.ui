@@ -67,26 +67,26 @@ public abstract class ViewerSettingsAndStatusDialog extends ViewSettingsDialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 
-		Composite dialogArea = (Composite) super.createDialogArea(parent);
+		Composite dialogAreaComposite = (Composite) super.createDialogArea(parent);
 
-		dialogArea.setLayout(new GridLayout(1, true));
+		dialogAreaComposite.setLayout(new GridLayout(1, true));
 
-		initializeDialogUnits(dialogArea);
+		initializeDialogUnits(dialogAreaComposite);
 
-		createMessageArea(dialogArea).setLayoutData(
+		createMessageArea(dialogAreaComposite).setLayoutData(
 				new GridData(SWT.FILL, SWT.NONE, true, false));
 
-		createDialogContentArea(dialogArea).setLayoutData(
+		createDialogContentArea(dialogAreaComposite).setLayoutData(
 				new GridData(SWT.FILL, SWT.FILL, true, true));
 
-		applyDialogFont(dialogArea);
+		applyDialogFont(dialogAreaComposite);
 
 		initializeDialog();
 
-		return dialogArea;
+		return dialogAreaComposite;
 	}
 
-	protected abstract Control createDialogContentArea(Composite dialogArea);
+	protected abstract Control createDialogContentArea(Composite dialogAreaComposite);
 
 	protected void initializeDialog() {
 		handleStatusUdpate(IStatus.INFO, getDefaultMessage());
