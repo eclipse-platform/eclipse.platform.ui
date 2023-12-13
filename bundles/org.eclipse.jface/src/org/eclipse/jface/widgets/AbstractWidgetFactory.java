@@ -102,4 +102,21 @@ public abstract class AbstractWidgetFactory<F extends AbstractWidgetFactory<?, ?
 		addProperty(b -> b.setData(data));
 		return cast(this);
 	}
+
+	/**
+	 * Sets the application defined property of the receiver with the specified name
+	 * to the given value.
+	 *
+	 * @param key   the name of the property
+	 * @param value the new value for the property
+	 * @return this
+	 *
+	 * @see Widget#setData(String, Object)
+	 *
+	 * @since 3.33
+	 */
+	public F data(String key, Object value) {
+		addProperty(b -> b.setData(key, value));
+		return cast(this);
+	}
 }
