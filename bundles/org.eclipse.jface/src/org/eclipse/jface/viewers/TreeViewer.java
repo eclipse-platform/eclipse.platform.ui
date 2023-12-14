@@ -1151,9 +1151,8 @@ public class TreeViewer extends AbstractTreeViewer {
 			item.dispose();
 
 			// create children on parent
-			// For performance insert every item at index 0 (in reverse order):
-			for (int i = children.length - 1; i >= 0; i--) {
-				createTreeItem(parent, children[i], 0);
+			for (Object element : children) {
+				createTreeItem(parent, element, -1);
 			}
 
 			// reset the selection. client's selection listener should not be triggered.
