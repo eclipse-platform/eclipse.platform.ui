@@ -4,3 +4,4 @@ Bug 416898 - Some Platform UI bundles need to be touched to get API descriptions
 Bug 510796 - Comparator errors in I20170120-2000
 Bug 534597 - Unanticipated comparator errors in I20180511-2000
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1184
+https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1659
