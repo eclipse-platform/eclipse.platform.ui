@@ -31,7 +31,7 @@ package org.eclipse.ui;
  * event.<br>
  * Such an event-handler is always executed and cannot be disabled via a
  * preferences.
- * <p>
+ * </p>
  * For example a class
  *
  * <pre>
@@ -56,6 +56,7 @@ package org.eclipse.ui;
  * }
  * </pre>
  *
+ * <p>
  * Processing of OSGi declarative services annotations has to be enabled for the
  * containing Plug-in and it has to import the package
  * {@code org.osgi.service.event} and
