@@ -89,9 +89,8 @@ public class ViewerItemsLimitTest extends UITestCase {
 		super.doSetUp();
 		cleanUp();
 		preferenceStore = WorkbenchPlugin.getDefault().getPreferenceStore();
-		// TODO: preference is set to zero, enable once preference is restored
-//		int viewLimit = preferenceStore.getInt(IWorkbenchPreferenceConstants.LARGE_VIEW_LIMIT);
-//		assertEquals("Default viewer limit must be " + DEFAULT_VIEW_LIMIT, DEFAULT_VIEW_LIMIT, viewLimit);
+		int viewLimit = preferenceStore.getInt(IWorkbenchPreferenceConstants.LARGE_VIEW_LIMIT);
+		assertEquals("Default viewer limit must be " + DEFAULT_VIEW_LIMIT, DEFAULT_VIEW_LIMIT, viewLimit);
 		window = getActiveWindow();
 		activePage = window.getActivePage();
 		defaultPerspective = activePage.getPerspective();
