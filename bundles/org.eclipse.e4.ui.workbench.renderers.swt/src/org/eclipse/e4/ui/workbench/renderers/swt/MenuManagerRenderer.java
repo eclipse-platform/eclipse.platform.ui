@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2020 IBM Corporation and others.
+ * Copyright (c) 2009, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,6 +22,7 @@
  *     Daniel Kruegler <daniel.kruegler@gmail.com> - Bug 473779
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 506306
  *     Axel Richard <axel.richard@oebo.fr> - Bug 354538
+ *     Christoph Läubrich - issue #1435
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -37,6 +38,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.e4.core.commands.ExpressionContext;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IContextFunction;
@@ -1170,7 +1172,16 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 							mgrToUpdate.clear();
 						}
 						for (IContributionManager mgr1 : toUpdate) {
-							mgr1.update(false);
+							try {
+								mgr1.update(false);
+							} catch (RuntimeException e) {
+								String message = String.format(
+										"ContributionManager '%s' threw an exception while performing update!", mgr1); //$NON-NLS-1$
+								ILog.get().error(message, e);
+								synchronized (mgrToUpdate) {
+									mgrToUpdate.add(mgr1);
+								}
+							}
 						}
 					});
 				}
