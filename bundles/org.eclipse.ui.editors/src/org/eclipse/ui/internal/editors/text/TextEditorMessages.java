@@ -159,6 +159,7 @@ final class TextEditorMessages extends NLS {
 	public static String TextEditorDefaultsPreferencePage_ideographicSpace;
 	public static String TextEditorDefaultsPreferencePage_leading;
 	public static String TextEditorDefaultsPreferencePage_lineFeed;
+	public static String TextEditorDefaultsPreferencePage_zwcharacters;
 	public static String TextEditorDefaultsPreferencePage_range_indicator;
 	public static String TextEditorDefaultsPreferencePage_smartHomeEnd;
 	public static String TextEditorDefaultsPreferencePage_warn_if_derived;
