@@ -42,6 +42,7 @@ public class OpenFileAction extends OpenSystemEditorAction {
 	/**
 	 * The id of this action.
 	 */
+	@SuppressWarnings("hiding")
 	public static final String ID = PlatformUI.PLUGIN_ID + ".OpenFileAction";//$NON-NLS-1$
 
 	/**
