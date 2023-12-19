@@ -38,6 +38,7 @@ public class MoveResourceAction extends CopyResourceAction {
 	/**
 	 * The id of this action.
 	 */
+	@SuppressWarnings("hiding")
 	public static final String ID = PlatformUI.PLUGIN_ID
 			+ ".MoveResourceAction"; //$NON-NLS-1$
 

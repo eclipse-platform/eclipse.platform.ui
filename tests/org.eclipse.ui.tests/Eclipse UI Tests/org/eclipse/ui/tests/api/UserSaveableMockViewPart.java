@@ -25,6 +25,7 @@ import org.eclipse.ui.ISaveablePart2;
 public class UserSaveableMockViewPart extends MockViewPart implements
 		ISaveablePart2 {
 
+	@SuppressWarnings("hiding")
 	public static String ID = "org.eclipse.ui.tests.api.UserSaveableMockViewPart";
 
 	private boolean isDirty = false;
