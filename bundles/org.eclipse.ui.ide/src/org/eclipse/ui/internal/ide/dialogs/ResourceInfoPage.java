@@ -317,7 +317,7 @@ public class ResourceInfoPage extends PropertyPage {
 			gd = new GridData();
 			locationTitle.setLayoutData(gd);
 
-			Text locationValue = new Text(basicInfoComposite, SWT.WRAP
+			locationValue = new Text(basicInfoComposite, SWT.WRAP
 					| SWT.READ_ONLY);
 			final String locationStr = TextProcessor.process(IDEResourceInfoUtils
 					.getLocationText(resource));
@@ -375,7 +375,7 @@ public class ResourceInfoPage extends PropertyPage {
 			Label sizeTitle = new Label(basicInfoComposite, SWT.LEFT);
 			sizeTitle.setText(SIZE_TITLE);
 
-			Text sizeValue = new Text(basicInfoComposite, SWT.LEFT
+			sizeValue = new Text(basicInfoComposite, SWT.LEFT
 					| SWT.READ_ONLY);
 			sizeValue.setText(IDEResourceInfoUtils.getSizeString(resource));
 			gd = new GridData();
