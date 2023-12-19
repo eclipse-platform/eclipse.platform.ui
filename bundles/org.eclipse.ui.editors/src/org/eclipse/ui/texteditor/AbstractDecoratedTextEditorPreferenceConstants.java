@@ -502,7 +502,8 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * </p>
 	 *
 	 * <p>
-	 * The following preferences can be used for fine-grained configuration when enabled.
+	 * The following preferences can be used for fine-grained configuration when
+	 * enabled.
 	 * </p>
 	 * <ul>
 	 * <li>{@link #EDITOR_SHOW_LEADING_SPACES}</li>
@@ -516,6 +517,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * <li>{@link #EDITOR_SHOW_TRAILING_TABS}</li>
 	 * <li>{@link #EDITOR_SHOW_CARRIAGE_RETURN}</li>
 	 * <li>{@link #EDITOR_SHOW_LINE_FEED}</li>
+	 * <li>{@link #EDITOR_SHOW_ZW_CHARACTERS}</li>
 	 * <li>{@link #EDITOR_WHITESPACE_CHARACTER_ALPHA_VALUE}</li>
 	 * </ul>
 	 *
@@ -646,6 +648,18 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * @since 3.7
 	 */
 	public static final String EDITOR_SHOW_LINE_FEED= AbstractTextEditor.PREFERENCE_SHOW_LINE_FEED;
+
+	/**
+	 * A named preference that controls the display of zero-width characters like
+	 * zero-width space. The value is used only if the value of
+	 * {@link #EDITOR_SHOW_WHITESPACE_CHARACTERS} is <code>true</code>.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 *
+	 * @since 3.22
+	 */
+	public static final String EDITOR_SHOW_ZW_CHARACTERS = AbstractTextEditor.PREFERENCE_SHOW_ZW_CHARACTERS;
 
 	/**
 	 * A named preference that controls the alpha value of whitespace characters. The value is used
@@ -858,6 +872,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		store.setDefault(EDITOR_SHOW_TRAILING_TABS, true);
 		store.setDefault(EDITOR_SHOW_CARRIAGE_RETURN, true);
 		store.setDefault(EDITOR_SHOW_LINE_FEED, true);
+		store.setDefault(EDITOR_SHOW_ZW_CHARACTERS, true);
 		store.setDefault(EDITOR_WHITESPACE_CHARACTER_ALPHA_VALUE, 80);
 
 		store.setDefault(EDITOR_TEXT_DRAG_AND_DROP_ENABLED, true);

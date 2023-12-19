@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.ui.workbench.texteditor" version="2">
+    <resource path="src/org/eclipse/ui/texteditor/AbstractTextEditor.java" type="org.eclipse.ui.texteditor.AbstractTextEditor">
+        <filter id="336658481">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.texteditor.AbstractTextEditor"/>
+                <message_argument value="PREFERENCE_SHOW_ZW_CHARACTERS"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/ui/texteditor/ITextEditorActionConstants.java" type="org.eclipse.ui.texteditor.ITextEditorActionConstants">
         <filter id="571473929">
             <message_arguments>
