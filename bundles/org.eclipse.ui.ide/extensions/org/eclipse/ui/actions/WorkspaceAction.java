@@ -369,6 +369,9 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 		if (!super.updateSelection(selection) || selection.isEmpty()) {
 			return false;
 		}
+		if (getSelectedResources().size() > 1) {
+			return true;
+		}
 		for (IResource r : getSelectedResources()) {
 			if (!r.isAccessible()) {
 				return false;
