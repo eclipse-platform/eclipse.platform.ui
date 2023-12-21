@@ -3,8 +3,6 @@
 JFace Data Binding/Snippets
 ===========================
 
-< [JFace Data Binding](/JFace_Data_Binding "JFace Data Binding")
-
 | **JFace Data Binding** |
 | :-: |
 | [Home](/JFace_Data_Binding "JFace Data Binding") |
