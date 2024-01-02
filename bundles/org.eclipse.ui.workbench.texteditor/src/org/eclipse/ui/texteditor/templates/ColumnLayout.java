@@ -16,7 +16,6 @@ package org.eclipse.ui.texteditor.templates;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -27,6 +26,7 @@ import org.eclipse.swt.widgets.TableColumn;
 
 import org.eclipse.core.runtime.Assert;
 
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -44,33 +44,27 @@ final class ColumnLayout extends Layout {
 	private static final String RECALCULATE_LAYOUT= "recalculateKey"; //$NON-NLS-1$
 
 	/**
-	 * The number of extra pixels taken as horizontal trim by the table column.
-	 * To ensure there are N pixels available for the content of the column,
-	 * assign N+COLUMN_TRIM for the column width.
+	 * The number of extra pixels taken as horizontal trim by the table column. To
+	 * ensure there are N pixels available for the content of the column, assign
+	 * N+columnTrim for the column width.
 	 * <p>
 	 * XXX: Should either switch to use
-	 * {@link org.eclipse.jface.layout.TableColumnLayout} or get API from JFace
-	 * or SWT, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=218483
+	 * {@link org.eclipse.jface.layout.TableColumnLayout} or get API from JFace or
+	 * SWT, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=218483
 	 * </p>
 	 *
 	 * @since 3.1
 	 */
-	private static int COLUMN_TRIM;
+	private static int columnTrim;
 	static {
-		String platform= SWT.getPlatform();
-		switch (platform) {
-		case "win32": //$NON-NLS-1$
-			COLUMN_TRIM= 4;
-			break;
-		case "carbon": //$NON-NLS-1$
-			COLUMN_TRIM= 24;
-			break;
-		default:
-			COLUMN_TRIM= 3;
-			break;
+		if (Util.isWindows()) {
+			columnTrim = 4;
+		} else if (Util.isMac()) {
+			columnTrim = 24;
+		} else {
+			columnTrim = 3;
 		}
 	}
-
 	private List<ColumnLayoutData> columns= new ArrayList<>();
 
 	/**
@@ -93,7 +87,7 @@ final class ColumnLayout extends Layout {
 				ColumnPixelData col= (ColumnPixelData) layoutData;
 				width += col.width;
 				if (col.addTrim) {
-					width += COLUMN_TRIM;
+					width += columnTrim;
 				}
 			} else if (layoutData instanceof ColumnWeightData) {
 				ColumnWeightData col= (ColumnWeightData) layoutData;
@@ -126,7 +120,7 @@ final class ColumnLayout extends Layout {
 				ColumnPixelData cpd= (ColumnPixelData) col;
 				int pixels= cpd.width;
 				if (cpd.addTrim) {
-					pixels += COLUMN_TRIM;
+					pixels += columnTrim;
 				}
 				widths[i]= pixels;
 				fixedWidth += pixels;
