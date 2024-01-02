@@ -17,7 +17,6 @@ package org.eclipse.ui.internal.activities;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.runtime.CoreException;
@@ -40,18 +39,6 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 	 * Prefix for all activity preferences
 	 */
 	private static final String PREFIX = "UIActivities."; //$NON-NLS-1$
-
-	private List<ActivityRequirementBindingDefinition> activityRequirementBindingDefinitions;
-
-	private List<ActivityDefinition> activityDefinitions;
-
-	private List<ActivityPatternBindingDefinition> activityPatternBindingDefinitions;
-
-	private List<CategoryActivityBindingDefinition> categoryActivityBindingDefinitions;
-
-	private List<CategoryDefinition> categoryDefinitions;
-
-	private List<String> defaultEnabledActivities;
 
 	private IExtensionRegistry extensionRegistry;
 

@@ -29,8 +29,6 @@ import org.eclipse.ui.quickaccess.QuickAccessElement;
  */
 public class PreferenceElement extends QuickAccessElement {
 
-	private static final String separator = " - "; //$NON-NLS-1$
-
 	private IPreferenceNode preferenceNode;
 
 	private String prefix;
