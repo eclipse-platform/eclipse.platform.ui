@@ -144,7 +144,6 @@ public class CommandProcessingAddon {
 
 	private void registerCommandListener() {
 		cmListener = new ICommandManagerListener() {
-			@SuppressWarnings("restriction")
 			@Override
 			public void commandManagerChanged(CommandManagerEvent commandManagerEvent) {
 				if (commandManagerEvent.isCommandChanged()) {
