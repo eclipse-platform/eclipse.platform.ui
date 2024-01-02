@@ -46,14 +46,14 @@ import org.eclipse.swt.widgets.Widget;
  * @since 3.4
  */
 public abstract class AbstractColumnLayout extends Layout {
-	private static int COLUMN_TRIM;
+	private static int columnTrim;
 	static {
 		if (Util.isWindows()) {
-			COLUMN_TRIM = 4;
+			columnTrim = 4;
 		} else if (Util.isMac()) {
-			COLUMN_TRIM = 24;
+			columnTrim = 24;
 		} else {
-			COLUMN_TRIM = 3;
+			columnTrim = 3;
 		}
 	}
 
@@ -342,14 +342,14 @@ public abstract class AbstractColumnLayout extends Layout {
 	protected abstract void updateColumnData(Widget column);
 
 	/**
-	 * The number of extra pixels taken as horizontal trim by the table column.
-	 * To ensure there are N pixels available for the content of the column,
-	 * assign N+COLUMN_TRIM for the column width.
+	 * The number of extra pixels taken as horizontal trim by the table column. To
+	 * ensure there are N pixels available for the content of the column, assign
+	 * N+columnTrim for the column width.
 	 *
 	 * @return the trim used by the columns
 	 * @since 3.4
 	 */
 	protected int getColumnTrim() {
-		return COLUMN_TRIM;
+		return columnTrim;
 	}
 }
