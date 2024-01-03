@@ -872,18 +872,14 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 	private void filterProposals() {
 		++ fInvocationCounter;
 		Control control= fViewer.getTextWidget();
-		control.getDisplay().asyncExec(new Runnable() {
+		control.getDisplay().asyncExec(() -> {
 			long fCounter= fInvocationCounter;
-			@Override
-			public void run() {
+			if (fCounter != fInvocationCounter)
+				return;
+			if (fInvocationProcessedCounter == fInvocationCounter)
+				return;
 
-				if (fCounter != fInvocationCounter)
-					return;
-				if (fInvocationProcessedCounter == fInvocationCounter)
-					return;
-
-				doFilterProposals();
-			}
+			doFilterProposals();
 		});
 	}
 
