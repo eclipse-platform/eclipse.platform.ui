@@ -170,7 +170,8 @@ public class CocoaUIProcessor {
 	/**
 	 * @param bindingContexts
 	 * @param bindingContextId
-	 * @return
+	 * @return Binding Context matching the input string
+	 *         <code>bindingContextId</code>, <code>null</code> if no match found
 	 */
 	private MBindingContext findBindingContext(List<MBindingContext> bindingContexts, String bindingContextId) {
 		for (MBindingContext bc : bindingContexts) {
