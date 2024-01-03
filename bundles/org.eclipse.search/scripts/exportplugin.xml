@@ -41,7 +41,7 @@
 			</fileset>
 			<fileset dir="bin" />
 		    <zipfileset dir="search" prefix="src" />
-		    <zipfileset dir="new search" prefix="src" />
+		    <zipfileset dir="newsearch" prefix="src" />
 			<fileset dir="${dest}">
 			  <include name="META-INF/**" />
 			</fileset>
