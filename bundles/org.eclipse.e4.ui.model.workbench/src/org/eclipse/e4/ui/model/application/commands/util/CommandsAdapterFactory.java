@@ -88,7 +88,7 @@ public class CommandsAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected CommandsSwitch<Adapter> modelSwitch = new CommandsSwitch<Adapter>() {
+	protected CommandsSwitch<Adapter> modelSwitch = new CommandsSwitch<>() {
 		@Override
 		public Adapter caseBindingTableContainer(MBindingTableContainer object) {
 			return createBindingTableContainerAdapter();

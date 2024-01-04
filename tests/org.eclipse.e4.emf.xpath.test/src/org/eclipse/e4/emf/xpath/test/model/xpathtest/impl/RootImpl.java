@@ -11,18 +11,13 @@ import java.util.Collection;
 import org.eclipse.e4.emf.xpath.test.model.xpathtest.Node;
 import org.eclipse.e4.emf.xpath.test.model.xpathtest.Root;
 import org.eclipse.e4.emf.xpath.test.model.xpathtest.XpathtestPackage;
-
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
-
 import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
-
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
-
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -32,11 +27,11 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.emf.xpath.test.model.xpathtest.impl.RootImpl#getNodes <em>Nodes</em>}</li>
  *   <li>{@link org.eclipse.e4.emf.xpath.test.model.xpathtest.impl.RootImpl#getId <em>Id</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */
@@ -98,7 +93,7 @@ public class RootImpl extends EObjectImpl implements Root {
 	@Override
 	public EList<Node> getNodes() {
 		if (nodes == null) {
-			nodes = new EObjectContainmentEList<>(Node.class, this, XpathtestPackage.ROOT__NODES);
+			nodes = new EObjectContainmentEList<Node>(Node.class, this, XpathtestPackage.ROOT__NODES);
 		}
 		return nodes;
 	}

@@ -171,8 +171,9 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 	public void setLabel(String newLabel) {
 		String oldLabel = label;
 		label = newLabel;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.AREA__LABEL, oldLabel, label));
+		}
 	}
 
 	/**
@@ -196,9 +197,10 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 	public void setIconURI(String newIconURI) {
 		String oldIconURI = iconURI;
 		iconURI = newIconURI;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.AREA__ICON_URI, oldIconURI,
 					iconURI));
+		}
 	}
 
 	/**
@@ -222,9 +224,10 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 	public void setTooltip(String newTooltip) {
 		String oldTooltip = tooltip;
 		tooltip = newTooltip;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.AREA__TOOLTIP, oldTooltip,
 					tooltip));
+		}
 	}
 
 	/**
@@ -465,8 +468,9 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (label: "); //$NON-NLS-1$

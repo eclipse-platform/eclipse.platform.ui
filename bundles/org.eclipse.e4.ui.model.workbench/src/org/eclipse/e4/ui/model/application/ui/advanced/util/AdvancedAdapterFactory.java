@@ -91,7 +91,7 @@ public class AdvancedAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected AdvancedSwitch<Adapter> modelSwitch = new AdvancedSwitch<Adapter>() {
+	protected AdvancedSwitch<Adapter> modelSwitch = new AdvancedSwitch<>() {
 		@Override
 		public Adapter casePlaceholder(MPlaceholder object) {
 			return createPlaceholderAdapter();

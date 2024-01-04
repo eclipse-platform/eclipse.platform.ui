@@ -2,11 +2,8 @@ package org.eclipse.e4.emf.xpath.test.model.xpathtest.impl;
 
 import org.eclipse.e4.emf.xpath.test.model.xpathtest.MenuElement;
 import org.eclipse.e4.emf.xpath.test.model.xpathtest.XpathtestPackage;
-
 import org.eclipse.emf.common.notify.Notification;
-
 import org.eclipse.emf.ecore.EClass;
-
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 
@@ -16,11 +13,11 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.emf.xpath.test.model.xpathtest.impl.MenuElementImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.eclipse.e4.emf.xpath.test.model.xpathtest.impl.MenuElementImpl#getLabel <em>Label</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

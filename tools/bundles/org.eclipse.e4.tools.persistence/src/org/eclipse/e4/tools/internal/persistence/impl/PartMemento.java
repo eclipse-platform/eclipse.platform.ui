@@ -113,9 +113,10 @@ public class PartMemento extends MinimalEObjectImpl.Container implements IPartMe
 	public void setPartId(String newPartId) {
 		String oldPartId = partId;
 		partId = newPartId;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, IPersistencePackage.PART_MEMENTO__PART_ID, oldPartId,
 					partId));
+		}
 	}
 
 	/**
@@ -137,9 +138,10 @@ public class PartMemento extends MinimalEObjectImpl.Container implements IPartMe
 	public void setMemento(String newMemento) {
 		String oldMemento = memento;
 		memento = newMemento;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, IPersistencePackage.PART_MEMENTO__MEMENTO, oldMemento,
 					memento));
+		}
 	}
 
 	/**
@@ -217,8 +219,9 @@ public class PartMemento extends MinimalEObjectImpl.Container implements IPartMe
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (partId: "); //$NON-NLS-1$

@@ -138,9 +138,10 @@ public class ImperativeExpressionImpl extends ExpressionImpl implements MImperat
 	public void setContributionURI(String newContributionURI) {
 		String oldContributionURI = contributionURI;
 		contributionURI = newContributionURI;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.IMPERATIVE_EXPRESSION__CONTRIBUTION_URI,
 					oldContributionURI, contributionURI));
+		}
 	}
 
 	/**
@@ -162,9 +163,10 @@ public class ImperativeExpressionImpl extends ExpressionImpl implements MImperat
 	public void setObject(Object newObject) {
 		Object oldObject = object;
 		object = newObject;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.IMPERATIVE_EXPRESSION__OBJECT,
 					oldObject, object));
+		}
 	}
 
 	/**
@@ -186,9 +188,10 @@ public class ImperativeExpressionImpl extends ExpressionImpl implements MImperat
 	public void setTracking(boolean newTracking) {
 		boolean oldTracking = tracking;
 		tracking = newTracking;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.IMPERATIVE_EXPRESSION__TRACKING,
 					oldTracking, tracking));
+		}
 	}
 
 	/**
@@ -323,8 +326,9 @@ public class ImperativeExpressionImpl extends ExpressionImpl implements MImperat
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (contributionURI: "); //$NON-NLS-1$

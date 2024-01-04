@@ -104,7 +104,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected MenuSwitch<Adapter> modelSwitch = new MenuSwitch<Adapter>() {
+	protected MenuSwitch<Adapter> modelSwitch = new MenuSwitch<>() {
 		@Override
 		public Adapter caseItem(MItem object) {
 			return createItemAdapter();

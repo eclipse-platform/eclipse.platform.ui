@@ -125,9 +125,10 @@ public class KeyBindingImpl extends ApplicationElementImpl implements MKeyBindin
 	public void setKeySequence(String newKeySequence) {
 		String oldKeySequence = keySequence;
 		keySequence = newKeySequence;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.KEY_BINDING__KEY_SEQUENCE,
 					oldKeySequence, keySequence));
+		}
 	}
 
 	/**
@@ -141,9 +142,10 @@ public class KeyBindingImpl extends ApplicationElementImpl implements MKeyBindin
 			InternalEObject oldCommand = (InternalEObject) command;
 			command = (MCommand) eResolveProxy(oldCommand);
 			if (command != oldCommand) {
-				if (eNotificationRequired())
+				if (eNotificationRequired()) {
 					eNotify(new ENotificationImpl(this, Notification.RESOLVE, CommandsPackageImpl.KEY_BINDING__COMMAND,
 							oldCommand, command));
+				}
 			}
 		}
 		return command;
@@ -167,9 +169,10 @@ public class KeyBindingImpl extends ApplicationElementImpl implements MKeyBindin
 	public void setCommand(MCommand newCommand) {
 		MCommand oldCommand = command;
 		command = newCommand;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.KEY_BINDING__COMMAND, oldCommand,
 					command));
+		}
 	}
 
 	/**
@@ -212,8 +215,9 @@ public class KeyBindingImpl extends ApplicationElementImpl implements MKeyBindin
 		case CommandsPackageImpl.KEY_BINDING__KEY_SEQUENCE:
 			return getKeySequence();
 		case CommandsPackageImpl.KEY_BINDING__COMMAND:
-			if (resolve)
+			if (resolve) {
 				return getCommand();
+			}
 			return basicGetCommand();
 		case CommandsPackageImpl.KEY_BINDING__PARAMETERS:
 			return getParameters();
@@ -332,8 +336,9 @@ public class KeyBindingImpl extends ApplicationElementImpl implements MKeyBindin
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (keySequence: "); //$NON-NLS-1$

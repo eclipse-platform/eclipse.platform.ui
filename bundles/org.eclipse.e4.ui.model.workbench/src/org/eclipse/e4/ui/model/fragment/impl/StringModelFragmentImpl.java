@@ -151,9 +151,10 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 	public void setFeaturename(String newFeaturename) {
 		String oldFeaturename = featurename;
 		featurename = newFeaturename;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET,
 					FragmentPackageImpl.STRING_MODEL_FRAGMENT__FEATURENAME, oldFeaturename, featurename));
+		}
 	}
 
 	/**
@@ -175,9 +176,10 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 	public void setParentElementId(String newParentElementId) {
 		String oldParentElementId = parentElementId;
 		parentElementId = newParentElementId;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET,
 					FragmentPackageImpl.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID, oldParentElementId, parentElementId));
+		}
 	}
 
 	/**
@@ -199,9 +201,10 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 	public void setPositionInList(String newPositionInList) {
 		String oldPositionInList = positionInList;
 		positionInList = newPositionInList;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET,
 					FragmentPackageImpl.STRING_MODEL_FRAGMENT__POSITION_IN_LIST, oldPositionInList, positionInList));
+		}
 	}
 
 	/**
@@ -297,8 +300,9 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (featurename: "); //$NON-NLS-1$
@@ -379,7 +383,7 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 				for (MApplicationElement element : getElements()) {
 					elements.add((MApplicationElement) EcoreUtil.copy((EObject) element));
 				}
-				if (elements.isEmpty() == false) {
+				if (!elements.isEmpty()) {
 					ret.addAll(ModelUtils.merge(targetElement, feature, elements, getPositionInList()));
 				}
 			}

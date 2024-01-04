@@ -194,9 +194,10 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 	public void setCommandName(String newCommandName) {
 		String oldCommandName = commandName;
 		commandName = newCommandName;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.COMMAND__COMMAND_NAME,
 					oldCommandName, commandName));
+		}
 	}
 
 	/**
@@ -218,9 +219,10 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 	public void setDescription(String newDescription) {
 		String oldDescription = description;
 		description = newDescription;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.COMMAND__DESCRIPTION,
 					oldDescription, description));
+		}
 	}
 
 	/**
@@ -248,9 +250,10 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 			InternalEObject oldCategory = (InternalEObject) category;
 			category = (MCategory) eResolveProxy(oldCategory);
 			if (category != oldCategory) {
-				if (eNotificationRequired())
+				if (eNotificationRequired()) {
 					eNotify(new ENotificationImpl(this, Notification.RESOLVE, CommandsPackageImpl.COMMAND__CATEGORY,
 							oldCategory, category));
+				}
 			}
 		}
 		return category;
@@ -274,9 +277,10 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 	public void setCategory(MCategory newCategory) {
 		MCategory oldCategory = category;
 		category = newCategory;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.COMMAND__CATEGORY, oldCategory,
 					category));
+		}
 	}
 
 	/**
@@ -300,9 +304,10 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 	public void setCommandIconURI(String newCommandIconURI) {
 		String oldCommandIconURI = commandIconURI;
 		commandIconURI = newCommandIconURI;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.COMMAND__COMMAND_ICON_URI,
 					oldCommandIconURI, commandIconURI));
+		}
 	}
 
 	/**
@@ -371,8 +376,9 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 		case CommandsPackageImpl.COMMAND__PARAMETERS:
 			return getParameters();
 		case CommandsPackageImpl.COMMAND__CATEGORY:
-			if (resolve)
+			if (resolve) {
 				return getCategory();
+			}
 			return basicGetCategory();
 		case CommandsPackageImpl.COMMAND__COMMAND_ICON_URI:
 			return getCommandIconURI();
@@ -516,8 +522,9 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (commandName: "); //$NON-NLS-1$

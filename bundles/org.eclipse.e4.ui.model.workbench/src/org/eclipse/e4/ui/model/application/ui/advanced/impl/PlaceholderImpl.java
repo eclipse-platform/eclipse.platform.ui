@@ -98,9 +98,10 @@ public class PlaceholderImpl extends UIElementImpl implements MPlaceholder {
 			InternalEObject oldRef = (InternalEObject) ref;
 			ref = (MUIElement) eResolveProxy(oldRef);
 			if (ref != oldRef) {
-				if (eNotificationRequired())
+				if (eNotificationRequired()) {
 					eNotify(new ENotificationImpl(this, Notification.RESOLVE, AdvancedPackageImpl.PLACEHOLDER__REF,
 							oldRef, ref));
+				}
 			}
 		}
 		return ref;
@@ -124,8 +125,9 @@ public class PlaceholderImpl extends UIElementImpl implements MPlaceholder {
 	public void setRef(MUIElement newRef) {
 		MUIElement oldRef = ref;
 		ref = newRef;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.PLACEHOLDER__REF, oldRef, ref));
+		}
 	}
 
 	/**
@@ -147,9 +149,10 @@ public class PlaceholderImpl extends UIElementImpl implements MPlaceholder {
 	public void setCloseable(boolean newCloseable) {
 		boolean oldCloseable = closeable;
 		closeable = newCloseable;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.PLACEHOLDER__CLOSEABLE,
 					oldCloseable, closeable));
+		}
 	}
 
 	/**
@@ -161,8 +164,9 @@ public class PlaceholderImpl extends UIElementImpl implements MPlaceholder {
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 		case AdvancedPackageImpl.PLACEHOLDER__REF:
-			if (resolve)
+			if (resolve) {
 				return getRef();
+			}
 			return basicGetRef();
 		case AdvancedPackageImpl.PLACEHOLDER__CLOSEABLE:
 			return isCloseable();
@@ -235,8 +239,9 @@ public class PlaceholderImpl extends UIElementImpl implements MPlaceholder {
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (closeable: "); //$NON-NLS-1$

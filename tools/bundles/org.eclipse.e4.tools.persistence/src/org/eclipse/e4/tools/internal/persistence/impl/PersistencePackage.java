@@ -86,8 +86,9 @@ public class PersistencePackage extends EPackageImpl implements IPersistencePack
 	 * @generated
 	 */
 	public static IPersistencePackage init() {
-		if (isInited)
+		if (isInited) {
 			return (IPersistencePackage) EPackage.Registry.INSTANCE.getEPackage(IPersistencePackage.eNS_URI);
+		}
 
 		// Obtain or create and register package
 		Object registeredPersistencePackage = EPackage.Registry.INSTANCE.get(eNS_URI);
@@ -219,8 +220,9 @@ public class PersistencePackage extends EPackageImpl implements IPersistencePack
 	 * @generated
 	 */
 	public void createPackageContents() {
-		if (isCreated)
+		if (isCreated) {
 			return;
+		}
 		isCreated = true;
 
 		// Create classes and their features
@@ -250,8 +252,9 @@ public class PersistencePackage extends EPackageImpl implements IPersistencePack
 	 * @generated
 	 */
 	public void initializePackageContents() {
-		if (isInitialized)
+		if (isInitialized) {
 			return;
+		}
 		isInitialized = true;
 
 		// Initialize package

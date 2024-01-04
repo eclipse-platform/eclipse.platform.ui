@@ -98,7 +98,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected BasicSwitch<Adapter> modelSwitch = new BasicSwitch<Adapter>() {
+	protected BasicSwitch<Adapter> modelSwitch = new BasicSwitch<>() {
 		@Override
 		public Adapter casePart(MPart object) {
 			return createPartAdapter();
