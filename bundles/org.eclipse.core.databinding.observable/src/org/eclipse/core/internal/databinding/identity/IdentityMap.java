@@ -183,7 +183,7 @@ public class IdentityMap<K, V> implements Map<K, V> {
 				Object key = unwrappedEntry.getKey();
 				final IdentityWrapper<Object> wrappedKey = IdentityWrapper
 						.wrap(key);
-				Map.Entry<IdentityWrapper<Object>, Object> wrappedEntry = new Map.Entry<IdentityWrapper<Object>, Object>() {
+				Map.Entry<IdentityWrapper<Object>, Object> wrappedEntry = new Map.Entry<>() {
 					@Override
 					public IdentityWrapper<Object> getKey() {
 						return wrappedKey;

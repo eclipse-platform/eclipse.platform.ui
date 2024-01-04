@@ -65,7 +65,7 @@ public class MapSimpleValueObservableMap<S, K, I extends S, V> extends AbstractO
 
 	private boolean updating = false;
 
-	private IMapChangeListener<K, I> masterListener = new IMapChangeListener<K, I>() {
+	private IMapChangeListener<K, I> masterListener = new IMapChangeListener<>() {
 		@Override
 		public void handleMapChange(final MapChangeEvent<? extends K, ? extends I> event) {
 			if (!isDisposed()) {
