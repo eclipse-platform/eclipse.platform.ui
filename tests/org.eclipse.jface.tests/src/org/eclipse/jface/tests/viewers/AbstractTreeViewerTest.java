@@ -164,6 +164,143 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 	}
 
 	@Test
+	public void testAutoExpandOnSingleChild() {
+		TestElement modelRoot = TestElement.createModel(5, 1);
+		TestElement trivialPathRoot = modelRoot.getFirstChild();
+		fViewer.setInput(modelRoot);
+
+		fTreeViewer.setAutoExpandOnSingleChildLevels(2);
+		fTreeViewer.setExpandedStateWithAutoExpandOnSingleChild(trivialPathRoot, true);
+
+		assertTrue("The expanded widget child is not expanded", fTreeViewer.getExpandedState(trivialPathRoot));
+		assertTrue("The first child of the trivial path was not auto-expanded",
+				fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild()));
+		assertFalse("Trivial path is expanded further than specified depth ",
+				fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild().getFirstChild()));
+	}
+
+	@Test
+	public void testAutoExpandOnSingleChildDeeperDownPath() {
+		TestElement modelRoot = TestElement.createModel(6, 1);
+		TestElement trivialPathRoot = modelRoot.getFirstChild();
+		fViewer.setInput(modelRoot);
+
+		fTreeViewer.setExpandedState(modelRoot, true); // https://github.com/eclipse-platform/eclipse.platform.ui/pull/1072#discussion_r1431558570
+		fTreeViewer.setExpandedState(trivialPathRoot, true); // https://github.com/eclipse-platform/eclipse.platform.ui/pull/1072#discussion_r1431558570
+		fTreeViewer.setAutoExpandOnSingleChildLevels(2);
+		fTreeViewer.setExpandedStateWithAutoExpandOnSingleChild(trivialPathRoot.getFirstChild(), true);
+
+		assertTrue("The first child of the trivial path was not auto-expanded",
+				fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild()));
+		assertTrue("The second child of the trivial path was not auto-expanded",
+				fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild().getFirstChild()));
+		assertFalse("Trivial path is expanded further than specified depth ",
+				fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild().getFirstChild().getFirstChild()));
+	}
+
+	@Test
+	public void testAutoExpandOnSingleChildFromRoot() {
+		TestElement modelRoot = TestElement.createModel(5, 5);
+		TestElement trivialPathRoot = modelRoot;
+		fViewer.setInput(modelRoot);
+
+		fTreeViewer.setAutoExpandOnSingleChildLevels(2);
+		fTreeViewer.setExpandedStateWithAutoExpandOnSingleChild(trivialPathRoot, true);
+
+		assertFalse("The first child of the trivial path was auto-expanded",
+				fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild()));
+	}
+
+	@Test
+	public void testAutoExpandOnSingleChildFromRootWithSensibleTrivialPath() {
+		TestElement modelRoot = TestElement.createModel(5, 1);
+		TestElement trivialPathRoot = modelRoot;
+		fViewer.setInput(modelRoot);
+
+		fTreeViewer.setAutoExpandOnSingleChildLevels(2);
+		fTreeViewer.setExpandedStateWithAutoExpandOnSingleChild(trivialPathRoot, true);
+
+		assertTrue("The first child of the trivial path was auto-expanded",
+				fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild()));
+	}
+
+	@Test
+	public void testAutoExpandOnSingleChildSmallerThanAutoExpandDepth() {
+		TestElement modelRoot = TestElement.createModel(2, 1);
+		TestElement trivialPathRoot = modelRoot.getFirstChild();
+		fViewer.setInput(modelRoot);
+
+		fTreeViewer.setAutoExpandOnSingleChildLevels(10);
+		fTreeViewer.setExpandedStateWithAutoExpandOnSingleChild(trivialPathRoot, true);
+
+		assertTrue("The expanded widget child is not expanded", fTreeViewer.getExpandedState(trivialPathRoot));
+		assertFalse("The first child of the trivial path was auto-expanded although it contains zero children",
+				fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild()));
+	}
+
+	@Test
+	public void testSetAutoExpandOnSingleChildLevels() {
+		fTreeViewer.setAutoExpandOnSingleChildLevels(AbstractTreeViewer.NO_EXPAND);
+		assertEquals("Setting an auto-expansion level of NO_EXPAND works",
+				fTreeViewer.getAutoExpandOnSingleChildLevels(), AbstractTreeViewer.NO_EXPAND);
+
+		fTreeViewer.setAutoExpandOnSingleChildLevels(4);
+		assertEquals("Setting a non-trivial auto-expansion level works", fTreeViewer.getAutoExpandOnSingleChildLevels(),
+				4);
+
+		fTreeViewer.setAutoExpandOnSingleChildLevels(AbstractTreeViewer.NO_EXPAND);
+		assertEquals("Setting an auto-expansion level of NO_EXPAND works",
+				fTreeViewer.getAutoExpandOnSingleChildLevels(), AbstractTreeViewer.NO_EXPAND);
+	}
+
+	@Test
+	public void testAutoExpandOnSingleChildManualDisable() {
+		// We need our own model since some default models do not generate trivial
+		// paths
+		TestElement modelRoot = TestElement.createModel(5, 1);
+		TestElement trivialPathRoot = modelRoot.getFirstChild();
+		fViewer.setInput(modelRoot);
+
+		fTreeViewer.setAutoExpandOnSingleChildLevels(AbstractTreeViewer.NO_EXPAND);
+		fTreeViewer.setExpandedStateWithAutoExpandOnSingleChild(trivialPathRoot, true);
+
+		assertTrue("The expanded widget child is not expanded", fTreeViewer.getExpandedState(trivialPathRoot));
+		assertFalse("The first child of the trivial path was auto-expanded",
+				fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild()));
+	}
+
+	public void testAutoExpandOnSingleChildManualEnableAndThenDisable() {
+		TestElement modelRoot = TestElement.createModel(5, 1);
+		TestElement trivialPathRoot = modelRoot.getFirstChild();
+		fViewer.setInput(modelRoot);
+
+		fTreeViewer.setAutoExpandOnSingleChildLevels(2);
+		fTreeViewer.setAutoExpandOnSingleChildLevels(AbstractTreeViewer.NO_EXPAND);
+		fTreeViewer.setExpandedStateWithAutoExpandOnSingleChild(trivialPathRoot, true);
+
+		assertTrue("The expanded widget child is not expanded", fTreeViewer.getExpandedState(trivialPathRoot));
+		assertFalse("The first child of the trivial path was auto-expanded",
+				fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild()));
+	}
+
+	@Test
+	public void testAutoExpandOnSingleChildInfiniteExpand() {
+		TestElement modelRoot = TestElement.createModel(5, 1);
+		TestElement trivialPathRoot = modelRoot.getFirstChild();
+		fViewer.setInput(modelRoot);
+
+		fTreeViewer.setAutoExpandOnSingleChildLevels(AbstractTreeViewer.ALL_LEVELS);
+		fTreeViewer.setExpandedStateWithAutoExpandOnSingleChild(trivialPathRoot, true);
+
+		assertTrue("The expanded widget child is not expanded", fTreeViewer.getExpandedState(trivialPathRoot));
+		TestElement child = trivialPathRoot.getFirstChild();
+		for (int depth = 1; child != null; depth++) {
+			assertTrue("The " + depth + ". child of the trivial path was not auto-expanded",
+					fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild()));
+			child = child.getFirstChild();
+		}
+	}
+
 	public void testFilterExpanded() {
 		TestElement first = fRootElement.getFirstChild();
 		TestElement first2 = first.getFirstChild();
