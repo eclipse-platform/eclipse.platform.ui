@@ -116,7 +116,7 @@ public class DateAndTimeObservableValue extends AbstractObservableValue<Date> {
 	}
 
 	// One calendar per thread to preserve thread-safety
-	private static final ThreadLocal<Calendar> calendar = new ThreadLocal<Calendar>() {
+	private static final ThreadLocal<Calendar> calendar = new ThreadLocal<>() {
 		@Override
 		protected Calendar initialValue() {
 			return Calendar.getInstance();

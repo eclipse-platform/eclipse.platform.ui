@@ -76,7 +76,7 @@ public class OpenFolderAsProjectAction extends Action {
 
 	@Override
 	public void run() {
-		List<IProject> imported = new LinkedList<IProject>();
+		List<IProject> imported = new LinkedList<>();
 		JobGroup group = new JobGroup(WorkbenchNavigatorMessages.OpenProjectAction_multiple, 0, folders.size());
 		Job.getJobManager().addJobChangeListener(new GroupFinishedListener(group,
 				() -> reflectChanges(imported, folders.stream().map(IFolder::getParent).distinct().toList())));
