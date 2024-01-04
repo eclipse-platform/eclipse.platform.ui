@@ -450,7 +450,7 @@ public class ModelServiceImpl implements EModelService {
 		}
 
 		List<MUIElement> elements = findElements(searchRoot, id, MUIElement.class);
-		if (elements.size() > 0) {
+		if (!elements.isEmpty()) {
 			return elements.get(0);
 		}
 		return null;

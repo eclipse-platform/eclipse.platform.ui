@@ -453,7 +453,7 @@ public class PartServiceImpl implements EPartService {
 	@Override
 	public MPart findPart(String id) {
 		List<MPart> parts = getParts(MPart.class, id);
-		return parts.size() > 0 ? parts.get(0) : null;
+		return parts.isEmpty() ? null : parts.get(0);
 	}
 
 	private <T> List<T> getParts(Class<T> cls, String id) {
@@ -1020,7 +1020,7 @@ public class PartServiceImpl implements EPartService {
 				} else {
 					// Find the first visible stack in the area
 					List<MPartStack> sharedStacks = modelService.findElements(area, null, MPartStack.class);
-					if (sharedStacks.size() > 0) {
+					if (!sharedStacks.isEmpty()) {
 						for (MPartStack stack : sharedStacks) {
 							if (stack.isToBeRendered()) {
 								stack.getChildren().add(providedPart);
@@ -1085,7 +1085,7 @@ public class PartServiceImpl implements EPartService {
 			descId += ":*"; //$NON-NLS-1$
 			List<MPlaceholder> phList = modelService.findElements(workbenchWindow, descId,
 					MPlaceholder.class, null, EModelService.PRESENTATION);
-			if (phList.size() > 0) {
+			if (!phList.isEmpty()) {
 				MUIElement phParent = phList.get(0).getParent();
 				if (phParent instanceof MPartStack) {
 					MPartStack theStack = (MPartStack) phParent;

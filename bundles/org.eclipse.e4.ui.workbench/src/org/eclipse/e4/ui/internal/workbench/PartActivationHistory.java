@@ -323,7 +323,7 @@ class PartActivationHistory {
 
 		List<MPart> activeCandidates = modelService.findElements(perspective, null, MPart.class,
 				singletonList(EPartService.ACTIVE_ON_CLOSE_TAG));
-		if (activeCandidates.size() > 0) {
+		if (!activeCandidates.isEmpty()) {
 			activeCandidates.get(0).getTags().remove(EPartService.ACTIVE_ON_CLOSE_TAG);
 			MPart candidate = activeCandidates.get(0);
 			if (partService.isInContainer(perspective, candidate)
