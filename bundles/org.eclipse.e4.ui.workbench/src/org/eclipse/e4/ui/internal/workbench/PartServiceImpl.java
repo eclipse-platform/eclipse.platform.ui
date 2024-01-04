@@ -868,7 +868,7 @@ public class PartServiceImpl implements EPartService {
 		if (!force) {
 			int colonIndex = id.indexOf(':');
 			if (colonIndex >= 0) {
-				String remId = ""; //$NON-NLS-1$
+				String remId = Util.ZERO_LENGTH_STRING;
 				try {
 					remId = id.substring(colonIndex + 1);
 				} catch (StringIndexOutOfBoundsException e) {
