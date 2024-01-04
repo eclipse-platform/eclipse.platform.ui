@@ -526,7 +526,7 @@ public class ModelAssembler {
 			log(LogLevel.DEBUG, "Nothing to merge for fragment {} of {}", contributorURI, //$NON-NLS-1$
 					contributorName);
 		}
-		if (evalImports && fragmentsContainer.getImports().size() > 0) {
+		if (evalImports && !fragmentsContainer.getImports().isEmpty()) {
 			resolveImports(fragmentsContainer.getImports(), addedElements);
 		}
 	}
