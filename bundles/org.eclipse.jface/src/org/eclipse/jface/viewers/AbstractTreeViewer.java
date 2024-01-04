@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Function;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
@@ -84,8 +85,17 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *
 	 * @see #expandToLevel(int)
 	 * @see #collapseToLevel(Object, int)
+	 * @see #setAutoExpandOnSingleChildLevels(int)
 	 */
 	public static final int ALL_LEVELS = -1;
+
+	/**
+	 * Constant indicating that no level of the tree should be expanded or collapsed
+	 *
+	 * @see #setAutoExpandOnSingleChildLevels(int)
+	 * @since 3.33
+	 */
+	public static final int NO_EXPAND = 0;
 
 	/**
 	 * List of registered tree listeners (element type:
@@ -94,17 +104,34 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	private ListenerList<ITreeViewerListener> treeListeners = new ListenerList<>();
 
 	/**
-	 * The level to which the tree is automatically expanded each time the
-	 * viewer's input is changed (that is, by <code>setInput</code>). A value
-	 * of 0 means that auto-expand is off.
+	 * The level to which the tree is automatically expanded each time the viewer's
+	 * input is changed (that is, by {@code setInput}). A value of {@code NO_EXPAND}
+	 * means that auto-expand is off.
 	 *
 	 * @see #setAutoExpandLevel
 	 */
 	private int expandToLevel = 0;
 
 	/**
-	 * Indicates if filters should be checked to determine expandability of
-	 * a tree node.
+	 * How many levels to autoexpand on single child levels: the expansion is
+	 * recursively applied for the given number of levels if the widget at each of
+	 * the according levels only has a single child. {@code NO_EXPAND} will disable
+	 * the feature, while {@code ALL_LEVELS} will expand to the leaves.
+	 */
+	private int autoExpandOnSingleChildLevels = 0;
+
+	/**
+	 * Listens to expansion events for triggering the auto expansion mechanism for
+	 * elements with a single child according to:
+	 * {@link #setAutoExpandOnSingleChildLevels(int)}
+	 *
+	 * This listener is added and removed as needed.
+	 */
+	private ITreeViewerListener autoExpandOnSingleChildListener;
+
+	/**
+	 * Indicates if filters should be checked to determine expandability of a tree
+	 * node.
 	 */
 	private boolean isExpandableCheckFilters = false;
 
@@ -1208,6 +1235,17 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	}
 
 	/**
+	 * @return {@code NO_EXPAND} for disabled, {@code ALL_LEVELS} for infinite
+	 *         expansion or any integer value for a specific number of levels to
+	 *         expand.
+	 * @since 3.33
+	 */
+	public int getAutoExpandOnSingleChildLevels() {
+		return autoExpandOnSingleChildLevels;
+	}
+
+
+	/**
 	 * Returns the SWT child items for the given SWT widget.
 	 *
 	 * @param widget
@@ -1795,18 +1833,23 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	}
 
 	/**
-	 * Recursively expands the subtree rooted at the given widget to the given
-	 * level.
+	 * Recursively, conditionally expands the subtree rooted at the given widget to
+	 * the given level. Takes the {@code shouldChildrenExpand} predicate that
+	 * defines for a given widget if it shall be expanded.
 	 * <p>
 	 * Note that the default implementation of this method does not call
-	 * <code>setRedraw</code>.
+	 * {@code setRedraw}.
 	 * </p>
 	 *
-	 * @param widget the widget
-	 * @param level  non-negative level, or <code>ALL_LEVELS</code> to collapse all
-	 *               levels of the tree
+	 * @param widget               the widget
+	 * @param level                non-negative level, or {@code ALL_LEVELS} to
+	 *                             expand all levels of the tree
+	 * @param shouldChildrenExpand predicate that defines for a given widget if it
+	 *                             should be expanded.
+	 * @since 3.32
 	 */
-	protected void internalExpandToLevel(Widget widget, int level) {
+	private void internalConditionalExpandToLevel(Widget widget, int level,
+			Function<Widget, Boolean> shouldChildrenExpand) {
 		if (level == ALL_LEVELS || level > 0) {
 			Object data = widget.getData();
 			if (widget instanceof Item it && data != null && !isExpandable(it, null, data)) {
@@ -1823,12 +1866,30 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 					int newLevel = (level == ALL_LEVELS ? ALL_LEVELS
 							: level - 1);
 					for (Item element : children) {
-						internalExpandToLevel(element, newLevel);
+						if (shouldChildrenExpand.apply(widget).booleanValue()) {
+							internalConditionalExpandToLevel(element, newLevel, shouldChildrenExpand);
+						}
 					}
 				}
 			}
 			// XXX expanding here fails on linux
 		}
+	}
+
+	/**
+	 * Recursively expands the subtree rooted at the given widget to the given
+	 * level.
+	 * <p>
+	 * Note that the default implementation of this method does not call
+	 * <code>setRedraw</code>.
+	 * </p>
+	 *
+	 * @param widget the widget
+	 * @param level  non-negative level, or <code>ALL_LEVELS</code> to expand all
+	 *               levels of the tree
+	 */
+	protected void internalExpandToLevel(Widget widget, int level) {
+		internalConditionalExpandToLevel(widget, level, w -> Boolean.TRUE);
 	}
 
 	/**
@@ -2426,6 +2487,71 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	}
 
 	/**
+	 * Sets the maximum number of levels to automatically expand whenever a widget
+	 * is expanded that only has a single child element. The expansion is
+	 * recursively applied for the given number of levels if the widget at each of
+	 * the according levels only has a single child.
+	 * <p>
+	 * This behavior applies when expanding a widget using the method
+	 * {@link #setExpandedStateWithAutoExpandOnSingleChild(Object, boolean)} or when
+	 * an {@link SWT} event is triggered on the underlying tree. The behavior is
+	 * such, that a level of 0 or 1 represents opening the current widget itself.
+	 * Thus, only a {@code level} of 2 or greater will have any additional effect.
+	 * {@code NO_EXPAND} means that such paths are not automatically expanded.
+	 * <p>
+	 * The expansion is recursively applied for the given number of levels if the
+	 * widget at each of the according levels only has a single child and is off by
+	 * default. Turning this behavior on should be done cautiously on trees with
+	 * lazy-loaded child-nodes.
+	 * <p>
+	 * <p>
+	 * Using {@code ALL_LEVELS} as argument will recursively expand as many levels
+	 * as possible until a widget at the according level has more than a single
+	 * child.
+	 * </p>
+	 *
+	 * @param level {@code NO_EXPAND} for disabled, {@code ALL_LEVELS} for infinite
+	 *              expansion or any positive integer value to set a level to which
+	 *              expansion is recursively applied for the given number of levels
+	 *              if the widget at each of the according levels only has a single
+	 *              child.
+	 * @since 3.33
+	 */
+	public void setAutoExpandOnSingleChildLevels(int level) {
+		autoExpandOnSingleChildLevels = level;
+		if (level == NO_EXPAND) {
+			removeAutoExpandOnSingleChildListener();
+		} else {
+			registerAutoExpandOnSingleChildListener();
+		}
+	}
+
+	private void registerAutoExpandOnSingleChildListener() {
+		autoExpandOnSingleChildListener = new ITreeViewerListener() {
+			@Override
+			public void treeCollapsed(TreeExpansionEvent event) {
+				// Do nothing
+			}
+
+			@Override
+			public void treeExpanded(TreeExpansionEvent e) {
+				Widget item = doFindItem(e.getElement());
+
+				internalConditionalExpandToLevel(item, autoExpandOnSingleChildLevels,
+						w -> Boolean.valueOf(doesWidgetHaveExactlyOneChild(w)));
+			}
+		};
+		addTreeListener(autoExpandOnSingleChildListener);
+	}
+
+	private void removeAutoExpandOnSingleChildListener() {
+		if (autoExpandOnSingleChildListener != null) {
+			removeTreeListener(autoExpandOnSingleChildListener);
+			autoExpandOnSingleChildListener = null;
+		}
+	}
+
+	/**
 	 * Sets the content provider used by this <code>AbstractTreeViewer</code>.
 	 * <p>
 	 * Content providers for abstract tree viewers must implement either
@@ -2545,11 +2671,9 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * Sets whether the node corresponding to the given element or tree path is
 	 * expanded or collapsed.
 	 *
-	 * @param elementOrTreePath
-	 *            the element
-	 * @param expanded
-	 *            <code>true</code> if the node is expanded, and
-	 *            <code>false</code> if collapsed
+	 * @param elementOrTreePath the element
+	 * @param expanded          <code>true</code> if the node is expanded, and
+	 *                          <code>false</code> if collapsed
 	 */
 	public void setExpandedState(Object elementOrTreePath, boolean expanded) {
 		Assert.isNotNull(elementOrTreePath);
@@ -2561,6 +2685,29 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 				createChildren(item);
 			}
 			setExpanded(it, expanded);
+		}
+	}
+
+	/**
+	 * Behaves like {@link #setExpandedState(Object, boolean)} but additionally also
+	 * respects expansion of paths of of single child elements if set up by
+	 * {@link #setAutoExpandOnSingleChildLevels(int)}.
+	 *
+	 * @param elementOrTreePath the widget to expand
+	 * @param expanded          the new expanded state of {@code elementOrTreePath}
+	 * @since 3.33
+	 */
+	public void setExpandedStateWithAutoExpandOnSingleChild(Object elementOrTreePath, boolean expanded) {
+		Assert.isNotNull(elementOrTreePath);
+		if (checkBusy()) {
+			return;
+		}
+		setExpandedState(elementOrTreePath, expanded);
+		Widget item = internalGetWidgetToSelect(elementOrTreePath);
+
+		if (autoExpandOnSingleChildLevels != NO_EXPAND && expanded) {
+			internalConditionalExpandToLevel(item, autoExpandOnSingleChildLevels,
+					w -> Boolean.valueOf(doesWidgetHaveExactlyOneChild(w)));
 		}
 	}
 
@@ -3390,6 +3537,10 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		}
 
 		return selection;
+	}
+
+	private boolean doesWidgetHaveExactlyOneChild(Widget w) {
+		return getChildren(w).length == 1;
 	}
 
 }

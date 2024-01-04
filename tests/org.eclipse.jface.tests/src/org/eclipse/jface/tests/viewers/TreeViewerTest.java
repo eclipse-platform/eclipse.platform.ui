@@ -13,11 +13,17 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.junit.Test;
 
 public class TreeViewerTest extends AbstractTreeViewerTest {
 
@@ -48,6 +54,24 @@ public class TreeViewerTest extends AbstractTreeViewerTest {
 	protected String getItemText(int at) {
 		Tree tree = (Tree) fTreeViewer.getControl();
 		return tree.getItems()[at].getText();
+	}
+
+	@Test
+	public void testAutoExpandOnSingleChildThroughEvent() {
+		TestElement modelRoot = TestElement.createModel(5, 1);
+		TestElement trivialPathRoot = modelRoot.getFirstChild();
+		fViewer.setInput(modelRoot);
+
+		fTreeViewer.setAutoExpandOnSingleChildLevels(2);
+		Event event = new Event();
+		event.item = ((Tree) fViewer.getControl()).getItem(0);
+		((TreeItem) event.item).getParent().notifyListeners(SWT.Expand, event);
+
+		assertTrue("The expanded widget child is not expanded", fTreeViewer.getExpandedState(trivialPathRoot));
+		assertTrue("The first child of the trivial path was not auto-expanded",
+				fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild()));
+		assertFalse("Trivial path is expanded further than specified depth ",
+				fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild().getFirstChild()));
 	}
 
 }
