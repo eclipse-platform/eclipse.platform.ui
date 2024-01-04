@@ -3,7 +3,7 @@
     modelDirectory="/org.eclipse.e4.ui.tests/src" editDirectory=""
     editorDirectory="" modelPluginID="org.eclipse.e4.ui.tests" modelName="TestModel"
     rootExtendsInterface="" testsDirectory="" importerID="org.eclipse.emf.importer.ecore"
-    complianceLevel="8.0" copyrightFields="false" usedGenPackages="../../org.eclipse.e4.ui.model.workbench/model/UIElements.genmodel#//application"
+    complianceLevel="17.0" copyrightFields="false" usedGenPackages="../../org.eclipse.e4.ui.model.workbench/model/UIElements.genmodel#//application"
     interfaceNamePattern="M{0}" operationReflection="true" cleanup="true">
   <foreignModel>TestModel.ecore</foreignModel>
   <genPackages prefix="Test" basePackage="org.eclipse.e4.ui.tests.model" disposableProviderFactory="true"

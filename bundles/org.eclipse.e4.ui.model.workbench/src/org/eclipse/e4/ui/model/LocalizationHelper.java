@@ -52,8 +52,9 @@ final public class LocalizationHelper {
 	 */
 	public static String getLocalizedAccessibilityPhrase(MUIElement element) {
 		String key = element.getAccessibilityPhrase();
-		if (key == null)
+		if (key == null) {
 			return null;
+		}
 		return getLocalized(key, element);
 	}
 
@@ -67,11 +68,13 @@ final public class LocalizationHelper {
 	 *         be found
 	 */
 	public static String getLocalizedLabel(MUIElement element) {
-		if (!(element instanceof MUILabel))
+		if (!(element instanceof MUILabel)) {
 			return null;
+		}
 		String key = ((MUILabel) element).getLabel();
-		if (key == null)
+		if (key == null) {
 			return null;
+		}
 		return getLocalized(key, element);
 	}
 
@@ -85,11 +88,13 @@ final public class LocalizationHelper {
 	 *         can be found
 	 */
 	public static String getLocalizedTooltip(MUIElement element) {
-		if (!(element instanceof MUILabel))
+		if (!(element instanceof MUILabel)) {
 			return null;
+		}
 		String key = ((MUILabel) element).getTooltip();
-		if (key == null)
+		if (key == null) {
 			return null;
+		}
 		return getLocalized(key, element);
 	}
 
@@ -131,11 +136,13 @@ final public class LocalizationHelper {
 	 */
 	public static String getLocalized(String key, MApplicationElement element,
 			IEclipseContext context) {
-		if (key == null || context == null)
+		if (key == null || context == null) {
 			return key;
+		}
 		TranslationService translation = context.get(TranslationService.class);
-		if (translation == null)
+		if (translation == null) {
 			return key;
+		}
 		return translation.translate(key, element.getContributorURI());
 	}
 

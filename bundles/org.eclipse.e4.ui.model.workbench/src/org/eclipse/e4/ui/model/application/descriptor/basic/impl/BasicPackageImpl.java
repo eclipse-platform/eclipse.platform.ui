@@ -469,8 +469,9 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public static BasicPackageImpl init() {
-		if (isInited)
+		if (isInited) {
 			return (BasicPackageImpl) EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI);
+		}
 
 		// Obtain or create and register package
 		Object registeredBasicPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
@@ -782,8 +783,9 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public void createPackageContents() {
-		if (isCreated)
+		if (isCreated) {
 			return;
+		}
 		isCreated = true;
 
 		// Create classes and their features
@@ -821,8 +823,9 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public void initializePackageContents() {
-		if (isInitialized)
+		if (isInitialized) {
 			return;
+		}
 		isInitialized = true;
 
 		// Initialize package

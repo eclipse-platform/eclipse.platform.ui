@@ -943,8 +943,9 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public static ApplicationPackageImpl init() {
-		if (isInited)
+		if (isInited) {
 			return (ApplicationPackageImpl) EPackage.Registry.INSTANCE.getEPackage(ApplicationPackageImpl.eNS_URI);
+		}
 
 		// Obtain or create and register package
 		Object registeredApplicationPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
@@ -1330,8 +1331,9 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public void createPackageContents() {
-		if (isCreated)
+		if (isCreated) {
 			return;
+		}
 		isCreated = true;
 
 		// Create classes and their features
@@ -1381,8 +1383,9 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public void initializePackageContents() {
-		if (isInitialized)
+		if (isInitialized) {
 			return;
+		}
 		isInitialized = true;
 
 		// Initialize package

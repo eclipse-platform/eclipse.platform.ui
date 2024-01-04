@@ -140,8 +140,9 @@ public class CategoryImpl extends ApplicationElementImpl implements MCategory {
 	public void setName(String newName) {
 		String oldName = name;
 		name = newName;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.CATEGORY__NAME, oldName, name));
+		}
 	}
 
 	/**
@@ -163,9 +164,10 @@ public class CategoryImpl extends ApplicationElementImpl implements MCategory {
 	public void setDescription(String newDescription) {
 		String oldDescription = description;
 		description = newDescription;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.CATEGORY__DESCRIPTION,
 					oldDescription, description));
+		}
 	}
 
 	/**
@@ -329,8 +331,9 @@ public class CategoryImpl extends ApplicationElementImpl implements MCategory {
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (name: "); //$NON-NLS-1$

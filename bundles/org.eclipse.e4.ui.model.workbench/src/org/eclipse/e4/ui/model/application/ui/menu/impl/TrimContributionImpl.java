@@ -152,9 +152,10 @@ public class TrimContributionImpl extends ElementContainerImpl<MTrimElement> imp
 	public void setParentId(String newParentId) {
 		String oldParentId = parentId;
 		parentId = newParentId;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.TRIM_CONTRIBUTION__PARENT_ID,
 					oldParentId, parentId));
+		}
 	}
 
 	/**
@@ -176,9 +177,10 @@ public class TrimContributionImpl extends ElementContainerImpl<MTrimElement> imp
 	public void setPositionInParent(String newPositionInParent) {
 		String oldPositionInParent = positionInParent;
 		positionInParent = newPositionInParent;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.TRIM_CONTRIBUTION__POSITION_IN_PARENT,
 					oldPositionInParent, positionInParent));
+		}
 	}
 
 	/**
@@ -263,8 +265,9 @@ public class TrimContributionImpl extends ElementContainerImpl<MTrimElement> imp
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (parentId: "); //$NON-NLS-1$

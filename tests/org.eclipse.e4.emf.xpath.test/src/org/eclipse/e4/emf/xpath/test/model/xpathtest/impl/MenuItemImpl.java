@@ -2,11 +2,8 @@ package org.eclipse.e4.emf.xpath.test.model.xpathtest.impl;
 
 import org.eclipse.e4.emf.xpath.test.model.xpathtest.MenuItem;
 import org.eclipse.e4.emf.xpath.test.model.xpathtest.XpathtestPackage;
-
 import org.eclipse.emf.common.notify.Notification;
-
 import org.eclipse.emf.ecore.EClass;
-
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
@@ -15,10 +12,10 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.emf.xpath.test.model.xpathtest.impl.MenuItemImpl#getMnemonic <em>Mnemonic</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

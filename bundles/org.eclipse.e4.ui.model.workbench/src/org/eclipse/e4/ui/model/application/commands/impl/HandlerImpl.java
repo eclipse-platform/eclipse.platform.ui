@@ -77,9 +77,10 @@ public class HandlerImpl extends ContributionImpl implements MHandler {
 			InternalEObject oldCommand = (InternalEObject) command;
 			command = (MCommand) eResolveProxy(oldCommand);
 			if (command != oldCommand) {
-				if (eNotificationRequired())
+				if (eNotificationRequired()) {
 					eNotify(new ENotificationImpl(this, Notification.RESOLVE, CommandsPackageImpl.HANDLER__COMMAND,
 							oldCommand, command));
+				}
 			}
 		}
 		return command;
@@ -103,9 +104,10 @@ public class HandlerImpl extends ContributionImpl implements MHandler {
 	public void setCommand(MCommand newCommand) {
 		MCommand oldCommand = command;
 		command = newCommand;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.HANDLER__COMMAND, oldCommand,
 					command));
+		}
 	}
 
 	/**
@@ -117,8 +119,9 @@ public class HandlerImpl extends ContributionImpl implements MHandler {
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 		case CommandsPackageImpl.HANDLER__COMMAND:
-			if (resolve)
+			if (resolve) {
 				return getCommand();
+			}
 			return basicGetCommand();
 		default:
 			return super.eGet(featureID, resolve, coreType);

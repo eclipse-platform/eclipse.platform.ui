@@ -416,9 +416,10 @@ public class PartImpl extends UIElementImpl implements MPart {
 	public void setContributionURI(String newContributionURI) {
 		String oldContributionURI = contributionURI;
 		contributionURI = newContributionURI;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__CONTRIBUTION_URI,
 					oldContributionURI, contributionURI));
+		}
 	}
 
 	/**
@@ -440,8 +441,9 @@ public class PartImpl extends UIElementImpl implements MPart {
 	public void setObject(Object newObject) {
 		Object oldObject = object;
 		object = newObject;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__OBJECT, oldObject, object));
+		}
 	}
 
 	/**
@@ -463,8 +465,9 @@ public class PartImpl extends UIElementImpl implements MPart {
 	public void setContext(IEclipseContext newContext) {
 		IEclipseContext oldContext = context;
 		context = newContext;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__CONTEXT, oldContext, context));
+		}
 	}
 
 	/**
@@ -515,8 +518,9 @@ public class PartImpl extends UIElementImpl implements MPart {
 	public void setLabel(String newLabel) {
 		String oldLabel = label;
 		label = newLabel;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__LABEL, oldLabel, label));
+		}
 	}
 
 	/**
@@ -540,9 +544,10 @@ public class PartImpl extends UIElementImpl implements MPart {
 	public void setIconURI(String newIconURI) {
 		String oldIconURI = iconURI;
 		iconURI = newIconURI;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__ICON_URI, oldIconURI,
 					iconURI));
+		}
 	}
 
 	/**
@@ -566,8 +571,9 @@ public class PartImpl extends UIElementImpl implements MPart {
 	public void setTooltip(String newTooltip) {
 		String oldTooltip = tooltip;
 		tooltip = newTooltip;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__TOOLTIP, oldTooltip, tooltip));
+		}
 	}
 
 	/**
@@ -622,8 +628,9 @@ public class PartImpl extends UIElementImpl implements MPart {
 	public void setDirty(boolean newDirty) {
 		boolean oldDirty = dirty;
 		dirty = newDirty;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__DIRTY, oldDirty, dirty));
+		}
 	}
 
 	/**
@@ -674,10 +681,11 @@ public class PartImpl extends UIElementImpl implements MPart {
 		if (eNotificationRequired()) {
 			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET,
 					BasicPackageImpl.PART__TOOLBAR, oldToolbar, newToolbar);
-			if (msgs == null)
+			if (msgs == null) {
 				msgs = notification;
-			else
+			} else {
 				msgs.add(notification);
+			}
 		}
 		return msgs;
 	}
@@ -691,18 +699,22 @@ public class PartImpl extends UIElementImpl implements MPart {
 	public void setToolbar(MToolBar newToolbar) {
 		if (newToolbar != toolbar) {
 			NotificationChain msgs = null;
-			if (toolbar != null)
+			if (toolbar != null) {
 				msgs = ((InternalEObject) toolbar).eInverseRemove(this,
 						EOPPOSITE_FEATURE_BASE - BasicPackageImpl.PART__TOOLBAR, null, msgs);
-			if (newToolbar != null)
+			}
+			if (newToolbar != null) {
 				msgs = ((InternalEObject) newToolbar).eInverseAdd(this,
 						EOPPOSITE_FEATURE_BASE - BasicPackageImpl.PART__TOOLBAR, null, msgs);
+			}
 			msgs = basicSetToolbar(newToolbar, msgs);
-			if (msgs != null)
+			if (msgs != null) {
 				msgs.dispatch();
-		} else if (eNotificationRequired())
+			}
+		} else if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__TOOLBAR, newToolbar,
 					newToolbar));
+		}
 	}
 
 	/**
@@ -724,9 +736,10 @@ public class PartImpl extends UIElementImpl implements MPart {
 	public void setCloseable(boolean newCloseable) {
 		boolean oldCloseable = closeable;
 		closeable = newCloseable;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__CLOSEABLE, oldCloseable,
 					closeable));
+		}
 	}
 
 	/**
@@ -748,9 +761,10 @@ public class PartImpl extends UIElementImpl implements MPart {
 	public void setDescription(String newDescription) {
 		String oldDescription = description;
 		description = newDescription;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__DESCRIPTION, oldDescription,
 					description));
+		}
 	}
 
 	/**
@@ -836,10 +850,11 @@ public class PartImpl extends UIElementImpl implements MPart {
 		case BasicPackageImpl.PART__VARIABLES:
 			return getVariables();
 		case BasicPackageImpl.PART__PROPERTIES:
-			if (coreType)
+			if (coreType) {
 				return ((EMap.InternalMapView<String, String>) getProperties()).eMap();
-			else
+			} else {
 				return getProperties();
+			}
 		case BasicPackageImpl.PART__LABEL:
 			return getLabel();
 		case BasicPackageImpl.PART__ICON_URI:
@@ -1324,8 +1339,9 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (contributionURI: "); //$NON-NLS-1$

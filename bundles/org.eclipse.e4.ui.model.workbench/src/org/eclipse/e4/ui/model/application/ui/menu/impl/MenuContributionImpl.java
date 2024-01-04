@@ -152,9 +152,10 @@ public class MenuContributionImpl extends ElementContainerImpl<MMenuElement> imp
 	public void setPositionInParent(String newPositionInParent) {
 		String oldPositionInParent = positionInParent;
 		positionInParent = newPositionInParent;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU_CONTRIBUTION__POSITION_IN_PARENT,
 					oldPositionInParent, positionInParent));
+		}
 	}
 
 	/**
@@ -176,9 +177,10 @@ public class MenuContributionImpl extends ElementContainerImpl<MMenuElement> imp
 	public void setParentId(String newParentId) {
 		String oldParentId = parentId;
 		parentId = newParentId;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU_CONTRIBUTION__PARENT_ID,
 					oldParentId, parentId));
+		}
 	}
 
 	/**
@@ -263,8 +265,9 @@ public class MenuContributionImpl extends ElementContainerImpl<MMenuElement> imp
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (positionInParent: "); //$NON-NLS-1$

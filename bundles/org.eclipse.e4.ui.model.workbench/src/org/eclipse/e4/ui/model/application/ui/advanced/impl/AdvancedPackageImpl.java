@@ -1218,8 +1218,9 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public static AdvancedPackageImpl init() {
-		if (isInited)
+		if (isInited) {
 			return (AdvancedPackageImpl) EPackage.Registry.INSTANCE.getEPackage(AdvancedPackageImpl.eNS_URI);
+		}
 
 		// Obtain or create and register package
 		Object registeredAdvancedPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
@@ -1441,8 +1442,9 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public void createPackageContents() {
-		if (isCreated)
+		if (isCreated) {
 			return;
+		}
 		isCreated = true;
 
 		// Create classes and their features
@@ -1476,8 +1478,9 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public void initializePackageContents() {
-		if (isInitialized)
+		if (isInitialized) {
 			return;
+		}
 		isInitialized = true;
 
 		// Initialize package

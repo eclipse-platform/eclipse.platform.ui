@@ -5,7 +5,7 @@
     modelPluginID="org.eclipse.e4.tools.persistence" modelName="Persistence" editPluginClass="org.eclipse.e4.tools.persistence.provider.PersistenceEditPlugin"
     editorPluginClass="org.eclipse.e4.tools.persistence.presentation.PersistenceEditorPlugin"
     updateClasspath="false" nonNLSMarkers="true" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
-    codeFormatting="true" testsDirectory="" testSuiteClass="org.eclipse.e4.tools.internal.persistence.tests.PersistenceAllTests"
+    codeFormatting="true" commentFormatting="true" testsDirectory="" testSuiteClass="org.eclipse.e4.tools.internal.persistence.tests.PersistenceAllTests"
     importerID="org.eclipse.emf.importer.ecore" complianceLevel="11.0" copyrightFields="false"
     editPluginID="org.eclipse.e4.tools.persistence.edit" editorPluginID="org.eclipse.e4.tools.persistence.edit"
     usedGenPackages="../../org.eclipse.e4.ui.model.workbench/model/UIElements.genmodel#//application"

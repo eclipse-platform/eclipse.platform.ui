@@ -263,8 +263,9 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	public void setWidget(Object newWidget) {
 		Object oldWidget = widget;
 		widget = newWidget;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.UI_ELEMENT__WIDGET, oldWidget, widget));
+		}
 	}
 
 	/**
@@ -286,9 +287,10 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	public void setRenderer(Object newRenderer) {
 		Object oldRenderer = renderer;
 		renderer = newRenderer;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.UI_ELEMENT__RENDERER, oldRenderer,
 					renderer));
+		}
 	}
 
 	/**
@@ -310,9 +312,10 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	public void setToBeRendered(boolean newToBeRendered) {
 		boolean oldToBeRendered = toBeRendered;
 		toBeRendered = newToBeRendered;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.UI_ELEMENT__TO_BE_RENDERED,
 					oldToBeRendered, toBeRendered));
+		}
 	}
 
 	/**
@@ -334,8 +337,9 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	public void setOnTop(boolean newOnTop) {
 		boolean oldOnTop = onTop;
 		onTop = newOnTop;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.UI_ELEMENT__ON_TOP, oldOnTop, onTop));
+		}
 	}
 
 	/**
@@ -357,9 +361,10 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	public void setVisible(boolean newVisible) {
 		boolean oldVisible = visible;
 		visible = newVisible;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.UI_ELEMENT__VISIBLE, oldVisible,
 					visible));
+		}
 	}
 
 	/**
@@ -370,8 +375,9 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	@SuppressWarnings("unchecked")
 	@Override
 	public MElementContainer<MUIElement> getParent() {
-		if (eContainerFeatureID() != UiPackageImpl.UI_ELEMENT__PARENT)
+		if (eContainerFeatureID() != UiPackageImpl.UI_ELEMENT__PARENT) {
 			return null;
+		}
 		return (MElementContainer<MUIElement>) eInternalContainer();
 	}
 
@@ -395,19 +401,25 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 		if (newParent != eInternalContainer()
 				|| (eContainerFeatureID() != UiPackageImpl.UI_ELEMENT__PARENT && newParent != null)) {
 			if (EcoreUtil.isAncestor(this, (EObject) newParent))
+			 {
 				throw new IllegalArgumentException("Recursive containment not allowed for " + toString()); //$NON-NLS-1$
+			}
 			NotificationChain msgs = null;
-			if (eInternalContainer() != null)
+			if (eInternalContainer() != null) {
 				msgs = eBasicRemoveFromContainer(msgs);
-			if (newParent != null)
+			}
+			if (newParent != null) {
 				msgs = ((InternalEObject) newParent).eInverseAdd(this, UiPackageImpl.ELEMENT_CONTAINER__CHILDREN,
 						MElementContainer.class, msgs);
+			}
 			msgs = basicSetParent(newParent, msgs);
-			if (msgs != null)
+			if (msgs != null) {
 				msgs.dispatch();
-		} else if (eNotificationRequired())
+			}
+		} else if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.UI_ELEMENT__PARENT, newParent,
 					newParent));
+		}
 	}
 
 	/**
@@ -429,9 +441,10 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	public void setContainerData(String newContainerData) {
 		String oldContainerData = containerData;
 		containerData = newContainerData;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.UI_ELEMENT__CONTAINER_DATA,
 					oldContainerData, containerData));
+		}
 	}
 
 	/**
@@ -445,9 +458,10 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 			InternalEObject oldCurSharedRef = (InternalEObject) curSharedRef;
 			curSharedRef = (MPlaceholder) eResolveProxy(oldCurSharedRef);
 			if (curSharedRef != oldCurSharedRef) {
-				if (eNotificationRequired())
+				if (eNotificationRequired()) {
 					eNotify(new ENotificationImpl(this, Notification.RESOLVE, UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF,
 							oldCurSharedRef, curSharedRef));
+				}
 			}
 		}
 		return curSharedRef;
@@ -471,9 +485,10 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	public void setCurSharedRef(MPlaceholder newCurSharedRef) {
 		MPlaceholder oldCurSharedRef = curSharedRef;
 		curSharedRef = newCurSharedRef;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF,
 					oldCurSharedRef, curSharedRef));
+		}
 	}
 
 	/**
@@ -497,10 +512,11 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 		if (eNotificationRequired()) {
 			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET,
 					UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN, oldVisibleWhen, newVisibleWhen);
-			if (msgs == null)
+			if (msgs == null) {
 				msgs = notification;
-			else
+			} else {
 				msgs.add(notification);
+			}
 		}
 		return msgs;
 	}
@@ -514,18 +530,22 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	public void setVisibleWhen(MExpression newVisibleWhen) {
 		if (newVisibleWhen != visibleWhen) {
 			NotificationChain msgs = null;
-			if (visibleWhen != null)
+			if (visibleWhen != null) {
 				msgs = ((InternalEObject) visibleWhen).eInverseRemove(this,
 						EOPPOSITE_FEATURE_BASE - UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN, null, msgs);
-			if (newVisibleWhen != null)
+			}
+			if (newVisibleWhen != null) {
 				msgs = ((InternalEObject) newVisibleWhen).eInverseAdd(this,
 						EOPPOSITE_FEATURE_BASE - UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN, null, msgs);
+			}
 			msgs = basicSetVisibleWhen(newVisibleWhen, msgs);
-			if (msgs != null)
+			if (msgs != null) {
 				msgs.dispatch();
-		} else if (eNotificationRequired())
+			}
+		} else if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN,
 					newVisibleWhen, newVisibleWhen));
+		}
 	}
 
 	/**
@@ -547,9 +567,10 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	public void setAccessibilityPhrase(String newAccessibilityPhrase) {
 		String oldAccessibilityPhrase = accessibilityPhrase;
 		accessibilityPhrase = newAccessibilityPhrase;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.UI_ELEMENT__ACCESSIBILITY_PHRASE,
 					oldAccessibilityPhrase, accessibilityPhrase));
+		}
 	}
 
 	/**
@@ -586,8 +607,9 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 		case UiPackageImpl.UI_ELEMENT__PARENT:
-			if (eInternalContainer() != null)
+			if (eInternalContainer() != null) {
 				msgs = eBasicRemoveFromContainer(msgs);
+			}
 			return basicSetParent((MElementContainer<MUIElement>) otherEnd, msgs);
 		default:
 			return super.eInverseAdd(otherEnd, featureID, msgs);
@@ -650,8 +672,9 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 		case UiPackageImpl.UI_ELEMENT__CONTAINER_DATA:
 			return getContainerData();
 		case UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF:
-			if (resolve)
+			if (resolve) {
 				return getCurSharedRef();
+			}
 			return basicGetCurSharedRef();
 		case UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN:
 			return getVisibleWhen();
@@ -832,8 +855,9 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (widget: "); //$NON-NLS-1$

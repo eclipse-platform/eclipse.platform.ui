@@ -88,7 +88,7 @@ public class UiAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected UiSwitch<Adapter> modelSwitch = new UiSwitch<Adapter>() {
+	protected UiSwitch<Adapter> modelSwitch = new UiSwitch<>() {
 		@Override
 		public Adapter caseContext(MContext object) {
 			return createContextAdapter();
