@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2023 IBM Corporation and others.
+ * Copyright (c) 2009, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
 
 package org.eclipse.e4.ui.tests.application;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
@@ -59,12 +60,16 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		boolean[] hasFired;
 
 		EventHandler attListener = event -> {
-			assertTrue(event.getTopic().equals(topic),
-					"Incorrect Topic: " + event.getTopic()); //$NON-NLS-1$
+			// In case of * topic check that that event topic starts with the same prefix
+			if (topic.endsWith("*")) {
+				assertTrue("Incorrect Topic.", event.getTopic().startsWith(topic.substring(0, topic.length() - 2)));
+			} else {
+				assertEquals("Incorrect Topic.", topic, event.getTopic());
+			}
 
 			String attId = (String) event.getProperty(EventTags.ATTNAME);
 			int attIndex = getAttIndex(attId);
-			assertTrue(attIndex >= 0, "Unknown Attribite: " + attId); //$NON-NLS-1$
+			assertTrue("Unknown Attribite: " + attId, attIndex >= 0); //$NON-NLS-1$
 			hasFired[attIndex] = true;
 		};
 
@@ -79,9 +84,6 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 			reset();
 
 			eventBroker.subscribe(this.topic, attListener);
-		}
-
-		protected void assertTrue(boolean b, String string) {
 		}
 
 		protected int getAttIndex(String attId) {
@@ -232,7 +234,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		String newId = "Some New Id";
 		allData.setElementId(newId);
 		allData.getTags().add("Testing");
-		// allData.setTags("new Style");
+
 		allData.getPersistedState().put("testing", "Some state");
 		checkForFailures(allTesters, appTester);
 
@@ -322,7 +324,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		IEventBroker childEB = childContext.get(IEventBroker.class);
 		assertNotEquals("child context has same IEventBroker", appEB, childEB);
 
-		final boolean seen[] = { false };
+		final boolean[] seen = { false };
 		childEB.subscribe(testTopic, event -> seen[0] = true);
 
 		// ensure the EBs are wired up
@@ -355,7 +357,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 				badTesters.add(t);
 		}
 
-		if (badTesters.size() > 0) {
+		if (!badTesters.isEmpty()) {
 			String msg = "Events were fired in the wrong topic(s): "
 					+ badTesters;
 			fail(msg);
