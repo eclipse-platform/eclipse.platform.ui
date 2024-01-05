@@ -108,12 +108,12 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		this.editor = editor;
 	}
 
-	public Set<IContentType> getContentTypes(IDocument document) {
+	public Set<IContentType> getContentTypes(IDocument documentParam) {
 		if (this.resolvedContentTypes != null) {
 			return this.resolvedContentTypes;
 		}
 		this.resolvedContentTypes = new LinkedHashSet<>();
-		ITextFileBuffer buffer = getCurrentBuffer(document);
+		ITextFileBuffer buffer = getCurrentBuffer(documentParam);
 		if (buffer != null) {
 			try {
 				IContentType contentType = buffer.getContentType();
@@ -125,7 +125,7 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 						.log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, ex.getMessage(), ex));
 			}
 		}
-		String fileName = getCurrentFileName(document);
+		String fileName = getCurrentFileName(documentParam);
 		if (fileName != null) {
 			Queue<IContentType> types = new LinkedList<>(
 					Arrays.asList(Platform.getContentTypeManager().findContentTypesFor(fileName)));
@@ -148,13 +148,13 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		return null;
 	}
 
-	private String getCurrentFileName(IDocument document) {
+	private String getCurrentFileName(IDocument documentParam) {
 		String fileName = null;
 		if (this.editor != null) {
 			fileName = editor.getEditorInput().getName();
 		}
 		if (fileName == null) {
-			ITextFileBuffer buffer = getCurrentBuffer(document);
+			ITextFileBuffer buffer = getCurrentBuffer(documentParam);
 			if (buffer != null) {
 				IPath path = buffer.getLocation();
 				if (path != null) {
@@ -205,30 +205,30 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		return super.getPresentationReconciler(sourceViewer);
 	}
 
-	void watchDocument(IDocument document) {
-		if (this.document == document) {
+	void watchDocument(IDocument documentParam) {
+		if (document == documentParam) {
 			return;
 		}
-		if (this.document != null) {
-			this.document.removeDocumentPartitioningListener(this);
+		if (document != null) {
+			document.removeDocumentPartitioningListener(this);
 		}
 		if (document != null) {
-			this.document = document;
-			associateTokenContentTypes(document);
+			document = documentParam;
+			associateTokenContentTypes(documentParam);
 			document.addDocumentPartitioningListener(this);
 		}
 	}
 
 	@Override
-	public void documentPartitioningChanged(IDocument document) {
-		associateTokenContentTypes(document);
+	public void documentPartitioningChanged(IDocument documentParam) {
+		associateTokenContentTypes(documentParam);
 	}
 
-	private void associateTokenContentTypes(IDocument document) {
+	private void associateTokenContentTypes(IDocument documentParam) {
 		if (contentAssistant == null) {
 			return;
 		}
-		contentAssistant.updateTokens(document);
+		contentAssistant.updateTokens(documentParam);
 	}
 
 	@Override
