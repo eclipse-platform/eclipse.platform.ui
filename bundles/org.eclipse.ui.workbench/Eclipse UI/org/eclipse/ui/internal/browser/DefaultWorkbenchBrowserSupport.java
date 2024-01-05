@@ -53,7 +53,7 @@ public class DefaultWorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupp
 	}
 
 	protected IWebBrowser doCreateBrowser(int style, String browserId, String name, String tooltip)
-			throws PartInitException {
+	{
 		return new DefaultWebBrowser(this, browserId);
 	}
 

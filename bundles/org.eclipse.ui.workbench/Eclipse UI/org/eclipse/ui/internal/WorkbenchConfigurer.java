@@ -23,7 +23,6 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
@@ -167,7 +166,7 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
 	}
 
 	@Override
-	public IWorkbenchWindowConfigurer restoreWorkbenchWindow(IMemento memento) throws WorkbenchException {
+	public IWorkbenchWindowConfigurer restoreWorkbenchWindow(IMemento memento) {
 		return getWindowConfigurer(null);
 	}
 
