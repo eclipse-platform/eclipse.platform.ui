@@ -162,23 +162,21 @@ public class MapDelegatingValueObservableMap<S, K, I extends S, V> extends Abstr
 			Map<K, V> newValues = new HashMap<>();
 
 			Set<? extends K> addedKeys = diff.getAddedKeys();
-			for (K key : addedKeys) {
+			addedKeys.forEach(key -> {
 				I masterValue = diff.getNewValue(key);
 				V newValue = cache.get(masterValue);
 				newValues.put(key, newValue);
-			}
+			});
 
 			Set<? extends K> removedKeys = diff.getRemovedKeys();
-			for (K key : removedKeys) {
+			removedKeys.forEach(key -> {
 				I masterValue = diff.getOldValue(key);
 				V oldValue = cache.get(masterValue);
 				oldValues.put(key, oldValue);
-			}
+			});
 
 			Set<K> changedKeys = new HashSet<>(diff.getChangedKeys());
-			for (Iterator<K> it = changedKeys.iterator(); it.hasNext();) {
-				K key = it.next();
-
+			changedKeys.forEach(key -> {
 				I oldMasterValue = diff.getOldValue(key);
 				I newMasterValue = diff.getNewValue(key);
 
@@ -186,12 +184,12 @@ public class MapDelegatingValueObservableMap<S, K, I extends S, V> extends Abstr
 				V newValue = cache.get(newMasterValue);
 
 				if (Objects.equals(oldValue, newValue)) {
-					it.remove();
+					changedKeys.remove(key);
 				} else {
 					oldValues.put(key, oldValue);
 					newValues.put(key, newValue);
 				}
-			}
+			});
 
 			return Diffs.createMapDiff(addedKeys, removedKeys, changedKeys, oldValues, newValues);
 		}
@@ -270,12 +268,11 @@ public class MapDelegatingValueObservableMap<S, K, I extends S, V> extends Abstr
 
 	private Set<K> keysFor(I masterValue) {
 		Set<K> keys = new HashSet<>();
-
-		for (Map.Entry<K, I> entry : masterMap.entrySet()) {
+		masterMap.entrySet().forEach(entry -> {
 			if (entry.getValue() == masterValue) {
 				keys.add(entry.getKey());
 			}
-		}
+		});
 
 		return keys;
 	}
