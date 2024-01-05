@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IStaleListener;
@@ -176,19 +177,19 @@ public class MapDelegatingValueObservableMap<S, K, I extends S, V> extends Abstr
 			});
 
 			Set<K> changedKeys = new HashSet<>(diff.getChangedKeys());
-			changedKeys.forEach(key -> {
+			changedKeys.removeIf(key -> {
 				I oldMasterValue = diff.getOldValue(key);
 				I newMasterValue = diff.getNewValue(key);
 
 				V oldValue = cache.get(oldMasterValue);
 				V newValue = cache.get(newMasterValue);
 
-				if (Objects.equals(oldValue, newValue)) {
-					changedKeys.remove(key);
-				} else {
-					oldValues.put(key, oldValue);
-					newValues.put(key, newValue);
-				}
+				if (Objects.equals(oldValue, newValue))
+					return true;
+
+				oldValues.put(key, oldValue);
+				newValues.put(key, newValue);
+				return false;
 			});
 
 			return Diffs.createMapDiff(addedKeys, removedKeys, changedKeys, oldValues, newValues);
@@ -268,12 +269,10 @@ public class MapDelegatingValueObservableMap<S, K, I extends S, V> extends Abstr
 
 	private Set<K> keysFor(I masterValue) {
 		Set<K> keys = new HashSet<>();
-		masterMap.entrySet().forEach(entry -> {
-			if (entry.getValue() == masterValue) {
-				keys.add(entry.getKey());
-			}
-		});
-
+		Set<K> masterSet = masterMap.entrySet().stream().filter(e -> e.getValue() == masterValue)
+				.map(Map.Entry::getKey)
+				.collect(Collectors.toSet());
+		keys.addAll(masterSet);
 		return keys;
 	}
 
