@@ -15,7 +15,6 @@ package org.eclipse.ui.internal.browser;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.browser.AbstractWorkbenchBrowserSupport;
 import org.eclipse.ui.browser.IWebBrowser;
 
@@ -59,7 +58,7 @@ public class DefaultWorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupp
 
 	@Override
 	public IWebBrowser createBrowser(int style, String browserId, String name, String tooltip)
-			throws PartInitException {
+	{
 		IWebBrowser browser = findBrowser(browserId == null ? getDefaultId() : browserId);
 		if (browser != null) {
 			return browser;
@@ -70,7 +69,7 @@ public class DefaultWorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupp
 	}
 
 	@Override
-	public IWebBrowser createBrowser(String browserId) throws PartInitException {
+	public IWebBrowser createBrowser(String browserId) {
 		return createBrowser(AS_EXTERNAL, browserId, null, null);
 	}
 
