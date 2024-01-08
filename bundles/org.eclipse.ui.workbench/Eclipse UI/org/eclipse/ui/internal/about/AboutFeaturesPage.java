@@ -49,6 +49,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
@@ -70,25 +71,21 @@ public class AboutFeaturesPage extends ProductInfoPage {
 
 		@Override
 		public String getColumnText(Object element, int columnIndex) {
-			if (element instanceof AboutBundleGroupData) {
-				AboutBundleGroupData data = (AboutBundleGroupData) element;
-				switch (columnIndex) {
-				case 0:
-					return data.getProviderName();
-				case 1:
-					return data.getName();
-				case 2:
-					return data.getVersion();
-				case 3:
-					return data.getId();
-				}
+			if (element instanceof AboutBundleGroupData data) {
+
+				return switch (columnIndex) {
+				case 0 -> data.getProviderName();
+				case 1 -> data.getName();
+				case 2 -> data.getVersion();
+				case 3 -> data.getId();
+				default -> ""; //$NON-NLS-1$
+				};
 			}
 			return ""; //$NON-NLS-1$
 		}
 
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
-			// TODO Auto-generated method stub
 			return null;
 		}
 	}
@@ -108,7 +105,7 @@ public class AboutFeaturesPage extends ProductInfoPage {
 
 	private static final int COLUMNS_ID = IDialogConstants.CLIENT_ID + 3;
 
-	private TableViewer table;
+	private Table table;
 
 	private Label imageLabel;
 
@@ -175,7 +172,7 @@ public class AboutFeaturesPage extends ProductInfoPage {
 	 * selected feature.
 	 */
 	private void handlePluginInfoPressed() {
-		TableItem[] items = table.getTable().getSelection();
+		TableItem[] items = table.getSelection();
 		if (items.length <= 0) {
 			return;
 		}
@@ -196,7 +193,7 @@ public class AboutFeaturesPage extends ProductInfoPage {
 		moreButton = createButton(parent, MORE_ID, WorkbenchMessages.AboutFeaturesDialog_moreInfo);
 		pluginsButton = createButton(parent, PLUGINS_ID, WorkbenchMessages.AboutFeaturesDialog_pluginsInfo);
 		createButton(parent, COLUMNS_ID, WorkbenchMessages.AboutFeaturesDialog_columns);
-		TableItem[] items = table.getTable().getSelection();
+		TableItem[] items = table.getSelection();
 		AboutBundleGroupData info = null;
 		if (items.length > 0) {
 			info = (AboutBundleGroupData) items[0].getData();
@@ -258,7 +255,7 @@ public class AboutFeaturesPage extends ProductInfoPage {
 
 		textManager = new AboutTextManager(text);
 
-		TableItem[] items = table.getTable().getSelection();
+		TableItem[] items = table.getSelection();
 		if (items.length > 0) {
 			updateInfoArea((AboutBundleGroupData) items[0].getData());
 		}
@@ -278,16 +275,18 @@ public class AboutFeaturesPage extends ProductInfoPage {
 
 		initializeBundleGroupInfos();
 
-		table = new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.FULL_SELECTION | SWT.BORDER);
+		TableViewer tableViewer = new TableViewer(parent,
+				SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.FULL_SELECTION | SWT.BORDER);
 
+		table = tableViewer.getTable();
 		GridData gridData = new GridData(GridData.FILL, GridData.FILL, true, true);
 		gridData.heightHint = convertVerticalDLUsToPixels(TABLE_HEIGHT);
-		table.getTable().setLayoutData(gridData);
-		table.getTable().setHeaderVisible(true);
+		table.setLayoutData(gridData);
+		table.setHeaderVisible(true);
 
-		table.getTable().setLinesVisible(true);
-		table.getTable().setFont(parent.getFont());
-		table.getTable().addSelectionListener(widgetSelectedAdapter(e -> {
+		table.setLinesVisible(true);
+		table.setFont(parent.getFont());
+		table.addSelectionListener(widgetSelectedAdapter(e -> {
 			// If there is no item, nothing we can do.
 			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=266177
 			if (e.item == null)
@@ -296,7 +295,7 @@ public class AboutFeaturesPage extends ProductInfoPage {
 			updateInfoArea(info);
 			updateButtons(info);
 		}));
-		table.getTable().addSelectionListener(widgetDefaultSelectedAdapter(e -> {
+		table.addSelectionListener(widgetDefaultSelectedAdapter(e -> {
 			handlePluginInfoPressed();
 		}));
 
@@ -304,36 +303,36 @@ public class AboutFeaturesPage extends ProductInfoPage {
 				convertHorizontalDLUsToPixels(70), convertHorizontalDLUsToPixels(130) };
 
 		for (int i = 0; i < columnTitles.length; i++) {
-			TableColumn tableColumn = new TableColumn(table.getTable(), SWT.NULL);
+			TableColumn tableColumn = new TableColumn(table, SWT.NULL);
 			tableColumn.setWidth(columnWidths[i]);
 			tableColumn.setText(columnTitles[i]);
 			final int columnIndex = i;
 			tableColumn.addSelectionListener(widgetSelectedAdapter(e -> sort(columnIndex)));
 		}
 
-		table.setContentProvider(ArrayContentProvider.getInstance());
-		table.setLabelProvider(new BundleGroupTableLabelProvider());
+		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
+		tableViewer.setLabelProvider(new BundleGroupTableLabelProvider());
 
 		final BundlePatternFilter searchFilter = new BundlePatternFilter();
 		filterText.addModifyListener(e -> {
 			searchFilter.setPattern(filterText.getText());
-			table.getTable().setRedraw(false);
+			table.setRedraw(false);
 			try {
-				table.refresh();
+				tableViewer.refresh();
 			} finally {
-				table.getTable().setRedraw(true);
+				table.setRedraw(true);
 			}
 		});
-		table.addFilter(searchFilter);
+		tableViewer.addFilter(searchFilter);
 
 		Map<String, AboutBundleGroupData> features = new HashMap<>();
 
 		for (AboutBundleGroupData data : bundleGroupInfos) {
 			features.put(data.getVersionedId(), data);
 		}
-		table.setInput(features.values());
-		table.refresh(false);
-		addCopySupport(table.getTable());
+		tableViewer.setInput(features.values());
+		// tableViewer.refresh(false);
+		addCopySupport(table);
 	}
 
 	private void disposeImages() {
@@ -421,12 +420,12 @@ public class AboutFeaturesPage extends ProductInfoPage {
 			lastColumnChosen = column;
 		}
 
-		if (table.getTable().getItemCount() <= 1) {
+		if (table.getItemCount() <= 1) {
 			return;
 		}
 
 		// Remember the last selection
-		int sel = table.getTable().getSelectionIndex();
+		int sel = table.getSelectionIndex();
 		if (sel != -1) {
 			lastSelection = bundleGroupInfos[sel];
 		}
@@ -446,8 +445,8 @@ public class AboutFeaturesPage extends ProductInfoPage {
 			break;
 		}
 		// set the sort column and directional indicator
-		table.getTable().setSortColumn(table.getTable().getColumn(column));
-		table.getTable().setSortDirection(reverseSort ? SWT.DOWN : SWT.UP);
+		table.setSortColumn(table.getColumn(column));
+		table.setSortDirection(reverseSort ? SWT.DOWN : SWT.UP);
 
 		refreshTable();
 	}
@@ -457,7 +456,7 @@ public class AboutFeaturesPage extends ProductInfoPage {
 	 * selection from before sort action request.
 	 */
 	private void refreshTable() {
-		TableItem[] items = table.getTable().getItems();
+		TableItem[] items = table.getItems();
 
 		// create new order of table items
 		for (int i = 0; i < items.length; i++) {
@@ -475,8 +474,8 @@ public class AboutFeaturesPage extends ProductInfoPage {
 				}
 			}
 
-			table.getTable().setSelection(sel);
-			table.getTable().showSelection();
+			table.setSelection(sel);
+			table.showSelection();
 		}
 
 		updateInfoArea(lastSelection);
@@ -493,9 +492,9 @@ public class AboutFeaturesPage extends ProductInfoPage {
 	}
 
 	protected Collection<Object> getSelectionValue() {
-		if (table == null || table.getTable().isDisposed())
+		if (table == null || table.isDisposed())
 			return null;
-		TableItem[] items = table.getTable().getSelection();
+		TableItem[] items = table.getSelection();
 		if (items.length <= 0) {
 			return null;
 		}
@@ -505,7 +504,7 @@ public class AboutFeaturesPage extends ProductInfoPage {
 	}
 
 	private void handleColumnsPressed() {
-		ConfigureColumns.forTable(table.getTable(), this);
+		ConfigureColumns.forTable(table, this);
 	}
 
 	/**
@@ -514,7 +513,7 @@ public class AboutFeaturesPage extends ProductInfoPage {
 	 * cannot be opened.
 	 */
 	private void handleMoreInfoPressed() {
-		TableItem[] items = table.getTable().getSelection();
+		TableItem[] items = table.getSelection();
 		if (items.length <= 0) {
 			return;
 		}
