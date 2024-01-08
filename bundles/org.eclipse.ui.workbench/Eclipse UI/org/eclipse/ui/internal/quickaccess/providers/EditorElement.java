@@ -30,8 +30,6 @@ public class EditorElement extends QuickAccessElement {
 
 	private static final String DIRTY_MARK = "*"; //$NON-NLS-1$
 
-	private static final String separator = " - "; //$NON-NLS-1$
-
 	private IEditorReference editorReference;
 	private boolean dirty;
 
