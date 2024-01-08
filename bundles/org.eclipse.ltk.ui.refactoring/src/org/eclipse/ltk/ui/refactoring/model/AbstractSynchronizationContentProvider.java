@@ -27,8 +27,7 @@ import org.eclipse.team.ui.mapping.SynchronizationContentProvider;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -85,11 +84,8 @@ public abstract class AbstractSynchronizationContentProvider extends Synchroniza
 	protected RefactoringHistory getRefactorings(final ISynchronizationContext context, final IProject project, IProgressMonitor monitor) {
 		Assert.isNotNull(context);
 		Assert.isNotNull(project);
-		if (monitor == null)
-			monitor= new NullProgressMonitor();
+		SubMonitor subMonitor= SubMonitor.convert(monitor, RefactoringUIMessages.RefactoringModelMerger_retrieving_refactorings, IProgressMonitor.UNKNOWN);
 		try {
-			monitor.beginTask(RefactoringUIMessages.RefactoringModelMerger_retrieving_refactorings, IProgressMonitor.UNKNOWN);
-			final IProgressMonitor finalMonitor= monitor;
 			final Set<RefactoringDescriptorSynchronizationProxy> result= new HashSet<>();
 			final IResourceDiffTree tree= context.getDiffTree();
 			tree.accept(project.getFolder(RefactoringHistoryService.NAME_HISTORY_FOLDER).getFullPath(), diff -> {
@@ -104,7 +100,7 @@ public abstract class AbstractSynchronizationContentProvider extends Synchroniza
 						if (revision1 != null) {
 							final String name1= revision1.getName();
 							if (RefactoringHistoryService.NAME_HISTORY_FILE.equalsIgnoreCase(name1))
-								AbstractResourceMappingMerger.getRefactoringDescriptors(revision1, localDescriptors, new SubProgressMonitor(finalMonitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+								AbstractResourceMappingMerger.getRefactoringDescriptors(revision1, localDescriptors, subMonitor.newChild(1, SubMonitor.SUPPRESS_SUBTASK));
 						}
 					}
 					final ITwoWayDiff remoteDiff= threeWay.getLocalChange();
@@ -114,7 +110,7 @@ public abstract class AbstractSynchronizationContentProvider extends Synchroniza
 						if (revision2 != null) {
 							final String name2= revision2.getName();
 							if (RefactoringHistoryService.NAME_HISTORY_FILE.equalsIgnoreCase(name2))
-								AbstractResourceMappingMerger.getRefactoringDescriptors(revision2, remoteDescriptors, new SubProgressMonitor(finalMonitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+								AbstractResourceMappingMerger.getRefactoringDescriptors(revision2, remoteDescriptors, subMonitor.newChild(1, SubMonitor.SUPPRESS_SUBTASK));
 						}
 					}
 					final Set<RefactoringDescriptor> local= new HashSet<>(localDescriptors);
@@ -138,7 +134,7 @@ public abstract class AbstractSynchronizationContentProvider extends Synchroniza
 
 			return new RefactoringHistoryImplementation(result.toArray(new RefactoringDescriptorProxy[result.size()]));
 		} finally {
-			monitor.done();
+			subMonitor.done();
 		}
 	}
 }

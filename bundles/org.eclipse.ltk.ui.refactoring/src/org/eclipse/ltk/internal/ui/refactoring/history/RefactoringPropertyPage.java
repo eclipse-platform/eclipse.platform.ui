@@ -34,7 +34,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
@@ -345,10 +345,10 @@ public final class RefactoringPropertyPage extends PropertyPage {
 			try {
 				final Shell shell= getShell();
 				context.run(false, true, new WorkbenchRunnableAdapter(monitor -> {
+					SubMonitor subMonitor= SubMonitor.convert(monitor, RefactoringCoreMessages.RefactoringHistoryService_deleting_refactorings, 100);
 					try {
-						monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_deleting_refactorings, 100);
 						try {
-							service.deleteRefactoringHistory(project, new SubProgressMonitor(monitor, 50, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+							service.deleteRefactoringHistory(project, subMonitor.newChild(50, SubMonitor.SUPPRESS_SUBTASK));
 						} catch (CoreException exception) {
 							final Throwable throwable= exception.getStatus().getException();
 							if (throwable instanceof IOException) {
@@ -356,13 +356,13 @@ public final class RefactoringPropertyPage extends PropertyPage {
 							} else
 								throw exception;
 						}
-						final RefactoringHistory history= service.getProjectHistory(project, new SubProgressMonitor(monitor, 50, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+						final RefactoringHistory history= service.getProjectHistory(project, subMonitor.newChild(50, SubMonitor.SUPPRESS_SUBTASK));
 						shell.getDisplay().syncExec(() -> {
 							fHistoryControl.setInput(history);
 							fHistoryControl.setCheckedDescriptors(EMPTY_DESCRIPTORS);
 						});
 					} finally {
-						monitor.done();
+						subMonitor.done();
 					}
 				}, project));
 			} catch (InvocationTargetException exception) {

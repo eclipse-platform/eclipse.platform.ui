@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 
@@ -119,10 +119,10 @@ public final class RefactoringHistoryEditHelper {
 			try {
 				final IProject[] affected= getAffectedProjects(descriptors);
 				context.run(false, true, new WorkbenchRunnableAdapter(monitor -> {
+					SubMonitor subMonitor= SubMonitor.convert(monitor, RefactoringCoreMessages.RefactoringHistoryService_deleting_refactorings, 300);
 					try {
-						monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_deleting_refactorings, 300);
 						try {
-							service.deleteRefactoringDescriptors(descriptors, query, new SubProgressMonitor(monitor, 280, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+							service.deleteRefactoringDescriptors(descriptors, query, subMonitor.newChild(280, SubMonitor.SUPPRESS_SUBTASK));
 						} catch (CoreException exception) {
 							final Throwable throwable= exception.getStatus().getException();
 							if (throwable instanceof IOException) {
@@ -131,14 +131,14 @@ public final class RefactoringHistoryEditHelper {
 								throw exception;
 						}
 						if (query.hasDeletions()) {
-							final RefactoringHistory history= provider.getRefactoringHistory(new SubProgressMonitor(monitor, 20, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+							final RefactoringHistory history= provider.getRefactoringHistory(subMonitor.newChild(20, SubMonitor.SUPPRESS_SUBTASK));
 							shell.getDisplay().syncExec(() -> {
 								control.setInput(history);
 								control.setCheckedDescriptors(RefactoringPropertyPage.EMPTY_DESCRIPTORS);
 							});
 						}
 					} finally {
-						monitor.done();
+						subMonitor.done();
 					}
 				}, affected == null ? ResourcesPlugin.getWorkspace().getRoot() : (ISchedulingRule) new MultiRule(affected)));
 			} catch (InvocationTargetException exception) {

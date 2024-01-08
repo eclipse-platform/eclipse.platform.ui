@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.core.resources.IFile;
 
@@ -170,13 +170,11 @@ public class UndoTextFileChange extends Change {
 
 	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
-		if (pm == null)
-			pm= new NullProgressMonitor();
+		SubMonitor subMon= SubMonitor.convert(pm, 3);
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
-		pm.beginTask("", 2); //$NON-NLS-1$
 		ITextFileBuffer buffer= null;
 		try {
-			manager.connect(fFile.getFullPath(), LocationKind.IFILE, new SubProgressMonitor(pm, 1));
+			manager.connect(fFile.getFullPath(), LocationKind.IFILE, subMon.newChild(1));
 			buffer= manager.getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
 			IDocument document= buffer.getDocument();
 			ContentStamp currentStamp= ContentStamps.get(fFile, document);
@@ -185,7 +183,7 @@ public class UndoTextFileChange extends Change {
 			UndoEdit redo= performEdits(buffer, document, setContentStampSuccess);
 
 			if (needsSaving()) {
-				buffer.commit(pm, false);
+				buffer.commit(subMon.newChild(1), false);
 				if (!setContentStampSuccess[0]) {
 					// We weren't able to restore document stamp.
 					// Since we save restore the file stamp instead
@@ -210,7 +208,7 @@ public class UndoTextFileChange extends Change {
 				return new NullChange();
 		} finally {
 			if (buffer != null)
-				manager.disconnect(fFile.getFullPath(), LocationKind.IFILE, new SubProgressMonitor(pm, 1));
+				manager.disconnect(fFile.getFullPath(), LocationKind.IFILE, subMon.newChild(1));
 		}
 	}
 
