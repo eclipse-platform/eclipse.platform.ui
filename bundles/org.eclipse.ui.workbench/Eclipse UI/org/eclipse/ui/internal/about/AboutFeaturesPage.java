@@ -32,8 +32,13 @@ import org.eclipse.core.runtime.IBundleGroupProvider;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.ConfigureColumns;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -47,6 +52,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -60,6 +66,29 @@ import org.osgi.framework.Bundle;
  * outside the workbench.
  */
 public class AboutFeaturesPage extends ProductInfoPage {
+
+	public class BundleGroupTableLabelProvider extends LabelProvider implements ITableLabelProvider {
+
+		@Override
+		public String getColumnText(Object element, int columnIndex) {
+			if (element instanceof AboutBundleGroupData data) {
+
+				return switch (columnIndex) {
+				case 0 -> data.getProviderName();
+				case 1 -> data.getName();
+				case 2 -> data.getVersion();
+				case 3 -> data.getId();
+				default -> ""; //$NON-NLS-1$
+				};
+			}
+			return ""; //$NON-NLS-1$
+		}
+
+		@Override
+		public Image getColumnImage(Object element, int columnIndex) {
+			return null;
+		}
+	}
 
 	// used as the page id when this page is launched in its own dialog
 	private static final String ID = "productInfo.features"; //$NON-NLS-1$
@@ -239,10 +268,17 @@ public class AboutFeaturesPage extends ProductInfoPage {
 	 */
 	protected void createTable(Composite parent) {
 
+		final Text filterText = new Text(parent, SWT.BORDER | SWT.SEARCH | SWT.ICON_CANCEL | SWT.ICON_SEARCH);
+		filterText.setLayoutData(GridDataFactory.fillDefaults().create());
+		filterText.setMessage(WorkbenchMessages.AboutPluginsDialog_filterTextMessage);
+		filterText.setFocus();
+
 		initializeBundleGroupInfos();
 
-		table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.FULL_SELECTION | SWT.BORDER);
+		TableViewer tableViewer = new TableViewer(parent,
+				SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.FULL_SELECTION | SWT.BORDER);
 
+		table = tableViewer.getTable();
 		GridData gridData = new GridData(GridData.FILL, GridData.FILL, true, true);
 		gridData.heightHint = convertVerticalDLUsToPixels(TABLE_HEIGHT);
 		table.setLayoutData(gridData);
@@ -274,26 +310,28 @@ public class AboutFeaturesPage extends ProductInfoPage {
 			tableColumn.addSelectionListener(widgetSelectedAdapter(e -> sort(columnIndex)));
 		}
 
-		// create a table row for each bundle group
-		String selId = lastSelection == null ? null : lastSelection.getId();
-		int sel = 0;
-		for (int i = 0; i < bundleGroupInfos.length; i++) {
-			if (bundleGroupInfos[i].getId().equals(selId)) {
-				sel = i;
+		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
+		tableViewer.setLabelProvider(new BundleGroupTableLabelProvider());
+
+		final BundlePatternFilter searchFilter = new BundlePatternFilter();
+		filterText.addModifyListener(e -> {
+			searchFilter.setPattern(filterText.getText());
+			table.setRedraw(false);
+			try {
+				tableViewer.refresh();
+			} finally {
+				table.setRedraw(true);
 			}
+		});
+		tableViewer.addFilter(searchFilter);
 
-			TableItem item = new TableItem(table, SWT.NULL);
-			item.setText(createRow(bundleGroupInfos[i]));
-			item.setData(bundleGroupInfos[i]);
+		Map<String, AboutBundleGroupData> features = new HashMap<>();
+
+		for (AboutBundleGroupData data : bundleGroupInfos) {
+			features.put(data.getVersionedId(), data);
 		}
-
-		// if an item was specified during construction, it should be
-		// selected when the table is created
-		if (bundleGroupInfos.length > 0) {
-			table.setSelection(sel);
-			table.showSelection();
-		}
-
+		tableViewer.setInput(features.values());
+		// tableViewer.refresh(false);
 		addCopySupport(table);
 	}
 
@@ -505,3 +543,4 @@ public class AboutFeaturesPage extends ProductInfoPage {
 		}
 	}
 }
+
