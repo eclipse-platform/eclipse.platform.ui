@@ -39,21 +39,21 @@ import org.eclipse.swt.widgets.TreeColumn;
 public class TableLayout extends Layout {
 
 	/**
-	 * The number of extra pixels taken as horizontal trim by the table column. To
-	 * ensure there are N pixels available for the content of the column, assign
-	 * N+columnTrim for the column width.
+	 * The number of extra pixels taken as horizontal trim by the table column.
+	 * To ensure there are N pixels available for the content of the column,
+	 * assign N+COLUMN_TRIM for the column width.
 	 *
 	 * @since 3.1
 	 */
-	private static int columnTrim;
+	private static int COLUMN_TRIM;
 
 	static {
 		if (Util.isWindows()) {
-			columnTrim = 4;
+			COLUMN_TRIM = 4;
 		} else if (Util.isMac()) {
-			columnTrim = 24;
+			COLUMN_TRIM = 24;
 		} else {
-			columnTrim = 3;
+			COLUMN_TRIM = 3;
 		}
 	}
 
@@ -118,7 +118,7 @@ public class TableLayout extends Layout {
 				ColumnPixelData col = (ColumnPixelData) layoutData;
 				width += col.width;
 				if (col.addTrim) {
-					width += columnTrim;
+					width += COLUMN_TRIM;
 				}
 			} else if (layoutData instanceof ColumnWeightData) {
 				ColumnWeightData col = (ColumnWeightData) layoutData;
@@ -169,7 +169,7 @@ public class TableLayout extends Layout {
 				ColumnPixelData cpd = (ColumnPixelData) col;
 				int pixels = cpd.width;
 				if (cpd.addTrim) {
-					pixels += columnTrim;
+					pixels += COLUMN_TRIM;
 				}
 				widths[i] = pixels;
 				fixedWidth += pixels;
