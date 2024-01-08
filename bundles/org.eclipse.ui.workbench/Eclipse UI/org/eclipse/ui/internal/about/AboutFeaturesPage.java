@@ -32,8 +32,13 @@ import org.eclipse.core.runtime.IBundleGroupProvider;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.ConfigureColumns;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -44,9 +49,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -60,6 +65,33 @@ import org.osgi.framework.Bundle;
  * outside the workbench.
  */
 public class AboutFeaturesPage extends ProductInfoPage {
+
+	public class BundleGroupTableLabelProvider extends LabelProvider implements ITableLabelProvider {
+
+		@Override
+		public String getColumnText(Object element, int columnIndex) {
+			if (element instanceof AboutBundleGroupData) {
+				AboutBundleGroupData data = (AboutBundleGroupData) element;
+				switch (columnIndex) {
+				case 0:
+					return data.getProviderName();
+				case 1:
+					return data.getName();
+				case 2:
+					return data.getVersion();
+				case 3:
+					return data.getId();
+				}
+			}
+			return ""; //$NON-NLS-1$
+		}
+
+		@Override
+		public Image getColumnImage(Object element, int columnIndex) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+	}
 
 	// used as the page id when this page is launched in its own dialog
 	private static final String ID = "productInfo.features"; //$NON-NLS-1$
@@ -76,7 +108,7 @@ public class AboutFeaturesPage extends ProductInfoPage {
 
 	private static final int COLUMNS_ID = IDialogConstants.CLIENT_ID + 3;
 
-	private Table table;
+	private TableViewer table;
 
 	private Label imageLabel;
 
@@ -143,7 +175,7 @@ public class AboutFeaturesPage extends ProductInfoPage {
 	 * selected feature.
 	 */
 	private void handlePluginInfoPressed() {
-		TableItem[] items = table.getSelection();
+		TableItem[] items = table.getTable().getSelection();
 		if (items.length <= 0) {
 			return;
 		}
@@ -164,7 +196,7 @@ public class AboutFeaturesPage extends ProductInfoPage {
 		moreButton = createButton(parent, MORE_ID, WorkbenchMessages.AboutFeaturesDialog_moreInfo);
 		pluginsButton = createButton(parent, PLUGINS_ID, WorkbenchMessages.AboutFeaturesDialog_pluginsInfo);
 		createButton(parent, COLUMNS_ID, WorkbenchMessages.AboutFeaturesDialog_columns);
-		TableItem[] items = table.getSelection();
+		TableItem[] items = table.getTable().getSelection();
 		AboutBundleGroupData info = null;
 		if (items.length > 0) {
 			info = (AboutBundleGroupData) items[0].getData();
@@ -226,7 +258,7 @@ public class AboutFeaturesPage extends ProductInfoPage {
 
 		textManager = new AboutTextManager(text);
 
-		TableItem[] items = table.getSelection();
+		TableItem[] items = table.getTable().getSelection();
 		if (items.length > 0) {
 			updateInfoArea((AboutBundleGroupData) items[0].getData());
 		}
@@ -239,18 +271,23 @@ public class AboutFeaturesPage extends ProductInfoPage {
 	 */
 	protected void createTable(Composite parent) {
 
+		final Text filterText = new Text(parent, SWT.BORDER | SWT.SEARCH | SWT.ICON_CANCEL | SWT.ICON_SEARCH);
+		filterText.setLayoutData(GridDataFactory.fillDefaults().create());
+		filterText.setMessage(WorkbenchMessages.AboutPluginsDialog_filterTextMessage);
+		filterText.setFocus();
+
 		initializeBundleGroupInfos();
 
-		table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.FULL_SELECTION | SWT.BORDER);
+		table = new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.FULL_SELECTION | SWT.BORDER);
 
 		GridData gridData = new GridData(GridData.FILL, GridData.FILL, true, true);
 		gridData.heightHint = convertVerticalDLUsToPixels(TABLE_HEIGHT);
-		table.setLayoutData(gridData);
-		table.setHeaderVisible(true);
+		table.getTable().setLayoutData(gridData);
+		table.getTable().setHeaderVisible(true);
 
-		table.setLinesVisible(true);
-		table.setFont(parent.getFont());
-		table.addSelectionListener(widgetSelectedAdapter(e -> {
+		table.getTable().setLinesVisible(true);
+		table.getTable().setFont(parent.getFont());
+		table.getTable().addSelectionListener(widgetSelectedAdapter(e -> {
 			// If there is no item, nothing we can do.
 			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=266177
 			if (e.item == null)
@@ -259,7 +296,7 @@ public class AboutFeaturesPage extends ProductInfoPage {
 			updateInfoArea(info);
 			updateButtons(info);
 		}));
-		table.addSelectionListener(widgetDefaultSelectedAdapter(e -> {
+		table.getTable().addSelectionListener(widgetDefaultSelectedAdapter(e -> {
 			handlePluginInfoPressed();
 		}));
 
@@ -267,34 +304,36 @@ public class AboutFeaturesPage extends ProductInfoPage {
 				convertHorizontalDLUsToPixels(70), convertHorizontalDLUsToPixels(130) };
 
 		for (int i = 0; i < columnTitles.length; i++) {
-			TableColumn tableColumn = new TableColumn(table, SWT.NULL);
+			TableColumn tableColumn = new TableColumn(table.getTable(), SWT.NULL);
 			tableColumn.setWidth(columnWidths[i]);
 			tableColumn.setText(columnTitles[i]);
 			final int columnIndex = i;
 			tableColumn.addSelectionListener(widgetSelectedAdapter(e -> sort(columnIndex)));
 		}
 
-		// create a table row for each bundle group
-		String selId = lastSelection == null ? null : lastSelection.getId();
-		int sel = 0;
-		for (int i = 0; i < bundleGroupInfos.length; i++) {
-			if (bundleGroupInfos[i].getId().equals(selId)) {
-				sel = i;
+		table.setContentProvider(ArrayContentProvider.getInstance());
+		table.setLabelProvider(new BundleGroupTableLabelProvider());
+
+		final BundlePatternFilter searchFilter = new BundlePatternFilter();
+		filterText.addModifyListener(e -> {
+			searchFilter.setPattern(filterText.getText());
+			table.getTable().setRedraw(false);
+			try {
+				table.refresh();
+			} finally {
+				table.getTable().setRedraw(true);
 			}
+		});
+		table.addFilter(searchFilter);
 
-			TableItem item = new TableItem(table, SWT.NULL);
-			item.setText(createRow(bundleGroupInfos[i]));
-			item.setData(bundleGroupInfos[i]);
+		Map<String, AboutBundleGroupData> features = new HashMap<>();
+
+		for (AboutBundleGroupData data : bundleGroupInfos) {
+			features.put(data.getVersionedId(), data);
 		}
-
-		// if an item was specified during construction, it should be
-		// selected when the table is created
-		if (bundleGroupInfos.length > 0) {
-			table.setSelection(sel);
-			table.showSelection();
-		}
-
-		addCopySupport(table);
+		table.setInput(features.values());
+		table.refresh(false);
+		addCopySupport(table.getTable());
 	}
 
 	private void disposeImages() {
@@ -382,12 +421,12 @@ public class AboutFeaturesPage extends ProductInfoPage {
 			lastColumnChosen = column;
 		}
 
-		if (table.getItemCount() <= 1) {
+		if (table.getTable().getItemCount() <= 1) {
 			return;
 		}
 
 		// Remember the last selection
-		int sel = table.getSelectionIndex();
+		int sel = table.getTable().getSelectionIndex();
 		if (sel != -1) {
 			lastSelection = bundleGroupInfos[sel];
 		}
@@ -407,8 +446,8 @@ public class AboutFeaturesPage extends ProductInfoPage {
 			break;
 		}
 		// set the sort column and directional indicator
-		table.setSortColumn(table.getColumn(column));
-		table.setSortDirection(reverseSort ? SWT.DOWN : SWT.UP);
+		table.getTable().setSortColumn(table.getTable().getColumn(column));
+		table.getTable().setSortDirection(reverseSort ? SWT.DOWN : SWT.UP);
 
 		refreshTable();
 	}
@@ -418,7 +457,7 @@ public class AboutFeaturesPage extends ProductInfoPage {
 	 * selection from before sort action request.
 	 */
 	private void refreshTable() {
-		TableItem[] items = table.getItems();
+		TableItem[] items = table.getTable().getItems();
 
 		// create new order of table items
 		for (int i = 0; i < items.length; i++) {
@@ -436,8 +475,8 @@ public class AboutFeaturesPage extends ProductInfoPage {
 				}
 			}
 
-			table.setSelection(sel);
-			table.showSelection();
+			table.getTable().setSelection(sel);
+			table.getTable().showSelection();
 		}
 
 		updateInfoArea(lastSelection);
@@ -454,9 +493,9 @@ public class AboutFeaturesPage extends ProductInfoPage {
 	}
 
 	protected Collection<Object> getSelectionValue() {
-		if (table == null || table.isDisposed())
+		if (table == null || table.getTable().isDisposed())
 			return null;
-		TableItem[] items = table.getSelection();
+		TableItem[] items = table.getTable().getSelection();
 		if (items.length <= 0) {
 			return null;
 		}
@@ -466,7 +505,7 @@ public class AboutFeaturesPage extends ProductInfoPage {
 	}
 
 	private void handleColumnsPressed() {
-		ConfigureColumns.forTable(table, this);
+		ConfigureColumns.forTable(table.getTable(), this);
 	}
 
 	/**
@@ -475,7 +514,7 @@ public class AboutFeaturesPage extends ProductInfoPage {
 	 * cannot be opened.
 	 */
 	private void handleMoreInfoPressed() {
-		TableItem[] items = table.getSelection();
+		TableItem[] items = table.getTable().getSelection();
 		if (items.length <= 0) {
 			return;
 		}
@@ -505,3 +544,4 @@ public class AboutFeaturesPage extends ProductInfoPage {
 		}
 	}
 }
+

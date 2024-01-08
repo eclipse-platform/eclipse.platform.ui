@@ -693,6 +693,11 @@ class BundlePatternFilter extends ViewerFilter {
 			return matcher.match(data.getName()) || matcher.match(data.getProviderName())
 					|| matcher.match(data.getId());
 		}
+		else if (element instanceof AboutBundleGroupData) {
+			AboutBundleGroupData data = (AboutBundleGroupData) element;
+			return matcher.match(data.getName()) || matcher.match(data.getProviderName())
+					|| matcher.match(data.getId());
+		}
 		return true;
 	}
 }
