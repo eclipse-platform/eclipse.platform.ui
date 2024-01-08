@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.core.resources.IFile;
 
@@ -198,13 +198,11 @@ public class MultiStateUndoChange extends Change {
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		if (fValidationState == null || fValidationState.isValid(needsSaving(), false).hasFatalError())
 			return new NullChange();
-		if (pm == null)
-			pm= new NullProgressMonitor();
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
-		pm.beginTask("", 2); //$NON-NLS-1$
+		SubMonitor subMon= SubMonitor.convert(pm, 3);
 		ITextFileBuffer buffer= null;
 		try {
-			manager.connect(fFile.getFullPath(), LocationKind.IFILE, new SubProgressMonitor(pm, 1));
+			manager.connect(fFile.getFullPath(), LocationKind.IFILE, subMon.newChild(1));
 			buffer= manager.getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
 			IDocument document= buffer.getDocument();
 			ContentStamp currentStamp= ContentStamps.get(fFile, document);
@@ -218,7 +216,7 @@ public class MultiStateUndoChange extends Change {
 			// try to restore the document content stamp
 			boolean success= ContentStamps.set(document, fContentStampToRestore);
 			if (needsSaving()) {
-				buffer.commit(pm, false);
+				buffer.commit(subMon.newChild(1), false);
 				if (!success) {
 					// We weren't able to restore document stamp.
 					// Since we save restore the file stamp instead
@@ -230,7 +228,7 @@ public class MultiStateUndoChange extends Change {
 			throw Changes.asCoreException(e);
 		} finally {
 			if (buffer != null)
-				manager.disconnect(fFile.getFullPath(), LocationKind.IFILE, new SubProgressMonitor(pm, 1));
+				manager.disconnect(fFile.getFullPath(), LocationKind.IFILE, subMon.newChild(1));
 		}
 	}
 }

@@ -35,7 +35,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 
@@ -817,13 +817,12 @@ public class RefactoringHistoryWizard extends Wizard {
 		final RefactoringStatus status= new RefactoringStatus();
 		final IWizardContainer wizard= getContainer();
 		final IRunnableWithProgress runnable= monitor -> {
-			Assert.isNotNull(monitor);
+			SubMonitor subMonitor= SubMonitor.convert(monitor, RefactoringUIMessages.RefactoringHistoryWizard_preparing_refactoring, 220);
 			try {
-				monitor.beginTask(RefactoringUIMessages.RefactoringHistoryWizard_preparing_refactoring, 220);
 				result[0]= null;
 				if (!fAboutToPerformFired) {
 					try {
-						status.merge(fireAboutToPerformHistory(new SubProgressMonitor(monitor, 50, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)));
+						status.merge(fireAboutToPerformHistory(subMonitor.newChild(50, SubMonitor.SUPPRESS_SUBTASK)));
 					} finally {
 						fAboutToPerformFired= true;
 					}
@@ -839,25 +838,25 @@ public class RefactoringHistoryWizard extends Wizard {
 					final IRefactoringHistoryService service= RefactoringCore.getHistoryService();
 					try {
 						service.connect();
-						final RefactoringDescriptor descriptor= proxy.requestDescriptor(new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+						final RefactoringDescriptor descriptor= proxy.requestDescriptor(subMonitor.newChild(10, SubMonitor.SUPPRESS_SUBTASK));
 						if (descriptor != null) {
-							final RefactoringContext context= createRefactoringContext(descriptor, status, new SubProgressMonitor(monitor, 60, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+							final RefactoringContext context= createRefactoringContext(descriptor, status, subMonitor.newChild(60, SubMonitor.SUPPRESS_SUBTASK));
 							try {
 								if (context != null && status.isOK()) {
 									final Refactoring refactoring= context.getRefactoring();
 									fPreviewPage.setRefactoring(refactoring);
 									fErrorPage.setRefactoring(refactoring);
-									status.merge(checkConditions(refactoring, new SubProgressMonitor(monitor, 20, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL), CheckConditionsOperation.INITIAL_CONDITONS));
+									status.merge(checkConditions(refactoring, subMonitor.newChild(20, SubMonitor.SUPPRESS_SUBTASK), CheckConditionsOperation.INITIAL_CONDITONS));
 									if (!status.isOK()) {
 										prepareErrorPage(status, proxy, status.hasFatalError(), last);
 										result[0]= fErrorPage;
 									} else {
-										status.merge(checkConditions(refactoring, new SubProgressMonitor(monitor, 65, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL), CheckConditionsOperation.FINAL_CONDITIONS));
+										status.merge(checkConditions(refactoring, subMonitor.newChild(65, SubMonitor.SUPPRESS_SUBTASK), CheckConditionsOperation.FINAL_CONDITIONS));
 										if (!status.isOK()) {
 											prepareErrorPage(status, proxy, status.hasFatalError(), last);
 											result[0]= fErrorPage;
 										} else {
-											final Change change= createChange(refactoring, new SubProgressMonitor(monitor, 5, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+											final Change change= createChange(refactoring, subMonitor.newChild(5, SubMonitor.SUPPRESS_SUBTASK));
 											getShell().getDisplay().syncExec(() -> fPreviewPage.setChange(change));
 											result[0]= fPreviewPage;
 										}
@@ -887,7 +886,7 @@ public class RefactoringHistoryWizard extends Wizard {
 			} catch (OperationCanceledException exception2) {
 				throw new InterruptedException(exception2.getLocalizedMessage());
 			} finally {
-				monitor.done();
+				subMonitor.done();
 			}
 		};
 		try {
@@ -969,9 +968,10 @@ public class RefactoringHistoryWizard extends Wizard {
 					return false;
 			}
 			final IRunnableWithProgress runnable= monitor -> {
+				SubMonitor subMonitor= SubMonitor.convert(monitor, fExecutedRefactorings);
 				for (int index= 0; index < fExecutedRefactorings; index++) {
 					try {
-						RefactoringCore.getUndoManager().performUndo(null, new SubProgressMonitor(monitor, 100));
+						RefactoringCore.getUndoManager().performUndo(null, subMonitor.newChild(1));
 						if (fExecutedRefactorings > 0)
 							fExecutedRefactorings--;
 					} catch (CoreException exception) {
@@ -1063,11 +1063,11 @@ public class RefactoringHistoryWizard extends Wizard {
 
 				@Override
 				public void run(final IProgressMonitor monitor) throws CoreException {
+					SubMonitor subMonitor= SubMonitor.convert(monitor, RefactoringUIMessages.RefactoringHistoryWizard_preparing_refactorings, 100);
 					try {
-						monitor.beginTask(RefactoringUIMessages.RefactoringHistoryWizard_preparing_refactorings, 100);
 						if (!fAboutToPerformFired) {
 							try {
-								status.merge(fireAboutToPerformHistory(new SubProgressMonitor(monitor, 20, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)));
+								status.merge(fireAboutToPerformHistory(subMonitor.newChild(20, SubMonitor.SUPPRESS_SUBTASK)));
 							} finally {
 								fAboutToPerformFired= true;
 							}
@@ -1076,9 +1076,9 @@ public class RefactoringHistoryWizard extends Wizard {
 							final int severity= status.getSeverity();
 							throw new CoreException(new Status(severity != RefactoringStatus.FATAL ? severity : IStatus.ERROR, RefactoringUIPlugin.getPluginId(), 0, null, null));
 						}
-						super.run(new SubProgressMonitor(monitor, 80, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+						super.run(subMonitor.newChild(80, SubMonitor.SUPPRESS_SUBTASK));
 					} finally {
-						monitor.done();
+						subMonitor.done();
 					}
 				}
 			};
@@ -1134,12 +1134,12 @@ public class RefactoringHistoryWizard extends Wizard {
 
 			@Override
 			public void run(final IProgressMonitor monitor) throws CoreException {
+				SubMonitor subMonitor= SubMonitor.convert(monitor, RefactoringUIMessages.RefactoringHistoryWizard_preparing_changes, 12);
 				try {
-					monitor.beginTask(RefactoringUIMessages.RefactoringHistoryWizard_preparing_changes, 12);
-					super.run(new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-					refactoringPerformed(refactoring, new SubProgressMonitor(monitor, 2, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+					super.run(subMonitor.newChild(10, SubMonitor.SUPPRESS_SUBTASK));
+					refactoringPerformed(refactoring, subMonitor.newChild(2, SubMonitor.SUPPRESS_SUBTASK));
 				} finally {
-					monitor.done();
+					subMonitor.done();
 				}
 			}
 		};

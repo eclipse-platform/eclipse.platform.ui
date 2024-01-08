@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.core.resources.IResource;
 
@@ -74,9 +74,9 @@ public class UndoDeleteResourceChange extends Change {
 			String message= Messages.format(RefactoringCoreMessages.UndoDeleteResourceChange_already_exists, BasicElementLabels.getResourceName(fResourceState.getName()));
 			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), message));
 		}
-
-		IResource created= fResourceState.createResource(pm);
-		created.refreshLocal(IResource.DEPTH_INFINITE, new SubProgressMonitor(pm, 1));
+		SubMonitor subMonitor= SubMonitor.convert(pm, 2);
+		IResource created= fResourceState.createResource(subMonitor.newChild(1));
+		created.refreshLocal(IResource.DEPTH_INFINITE, subMonitor.newChild(1));
 		DeleteResourceChange change= new DeleteResourceChange(created.getFullPath(), true, false);
 		change.setValidationMethod(ResourceChange.VALIDATE_NOT_READ_ONLY | ResourceChange.VALIDATE_NOT_DIRTY);
 		return change;

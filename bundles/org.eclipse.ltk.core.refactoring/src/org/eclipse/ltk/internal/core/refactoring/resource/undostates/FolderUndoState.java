@@ -20,8 +20,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
@@ -84,27 +83,17 @@ public class FolderUndoState extends ContainerUndoState {
 			return;
 		}
 		IFolder folderHandle = (IFolder) resource;
+		SubMonitor subMonitor= SubMonitor.convert(monitor, RefactoringCoreMessages.FolderDescription_NewFolderProgress, 200);
 		try {
-			monitor.beginTask("", 200); //$NON-NLS-1$
-			monitor.setTaskName(RefactoringCoreMessages.FolderDescription_NewFolderProgress);
-			if (monitor.isCanceled()) {
-				throw new OperationCanceledException();
-			}
 			if (location != null) {
-				folderHandle.createLink(location,
-						IResource.ALLOW_MISSING_LOCAL, new SubProgressMonitor(
-								monitor, 100));
+				folderHandle.createLink(location, IResource.ALLOW_MISSING_LOCAL, subMonitor.split(100));
 			} else {
-				folderHandle.create(false, true, new SubProgressMonitor(
-						monitor, 100));
+				folderHandle.create(false, true, subMonitor.split(100));
 			}
-			if (monitor.isCanceled()) {
-				throw new OperationCanceledException();
-			}
-			createChildResources(folderHandle, monitor, 100);
+			createChildResources(folderHandle, subMonitor.split(100));
 
 		} finally {
-			monitor.done();
+			subMonitor.done();
 		}
 	}
 }

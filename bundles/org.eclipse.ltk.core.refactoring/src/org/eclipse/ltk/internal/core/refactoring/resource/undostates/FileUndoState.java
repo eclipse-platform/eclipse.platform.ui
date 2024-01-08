@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFileState;
@@ -140,14 +140,13 @@ public class FileUndoState extends AbstractResourceUndoState {
 			return;
 		}
 		IFile fileHandle= (IFile) resource;
-		monitor.beginTask("", 200); //$NON-NLS-1$
-		monitor.setTaskName(RefactoringCoreMessages.FileDescription_NewFileProgress);
+		SubMonitor subMonitor= SubMonitor.convert(monitor, RefactoringCoreMessages.FileDescription_NewFileProgress, 200);
 		try {
 			if (monitor.isCanceled()) {
 				throw new OperationCanceledException();
 			}
 			if (location != null) {
-				fileHandle.createLink(location, IResource.ALLOW_MISSING_LOCAL, new SubProgressMonitor(monitor, 200));
+				fileHandle.createLink(location, IResource.ALLOW_MISSING_LOCAL, subMonitor.newChild(200));
 			} else {
 				InputStream contents;
 				// Retrieve the contents from the file content
@@ -159,8 +158,8 @@ public class FileUndoState extends AbstractResourceUndoState {
 				} else {
 					contents= new ByteArrayInputStream(RefactoringCoreMessages.FileDescription_ContentsCouldNotBeRestored.getBytes());
 				}
-				fileHandle.create(contents, false, new SubProgressMonitor(monitor, 100));
-				fileHandle.setCharset(charset, new SubProgressMonitor(monitor, 100));
+				fileHandle.create(contents, false, subMonitor.newChild(100));
+				fileHandle.setCharset(charset, subMonitor.newChild(100));
 			}
 			if (monitor.isCanceled()) {
 				throw new OperationCanceledException();
@@ -172,7 +171,7 @@ public class FileUndoState extends AbstractResourceUndoState {
 				throw e;
 			}
 		} finally {
-			monitor.done();
+			subMonitor.done();
 		}
 	}
 

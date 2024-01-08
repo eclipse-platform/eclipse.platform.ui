@@ -16,8 +16,7 @@ package org.eclipse.ltk.core.refactoring;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
 
@@ -119,26 +118,24 @@ public class PerformRefactoringOperation implements IWorkspaceRunnable {
 
 	@Override
 	public void run(IProgressMonitor monitor) throws CoreException {
+		SubMonitor subMon= SubMonitor.convert(monitor, 8);
 		try {
-			if (monitor == null)
-				monitor= new NullProgressMonitor();
-			monitor.beginTask("", 10); //$NON-NLS-1$
 			final CreateChangeOperation create= new CreateChangeOperation(new CheckConditionsOperation(fRefactoring, fStyle), RefactoringStatus.FATAL);
-			create.run(new SubProgressMonitor(monitor, 6));
+			create.run(subMon.newChild(6));
 			fPreconditionStatus= create.getConditionCheckingStatus();
 			if (fPreconditionStatus.hasFatalError()) {
-				monitor.done();
 				return;
 			}
 			final Change change= create.getChange();
 			if (change != null) {
 				final PerformChangeOperation perform= new PerformChangeOperation(change);
 				perform.setUndoManager(RefactoringCore.getUndoManager(), fRefactoring.getName());
-				perform.run(new SubProgressMonitor(monitor, 2));
+				perform.run(subMon.newChild(2));
 				fValidationStatus= perform.getValidationStatus();
 				fUndo= perform.getUndoChange();
 			}
 		} finally {
+			subMon.done();
 			if (fRefactoringContext != null)
 				fRefactoringContext.dispose();
 		}

@@ -17,7 +17,7 @@ package org.eclipse.ltk.core.refactoring;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -212,18 +212,18 @@ public class PerformRefactoringHistoryOperation implements IWorkspaceRunnable {
 	public void run(final IProgressMonitor monitor) throws CoreException {
 		fExecutionStatus= new RefactoringStatus();
 		final RefactoringDescriptorProxy[] proxies= fRefactoringHistory.getDescriptors();
-		monitor.beginTask(RefactoringCoreMessages.PerformRefactoringHistoryOperation_perform_refactorings, 170 * proxies.length);
+		SubMonitor subMon= SubMonitor.convert(monitor, RefactoringCoreMessages.PerformRefactoringHistoryOperation_perform_refactorings, 17 * proxies.length);
 		final IRefactoringHistoryService service= RefactoringHistoryService.getInstance();
 		try {
 			service.connect();
 			for (RefactoringDescriptorProxy proxie : proxies) {
-				final RefactoringDescriptor descriptor= proxie.requestDescriptor(new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+				final RefactoringDescriptor descriptor= proxie.requestDescriptor(subMon.newChild(1, SubMonitor.SUPPRESS_SUBTASK));
 				if (descriptor != null) {
 					RefactoringContext context= null;
 					RefactoringStatus status= new RefactoringStatus();
 					try {
 						try {
-							context= createRefactoringContext(descriptor, status, new SubProgressMonitor(monitor, 30, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+							context= createRefactoringContext(descriptor, status, subMon.newChild(3, SubMonitor.SUPPRESS_SUBTASK));
 						} catch (CoreException exception) {
 							status.merge(RefactoringStatus.create(exception.getStatus()));
 						}
@@ -231,15 +231,15 @@ public class PerformRefactoringHistoryOperation implements IWorkspaceRunnable {
 							Refactoring refactoring= context.getRefactoring();
 							final PerformRefactoringOperation operation= new PerformRefactoringOperation(refactoring, CheckConditionsOperation.ALL_CONDITIONS);
 							try {
-								status.merge(aboutToPerformRefactoring(refactoring, descriptor, new SubProgressMonitor(monitor, 30, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)));
+								status.merge(aboutToPerformRefactoring(refactoring, descriptor, subMon.newChild(3, SubMonitor.SUPPRESS_SUBTASK)));
 								if (!status.hasFatalError()) {
-									ResourcesPlugin.getWorkspace().run(operation, new SubProgressMonitor(monitor, 90, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+									ResourcesPlugin.getWorkspace().run(operation, subMon.newChild(9, SubMonitor.SUPPRESS_SUBTASK));
 									status.merge(operation.getConditionStatus());
 									if (!status.hasFatalError())
 										status.merge(operation.getValidationStatus());
 								}
 							} finally {
-								refactoringPerformed(refactoring, new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+								refactoringPerformed(refactoring, subMon.newChild(1, SubMonitor.SUPPRESS_SUBTASK));
 							}
 						}
 					} finally {
@@ -251,7 +251,7 @@ public class PerformRefactoringHistoryOperation implements IWorkspaceRunnable {
 			}
 		} finally {
 			service.disconnect();
-			monitor.done();
+			subMon.done();
 		}
 	}
 }
