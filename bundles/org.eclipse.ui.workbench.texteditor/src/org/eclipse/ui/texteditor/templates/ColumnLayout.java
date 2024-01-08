@@ -46,7 +46,7 @@ final class ColumnLayout extends Layout {
 	/**
 	 * The number of extra pixels taken as horizontal trim by the table column. To
 	 * ensure there are N pixels available for the content of the column, assign
-	 * N+columnTrim for the column width.
+	 * N+COLUMN_TRIM for the column width.
 	 * <p>
 	 * XXX: Should either switch to use
 	 * {@link org.eclipse.jface.layout.TableColumnLayout} or get API from JFace or
@@ -55,14 +55,14 @@ final class ColumnLayout extends Layout {
 	 *
 	 * @since 3.1
 	 */
-	private static int columnTrim;
+	private static int COLUMN_TRIM;
 	static {
 		if (Util.isWindows()) {
-			columnTrim = 4;
+			COLUMN_TRIM = 4;
 		} else if (Util.isMac()) {
-			columnTrim = 24;
+			COLUMN_TRIM = 24;
 		} else {
-			columnTrim = 3;
+			COLUMN_TRIM = 3;
 		}
 	}
 	private List<ColumnLayoutData> columns= new ArrayList<>();
@@ -87,7 +87,7 @@ final class ColumnLayout extends Layout {
 				ColumnPixelData col= (ColumnPixelData) layoutData;
 				width += col.width;
 				if (col.addTrim) {
-					width += columnTrim;
+					width += COLUMN_TRIM;
 				}
 			} else if (layoutData instanceof ColumnWeightData) {
 				ColumnWeightData col= (ColumnWeightData) layoutData;
@@ -120,7 +120,7 @@ final class ColumnLayout extends Layout {
 				ColumnPixelData cpd= (ColumnPixelData) col;
 				int pixels= cpd.width;
 				if (cpd.addTrim) {
-					pixels += columnTrim;
+					pixels += COLUMN_TRIM;
 				}
 				widths[i]= pixels;
 				fixedWidth += pixels;
