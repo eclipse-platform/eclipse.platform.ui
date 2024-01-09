@@ -20,7 +20,8 @@ package org.eclipse.ui.tests.dialogs;
  * <code>org.eclipse.ui.views.tasklist</code>.  For the purpose
  * of testing.
  * </p>
- * @private
+ *
+ * @noreference
  */
 public class TaskListTestStub {
 	//Prevent instantiation

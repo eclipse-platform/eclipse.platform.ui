@@ -27,9 +27,6 @@ import org.eclipse.ui.PlatformUI;
  * BusyShowWhileDialog is a test of busyShowWhile in a modal dialog.
  */
 public class BusyShowWhileDialog extends IconAndMessageDialog {
-	/**
-	 * @todo Generated comment
-	 */
 	public BusyShowWhileDialog(Shell parentShell) {
 		super(parentShell);
 		message = "Busy While Test"; //$NON-NLS-1$
