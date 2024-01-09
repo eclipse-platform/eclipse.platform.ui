@@ -334,8 +334,11 @@ public class ProcessorBasedRefactoring extends Refactoring {
 
 			fTextChangeMap= null;
 
+			List<Change> allChanges= new ArrayList<>();
+			allChanges.addAll(preChanges);
+			allChanges.addAll(changes);
 			Change postChange= getProcessor().postCreateChange(
-					changes.toArray(new Change[changes.size()]),
+					allChanges.toArray(new Change[allChanges.size()]),
 					sm.split(1));
 
 			ProcessorChange result= new ProcessorChange(getName());
