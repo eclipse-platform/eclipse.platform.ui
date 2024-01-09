@@ -16,9 +16,9 @@ package org.eclipse.e4.tools.emf.ui.common;
 
 /**
  * Specifies the scope when searching for a resource. This differs from the PDE
- * search functions in that <li>more than just java objects can be queried. <li>
- * Searches can specify the current project only, current workspace, non bundle
- * projects, and target platform.
+ * search functions in that more than just java objects can be queried. Searches
+ * can specify the current project only, current workspace, non bundle projects,
+ * and target platform.
  *
  * @author Steven Spungin
  */
