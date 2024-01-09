@@ -12,12 +12,14 @@
  *     IBM Corporation - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.internal.browser;
+
 /**
  * A working copy of an external web browser.
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- * @see org.eclipse.ui.internal.browser.IWebBrowser
+ *
+ * @see org.eclipse.ui.browser.IWebBrowser
  * @see IBrowserDescriptor
  * @since 1.0
  */

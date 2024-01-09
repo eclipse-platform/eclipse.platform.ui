@@ -163,9 +163,6 @@ public class JobsView {
 		}
 	}
 
-	/**
-	 * @see ViewPart#createPartControl(Composite)
-	 */
 	@PostConstruct
 	public void createPartControl(Composite parent) {
 		this.parent = parent;
@@ -559,9 +556,6 @@ else
 		}
 	}
 
-	/**
-	 * @see ViewPart#setFocus()
-	 */
 	@Focus
 	public void setFocus() {
 		if (durationField != null && !durationField.isDisposed())

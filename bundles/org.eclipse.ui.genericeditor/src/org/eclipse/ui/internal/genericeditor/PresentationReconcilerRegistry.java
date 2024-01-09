@@ -50,8 +50,9 @@ public class PresentationReconcilerRegistry {
 	}
 
 	/**
-	 * Get the contributed {@link IPresentationReconciliers}s that are relevant to hook on source viewer according
-	 * to document content types.
+	 * Get the contributed {@link IPresentationReconciler}s that are relevant to
+	 * hook on source viewer according to document content types.
+	 * 
 	 * @param sourceViewer the source viewer we're hooking completion to.
 	 * @param editor the text editor
 	 * @param contentTypes the content types of the document we're editing.

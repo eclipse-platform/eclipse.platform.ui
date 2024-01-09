@@ -50,17 +50,11 @@ public class IViewActionDelegateTest extends IActionDelegateTest {
 				"selectionChanged", "run" }));
 	}
 
-	/**
-	 * @see IActionDelegateTest#createActionWidget()
-	 */
 	@Override
 	protected Object createActionWidget() throws Throwable {
 		return fPage.showView(TEST_VIEW_ID);
 	}
 
-	/**
-	 * @see IActionDelegateTest#runAction()
-	 */
 	@Override
 	protected void runAction(Object widget) throws Throwable {
 		MockViewPart view = (MockViewPart) widget;
@@ -68,9 +62,6 @@ public class IViewActionDelegateTest extends IActionDelegateTest {
 		ActionUtil.runActionWithLabel(this, mgr, "Mock Action");
 	}
 
-	/**
-	 * @see IActionDelegateTest#fireSelection()
-	 */
 	@Override
 	protected void fireSelection(Object widget) throws Throwable {
 		MockViewPart view = (MockViewPart) widget;

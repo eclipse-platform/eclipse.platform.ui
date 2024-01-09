@@ -48,8 +48,8 @@ public class CharacterPairMatcherRegistry {
 	}
 
 	/**
-	 * Get the contributed {@link IPresentationReconciliers}s that are relevant to
-	 * hook on source viewer according to document content types.
+	 * Get the contributed {@link ICharacterPairMatcher}s that are relevant to hook
+	 * on source viewer according to document content types.
 	 *
 	 * @param sourceViewer the source viewer we're hooking completion to.
 	 * @param editor       the text editor

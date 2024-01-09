@@ -67,7 +67,7 @@ public class ReconcilerRegistry {
 	}
 
 	/**
-	 * Get the contributed {@link IReconciliers}s that are relevant to hook on
+	 * Get the contributed {@link IReconciler}s that are relevant to hook on
 	 * source viewer according to document content types.
 	 *
 	 * @param sourceViewer         the source viewer we're hooking completion to.
@@ -86,7 +86,7 @@ public class ReconcilerRegistry {
 	}
 
 	/**
-	 * Get the contributed highlight {@link IReconciliers}s that are relevant to
+	 * Get the contributed highlight {@link IReconciler}s that are relevant to
 	 * hook on source viewer according to document content types.
 	 *
 	 * @param sourceViewer         the source viewer we're hooking completion to.
@@ -106,7 +106,7 @@ public class ReconcilerRegistry {
 	}
 
 	/**
-	 * Get the contributed folding {@link IReconciliers}s that are relevant to hook
+	 * Get the contributed folding {@link IReconciler}s that are relevant to hook
 	 * on source viewer according to document content types.
 	 *
 	 * @param sourceViewer         the source viewer we're hooking completion to.

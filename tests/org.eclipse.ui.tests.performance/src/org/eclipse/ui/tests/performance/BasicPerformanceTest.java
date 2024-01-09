@@ -140,10 +140,11 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	}
 
 	/**
-	 * Called from within a test case immediately before the code to measure is
-	 * run. It starts capturing of performance data. Must be followed by a call
-	 * to {@link PerformanceTestCase#stopMeasuring()}before subsequent calls to
-	 * this method or {@link PerformanceTestCase#commitMeasurements()}.
+	 * Called from within a test case immediately before the code to measure is run.
+	 * It starts capturing of performance data. Must be followed by a call to
+	 * {@link org.eclipse.test.performance.PerformanceTestCase#stopMeasuring()}before
+	 * subsequent calls to this method or
+	 * {@link org.eclipse.test.performance.PerformanceTestCase#commitMeasurements()}.
 	 */
 	public void startMeasuring() {
 		tester.startMeasuring();

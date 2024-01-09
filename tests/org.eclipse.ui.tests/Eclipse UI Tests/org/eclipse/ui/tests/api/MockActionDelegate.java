@@ -32,32 +32,20 @@ public class MockActionDelegate implements IWorkbenchWindowActionDelegate {
 		lastMockActionDelegate = this;
 	}
 
-	/*
-	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
-	 */
 	@Override
 	public void init(IWorkbenchWindow window) {
 	}
 
-	/**
-	 * @see IActionDelegate#run(IAction)
-	 */
 	@Override
 	public void run(IAction action) {
 		callHistory.add("run");
 	}
 
-	/**
-	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
-	 */
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		callHistory.add("selectionChanged");
 	}
 
-	/*
-	 * @see IWorkbenchWindowActionDelegate#dispose()
-	 */
 	@Override
 	public void dispose() {
 	}
