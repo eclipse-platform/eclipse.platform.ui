@@ -98,7 +98,8 @@ public class StringMatcher {
 	}
 
 	/**
-	 * Find the first occurrence of the pattern between <code>start</code )(inclusive) and <code>end</code>(exclusive).
+	 * Find the first occurrence of the pattern between
+	 * <code>start</code> (inclusive) and <code>end</code> (exclusive).
 	 *
 	 * @param text
 	 *            the String object to search in
