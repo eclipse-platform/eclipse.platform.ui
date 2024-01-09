@@ -91,7 +91,6 @@ public class PrioriTree extends DefaultPriorityFunction {
 	 * <p>
 	 * THe picture below illustrates: # marks a target node * marks nodes that implicitly
 	 * also get set. And '-' marks nodes that are unaffected.
-	 * <p>
 	 * <pre>
 	 *                                       *
 	 *                                     /   \

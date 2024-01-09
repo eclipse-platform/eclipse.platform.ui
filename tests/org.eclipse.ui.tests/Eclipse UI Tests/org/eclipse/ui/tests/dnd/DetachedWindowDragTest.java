@@ -26,7 +26,7 @@ import org.eclipse.ui.tests.autotests.AbstractTestLogger;
  * In some cases the sources and targets may overlap with non-detached tests so in order to avoid
  * name clashes in the tests we add a suffix, "(Detached)", to the test's 'name' when the target is
  * 'Detached'.
- * <p>
+ *
  * @since 3.1
  */
 public class DetachedWindowDragTest	extends DragTest {

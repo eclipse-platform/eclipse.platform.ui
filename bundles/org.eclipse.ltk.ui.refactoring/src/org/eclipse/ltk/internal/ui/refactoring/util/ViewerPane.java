@@ -25,7 +25,6 @@ import org.eclipse.jface.action.ToolBarManager;
 /**
  * A <code>ViewerPane</code> is a convenience class which installs a
  * <code>CLabel</code> and a <code>Toolbar</code> in a <code>ViewForm</code>.
- * <P>
  */
 public final class ViewerPane extends ViewForm {
 
