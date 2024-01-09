@@ -488,12 +488,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 					label.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_TildeNonExpandedWarning0
 							+ IDEWorkbenchMessages.ChooseWorkspaceDialog_ResolvedAbsolutePath0
 							+ location.getAbsoluteFile().toPath().normalize());
-
 				}
-
-
-
-
 			}
 		});
 		setInitialTextValues(text);
