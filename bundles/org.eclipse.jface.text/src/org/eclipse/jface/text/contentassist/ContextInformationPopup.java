@@ -876,24 +876,30 @@ class ContextInformationPopup implements IContentAssistListener {
 		 */
 		if (!isValid(fContextInfoPopup))
 			return;
-		fContextInfoPopup.getDisplay().asyncExec(() -> {
-			ContextFrame fFrame= fContextFrameStack.peek();
-			// only do this if no other frames have been added in between
-			if (!fContextFrameStack.isEmpty() && fFrame == fContextFrameStack.peek()) {
-				int offset= fContentAssistSubjectControlAdapter.getSelectedRange().x;
 
-				// iterate all contexts on the stack
-				while (isValid(fContextInfoPopup) && !fContextFrameStack.isEmpty()) {
-					ContextFrame top= fContextFrameStack.peek();
-					if (top.fValidator == null || !top.fValidator.isContextInformationValid(offset)) {
-						hideContextInfoPopup(false); // loop variant: reduces the number of contexts on the stack
-					} else if (top.fPresenter != null && top.fPresenter.updatePresentation(offset, fTextPresentation)) {
-						int widgetOffset= fContentAssistSubjectControlAdapter.getWidgetSelectionRange().x;
-						TextPresentation.applyTextPresentation(fTextPresentation, fContextInfoText);
-						resize(widgetOffset);
-						break;
-					} else
-						break;
+		fContextInfoPopup.getDisplay().asyncExec(new Runnable() {
+
+			private ContextFrame fFrame= fContextFrameStack.peek();
+
+			@Override
+			public void run() {
+				// only do this if no other frames have been added in between
+				if (!fContextFrameStack.isEmpty() && fFrame == fContextFrameStack.peek()) {
+					int offset= fContentAssistSubjectControlAdapter.getSelectedRange().x;
+
+					// iterate all contexts on the stack
+					while (isValid(fContextInfoPopup) && !fContextFrameStack.isEmpty()) {
+						ContextFrame top= fContextFrameStack.peek();
+						if (top.fValidator == null || !top.fValidator.isContextInformationValid(offset)) {
+							hideContextInfoPopup(false); // loop variant: reduces the number of contexts on the stack
+						} else if (top.fPresenter != null && top.fPresenter.updatePresentation(offset, fTextPresentation)) {
+							int widgetOffset= fContentAssistSubjectControlAdapter.getWidgetSelectionRange().x;
+							TextPresentation.applyTextPresentation(fTextPresentation, fContextInfoText);
+							resize(widgetOffset);
+							break;
+						} else
+							break;
+					}
 				}
 			}
 		});
