@@ -20,7 +20,8 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
 	FailingParticipantTests.class,
 	SharedTextChangeTests.class,
-	CancelingParticipantTests.class
+	CancelingParticipantTests.class,
+	MoveRefactoringWithRefUpdateTest.class
 })
 public class ParticipantTests {
 }
