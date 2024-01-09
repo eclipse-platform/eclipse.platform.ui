@@ -49,6 +49,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.BorderData;
 import org.eclipse.swt.layout.BorderLayout;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowData;
@@ -58,6 +59,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -94,6 +96,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 	private Form recentWorkspacesForm;
 
 	private Button defaultButton;
+
 
 	/**
 	 * Create a modal dialog on the argument shell, using and updating the
@@ -447,11 +450,14 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 	}
 
 	protected Combo createPathCombo(Composite panel) {
-		text = new Combo(panel, SWT.BORDER | SWT.LEAD | SWT.DROP_DOWN);
+		Composite c = new Composite(panel, SWT.NONE);
+		FillLayout layout = new FillLayout(SWT.VERTICAL);
+		c.setLayout(layout);
+		text = new Combo(c, SWT.BORDER | SWT.LEAD | SWT.DROP_DOWN);
 		new DirectoryProposalContentAssist().apply(text);
 		text.setTextDirection(SWT.AUTO_TEXT_DIRECTION);
 		text.setFocus();
-		text.setLayoutData(new GridData(400, SWT.DEFAULT));
+		Label label = new Label(c, SWT.BORDER | SWT.LEAD);
 		text.addModifyListener(e -> {
 			Button okButton = getButton(Window.OK);
 			if(okButton != null && !okButton.isDisposed()) {
@@ -464,6 +470,30 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 					}
 				}
 				okButton.setEnabled(nonWhitespaceFound);
+
+				File location = new File(characters);
+				String normalisedPath = location.getAbsoluteFile().toPath().normalize().toString();
+				String normalisedPathWithSeperator = normalisedPath + File.separator;
+				if (!characters.equalsIgnoreCase(normalisedPath)
+						&& !characters.equalsIgnoreCase(normalisedPathWithSeperator)) {
+				label.setText(
+						IDEWorkbenchMessages.ChooseWorkspaceDialog_ResolvedAbsolutePath0
+								+ location.getAbsoluteFile().toPath().normalize());
+				}
+				else {
+					label.setText(""); //$NON-NLS-1$
+				}
+				if (normalisedPath.indexOf("~") != -1) //$NON-NLS-1$
+				{
+					label.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_TildeNonExpandedWarning0
+							+ IDEWorkbenchMessages.ChooseWorkspaceDialog_ResolvedAbsolutePath0
+							+ location.getAbsoluteFile().toPath().normalize());
+
+				}
+
+
+
+
 			}
 		});
 		setInitialTextValues(text);
