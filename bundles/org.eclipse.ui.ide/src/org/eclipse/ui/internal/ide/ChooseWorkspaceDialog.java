@@ -483,7 +483,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 				else {
 					label.setText(""); //$NON-NLS-1$
 				}
-				if (normalisedPath.indexOf("~") != -1) //$NON-NLS-1$
+				if (normalisedPath.startsWith("~")) //$NON-NLS-1$
 				{
 					label.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_TildeNonExpandedWarning0
 							+ IDEWorkbenchMessages.ChooseWorkspaceDialog_ResolvedAbsolutePath0
