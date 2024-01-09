@@ -179,8 +179,7 @@ public class RefactoringStatusViewer extends SashForm {
 	}
 
 	/**
-	 * Returns the currently used <tt>RefactoringStatus</tt>.
-	 * @return the <tt>RefactoringStatus</tt>
+	 * @return the currently used {@link RefactoringStatus}
 	 */
 	public RefactoringStatus getStatus() {
 		return fStatus;

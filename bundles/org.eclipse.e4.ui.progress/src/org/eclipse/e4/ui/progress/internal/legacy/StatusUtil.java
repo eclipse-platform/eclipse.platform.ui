@@ -22,8 +22,8 @@ import org.eclipse.e4.ui.progress.internal.ProgressMessages;
 /**
  * Utility class to create status objects.
  *
- * @private - This class is an internal implementation class and should
- * not be referenced or subclassed outside of the workbench
+ * @noreference This class is an internal implementation class and should not be
+ *              referenced or subclassed outside of the workbench
  */
 public class StatusUtil {
 

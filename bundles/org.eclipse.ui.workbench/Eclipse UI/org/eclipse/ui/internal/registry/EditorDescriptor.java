@@ -555,9 +555,8 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable, 
 	 * Sets the open mode of this editor descriptor.
 	 *
 	 * @param mode the open mode
-	 *
-	 * @issue this method is public as a temporary fix for bug 47600
 	 */
+	// TODO this method is public as a temporary fix for bug 47600
 	public void setOpenMode(int mode) {
 		openMode = mode;
 	}
