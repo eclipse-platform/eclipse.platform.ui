@@ -110,7 +110,6 @@ public final class PositionInfo {
 	 * <li><code>after:org.eclipse.test.id</code> - place an element in a list
 	 * after the element with the ID "org.eclipse.test.id"</li>
 	 * </ul>
-	 * </p>
 	 *
 	 * @param positionInfo
 	 *          the positioning string

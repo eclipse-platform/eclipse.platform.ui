@@ -32,7 +32,6 @@ import org.eclipse.ui.services.IServiceLocator;
  * <p>
  * It currently supports placement in menus.
  * </p>
- * <p>
  *
  * @author Prakash G.R.
  *
