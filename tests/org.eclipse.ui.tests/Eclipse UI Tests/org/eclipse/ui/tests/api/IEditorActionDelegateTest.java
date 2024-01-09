@@ -57,18 +57,12 @@ public class IEditorActionDelegateTest extends IActionDelegateTest {
 				"setActiveEditor", "selectionChanged", "run" }));
 	}
 
-	/**
-	 * @see IActionDelegateTest#createActionWidget()
-	 */
 	@Override
 	protected Object createActionWidget() throws Throwable {
 		editor = openEditor(fPage, "X");
 		return editor;
 	}
 
-	/**
-	 * @see IActionDelegateTest#runAction()
-	 */
 	@Override
 	protected void runAction(Object widget) throws Throwable {
 		MockEditorPart editor = (MockEditorPart) widget;
@@ -78,9 +72,6 @@ public class IEditorActionDelegateTest extends IActionDelegateTest {
 		ActionUtil.runActionWithLabel(this, mgr, "Mock Action");
 	}
 
-	/**
-	 * @see IActionDelegateTest#fireSelection()
-	 */
 	@Override
 	protected void fireSelection(Object widget) throws Throwable {
 		MockEditorPart editor = (MockEditorPart) widget;

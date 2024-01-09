@@ -86,8 +86,8 @@ public class JobInfoTest {
 	}
 
 	/**
-	 * Test that {@link org.eclipse.ui.internal.progress.JobInfo#compareTo(Object)}
-	 * is valid implemented and complies to the interface method contract.
+	 * Test that {@link JobSnapshot#compareTo(JobSnapshot)} is valid implemented and
+	 * complies to the interface method contract.
 	 */
 	@Test
 	public void testCompareToContractCompliance() {

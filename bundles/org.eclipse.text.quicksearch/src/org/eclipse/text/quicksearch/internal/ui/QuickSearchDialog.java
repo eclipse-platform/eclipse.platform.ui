@@ -1418,7 +1418,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 
 	/**
 	 * Get the control where the search pattern is entered. Any filtering should
-	 * be done using an {@link ItemsFilter}. This control should only be
+	 * be done using an {@code ItemsFilter}. This control should only be
 	 * accessed for listeners that wish to handle events that do not affect
 	 * filtering such as custom traversal.
 	 *

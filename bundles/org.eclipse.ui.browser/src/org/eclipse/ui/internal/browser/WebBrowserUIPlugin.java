@@ -66,10 +66,11 @@ public class WebBrowserUIPlugin extends AbstractUIPlugin {
 	/**
 	 * Returns an array of all known browers.
 	 * <p>
-	 * A new array is returned on each call, so clients may store or modify the result.
+	 * A new array is returned on each call, so clients may store or modify the
+	 * result.
 	 * </p>
 	 *
-	 * @return a possibly-empty array of browser instances {@link IClient}
+	 * @return a possibly-empty array of browser instances
 	 */
 	public static IBrowserExt[] getBrowsers() {
 		if (browsers == null)

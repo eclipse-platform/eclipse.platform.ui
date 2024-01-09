@@ -52,9 +52,11 @@ public interface IOverrideTestsItem {
 	public Composite getComposite();
 
 	/**
-	 * Get the kind of {@link Element} that this item applies to.
+	 * Get the kind of
+	 * {@link org.eclipse.ui.tests.views.properties.tabbed.model.Element} that this
+	 * item applies to.
 	 *
-	 * @return the kind of {@link Element} that this item applies to.
+	 * @return the kind of element that this item applies to.
 	 */
 	public Class getElement();
 

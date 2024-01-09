@@ -115,26 +115,17 @@ public class IWorkbenchWindowActionDelegateTest extends IActionDelegateTest {
 		assertFalse(mockWWinActionDelegate.callHistory.verifyOrder(new String[] {"dispose", "dispose"}));
 	}
 
-	/**
-	 * @see IActionDelegateTest#createActionWidget()
-	 */
 	@Override
 	protected Object createActionWidget() throws Throwable {
 		fPage.showActionSet("org.eclipse.ui.tests.api.MockActionSet");
 		return null;
 	}
 
-	/**
-	 * @see IActionDelegateTest#runAction()
-	 */
 	@Override
 	protected void runAction(Object widget) throws Throwable {
 		ActionUtil.runActionWithLabel(this, fWindow, "Mock Action");
 	}
 
-	/**
-	 * @see IActionDelegateTest#fireSelection()
-	 */
 	@Override
 	protected void fireSelection(Object widget) throws Throwable {
 		MockViewPart view = (MockViewPart) fPage.showView(MockViewPart.ID);

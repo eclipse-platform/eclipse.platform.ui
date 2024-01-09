@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.browser.macosx;
 
-import java.io.*;
+import java.io.IOException;
 import java.net.URL;
 
 import org.eclipse.ui.browser.AbstractWebBrowser;
@@ -25,9 +25,6 @@ public class DefaultBrowser extends AbstractWebBrowser {
 		super(id);
 	}
 
-	/**
-	 * @see org.eclipse.help.browser.IBrowser#displayURL(String)
-	 */
 	@Override
 	public void openURL(URL url2) {
 		String url = url2.toExternalForm();

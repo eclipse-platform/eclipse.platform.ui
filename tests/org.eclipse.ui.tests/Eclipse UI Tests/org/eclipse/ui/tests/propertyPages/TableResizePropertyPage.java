@@ -72,9 +72,6 @@ public class TableResizePropertyPage extends PropertyPage {
 
 	}
 
-	/**
-	 * @see PreferencePage#createContents(Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);

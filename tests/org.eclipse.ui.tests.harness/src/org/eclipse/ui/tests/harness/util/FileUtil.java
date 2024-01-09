@@ -67,8 +67,7 @@ public class FileUtil {
 	 * a runnable)<br/>
 	 * <br/>
 	 * This method was copied from
-	 * {@link org.eclipse.jdt.internal.ui.util.CoreUtility#createFolder(IFolder, boolean, boolean, IProgressMonitor)
-	 * CoreUtility#createFolder}.
+	 * {@code org.eclipse.jdt.internal.ui.util.CoreUtility#createFolder(IFolder, boolean, boolean, IProgressMonitor)}.
 	 *
 	 * @param folder  the folder to create
 	 * @param force   a flag controlling how to deal with resources that are not in

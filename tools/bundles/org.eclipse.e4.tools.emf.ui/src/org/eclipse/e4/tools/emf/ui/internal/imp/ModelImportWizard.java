@@ -85,7 +85,6 @@ public class ModelImportWizard extends Wizard {
 	 * @return the extension point name associated with the {@link MApplicationElement} that is passed in the
 	 *         constructor of
 	 *         this wizard.
-	 * @see #MAPPING_EXTENSION
 	 * @see #getApplicationElement()
 	 */
 	protected String getExtensionPointName() {
@@ -96,7 +95,6 @@ public class ModelImportWizard extends Wizard {
 	 * @return the extension point id associated with the {@link MApplicationElement} that is passed in the constructor
 	 *         of
 	 *         this wizard.
-	 * @see #MAPPING_EXTENSION
 	 * @see #getApplicationElement()
 	 */
 	protected String getExtensionPoint() {
@@ -106,7 +104,6 @@ public class ModelImportWizard extends Wizard {
 	/**
 	 * @return the attribute name of the {@link IConfigurationElement} that
 	 *         contains the description that you want to see in the wizard page.
-	 * @see #MAPPING_NAME
 	 */
 	protected String getMappingName() {
 		return RegistryUtil.getStruct(applicationElement, getHint()).getMappingName();
@@ -115,8 +112,6 @@ public class ModelImportWizard extends Wizard {
 	/**
 	 * Returns the list of {@link MApplicationElement}s of the type passed in
 	 * the constructor of the wizard.
-	 *
-	 *
 	 *
 	 * @return an array of {@link MApplicationElement}
 	 */
