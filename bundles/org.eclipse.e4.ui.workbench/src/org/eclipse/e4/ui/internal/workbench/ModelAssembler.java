@@ -513,8 +513,10 @@ public class ModelAssembler {
 		Diagnostic validationResult = Diagnostician.INSTANCE.validate((EObject) fragment);
 		int severity = validationResult.getSeverity();
 		if (severity == Diagnostic.ERROR) {
-			log(LogLevel.ERROR, "Fragment from {} of {} could not be validated and was not merged: " //$NON-NLS-1$
-					+ fragment, contributorURI, contributorName);
+			log(LogLevel.ERROR,
+					"Fragment from {} of {} could not be validated and was not merged:  -> Validation result: {}" //$NON-NLS-1$
+							+ fragment,
+					contributorURI, contributorName, validationResult);
 		}
 
 		List<MApplicationElement> merged = processModelFragment(fragment, contributorURI, checkExist);
