@@ -242,6 +242,7 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
 		super.testWorldChanged();
 	}
 
+	@Test
 	@Override
 	public void testContains() {
 		if (disableTestsBug347491) {
@@ -253,4 +254,18 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
 		}
 		super.testContains();
 	}
+
+	@Test
+	@Override
+	public void testAutoExpandOnSingleChildThroughEvent() {
+		if (disableTestsBug347491) {
+			return;
+		}
+		if (setDataCalls == 0) {
+			System.err.println("SWT.SetData is not received. Cancelled test " + testName.getMethodName());
+			return;
+		}
+		super.testAutoExpandOnSingleChildThroughEvent();
+	}
+
 }

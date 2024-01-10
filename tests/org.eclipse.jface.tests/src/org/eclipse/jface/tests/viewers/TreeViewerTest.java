@@ -63,9 +63,12 @@ public class TreeViewerTest extends AbstractTreeViewerTest {
 		fViewer.setInput(modelRoot);
 
 		fTreeViewer.setAutoExpandOnSingleChildLevels(2);
+		Tree tree = (Tree) fTreeViewer.getControl();
+		TreeItem itemToExpand = ((Tree) fViewer.getControl()).getItem(0);
+
 		Event event = new Event();
-		event.item = ((Tree) fViewer.getControl()).getItem(0);
-		((TreeItem) event.item).getParent().notifyListeners(SWT.Expand, event);
+		event.item = itemToExpand;
+		tree.notifyListeners(SWT.Expand, event);
 
 		assertTrue("The expanded widget child is not expanded", fTreeViewer.getExpandedState(trivialPathRoot));
 		assertTrue("The first child of the trivial path was not auto-expanded",
