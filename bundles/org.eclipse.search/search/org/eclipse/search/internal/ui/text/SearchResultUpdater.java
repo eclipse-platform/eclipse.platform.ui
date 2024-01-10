@@ -45,6 +45,7 @@ public class SearchResultUpdater implements IResourceChangeListener, IQueryListe
 			handleDelta(delta);
 	}
 
+	@SuppressWarnings("incomplete-switch")
 	private void handleDelta(IResourceDelta d) {
 		try {
 			d.accept(delta -> {

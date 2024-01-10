@@ -15,6 +15,8 @@
  *******************************************************************************/
 package org.eclipse.jface.action;
 
+import java.util.Arrays;
+
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.jface.action.ExternalActionManager.IBindingManagerCallback;
@@ -31,6 +33,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.Util;
+import org.eclipse.pde.api.tools.annotations.NoExtend;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
@@ -51,8 +54,8 @@ import org.eclipse.swt.widgets.Widget;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * @noextend This class is not intended to be subclassed by clients.
  */
+@NoExtend
 public class ActionContributionItem extends ContributionItem {
 
 	/**
@@ -1167,7 +1170,22 @@ public class ActionContributionItem extends ContributionItem {
 		if (holdMenu == null) {
 			return;
 		}
+
+		// for backwards compatibility (in case the menu is NOT calculated asynchronously)
 		copyMenu(holdMenu, proxy);
+
+		// in case the menu is populated asynchronously by the menu creator, this listener will update it once it's complete
+		holdMenu.addListener(SWT.Show, evt -> {
+			// This one is (currently) being triggered from ContextuaLaunchAction
+			if (evt.data == null || evt.data != holdMenu)
+				return;
+
+			// remove all items in the proxy...
+			Arrays.stream(proxy.getItems()).forEach(Widget::dispose);
+
+			// ... and replace them with the new content
+			copyMenu(holdMenu, proxy);
+		});
 	}
 
 	/**

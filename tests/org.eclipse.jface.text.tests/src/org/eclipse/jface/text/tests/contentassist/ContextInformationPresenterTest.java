@@ -48,12 +48,12 @@ public class ContextInformationPresenterTest extends AbstractContentAssistTest {
 		 */
 		@Override
 		public boolean updatePresentation(int offset, TextPresentation presentation) {
-			if (info == null) { // Ignore unknown information
+			if (contextInfo == null) { // Ignore unknown information
 				return false;
 			}
 
-			int begin= info.getContextInformationPosition();
-			int end= begin + info.getContextDisplayString().length();
+			int begin= contextInfo.getContextInformationPosition();
+			int end= begin + contextInfo.getContextDisplayString().length();
 			boolean style= (offset >= begin && offset <= end);
 			if (style == isStyled) {
 				return false;

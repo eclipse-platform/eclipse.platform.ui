@@ -30,7 +30,6 @@ import java.net.URLConnection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import org.eclipse.core.internal.runtime.PlatformURLPluginConnection;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -316,7 +315,9 @@ public class ResourceHandler implements IModelResourceHandler {
 				// PlatformURLPluginConnection which doesn't expose the
 				// last-modification time. So we try to resolve the file through
 				// the bundle to obtain a BundleURLConnection instead.
-				Object[] obj = PlatformURLPluginConnection.parse(url.getFile().trim(), url);
+				@SuppressWarnings("restriction")
+				Object[] obj = org.eclipse.core.internal.runtime.PlatformURLPluginConnection.parse(url.getFile().trim(),
+						url);
 				Bundle b = (Bundle) obj[0];
 				// first try to resolve as an bundle file entry, then as a resource using
 				// the bundle's classpath

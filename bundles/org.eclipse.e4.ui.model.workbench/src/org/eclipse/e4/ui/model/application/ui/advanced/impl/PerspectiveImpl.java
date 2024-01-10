@@ -318,9 +318,10 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	public void setLabel(String newLabel) {
 		String oldLabel = label;
 		label = newLabel;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.PERSPECTIVE__LABEL, oldLabel,
 					label));
+		}
 	}
 
 	/**
@@ -344,9 +345,10 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	public void setIconURI(String newIconURI) {
 		String oldIconURI = iconURI;
 		iconURI = newIconURI;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.PERSPECTIVE__ICON_URI, oldIconURI,
 					iconURI));
+		}
 	}
 
 	/**
@@ -370,9 +372,10 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	public void setTooltip(String newTooltip) {
 		String oldTooltip = tooltip;
 		tooltip = newTooltip;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.PERSPECTIVE__TOOLTIP, oldTooltip,
 					tooltip));
+		}
 	}
 
 	/**
@@ -414,9 +417,10 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	public void setContext(IEclipseContext newContext) {
 		IEclipseContext oldContext = context;
 		context = newContext;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.PERSPECTIVE__CONTEXT, oldContext,
 					context));
+		}
 	}
 
 	/**
@@ -566,10 +570,11 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 		case AdvancedPackageImpl.PERSPECTIVE__VARIABLES:
 			return getVariables();
 		case AdvancedPackageImpl.PERSPECTIVE__PROPERTIES:
-			if (coreType)
+			if (coreType) {
 				return ((EMap.InternalMapView<String, String>) getProperties()).eMap();
-			else
+			} else {
 				return getProperties();
+			}
 		case AdvancedPackageImpl.PERSPECTIVE__HANDLERS:
 			return getHandlers();
 		case AdvancedPackageImpl.PERSPECTIVE__BINDING_CONTEXTS:
@@ -898,8 +903,9 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (label: "); //$NON-NLS-1$

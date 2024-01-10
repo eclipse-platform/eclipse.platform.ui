@@ -64,8 +64,8 @@ public class TestAdapterFactory extends AdapterFactoryImpl {
 		if (object == modelPackage) {
 			return true;
 		}
-		if (object instanceof EObject o) {
-			return o.eClass().getEPackage() == modelPackage;
+		if (object instanceof EObject) {
+			return ((EObject)object).eClass().getEPackage() == modelPackage;
 		}
 		return false;
 	}
@@ -76,7 +76,7 @@ public class TestAdapterFactory extends AdapterFactoryImpl {
 	 *
 	 * @generated
 	 */
-	protected TestSwitch<Adapter> modelSwitch = new TestSwitch<Adapter>() {
+	protected TestSwitch<Adapter> modelSwitch = new TestSwitch<>() {
 			@Override
 			public Adapter caseTestHarness(MTestHarness object) {
 				return createTestHarnessAdapter();

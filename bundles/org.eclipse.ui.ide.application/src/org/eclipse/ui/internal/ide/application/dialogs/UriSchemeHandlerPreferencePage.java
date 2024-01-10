@@ -101,7 +101,6 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 	private Composite handlerComposite;
 	private volatile boolean isLoading = false;
 
-	@SuppressWarnings("javadoc")
 	public UriSchemeHandlerPreferencePage() {
 		super.setDescription(UrlHandlerPreferencePage_Page_Description);
 	}
@@ -326,7 +325,7 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 		}
 	}
 
-	private final class ItemLabelProvider extends LabelProvider implements ITableLabelProvider {
+	private static final class ItemLabelProvider extends LabelProvider implements ITableLabelProvider {
 
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {

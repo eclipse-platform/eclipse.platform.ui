@@ -308,6 +308,7 @@ public class TabbedPropertyRegistry {
 	 * Given a property tab descriptor remove all its section descriptors that
 	 * do not apply to the given input object.
 	 */
+	@SuppressWarnings("unchecked")
 	protected ITabDescriptor adaptDescriptorFor(ITabDescriptor target,
 			IWorkbenchPart part, ISelection selection) {
 		List<ISectionDescriptor> filteredSectionDescriptors = new ArrayList<>();

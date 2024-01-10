@@ -109,9 +109,10 @@ public class BindingTableImpl extends ApplicationElementImpl implements MBinding
 			InternalEObject oldBindingContext = (InternalEObject) bindingContext;
 			bindingContext = (MBindingContext) eResolveProxy(oldBindingContext);
 			if (bindingContext != oldBindingContext) {
-				if (eNotificationRequired())
+				if (eNotificationRequired()) {
 					eNotify(new ENotificationImpl(this, Notification.RESOLVE,
 							CommandsPackageImpl.BINDING_TABLE__BINDING_CONTEXT, oldBindingContext, bindingContext));
+				}
 			}
 		}
 		return bindingContext;
@@ -135,9 +136,10 @@ public class BindingTableImpl extends ApplicationElementImpl implements MBinding
 	public void setBindingContext(MBindingContext newBindingContext) {
 		MBindingContext oldBindingContext = bindingContext;
 		bindingContext = newBindingContext;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.BINDING_TABLE__BINDING_CONTEXT,
 					oldBindingContext, bindingContext));
+		}
 	}
 
 	/**
@@ -166,8 +168,9 @@ public class BindingTableImpl extends ApplicationElementImpl implements MBinding
 		case CommandsPackageImpl.BINDING_TABLE__BINDINGS:
 			return getBindings();
 		case CommandsPackageImpl.BINDING_TABLE__BINDING_CONTEXT:
-			if (resolve)
+			if (resolve) {
 				return getBindingContext();
+			}
 			return basicGetBindingContext();
 		default:
 			return super.eGet(featureID, resolve, coreType);

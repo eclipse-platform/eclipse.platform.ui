@@ -72,6 +72,7 @@ public abstract class AbstractTabDescriptor implements ITabDescriptor,
 		return tab;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(Object object) {
 		if (object == null) {
@@ -126,6 +127,7 @@ public abstract class AbstractTabDescriptor implements ITabDescriptor,
 	 *
 	 * @return the list of section descriptors for the tab.
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	public List getSectionDescriptors() {
 		return sectionDescriptors;

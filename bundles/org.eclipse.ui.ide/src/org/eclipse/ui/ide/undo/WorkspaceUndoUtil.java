@@ -163,7 +163,7 @@ public class WorkspaceUndoUtil {
 	 *
 	 * @param resourcesToDelete
 	 *            an array of resources to be deleted
-	 * @param monitor
+	 * @param mon
 	 *            the progress monitor to use to show the operation's progress
 	 * @param uiInfo
 	 *            the IAdaptable (or <code>null</code>) provided by the

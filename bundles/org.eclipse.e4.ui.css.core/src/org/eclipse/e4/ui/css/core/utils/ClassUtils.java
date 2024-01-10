@@ -35,11 +35,7 @@ public class ClassUtils {
 	 * Return the package name of Class <code>c</code>.
 	 */
 	public static String getPackageName(Class<?> c) {
-		String name = c.getName();
-		int index = name.lastIndexOf('.');
-		if (index > 0) {
-			return name.substring(0, index);
-		}
-		return null;
+		Package p = c.getPackage();
+		return p == null ? null : p.getName();
 	}
 }

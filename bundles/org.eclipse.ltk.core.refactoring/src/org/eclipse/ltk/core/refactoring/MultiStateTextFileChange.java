@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.core.resources.IFile;
 
@@ -422,17 +422,15 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	 *             if no document could be acquired
 	 */
 	public final IDocument getCurrentDocument(IProgressMonitor monitor) throws CoreException {
-		if (monitor == null)
-			monitor= new NullProgressMonitor();
 		IDocument result= null;
-		monitor.beginTask("", 2); //$NON-NLS-1$
+		SubMonitor subMon= SubMonitor.convert(monitor, 2);
 		try {
-			result= acquireDocument(new SubProgressMonitor(monitor, 1));
+			result= acquireDocument(subMon.newChild(1));
 		} finally {
 			if (result != null)
-				releaseDocument(result, new SubProgressMonitor(monitor, 1));
+				releaseDocument(result, subMon.newChild(1));
 		}
-		monitor.done();
+		subMon.done();
 		if (result == null)
 			result= new Document();
 		return result;
@@ -749,15 +747,13 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	 *             if no document could be acquired
 	 */
 	public final IDocument getPreviewDocument(IProgressMonitor monitor) throws CoreException {
-		if (monitor == null)
-			monitor= new NullProgressMonitor();
-
+		SubMonitor subMon= SubMonitor.convert(monitor, 2);
 		IDocument result= null;
 		IDocument document= null;
 
 		try {
 
-			document= acquireDocument(new SubProgressMonitor(monitor, 1));
+			document= acquireDocument(subMon.newChild(1));
 			if (document != null) {
 				result= new Document(document.get());
 
@@ -768,9 +764,9 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 			throw Changes.asCoreException(exception);
 		} finally {
 			if (document != null) {
-				releaseDocument(document, new SubProgressMonitor(monitor, 1));
+				releaseDocument(document, subMon.newChild(1));
 			}
-			monitor.done();
+			subMon.done();
 		}
 		if (result == null)
 			result= new Document();
@@ -846,18 +842,16 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	 */
 	@Override
 	public final Change perform(final IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask("", 3); //$NON-NLS-1$
-
+		SubMonitor subMon= SubMonitor.convert(monitor, 3);
 		IDocument document= null;
-
 		try {
-			document= acquireDocument(new SubProgressMonitor(monitor, 1));
+			document= acquireDocument(subMon.newChild(1));
 
 			final LinkedList<UndoEdit> undoList= new LinkedList<>();
 			performChanges(document, undoList, false);
 
 			if (needsSaving())
-				fBuffer.commit(new SubProgressMonitor(monitor, 1), false);
+				fBuffer.commit(subMon.newChild(1), false);
 
 			return new MultiStateUndoChange(getName(), fFile, undoList.toArray(new UndoEdit[undoList.size()]), fContentStamp, fSaveMode);
 
@@ -865,9 +859,9 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 			throw Changes.asCoreException(exception);
 		} finally {
 			if (document != null) {
-				releaseDocument(document, new SubProgressMonitor(monitor, 1));
+				releaseDocument(document, subMon.newChild(1));
 			}
-			monitor.done();
+			subMon.done();
 		}
 	}
 

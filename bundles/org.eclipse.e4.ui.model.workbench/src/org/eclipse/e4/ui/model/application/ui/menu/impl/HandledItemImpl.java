@@ -118,9 +118,10 @@ public abstract class HandledItemImpl extends ItemImpl implements MHandledItem {
 			InternalEObject oldCommand = (InternalEObject) command;
 			command = (MCommand) eResolveProxy(oldCommand);
 			if (command != oldCommand) {
-				if (eNotificationRequired())
+				if (eNotificationRequired()) {
 					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MenuPackageImpl.HANDLED_ITEM__COMMAND,
 							oldCommand, command));
+				}
 			}
 		}
 		return command;
@@ -144,9 +145,10 @@ public abstract class HandledItemImpl extends ItemImpl implements MHandledItem {
 	public void setCommand(MCommand newCommand) {
 		MCommand oldCommand = command;
 		command = newCommand;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.HANDLED_ITEM__COMMAND, oldCommand,
 					command));
+		}
 	}
 
 	/**
@@ -170,9 +172,10 @@ public abstract class HandledItemImpl extends ItemImpl implements MHandledItem {
 	public void setWbCommand(ParameterizedCommand newWbCommand) {
 		ParameterizedCommand oldWbCommand = wbCommand;
 		wbCommand = newWbCommand;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.HANDLED_ITEM__WB_COMMAND,
 					oldWbCommand, wbCommand));
+		}
 	}
 
 	/**
@@ -213,8 +216,9 @@ public abstract class HandledItemImpl extends ItemImpl implements MHandledItem {
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 		case MenuPackageImpl.HANDLED_ITEM__COMMAND:
-			if (resolve)
+			if (resolve) {
 				return getCommand();
+			}
 			return basicGetCommand();
 		case MenuPackageImpl.HANDLED_ITEM__WB_COMMAND:
 			return getWbCommand();
@@ -299,8 +303,9 @@ public abstract class HandledItemImpl extends ItemImpl implements MHandledItem {
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (wbCommand: "); //$NON-NLS-1$

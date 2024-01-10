@@ -121,6 +121,7 @@ public class WBWRenderer extends SWTPartRenderer {
 	@Inject
 	Logger logger;
 
+	@SuppressWarnings("hiding")
 	@Inject
 	private IEclipseContext context;
 
@@ -129,6 +130,7 @@ public class WBWRenderer extends SWTPartRenderer {
 
 	private ThemeDefinitionChangedHandler themeDefinitionChanged;
 
+	@SuppressWarnings("hiding")
 	@Inject
 	private EModelService modelService;
 

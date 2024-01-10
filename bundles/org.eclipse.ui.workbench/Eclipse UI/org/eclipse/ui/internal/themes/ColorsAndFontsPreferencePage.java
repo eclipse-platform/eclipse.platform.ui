@@ -514,7 +514,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		 * Returns the DEFINITION_NOT_AVAIL_COLOR color when definition is not present
 		 * in the current theme or null when it is available
 		 *
-		 * @param def the definition
 		 * @return the DEFINITION_NOT_AVAIL_COLOR color or null
 		 */
 		@Override

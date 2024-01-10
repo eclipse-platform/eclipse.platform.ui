@@ -138,9 +138,10 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 			InternalEObject oldSelectedElement = (InternalEObject) selectedElement;
 			selectedElement = (MMenuElement) eResolveProxy(oldSelectedElement);
 			if (selectedElement != oldSelectedElement) {
-				if (eNotificationRequired())
+				if (eNotificationRequired()) {
 					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MenuPackageImpl.MENU__SELECTED_ELEMENT,
 							oldSelectedElement, selectedElement));
+				}
 			}
 		}
 		return selectedElement;
@@ -164,9 +165,10 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 	public void setSelectedElement(MMenuElement newSelectedElement) {
 		MMenuElement oldSelectedElement = selectedElement;
 		selectedElement = newSelectedElement;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU__SELECTED_ELEMENT,
 					oldSelectedElement, selectedElement));
+		}
 	}
 
 	/**
@@ -188,8 +190,9 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 	public void setEnabled(boolean newEnabled) {
 		boolean oldEnabled = enabled;
 		enabled = newEnabled;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU__ENABLED, oldEnabled, enabled));
+		}
 	}
 
 	/**
@@ -234,8 +237,9 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 		case MenuPackageImpl.MENU__CHILDREN:
 			return getChildren();
 		case MenuPackageImpl.MENU__SELECTED_ELEMENT:
-			if (resolve)
+			if (resolve) {
 				return getSelectedElement();
+			}
 			return basicGetSelectedElement();
 		case MenuPackageImpl.MENU__ENABLED:
 			return isEnabled();
@@ -358,8 +362,9 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (enabled: "); //$NON-NLS-1$

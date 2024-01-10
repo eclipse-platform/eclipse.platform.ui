@@ -14,6 +14,7 @@
 package org.eclipse.jface.viewers;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.pde.api.tools.annotations.NoExtend;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -30,8 +31,8 @@ import org.eclipse.swt.widgets.Control;
  * of the check box is being toggled by the end users; the listener method
  * <code>applyEditorValue</code> is immediately called to signal the change.
  * </p>
- * @noextend This class is not intended to be subclassed by clients.
  */
+@NoExtend
 public class CheckboxCellEditor extends CellEditor {
 
 	/**

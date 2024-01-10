@@ -20,8 +20,7 @@ import java.util.List;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
@@ -231,15 +230,15 @@ public abstract class TextChange extends TextEditBasedChange {
 
 	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
-		pm.beginTask("", 3); //$NON-NLS-1$
+		SubMonitor subMon= SubMonitor.convert(pm, 3);
 		IDocument document= null;
 
 		try {
-			document= acquireDocument(new SubProgressMonitor(pm, 1));
+			document= acquireDocument(subMon.newChild(1));
 
 			UndoEdit undo= performEdits(document);
 
-			commit(document, new SubProgressMonitor(pm, 1));
+			commit(document, subMon.newChild(1));
 			return createUndoChange(undo);
 
 		} catch (BadLocationException e) {
@@ -247,8 +246,8 @@ public abstract class TextChange extends TextEditBasedChange {
 		} catch (MalformedTreeException e) {
 			throw Changes.asCoreException(e);
 		} finally {
-			releaseDocument(document, new SubProgressMonitor(pm, 1));
-			pm.done();
+			releaseDocument(document, subMon.newChild(1));
+			subMon.done();
 		}
 	}
 
@@ -305,17 +304,15 @@ public abstract class TextChange extends TextEditBasedChange {
 	 * @throws CoreException if the document can't be acquired
 	 */
 	public IDocument getCurrentDocument(IProgressMonitor pm) throws CoreException {
-		if (pm == null)
-			pm= new NullProgressMonitor();
+		SubMonitor subMon= SubMonitor.convert(pm, 2);
 		IDocument result= null;
-		pm.beginTask("", 2); //$NON-NLS-1$
 		try{
-			result= acquireDocument(new SubProgressMonitor(pm, 1));
+			result= acquireDocument(subMon.newChild(1));
 		} finally {
 			if (result != null)
-				releaseDocument(result, new SubProgressMonitor(pm, 1));
+				releaseDocument(result, subMon.newChild(1));
 		}
-		pm.done();
+		subMon.done();
 		return result;
 	}
 

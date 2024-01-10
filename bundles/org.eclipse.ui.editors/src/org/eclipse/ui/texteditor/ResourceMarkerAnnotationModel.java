@@ -16,6 +16,9 @@ package org.eclipse.ui.texteditor;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResource;
@@ -24,8 +27,7 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
+
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 
@@ -87,6 +89,7 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 	 *
 	 * @param markerDeltas the array of marker deltas
 	 */
+	@SuppressWarnings("incomplete-switch")
 	protected void update(IMarkerDelta[] markerDeltas) {
 
 		if (markerDeltas.length ==  0)
@@ -116,6 +119,7 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 	 *
 	 * @param markerDeltas the array of marker deltas
 	 */
+	@SuppressWarnings("incomplete-switch")
 	private void batchedUpdate(IMarkerDelta[] markerDeltas) {
 		HashSet<IMarker> removedMarkers= new HashSet<>(markerDeltas.length);
 		HashSet<IMarker> modifiedMarkers= new HashSet<>(markerDeltas.length);

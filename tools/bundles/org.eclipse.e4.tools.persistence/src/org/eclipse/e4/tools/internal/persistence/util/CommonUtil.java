@@ -129,7 +129,7 @@ public final class CommonUtil {
 	public static List<MPart> getPerspectivePartsWithState(final MPerspective perspective) {
 		List<MPlaceholder> phList = CommonUtil.getEModelService().findElements(perspective, null, MPlaceholder.class,
 				null);
-		List<MPart> result = new ArrayList<MPart>();
+		List<MPart> result = new ArrayList<>();
 		for (MPlaceholder ph : phList) {
 			MUIElement element = ph.getRef();
 			if (!MPart.class.isInstance(element)) {

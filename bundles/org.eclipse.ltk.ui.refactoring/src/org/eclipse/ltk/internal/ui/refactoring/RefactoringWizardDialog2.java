@@ -103,6 +103,7 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 			gd.verticalAlignment= SWT.TOP;
 			fText.setLayoutData(gd);
 		}
+		@SuppressWarnings("incomplete-switch")
 		public void setMessage(IWizardPage page) {
 			String msg= page.getErrorMessage();
 			int type= IMessageProvider.ERROR;
@@ -527,6 +528,7 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 		showCurrentPage();
 	}
 
+	@SuppressWarnings("incomplete-switch")
 	private boolean showErrorDialog(ErrorWizardPage page) {
 		RefactoringStatusDialog dialog= new RefactoringStatusDialog(getShell(), page,
 			fWizard.internalShowBackButtonOnStatusDialog(InternalAPI.INSTANCE));

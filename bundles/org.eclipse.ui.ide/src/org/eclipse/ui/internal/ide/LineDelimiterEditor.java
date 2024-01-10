@@ -207,7 +207,7 @@ public class LineDelimiterEditor {
 	 *            the project for which the line editor will be modified
 	 * @return the preferences
 	 */
-	private Preferences getPreferences(IProject project) {
+	private static Preferences getPreferences(IProject project) {
 		if (project != null) {
 			return Platform.getPreferencesService().getRootNode().node(ProjectScope.SCOPE).node(project.getName());
 		}

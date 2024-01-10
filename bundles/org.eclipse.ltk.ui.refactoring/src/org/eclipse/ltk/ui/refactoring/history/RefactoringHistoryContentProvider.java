@@ -127,6 +127,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 		// Do nothing
 	}
 
+	@SuppressWarnings("incomplete-switch")
 	@Override
 	public Object[] getChildren(final Object element) {
 		if (element instanceof RefactoringHistoryNode) {

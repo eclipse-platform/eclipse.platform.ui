@@ -1541,7 +1541,7 @@ public final class BindingManager extends HandleObjectManager<Scheme>
 	public Scheme getScheme(final String schemeId) {
 		checkId(schemeId);
 
-		Scheme scheme = (Scheme) handleObjectsById.get(schemeId);
+		Scheme scheme = handleObjectsById.get(schemeId);
 		if (scheme == null) {
 			scheme = new Scheme(schemeId);
 			handleObjectsById.put(schemeId, scheme);

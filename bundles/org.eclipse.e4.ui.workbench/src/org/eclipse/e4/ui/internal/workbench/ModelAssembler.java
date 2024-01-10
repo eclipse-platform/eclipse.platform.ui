@@ -111,7 +111,7 @@ public class ModelAssembler {
 		@Override
 		public List<FragmentWrapperElementMapping> addingBundle(Bundle bundle, BundleEvent event) {
 			// only react on bundles with Model-Fragment header
-			if (bundle.getHeaders("").get(MODEL_FRAGMENT_HEADER) != null) { //$NON-NLS-1$
+			if (bundle.getHeaders(Util.ZERO_LENGTH_STRING).get(MODEL_FRAGMENT_HEADER) != null) {
 				// add the fragment to the application model
 				List<ModelFragmentWrapper> wrappers = getModelFragmentWrapperFromBundle(bundle,
 						ModelAssembler.this.initial);
@@ -158,7 +158,7 @@ public class ModelAssembler {
 
 					// unload resource
 					String bundleName = bundle.getSymbolicName();
-					String fragmentHeader = bundle.getHeaders("").get(MODEL_FRAGMENT_HEADER); //$NON-NLS-1$
+					String fragmentHeader = bundle.getHeaders(Util.ZERO_LENGTH_STRING).get(MODEL_FRAGMENT_HEADER);
 					String[] fr = fragmentHeader.split(";"); //$NON-NLS-1$
 					if (fr.length > 0) {
 						String attrURI = fr[0];
@@ -227,8 +227,8 @@ public class ModelAssembler {
 	void activate(BundleContext bundleContext) {
 		this.bundleContext = bundleContext;
 
-		this.tracker = new BundleTracker<>(bundleContext,
-				Bundle.STARTING | Bundle.ACTIVE | Bundle.STOPPING, new ModelFragmentBundleTracker());
+		this.tracker = new BundleTracker<>(bundleContext, Bundle.STARTING | Bundle.ACTIVE | Bundle.STOPPING,
+				new ModelFragmentBundleTracker());
 	}
 
 	@Deactivate
@@ -307,7 +307,7 @@ public class ModelAssembler {
 	 * Extension points will be sorted based on the dependencies of their
 	 * contributors.
 	 *
-	 * @param initial     <code>true</code> if running from a non-persisted state
+	 * @param initial <code>true</code> if running from a non-persisted state
 	 */
 	@Execute
 	public void processModel(boolean initial) {
@@ -352,9 +352,9 @@ public class ModelAssembler {
 					}
 					for (MModelFragment fragment : fragmentsContainer.getFragments()) {
 						boolean checkExist = !initial && NOTEXISTS.equals(ce.getAttribute("apply")); //$NON-NLS-1$
-						wrappers.add(new ModelFragmentWrapper(fragmentsContainer, fragment,
-								ce.getContributor().getName(), URIHelper.constructPlatformURI(ce.getContributor()),
-								checkExist)); // $NON-NLS-1$
+						wrappers.add(
+								new ModelFragmentWrapper(fragmentsContainer, fragment, ce.getContributor().getName(),
+										URIHelper.constructPlatformURI(ce.getContributor()), checkExist)); // $NON-NLS-1$
 					}
 				}
 			}
@@ -370,8 +370,8 @@ public class ModelAssembler {
 			// once the initial tracking is done we process the tracked bundles
 			// this is for performance optimization on initial loading to avoid multiple
 			// fragment merge operations
-			List<ModelFragmentWrapper> collect = this.tracker.getTracked().values().stream()
-					.flatMap(List::stream).map(w -> w.wrapper).collect(Collectors.toList());
+			List<ModelFragmentWrapper> collect = this.tracker.getTracked().values().stream().flatMap(List::stream)
+					.map(w -> w.wrapper).collect(Collectors.toList());
 			wrappers.addAll(collect);
 		}
 
@@ -380,7 +380,7 @@ public class ModelAssembler {
 
 	private List<ModelFragmentWrapper> getModelFragmentWrapperFromBundle(Bundle bundle, boolean initial) {
 		List<ModelFragmentWrapper> wrappers = new ArrayList<>();
-		String fragmentHeader = bundle.getHeaders("").get(MODEL_FRAGMENT_HEADER); //$NON-NLS-1$
+		String fragmentHeader = bundle.getHeaders(Util.ZERO_LENGTH_STRING).get(MODEL_FRAGMENT_HEADER);
 		String[] fr = fragmentHeader.split(";"); //$NON-NLS-1$
 		if (fr.length > 0) {
 			String uri = fr[0];
@@ -501,8 +501,8 @@ public class ModelAssembler {
 	public void processFragment(MModelFragments fragmentsContainer, MModelFragment fragment, String contributorName,
 			String contributorURI, boolean checkExist) {
 		/**
-		 * The application elements that were added by the given
-		 * IConfigurationElement to the application model
+		 * The application elements that were added by the given IConfigurationElement
+		 * to the application model
 		 */
 		List<MApplicationElement> addedElements = new ArrayList<>();
 
@@ -513,9 +513,8 @@ public class ModelAssembler {
 		Diagnostic validationResult = Diagnostician.INSTANCE.validate((EObject) fragment);
 		int severity = validationResult.getSeverity();
 		if (severity == Diagnostic.ERROR) {
-			log(LogLevel.ERROR,
-					"Fragment from {} of {} could not be validated and was not merged: " //$NON-NLS-1$
-							+ fragment, contributorURI, contributorName);
+			log(LogLevel.ERROR, "Fragment from {} of {} could not be validated and was not merged: " //$NON-NLS-1$
+					+ fragment, contributorURI, contributorName);
 		}
 
 		List<MApplicationElement> merged = processModelFragment(fragment, contributorURI, checkExist);
@@ -526,7 +525,7 @@ public class ModelAssembler {
 			log(LogLevel.DEBUG, "Nothing to merge for fragment {} of {}", contributorURI, //$NON-NLS-1$
 					contributorName);
 		}
-		if (evalImports && fragmentsContainer.getImports().size() > 0) {
+		if (evalImports && !fragmentsContainer.getImports().isEmpty()) {
 			resolveImports(fragmentsContainer.getImports(), addedElements);
 		}
 	}

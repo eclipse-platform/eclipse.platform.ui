@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulableOperation;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
@@ -317,8 +317,8 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 		IWorkspaceRunnable runnable= monitor -> {
 			boolean reverseIsInitialized= false;
 			try {
-				monitor.beginTask("", 11); //$NON-NLS-1$
-				result.validationStatus= fActiveChange.isValid(new SubProgressMonitor(monitor, 2));
+				SubMonitor subMon= SubMonitor.convert(pm, 12);
+				result.validationStatus= fActiveChange.isValid(subMon.newChild(2));
 				if (result.validationStatus.hasFatalError()) {
 					query.stopped(result.validationStatus);
 					// no need to dispose here. The framework disposes
@@ -329,7 +329,7 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 					return;
 				}
 				try {
-					result.reverseChange= fActiveChange.perform(new SubProgressMonitor(monitor, 9));
+					result.reverseChange= fActiveChange.perform(subMon.newChild(9));
 					result.changeExecuted= true;
 				} finally {
 					ResourcesPlugin.getWorkspace().checkpoint(false);
@@ -337,7 +337,7 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 				fActiveChange.dispose();
 				if (result.reverseChange != null) {
 					result.reverseChange.initializeValidationData(new NotCancelableProgressMonitor(
-						new SubProgressMonitor(monitor, 1)));
+							subMon.newChild(1)));
 					reverseIsInitialized= true;
 				}
 			} catch (CoreException | RuntimeException e) {

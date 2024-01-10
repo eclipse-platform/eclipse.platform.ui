@@ -1163,7 +1163,6 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 		 * @return the mappings
 		 */
 		public FileEditorMapping[] allMappings() {
-			@SuppressWarnings("unchecked")
 			HashMap<String, FileEditorMapping> merge = (HashMap<String, FileEditorMapping>) defaultMap.clone();
 			merge.putAll(map);
 			Collection<FileEditorMapping> values = merge.values();

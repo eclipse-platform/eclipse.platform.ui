@@ -17,13 +17,13 @@ import org.eclipse.jdt.internal.corext.template.java.AbstractJavaContextType;
 import org.eclipse.jdt.internal.corext.template.java.IJavaContext;
 
 /**
- * The context type for templates inside e4 code.
- * The same class is used for several context types:
- * <dl>
+ * The context type for templates inside e4 code. The same class is used for
+ * several context types:
+ * <ul>
  * <li>templates for all Java code locations</li>
  * <li>templates for member locations</li>
  * <li>templates for statement locations</li>
- * </dl>
+ * </ul>
  */
 @SuppressWarnings("restriction")
 public class E4ContextType extends AbstractJavaContextType {

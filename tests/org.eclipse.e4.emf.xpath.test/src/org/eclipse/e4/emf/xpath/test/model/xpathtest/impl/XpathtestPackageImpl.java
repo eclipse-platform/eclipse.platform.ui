@@ -15,12 +15,10 @@ import org.eclipse.e4.emf.xpath.test.model.xpathtest.Node;
 import org.eclipse.e4.emf.xpath.test.model.xpathtest.Root;
 import org.eclipse.e4.emf.xpath.test.model.xpathtest.XpathtestFactory;
 import org.eclipse.e4.emf.xpath.test.model.xpathtest.XpathtestPackage;
-
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
-
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 /**
@@ -121,7 +119,8 @@ public class XpathtestPackageImpl extends EPackageImpl implements XpathtestPacka
 		if (isInited) return (XpathtestPackage)EPackage.Registry.INSTANCE.getEPackage(XpathtestPackage.eNS_URI);
 
 		// Obtain or create and register package
-		XpathtestPackageImpl theXpathtestPackage = (XpathtestPackageImpl)(EPackage.Registry.INSTANCE.get(eNS_URI) instanceof XpathtestPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI) : new XpathtestPackageImpl());
+		Object registeredXpathtestPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
+		XpathtestPackageImpl theXpathtestPackage = registeredXpathtestPackage instanceof XpathtestPackageImpl ? (XpathtestPackageImpl)registeredXpathtestPackage : new XpathtestPackageImpl();
 
 		isInited = true;
 
@@ -133,7 +132,6 @@ public class XpathtestPackageImpl extends EPackageImpl implements XpathtestPacka
 
 		// Mark meta-data to indicate it can't be changed
 		theXpathtestPackage.freeze();
-
 
 		// Update the registry and return the package
 		EPackage.Registry.INSTANCE.put(XpathtestPackage.eNS_URI, theXpathtestPackage);

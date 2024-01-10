@@ -149,7 +149,8 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	protected IDialogSettings getDialogBoundsSettings() {
 		Bundle bundle = WorkbenchPlugin.getDefault().getBundle();
 		IDialogSettings settings = PlatformUI.getDialogSettingsProvider(bundle).getDialogSettings();
-		return DialogSettings.getOrCreateSection(settings, getClass().getSimpleName());
+		String name = getClass().getSimpleName() + ".dialogBounds"; //$NON-NLS-1$
+		return DialogSettings.getOrCreateSection(settings, name);
 	}
 
 }

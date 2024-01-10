@@ -129,9 +129,10 @@ public class PopupMenuImpl extends MenuImpl implements MPopupMenu {
 	public void setContext(IEclipseContext newContext) {
 		IEclipseContext oldContext = context;
 		context = newContext;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.POPUP_MENU__CONTEXT, oldContext,
 					context));
+		}
 	}
 
 	/**
@@ -190,10 +191,11 @@ public class PopupMenuImpl extends MenuImpl implements MPopupMenu {
 		case MenuPackageImpl.POPUP_MENU__VARIABLES:
 			return getVariables();
 		case MenuPackageImpl.POPUP_MENU__PROPERTIES:
-			if (coreType)
+			if (coreType) {
 				return ((EMap.InternalMapView<String, String>) getProperties()).eMap();
-			else
+			} else {
 				return getProperties();
+			}
 		default:
 			return super.eGet(featureID, resolve, coreType);
 		}
@@ -318,8 +320,9 @@ public class PopupMenuImpl extends MenuImpl implements MPopupMenu {
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (context: "); //$NON-NLS-1$

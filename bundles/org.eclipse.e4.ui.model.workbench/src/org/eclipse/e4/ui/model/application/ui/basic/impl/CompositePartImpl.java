@@ -140,9 +140,10 @@ public class CompositePartImpl extends PartImpl implements MCompositePart {
 			InternalEObject oldSelectedElement = (InternalEObject) selectedElement;
 			selectedElement = (MPartSashContainerElement) eResolveProxy(oldSelectedElement);
 			if (selectedElement != oldSelectedElement) {
-				if (eNotificationRequired())
+				if (eNotificationRequired()) {
 					eNotify(new ENotificationImpl(this, Notification.RESOLVE,
 							BasicPackageImpl.COMPOSITE_PART__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
+				}
 			}
 		}
 		return selectedElement;
@@ -166,9 +167,10 @@ public class CompositePartImpl extends PartImpl implements MCompositePart {
 	public void setSelectedElement(MPartSashContainerElement newSelectedElement) {
 		MPartSashContainerElement oldSelectedElement = selectedElement;
 		selectedElement = newSelectedElement;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.COMPOSITE_PART__SELECTED_ELEMENT,
 					oldSelectedElement, selectedElement));
+		}
 	}
 
 	/**
@@ -190,9 +192,10 @@ public class CompositePartImpl extends PartImpl implements MCompositePart {
 	public void setHorizontal(boolean newHorizontal) {
 		boolean oldHorizontal = horizontal;
 		horizontal = newHorizontal;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.COMPOSITE_PART__HORIZONTAL,
 					oldHorizontal, horizontal));
+		}
 	}
 
 	/**
@@ -237,8 +240,9 @@ public class CompositePartImpl extends PartImpl implements MCompositePart {
 		case BasicPackageImpl.COMPOSITE_PART__CHILDREN:
 			return getChildren();
 		case BasicPackageImpl.COMPOSITE_PART__SELECTED_ELEMENT:
-			if (resolve)
+			if (resolve) {
 				return getSelectedElement();
+			}
 			return basicGetSelectedElement();
 		case BasicPackageImpl.COMPOSITE_PART__HORIZONTAL:
 			return isHorizontal();
@@ -377,8 +381,9 @@ public class CompositePartImpl extends PartImpl implements MCompositePart {
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (horizontal: "); //$NON-NLS-1$

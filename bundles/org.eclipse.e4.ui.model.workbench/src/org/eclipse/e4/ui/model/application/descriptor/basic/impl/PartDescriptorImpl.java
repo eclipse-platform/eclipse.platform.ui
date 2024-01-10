@@ -414,9 +414,10 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 	public void setLabel(String newLabel) {
 		String oldLabel = label;
 		label = newLabel;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART_DESCRIPTOR__LABEL, oldLabel,
 					label));
+		}
 	}
 
 	/**
@@ -440,9 +441,10 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 	public void setIconURI(String newIconURI) {
 		String oldIconURI = iconURI;
 		iconURI = newIconURI;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART_DESCRIPTOR__ICON_URI,
 					oldIconURI, iconURI));
+		}
 	}
 
 	/**
@@ -466,9 +468,10 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 	public void setTooltip(String newTooltip) {
 		String oldTooltip = tooltip;
 		tooltip = newTooltip;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART_DESCRIPTOR__TOOLTIP, oldTooltip,
 					tooltip));
+		}
 	}
 
 	/**
@@ -538,9 +541,10 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 	public void setAllowMultiple(boolean newAllowMultiple) {
 		boolean oldAllowMultiple = allowMultiple;
 		allowMultiple = newAllowMultiple;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART_DESCRIPTOR__ALLOW_MULTIPLE,
 					oldAllowMultiple, allowMultiple));
+		}
 	}
 
 	/**
@@ -562,9 +566,10 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 	public void setCategory(String newCategory) {
 		String oldCategory = category;
 		category = newCategory;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART_DESCRIPTOR__CATEGORY,
 					oldCategory, category));
+		}
 	}
 
 	/**
@@ -601,10 +606,11 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 		if (eNotificationRequired()) {
 			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET,
 					BasicPackageImpl.PART_DESCRIPTOR__TOOLBAR, oldToolbar, newToolbar);
-			if (msgs == null)
+			if (msgs == null) {
 				msgs = notification;
-			else
+			} else {
 				msgs.add(notification);
+			}
 		}
 		return msgs;
 	}
@@ -618,18 +624,22 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 	public void setToolbar(MToolBar newToolbar) {
 		if (newToolbar != toolbar) {
 			NotificationChain msgs = null;
-			if (toolbar != null)
+			if (toolbar != null) {
 				msgs = ((InternalEObject) toolbar).eInverseRemove(this,
 						EOPPOSITE_FEATURE_BASE - BasicPackageImpl.PART_DESCRIPTOR__TOOLBAR, null, msgs);
-			if (newToolbar != null)
+			}
+			if (newToolbar != null) {
 				msgs = ((InternalEObject) newToolbar).eInverseAdd(this,
 						EOPPOSITE_FEATURE_BASE - BasicPackageImpl.PART_DESCRIPTOR__TOOLBAR, null, msgs);
+			}
 			msgs = basicSetToolbar(newToolbar, msgs);
-			if (msgs != null)
+			if (msgs != null) {
 				msgs.dispatch();
-		} else if (eNotificationRequired())
+			}
+		} else if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART_DESCRIPTOR__TOOLBAR, newToolbar,
 					newToolbar));
+		}
 	}
 
 	/**
@@ -651,9 +661,10 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 	public void setCloseable(boolean newCloseable) {
 		boolean oldCloseable = closeable;
 		closeable = newCloseable;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART_DESCRIPTOR__CLOSEABLE,
 					oldCloseable, closeable));
+		}
 	}
 
 	/**
@@ -681,9 +692,10 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 	public void setDirtyable(boolean newDirtyable) {
 		boolean oldDirtyable = dirtyable;
 		dirtyable = newDirtyable;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART_DESCRIPTOR__DIRTYABLE,
 					oldDirtyable, dirtyable));
+		}
 	}
 
 	/**
@@ -705,9 +717,10 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 	public void setContributionURI(String newContributionURI) {
 		String oldContributionURI = contributionURI;
 		contributionURI = newContributionURI;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART_DESCRIPTOR__CONTRIBUTION_URI,
 					oldContributionURI, contributionURI));
+		}
 	}
 
 	/**
@@ -729,9 +742,10 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 	public void setDescription(String newDescription) {
 		String oldDescription = description;
 		description = newDescription;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART_DESCRIPTOR__DESCRIPTION,
 					oldDescription, description));
+		}
 	}
 
 	/**
@@ -872,10 +886,11 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 		case BasicPackageImpl.PART_DESCRIPTOR__VARIABLES:
 			return getVariables();
 		case BasicPackageImpl.PART_DESCRIPTOR__PROPERTIES:
-			if (coreType)
+			if (coreType) {
 				return ((EMap.InternalMapView<String, String>) getProperties()).eMap();
-			else
+			} else {
 				return getProperties();
+			}
 		case BasicPackageImpl.PART_DESCRIPTOR__TRIM_BARS:
 			return getTrimBars();
 		default:
@@ -1224,8 +1239,9 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (label: "); //$NON-NLS-1$

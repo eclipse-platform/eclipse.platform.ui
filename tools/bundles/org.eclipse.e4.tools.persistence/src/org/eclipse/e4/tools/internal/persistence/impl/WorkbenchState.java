@@ -127,10 +127,11 @@ public class WorkbenchState extends MinimalEObjectImpl.Container implements IWor
 		if (eNotificationRequired()) {
 			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET,
 					IPersistencePackage.WORKBENCH_STATE__PERSPECTIVE, oldPerspective, newPerspective);
-			if (msgs == null)
+			if (msgs == null) {
 				msgs = notification;
-			else
+			} else {
 				msgs.add(notification);
+			}
 		}
 		return msgs;
 	}
@@ -144,18 +145,22 @@ public class WorkbenchState extends MinimalEObjectImpl.Container implements IWor
 	public void setPerspective(MPerspective newPerspective) {
 		if (newPerspective != perspective) {
 			NotificationChain msgs = null;
-			if (perspective != null)
+			if (perspective != null) {
 				msgs = ((InternalEObject) perspective).eInverseRemove(this,
 						EOPPOSITE_FEATURE_BASE - IPersistencePackage.WORKBENCH_STATE__PERSPECTIVE, null, msgs);
-			if (newPerspective != null)
+			}
+			if (newPerspective != null) {
 				msgs = ((InternalEObject) newPerspective).eInverseAdd(this,
 						EOPPOSITE_FEATURE_BASE - IPersistencePackage.WORKBENCH_STATE__PERSPECTIVE, null, msgs);
+			}
 			msgs = basicSetPerspective(newPerspective, msgs);
-			if (msgs != null)
+			if (msgs != null) {
 				msgs.dispatch();
-		} else if (eNotificationRequired())
+			}
+		} else if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, IPersistencePackage.WORKBENCH_STATE__PERSPECTIVE,
 					newPerspective, newPerspective));
+		}
 	}
 
 	/**
@@ -193,10 +198,11 @@ public class WorkbenchState extends MinimalEObjectImpl.Container implements IWor
 		if (eNotificationRequired()) {
 			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET,
 					IPersistencePackage.WORKBENCH_STATE__EDITOR_AREA, oldEditorArea, newEditorArea);
-			if (msgs == null)
+			if (msgs == null) {
 				msgs = notification;
-			else
+			} else {
 				msgs.add(notification);
+			}
 		}
 		return msgs;
 	}
@@ -210,18 +216,22 @@ public class WorkbenchState extends MinimalEObjectImpl.Container implements IWor
 	public void setEditorArea(MArea newEditorArea) {
 		if (newEditorArea != editorArea) {
 			NotificationChain msgs = null;
-			if (editorArea != null)
+			if (editorArea != null) {
 				msgs = ((InternalEObject) editorArea).eInverseRemove(this,
 						EOPPOSITE_FEATURE_BASE - IPersistencePackage.WORKBENCH_STATE__EDITOR_AREA, null, msgs);
-			if (newEditorArea != null)
+			}
+			if (newEditorArea != null) {
 				msgs = ((InternalEObject) newEditorArea).eInverseAdd(this,
 						EOPPOSITE_FEATURE_BASE - IPersistencePackage.WORKBENCH_STATE__EDITOR_AREA, null, msgs);
+			}
 			msgs = basicSetEditorArea(newEditorArea, msgs);
-			if (msgs != null)
+			if (msgs != null) {
 				msgs.dispatch();
-		} else if (eNotificationRequired())
+			}
+		} else if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, IPersistencePackage.WORKBENCH_STATE__EDITOR_AREA,
 					newEditorArea, newEditorArea));
+		}
 	}
 
 	/**

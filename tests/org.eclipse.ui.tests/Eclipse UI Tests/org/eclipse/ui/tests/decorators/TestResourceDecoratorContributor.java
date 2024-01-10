@@ -16,7 +16,9 @@ package org.eclipse.ui.tests.decorators;
 import org.eclipse.core.resources.IResource;
 
 public class TestResourceDecoratorContributor extends TestAdaptableDecoratorContributor {
+	@SuppressWarnings("hiding")
 	public static final String SUFFIX = "IResource.1";
+	@SuppressWarnings("hiding")
 	public static final String ID = "org.eclipse.ui.tests.decorators.resourceDescorator";
 	public TestResourceDecoratorContributor() {
 		setExpectedElementType(IResource.class);

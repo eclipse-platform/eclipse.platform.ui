@@ -145,7 +145,8 @@ public class ResourceMgmtActionProvider extends CommonActionProvider {
 			buildAction.selectionChanged(selection);
 			menu.appendToGroup(ICommonMenuConstants.GROUP_BUILD, buildAction);
 		}
-		if (!hasClosedProjects) {
+		// To refresh, even if one project is open
+		if (hasOpenProjects) {
 			refreshAction.selectionChanged(selection);
 			menu.appendToGroup(ICommonMenuConstants.GROUP_BUILD, refreshAction);
 		}

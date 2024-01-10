@@ -362,7 +362,6 @@ public class PerspectiveBuilder {
 		if (!(element instanceof MPartSashContainer || element instanceof MPartStack)) {
 			return;
 		}
-		@SuppressWarnings("unchecked")
 		MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) element;
 		List<MUIElement> children = container.getChildren();
 		if (container.getSelectedElement() == null && !children.isEmpty()) {

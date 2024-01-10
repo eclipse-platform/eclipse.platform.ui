@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.pde.api.tools.annotations.NoExtend;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
@@ -44,8 +45,8 @@ import org.eclipse.swt.widgets.Display;
  * Unlike the FontRegistry, it is an error to replace images. As a result
  * there are no events that fire when values are changed in the registry
  * </p>
- * @noextend This class is not intended to be subclassed by clients.
  */
+@NoExtend
 public class ImageRegistry {
 	/**
 	 * display used when getting images

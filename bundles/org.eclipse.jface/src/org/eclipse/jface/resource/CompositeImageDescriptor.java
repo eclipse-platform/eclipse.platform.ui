@@ -17,6 +17,7 @@ package org.eclipse.jface.resource;
 import java.util.Objects;
 import java.util.function.ToIntFunction;
 
+import org.eclipse.pde.api.tools.annotations.NoExtend;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageDataProvider;
@@ -48,8 +49,8 @@ public abstract class CompositeImageDescriptor extends ImageDescriptor {
 	 * @see #createCachedImageDataProvider(ImageDescriptor)
 	 *
 	 * @since 3.13
-	 * @noextend This class is not intended to be subclassed by clients.
 	 */
+	@NoExtend
 	protected abstract class CachedImageDataProvider implements ImageDataProvider {
 		/**
 		 * Returns the {@link ImageData#width} in points. This method must only

@@ -81,8 +81,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 					// Keep looking if it is not in the cache.
 					IContentProvider contentProvider = getContentProvider();
 					// If we are building lazily then request lookup now
-					if (contentProvider instanceof ILazyContentProvider) {
-						ILazyContentProvider lazyProvider = (ILazyContentProvider) contentProvider;
+					if (contentProvider instanceof ILazyContentProvider lazyProvider) {
 						if (!isBusy()) {
 							lazyProvider.updateElement(index);
 						} else {
@@ -350,9 +349,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		boolean oldBusy = isBusy();
 		setBusy(true);
 		try {
-			if (widget instanceof Item) {
-				final Item item = (Item) widget;
-
+			if (widget instanceof Item item) {
 				// remember element we are showing
 				if (fullMap) {
 					associate(element, item);
@@ -487,8 +484,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 
 		List<Object> result = new ArrayList<>();
 		int[] selectionIndices = doGetSelectionIndices();
-		if (getContentProvider() instanceof ILazyContentProvider) {
-			ILazyContentProvider lazy = (ILazyContentProvider) getContentProvider();
+		if (getContentProvider() instanceof ILazyContentProvider lazy) {
 			for (int selectionIndex : selectionIndices) {
 				lazy.updateElement(selectionIndex);// Start the update
 				// check for the case where the content provider changed the number of items
@@ -770,8 +766,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 				if (index != -1) {
 					indices[count++] = index;
 				}
-			} else if (w instanceof Item) {
-				Item item = (Item) w;
+			} else if (w instanceof Item item) {
 				disassociate(item);
 				indices[count++] = doIndexOf(item);
 			}
@@ -879,8 +874,8 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 			}
 		}
 
-		if (w instanceof Item) {
-			doShowItem((Item) w);
+		if (w instanceof Item item) {
+			doShowItem(item);
 		}
 	}
 
@@ -905,8 +900,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 			for (int i = 0; i < size; ++i) {
 				Object o = list.get(i);
 				Widget w = findItem(o);
-				if (w instanceof Item) {
-					Item item = (Item) w;
+				if (w instanceof Item item) {
 					items[count++] = item;
 				}
 			}
@@ -944,7 +938,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 						&& getLastElement() instanceof ExpandableNode expNode) {
 
 					// extract only non found items already.
-					List<Object> notFoundItems = new ArrayList<Object>(list);
+					List<Object> notFoundItems = new ArrayList<>(list);
 					for (int index : indices) {
 						notFoundItems.remove(doGetItem(index).getData());
 					}
@@ -986,8 +980,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		for (int i = 0; i < size; ++i) {
 			Object o = list.get(i);
 			Widget w = findItem(o);
-			if (w instanceof Item) {
-				Item item = (Item) w;
+			if (w instanceof Item item) {
 				indices[count++] = doIndexOf(item);
 				if (firstItem == null) {
 					firstItem = item;
@@ -997,15 +990,13 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 			}
 		}
 
-		if (getContentProvider() instanceof ILazyContentProvider) {
-			ILazyContentProvider provider = (ILazyContentProvider) getContentProvider();
-
+		if (getContentProvider() instanceof ILazyContentProvider provider) {
 			// Now go through it again until all is done or we are no longer
 			// virtual
 			// This may create all items so it is not a good
 			// idea in general.
 			// Use #setSelection (int [] indices,boolean reveal) instead
-			for (int i = 0; virtualElements.size() > 0 && i < doGetItemCount(); i++) {
+			for (int i = 0; !virtualElements.isEmpty() && i < doGetItemCount(); i++) {
 				provider.updateElement(i);
 				Item item = doGetItem(i);
 				if (virtualElements.contains(item.getData())) {

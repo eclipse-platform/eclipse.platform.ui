@@ -90,6 +90,7 @@ public class RefactoringHistoryServiceTests {
 			fLastEvent= null;
 		}
 
+		@SuppressWarnings("incomplete-switch")
 		@Override
 		public void executionNotification(RefactoringExecutionEvent event) {
 			int previous= fLastEvent != null ? fLastEvent.getEventType() : -1;

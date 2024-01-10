@@ -26,6 +26,7 @@ import org.eclipse.ui.views.properties.PropertyShowInContext;
  */
 public class TestNewPropertySheetHandler extends NewPropertySheetHandler {
 
+	@SuppressWarnings("hiding")
 	public static final String ID = NewPropertySheetHandler.ID + "Test";
 
 	@Override

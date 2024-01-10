@@ -102,7 +102,6 @@ public class WorkbenchProperties {
 	 *
 	 * @return an observable value
 	 */
-	@SuppressWarnings("unchecked")
 	public static <S extends ISelectionService, T> IValueProperty<S, T> singleSelection(String partId,
 			boolean postSelection) {
 		return (IValueProperty<S, T>) singleSelection(partId, postSelection, Object.class);
@@ -131,7 +130,6 @@ public class WorkbenchProperties {
 	 *
 	 * @return an observable value
 	 */
-	@SuppressWarnings("unchecked")
 	public static <S extends ISelectionService, E> IListProperty<S, E> multipleSelection() {
 		return (IListProperty<S, E>) multipleSelection(Object.class);
 	}
@@ -160,7 +158,6 @@ public class WorkbenchProperties {
 	 *
 	 * @return an observable value
 	 */
-	@SuppressWarnings("unchecked")
 	public static <S extends ISelectionService, E> IListProperty<S, E> multipleSelection(String partId,
 			boolean postSelection) {
 		return (IListProperty<S, E>) multipleSelection(partId, postSelection, Object.class);

@@ -78,8 +78,8 @@ abstract class AbstractMultiSelectionHandler extends AbstractHandler {
 	public abstract void execute() throws ExecutionException;
 
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		if (initFrom(event)) {
+	public Object execute(ExecutionEvent executionEvent) throws ExecutionException {
+		if (initFrom(executionEvent)) {
 			execute();
 		}
 		return null;
@@ -341,8 +341,8 @@ abstract class AbstractMultiSelectionHandler extends AbstractHandler {
 		return document.getLineOffset(lineNo) + document.getLineInformation(lineNo).getLength();
 	}
 
-	private boolean initFrom(ExecutionEvent event) {
-		this.event = event;
+	private boolean initFrom(ExecutionEvent executionEvent) {
+		this.event = executionEvent;
 		initTextEditor();
 		if (textEditor == null)
 			return false;

@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.pde.api.tools.annotations.NoExtend;
 
 /**
  * The expandable placeholder element to be used for viewer items that represent
@@ -34,9 +35,8 @@ import org.eclipse.jface.viewers.TableViewer;
  * The node consists of a parent element, list of all children of this parent
  * and the offset to which child elements are supposed to be created and shown
  * in the viewer.
- *
- * @noextend This class is not intended to be subclassed by clients.
  */
+@NoExtend
 public class ExpandableNode {
 
 	/**
@@ -92,7 +92,7 @@ public class ExpandableNode {
 	 * this node up to this offset (but not including it). In other worlds, this is
 	 * the index of first invisible element under this node.
 	 *
-	 * {@return current offset in the original list of elements}
+	 * @return current offset in the original list of elements
 	 */
 	public int getOffset() {
 		return startOffSet;
@@ -109,8 +109,8 @@ public class ExpandableNode {
 	 * This method returns those children of the current node which are supposed to
 	 * be not created / shown yet in the viewer.
 	 *
-	 * {@return all remaining elements from original array starting with the element
-	 * at offset index}
+	 * @return all remaining elements from original array starting with the element
+	 *         at offset index
 	 */
 	public Object[] getRemainingElements() {
 		if (addedElements.size() > 0) {

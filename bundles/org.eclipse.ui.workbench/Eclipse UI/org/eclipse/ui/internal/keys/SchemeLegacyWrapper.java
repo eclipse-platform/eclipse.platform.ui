@@ -21,7 +21,7 @@ import org.eclipse.ui.commands.NotDefinedException;
 
 /**
  * A wrapper around the new {@link Scheme} class, providing supported for the
- * old {@link IKeyConfiguration} interface.
+ * old {@code IKeyConfiguration} interface.
  *
  * @since 3.1
  */

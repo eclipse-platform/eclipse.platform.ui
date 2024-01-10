@@ -12,5 +12,9 @@ Export-Package: org.eclipse.ui.internal.monitoring;x-internal:=true,
  org.eclipse.ui.monitoring;x-internal:=true
 Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.29.0,4.0.0)",
  org.eclipse.jface;bundle-version="[3.10.0,4.0.0)",
- org.eclipse.ui;bundle-version="[3.106.0,4.0.0)"
+ org.eclipse.ui;bundle-version="[3.106.0,4.0.0)",
+ org.eclipse.e4.ui.workbench;bundle-version="[1.15.300,2.0.0)"
+Service-Component: OSGI-INF/org.eclipse.ui.internal.monitoring.MonitoringStartup.xml
 Automatic-Module-Name: org.eclipse.ui.monitoring
+Import-Package: org.osgi.service.event;version="[1.4.0,2.0.0)",
+ org.osgi.service.event.propertytypes;version="[1.4.0,2.0.0)"

@@ -116,9 +116,10 @@ public abstract class ContributionImpl extends ApplicationElementImpl implements
 	public void setContributionURI(String newContributionURI) {
 		String oldContributionURI = contributionURI;
 		contributionURI = newContributionURI;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.CONTRIBUTION__CONTRIBUTION_URI,
 					oldContributionURI, contributionURI));
+		}
 	}
 
 	/**
@@ -140,9 +141,10 @@ public abstract class ContributionImpl extends ApplicationElementImpl implements
 	public void setObject(Object newObject) {
 		Object oldObject = object;
 		object = newObject;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.CONTRIBUTION__OBJECT,
 					oldObject, object));
+		}
 	}
 
 	/**
@@ -227,8 +229,9 @@ public abstract class ContributionImpl extends ApplicationElementImpl implements
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (contributionURI: "); //$NON-NLS-1$

@@ -54,7 +54,6 @@ class SelectionServiceListener<S, D extends IDiff>
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		// Note that the part is not the same object as the selection service, but it is

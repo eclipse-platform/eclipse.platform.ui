@@ -28,7 +28,7 @@ public class E4UndoRedoTestPart {
 		handlerService.activateHandler(ActionFactory.REDO.getCommandId(), new Handler("Redo"));
 	}
 
-	private class Handler {
+	private static class Handler {
 
 		private final String type;
 

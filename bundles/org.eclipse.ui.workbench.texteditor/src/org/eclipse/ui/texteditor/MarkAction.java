@@ -52,6 +52,7 @@ public class MarkAction extends TextEditorAction {
 		fType= type;
 	}
 
+	@SuppressWarnings("incomplete-switch")
 	@Override
 	public void run() {
 

@@ -484,7 +484,6 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 	 *
 	 * @return Collection of StatusAdapters
 	 */
-	@SuppressWarnings("unchecked")
 	private Collection<StatusAdapter> getErrors() {
 		return (Collection<StatusAdapter>) dialogState.get(IStatusDialogConstants.STATUS_ADAPTERS);
 	}

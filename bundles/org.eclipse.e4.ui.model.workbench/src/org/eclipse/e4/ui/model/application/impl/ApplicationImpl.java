@@ -323,9 +323,10 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	public void setContext(IEclipseContext newContext) {
 		IEclipseContext oldContext = context;
 		context = newContext;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.APPLICATION__CONTEXT,
 					oldContext, context));
+		}
 	}
 
 	/**
@@ -606,10 +607,11 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 		case ApplicationPackageImpl.APPLICATION__VARIABLES:
 			return getVariables();
 		case ApplicationPackageImpl.APPLICATION__PROPERTIES:
-			if (coreType)
+			if (coreType) {
 				return ((EMap.InternalMapView<String, String>) getProperties()).eMap();
-			else
+			} else {
 				return getProperties();
+			}
 		case ApplicationPackageImpl.APPLICATION__HANDLERS:
 			return getHandlers();
 		case ApplicationPackageImpl.APPLICATION__BINDING_TABLES:
@@ -1013,8 +1015,9 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (context: "); //$NON-NLS-1$

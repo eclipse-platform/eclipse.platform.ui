@@ -72,7 +72,6 @@ import org.junit.Test;
 import org.osgi.service.log.LogEntry;
 import org.osgi.service.log.LogListener;
 
-@SuppressWarnings("nls")
 public class ModelAssemblerTests {
 	private static final String EXTENSION_POINT_ID = "org.eclipse.e4.workbench.model";
 	private static final String BUNDLE_SYMBOLIC_NAME = "org.eclipse.e4.ui.tests";

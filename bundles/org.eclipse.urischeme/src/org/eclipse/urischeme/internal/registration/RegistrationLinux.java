@@ -22,7 +22,6 @@ import org.eclipse.urischeme.IOperatingSystemRegistration;
 import org.eclipse.urischeme.IScheme;
 import org.eclipse.urischeme.ISchemeInformation;
 
-@SuppressWarnings("javadoc")
 public class RegistrationLinux implements IOperatingSystemRegistration {
 
 	private static final String DEFAULT_PRODUCT_NAME = "Eclipse SDK"; //$NON-NLS-1$

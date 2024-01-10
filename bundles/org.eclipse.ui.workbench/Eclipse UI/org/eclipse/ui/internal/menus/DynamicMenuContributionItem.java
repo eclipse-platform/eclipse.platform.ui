@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,11 +10,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Christoph Läubrich - handle runtime exceptions produced by dynamic contribution
  ******************************************************************************/
 
 package org.eclipse.ui.internal.menus;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IContributionManager;
@@ -32,7 +34,6 @@ import org.eclipse.ui.services.IServiceLocator;
  * <p>
  * It currently supports placement in menus.
  * </p>
- * <p>
  *
  * @author Prakash G.R.
  *
@@ -62,7 +63,11 @@ public class DynamicMenuContributionItem extends ContributionItem {
 	@Override
 	public boolean isDynamic() {
 		if (loadedDynamicContribution != null) {
-			return loadedDynamicContribution.isDynamic();
+			try {
+				return loadedDynamicContribution.isDynamic();
+			} catch (RuntimeException e) {
+				reportErrorForContribution(loadedDynamicContribution, e);
+			}
 		}
 		return true;
 	}
@@ -70,7 +75,11 @@ public class DynamicMenuContributionItem extends ContributionItem {
 	@Override
 	public boolean isDirty() {
 		if (loadedDynamicContribution != null) {
-			return loadedDynamicContribution.isDirty();
+			try {
+				return loadedDynamicContribution.isDirty();
+			} catch (RuntimeException e) {
+				reportErrorForContribution(loadedDynamicContribution, e);
+			}
 		}
 		return super.isDirty();
 	}
@@ -78,7 +87,11 @@ public class DynamicMenuContributionItem extends ContributionItem {
 	@Override
 	public boolean isEnabled() {
 		if (loadedDynamicContribution != null) {
-			return loadedDynamicContribution.isEnabled();
+			try {
+				return loadedDynamicContribution.isEnabled();
+			} catch (RuntimeException e) {
+				reportErrorForContribution(loadedDynamicContribution, e);
+			}
 		}
 		return super.isEnabled();
 	}
@@ -86,7 +99,11 @@ public class DynamicMenuContributionItem extends ContributionItem {
 	@Override
 	public boolean isGroupMarker() {
 		if (loadedDynamicContribution != null) {
-			return loadedDynamicContribution.isGroupMarker();
+			try {
+				return loadedDynamicContribution.isGroupMarker();
+			} catch (RuntimeException e) {
+				reportErrorForContribution(loadedDynamicContribution, e);
+			}
 		}
 		return super.isGroupMarker();
 	}
@@ -94,7 +111,11 @@ public class DynamicMenuContributionItem extends ContributionItem {
 	@Override
 	public boolean isSeparator() {
 		if (loadedDynamicContribution != null) {
-			return loadedDynamicContribution.isSeparator();
+			try {
+				return loadedDynamicContribution.isSeparator();
+			} catch (RuntimeException e) {
+				reportErrorForContribution(loadedDynamicContribution, e);
+			}
 		}
 		return super.isSeparator();
 	}
@@ -102,7 +123,11 @@ public class DynamicMenuContributionItem extends ContributionItem {
 	@Override
 	public boolean isVisible() {
 		if (loadedDynamicContribution != null) {
-			return loadedDynamicContribution.isVisible();
+			try {
+				return loadedDynamicContribution.isVisible();
+			} catch (RuntimeException e) {
+				reportErrorForContribution(loadedDynamicContribution, e);
+			}
 		}
 		return super.isVisible();
 	}
@@ -110,7 +135,11 @@ public class DynamicMenuContributionItem extends ContributionItem {
 	@Override
 	public void saveWidgetState() {
 		if (loadedDynamicContribution != null) {
-			loadedDynamicContribution.saveWidgetState();
+			try {
+				loadedDynamicContribution.saveWidgetState();
+			} catch (RuntimeException e) {
+				reportErrorForContribution(loadedDynamicContribution, e);
+			}
 		}
 		super.saveWidgetState();
 	}
@@ -118,7 +147,11 @@ public class DynamicMenuContributionItem extends ContributionItem {
 	@Override
 	public void setVisible(boolean visible) {
 		if (loadedDynamicContribution != null) {
-			loadedDynamicContribution.setVisible(visible);
+			try {
+				loadedDynamicContribution.setVisible(visible);
+			} catch (RuntimeException e) {
+				reportErrorForContribution(loadedDynamicContribution, e);
+			}
 		}
 		super.setVisible(visible);
 	}
@@ -126,29 +159,49 @@ public class DynamicMenuContributionItem extends ContributionItem {
 	@Override
 	public void fill(Composite parent) {
 		IContributionItem contributionItem = getContributionItem();
-		if (contributionItem != null)
-			contributionItem.fill(parent);
+		if (contributionItem != null) {
+			try {
+				contributionItem.fill(parent);
+			} catch (RuntimeException e) {
+				reportErrorForContribution(contributionItem, e);
+			}
+		}
 	}
 
 	@Override
 	public void fill(CoolBar parent, int index) {
 		IContributionItem contributionItem = getContributionItem();
-		if (contributionItem != null)
-			contributionItem.fill(parent, index);
+		if (contributionItem != null){
+			try {
+				contributionItem.fill(parent, index);
+			} catch (RuntimeException e) {
+				reportErrorForContribution(contributionItem, e);
+			}
+		}
 	}
 
 	@Override
 	public void fill(Menu menu, int index) {
 		IContributionItem contributionItem = getContributionItem();
-		if (contributionItem != null)
-			contributionItem.fill(menu, index);
+		if (contributionItem != null) {
+			try {
+				contributionItem.fill(menu, index);
+			} catch (RuntimeException e) {
+				reportErrorForContribution(contributionItem, e);
+			}
+		}
 	}
 
 	@Override
 	public void fill(ToolBar parent, int index) {
 		IContributionItem contributionItem = getContributionItem();
-		if (contributionItem != null)
-			contributionItem.fill(parent, index);
+		if (contributionItem != null) {
+			try {
+				contributionItem.fill(parent, index);
+			} catch (RuntimeException e) {
+				reportErrorForContribution(contributionItem, e);
+			}
+		}
 	}
 
 	private IContributionItem getContributionItem() {
@@ -177,7 +230,11 @@ public class DynamicMenuContributionItem extends ContributionItem {
 	@Override
 	public void dispose() {
 		if (loadedDynamicContribution != null) {
-			loadedDynamicContribution.dispose();
+			try {
+				loadedDynamicContribution.dispose();
+			} catch (RuntimeException e) {
+				reportErrorForContribution(loadedDynamicContribution, e);
+			}
 			loadedDynamicContribution = null;
 		}
 		super.dispose();
@@ -186,14 +243,22 @@ public class DynamicMenuContributionItem extends ContributionItem {
 	@Override
 	public void update() {
 		if (loadedDynamicContribution != null) {
-			loadedDynamicContribution.update();
+			try {
+				loadedDynamicContribution.update();
+			} catch (RuntimeException e) {
+				reportErrorForContribution(loadedDynamicContribution, e);
+			}
 		}
 	}
 
 	@Override
 	public void update(String id) {
 		if (loadedDynamicContribution != null) {
-			loadedDynamicContribution.update(id);
+			try {
+				loadedDynamicContribution.update(id);
+			} catch (RuntimeException e) {
+				reportErrorForContribution(loadedDynamicContribution, e);
+			}
 		}
 	}
 
@@ -201,8 +266,18 @@ public class DynamicMenuContributionItem extends ContributionItem {
 	public void setParent(IContributionManager parent) {
 		super.setParent(parent);
 		if (loadedDynamicContribution != null) {
-			loadedDynamicContribution.setParent(parent);
+			try {
+				loadedDynamicContribution.setParent(parent);
+			} catch (RuntimeException e) {
+				reportErrorForContribution(loadedDynamicContribution, e);
+			}
 		}
+	}
+
+	private static void reportErrorForContribution(IContributionItem contributionItem, RuntimeException e) {
+		String message = String.format("Dynamic menu contribution '%s' threw an unexpected exception", //$NON-NLS-1$
+				contributionItem);
+		ILog.get().error(message, e);
 	}
 
 }

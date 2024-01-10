@@ -299,7 +299,7 @@ public class E4PickList extends AbstractPickList {
 		return ((ObservableListContentProvider<?>) viewer.getContentProvider()).getElements(viewer.getInput()).length;
 	}
 
-	private class TableViewerEditorActivationStrategy extends ColumnViewerEditorActivationStrategy {
+	private static class TableViewerEditorActivationStrategy extends ColumnViewerEditorActivationStrategy {
 
 		public TableViewerEditorActivationStrategy(ColumnViewer viewer) {
 			super(viewer);

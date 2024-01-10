@@ -653,6 +653,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 
 		private IUndoableOperation fOperation;
 
+		@SuppressWarnings("incomplete-switch")
 		@Override
 		public void historyNotification(final OperationHistoryEvent event) {
 			final int type= event.getEventType();

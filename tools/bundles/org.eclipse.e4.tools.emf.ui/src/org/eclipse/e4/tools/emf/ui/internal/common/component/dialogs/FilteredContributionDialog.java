@@ -95,6 +95,7 @@ import org.eclipse.swt.widgets.Text;
  *
  * @author Steven Spungin
  */
+@SuppressWarnings("restriction") // uses org.eclipse.pde.internal
 public abstract class FilteredContributionDialog extends SaveDialogBoundsSettingsDialog {
 
 	private static final int MAX_RESULTS = 500;

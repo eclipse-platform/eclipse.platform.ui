@@ -16,9 +16,8 @@ package org.eclipse.ltk.core.refactoring.resource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -96,70 +95,56 @@ public class MoveResourceChange extends ResourceChange {
 
 	@Override
 	public final Change perform(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
-		try {
-			if (monitor == null)
-				monitor= new NullProgressMonitor();
+		SubMonitor subMonitor= SubMonitor.convert(monitor, getName(), 4);
 
-			monitor.beginTask(getName(), 4);
+		Change deleteUndo= null;
 
-			Change deleteUndo= null;
-
-			// delete destination if required
-			IResource resourceAtDestination= fTarget.findMember(fSource.getName());
-			if (resourceAtDestination != null && resourceAtDestination.exists()) {
-				deleteUndo= performDestinationDelete(resourceAtDestination, new SubProgressMonitor(monitor, 1));
-			} else {
-				monitor.worked(1);
-			}
-
-			// move resource
-			long currentStamp= fSource.getModificationStamp();
-			IPath destinationPath= fTarget.getFullPath().append(fSource.getName());
-			fSource.move(destinationPath, IResource.KEEP_HISTORY | IResource.SHALLOW, new SubProgressMonitor(monitor, 2));
-			resourceAtDestination= ResourcesPlugin.getWorkspace().getRoot().findMember(destinationPath);
-
-			// restore timestamp at destination
-			if (fStampToRestore != IResource.NULL_STAMP) {
-				resourceAtDestination.revertModificationStamp(fStampToRestore);
-			}
-
-			// restore file at source
-			if (fRestoreSourceChange != null) {
-				performSourceRestore(new SubProgressMonitor(monitor, 1));
-			} else {
-				monitor.worked(1);
-			}
-			return new MoveResourceChange(resourceAtDestination, fSource.getParent(), currentStamp, deleteUndo);
-		} finally {
-			monitor.done();
+		// delete destination if required
+		IResource resourceAtDestination= fTarget.findMember(fSource.getName());
+		if (resourceAtDestination != null && resourceAtDestination.exists()) {
+			deleteUndo= performDestinationDelete(resourceAtDestination, subMonitor.newChild(1));
+		} else {
+			subMonitor.worked(1);
 		}
+
+		// move resource
+		long currentStamp= fSource.getModificationStamp();
+		IPath destinationPath= fTarget.getFullPath().append(fSource.getName());
+		fSource.move(destinationPath, IResource.KEEP_HISTORY | IResource.SHALLOW, subMonitor.newChild(2));
+		resourceAtDestination= ResourcesPlugin.getWorkspace().getRoot().findMember(destinationPath);
+
+		// restore timestamp at destination
+		if (fStampToRestore != IResource.NULL_STAMP) {
+			resourceAtDestination.revertModificationStamp(fStampToRestore);
+		}
+
+		// restore file at source
+		if (fRestoreSourceChange != null) {
+			performSourceRestore(subMonitor.newChild(1));
+		} else {
+			subMonitor.worked(1);
+		}
+		return new MoveResourceChange(resourceAtDestination, fSource.getParent(), currentStamp, deleteUndo);
+
 	}
 
 	private Change performDestinationDelete(IResource newResource, IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask(RefactoringCoreMessages.MoveResourceChange_progress_delete_destination, 3);
-		try {
-			DeleteResourceChange deleteChange= new DeleteResourceChange(newResource.getFullPath(), true);
-			deleteChange.initializeValidationData(new SubProgressMonitor(monitor, 1));
-			RefactoringStatus deleteStatus= deleteChange.isValid(new SubProgressMonitor(monitor, 1));
-			if (!deleteStatus.hasFatalError()) {
-				return deleteChange.perform(new SubProgressMonitor(monitor, 1));
-			}
-			return null;
-		} finally {
-			monitor.done();
+		SubMonitor subMonitor= SubMonitor.convert(monitor, RefactoringCoreMessages.MoveResourceChange_progress_delete_destination, 3);
+		DeleteResourceChange deleteChange= new DeleteResourceChange(newResource.getFullPath(), true);
+		deleteChange.initializeValidationData(subMonitor.newChild(1));
+		RefactoringStatus deleteStatus= deleteChange.isValid(subMonitor.newChild(1));
+		if (!deleteStatus.hasFatalError()) {
+			return deleteChange.perform(subMonitor.newChild(1));
 		}
+		return null;
 	}
 
 	private void performSourceRestore(IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask(RefactoringCoreMessages.MoveResourceChange_progress_restore_source, 3);
-		try {
-			fRestoreSourceChange.initializeValidationData(new SubProgressMonitor(monitor, 1));
-			RefactoringStatus restoreStatus= fRestoreSourceChange.isValid(new SubProgressMonitor(monitor, 1));
-			if (!restoreStatus.hasFatalError()) {
-				fRestoreSourceChange.perform(new SubProgressMonitor(monitor, 1));
-			}
-		} finally {
-			monitor.done();
+		SubMonitor subMonitor= SubMonitor.convert(monitor, RefactoringCoreMessages.MoveResourceChange_progress_restore_source, 3);
+		fRestoreSourceChange.initializeValidationData(subMonitor.newChild(1));
+		RefactoringStatus restoreStatus= fRestoreSourceChange.isValid(subMonitor.newChild(1));
+		if (!restoreStatus.hasFatalError()) {
+			fRestoreSourceChange.perform(subMonitor.newChild(1));
 		}
 	}
 

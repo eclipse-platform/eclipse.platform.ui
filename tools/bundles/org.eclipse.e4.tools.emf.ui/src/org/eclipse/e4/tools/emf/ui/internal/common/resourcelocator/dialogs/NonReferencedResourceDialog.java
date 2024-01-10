@@ -23,7 +23,9 @@ import java.io.InputStream;
 import java.util.jar.Manifest;
 import java.util.zip.ZipFile;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -39,7 +41,6 @@ import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
-import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -404,6 +405,16 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 		return result;
 	}
 
+	public static void createFolder(IFolder folder) throws CoreException {
+		if (!folder.exists()) {
+			IContainer parent = folder.getParent();
+			if (parent instanceof IFolder) {
+				createFolder((IFolder) parent);
+			}
+			folder.create(true, true, null);
+		}
+	}
+
 	public void copyResourceToProject(IProject project) {
 		try {
 			final ProjectFolderPickerDialog dlg = new ProjectFolderPickerDialog(getShell(), project, file.getFullPath()
@@ -423,7 +434,7 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 				// file).getContributionData().className + ".class";
 				IPath newPath = IPath.fromOSString(dlg.getValue());
 				if (newPath.isEmpty() == false) {
-					CoreUtility.createFolder(project.getFolder(newPath));
+					createFolder(project.getFolder(newPath));
 				}
 				if (className != null) {
 					newPath.append(className + ".class"); //$NON-NLS-1$

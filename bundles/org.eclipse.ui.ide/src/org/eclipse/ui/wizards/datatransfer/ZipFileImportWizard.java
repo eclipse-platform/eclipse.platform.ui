@@ -100,8 +100,8 @@ public class ZipFileImportWizard extends Wizard implements IImportWizard {
 	}
 
 	@Override
-	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
-		this.workbench = workbench;
+	public void init(IWorkbench currentWorkbench, IStructuredSelection currentSelection) {
+		this.workbench = currentWorkbench;
 		this.selection = currentSelection;
 		List<IResource> selectedResources = IDE.computeSelectedResources(currentSelection);
 		if (!selectedResources.isEmpty()) {

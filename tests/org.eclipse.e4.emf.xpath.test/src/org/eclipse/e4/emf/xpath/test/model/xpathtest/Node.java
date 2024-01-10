@@ -15,6 +15,7 @@ import org.eclipse.emf.common.util.EList;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.emf.xpath.test.model.xpathtest.Node#getParent <em>Parent</em>}</li>
  *   <li>{@link org.eclipse.e4.emf.xpath.test.model.xpathtest.Node#getChildren <em>Children</em>}</li>
@@ -25,7 +26,6 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link org.eclipse.e4.emf.xpath.test.model.xpathtest.Node#getInrefs <em>Inrefs</em>}</li>
  *   <li>{@link org.eclipse.e4.emf.xpath.test.model.xpathtest.Node#getOutrefs <em>Outrefs</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.eclipse.e4.emf.xpath.test.model.xpathtest.XpathtestPackage#getNode()
  * @model

@@ -276,6 +276,7 @@ final class DisplayWaiter {
 	 * @param delay the delay from now in milliseconds
 	 * @return the timeout state which can be queried for its timed out status
 	 */
+	@SuppressWarnings("incomplete-switch")
 	public Timeout start(long delay) {
 		Assert.assertTrue(delay > 0);
 		synchronized (fMutex) {
@@ -316,6 +317,7 @@ final class DisplayWaiter {
 	 * @param delay the delay from now in milliseconds
 	 * @return the timeout state which can be queried for its timed out status
 	 */
+	@SuppressWarnings("incomplete-switch")
 	public Timeout restart(long delay) {
 		Assert.assertTrue(delay > 0);
 		synchronized (fMutex) {

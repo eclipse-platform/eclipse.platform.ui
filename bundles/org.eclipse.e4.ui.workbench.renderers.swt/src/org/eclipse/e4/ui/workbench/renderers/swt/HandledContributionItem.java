@@ -90,7 +90,6 @@ public class HandledContributionItem extends AbstractContributionItem {
 
 	@Inject
 	@Optional
-	@SuppressWarnings("restriction")
 	private ICommandHelpService commandHelpService;
 
 	private Runnable unreferenceRunnable;
@@ -389,7 +388,6 @@ public class HandledContributionItem extends AbstractContributionItem {
 	}
 
 	@Override
-	@SuppressWarnings("restriction")
 	protected void handleHelpRequest() {
 		if(helpService==null)
 			return;

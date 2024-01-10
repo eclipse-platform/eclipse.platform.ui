@@ -39,6 +39,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.jface.internal.XmlProcessorFactoryJFace;
+import org.eclipse.pde.api.tools.annotations.NoExtend;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -70,9 +71,8 @@ import org.xml.sax.SAXException;
  * settings.save("c:\\temp\\test\\dialog.xml");
  * </code>
  * </pre>
- * @noextend This class is not intended to be subclassed by clients.
  */
-
+@NoExtend
 public class DialogSettings implements IDialogSettings {
 	// The name of the DialogSettings.
 	private String name;

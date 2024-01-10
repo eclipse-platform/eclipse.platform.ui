@@ -36,6 +36,7 @@ import org.eclipse.search.core.text.TextSearchRequestor;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.text.FileMatch;
 import org.eclipse.search.internal.ui.text.FileSearchQuery;
+import org.eclipse.search.internal.ui.text.LineElement;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.FileTextSearchScope;
 
@@ -72,7 +73,8 @@ public class LineBasedFileSearch extends FileSearchQuery  {
 				int startLine= doc.getLineOfOffset(matchRequestor.getMatchOffset());
 				int endLine= doc.getLineOfOffset(matchRequestor.getMatchOffset() + matchRequestor.getMatchLength());
 				synchronized(fLock) {
-					fResult.addMatch(new FileMatch(file, startLine, endLine - startLine + 1, null));
+					LineElement element= new LineElement(matchRequestor.getFile(), startLine, 0, "");
+					fResult.addMatch(new FileMatch(file, startLine, endLine - startLine + 1, element));
 				}
 			} catch (BadLocationException e) {
 				throw new CoreException(new Status(IStatus.ERROR, SearchPlugin.getID(), IStatus.ERROR, "bad location", e));
@@ -80,7 +82,7 @@ public class LineBasedFileSearch extends FileSearchQuery  {
 			return true;
 		}
 
-		private IDocument getDocument(IFile file) throws CoreException {
+		private synchronized IDocument getDocument(IFile file) throws CoreException {
 			if (file.equals(fLastFile)) {
 				return fLastDocument;
 			}

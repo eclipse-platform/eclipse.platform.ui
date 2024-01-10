@@ -137,7 +137,7 @@ public class PositionTrackerTest {
 
 			for (int i= 0; i < originalStarts.length; i++) {
 				Position currentPosition= InternalSearchUI.getInstance().getPositionTracker().getCurrentPosition(matches[i]);
-				assertNotNull(currentPosition);
+				assertNotNull("null position for match: " + matches[i], currentPosition);
 				assertEquals(originalStarts[i] + "Test".length(), currentPosition.getOffset());
 
 			}

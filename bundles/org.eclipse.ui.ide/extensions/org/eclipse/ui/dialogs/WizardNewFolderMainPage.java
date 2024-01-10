@@ -62,6 +62,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Resource;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -69,6 +70,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.dialogs.UIResourceFilterDescription;
@@ -605,22 +607,32 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 	}
 
 	private void disposeAdvancedControls() {
-		if (linkedResourceComposite != null) {
-			linkedResourceComposite.dispose();
-			linkedResourceComposite = null;
-			filterButton.dispose();
-			useDefaultLocation.dispose();
-			useVirtualFolder.dispose();
-			useLinkedResource.dispose();
-			linkedGroupComposite.dispose();
-			folderImage.dispose();
-			virtualFolderImage.dispose();
-			linkedFolderImage.dispose();
-			filterButton = null;
-			useDefaultLocation = null;
-			useVirtualFolder = null;
-			useLinkedResource = null;
-			linkedGroupComposite = null;
+		dispose(linkedResourceComposite);
+		dispose(filterButton);
+		dispose(useDefaultLocation);
+		dispose(useVirtualFolder);
+		dispose(useLinkedResource);
+		dispose(linkedGroupComposite);
+		dispose(folderImage);
+		dispose(virtualFolderImage);
+		dispose(linkedFolderImage);
+		linkedResourceComposite = null;
+		filterButton = null;
+		useDefaultLocation = null;
+		useVirtualFolder = null;
+		useLinkedResource = null;
+		linkedGroupComposite = null;
+	}
+
+	private void dispose(Resource resource) {
+		if (resource != null) {
+			resource.dispose();
+		}
+	}
+
+	private void dispose(Widget widget) {
+		if (widget != null) {
+			widget.dispose();
 		}
 	}
 

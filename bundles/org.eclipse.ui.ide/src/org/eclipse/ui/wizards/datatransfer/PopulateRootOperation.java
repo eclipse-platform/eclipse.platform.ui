@@ -64,15 +64,15 @@ public class PopulateRootOperation extends SelectFilesOperation {
 	 */
 	protected FileSystemElement createElement(FileSystemElement parent,
 			Object fileSystemObject, int depth) throws InterruptedException {
-		ModalContext.checkCanceled(monitor);
+		ModalContext.checkCanceled(currentMonitor);
 		boolean isContainer = provider.isFolder(fileSystemObject);
 		String elementLabel = parent == null ? provider
 				.getFullPath(fileSystemObject) : provider
 				.getLabel(fileSystemObject);
 
-		MinimizedFileSystemElement result = new MinimizedFileSystemElement(
+		MinimizedFileSystemElement createdElement = new MinimizedFileSystemElement(
 				elementLabel, parent, isContainer);
-		result.setFileSystemObject(fileSystemObject);
+		createdElement.setFileSystemObject(fileSystemObject);
 
 		if (isContainer) {
 			if (depth > 0) {
@@ -82,13 +82,13 @@ public class PopulateRootOperation extends SelectFilesOperation {
 				}
 				Iterator childrenEnum = children.iterator();
 				while (childrenEnum.hasNext()) {
-					createElement(result, childrenEnum.next(), depth - 1);
+					createElement(createdElement, childrenEnum.next(), depth - 1);
 				}
-				result.setPopulated();
+				createdElement.setPopulated();
 			}
 
 		}
 
-		return result;
+		return createdElement;
 	}
 }

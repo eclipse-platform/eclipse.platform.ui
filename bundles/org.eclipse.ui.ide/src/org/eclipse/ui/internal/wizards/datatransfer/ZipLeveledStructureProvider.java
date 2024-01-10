@@ -205,7 +205,7 @@ public class ZipLeveledStructureProvider implements
 			getZipFile().close();
 		} catch (IOException e) {
 			IDEWorkbenchPlugin.log(DataTransferMessages.ZipImport_couldNotClose
-					+ getZipFile().getName(), e);
+					+ zipFile.getName(), e);
 			return false;
 		}
 		return true;

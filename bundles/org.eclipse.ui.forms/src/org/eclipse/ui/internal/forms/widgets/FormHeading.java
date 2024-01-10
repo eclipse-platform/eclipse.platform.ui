@@ -194,7 +194,7 @@ public class FormHeading extends Canvas {
 						|| hasMessageRegion())
 					totalFlexWidth -= SPACING;
 				// subtract tool bar
-				if (hasToolBar() && getToolBarAlignment() == SWT.TOP)
+				if (hasToolBar() && getToolBarAlignment() == SWT.TOP && tbsize != null)
 					totalFlexWidth -= tbsize.x + SPACING;
 				flexWidth = totalFlexWidth;
 				if (hasMessageRegion()) {
@@ -292,16 +292,16 @@ public class FormHeading extends Canvas {
 				int xloc = x;
 				int yloc = y + VMARGIN;
 				int row1Height = tsize.y;
-				if (hasMessageRegion())
+				if (hasMessageRegion() && msize != null)
 					row1Height = Math.max(row1Height, msize.y);
-				if (hasToolBar() && getToolBarAlignment() == SWT.TOP)
+				if (hasToolBar() && getToolBarAlignment() == SWT.TOP && tbsize != null)
 					row1Height = Math.max(row1Height, tbsize.y);
 				titleRegion.setBounds(xloc,
 				// yloc + row1Height / 2 - tsize.y / 2,
 						yloc, tsize.x, tsize.y);
 				xloc += tsize.x;
 
-				if (hasMessageRegion()) {
+				if (hasMessageRegion() && msize != null) {
 					xloc += SPACING;
 					int messageOffset = 0;
 					if (tsize.y > 0) {
@@ -342,7 +342,7 @@ public class FormHeading extends Canvas {
 							tbsize.x, tbsize.y);
 					tw = tbsize.x + SPACING;
 				}
-				if (headClient != null) {
+				if (headClient != null && clsize != null) {
 					int carea = width - HMARGIN * 2 - tw;
 					headClient.setBounds(xloc, yloc, carea, clsize.y);
 				}

@@ -95,7 +95,16 @@ public class CommandEditor extends AbstractComponentEditor<MCommand> {
 
 	@Override
 	public Image getImage(Object element) {
-		return getImage(element, ResourceProvider.IMG_Command);
+		Image result = null;
+
+		if (element instanceof MCommand command) {
+			result = getImageFromIconURI(command.getCommandIconURI(), shouldBeGrey(command));
+		}
+
+		if (result == null) {
+			result = getImage(element, ResourceProvider.IMG_Command);
+		}
+		return result;
 	}
 
 	@Override

@@ -43,7 +43,6 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.internal.core.JavaProject;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -94,8 +93,9 @@ public class ExportIdsHandler {
 			this.pool = pool;
 
 			clazz = new JavaClass();
-
-			if (JavaProject.hasJavaNature(project)) {
+			@SuppressWarnings("restriction")
+			boolean hasJavaNature = org.eclipse.jdt.internal.core.JavaProject.hasJavaNature(project);
+			if (hasJavaNature) {
 				try {
 					IJavaProject javaProject = JavaCore.create(project);
 					for (IPackageFragmentRoot iPackageFragmentRoot : javaProject.getAllPackageFragmentRoots()) {

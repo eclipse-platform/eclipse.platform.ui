@@ -25,11 +25,11 @@ public class MockActionDelegate implements IWorkbenchWindowActionDelegate {
 
 	public static final String ACTION_SET_ID = "org.eclipse.ui.tests.api.MockActionSet";
 
-	public static MockActionDelegate lastDelegate;
+	public static MockActionDelegate lastMockActionDelegate;
 
 	public MockActionDelegate() {
 		callHistory = new CallHistory(this);
-		lastDelegate = this;
+		lastMockActionDelegate = this;
 	}
 
 	/*

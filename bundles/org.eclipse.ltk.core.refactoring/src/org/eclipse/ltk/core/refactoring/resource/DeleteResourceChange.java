@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -120,66 +120,58 @@ public class DeleteResourceChange extends ResourceChange {
 
 	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
-		if (pm == null)
-			pm= new NullProgressMonitor();
+		SubMonitor subMonitor= SubMonitor.convert(pm, RefactoringCoreMessages.DeleteResourceChange_deleting, 10);
 
-		pm.beginTask("", 10); //$NON-NLS-1$
-		pm.setTaskName(RefactoringCoreMessages.DeleteResourceChange_deleting);
-
-		try {
-			IResource resource= getResource();
-			if (resource == null || !resource.exists()) {
-				if (fDeleteContent)
-					return null; // see https://bugs.eclipse.org/343584
-				String message= Messages.format(RefactoringCoreMessages.DeleteResourceChange_error_resource_not_exists, BasicElementLabels.getPathLabel(fResourcePath.makeRelative(), false));
-				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), message));
-			}
-
-			// make sure all files inside the resource are saved so restoring works
-			if (resource.isAccessible()) {
-				resource.accept((IResourceVisitor) curr -> {
-					try {
-						if (curr instanceof IFile) {
-							// progress is covered outside.
-							saveFileIfNeeded((IFile) curr, new NullProgressMonitor());
-						}
-					} catch (CoreException e) {
-						// ignore
-					}
-					return true;
-				}, IResource.DEPTH_INFINITE, false);
-			}
-
-			ResourceUndoState desc= ResourceUndoState.fromResource(resource);
-			if (resource instanceof IProject) {
-				((IProject) resource).delete(fDeleteContent, fForceOutOfSync, new SubProgressMonitor(pm, 10));
-			} else {
-				int updateFlags;
-				if (fForceOutOfSync) {
-					updateFlags= IResource.KEEP_HISTORY | IResource.FORCE;
-				} else {
-					updateFlags= IResource.KEEP_HISTORY;
-				}
-				resource.delete(updateFlags, new SubProgressMonitor(pm, 5));
-				desc.recordStateFromHistory(resource, new SubProgressMonitor(pm, 5));
-			}
-			return new UndoDeleteResourceChange(desc);
-		} finally {
-			pm.done();
+		IResource resource= getResource();
+		if (resource == null || !resource.exists()) {
+			if (fDeleteContent)
+				return null; // see https://bugs.eclipse.org/343584
+			String message= Messages.format(RefactoringCoreMessages.DeleteResourceChange_error_resource_not_exists, BasicElementLabels.getPathLabel(fResourcePath.makeRelative(), false));
+			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), message));
 		}
+
+		// make sure all files inside the resource are saved so restoring works
+		if (resource.isAccessible()) {
+			resource.accept((IResourceVisitor) curr -> {
+				try {
+					if (curr instanceof IFile) {
+						// progress is covered outside.
+						saveFileIfNeeded((IFile) curr, new NullProgressMonitor());
+					}
+				} catch (CoreException e) {
+					// ignore
+				}
+				return true;
+			}, IResource.DEPTH_INFINITE, false);
+		}
+
+		ResourceUndoState desc= ResourceUndoState.fromResource(resource);
+		if (resource instanceof IProject) {
+			((IProject) resource).delete(fDeleteContent, fForceOutOfSync,subMonitor.newChild(10));
+		} else {
+			int updateFlags;
+			if (fForceOutOfSync) {
+				updateFlags= IResource.KEEP_HISTORY | IResource.FORCE;
+			} else {
+				updateFlags= IResource.KEEP_HISTORY;
+			}
+			resource.delete(updateFlags, subMonitor.newChild(5));
+			desc.recordStateFromHistory(resource, subMonitor.newChild(5));
+		}
+		return new UndoDeleteResourceChange(desc);
+
 	}
 
 	private static void saveFileIfNeeded(IFile file, IProgressMonitor pm) throws CoreException {
 		ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);
+		SubMonitor subMonitor= SubMonitor.convert(pm, 2);
 		if (buffer != null && buffer.isDirty() && buffer.isStateValidated() && buffer.isSynchronized()) {
-			pm.beginTask("", 2); //$NON-NLS-1$
-			buffer.commit(new SubProgressMonitor(pm, 1), false);
-			file.refreshLocal(IResource.DEPTH_ONE, new SubProgressMonitor(pm, 1));
-			pm.done();
+			buffer.commit(subMonitor.newChild(1), false);
+			file.refreshLocal(IResource.DEPTH_ONE, subMonitor.newChild(1));
+			buffer.commit(subMonitor.newChild(1), false);
+			file.refreshLocal(IResource.DEPTH_ONE, subMonitor.newChild(1));
 		} else {
-			pm.beginTask("", 1); //$NON-NLS-1$
-			pm.worked(1);
-			pm.done();
+			subMonitor.worked(2);
 		}
 	}
 

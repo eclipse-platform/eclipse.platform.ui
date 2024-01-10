@@ -244,6 +244,7 @@ public class RefactoringStatusEntry {
 	 *
 	 * @since 3.2
 	 */
+	@SuppressWarnings("incomplete-switch")
 	public IStatus toStatus() {
 		int statusSeverity= IStatus.ERROR;
 		switch (getSeverity()) {

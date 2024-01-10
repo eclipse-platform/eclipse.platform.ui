@@ -86,10 +86,11 @@ public abstract class ToolItemImpl extends ItemImpl implements MToolItem {
 		if (eNotificationRequired()) {
 			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET,
 					MenuPackageImpl.TOOL_ITEM__MENU, oldMenu, newMenu);
-			if (msgs == null)
+			if (msgs == null) {
 				msgs = notification;
-			else
+			} else {
 				msgs.add(notification);
+			}
 		}
 		return msgs;
 	}
@@ -103,17 +104,21 @@ public abstract class ToolItemImpl extends ItemImpl implements MToolItem {
 	public void setMenu(MMenu newMenu) {
 		if (newMenu != menu) {
 			NotificationChain msgs = null;
-			if (menu != null)
+			if (menu != null) {
 				msgs = ((InternalEObject) menu).eInverseRemove(this,
 						EOPPOSITE_FEATURE_BASE - MenuPackageImpl.TOOL_ITEM__MENU, null, msgs);
-			if (newMenu != null)
+			}
+			if (newMenu != null) {
 				msgs = ((InternalEObject) newMenu).eInverseAdd(this,
 						EOPPOSITE_FEATURE_BASE - MenuPackageImpl.TOOL_ITEM__MENU, null, msgs);
+			}
 			msgs = basicSetMenu(newMenu, msgs);
-			if (msgs != null)
+			if (msgs != null) {
 				msgs.dispatch();
-		} else if (eNotificationRequired())
+			}
+		} else if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.TOOL_ITEM__MENU, newMenu, newMenu));
+		}
 	}
 
 	/**

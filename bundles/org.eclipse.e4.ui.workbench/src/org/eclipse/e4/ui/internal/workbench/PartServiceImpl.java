@@ -453,7 +453,7 @@ public class PartServiceImpl implements EPartService {
 	@Override
 	public MPart findPart(String id) {
 		List<MPart> parts = getParts(MPart.class, id);
-		return parts.size() > 0 ? parts.get(0) : null;
+		return parts.isEmpty() ? null : parts.get(0);
 	}
 
 	private <T> List<T> getParts(Class<T> cls, String id) {
@@ -868,7 +868,7 @@ public class PartServiceImpl implements EPartService {
 		if (!force) {
 			int colonIndex = id.indexOf(':');
 			if (colonIndex >= 0) {
-				String remId = ""; //$NON-NLS-1$
+				String remId = Util.ZERO_LENGTH_STRING;
 				try {
 					remId = id.substring(colonIndex + 1);
 				} catch (StringIndexOutOfBoundsException e) {
@@ -1020,7 +1020,7 @@ public class PartServiceImpl implements EPartService {
 				} else {
 					// Find the first visible stack in the area
 					List<MPartStack> sharedStacks = modelService.findElements(area, null, MPartStack.class);
-					if (sharedStacks.size() > 0) {
+					if (!sharedStacks.isEmpty()) {
 						for (MPartStack stack : sharedStacks) {
 							if (stack.isToBeRendered()) {
 								stack.getChildren().add(providedPart);
@@ -1042,6 +1042,7 @@ public class PartServiceImpl implements EPartService {
 					addToLastContainer(category, providedPart);
 				} else {
 					// add the part to the container
+					@SuppressWarnings("unchecked")
 					MElementContainer<MPartSashContainerElement> container = containers.get(0);
 					MPlaceholder placeholder = providedPart.getCurSharedRef();
 					if (placeholder == null) {
@@ -1084,7 +1085,7 @@ public class PartServiceImpl implements EPartService {
 			descId += ":*"; //$NON-NLS-1$
 			List<MPlaceholder> phList = modelService.findElements(workbenchWindow, descId,
 					MPlaceholder.class, null, EModelService.PRESENTATION);
-			if (phList.size() > 0) {
+			if (!phList.isEmpty()) {
 				MUIElement phParent = phList.get(0).getParent();
 				if (phParent instanceof MPartStack) {
 					MPartStack theStack = (MPartStack) phParent;

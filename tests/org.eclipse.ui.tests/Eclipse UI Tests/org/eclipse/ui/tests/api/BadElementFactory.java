@@ -29,13 +29,14 @@ public class BadElementFactory implements IElementFactory {
 	/**
 	 * Set to cause the factory to fail.
 	 */
-	public static boolean fail = false;
+	public static boolean shouldFailOnCreateElement = false;
 
 
 	/**
-	 * Set to true when {@link #createElement(IMemento)} is called while fail is true.
+	 * Set to true when {@link #createElement(IMemento)} is called while
+	 * shouldFailOnCreateElement fail is true.
 	 */
-	public static boolean failAttempted = false;
+	public static boolean elementCreationAttemptedWhileShouldFail = false;
 
 	public static class BadElementInstance implements IAdaptable,
 			IPersistableElement {
@@ -43,13 +44,14 @@ public class BadElementFactory implements IElementFactory {
 		/**
 		 * Set to cause save to fail.
 		 */
-		public static boolean fail = false;
+		public static boolean shouldSaveFail = false;
 
 
 		/**
-		 * Set to true when {@link #saveState(IMemento)} is called while fail is true.
+		 * Set to true when {@link #saveState(IMemento)} is called while shouldSaveFail
+		 * is true.
 		 */
-		public static boolean failAttempted = false;
+		public static boolean saveAttemptedWhileShouldFail = false;
 
 
 		@SuppressWarnings("unchecked")
@@ -68,8 +70,8 @@ public class BadElementFactory implements IElementFactory {
 
 		@Override
 		public void saveState(IMemento memento) {
-			if (fail) {
-				failAttempted = true;
+			if (shouldSaveFail) {
+				saveAttemptedWhileShouldFail = true;
 				throw new RuntimeException();
 			}
 
@@ -79,8 +81,8 @@ public class BadElementFactory implements IElementFactory {
 
 	@Override
 	public IAdaptable createElement(IMemento memento) {
-		if (fail) {
-			failAttempted = true;
+		if (shouldFailOnCreateElement) {
+			elementCreationAttemptedWhileShouldFail = true;
 			throw new RuntimeException();
 		}
 		return new BadElementInstance();

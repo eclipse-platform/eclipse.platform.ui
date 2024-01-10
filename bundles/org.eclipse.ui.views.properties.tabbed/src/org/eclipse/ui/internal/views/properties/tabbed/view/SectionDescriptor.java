@@ -193,6 +193,7 @@ public class SectionDescriptor extends AbstractSectionDescriptor {
 	 *
 	 * @see org.eclipse.ui.views.properties.tabbed.ISectionDescriptor#getInputTypes()
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	public List getInputTypes() {
 		if (inputTypes == null) {

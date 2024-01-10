@@ -16,7 +16,6 @@ package org.eclipse.urischeme.internal.registration;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-@SuppressWarnings("javadoc")
 public class Util {
 	/**
 	 * Checks if the given uriScheme is a valid uri scheme. Uses the {@link URI}

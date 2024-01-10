@@ -110,7 +110,7 @@ public class LocaleChangeServiceImpl implements ILocaleChangeService {
 	 * @param children
 	 *            The list of {@link MUIElement}s that should be checked for Locale updates.
 	 */
-	@SuppressWarnings({ "rawtypes" })
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected void updateLocalization(List<? extends MUIElement> children) {
 		for (MUIElement element : children) {
 			if (element instanceof MElementContainer) {

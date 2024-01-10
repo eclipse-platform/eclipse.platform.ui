@@ -15,14 +15,15 @@
 package org.eclipse.jface.action;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.pde.api.tools.annotations.NoExtend;
 
 /**
  * Abstract superclass for group marker classes.
  * <p>
  * This class is not intended to be subclassed outside the framework.
  * </p>
- * @noextend This class is not intended to be subclassed by clients.
  */
+@NoExtend
 public abstract class AbstractGroupMarker extends ContributionItem {
 	/**
 	 * Constructor for use by subclasses.

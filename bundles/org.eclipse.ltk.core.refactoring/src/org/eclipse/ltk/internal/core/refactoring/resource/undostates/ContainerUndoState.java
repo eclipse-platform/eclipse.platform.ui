@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -160,18 +160,17 @@ public abstract class ContainerUndoState extends AbstractResourceUndoState {
 	 *            the handle of the created parent
 	 * @param monitor
 	 *            the progress monitor to be used
-	 * @param ticks
-	 *            the number of ticks allocated for creating children
 	 * @throws CoreException if creation failed
 	 */
 	protected void createChildResources(IContainer parentHandle,
-			IProgressMonitor monitor, int ticks) throws CoreException {
+			IProgressMonitor monitor) throws CoreException {
 
 		// restore any children
 		if (members != null) {
+			SubMonitor subMonitor= SubMonitor.convert(monitor, members.size());
 			for (AbstractResourceUndoState member : members) {
 				member.parent = parentHandle;
-				member.createResource(new SubProgressMonitor(monitor, ticks / members.size()));
+				member.createResource(subMonitor.newChild(1));
 			}
 		}
 	}
@@ -179,24 +178,23 @@ public abstract class ContainerUndoState extends AbstractResourceUndoState {
 	@Override
 	public void recordStateFromHistory(IResource resource,
 			IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask(
-				RefactoringCoreMessages.FolderDescription_SavingUndoInfoProgress, 100);
 		if (members != null) {
+			SubMonitor subMonitor= SubMonitor.convert(monitor, RefactoringCoreMessages.FolderDescription_SavingUndoInfoProgress, members.size());
 			for (AbstractResourceUndoState member : members) {
 				if (member instanceof FileUndoState) {
 					IPath path = resource.getFullPath().append(((FileUndoState) member).name);
 					IFile fileHandle = resource.getWorkspace().getRoot().getFile(path);
 					member.recordStateFromHistory(fileHandle,
-							new SubProgressMonitor(monitor, 100 / members.size()));
+							subMonitor.newChild(1));
 				} else if (member instanceof FolderUndoState) {
 					IPath path = resource.getFullPath().append(((FolderUndoState) member).name);
 					IFolder folderHandle = resource.getWorkspace().getRoot().getFolder(path);
 					member.recordStateFromHistory(folderHandle,
-							new SubProgressMonitor(monitor, 100 / members.size()));
+							subMonitor.newChild(1));
 				}
 			}
+			subMonitor.done();
 		}
-		monitor.done();
 	}
 
 	/**

@@ -56,7 +56,6 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
-import org.eclipse.pde.internal.core.PDEExtensionRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
@@ -234,6 +233,7 @@ public class Util {
 	 * resources. It is updated when the workspace changes.. else it returns the
 	 * cached values.
 	 */
+	@SuppressWarnings("restriction") // uses org.eclipse.pde.internal.core.PDEExtensionRegistry
 	public static ResourceSet getModelElementResources() {
 
 		// Return previous computed result while workspace did not change...
@@ -244,7 +244,7 @@ public class Util {
 		registerE4XmiListener(); // Done only once.
 
 		modelResourceSet = new ResourceSetImpl();
-		final PDEExtensionRegistry reg = new PDEExtensionRegistry();
+		final org.eclipse.pde.internal.core.PDEExtensionRegistry reg = new org.eclipse.pde.internal.core.PDEExtensionRegistry();
 		IExtension[] extensions = reg.findExtensions("org.eclipse.e4.workbench.model", true); //$NON-NLS-1$
 		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 

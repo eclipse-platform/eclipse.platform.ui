@@ -83,7 +83,7 @@ import org.junit.runners.Suite;
 	 SaveablesListTest.class,
 	 PerspectiveExtensionReaderTest.class,
 	 ModeledPageLayoutTest.class,
-
+	 WorkbenchPluginTest.class
 })
 public class ApiTestSuite {
 

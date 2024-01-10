@@ -96,7 +96,6 @@ public class CTabFolderTest extends CSSSWTTestCase {
 		return shell;
 	}
 
-	@SuppressWarnings("restriction")
 	protected Label createLabelInCTabFolder(String styleSheet) {
 		engine = createEngine(styleSheet, display);
 

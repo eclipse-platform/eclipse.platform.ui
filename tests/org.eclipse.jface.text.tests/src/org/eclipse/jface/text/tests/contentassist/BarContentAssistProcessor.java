@@ -73,31 +73,31 @@ public class BarContentAssistProcessor implements IContentAssistProcessorExtensi
 
 	protected static class ContextInformationValidator implements IContextInformationValidator {
 
-		protected BarContextInformation info;
+		protected BarContextInformation contextInfo;
 
-		protected ITextViewer viewer;
+		protected ITextViewer textViewer;
 
-		protected int offset;
+		protected int textOffset;
 
 		@Override
 		public void install(IContextInformation info, ITextViewer viewer, int offset) {
 			if (info instanceof BarContextInformation) {
-				this.info= (BarContextInformation) info;
+				this.contextInfo= (BarContextInformation) info;
 			}
-			this.viewer= viewer;
-			this.offset= offset;
+			this.textViewer= viewer;
+			this.textOffset= offset;
 		}
 
 		@Override
 		public boolean isContextInformationValid(int offset) {
-			if (this.info == null) {
+			if (this.contextInfo == null) {
 				return false;
 			}
 			try {
-				IDocument document= viewer.getDocument();
-				IRegion line= document.getLineInformationOfOffset(this.offset);
+				IDocument document= textViewer.getDocument();
+				IRegion line= document.getLineInformationOfOffset(this.textOffset);
 				int end= line.getOffset() + line.getLength();
-				return (offset >= this.offset && offset < end);
+				return (offset >= this.textOffset && offset < end);
 			} catch (BadLocationException e) {
 				return false;
 			}
@@ -145,7 +145,7 @@ public class BarContentAssistProcessor implements IContentAssistProcessorExtensi
 	}
 
 	/**
-	 * Creates context info "idx= <word index in #PROPOSAL>" at the end of a word.
+	 * Creates context info "idx= &lt;word index in #PROPOSAL&gt;" at the end of a word.
 	 **/
 	@Override
 	public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {

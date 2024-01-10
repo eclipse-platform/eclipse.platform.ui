@@ -77,15 +77,17 @@ public class PersistenceSwitch<T> extends Switch<T> {
 		case IPersistencePackage.WORKBENCH_STATE: {
 			IWorkbenchState workbenchState = (IWorkbenchState) theEObject;
 			T result = caseWorkbenchState(workbenchState);
-			if (result == null)
+			if (result == null) {
 				result = defaultCase(theEObject);
+			}
 			return result;
 		}
 		case IPersistencePackage.PART_MEMENTO: {
 			IPartMemento partMemento = (IPartMemento) theEObject;
 			T result = casePartMemento(partMemento);
-			if (result == null)
+			if (result == null) {
 				result = defaultCase(theEObject);
+			}
 			return result;
 		}
 		default:

@@ -279,7 +279,6 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void updateButtonsEnableState(IStatus status) {
 		Button okButton = getOkButton();

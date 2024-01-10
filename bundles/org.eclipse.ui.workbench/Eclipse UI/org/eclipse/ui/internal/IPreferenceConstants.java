@@ -229,7 +229,6 @@ public interface IPreferenceConstants {
 
 	/**
 	 * Preference is not supported anymore
-	 * </p>
 	 *
 	 * @since 3.4
 	 *

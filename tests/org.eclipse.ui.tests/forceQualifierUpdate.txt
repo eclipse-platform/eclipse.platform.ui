@@ -10,3 +10,4 @@ Unanticipated comparator errors in I2022-0523-320
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1184
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1378
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1488
+https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1659

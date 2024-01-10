@@ -21,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -108,15 +109,15 @@ public class AboutUtils {
 	 * to a resource within a bundle, then a temp copy of the file will be extracted
 	 * and opened.
 	 *
-	 * @see Platform#asLocalURL(URL)
+	 * @see FileLocator#toFileURL(URL)
 	 *
 	 * @param url The target url to be displayed, null will be safely ignored
 	 * @return true if the url was successfully displayed and false otherwise
 	 */
-	public static boolean openBrowser(Shell shell, URL url) {
+	public static boolean openBrowser(@SuppressWarnings("unused") Shell shell, URL url) {
 		if (url != null) {
 			try {
-				url = Platform.asLocalURL(url);
+				url = FileLocator.toFileURL(url);
 			} catch (IOException e) {
 				return false;
 			}

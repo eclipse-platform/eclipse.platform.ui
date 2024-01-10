@@ -36,9 +36,8 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IStorage;
@@ -306,8 +305,8 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 	 */
 	private RefactoringHistory getRefactoringHistory(final IDiff[] diffs, final IProgressMonitor monitor) {
 		final Set<RefactoringDescriptor> result= new HashSet<>();
+		SubMonitor subMonitor= SubMonitor.convert(monitor, RefactoringUIMessages.RefactoringModelMerger_retrieving_refactorings, diffs.length * 2);
 		try {
-			monitor.beginTask(RefactoringUIMessages.RefactoringModelMerger_retrieving_refactorings, diffs.length * 2);
 			for (IDiff diff : diffs) {
 				if (diff instanceof IThreeWayDiff) {
 					final IThreeWayDiff threeWay= (IThreeWayDiff) diff;
@@ -320,7 +319,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 						if (revision != null) {
 							final String name= revision.getName();
 							if (RefactoringHistoryService.NAME_HISTORY_FILE.equalsIgnoreCase(name))
-								getRefactoringDescriptors(revision, localDescriptors, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+								getRefactoringDescriptors(revision, localDescriptors, subMonitor.newChild(1, SubMonitor.SUPPRESS_SUBTASK));
 						}
 					}
 					final ITwoWayDiff remoteDiff= threeWay.getLocalChange();
@@ -330,7 +329,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 						if (revision != null) {
 							final String name= revision.getName();
 							if (RefactoringHistoryService.NAME_HISTORY_FILE.equalsIgnoreCase(name))
-								getRefactoringDescriptors(revision, remoteDescriptors, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+								getRefactoringDescriptors(revision, remoteDescriptors, subMonitor.newChild(1, SubMonitor.SUPPRESS_SUBTASK));
 						}
 					}
 					remoteDescriptors.removeAll(localDescriptors);
@@ -338,7 +337,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 				}
 			}
 		} finally {
-			monitor.done();
+			subMonitor.done();
 		}
 		return new RefactoringHistoryImplementation(result.toArray(new RefactoringDescriptorProxy[result.size()]));
 	}
@@ -355,11 +354,11 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 	 *            the progress monitor to use
 	 */
 	static final void getRefactoringDescriptors(final IFileRevision revision, final Set<RefactoringDescriptor> descriptors, final IProgressMonitor monitor) {
+		SubMonitor subMonitor= SubMonitor.convert(monitor, RefactoringUIMessages.RefactoringModelMerger_retrieving_refactorings, 1);
 		try {
-			monitor.beginTask(RefactoringUIMessages.RefactoringModelMerger_retrieving_refactorings, 1);
 			IStorage storage= null;
 			try {
-				storage= revision.getStorage(new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+				storage= revision.getStorage(subMonitor.newChild(1, SubMonitor.SUPPRESS_SUBTASK));
 			} catch (CoreException exception) {
 				RefactoringUIPlugin.log(exception);
 			}
@@ -384,7 +383,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 				}
 			}
 		} finally {
-			monitor.done();
+			subMonitor.done();
 		}
 	}
 
@@ -392,20 +391,18 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 	public IStatus merge(final IMergeContext context, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(context);
 		IStatus status= Status.OK_STATUS;
-		if (monitor == null)
-			monitor= new NullProgressMonitor();
+		SubMonitor subMonitor= SubMonitor.convert(monitor, RefactoringUIMessages.RefactoringModelMerger_merge_message, 200);
 		try {
-			monitor.beginTask(RefactoringUIMessages.RefactoringModelMerger_merge_message, 200);
-//			status= aboutToPerformMerge(context, new SubProgressMonitor(monitor, 75));
+//			status= aboutToPerformMerge(context, subMonitor.newChild(75));
 			if (status.getSeverity() != IStatus.ERROR) {
 				final IDiff[] diffs= getDiffs(context);
-				status= createMergeStatus(context, context.merge(diffs, false, new SubProgressMonitor(monitor, 100)));
+				status= createMergeStatus(context, context.merge(diffs, false, subMonitor.newChild(100)));
 				final int code= status.getCode();
 				if (status.getSeverity() != IStatus.ERROR && code != IMergeStatus.CONFLICTS && code != IMergeStatus.INTERNAL_ERROR)
-					status= mergePerformed(context, new SubProgressMonitor(monitor, 25));
+					status= mergePerformed(context, subMonitor.newChild(25));
 			}
 		} finally {
-			monitor.done();
+			subMonitor.done();
 		}
 		return status;
 	}

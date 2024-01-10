@@ -14,6 +14,10 @@
 
 package org.eclipse.jface.viewers;
 
+import org.eclipse.pde.api.tools.annotations.NoExtend;
+import org.eclipse.pde.api.tools.annotations.NoImplement;
+import org.eclipse.pde.api.tools.annotations.NoInstantiate;
+import org.eclipse.pde.api.tools.annotations.NoReference;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
 
@@ -21,18 +25,18 @@ import org.eclipse.swt.widgets.Widget;
  * This class is not part of the public API of JFace. See bug 267722.
  *
  * @since 3.5
- * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
  */
+@NoInstantiate
+@NoExtend
 public class StructuredViewerInternals {
 
 	/**
 	 * Nothing to see here.
 	 *
 	 * @since 3.5
-	 * @noextend This interface is not intended to be extended by clients.
-	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
+	@NoExtend
+	@NoImplement
 	protected static interface AssociateListener {
 
 		/**
@@ -67,8 +71,8 @@ public class StructuredViewerInternals {
 	 *            the viewer
 	 * @param listener
 	 *            the {@link AssociateListener}
-	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@NoReference
 	protected static void setAssociateListener(StructuredViewer viewer,
 			AssociateListener listener) {
 		viewer.setAssociateListener(listener);
@@ -82,9 +86,8 @@ public class StructuredViewerInternals {
 	 * @param element
 	 *            the element
 	 * @return the Widgets corresponding to the element
-	 *
-	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@NoReference
 	protected static Widget[] getItems(StructuredViewer viewer, Object element) {
 		return viewer.findItems(element);
 	}

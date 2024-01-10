@@ -8,10 +8,10 @@ package org.eclipse.e4.emf.xpath.test.model.xpathtest;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.emf.xpath.test.model.xpathtest.MenuItem#getMnemonic <em>Mnemonic</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.eclipse.e4.emf.xpath.test.model.xpathtest.XpathtestPackage#getMenuItem()
  * @model

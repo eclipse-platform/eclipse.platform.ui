@@ -21,6 +21,7 @@ import org.eclipse.equinox.bidi.advanced.IStructuredTextExpert;
 import org.eclipse.equinox.bidi.advanced.StructuredTextEnvironment;
 import org.eclipse.equinox.bidi.advanced.StructuredTextExpertFactory;
 import org.eclipse.equinox.bidi.custom.StructuredTextTypeHandler;
+import org.eclipse.pde.api.tools.annotations.NoExtend;
 import org.eclipse.swt.events.SegmentEvent;
 import org.eclipse.swt.events.SegmentListener;
 
@@ -34,8 +35,8 @@ import org.eclipse.swt.events.SegmentListener;
  * </p>
  *
  * @since 3.9
- * @noextend This class is not intended to be subclassed by clients.
  */
+@NoExtend
 public class StructuredTextSegmentListener implements SegmentListener {
 
 	private final IStructuredTextExpert expert;
