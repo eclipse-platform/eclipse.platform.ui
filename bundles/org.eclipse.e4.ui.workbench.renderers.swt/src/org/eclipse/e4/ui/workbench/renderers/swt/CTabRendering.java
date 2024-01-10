@@ -18,15 +18,20 @@
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.Optional;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.ui.internal.css.swt.ICTabRendering;
+import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolderRenderer;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -54,6 +59,37 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 	 * Default value for "use round tabs" preference
 	 */
 	public static final boolean USE_ROUND_TABS_DEFAULT = false;
+	/**
+	 * A named preference for setting CTabFolder's to be rendered without icons in view areas
+	 * <p>
+	 * The default value for this preference is: <code>false</code> (render
+	 * CTabFolder's with icons)
+	 * </p>
+	 */
+	public static final String HIDE_ICONS_FOR_VIEW_TABS = "HIDE_ICONS_FOR_VIEW_TABS"; //$NON-NLS-1$
+
+	/**
+	 * Default value for "hide icons" preference for view tabs
+	 */
+	public static final boolean HIDE_ICONS_FOR_VIEW_TABS_DEFAULT = false;
+	/**
+	 * A named preference for setting CTabFolder's to show full text in view areas
+	 * <p>
+	 * The default value for this preference is: <code>false</code> (render
+	 * CTabFolder's without full text)
+	 * </p>
+	 */
+	public static final String SHOW_FULL_TEXT_FOR_VIEW_TABS = "SHOW_FULL_TEXT_FOR_VIEW_TABS"; //$NON-NLS-1$
+
+	/**
+	 * Default value for "show full text" preference for view tabs
+	 */
+	public static final boolean SHOW_FULL_TEXT_FOR_VIEW_TABS_DEFAULT = false;
+
+	private static int MIN_VIEW_CHARS = 1;
+	private static int MAX_VIEW_CHARS = 9999;
+
+	private static final String EditorTag = "EditorStack"; //$NON-NLS-1$
 
 	// Constants for circle drawing
 	static enum CirclePart {
@@ -139,6 +175,8 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 		parent.addDisposeListener(e -> preferences.removePreferenceChangeListener(this));
 
 		cornerRadiusPreferenceChanged();
+		showFullTextForViewTabsPreferenceChanged();
+		hideIconsForViewTabsPreferenceChanged();
 	}
 
 	@Override
@@ -1253,13 +1291,55 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 
 	@Override
 	public void preferenceChange(PreferenceChangeEvent event) {
-		if (!USE_ROUND_TABS.equals(event.getKey())) {
-			return;
+		if (event.getKey().equals(USE_ROUND_TABS)) {
+			cornerRadiusPreferenceChanged();
+		} else if (event.getKey().equals(HIDE_ICONS_FOR_VIEW_TABS)) {
+			hideIconsForViewTabsPreferenceChanged();
+		} else if (event.getKey().equals(SHOW_FULL_TEXT_FOR_VIEW_TABS)) {
+			showFullTextForViewTabsPreferenceChanged();
 		}
-		cornerRadiusPreferenceChanged();
+	}
+
+	private void showFullTextForViewTabsPreferenceChanged() {
+		boolean showFullText = getShowFullTextForViewTabsPreference();
+		if (!isPartOfEditorStack()) {
+			if (showFullText) {
+				Optional<Integer> lengthOfLongestItemText = Arrays.stream(parent.getItems()).map(CTabItem::getText)
+						.map(String::length)
+						.max(Integer::compare);
+				parent.setMinimumCharacters(lengthOfLongestItemText.orElseGet(() -> MAX_VIEW_CHARS));
+			} else {
+				parent.setMinimumCharacters(MIN_VIEW_CHARS);
+			}
+			parent.redraw();
+		}
+	}
+
+	private void hideIconsForViewTabsPreferenceChanged() {
+		boolean hideIcons = getHideIconsForViewTabsPreference();
+		if (!isPartOfEditorStack()) {
+			parent.setSelectedImageVisible(!hideIcons);
+			parent.setUnselectedImageVisible(!hideIcons);
+			parent.redraw();
+		}
 	}
 
 	private IEclipsePreferences getSwtRendererPreferences() {
 		return InstanceScope.INSTANCE.getNode("org.eclipse.e4.ui.workbench.renderers.swt"); //$NON-NLS-1$
+	}
+
+	private boolean isPartOfEditorStack() {
+		MUIElement element = (MUIElement) parent.getData(AbstractPartRenderer.OWNING_ME);
+		return element != null && element.getTags().contains(EditorTag);
+	}
+
+	private boolean getHideIconsForViewTabsPreference() {
+		IEclipsePreferences preferences = getSwtRendererPreferences();
+		return preferences.getBoolean(HIDE_ICONS_FOR_VIEW_TABS, HIDE_ICONS_FOR_VIEW_TABS_DEFAULT);
+	}
+
+	private boolean getShowFullTextForViewTabsPreference() {
+		IEclipsePreferences preferences = getSwtRendererPreferences();
+		return preferences.getBoolean(SHOW_FULL_TEXT_FOR_VIEW_TABS, SHOW_FULL_TEXT_FOR_VIEW_TABS_DEFAULT);
 	}
 }

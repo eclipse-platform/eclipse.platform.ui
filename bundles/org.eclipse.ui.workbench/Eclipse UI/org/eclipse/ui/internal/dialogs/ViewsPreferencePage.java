@@ -62,6 +62,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -106,6 +108,9 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	private boolean highContrastMode;
 
 	private Button themingEnabled;
+
+	private Button hideIconsForViewTabs;
+	private Button showFullTextForViewTabs;
 
 	@Override
 	protected Control createContents(Composite parent) {
@@ -162,6 +167,11 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 
 		createThemeIndependentComposits(comp);
 
+		// Theme dependent controls for Tab icons and titles in view areas
+		createShowFullTextForViewTabs(comp);
+		createHideIconsForViewTabs(comp);
+		createDependency(showFullTextForViewTabs, hideIconsForViewTabs);
+
 		if (currentTheme != null) {
 			String colorsAndFontsThemeId = getColorAndFontThemeIdByThemeId(currentTheme.getId());
 			if (colorsAndFontsThemeId != null && !currentColorsAndFontsTheme.getId().equals(colorsAndFontsThemeId)) {
@@ -178,6 +188,52 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		createUseRoundTabs(comp);
 		createColoredLabelsPref(comp);
 		createEnableMruPref(comp);
+	}
+
+	protected void createShowFullTextForViewTabs(Composite composite) {
+		IEclipsePreferences prefs = getSwtRendererPreferences();
+		boolean actualValue = prefs.getBoolean(CTabRendering.SHOW_FULL_TEXT_FOR_VIEW_TABS,
+				CTabRendering.SHOW_FULL_TEXT_FOR_VIEW_TABS_DEFAULT);
+		createLabel(composite, ""); //$NON-NLS-1$
+		createLabel(composite, WorkbenchMessages.ViewsPreference_viewTabs_icons_and_titles_label);
+		showFullTextForViewTabs = createCheckButton(composite,
+				WorkbenchMessages.ViewsPreference_showFullTextForViewTabs, actualValue);
+	}
+
+	protected void createHideIconsForViewTabs(Composite composite) {
+		IEclipsePreferences prefs = getSwtRendererPreferences();
+		boolean actualValue = prefs.getBoolean(CTabRendering.HIDE_ICONS_FOR_VIEW_TABS,
+				CTabRendering.HIDE_ICONS_FOR_VIEW_TABS_DEFAULT);
+		hideIconsForViewTabs = createCheckButton(composite, WorkbenchMessages.ViewsPreference_hideIconsForViewTabs,
+				actualValue);
+	}
+
+	/**
+	 * @param showFullTextForViewTabs
+	 * @param hideIconsForViewTabs
+	 */
+	private void createDependency(Button parent, Button dependent) {
+		GridData gridData = new GridData();
+		gridData.horizontalIndent = 20;
+		dependent.setLayoutData(gridData);
+
+		boolean parentState = parent.getSelection();
+		dependent.setEnabled(parentState);
+
+		SelectionListener listener = new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				boolean state = parent.getSelection();
+				dependent.setEnabled(state);
+				if (!state) {
+					dependent.setSelection(state);
+				}
+			}
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		};
+		parent.addSelectionListener(listener);
 	}
 
 	private List<ITheme> getCSSThemes(boolean highContrastMode) {
@@ -257,17 +313,19 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 
 	@Override
 	public boolean performOk() {
+		IEclipsePreferences prefs = getSwtRendererPreferences();
 		if (engine != null) {
 			ITheme theme = getSelectedTheme();
 			if (theme != null) {
 				engine.setTheme(getSelectedTheme(), !highContrastMode);
 			}
+			prefs.putBoolean(CTabRendering.HIDE_ICONS_FOR_VIEW_TABS, hideIconsForViewTabs.getSelection());
+			prefs.putBoolean(CTabRendering.SHOW_FULL_TEXT_FOR_VIEW_TABS, showFullTextForViewTabs.getSelection());
 		}
 
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 		apiStore.setValue(IWorkbenchPreferenceConstants.USE_COLORED_LABELS, useColoredLabels.getSelection());
 
-		IEclipsePreferences prefs = getSwtRendererPreferences();
 		prefs.putBoolean(StackRenderer.MRU_KEY, enableMru.getSelection());
 		boolean themingEnabledChanged = prefs.getBoolean(PartRenderingEngine.ENABLED_THEME_KEY, true) != themingEnabled
 				.getSelection();
@@ -342,6 +400,8 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			if (engine.getActiveTheme() != null) {
 				themeIdCombo.setSelection(new StructuredSelection(engine.getActiveTheme()));
 			}
+			hideIconsForViewTabs.setSelection(CTabRendering.HIDE_ICONS_FOR_VIEW_TABS_DEFAULT);
+			showFullTextForViewTabs.setSelection(CTabRendering.SHOW_FULL_TEXT_FOR_VIEW_TABS_DEFAULT);
 		}
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 		useColoredLabels.setSelection(apiStore.getDefaultBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS));
