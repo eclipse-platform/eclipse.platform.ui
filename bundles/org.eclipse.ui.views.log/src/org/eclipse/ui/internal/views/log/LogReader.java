@@ -18,7 +18,6 @@ package org.eclipse.ui.internal.views.log;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.text.ParseException;
 import java.util.*;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -121,7 +120,7 @@ class LogReader {
 						setNewParent(parents, entry, 0);
 						current = entry;
 						addEntry(current, entries, memento);
-					} catch (ParseException pe) {
+					} catch (IllegalArgumentException pe) {
 						//do nothing, just toss the entry
 					}
 					break;
@@ -135,7 +134,7 @@ class LogReader {
 							current = entry;
 							LogEntry parent = parents.get(depth - 1);
 							parent.addChild(entry);
-						} catch (ParseException pe) {
+						} catch (IllegalArgumentException pe) {
 							//do nothing, just toss the bad entry
 						}
 					}
