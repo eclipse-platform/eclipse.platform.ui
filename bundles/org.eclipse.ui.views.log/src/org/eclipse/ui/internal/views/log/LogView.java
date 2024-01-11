@@ -131,7 +131,7 @@ public class LogView extends ViewPart implements LogListener {
 	private Text fTextLabel;
 	private Shell fTextShell;
 
-	private boolean fFirstEvent = true;
+	private volatile boolean fFirstEvent = true;
 
 	private TreeColumn fColumn1;
 	private TreeColumn fColumn2;
@@ -1092,11 +1092,17 @@ public class LogView extends ViewPart implements LogListener {
 			}
 			return;
 		}
+		boolean shouldReadLog;
+		synchronized (batchedEntries) {
+			shouldReadLog = fFirstEvent || (currentSession == null);
+			if (shouldReadLog) {
+				fFirstEvent = false;
+			}
+		}
 
-		if (fFirstEvent || (currentSession == null)) {
+		if (shouldReadLog) {
 			readLogFile();
 			asyncRefresh(true);
-			fFirstEvent = false;
 		} else {
 			LogEntry entry = betterInput != null ? createLogEntry(betterInput) : createLogEntry(input);
 
