@@ -17,6 +17,7 @@ package org.eclipse.ui.internal.ide;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.LinkOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -427,7 +428,10 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 	 * information and a drop-down of the most recently used workspaces.
 	 */
 	protected Control createWorkspaceBrowseRow(Composite parent) {
-		Composite panel = createBrowseComposite(parent);
+		Composite parentpanel = createBrowseComposite(parent);
+		FillLayout layout = new FillLayout(SWT.VERTICAL);
+		parentpanel.setLayout(layout);
+		Composite panel = createBrowseComposite(parentpanel);
 
 		createPathCombo(panel);
 
@@ -440,9 +444,9 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 		Composite panel = new Composite(parent, SWT.NONE);
 
 		BorderLayout layout = new BorderLayout();
-		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-		layout.spacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN) / 2;
+		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN) ;
+		layout.spacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING) / 2;
 		panel.setLayout(layout);
 		panel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		panel.setFont(parent.getFont());
@@ -450,14 +454,14 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 	}
 
 	protected Combo createPathCombo(Composite panel) {
-		Composite c = new Composite(panel, SWT.NONE);
-		FillLayout layout = new FillLayout(SWT.VERTICAL);
-		c.setLayout(layout);
-		text = new Combo(c, SWT.BORDER | SWT.LEAD | SWT.DROP_DOWN);
+
+		Composite c = createBrowseComposite(panel.getParent());
+
+		text = new Combo(panel, SWT.BORDER | SWT.LEAD | SWT.DROP_DOWN);
 		new DirectoryProposalContentAssist().apply(text);
 		text.setTextDirection(SWT.AUTO_TEXT_DIRECTION);
 		text.setFocus();
-		Label label = new Label(c, SWT.BORDER | SWT.LEAD);
+		Label label = new Label(c, SWT.NONE);
 		text.addModifyListener(e -> {
 			Button okButton = getButton(Window.OK);
 			if(okButton != null && !okButton.isDisposed()) {
@@ -470,24 +474,31 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 					}
 				}
 				okButton.setEnabled(nonWhitespaceFound);
+				try {
+					File location = new File(characters);
+					String normalisedPath = ""; //$NON-NLS-1$
+					if (location.exists() && location.isDirectory()) {
+						normalisedPath = location.getAbsoluteFile().toPath().toRealPath(LinkOption.NOFOLLOW_LINKS)
+								.normalize().toString();
+					} else {
+						normalisedPath = location.getAbsoluteFile().toPath().normalize().toString();
+					}
+					String normalisedPathWithSeperator = normalisedPath + File.separator;
+					if (characters.startsWith("~")) //$NON-NLS-1$
+					{
+						label.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_TildeNonExpandedWarning0
+								+ IDEWorkbenchMessages.ChooseWorkspaceDialog_ResolvedAbsolutePath0
+								+ System.lineSeparator() + location.getAbsoluteFile().toPath().normalize());
+					} else if (!characters.equalsIgnoreCase(normalisedPath)
+							&& !characters.equalsIgnoreCase(normalisedPathWithSeperator)) {
+						label.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_ResolvedAbsolutePath0
+								+ System.lineSeparator() + location.getAbsoluteFile().toPath().normalize());
+					} else {
+						label.setText(""); //$NON-NLS-1$
+					}
 
-				File location = new File(characters);
-				String normalisedPath = location.getAbsoluteFile().toPath().normalize().toString();
-				String normalisedPathWithSeperator = normalisedPath + File.separator;
-				if (!characters.equalsIgnoreCase(normalisedPath)
-						&& !characters.equalsIgnoreCase(normalisedPathWithSeperator)) {
-				label.setText(
-						IDEWorkbenchMessages.ChooseWorkspaceDialog_ResolvedAbsolutePath0
-								+ location.getAbsoluteFile().toPath().normalize());
 				}
-				else {
-					label.setText(""); //$NON-NLS-1$
-				}
-				if (normalisedPath.startsWith("~")) //$NON-NLS-1$
-				{
-					label.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_TildeNonExpandedWarning0
-							+ IDEWorkbenchMessages.ChooseWorkspaceDialog_ResolvedAbsolutePath0
-							+ location.getAbsoluteFile().toPath().normalize());
+				catch (Exception ex) {
 				}
 			}
 		});
