@@ -19,7 +19,7 @@ Contents
     *   [1.1 Snippet012 - Dialog with Image Buttons](#Snippet012---Dialog-with-Image-Buttons)
     *   [1.2 Snippet082 - Color Selector](#Snippet082---Color-Selector)
 *   [2 Notification](#Notification)
-    *   [2.1 Snippet081 - Notication API](#Snippet081---Notication-API)
+    *   [2.1 Snippet081 - Notification API](#Snippet081---Notification-API)
 *   [3 Layout](#Layout)
     *   [3.1 Snippet013 - Grid Layout Factory](#Snippet013---Grid-Layout-Factory)
     *   [3.2 Snippet016 - Table Layout](#Snippet016---Table-Layout)
@@ -115,7 +115,7 @@ The JFace ColorSelector widget is a convenient composition of button and color s
 Notification
 ------------
 
-### [Snippet081 - Notication API](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/dialogs/Snippet081NotificationPopup.java)
+### [Snippet081 - Notification API](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/dialogs/Snippet081NotificationPopup.java)
 
 *   [Snippet081 - Notication API](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/dialogs/Snippet081NotificationPopup.java)
 
