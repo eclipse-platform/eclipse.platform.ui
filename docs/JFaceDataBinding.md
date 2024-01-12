@@ -17,6 +17,7 @@ Contents
 *   [9 Realm](#Realm)
 *   [10 TrackedGetter](#TrackedGetter)
 *   [11 Master Detail](#Master-Detail)
+*   [12 Runtime Dependencies](#Runtime-Dependencies)
 
 # Introduction
 
@@ -192,7 +193,8 @@ This is a pretty basic model class that conforms to the JavaBeans specification 
 	}
 }
 
-This is the standard SWT event loop with one complication - a SWT _Realm_ is created and made the default realm for our application. Think of a Realm as an abstraction of SWT's UI thread. If everything in your application happens in the UI thread, you don't have to deal with Realms in your binding code. For more details on this, see the [FAQ](/JFace_Data_Binding/FAQ "JFace Data Binding/FAQ") or the section that explains in detail what a [Realm](#Realm) is. If you are writing a plug-in for the Eclipse Platform, or a RCP application, you don't have to do this setup yourself - as of Eclipse 3.3, it is already part of the initialization code in **PlatformUI.createAndRunWorkbench()**.
+This is the standard SWT event loop with one complication - a SWT _Realm_ is created and made the default realm for our application. Think of a Realm as an abstraction of SWT's UI thread. If everything in your application happens in the UI thread, you don't have to deal with Realms in your binding code. 
+For more details on this, see the [FAQ](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/JFaceDataBindingFAQ.md) or the section that explains in detail what a [Realm](#Realm) is. If you are writing a plug-in for the Eclipse Platform, or a RCP application, you don't have to do this setup yourself - as of Eclipse 3.3, it is already part of the initialization code in **PlatformUI.createAndRunWorkbench()**.
 
 ### Validation Results
 
@@ -529,4 +531,20 @@ When the selected person changes, you could dispose the observable (and the bind
 To create a detail observable, first create an observable for the current selection (this is sometimes called the _master observable_), for example through ViewersObservables.observeSingleSelection(). Then, call BeansObservables.observeDetailValue(selectionObservable, "name", String.class) to create the detail observable for the currently selected person's name attibute.
 
 For an example snippet, see the [Master Detail snippet](#Snippets).
+
+# Runtime Dependencies
+
+The core Data Binding bundle has the following dependencies:
+
+*   org.eclipse.equinox.common (about 150 KB). We are currently using Assert, IStatus, and ListenerList from equinox.common, but we might potentially use more classes or interfaces from equinox.common in the future, such as e.g. ISafeRunnable/SafeRunner, IProgressMonitor, and IAdaptable.
+*   Databinding in Eclipse versions earlier than 4.16 had a dependency on ICU4J. 4.16 and later can use ICU if it is available but does not depend on it. (ICU4J is about 4MB for the real thing, or 100KB for the replacement bundle com.ibm.icu.base which is available from the Eclipse Project download pages.)
+
+The data binding framework will run without OSGi. There are optional dependencies on the packages org.osgi.framework, org.osgi.util.tracker, and org.eclipse.osgi.framework.log which allow us to log errors and warnings to the common log if OSGi is available. You can also inject a logger yourself by calling org.eclipse.core.databinding.util.Policy.setLog(), very similar to how this is solved in JFace.
+
+There are parts of Data Binding that depend on SWT/JFace but these have been broken out into a separate plug-in, org.eclipse.jface.databinding.
+
+For background and historical information, refer to [bug 153630 comment 9](https://bugs.eclipse.org/bugs/show_bug.cgi?id=153630#c9) and [bug 179305](https://bugs.eclipse.org/bugs/show_bug.cgi?id=179305).
+
+
+
 
