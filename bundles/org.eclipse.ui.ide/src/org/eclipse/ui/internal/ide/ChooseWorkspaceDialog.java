@@ -453,6 +453,32 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 		return panel;
 	}
 
+	private void populateResolvedPathLabel(Label label, String characters) {
+		try {
+			File location = new File(characters);
+			String normalisedPath = ""; //$NON-NLS-1$
+			if (location.exists() && location.isDirectory()) {
+				normalisedPath = location.getAbsoluteFile().toPath().toRealPath(LinkOption.NOFOLLOW_LINKS).normalize()
+						.toString();
+			} else {
+				normalisedPath = location.getAbsoluteFile().toPath().normalize().toString();
+			}
+			String normalisedPathWithSeperator = normalisedPath + File.separator;
+			if (characters.startsWith("~")) //$NON-NLS-1$
+			{
+				label.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_TildeNonExpandedWarning0
+						+ IDEWorkbenchMessages.ChooseWorkspaceDialog_ResolvedAbsolutePath0 + System.lineSeparator()
+						+ location.getAbsoluteFile().toPath().normalize());
+			} else if (!characters.equalsIgnoreCase(normalisedPath)
+					&& !characters.equalsIgnoreCase(normalisedPathWithSeperator)) {
+				label.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_ResolvedAbsolutePath0 + System.lineSeparator()
+						+ location.getAbsoluteFile().toPath().normalize());
+			} else {
+				label.setText(""); //$NON-NLS-1$
+			}
+		} catch (Exception ex) {
+		}
+	}
 	protected Combo createPathCombo(Composite panel) {
 
 		Composite c = createBrowseComposite(panel.getParent());
@@ -474,35 +500,11 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 					}
 				}
 				okButton.setEnabled(nonWhitespaceFound);
-				try {
-					File location = new File(characters);
-					String normalisedPath = ""; //$NON-NLS-1$
-					if (location.exists() && location.isDirectory()) {
-						normalisedPath = location.getAbsoluteFile().toPath().toRealPath(LinkOption.NOFOLLOW_LINKS)
-								.normalize().toString();
-					} else {
-						normalisedPath = location.getAbsoluteFile().toPath().normalize().toString();
-					}
-					String normalisedPathWithSeperator = normalisedPath + File.separator;
-					if (characters.startsWith("~")) //$NON-NLS-1$
-					{
-						label.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_TildeNonExpandedWarning0
-								+ IDEWorkbenchMessages.ChooseWorkspaceDialog_ResolvedAbsolutePath0
-								+ System.lineSeparator() + location.getAbsoluteFile().toPath().normalize());
-					} else if (!characters.equalsIgnoreCase(normalisedPath)
-							&& !characters.equalsIgnoreCase(normalisedPathWithSeperator)) {
-						label.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_ResolvedAbsolutePath0
-								+ System.lineSeparator() + location.getAbsoluteFile().toPath().normalize());
-					} else {
-						label.setText(""); //$NON-NLS-1$
-					}
-
-				}
-				catch (Exception ex) {
-				}
+				populateResolvedPathLabel(label, characters);
 			}
 		});
 		setInitialTextValues(text);
+		populateResolvedPathLabel(label, text.getText());
 		return text;
 	}
 
