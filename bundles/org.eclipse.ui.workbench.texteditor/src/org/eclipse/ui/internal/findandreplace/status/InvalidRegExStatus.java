@@ -37,8 +37,8 @@ public class InvalidRegExStatus implements IStatus {
 	}
 
 	@Override
-	public boolean isError() {
-		return true;
+	public boolean isInputValid() {
+		return false;
 	}
 
 }

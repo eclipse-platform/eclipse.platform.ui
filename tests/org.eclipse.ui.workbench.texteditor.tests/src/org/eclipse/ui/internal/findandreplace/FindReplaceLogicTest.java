@@ -97,7 +97,6 @@ public class FindReplaceLogicTest {
 	 * @param textViewer textviewer-object that contains the contents on which findReplaceLogic
 	 *            operates
 	 */
-	@SuppressWarnings("boxing")
 	private void performReplaceAllBaseTestcases(IFindReplaceLogic findReplaceLogic, TextViewer textViewer) {
 		Display display= parentShell.getDisplay();
 		textViewer.setDocument(new Document("aaaa"));
@@ -215,7 +214,6 @@ public class FindReplaceLogicTest {
 	}
 
 
-	@SuppressWarnings("boxing")
 	@Test
 	public void testPerformReplaceAndFind() {
 		TextViewer textViewer= setupTextViewer("Hello<replace>World<replace>!");
@@ -293,13 +291,11 @@ public class FindReplaceLogicTest {
 		assertThat(((FindStatus) findReplaceLogic.getStatus()).getMessageCode(), equalTo(code));
 	}
 
-	@SuppressWarnings("boxing")
 	private void expectStatusIsReplaceAllWithCount(IFindReplaceLogic findReplaceLogic, int count) {
 		assertThat(findReplaceLogic.getStatus(), instanceOf(ReplaceAllStatus.class));
 		assertThat(((ReplaceAllStatus) findReplaceLogic.getStatus()).getReplaceCount(), equalTo(count));
 	}
 
-	@SuppressWarnings("boxing")
 	private void expectStatusIsFindAllWithCount(IFindReplaceLogic findReplaceLogic, int count) {
 		assertThat(findReplaceLogic.getStatus(), instanceOf(FindAllStatus.class));
 		assertThat(((FindAllStatus) findReplaceLogic.getStatus()).getSelectCount(), equalTo(count));

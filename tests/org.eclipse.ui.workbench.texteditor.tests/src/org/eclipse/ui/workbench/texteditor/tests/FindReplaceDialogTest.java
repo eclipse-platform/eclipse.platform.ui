@@ -85,8 +85,12 @@ public class FindReplaceDialogTest {
 	}
 
 	private void openTextViewerAndFindReplaceDialog() {
+		openTextViewerAndFindReplaceDialog("line\nline\nline");
+	}
+
+	private void openTextViewerAndFindReplaceDialog(String content) {
 		fTextViewer= new TextViewer(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-		fTextViewer.setDocument(new Document("line\nline\nline"));
+		fTextViewer.setDocument(new Document(content));
 		fTextViewer.getControl().setFocus();
 
 		Accessor fFindReplaceAction;
@@ -187,14 +191,7 @@ public class FindReplaceDialogTest {
 		Combo findField= (Combo) fFindReplaceDialog.get("fFindField");
 		findField.setFocus();
 		findField.setText("line");
-		final Event event= new Event();
-
-		event.type= SWT.Traverse;
-		event.detail= SWT.TRAVERSE_RETURN;
-		event.character= SWT.CR;
-		event.doit= true;
-		findField.traverse(SWT.TRAVERSE_RETURN, event);
-		runEventQueue();
+		simulateEnterInFindInputField(false);
 
 		Shell shell= ((Shell) fFindReplaceDialog.get("fActiveShell"));
 		if (shell == null && Util.isGtk()) {
@@ -214,16 +211,12 @@ public class FindReplaceDialogTest {
 
 		Button wrapSearchBox= (Button) fFindReplaceDialog.get("fWrapCheckBox");
 		wrapSearchBox.setFocus();
-		event.doit= true;
-		findField.traverse(SWT.TRAVERSE_RETURN, event);
-		runEventQueue();
+		simulateEnterInFindInputField(false);
 		assertTrue(wrapSearchBox.isFocusControl());
 
 		Button allScopeBox= (Button) fFindReplaceDialog.get("fGlobalRadioButton");
 		allScopeBox.setFocus();
-		event.doit= true;
-		findField.traverse(SWT.TRAVERSE_RETURN, event);
-		runEventQueue();
+		simulateEnterInFindInputField(false);
 		assertTrue(allScopeBox.isFocusControl());
 	}
 
@@ -292,33 +285,79 @@ public class FindReplaceDialogTest {
 			} else
 				fail("this test does not work on GTK unless the runtime workbench has focus. Screenshot: " + takeScreenshot());
 		}
-		final Event event= new Event();
-
-		event.detail= SWT.TRAVERSE_RETURN;
-		event.character= SWT.CR;
-		findField.traverse(SWT.TRAVERSE_RETURN, event);
-		runEventQueue();
+		simulateEnterInFindInputField(false);
 		assertEquals(0, (target.getSelection()).x);
 		assertEquals(4, (target.getSelection()).y);
 
-		event.doit= true;
-		findField.traverse(SWT.TRAVERSE_RETURN, event);
-		runEventQueue();
+		simulateEnterInFindInputField(false);
 		assertEquals(5, (target.getSelection()).x);
 		assertEquals(4, (target.getSelection()).y);
 
-		event.stateMask= SWT.SHIFT;
-		event.doit= true;
-		findField.traverse(SWT.TRAVERSE_RETURN, event);
+		simulateEnterInFindInputField(true);
 		assertEquals(0, (target.getSelection()).x);
 		assertEquals(4, (target.getSelection()).y);
 
 		Button forwardRadioButton= (Button) fFindReplaceDialog.get("fForwardRadioButton");
 		forwardRadioButton.setSelection(false);
-		fFindReplaceDialog.invoke("updateButtonState", null);
-		event.doit= true;
-		forwardRadioButton.traverse(SWT.TRAVERSE_RETURN, event);
+		simulateEnterInFindInputField(true);
 		assertEquals(5, (target.getSelection()).x);
 	}
+
+	@Test
+	public void testChangeInputForIncrementalSearch() {
+		openTextViewerAndFindReplaceDialog();
+		Button incremenalSearchButton= ((Button) fFindReplaceDialog.get("fIncrementalCheckBox"));
+		incremenalSearchButton.setSelection(true);
+		fFindReplaceDialog.invoke("updateButtonState", null);
+
+		Combo findField= (Combo) fFindReplaceDialog.get("fFindField");
+		findField.setText("lin");
+		IFindReplaceTarget target= findReplaceLogic.getTarget();
+		assertEquals(0, (target.getSelection()).x);
+		assertEquals(findField.getText().length(), (target.getSelection()).y);
+
+		findField.setText("line");
+		assertEquals(0, (target.getSelection()).x);
+		assertEquals(findField.getText().length(), (target.getSelection()).y);
+
+		incremenalSearchButton.setSelection(false);
+		fFindReplaceDialog.invoke("updateButtonState", null);
+	}
+
+	@Test
+	public void testFindWithWholeWordEnabledWithMultipleWords() {
+		openTextViewerAndFindReplaceDialog("two words");
+		Combo findField= (Combo) fFindReplaceDialog.get("fFindField");
+		findField.setText("two");
+		Button wholeWordButton= ((Button) fFindReplaceDialog.get("fWholeWordCheckBox"));
+		wholeWordButton.setSelection(true);
+		runEventQueue();
+		IFindReplaceTarget target= findReplaceLogic.getTarget();
+		assertEquals(0, (target.getSelection()).x);
+		assertEquals(0, (target.getSelection()).y);
+
+		findField.setText("two wo");
+		runEventQueue();
+		assertFalse(wholeWordButton.getEnabled());
+		assertTrue(wholeWordButton.getSelection());
+
+		simulateEnterInFindInputField(false);
+		assertEquals(0, (target.getSelection()).x);
+		assertEquals(findField.getText().length(), (target.getSelection()).y);
+	}
+
+	private void simulateEnterInFindInputField(boolean shiftPressed) {
+		final Event event= new Event();
+		event.type= SWT.Traverse;
+		event.detail= SWT.TRAVERSE_RETURN;
+		event.character= SWT.CR;
+		if (shiftPressed) {
+			event.stateMask= SWT.SHIFT;
+		}
+		Combo findField= (Combo) fFindReplaceDialog.get("fFindField");
+		findField.traverse(SWT.TRAVERSE_RETURN, event);
+		runEventQueue();
+	}
+
 
 }

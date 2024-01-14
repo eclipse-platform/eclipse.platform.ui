@@ -58,7 +58,9 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 
 	@Override
 	public void activate(SearchOptions searchOption) {
-		searchOptions.add(searchOption);
+		if (!searchOptions.add(searchOption)) {
+			return;
+		}
 
 		switch (searchOption) {
 		case GLOBAL:
@@ -78,7 +80,10 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 
 	@Override
 	public void deactivate(SearchOptions searchOption) {
-		searchOptions.remove(searchOption);
+		if (!searchOptions.remove(searchOption)) {
+			return;
+		}
+
 		if (searchOption == SearchOptions.GLOBAL) {
 			useSelectedLines(true);
 		}
@@ -241,7 +246,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 					String msg = NLSUtility.format(FindReplaceMessages.FindReplace_Status_noMatchWithValue_label,
 							findString);
 					statusLineMessage(false, msg);
-					status = new FindStatus(FindStatus.StatusCode.NO_MATCH, false);
+					status = new FindStatus(FindStatus.StatusCode.NO_MATCH);
 				}
 			} catch (PatternSyntaxException ex) {
 				status = new InvalidRegExStatus(ex);
@@ -286,7 +291,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 					String msg = NLSUtility.format(FindReplaceMessages.FindReplace_Status_noMatchWithValue_label,
 							findString);
 					statusLineMessage(false, msg);
-					status = new FindStatus(FindStatus.StatusCode.NO_MATCH, false);
+					status = new FindStatus(FindStatus.StatusCode.NO_MATCH);
 				}
 			} catch (PatternSyntaxException ex) {
 				status = new InvalidRegExStatus(ex);
@@ -310,7 +315,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 		if (target instanceof IFindReplaceTargetExtension2) {
 			IFindReplaceTargetExtension2 extension = (IFindReplaceTargetExtension2) target;
 			if (!extension.validateTargetState()) {
-				status = new FindStatus(FindStatus.StatusCode.READONLY, true);
+				status = new FindStatus(FindStatus.StatusCode.READONLY);
 				return false;
 			}
 		}
@@ -490,10 +495,10 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 
 			if (isActive(SearchOptions.WRAP)) {
 				statusLineMessage(FindReplaceMessages.FindReplace_Status_wrapped_label);
-				status = new FindStatus(FindStatus.StatusCode.WRAPPED, false);
+				status = new FindStatus(FindStatus.StatusCode.WRAPPED);
 				index = findAndSelect(-1, findString);
 			} else {
-				status = new FindStatus(FindStatus.StatusCode.NO_MATCH, false);
+				status = new FindStatus(FindStatus.StatusCode.NO_MATCH);
 			}
 		}
 		return index;
@@ -564,7 +569,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 		if (index == -1) {
 			String msg = NLSUtility.format(FindReplaceMessages.FindReplace_Status_noMatchWithValue_label, findString);
 			statusLineMessage(false, msg);
-			status = new FindStatus(FindStatus.StatusCode.NO_MATCH, false);
+			status = new FindStatus(FindStatus.StatusCode.NO_MATCH);
 			return false;
 		}
 

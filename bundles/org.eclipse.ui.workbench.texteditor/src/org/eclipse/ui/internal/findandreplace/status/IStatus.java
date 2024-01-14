@@ -21,9 +21,8 @@ public interface IStatus {
 	public <T> T accept(IStatusVisitor<T> visitor);
 
 	/**
-	 * Whether the status represents an Error in the Find/Replace-Operation.
-	 *
-	 * @return the error state.
+	 * {@return whether the input is valid, e.g., that the find string is valid and
+	 * that the target is writable on replace operations}
 	 */
-	public boolean isError();
+	public boolean isInputValid();
 }
