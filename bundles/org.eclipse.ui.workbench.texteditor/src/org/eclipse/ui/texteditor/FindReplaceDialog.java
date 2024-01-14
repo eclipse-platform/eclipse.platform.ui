@@ -145,7 +145,7 @@ class FindReplaceDialog extends Dialog {
 			}
 
 			findReplaceLogic.performIncrementalSearch(getFindString());
-			evaluateFindReplacerStatus(false);
+			evaluateFindReplaceStatus(false);
 
 			updateButtonState(!findReplaceLogic.isActive(SearchOptions.INCREMENTAL));
 		}
@@ -290,18 +290,18 @@ class FindReplaceDialog extends Dialog {
 				new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						setupFindReplacer();
-						boolean eventRequiresBackwardSearch = (e.stateMask & SWT.MODIFIER_MASK) == SWT.SHIFT;
-						boolean oldSearchDirection = findReplaceLogic.isActive(SearchOptions.FORWARD);
-						activateInFindReplacerIf(SearchOptions.FORWARD,
-								!eventRequiresBackwardSearch && oldSearchDirection);
+						setupFindReplaceLogic();
+						boolean eventRequiresInverseSearchDirection = (e.stateMask & SWT.MODIFIER_MASK) == SWT.SHIFT;
+						boolean forwardSearchActivated = findReplaceLogic.isActive(SearchOptions.FORWARD);
+						activateInFindReplaceLogicIf(SearchOptions.FORWARD,
+								eventRequiresInverseSearchDirection != forwardSearchActivated);
 						boolean somethingFound = findReplaceLogic.performSearch(getFindString());
-						activateInFindReplacerIf(SearchOptions.FORWARD, oldSearchDirection);
+						activateInFindReplaceLogicIf(SearchOptions.FORWARD, forwardSearchActivated);
 
 						writeSelection();
 						updateButtonState(!somethingFound);
 						updateFindHistory();
-						evaluateFindReplacerStatus();
+						evaluateFindReplaceStatus();
 					}
 				});
 		setGridData(fFindNextButton, SWT.FILL, true, SWT.FILL, false);
@@ -314,7 +314,7 @@ class FindReplaceDialog extends Dialog {
 						writeSelection();
 						updateButtonState();
 						updateFindAndReplaceHistory();
-						evaluateFindReplacerStatus();
+						evaluateFindReplaceStatus();
 					}
 				});
 		setGridData(fSelectAllButton, SWT.FILL, true, SWT.FILL, false);
@@ -330,7 +330,7 @@ class FindReplaceDialog extends Dialog {
 						}
 						updateButtonState();
 						updateFindAndReplaceHistory();
-						evaluateFindReplacerStatus();
+						evaluateFindReplaceStatus();
 					}
 				});
 		setGridData(fReplaceFindButton, SWT.FILL, false, SWT.FILL, false);
@@ -344,7 +344,7 @@ class FindReplaceDialog extends Dialog {
 						}
 						updateButtonState();
 						updateFindAndReplaceHistory();
-						evaluateFindReplacerStatus();
+						evaluateFindReplaceStatus();
 					}
 				});
 		setGridData(fReplaceSelectionButton, SWT.FILL, false, SWT.FILL, false);
@@ -358,7 +358,7 @@ class FindReplaceDialog extends Dialog {
 						writeSelection();
 						updateButtonState();
 						updateFindAndReplaceHistory();
-						evaluateFindReplacerStatus();
+						evaluateFindReplaceStatus();
 					}
 				});
 		setGridData(fReplaceAllButton, SWT.FILL, true, SWT.FILL, false);
@@ -506,7 +506,7 @@ class FindReplaceDialog extends Dialog {
 		SelectionListener selectionListener = new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				activateInFindReplacerIf(SearchOptions.FORWARD, fForwardRadioButton.getSelection());
+				activateInFindReplaceLogicIf(SearchOptions.FORWARD, fForwardRadioButton.getSelection());
 			}
 
 			@Override
@@ -528,7 +528,7 @@ class FindReplaceDialog extends Dialog {
 		backwardRadioButton.addSelectionListener(selectionListener);
 		storeButtonWithMnemonicInMap(backwardRadioButton);
 
-		activateInFindReplacerIf(SearchOptions.FORWARD, true); // search forward by default
+		activateInFindReplaceLogicIf(SearchOptions.FORWARD, true); // search forward by default
 		backwardRadioButton.setSelection(!findReplaceLogic.isActive(SearchOptions.FORWARD));
 		fForwardRadioButton.setSelection(findReplaceLogic.isActive(SearchOptions.FORWARD));
 
@@ -671,7 +671,7 @@ class FindReplaceDialog extends Dialog {
 		SelectionListener selectionListener = new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				setupFindReplacer();
+				setupFindReplaceLogic();
 				storeSettings();
 			}
 
@@ -708,7 +708,7 @@ class FindReplaceDialog extends Dialog {
 		fIncrementalCheckBox.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				setupFindReplacer();
+				setupFindReplaceLogic();
 				storeSettings();
 			}
 
@@ -728,7 +728,7 @@ class FindReplaceDialog extends Dialog {
 			public void widgetSelected(SelectionEvent e) {
 				boolean newState = fIsRegExCheckBox.getSelection();
 				fIncrementalCheckBox.setEnabled(!newState);
-				setupFindReplacer();
+				setupFindReplaceLogic();
 				storeSettings();
 				updateButtonState();
 				setContentAssistsEnablement(newState);
@@ -1019,7 +1019,7 @@ class FindReplaceDialog extends Dialog {
 	 * @since 3.0
 	 */
 	private void updateButtonState(boolean disableReplace) {
-		setupFindReplacer();
+		setupFindReplaceLogic();
 		if (okToUse(getShell()) && okToUse(fFindNextButton)) {
 
 			boolean hasActiveSelection = false;
@@ -1243,21 +1243,23 @@ class FindReplaceDialog extends Dialog {
 	private void readConfiguration() {
 		IDialogSettings s = getDialogSettings();
 
-		activateInFindReplacerIf(SearchOptions.WRAP, s.get("wrap") == null || s.getBoolean("wrap")); //$NON-NLS-1$ //$NON-NLS-2$
-		activateInFindReplacerIf(SearchOptions.CASE_SENSITIVE, s.getBoolean("casesensitive")); //$NON-NLS-1$
-		activateInFindReplacerIf(SearchOptions.WHOLE_WORD, s.getBoolean("wholeword")); //$NON-NLS-1$
-		activateInFindReplacerIf(SearchOptions.INCREMENTAL, s.getBoolean("incremental")); //$NON-NLS-1$
-		activateInFindReplacerIf(SearchOptions.REGEX, s.getBoolean("isRegEx")); //$NON-NLS-1$
+		activateInFindReplaceLogicIf(SearchOptions.WRAP, s.get("wrap") == null || s.getBoolean("wrap")); //$NON-NLS-1$ //$NON-NLS-2$
+		activateInFindReplaceLogicIf(SearchOptions.CASE_SENSITIVE, s.getBoolean("casesensitive")); //$NON-NLS-1$
+		activateInFindReplaceLogicIf(SearchOptions.WHOLE_WORD, s.getBoolean("wholeword")); //$NON-NLS-1$
+		activateInFindReplaceLogicIf(SearchOptions.INCREMENTAL, s.getBoolean("incremental")); //$NON-NLS-1$
+		activateInFindReplaceLogicIf(SearchOptions.REGEX, s.getBoolean("isRegEx")); //$NON-NLS-1$
 
 	}
 
-	private void setupFindReplacer() {
-		activateInFindReplacerIf(SearchOptions.WRAP, fWrapCheckBox.getSelection());
-		activateInFindReplacerIf(SearchOptions.FORWARD, fForwardRadioButton.getSelection());
-		activateInFindReplacerIf(SearchOptions.CASE_SENSITIVE, fCaseCheckBox.getSelection());
-		activateInFindReplacerIf(SearchOptions.WHOLE_WORD, fWholeWordCheckBox.getSelection());
-		activateInFindReplacerIf(SearchOptions.INCREMENTAL, fIncrementalCheckBox.getSelection());
-		activateInFindReplacerIf(SearchOptions.REGEX, fIsRegExCheckBox.getSelection());
+	private void setupFindReplaceLogic() {
+		activateInFindReplaceLogicIf(SearchOptions.WRAP, fWrapCheckBox.getSelection());
+		activateInFindReplaceLogicIf(SearchOptions.FORWARD, fForwardRadioButton.getSelection());
+		activateInFindReplaceLogicIf(SearchOptions.CASE_SENSITIVE, fCaseCheckBox.getSelection());
+		activateInFindReplaceLogicIf(SearchOptions.REGEX, fIsRegExCheckBox.getSelection());
+		activateInFindReplaceLogicIf(SearchOptions.WHOLE_WORD,
+				fWholeWordCheckBox.getEnabled() && fWholeWordCheckBox.getSelection());
+		activateInFindReplaceLogicIf(SearchOptions.INCREMENTAL,
+				fIncrementalCheckBox.getEnabled() && fIncrementalCheckBox.getSelection());
 	}
 
 	/**
@@ -1279,7 +1281,7 @@ class FindReplaceDialog extends Dialog {
 		replaceHistory.add(replaceString);
 	}
 
-	private void activateInFindReplacerIf(SearchOptions option, boolean shouldActivate) {
+	private void activateInFindReplaceLogicIf(SearchOptions option, boolean shouldActivate) {
 		if (shouldActivate) {
 			findReplaceLogic.activate(option);
 		} else {
@@ -1287,8 +1289,8 @@ class FindReplaceDialog extends Dialog {
 		}
 	}
 
-	private void evaluateFindReplacerStatus() {
-		evaluateFindReplacerStatus(true);
+	private void evaluateFindReplaceStatus() {
+		evaluateFindReplaceStatus(true);
 	}
 
 	/**
@@ -1296,13 +1298,13 @@ class FindReplaceDialog extends Dialog {
 	 *
 	 * @param allowBeep Whether the evaluation should beep on some codes.
 	 */
-	private void evaluateFindReplacerStatus(boolean allowBeep) {
+	private void evaluateFindReplaceStatus(boolean allowBeep) {
 		IStatus status = findReplaceLogic.getStatus();
 
 		String dialogMessage = status.accept(new FindReplaceLogicMessageGenerator());
 		fStatusLabel.setText(dialogMessage);
 		fStatusLabel.setForeground(null);
-		if (status.isError()) {
+		if (!status.isInputValid()) {
 			fStatusLabel.setForeground(JFaceColors.getErrorText(fStatusLabel.getDisplay()));
 		}
 

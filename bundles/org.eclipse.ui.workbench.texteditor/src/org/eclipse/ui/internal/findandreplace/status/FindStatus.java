@@ -21,11 +21,9 @@ public class FindStatus implements IStatus {
 	}
 
 	private StatusCode messageCode;
-	private boolean isError;
 
-	public FindStatus(StatusCode errorCode, boolean isError) {
+	public FindStatus(StatusCode errorCode) {
 		this.messageCode = errorCode;
-		this.isError = isError;
 	}
 
 	public StatusCode getMessageCode() {
@@ -38,8 +36,8 @@ public class FindStatus implements IStatus {
 	}
 
 	@Override
-	public boolean isError() {
-		return this.isError;
+	public boolean isInputValid() {
+		return messageCode != StatusCode.READONLY;
 	}
 
 }

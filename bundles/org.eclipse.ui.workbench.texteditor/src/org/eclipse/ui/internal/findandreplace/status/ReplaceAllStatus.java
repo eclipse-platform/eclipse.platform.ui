@@ -30,8 +30,8 @@ public class ReplaceAllStatus implements IStatus {
 	}
 
 	@Override
-	public boolean isError() {
-		return false;
+	public boolean isInputValid() {
+		return true;
 	}
 
 }
