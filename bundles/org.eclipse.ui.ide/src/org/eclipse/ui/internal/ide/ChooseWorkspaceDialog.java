@@ -17,6 +17,7 @@ package org.eclipse.ui.internal.ide;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -49,7 +50,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.BorderData;
 import org.eclipse.swt.layout.BorderLayout;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowData;
@@ -59,8 +59,10 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Monitor;
@@ -78,6 +80,8 @@ import org.osgi.framework.FrameworkUtil;
  */
 public class ChooseWorkspaceDialog extends TitleAreaDialog {
 
+	private static final String TILDE = "~"; //$NON-NLS-1$
+
 	private static final String OPEN_FOLDER_EMOJI = new String(
 			new byte[] { (byte) 0xF0, (byte) 0x9F, (byte) 0x93, (byte) 0x82 }, StandardCharsets.UTF_8);
 
@@ -85,7 +89,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 
 	private ChooseWorkspaceData launchData;
 
-	private Combo text;
+	private Combo pathCombo;
 
 	private boolean suppressAskAgain = false;
 
@@ -264,7 +268,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 	/**
 	 * Removes the workspace from RecentWorkspaces
 	 */
-	private void removeWorkspaceFromLauncher(String workspace) {
+	private void removeWorkspaceFromLauncher(String workspace, Combo combo) {
 		// Remove Workspace from Properties
 		List<String> recentWorkpaces = new ArrayList<>(Arrays.asList(launchData.getRecentWorkspaces()));
 		recentWorkpaces.remove(workspace);
@@ -279,10 +283,10 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 		getShell().layout();
 		initializeBounds();
 		// Remove Workspace from combobox
-		text.remove(workspace);
-		if (text.getText().equals(workspace) || text.getText().isEmpty()) {
-			text.setText(TextProcessor
-					.process((text.getItemCount() > 0 ? text.getItem(0) : launchData.getInitialDefault())));
+		combo.remove(workspace);
+		if (combo.getText().equals(workspace) || combo.getText().isEmpty()) {
+			combo.setText(TextProcessor
+					.process((combo.getItemCount() > 0 ? combo.getItem(0) : launchData.getInitialDefault())));
 		}
 	}
 
@@ -291,7 +295,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 	 * @return String
 	 */
 	protected String getWorkspaceLocation() {
-		return text.getText();
+		return getCombo().getText();
 	}
 
 	@Override
@@ -364,7 +368,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 			forgetItem.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					removeWorkspaceFromLauncher(recentWorkspace);
+					removeWorkspaceFromLauncher(recentWorkspace, getCombo());
 				}
 			});
 			link.setMenu(menu);
@@ -429,11 +433,50 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 	protected Control createWorkspaceBrowseRow(Composite parent) {
 		Composite panel = createBrowseComposite(parent);
 
-		createPathCombo(panel);
-
-		createBrowseButton(panel);
-
+		pathCombo = createPathCombo(panel);
+		createBrowseButton(panel, pathCombo);
+		setInitialTextValues(pathCombo);
+		Label label = new Label(parent, SWT.LEAD);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalIndent = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		label.setLayoutData(gd);
+		pathCombo.addModifyListener(e -> {
+			String hint = getUnexpectedPathHint();
+			label.setText(hint);
+			boolean empty = hint.isEmpty();
+			if (empty != gd.exclude) {
+				label.setVisible(!empty);
+				gd.exclude = empty;
+				parent.layout();
+			}
+		});
+		Listener[] listeners = pathCombo.getListeners(SWT.Modify);
+		Event event = new Event();
+		event.type = SWT.Modify;
+		event.widget = pathCombo;
+		for (Listener listener : listeners) {
+			listener.handleEvent(event);
+		}
 		return panel;
+	}
+
+	protected String getUnexpectedPathHint() {
+		String workspaceLocation = getWorkspaceLocation();
+		File location = new File(workspaceLocation);
+		Path path = location.getAbsoluteFile().toPath();
+		String normalisedPath = path.normalize().toString();
+		String normalisedPathWithSeperator = normalisedPath + File.separator;
+		if (normalisedPathWithSeperator.contains(TILDE)) {
+			return IDEWorkbenchMessages.ChooseWorkspaceDialog_TildeNonExpandedWarning0
+					+ IDEWorkbenchMessages.ChooseWorkspaceDialog_ResolvedAbsolutePath0
+					+ path.normalize();
+		}
+		if (!workspaceLocation.equalsIgnoreCase(normalisedPath)
+				&& !workspaceLocation.equalsIgnoreCase(normalisedPathWithSeperator)) {
+			return IDEWorkbenchMessages.ChooseWorkspaceDialog_ResolvedAbsolutePath0
+					+ path.normalize();
+		}
+		return ""; //$NON-NLS-1$
 	}
 
 	protected Composite createBrowseComposite(Composite parent) {
@@ -450,15 +493,12 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 	}
 
 	protected Combo createPathCombo(Composite panel) {
-		Composite c = new Composite(panel, SWT.NONE);
-		FillLayout layout = new FillLayout(SWT.VERTICAL);
-		c.setLayout(layout);
-		text = new Combo(c, SWT.BORDER | SWT.LEAD | SWT.DROP_DOWN);
-		new DirectoryProposalContentAssist().apply(text);
-		text.setTextDirection(SWT.AUTO_TEXT_DIRECTION);
-		text.setFocus();
-		Label label = new Label(c, SWT.BORDER | SWT.LEAD);
-		text.addModifyListener(e -> {
+		Combo combo = new Combo(panel, SWT.BORDER | SWT.LEAD | SWT.DROP_DOWN);
+		new DirectoryProposalContentAssist().apply(combo);
+		combo.setTextDirection(SWT.AUTO_TEXT_DIRECTION);
+		combo.setFocus();
+		combo.setLayoutData(new GridData(400, SWT.DEFAULT));
+		combo.addModifyListener(e -> {
 			Button okButton = getButton(Window.OK);
 			if(okButton != null && !okButton.isDisposed()) {
 				boolean nonWhitespaceFound = false;
@@ -470,32 +510,12 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 					}
 				}
 				okButton.setEnabled(nonWhitespaceFound);
-
-				File location = new File(characters);
-				String normalisedPath = location.getAbsoluteFile().toPath().normalize().toString();
-				String normalisedPathWithSeperator = normalisedPath + File.separator;
-				if (!characters.equalsIgnoreCase(normalisedPath)
-						&& !characters.equalsIgnoreCase(normalisedPathWithSeperator)) {
-				label.setText(
-						IDEWorkbenchMessages.ChooseWorkspaceDialog_ResolvedAbsolutePath0
-								+ location.getAbsoluteFile().toPath().normalize());
-				}
-				else {
-					label.setText(""); //$NON-NLS-1$
-				}
-				if (normalisedPath.startsWith("~")) //$NON-NLS-1$
-				{
-					label.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_TildeNonExpandedWarning0
-							+ IDEWorkbenchMessages.ChooseWorkspaceDialog_ResolvedAbsolutePath0
-							+ location.getAbsoluteFile().toPath().normalize());
-				}
 			}
 		});
-		setInitialTextValues(text);
-		return text;
+		return combo;
 	}
 
-	protected Button createBrowseButton(Composite panel) {
+	protected Button createBrowseButton(Composite panel, Combo combo) {
 		Button browseButton = new Button(panel, SWT.PUSH);
 		browseButton.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_browseLabel);
 		browseButton.setToolTipText(IDEWorkbenchMessages.ChooseWorkspaceDialog_browseTooltip);
@@ -510,7 +530,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 				dialog.setFilterPath(getInitialBrowsePath());
 				String dir = dialog.open();
 				if (dir != null) {
-					text.setText(TextProcessor.process(dir));
+					combo.setText(TextProcessor.process(dir));
 				}
 			}
 		});
@@ -637,7 +657,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 	 * @return Combo
 	 */
 	public Combo getCombo() {
-		return text;
+		return pathCombo;
 	}
 
 	/**
