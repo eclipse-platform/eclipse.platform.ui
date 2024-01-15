@@ -209,6 +209,7 @@ class FindReplaceDialog extends Dialog {
 	public FindReplaceDialog(Shell parentShell) {
 		super(parentShell);
 		findReplaceLogic = new FindReplaceLogic();
+		findReplaceLogic.activate(SearchOptions.GLOBAL);
 		fParentShell = null;
 		fDialogPositionInit = null;
 
