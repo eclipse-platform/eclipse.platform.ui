@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.findandreplace.status;
 
-public interface IStatusVisitor<T> {
-	public T visit(IStatus status);
+public interface IFindReplaceStatusVisitor<T> {
+	public T visit(IFindReplaceStatus status);
 
 	public T visit(ReplaceAllStatus status);
 

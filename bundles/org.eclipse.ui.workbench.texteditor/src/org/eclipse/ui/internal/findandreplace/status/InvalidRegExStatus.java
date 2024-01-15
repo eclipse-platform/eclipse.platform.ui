@@ -19,7 +19,7 @@ import java.util.regex.PatternSyntaxException;
  * This class is used as glue to correctly map to the error messages generated
  * by RegEx-Errors which are directly displayed in plain text.
  */
-public class InvalidRegExStatus implements IStatus {
+public class InvalidRegExStatus implements IFindReplaceStatus {
 
 	private PatternSyntaxException regExException;
 
@@ -32,7 +32,7 @@ public class InvalidRegExStatus implements IStatus {
 	}
 
 	@Override
-	public <T> T accept(IStatusVisitor<T> visitor) {
+	public <T> T accept(IFindReplaceStatusVisitor<T> visitor) {
 		return visitor.visit(this);
 	}
 

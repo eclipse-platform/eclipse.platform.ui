@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.jface.text.IFindReplaceTarget;
 
-import org.eclipse.ui.internal.findandreplace.status.IStatus;
+import org.eclipse.ui.internal.findandreplace.status.IFindReplaceStatus;
 
 /**
  * Implements a generalized logic operator for in-file Find/Replace-Operations.
@@ -55,7 +55,7 @@ public interface IFindReplaceLogic {
 	 *
 	 * @return FindAndReplaceMessageStatus
 	 */
-	public IStatus getStatus();
+	public IFindReplaceStatus getStatus();
 
 	/**
 	 * RegEx-Search is not possible on every target. Hence, even after {code

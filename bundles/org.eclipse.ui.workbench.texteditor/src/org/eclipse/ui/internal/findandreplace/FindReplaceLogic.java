@@ -37,7 +37,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.findandreplace.status.FindAllStatus;
 import org.eclipse.ui.internal.findandreplace.status.FindStatus;
-import org.eclipse.ui.internal.findandreplace.status.IStatus;
+import org.eclipse.ui.internal.findandreplace.status.IFindReplaceStatus;
 import org.eclipse.ui.internal.findandreplace.status.InvalidRegExStatus;
 import org.eclipse.ui.internal.findandreplace.status.NoStatus;
 import org.eclipse.ui.internal.findandreplace.status.ReplaceAllStatus;
@@ -47,7 +47,7 @@ import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.IFindReplaceTargetExtension2;
 
 public class FindReplaceLogic implements IFindReplaceLogic {
-	private IStatus status;
+	private IFindReplaceStatus status;
 	private IFindReplaceTarget target;
 	private IRegion oldScope;
 	private Point incrementalBaseLocation;
@@ -99,7 +99,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	}
 
 	@Override
-	public IStatus getStatus() {
+	public IFindReplaceStatus getStatus() {
 		if (status == null) {
 			return new NoStatus();
 		}
