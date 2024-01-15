@@ -1304,8 +1304,9 @@ class FindReplaceDialog extends Dialog {
 
 		String dialogMessage = status.accept(new FindReplaceLogicMessageGenerator());
 		fStatusLabel.setText(dialogMessage);
-		fStatusLabel.setForeground(null);
-		if (!status.isInputValid()) {
+		if (status.isInputValid()) {
+			fStatusLabel.setForeground(fReplaceLabel.getForeground());
+		} else {
 			fStatusLabel.setForeground(JFaceColors.getErrorText(fStatusLabel.getDisplay()));
 		}
 
