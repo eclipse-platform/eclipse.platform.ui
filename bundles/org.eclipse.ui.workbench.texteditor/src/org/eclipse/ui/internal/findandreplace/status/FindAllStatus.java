@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.findandreplace.status;
 
-public class FindAllStatus implements IStatus {
+public class FindAllStatus implements IFindReplaceStatus {
 	private int selectCount;
 
 	public FindAllStatus(int selectCount) {
@@ -25,7 +25,7 @@ public class FindAllStatus implements IStatus {
 	}
 
 	@Override
-	public <T> T accept(IStatusVisitor<T> visitor) {
+	public <T> T accept(IFindReplaceStatusVisitor<T> visitor) {
 		return visitor.visit(this);
 	}
 

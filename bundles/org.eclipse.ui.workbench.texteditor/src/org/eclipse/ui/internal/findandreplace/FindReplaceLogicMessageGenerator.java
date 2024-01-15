@@ -15,17 +15,17 @@ package org.eclipse.ui.internal.findandreplace;
 
 import org.eclipse.ui.internal.findandreplace.status.FindAllStatus;
 import org.eclipse.ui.internal.findandreplace.status.FindStatus;
-import org.eclipse.ui.internal.findandreplace.status.IStatus;
-import org.eclipse.ui.internal.findandreplace.status.IStatusVisitor;
+import org.eclipse.ui.internal.findandreplace.status.IFindReplaceStatus;
+import org.eclipse.ui.internal.findandreplace.status.IFindReplaceStatusVisitor;
 import org.eclipse.ui.internal.findandreplace.status.InvalidRegExStatus;
 import org.eclipse.ui.internal.findandreplace.status.NoStatus;
 import org.eclipse.ui.internal.findandreplace.status.ReplaceAllStatus;
 import org.eclipse.ui.internal.texteditor.NLSUtility;
 
-public class FindReplaceLogicMessageGenerator implements IStatusVisitor<String> {
+public class FindReplaceLogicMessageGenerator implements IFindReplaceStatusVisitor<String> {
 
 	@Override
-	public String visit(IStatus status) {
+	public String visit(IFindReplaceStatus status) {
 		throw new UnsupportedOperationException();
 	}
 

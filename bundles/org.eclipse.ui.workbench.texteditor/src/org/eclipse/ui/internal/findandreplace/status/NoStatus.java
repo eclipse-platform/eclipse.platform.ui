@@ -16,14 +16,14 @@ package org.eclipse.ui.internal.findandreplace.status;
 /**
  * Represents an "everything worked fine, nothing to display"-status.
  */
-public class NoStatus implements IStatus {
+public class NoStatus implements IFindReplaceStatus {
 
 	public NoStatus() {
 		// do nothing
 	}
 
 	@Override
-	public <T> T accept(IStatusVisitor<T> visitor) {
+	public <T> T accept(IFindReplaceStatusVisitor<T> visitor) {
 		return visitor.visit(this);
 	}
 

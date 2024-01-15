@@ -17,8 +17,8 @@ package org.eclipse.ui.internal.findandreplace.status;
  * Interface for statuses that can occur while performing
  * Find/Replace-operations.
  */
-public interface IStatus {
-	public <T> T accept(IStatusVisitor<T> visitor);
+public interface IFindReplaceStatus {
+	public <T> T accept(IFindReplaceStatusVisitor<T> visitor);
 
 	/**
 	 * {@return whether the input is valid, e.g., that the find string is valid and

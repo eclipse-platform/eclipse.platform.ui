@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.findandreplace.status;
 
-public class FindStatus implements IStatus {
+public class FindStatus implements IFindReplaceStatus {
 
 	public enum StatusCode {
 		NO_MATCH,
@@ -31,7 +31,7 @@ public class FindStatus implements IStatus {
 	}
 
 	@Override
-	public <T> T accept(IStatusVisitor<T> visitor) {
+	public <T> T accept(IFindReplaceStatusVisitor<T> visitor) {
 		return visitor.visit(this);
 	}
 

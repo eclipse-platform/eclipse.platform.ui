@@ -70,7 +70,7 @@ import org.eclipse.ui.internal.findandreplace.IFindReplaceLogic;
 import org.eclipse.ui.internal.findandreplace.SearchOptions;
 import org.eclipse.ui.internal.findandreplace.status.FindAllStatus;
 import org.eclipse.ui.internal.findandreplace.status.FindStatus;
-import org.eclipse.ui.internal.findandreplace.status.IStatus;
+import org.eclipse.ui.internal.findandreplace.status.IFindReplaceStatus;
 import org.eclipse.ui.internal.findandreplace.status.InvalidRegExStatus;
 import org.eclipse.ui.internal.findandreplace.status.ReplaceAllStatus;
 import org.eclipse.ui.internal.texteditor.SWTUtil;
@@ -1299,7 +1299,7 @@ class FindReplaceDialog extends Dialog {
 	 * @param allowBeep Whether the evaluation should beep on some codes.
 	 */
 	private void evaluateFindReplaceStatus(boolean allowBeep) {
-		IStatus status = findReplaceLogic.getStatus();
+		IFindReplaceStatus status = findReplaceLogic.getStatus();
 
 		String dialogMessage = status.accept(new FindReplaceLogicMessageGenerator());
 		fStatusLabel.setText(dialogMessage);
