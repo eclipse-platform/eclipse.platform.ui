@@ -32,4 +32,9 @@ public class NoStatus implements IFindReplaceStatus {
 		return true;
 	}
 
+	@Override
+	public boolean wasSuccessful() {
+		return true;
+	}
+
 }

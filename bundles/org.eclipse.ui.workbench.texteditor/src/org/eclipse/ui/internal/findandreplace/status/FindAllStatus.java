@@ -34,4 +34,9 @@ public class FindAllStatus implements IFindReplaceStatus {
 		return true;
 	}
 
+	@Override
+	public boolean wasSuccessful() {
+		return selectCount > 0;
+	}
+
 }
