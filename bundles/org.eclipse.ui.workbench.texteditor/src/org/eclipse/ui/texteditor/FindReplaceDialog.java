@@ -68,11 +68,7 @@ import org.eclipse.ui.internal.findandreplace.FindReplaceMessages;
 import org.eclipse.ui.internal.findandreplace.HistoryStore;
 import org.eclipse.ui.internal.findandreplace.IFindReplaceLogic;
 import org.eclipse.ui.internal.findandreplace.SearchOptions;
-import org.eclipse.ui.internal.findandreplace.status.FindAllStatus;
-import org.eclipse.ui.internal.findandreplace.status.FindStatus;
 import org.eclipse.ui.internal.findandreplace.status.IFindReplaceStatus;
-import org.eclipse.ui.internal.findandreplace.status.InvalidRegExStatus;
-import org.eclipse.ui.internal.findandreplace.status.ReplaceAllStatus;
 import org.eclipse.ui.internal.texteditor.SWTUtil;
 
 /**
@@ -1310,18 +1306,8 @@ class FindReplaceDialog extends Dialog {
 			fStatusLabel.setForeground(JFaceColors.getErrorText(fStatusLabel.getDisplay()));
 		}
 
-		if (status instanceof FindStatus statusMessage || status instanceof InvalidRegExStatus invalidRegexStatus) {
+		if (!status.wasSuccessful()) {
 			tryToBeep(allowBeep);
-		}
-		if (status instanceof ReplaceAllStatus replaceAllStatus) {
-			if (replaceAllStatus.getReplaceCount() == 0) {
-				tryToBeep(allowBeep);
-			}
-		}
-		if (status instanceof FindAllStatus selectAllStatus) {
-			if (selectAllStatus.getSelectCount() == 0) {
-				tryToBeep(allowBeep);
-			}
 		}
 	}
 

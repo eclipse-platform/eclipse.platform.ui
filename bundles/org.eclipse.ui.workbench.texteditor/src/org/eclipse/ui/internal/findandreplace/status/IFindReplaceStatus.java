@@ -14,8 +14,8 @@
 package org.eclipse.ui.internal.findandreplace.status;
 
 /**
- * Interface for statuses that can occur while performing
- * Find/Replace-operations.
+ * Interface for statuses that can occur while performing find/replace
+ * operations.
  */
 public interface IFindReplaceStatus {
 	public <T> T accept(IFindReplaceStatusVisitor<T> visitor);
@@ -25,4 +25,10 @@ public interface IFindReplaceStatus {
 	 * that the target is writable on replace operations}
 	 */
 	public boolean isInputValid();
+
+	/**
+	 * {@return whether the find/replace operation was successful, i.e., whether
+	 * some matching string was found or replaced}
+	 */
+	public boolean wasSuccessful();
 }

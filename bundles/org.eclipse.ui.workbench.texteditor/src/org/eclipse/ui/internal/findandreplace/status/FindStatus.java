@@ -40,4 +40,11 @@ public class FindStatus implements IFindReplaceStatus {
 		return messageCode != StatusCode.READONLY;
 	}
 
+	@Override
+	public boolean wasSuccessful() {
+		// Also report StatusCode.WRAPPED as unsuccessful, because it implicitly
+		// includes NO_MATCH, as before wrapping no further match was found
+		return false;
+	}
+
 }

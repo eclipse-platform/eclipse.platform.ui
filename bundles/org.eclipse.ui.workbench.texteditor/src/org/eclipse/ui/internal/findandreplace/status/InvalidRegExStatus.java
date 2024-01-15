@@ -41,4 +41,9 @@ public class InvalidRegExStatus implements IFindReplaceStatus {
 		return false;
 	}
 
+	@Override
+	public boolean wasSuccessful() {
+		return false;
+	}
+
 }
