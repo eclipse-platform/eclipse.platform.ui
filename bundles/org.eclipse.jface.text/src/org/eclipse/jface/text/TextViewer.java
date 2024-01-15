@@ -2784,8 +2784,7 @@ public class TextViewer extends Viewer implements
 				event= ((SlaveDocumentEvent) event).getMasterEvent();
 
 			TextEvent e= new TextEvent(cmd.start, cmd.length, cmd.text, cmd.preservedText, event, redraws());
-			for (int i= 0; i < textListeners.size(); i++) {
-				ITextListener l= textListeners.get(i);
+			for (ITextListener l : textListeners) {
 				l.textChanged(e);
 			}
 		}

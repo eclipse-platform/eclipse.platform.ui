@@ -121,7 +121,9 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 	private void checkRange(int offset, int length, int documentLength) {
 		Assert.isLegal(offset > -1);
 		Assert.isLegal(length > -1);
-		Assert.isLegal(offset + length <= documentLength);
+		if (offset + length > documentLength) {
+			throw new IllegalArgumentException("offset + length > documentLength: " + offset + " + " + length + " > " + documentLength); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
 	}
 
 	@Override
