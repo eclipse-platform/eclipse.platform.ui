@@ -30,7 +30,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.HandleObjectManager;
 import org.eclipse.core.commands.common.NotDefinedException;
@@ -2088,6 +2090,9 @@ public final class BindingManager extends HandleObjectManager<Scheme>
 				continue;
 			} else if (bestMatch.getType() > current.getType()) {
 				continue;
+			} else if (hasDisabledHandler(current) || hasDisabledHandler(bestMatch)) {
+				// at least one of the bindings cannot be handled by its handler in the current context
+				continue;
 			}
 
 			// We could not resolve the conflict between these two.
@@ -2354,5 +2359,19 @@ public final class BindingManager extends HandleObjectManager<Scheme>
 			fireBindingManagerChanged(new BindingManagerEvent(this, false,
 					null, false, null, false, false, true));
 		}
+	}
+
+	private static boolean hasDisabledHandler(Binding binding) {
+		ParameterizedCommand parameterizedCommand = binding.getParameterizedCommand();
+		if (parameterizedCommand != null) {
+			Command command = parameterizedCommand.getCommand();
+			if (command != null) {
+				IHandler handler = command.getHandler();
+				if (handler != null) {
+					return !handler.isEnabled();
+				}
+			}
+		}
+		return false;
 	}
 }
