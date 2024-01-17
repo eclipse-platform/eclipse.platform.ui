@@ -45,6 +45,10 @@ public abstract class RefactoringWizardPage extends WizardPage {
 
 	/** Does the page belong to a conventional wizard? */
 	private final boolean fConventionalWizard;
+	/**
+	 * @since 3.13
+	 */
+	protected Refactoring fRefactoring;
 
 	/**
 	 * Creates a new refactoring wizard page.
@@ -98,10 +102,11 @@ public abstract class RefactoringWizardPage extends WizardPage {
 	 *  or <code>null</code>
 	 */
 	protected Refactoring getRefactoring() {
-		RefactoringWizard wizard= getRefactoringWizard();
-		if (wizard == null)
-			return null;
-		return wizard.getRefactoring();
+		return fRefactoring != null
+				? fRefactoring
+				: getRefactoringWizard() != null
+					? getRefactoringWizard().getRefactoring()
+					: null;
 	}
 
 	/**
