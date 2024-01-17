@@ -30,7 +30,7 @@ pipeline {
 					archiveArtifacts artifacts: '*.log,*/target/work/data/.metadata/*.log,*/tests/target/work/data/.metadata/*.log,apiAnalyzer-workspace/.metadata/*.log', allowEmptyArchive: true
 					junit '**/target/surefire-reports/TEST-*.xml'
 					discoverGitReferenceBuild referenceJob: 'eclipse.platform.ui/master'
-					recordIssues publishAllIssues: true, tools: [java(), mavenConsole(), javaDoc()]
+					recordIssues publishAllIssues: true, tools: [eclipse(pattern: '**/target/compilelogs/*.xml'), mavenConsole(), javaDoc()]
 				}
 			}
 		}
