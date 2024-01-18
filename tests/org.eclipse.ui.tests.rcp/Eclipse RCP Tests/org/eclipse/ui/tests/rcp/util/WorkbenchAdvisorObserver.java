@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.rcp.util;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,7 +28,6 @@ import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.tests.harness.util.RCPTestWorkbenchAdvisor;
-import org.junit.Assert;
 
 /**
  * This utility class is used to record the order in which the hooks are called.
@@ -79,13 +83,13 @@ public class WorkbenchAdvisorObserver extends RCPTestWorkbenchAdvisor {
 	}
 
 	public void assertNextOperation(String expected) {
-		Assert.assertTrue(iterator.hasNext());
-		Assert.assertEquals(expected, iterator.next());
+		assertTrue(iterator.hasNext());
+		assertEquals(expected, iterator.next());
 	}
 
 	public void assertAllOperationsExamined() {
-		Assert.assertNotNull(iterator);
-		Assert.assertFalse(iterator.hasNext());
+		assertNotNull(iterator);
+		assertFalse(iterator.hasNext());
 	}
 
 	private void addOperation(String operation) {
