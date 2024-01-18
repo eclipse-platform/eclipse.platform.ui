@@ -289,6 +289,15 @@ public class FindReplaceLogicTest {
 	}
 
 	@Test
+	public void testPerformSelectAllOnReadonlyTarget() {
+		TextViewer textViewer= setupTextViewer("Ab Ab");
+		textViewer.setEditable(false);
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.performSelectAll("Ab", Display.getCurrent());
+		expectStatusIsFindAllWithCount(findReplaceLogic, 2);
+	}
+
+	@Test
 	public void testSelectWholeWords() {
 		TextViewer textViewer= setupTextViewer("Hello World of get and getters, set and setters");
 		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);

@@ -398,79 +398,68 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	 *
 	 */
 	private int replaceAll(String findString, String replaceString) {
-		boolean oldSearchDirectionIsForward = isActive(SearchOptions.FORWARD);
-		activate(SearchOptions.FORWARD); // since we operate on the whole text, we can just start from top left and work
-											// forward - regardless of internal settings
-		int replaceCount = 0;
-		int findReplacePosition = 0;
-
-		findReplacePosition = 0;
-
 		if (!prepareTargetForEditing()) {
-			return replaceCount;
+			return 0;
 		}
 
-		if (target instanceof IFindReplaceTargetExtension) {
-			((IFindReplaceTargetExtension) target).setReplaceAllMode(true);
-		}
-
-		try {
-			int index = 0;
-			while (index != -1) {
-				index = findAndSelect(findReplacePosition, findString);
-				if (index != -1) { // substring not contained from current position
-					Point selection = replaceSelection(replaceString, isRegExSearchAvailableAndActive());
-					replaceCount++;
-					findReplacePosition = selection.x + selection.y;
+		List<Point> replacements = new ArrayList<>();
+		executeInForwardMode(() -> {
+			executeWithReplaceAllEnabled(() -> {
+				Point currentSelection = new Point(0, 0);
+				while (findAndSelect(currentSelection.x + currentSelection.y, findString) != -1) {
+					currentSelection = replaceSelection(replaceString, isRegExSearchAvailableAndActive());
+					replacements.add(currentSelection);
 				}
-			}
-		} finally {
-			if (target instanceof IFindReplaceTargetExtension) {
-				((IFindReplaceTargetExtension) target).setReplaceAllMode(false);
-			}
-			if (!oldSearchDirectionIsForward) {
+			});
+		});
+		return replacements.size();
+	}
+
+	private void executeInForwardMode(Runnable runnable) {
+		if (isActive(SearchOptions.FORWARD)) {
+			runnable.run();
+		} else {
+			activate(SearchOptions.FORWARD);
+			try {
+				runnable.run();
+			} finally {
 				deactivate(SearchOptions.FORWARD);
 			}
 		}
+	}
 
-		return replaceCount;
+	private void executeWithReplaceAllEnabled(Runnable runnable) {
+		if (target instanceof IFindReplaceTargetExtension selectableTarget) {
+			selectableTarget.setReplaceAllMode(true);
+			try {
+				runnable.run();
+			} finally {
+				selectableTarget.setReplaceAllMode(false);
+			}
+		} else {
+			runnable.run();
+		}
 	}
 
 	/**
-	 * @param findString    the String to select as part of the search
-	 * @return The amount of selected Elements
+	 * @param findString the string to select as part of the search
+	 * @return the number of selected elements
 	 */
 	private int selectAll(String findString) {
-		boolean oldSearchDirectionIsForward = isActive(SearchOptions.FORWARD);
-		activate(SearchOptions.FORWARD); // since we operate on the whole text, we can just start from top left and work
-											// forward - regardless of internal settings
-		int selectCount = 0;
-		int position = 0;
-
-		if (!prepareTargetForEditing()) {
-			return selectCount;
-		}
-
-		List<Region> selectedRegions = new ArrayList<>();
-		int index = 0;
-		do {
-			index = findAndSelect(position, findString);
-			if (index != -1) { // substring not contained from current position
-				Point selection = target.getSelection();
-				selectedRegions.add(new Region(selection.x, selection.y));
-				selectCount++;
-				position = selection.x + selection.y;
+		List<Point> selections = new ArrayList<>();
+		executeInForwardMode(() -> {
+			Point currentSeletion = new Point(0, 0);
+			while (findAndSelect(currentSeletion.x + currentSeletion.y, findString) != -1) {
+				currentSeletion = target.getSelection();
+				selections.add(currentSeletion);
 			}
-		} while (index != -1);
-		if (target instanceof IFindReplaceTargetExtension4) {
-			((IFindReplaceTargetExtension4) target).setSelection(selectedRegions.toArray(IRegion[]::new));
-		}
-
-		if (!oldSearchDirectionIsForward) {
-			deactivate(SearchOptions.FORWARD);
-		}
-
-		return selectCount;
+			if (target instanceof IFindReplaceTargetExtension4 selectableTarget) {
+				IRegion[] selectedRegions = selections.stream().map(selection -> new Region(selection.x, selection.y))
+						.toArray(IRegion[]::new);
+				selectableTarget.setSelection(selectedRegions);
+			}
+		});
+		return selections.size();
 	}
 
 	/**
