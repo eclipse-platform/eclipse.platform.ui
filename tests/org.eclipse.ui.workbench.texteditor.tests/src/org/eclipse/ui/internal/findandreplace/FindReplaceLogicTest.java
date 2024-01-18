@@ -243,6 +243,9 @@ public class FindReplaceLogicTest {
 		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
 		findReplaceLogic.activate(SearchOptions.FORWARD);
 
+		findReplaceLogic.performSelectAll("c", parentShell.getDisplay());
+		expectStatusIsCode(findReplaceLogic, FindStatus.StatusCode.NO_MATCH);
+
 		findReplaceLogic.performSelectAll("b", parentShell.getDisplay());
 		expectStatusIsFindAllWithCount(findReplaceLogic, 4);
 		// I don't have access to getAllSelectionPoints or similar (not yet implemented), so I cannot really test for correct behavior
@@ -252,15 +255,31 @@ public class FindReplaceLogicTest {
 		expectStatusIsFindAllWithCount(findReplaceLogic, 1);
 	}
 
+	@Test
+	public void testPerformSelectAllRegEx() {
+		TextViewer textViewer= setupTextViewer("AbAbAbAb");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+		findReplaceLogic.activate(SearchOptions.REGEX);
+
+		findReplaceLogic.performSelectAll("c.*", parentShell.getDisplay());
+		expectStatusIsCode(findReplaceLogic, FindStatus.StatusCode.NO_MATCH);
+
+		findReplaceLogic.performSelectAll("(Ab)*", parentShell.getDisplay());
+		expectStatusIsFindAllWithCount(findReplaceLogic, 1);
+
+		findReplaceLogic.performSelectAll("Ab(Ab)+Ab(Ab)+(Ab)+", parentShell.getDisplay());
+		expectStatusIsCode(findReplaceLogic, FindStatus.StatusCode.NO_MATCH);
+	}
+
 
 	@Test
-	@Ignore("https://github.com/eclipse-platform/eclipse.platform.ui/issues/1203")
 	public void testPerformSelectAllBackward() {
 		TextViewer textViewer= setupTextViewer("AbAbAbAb");
 		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
 		findReplaceLogic.deactivate(SearchOptions.FORWARD);
 
-		findReplaceLogic.performSelectAll("b", parentShell.getDisplay()); // https://github.com/eclipse-platform/eclipse.platform.ui/issues/1203 maybe related?
+		findReplaceLogic.performSelectAll("b", parentShell.getDisplay());
 		expectStatusIsFindAllWithCount(findReplaceLogic, 4);
 		// I don't have access to getAllSelectionPoints or similar (not yet implemented), so I cannot really test for correct behavior
 		// related to https://github.com/eclipse-platform/eclipse.platform.ui/issues/1047
