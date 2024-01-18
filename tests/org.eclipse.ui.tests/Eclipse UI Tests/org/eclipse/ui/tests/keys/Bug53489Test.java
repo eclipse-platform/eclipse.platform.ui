@@ -16,7 +16,6 @@ package org.eclipse.ui.tests.keys;
 
 import static org.junit.Assert.assertTrue;
 
-import java.awt.AWTException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -56,7 +55,6 @@ public class Bug53489Test {
 	 * Tests that pressing delete in a styled text widget (in a running Eclipse)
 	 * does not cause a double delete.
 	 *
-	 * @throws AWTException     If the creation of robot
 	 * @throws CommandException If execution of the handler fails.
 	 * @throws CoreException    If the test project cannot be created and opened.
 	 * @throws IOException      If the file cannot be read.
