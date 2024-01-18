@@ -1571,7 +1571,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 
 	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
-		String name = getClass().getSimpleName() + ".dialogBounds"; //$NON-NLS-1$
+		String name = getWizard().getClass().getSimpleName() + ".dialogBounds"; //$NON-NLS-1$
 		IDialogSettings dialogSettings = getWizard().getDialogSettings();
 		if (dialogSettings == null) {
 			return null;
