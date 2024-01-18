@@ -14,10 +14,10 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.rcp;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +28,9 @@ import org.eclipse.ui.IWorkbenchListener;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.tests.rcp.util.WorkbenchAdvisorObserver;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for IWorkbenchListener API and implementation.
@@ -40,15 +40,14 @@ public class WorkbenchListenerTest {
 
 	private Display display = null;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
-
 		assertNull(display);
 		display = PlatformUI.createDisplay();
 		assertNotNull(display);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		assertNotNull(display);
 		display.dispose();

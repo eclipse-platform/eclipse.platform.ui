@@ -14,26 +14,28 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.rcp;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.harness.util.RCPTestWorkbenchAdvisor;
 import org.eclipse.ui.tests.rcp.util.WorkbenchAdvisorObserver;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class PlatformUITest {
 
 
 	/** Make sure workbench is not returned before it is running. */
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testEarlyGetWorkbench() {
 		assertFalse(PlatformUI.isWorkbenchRunning());
-		PlatformUI.getWorkbench();
+		assertThrows(IllegalStateException.class, () -> PlatformUI.getWorkbench());
 	}
 
 	@Test
@@ -58,33 +60,22 @@ public class PlatformUITest {
 		display.dispose();
 		assertTrue(display.isDisposed());
 
-		assertEquals("Async run during startup.  See RCPTestWorkbenchAdvisor.preStartup()",
-				Boolean.FALSE,
-				RCPTestWorkbenchAdvisor.asyncDuringStartup);
-
-		// the following four asserts test the various combinations of Thread +
-		// DisplayAccess + a/sync exec. Anything without a call to DisplayAccess
-		// should be deferred until after startup.
-		assertEquals(
-				"Sync from qualified thread did not run during startup.  See RCPTestWorkbenchAdvisor.preStartup()",
-				Boolean.TRUE,
-				RCPTestWorkbenchAdvisor.syncWithDisplayAccess);
-		assertEquals(
-				"Async from qualified thread did not run during startup.  See RCPTestWorkbenchAdvisor.preStartup()",
-				Boolean.TRUE,
-				RCPTestWorkbenchAdvisor.asyncWithDisplayAccess);
-		assertEquals(
-				"Sync from un-qualified thread ran during startup.  See RCPTestWorkbenchAdvisor.preStartup()",
-				Boolean.FALSE,
-				RCPTestWorkbenchAdvisor.syncWithoutDisplayAccess);
-		assertEquals(
-				"Async from un-qualified thread ran during startup.  See RCPTestWorkbenchAdvisor.preStartup()",
-				Boolean.FALSE,
-				RCPTestWorkbenchAdvisor.asyncWithoutDisplayAccess);
-
-		assertFalse(
-				"DisplayAccess.accessDisplayDuringStartup() in UI thread did not result in exception.",
-				RCPTestWorkbenchAdvisor.displayAccessInUIThreadAllowed);
+		assertAll(//
+				() -> assertFalse(RCPTestWorkbenchAdvisor.asyncDuringStartup,
+						"Async run during startup.  See RCPTestWorkbenchAdvisor.preStartup()"),
+				// the following four asserts test the various combinations of Thread +
+				// DisplayAccess + a/sync exec. Anything without a call to DisplayAccess
+				// should be deferred until after startup.
+				() -> assertTrue(RCPTestWorkbenchAdvisor.syncWithDisplayAccess,
+						"Sync from qualified thread did not run during startup.  See RCPTestWorkbenchAdvisor.preStartup()"),
+				() -> assertTrue(RCPTestWorkbenchAdvisor.asyncWithDisplayAccess,
+						"Async from qualified thread did not run during startup.  See RCPTestWorkbenchAdvisor.preStartup()"),
+				() -> assertFalse(RCPTestWorkbenchAdvisor.syncWithoutDisplayAccess,
+						"Sync from un-qualified thread ran during startup.  See RCPTestWorkbenchAdvisor.preStartup()"),
+				() -> assertFalse(RCPTestWorkbenchAdvisor.asyncWithoutDisplayAccess,
+						"Async from un-qualified thread ran during startup.  See RCPTestWorkbenchAdvisor.preStartup()"),
+				() -> assertFalse(RCPTestWorkbenchAdvisor.displayAccessInUIThreadAllowed,
+						"DisplayAccess.accessDisplayDuringStartup() in UI thread did not result in exception."));
 	}
 
 	/**
@@ -92,7 +83,7 @@ public class PlatformUITest {
 	 * and PlatformUI.isWorkbenchRunning() returns false.
 	 * Regression test for bug 82286.
 	 */
-	@Ignore
+	@Disabled
 	@Test
 	public void testCreateAndRunWorkbenchWithExceptionOnStartup() {
 		final Display display = PlatformUI.createDisplay();

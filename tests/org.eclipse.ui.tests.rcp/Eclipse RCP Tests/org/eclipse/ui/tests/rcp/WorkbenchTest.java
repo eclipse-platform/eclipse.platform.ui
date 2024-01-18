@@ -22,7 +22,7 @@ import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IActivityManagerListener;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.tests.harness.util.RCPTestWorkbenchAdvisor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class WorkbenchTest {
 	/**
