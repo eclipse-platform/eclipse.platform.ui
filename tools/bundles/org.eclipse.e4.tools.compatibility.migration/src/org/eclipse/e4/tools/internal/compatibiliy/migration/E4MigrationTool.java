@@ -180,7 +180,6 @@ public final class E4MigrationTool {
 	 *
 	 * @param memento The IMemento to convert
 	 * @return The resulting MApplication
-	 * @throws WorkbenchException Thrown when the xml cannot be parsed
 	 */
 	public static MApplication convert(final IMemento memento) {
 		E4MigrationTool converter = new E4MigrationTool();

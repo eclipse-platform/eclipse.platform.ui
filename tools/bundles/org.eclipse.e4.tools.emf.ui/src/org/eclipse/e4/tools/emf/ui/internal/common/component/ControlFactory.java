@@ -809,8 +809,8 @@ public class ControlFactory {
 	 * a validator to check if the value exists (OK), or if it is null or empty
 	 * (WARNING), or if the class does not exists (ERROR)
 	 *
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id= 412567">Bug
-	 *      412567 </a> *
+	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=412567">Bug
+	 *      412567</a>
 	 * @param parent
 	 *            the parent composite
 	 * @param Messages
