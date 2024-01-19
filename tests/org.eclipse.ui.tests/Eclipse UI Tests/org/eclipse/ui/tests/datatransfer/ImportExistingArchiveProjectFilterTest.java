@@ -25,7 +25,9 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -75,7 +77,8 @@ public class ImportExistingArchiveProjectFilterTest extends UITestCase {
 	// Testcase for Github Issue
 	// https://github.com/eclipse-platform/eclipse.platform.ui/issues/748
 	@Test
-	public void testFolderVisibilityPostZipProjectImport() throws CoreException, IOException {
+	public void testFolderVisibilityPostZipProjectImport()
+			throws CoreException, IOException, OperationCanceledException, InterruptedException {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
 		IProject[] workspaceProjects = root.getProjects();
@@ -129,6 +132,8 @@ public class ImportExistingArchiveProjectFilterTest extends UITestCase {
 		processEvents();
 
 		// Check Project explorer tree viewer if res folder is present
+
+		Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, null);
 
 		ITreeContentProvider contentProvider = (ITreeContentProvider) treeViewer.getContentProvider();
 		Object[] rootElements = contentProvider.getElements(treeViewer.getInput());
