@@ -7109,7 +7109,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			textWidget.setHorizontalPixel(horizontalPixel.intValue());
 	}
 
-	@SuppressWarnings("boxing")
 	private ISelection readSelectionFromMemento(IMemento memento) {
 		if (memento.getInteger(TAG_SELECTION_OFFSET + "0") != null) { //$NON-NLS-1$
 			LinkedList<IRegion> regions = new LinkedList<>();

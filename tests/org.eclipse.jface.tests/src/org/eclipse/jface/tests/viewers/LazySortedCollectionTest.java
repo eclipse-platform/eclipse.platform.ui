@@ -146,7 +146,6 @@ public class LazySortedCollectionTest {
 		queryRange(0, elements.length, true);
 	}
 
-	@SuppressWarnings("boxing")
 	private void assertContentsValid() {
 		queryRange(0, comparisonCollection.size(), false);
 		Assert.assertEquals(comparisonCollection.size(), collection.size());

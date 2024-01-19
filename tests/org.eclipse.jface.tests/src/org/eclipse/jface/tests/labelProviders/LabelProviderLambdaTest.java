@@ -31,7 +31,6 @@ public class LabelProviderLambdaTest {
 		return viewer;
 	}
 
-	@SuppressWarnings("boxing")
 	protected static Integer[] createModel() {
 		Integer[] model = new Integer[10];
 		for (int i = 0; i < 10; i++) {
