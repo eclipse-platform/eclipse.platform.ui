@@ -1021,9 +1021,11 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ChooseWorkspaceDialog_removeWorkspaceSelection;
 	public static String ChooseWorkspaceDialog_recentWorkspaces;
 
-	public static String ChooseWorkspaceDialog_ResolvedAbsolutePath0;
+	public static String ChooseWorkspaceDialog_ResolvedAbsolutePath;
 
-	public static String ChooseWorkspaceDialog_TildeNonExpandedWarning0;
+	public static String ChooseWorkspaceDialog_TildeNonExpandedWarning;
+	public static String ChooseWorkspaceDialog_InvalidPathWarning;
+	public static String ChooseWorkspaceDialog_NotWriteablePathWarning;
 	public static String ChooseWorkspaceDialog_useDefaultMessage;
 
 	public static String ChooseWorkspaceWithSettingsDialog_SettingsGroupName;

@@ -17,6 +17,8 @@ package org.eclipse.ui.internal.ide;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -462,21 +464,43 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 
 	protected String getUnexpectedPathHint() {
 		String workspaceLocation = getWorkspaceLocation();
-		File location = new File(workspaceLocation);
-		Path path = location.getAbsoluteFile().toPath();
-		String normalisedPath = path.normalize().toString();
-		String normalisedPathWithSeperator = normalisedPath + File.separator;
-		if (normalisedPathWithSeperator.contains(TILDE)) {
-			return IDEWorkbenchMessages.ChooseWorkspaceDialog_TildeNonExpandedWarning0
-					+ IDEWorkbenchMessages.ChooseWorkspaceDialog_ResolvedAbsolutePath0
-					+ path.normalize();
-		}
-		if (!workspaceLocation.equalsIgnoreCase(normalisedPath)
-				&& !workspaceLocation.equalsIgnoreCase(normalisedPathWithSeperator)) {
-			return IDEWorkbenchMessages.ChooseWorkspaceDialog_ResolvedAbsolutePath0
-					+ path.normalize();
+		if (!workspaceLocation.isBlank()) {
+			File location = new File(workspaceLocation);
+			Path path;
+			try {
+				path = location.getAbsoluteFile().toPath();
+			} catch (InvalidPathException e) {
+				return NLS.bind(IDEWorkbenchMessages.ChooseWorkspaceDialog_InvalidPathWarning, e.getReason());
+			}
+			String normalisedPath = path.normalize().toString();
+			String normalisedPathWithSeperator = normalisedPath + File.separator;
+			if (!isWritable(path)) {
+				return NLS.bind(IDEWorkbenchMessages.ChooseWorkspaceDialog_NotWriteablePathWarning, normalisedPath);
+			}
+			if (normalisedPathWithSeperator.contains(TILDE)) {
+				return NLS.bind(IDEWorkbenchMessages.ChooseWorkspaceDialog_TildeNonExpandedWarning, normalisedPath);
+			}
+			if (!workspaceLocation.equalsIgnoreCase(normalisedPath)
+					&& !workspaceLocation.equalsIgnoreCase(normalisedPathWithSeperator)) {
+				return NLS.bind(IDEWorkbenchMessages.ChooseWorkspaceDialog_ResolvedAbsolutePath, normalisedPath);
+			}
 		}
 		return ""; //$NON-NLS-1$
+	}
+
+	/**
+	 * @param path
+	 * @return
+	 */
+	private boolean isWritable(Path path) {
+		if (Files.exists(path)) {
+			return Files.isWritable(path);
+		}
+		Path parent = path.getParent();
+		if (parent != null) {
+			return isWritable(parent);
+		}
+		return true;
 	}
 
 	protected Composite createBrowseComposite(Composite parent) {
@@ -509,10 +533,22 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 						nonWhitespaceFound = true;
 					}
 				}
-				okButton.setEnabled(nonWhitespaceFound);
+				okButton.setEnabled(nonWhitespaceFound && isValidPath(characters));
 			}
 		});
 		return combo;
+	}
+
+	/**
+	 * @param characters
+	 * @return
+	 */
+	private boolean isValidPath(String path) {
+		try {
+			return isWritable(new File(path).toPath());
+		} catch (InvalidPathException e) {
+			return false;
+		}
 	}
 
 	protected Button createBrowseButton(Composite panel, Combo combo) {
