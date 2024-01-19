@@ -348,7 +348,7 @@ public interface ISharedImages {
 	 * @noreference Marked for deletion see
 	 *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=559593
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2024-03")
 	String IMG_TOOL_BACK_HOVER = "IMG_TOOL_BACK_HOVER"; //$NON-NLS-1$
 
 	/**
@@ -370,7 +370,7 @@ public interface ISharedImages {
 	 * @noreference Marked for deletion see
 	 *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=559593
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2024-03")
 	String IMG_TOOL_COPY_HOVER = "IMG_TOOL_COPY_HOVER"; //$NON-NLS-1$
 
 	/**
@@ -392,7 +392,7 @@ public interface ISharedImages {
 	 * @noreference Marked for deletion see
 	 *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=559593
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2024-03")
 	String IMG_TOOL_CUT_HOVER = "IMG_TOOL_CUT_HOVER"; //$NON-NLS-1$
 
 	/**
@@ -418,7 +418,7 @@ public interface ISharedImages {
 	 * @noreference Marked for deletion see
 	 *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=559593
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2024-03")
 	String IMG_TOOL_DELETE_HOVER = "IMG_TOOL_DELETE_HOVER"; //$NON-NLS-1$
 
 	/**
@@ -440,7 +440,7 @@ public interface ISharedImages {
 	 * @noreference Marked for deletion see
 	 *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=559593
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2024-03")
 	String IMG_TOOL_FORWARD_HOVER = "IMG_TOOL_FORWARD_HOVER"; //$NON-NLS-1$
 
 	/**
@@ -463,7 +463,7 @@ public interface ISharedImages {
 	 * @noreference Marked for deletion see
 	 *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=559593
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2024-03")
 	String IMG_TOOL_NEW_WIZARD_HOVER = "IMG_TOOL_NEW_WIZARD_HOVER"; //$NON-NLS-1$
 
 	/**
@@ -485,7 +485,7 @@ public interface ISharedImages {
 	 * @noreference Marked for deletion see
 	 *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=559593
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2024-03")
 	String IMG_TOOL_PASTE_HOVER = "IMG_TOOL_PASTE_HOVER"; //$NON-NLS-1$
 
 	/**
@@ -508,7 +508,7 @@ public interface ISharedImages {
 	 * @noreference Marked for deletion see
 	 *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=559593
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2024-03")
 	String IMG_TOOL_REDO_HOVER = "IMG_TOOL_REDO_HOVER"; //$NON-NLS-1$
 
 	/**
@@ -531,7 +531,7 @@ public interface ISharedImages {
 	 * @noreference Marked for deletion see
 	 *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=559593
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2024-03")
 	String IMG_TOOL_UNDO_HOVER = "IMG_TOOL_UNDO_HOVER"; //$NON-NLS-1$
 
 	/**
@@ -553,7 +553,7 @@ public interface ISharedImages {
 	 * @noreference Marked for deletion see
 	 *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=559593
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2024-03")
 	String IMG_TOOL_UP_HOVER = "IMG_TOOL_UP_HOVER"; //$NON-NLS-1$
 
 	// The following set of constants represent the image pairs that are used

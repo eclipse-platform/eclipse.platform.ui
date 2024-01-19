@@ -28,7 +28,7 @@ package org.eclipse.core.commands.util;
  * @noreference This class is not intended to be referenced by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
-@Deprecated
+@Deprecated(forRemoval = true, since = "2024-03")
 public final class Tracing {
 
 	/**
