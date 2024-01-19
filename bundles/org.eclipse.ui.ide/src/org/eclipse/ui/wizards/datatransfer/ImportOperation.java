@@ -266,16 +266,16 @@ public class ImportOperation extends WorkspaceModifyOperation {
 
 			IFolder folder = getFolder(newDestination);
 			if (folder != null) {
-				if (policy != POLICY_FORCE_OVERWRITE) {
+				if (provider.isFolder(nextSource) && this.overwriteState == OVERWRITE_ALL) {
+					collectExistingReadonlyFiles(newDestinationPath, provider.getChildren(nextSource), noOverwrite,
+							overwriteReadonly, POLICY_FORCE_OVERWRITE, subMonitor.split(100));
+				}
+				else if (policy != POLICY_FORCE_OVERWRITE) {
 					if (this.overwriteState == OVERWRITE_NONE
 							|| !queryOverwrite(newDestinationPath)) {
 						noOverwrite.add(folder);
 						continue;
 					}
-				}
-				if (provider.isFolder(nextSource)) {
-					collectExistingReadonlyFiles(newDestinationPath, provider.getChildren(nextSource), noOverwrite,
-							overwriteReadonly, POLICY_FORCE_OVERWRITE, subMonitor.split(100));
 				}
 			} else {
 				IFile file = getFile(newDestination);
