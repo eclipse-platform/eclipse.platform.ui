@@ -60,7 +60,6 @@ public class Bug242231Test extends ViewerTestCase {
 				((TestElement) element).setLabel("value set");
 			}
 
-			@SuppressWarnings("boxing")
 			@Override
 			protected Object getValue(Object element) {
 				return 0;

@@ -276,7 +276,6 @@ public class TableViewerWithLimitTest extends BaseLimitBasedViewerTest {
 		assertEquals("Expandable node has an incorrect text", expectedLabel, tableItem.getText());
 	}
 
-	@SuppressWarnings("boxing")
 	private String calculateExpandableLabel(Object data) {
 		ExpandableNode node = (ExpandableNode) data;
 		int all = rootModel.size();
