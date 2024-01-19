@@ -127,15 +127,20 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 	private static class QueryComparator implements Comparator<MarkerQuery> {
 		@Override
 		public boolean equals(Object o) {
-			if (!(o instanceof QueryComparator)) {
-				return false;
+			if (o instanceof QueryComparator) {
+				return true; // singleton
 			}
-			return true;
+			return false;
+		}
+
+		@Override
+		public int hashCode() {
+			return 1; // singleton
 		}
 
 		@Override
 		public int compare(MarkerQuery q1, MarkerQuery q2) {
-			// more attribues come first
+			// more attributes come first
 			int size1 = q1.getAttributes().length;
 			int size2 = q2.getAttributes().length;
 
