@@ -1088,4 +1088,10 @@ public abstract class ColumnViewer extends StructuredViewer {
 		// by default return given selection.
 		return selection;
 	}
+
+	@Override
+	protected void unmapAllElements() {
+		expandableNodes.clear();
+		super.unmapAllElements();
+	}
 }
