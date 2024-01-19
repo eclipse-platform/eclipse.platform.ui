@@ -1684,6 +1684,11 @@ class FilterCopy extends UIResourceFilterDescription {
 		return serialNumber == filter.serialNumber;
 	}
 
+	@Override
+	public int hashCode() {
+		return serialNumber;
+	}
+
 	public int getSerialNumber() {
 		return serialNumber;
 	}
