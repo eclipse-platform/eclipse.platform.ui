@@ -2837,7 +2837,11 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 						// Clear the text and image to force a label update
 						item.setImage(null);
 						item.setText("");//$NON-NLS-1$
-
+						// Clear font set for expandable node in ViewerColumn.refresh(ViewerCell)
+						if (isExpandableNode(oldElement) && item instanceof TreeItem treeItem) {
+							// always in first column only
+							treeItem.setFont(0, null);
+						}
 					}
 				}
 			}
