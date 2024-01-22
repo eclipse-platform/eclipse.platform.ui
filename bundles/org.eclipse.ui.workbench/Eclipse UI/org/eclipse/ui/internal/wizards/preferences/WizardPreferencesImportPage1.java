@@ -15,7 +15,6 @@ package org.eclipse.ui.internal.wizards.preferences;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
@@ -66,16 +65,8 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
 	@Override
 	protected PreferenceTransferElement[] getTransfers() {
 		if (validFromFile()) {
-			FileInputStream fis;
-
-			try {
-				fis = new FileInputStream(getDestinationValue());
-			} catch (FileNotFoundException e) {
-				WorkbenchPlugin.log(e.getMessage(), e);
-				return new PreferenceTransferElement[0];
-			}
-			IPreferencesService service = Platform.getPreferencesService();
-			try {
+			try (FileInputStream fis = new FileInputStream(getDestinationValue())) {
+				IPreferencesService service = Platform.getPreferencesService();
 				IExportedPreferences prefs;
 				prefs = service.readPreferences(fis);
 				PreferenceTransferElement[] transfers = super.getTransfers();
@@ -101,12 +92,9 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
 			} catch (CoreException e) {
 				// Do not log core exceptions, they indicate the chosen file is not valid
 				// WorkbenchPlugin.log(e.getMessage(), e);
-			} finally {
-				try {
-					fis.close();
-				} catch (IOException e) {
-					WorkbenchPlugin.log(e.getMessage(), e);
-				}
+			} catch (IOException e) {
+				WorkbenchPlugin.log(e.getMessage(), e);
+				return new PreferenceTransferElement[0];
 			}
 		}
 
@@ -157,17 +145,8 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
 	@Override
 	protected boolean transfer(IPreferenceFilter[] filters) {
 		File importFile = new File(getDestinationValue());
-		FileInputStream fis = null;
-		try {
-			if (filters.length > 0) {
-				try {
-					fis = new FileInputStream(importFile);
-				} catch (FileNotFoundException e) {
-					WorkbenchPlugin.log(e.getMessage(), e);
-					MessageDialog.open(MessageDialog.ERROR, getControl().getShell(), "", //$NON-NLS-1$
-							e.getLocalizedMessage(), SWT.SHEET);
-					return false;
-				}
+		if (filters.length > 0) {
+			try (FileInputStream fis = new FileInputStream(importFile)) {
 				IPreferencesService service = Platform.getPreferencesService();
 				try {
 					IExportedPreferences prefs = service.readPreferences(fis);
@@ -179,16 +158,11 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
 							SWT.SHEET);
 					return false;
 				}
-			}
-		} finally {
-			if (fis != null) {
-				try {
-					fis.close();
-				} catch (IOException e) {
-					WorkbenchPlugin.log(e.getMessage(), e);
-					MessageDialog.open(MessageDialog.ERROR, getControl().getShell(), "", e.getLocalizedMessage(), //$NON-NLS-1$
-							SWT.SHEET);
-				}
+			} catch (IOException e) {
+				WorkbenchPlugin.log(e.getMessage(), e);
+				MessageDialog.open(MessageDialog.ERROR, getControl().getShell(), "", //$NON-NLS-1$
+						e.getLocalizedMessage(), SWT.SHEET);
+				return false;
 			}
 		}
 		return true;

@@ -129,25 +129,21 @@ public class ResourceTransfer extends ByteArrayTransfer {
 
 		int resourceCount = resources.length;
 
-		try {
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			DataOutputStream dataOut = new DataOutputStream(out);
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		try (DataOutputStream dataOut = new DataOutputStream(out)) {
 
-			//write the number of resources
+			// write the number of resources
 			dataOut.writeInt(resourceCount);
 
-			//write each resource
+			// write each resource
 			for (IResource resource : resources) {
 				writeResource(dataOut, resource);
 			}
 
-			//cleanup
-			dataOut.close();
-			out.close();
 			byte[] bytes = out.toByteArray();
 			super.javaToNative(bytes, transferData);
 		} catch (IOException e) {
-			//it's best to send nothing if there were problems
+			// it's best to send nothing if there were problems
 		}
 	}
 

@@ -14,7 +14,6 @@
 package org.eclipse.ui.internal.wizards.preferences;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import org.eclipse.core.runtime.CoreException;
@@ -154,15 +153,8 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage {
 		if (!ensureTargetIsValid(exportFile)) {
 			return false;
 		}
-		FileOutputStream fos = null;
-		try {
-			if (transfers.length > 0) {
-				try {
-					fos = new FileOutputStream(exportFile);
-				} catch (FileNotFoundException e) {
-					reportException(e);
-					return false;
-				}
+		if (transfers.length > 0) {
+			try (FileOutputStream fos = new FileOutputStream(exportFile)) {
 				IPreferencesService service = Platform.getPreferencesService();
 				try {
 					service.exportPreferences(service.getRootNode(), transfers, fos);
@@ -170,15 +162,9 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage {
 					reportException(e);
 					return false;
 				}
-			}
-		} finally {
-			if (fos != null) {
-				try {
-					fos.close();
-				} catch (IOException e) {
-					reportException(e);
-					return false;
-				}
+			} catch (IOException e) {
+				reportException(e);
+				return false;
 			}
 		}
 		return true;
