@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.swt.custom.BusyIndicator;
@@ -582,11 +583,24 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	@Override
 	public boolean performSelectAndReplace(String findString, String replaceString) {
 		resetStatus();
-		boolean needToSelectFirst = !getCurrentSelection().equals(findString);
-		if (needToSelectFirst) {
+		if (!isFindStringSelected(findString)) {
 			performSearch(findString);
 		}
 		return replaceSelection(replaceString);
+	}
+
+	private boolean isFindStringSelected(String findString) {
+		String selectedString = getCurrentSelection();
+		if (isRegExSearchAvailableAndActive()) {
+			int patternFlags = 0;
+			if (!isActive(SearchOptions.CASE_SENSITIVE)) {
+				patternFlags |= Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE;
+			}
+			Pattern pattern = Pattern.compile(findString, patternFlags);
+			return pattern.matcher(selectedString).find();
+		} else {
+			return getCurrentSelection().equals(findString);
+		}
 	}
 
 	@Override
