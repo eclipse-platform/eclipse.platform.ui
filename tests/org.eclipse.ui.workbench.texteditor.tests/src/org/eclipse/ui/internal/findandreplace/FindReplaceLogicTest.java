@@ -19,6 +19,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Before;
@@ -197,6 +198,98 @@ public class FindReplaceLogicTest {
 	}
 
 	@Test
+	public void testPerformSelectAndReplaceRegEx() {
+		TextViewer textViewer= setupTextViewer("Hello<replace>World<replace>!");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+		findReplaceLogic.activate(SearchOptions.REGEX);
+
+		findReplaceLogic.performSearch("<(\\w*)>");
+		boolean status= findReplaceLogic.performSelectAndReplace("<(\\w*)>", " ");
+		assertTrue(status);
+		assertThat(textViewer.getDocument().get(), equalTo("Hello World<replace>!"));
+		expectStatusEmpty(findReplaceLogic);
+
+		status= findReplaceLogic.performSelectAndReplace("<(\\w*)>", " ");
+		assertTrue(status);
+		assertThat(textViewer.getDocument().get(), equalTo("Hello World !"));
+		expectStatusEmpty(findReplaceLogic);
+
+		status= findReplaceLogic.performSelectAndReplace("<(\\w*)>", " ");
+		assertEquals("Status wasn't correctly returned", false, status);
+		assertEquals("Text shouldn't have been changed", "Hello World !", textViewer.getDocument().get());
+		expectStatusIsCode(findReplaceLogic, FindStatus.StatusCode.NO_MATCH);
+	}
+
+	@Test
+	public void testPerformSelectAndReplaceRegExWithLinebreaks() {
+		TextViewer textViewer= setupTextViewer("""
+				Hello
+				World
+				!""");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+		findReplaceLogic.activate(SearchOptions.REGEX);
+		findReplaceLogic.deactivate(SearchOptions.WRAP);
+
+		assertTrue(findReplaceLogic.performSearch("o$"));
+		boolean status= findReplaceLogic.performSelectAndReplace("o$", "o!");
+		assertTrue(status);
+		assertThat(textViewer.getDocument().get(), equalTo("""
+				Hello!
+				World
+				!"""));
+		expectStatusEmpty(findReplaceLogic);
+
+		status= findReplaceLogic.performSelectAndReplace("""
+				d
+				!""", "d!");
+		assertTrue(status);
+		assertThat(textViewer.getDocument().get(), equalTo("""
+				Hello!
+				World!"""));
+		expectStatusEmpty(findReplaceLogic);
+
+		status= findReplaceLogic.performSelectAndReplace("""
+				""", " ");
+		assertEquals("Status wasn't correctly returned", false, status);
+		assertEquals("Text shouldn't have been changed", """
+				Hello!
+				World!""", textViewer.getDocument().get());
+	}
+
+	@Test
+	public void testPerformSelectAndReplaceWithConfigurationChanges() {
+		TextViewer textViewer= setupTextViewer("Hello<replace>World<replace>!<replace>!");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+		findReplaceLogic.activate(SearchOptions.REGEX);
+
+		findReplaceLogic.performSearch("<(\\w*)>");
+		boolean status= findReplaceLogic.performSelectAndReplace("<(\\w*)>", " ");
+		assertTrue(status);
+		assertThat(textViewer.getDocument().get(), equalTo("Hello World<replace>!<replace>!"));
+		expectStatusEmpty(findReplaceLogic);
+
+		findReplaceLogic.deactivate(SearchOptions.REGEX);
+		status= findReplaceLogic.performSelectAndReplace("<replace>", " ");
+		assertTrue(status);
+		assertThat(textViewer.getDocument().get(), equalTo("Hello World !<replace>!"));
+		expectStatusEmpty(findReplaceLogic);
+
+		findReplaceLogic.activate(SearchOptions.REGEX);
+		status= findReplaceLogic.performSelectAndReplace("<(\\w*)>", " ");
+		assertTrue(status);
+		assertThat(textViewer.getDocument().get(), equalTo("Hello World ! !"));
+		expectStatusEmpty(findReplaceLogic);
+
+		status= findReplaceLogic.performSelectAndReplace("<(\\w*)>", " ");
+		assertEquals("Status wasn't correctly returned", false, status);
+		assertEquals("Text shouldn't have been changed", "Hello World ! !", textViewer.getDocument().get());
+		expectStatusIsCode(findReplaceLogic, FindStatus.StatusCode.NO_MATCH);
+	}
+
+	@Test
 	public void testPerformSelectAndReplaceBackward() {
 		TextViewer textViewer= setupTextViewer("Hello<replace>World<replace>!");
 		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
@@ -212,7 +305,6 @@ public class FindReplaceLogicTest {
 		assertThat(textViewer.getDocument().get(), equalTo("Hello World !"));
 		expectStatusEmpty(findReplaceLogic);
 	}
-
 
 	@Test
 	public void testPerformReplaceAndFind() {
@@ -234,6 +326,36 @@ public class FindReplaceLogicTest {
 		status= findReplaceLogic.performReplaceAndFind("<replace>", " ");
 		assertEquals("Status wasn't correctly returned", false, status);
 		assertEquals("Text shouldn't have been changed", "Hello World !", textViewer.getDocument().get());
+		expectStatusIsCode(findReplaceLogic, FindStatus.StatusCode.NO_MATCH);
+	}
+
+	@Test
+	public void testPerformReplaceAndFindRegEx() {
+		TextViewer textViewer= setupTextViewer("Hello<replace>World<replace>!<r>!");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+		findReplaceLogic.activate(SearchOptions.REGEX);
+
+		boolean status= findReplaceLogic.performReplaceAndFind("<(\\w*)>", " ");
+		assertTrue(status);
+		assertThat(textViewer.getDocument().get(), equalTo("Hello World<replace>!<r>!"));
+		assertThat(findReplaceLogic.getTarget().getSelectionText(), equalTo("<replace>"));
+		expectStatusEmpty(findReplaceLogic);
+
+		status= findReplaceLogic.performReplaceAndFind("<(\\w*)>", " ");
+		assertTrue(status);
+		assertThat(textViewer.getDocument().get(), equalTo("Hello World !<r>!"));
+		assertThat(findReplaceLogic.getTarget().getSelectionText(), equalTo("<r>"));
+		expectStatusEmpty(findReplaceLogic);
+
+		status= findReplaceLogic.performReplaceAndFind("<(\\w)>", " ");
+		assertTrue(status);
+		assertThat(textViewer.getDocument().get(), equalTo("Hello World ! !"));
+		expectStatusIsCode(findReplaceLogic, FindStatus.StatusCode.NO_MATCH);
+
+		status= findReplaceLogic.performReplaceAndFind("<(\\w*)>", " ");
+		assertEquals("Status wasn't correctly returned", false, status);
+		assertEquals("Text shouldn't have been changed", "Hello World ! !", textViewer.getDocument().get());
 		expectStatusIsCode(findReplaceLogic, FindStatus.StatusCode.NO_MATCH);
 	}
 
