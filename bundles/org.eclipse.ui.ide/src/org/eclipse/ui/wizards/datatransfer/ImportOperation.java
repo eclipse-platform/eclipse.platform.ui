@@ -526,19 +526,18 @@ public class ImportOperation extends WorkspaceModifyOperation {
 			return;
 		}
 
-		InputStream contentStream = provider.getContents(fileObject);
-		if (contentStream == null) {
-			if (isNotReadableFile(fileObject)) {
-				errorTable.add(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0,
-						NLS.bind(DataTransferMessages.ImportOperation_cannotReadError, fileObjectPath), null));
-			} else {
-				errorTable.add(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0,
-						NLS.bind(DataTransferMessages.ImportOperation_openStreamError, fileObjectPath), null));
+		try (InputStream contentStream = provider.getContents(fileObject)) {
+			if (contentStream == null) {
+				if (isNotReadableFile(fileObject)) {
+					errorTable.add(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0,
+							NLS.bind(DataTransferMessages.ImportOperation_cannotReadError, fileObjectPath), null));
+				} else {
+					errorTable.add(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0,
+							NLS.bind(DataTransferMessages.ImportOperation_openStreamError, fileObjectPath), null));
+				}
+				return;
 			}
-			return;
-		}
 
-		try {
 			if (createVirtualFolder || createLinks || createLinkFilesOnly) {
 				if (targetResource.exists())
 					targetResource.delete(true, subMonitor.split(50));
@@ -565,13 +564,9 @@ public class ImportOperation extends WorkspaceModifyOperation {
 			}
 		} catch (CoreException e) {
 			errorTable.add(e.getStatus());
-		} finally {
-			try {
-				contentStream.close();
-			} catch (IOException e) {
+		} catch (IOException e) {
 				errorTable.add(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0,
 						NLS.bind(DataTransferMessages.ImportOperation_closeStreamError, fileObjectPath), e));
-			}
 		}
 	}
 

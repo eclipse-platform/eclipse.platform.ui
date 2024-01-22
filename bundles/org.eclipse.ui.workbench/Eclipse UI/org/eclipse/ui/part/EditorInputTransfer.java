@@ -148,9 +148,8 @@ public class EditorInputTransfer extends ByteArrayTransfer {
 
 		int editorInputCount = editorInputs.length;
 
-		try {
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			DataOutputStream dataOut = new DataOutputStream(out);
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		try (DataOutputStream dataOut = new DataOutputStream(out)) {
 
 			// write the number of resources
 			dataOut.writeInt(editorInputCount);
@@ -160,9 +159,6 @@ public class EditorInputTransfer extends ByteArrayTransfer {
 				writeEditorInput(dataOut, editorInput);
 			}
 
-			// cleanup
-			dataOut.close();
-			out.close();
 			byte[] bytes = out.toByteArray();
 			super.javaToNative(bytes, transferData);
 		} catch (IOException e) {

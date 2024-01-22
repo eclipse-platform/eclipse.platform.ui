@@ -194,27 +194,22 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 		private void setProjectName() {
 			try {
 				if (projectArchiveFile != null) {
-					InputStream stream = structureProvider
-							.getContents(projectArchiveFile);
+					try (InputStream stream = structureProvider.getContents(projectArchiveFile)) {
 
-					// If we can get a description pull the name from there
-					if (stream == null) {
-						if (projectArchiveFile instanceof ZipEntry) {
-							IPath path = IPath.fromOSString(
-									((ZipEntry) projectArchiveFile).getName());
-							projectName = path.segment(path.segmentCount() - 2);
-						} else if (projectArchiveFile instanceof TarEntry) {
-							IPath path = IPath.fromOSString(
-									((TarEntry) projectArchiveFile).getName());
-							projectName = path.segment(path.segmentCount() - 2);
+						// If we can get a description pull the name from there
+						if (stream == null) {
+							if (projectArchiveFile instanceof ZipEntry) {
+								IPath path = IPath.fromOSString(((ZipEntry) projectArchiveFile).getName());
+								projectName = path.segment(path.segmentCount() - 2);
+							} else if (projectArchiveFile instanceof TarEntry) {
+								IPath path = IPath.fromOSString(((TarEntry) projectArchiveFile).getName());
+								projectName = path.segment(path.segmentCount() - 2);
+							}
+						} else {
+							description = IDEWorkbenchPlugin.getPluginWorkspace().loadProjectDescription(stream);
+							projectName = description.getName();
 						}
-					} else {
-						description = IDEWorkbenchPlugin.getPluginWorkspace()
-								.loadProjectDescription(stream);
-						stream.close();
-						projectName = description.getName();
 					}
-
 				}
 
 				// If we don't have the project name try again

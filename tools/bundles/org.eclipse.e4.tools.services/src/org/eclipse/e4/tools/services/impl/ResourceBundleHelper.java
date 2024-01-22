@@ -396,32 +396,25 @@ public class ResourceBundleHelper {
 			ResourceBundle bundle = null;
 			if (format.equals("java.properties")) { //$NON-NLS-1$
 				final String resourceName = toResourceName(bundleName, "properties"); //$NON-NLS-1$
-				InputStream stream = null;
-				try {
-					stream = AccessController.doPrivileged(
-							(PrivilegedExceptionAction<InputStream>) () -> {
-								InputStream is = null;
-								final URL url = osgiBundle.getEntry(resourceName);
-								if (url != null) {
-									final URLConnection connection = url.openConnection();
-									if (connection != null) {
-										// Disable caches to get fresh data for
-										// reloading.
-										connection.setUseCaches(false);
-										is = connection.getInputStream();
-									}
-								}
-								return is;
-							});
+				PrivilegedExceptionAction<InputStream> action = (PrivilegedExceptionAction<InputStream>) () -> {
+					URL url = osgiBundle.getEntry(resourceName);
+					if (url != null) {
+						URLConnection connection = url.openConnection();
+						if (connection != null) {
+							// Disable caches to get fresh data for
+							// reloading.
+							connection.setUseCaches(false);
+							return connection.getInputStream();
+						}
+					}
+					return null;
+				};
+				try (InputStream stream = AccessController.doPrivileged(action)) {
+					if (stream != null) {
+						bundle = new PropertyResourceBundle(stream);
+					}
 				} catch (final PrivilegedActionException e) {
 					throw (IOException) e.getException();
-				}
-				if (stream != null) {
-					try {
-						bundle = new PropertyResourceBundle(stream);
-					} finally {
-						stream.close();
-					}
 				}
 			}
 			else {
