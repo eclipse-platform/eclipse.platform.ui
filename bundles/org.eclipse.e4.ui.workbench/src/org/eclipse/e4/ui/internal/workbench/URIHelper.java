@@ -19,10 +19,10 @@ package org.eclipse.e4.ui.internal.workbench;
 import java.net.URI;
 import java.net.URISyntaxException;
 import org.eclipse.core.runtime.IContributor;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.spi.RegistryContributor;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.wiring.BundleRevision;
-import org.osgi.service.log.LogService;
 
 /**
  * Collection of URI-related utilities
@@ -86,7 +86,7 @@ public class URIHelper {
 		try {
 			uri = new URI(contributorURI);
 		} catch (URISyntaxException e) {
-			Activator.log(LogService.LOG_ERROR, "Invalid contributor URI: " + contributorURI); //$NON-NLS-1$
+			ILog.get().error("Invalid contributor URI: " + contributorURI); //$NON-NLS-1$
 			return null;
 		}
 		if (!PLATFORM_SCHEMA.equals(uri.getScheme()))

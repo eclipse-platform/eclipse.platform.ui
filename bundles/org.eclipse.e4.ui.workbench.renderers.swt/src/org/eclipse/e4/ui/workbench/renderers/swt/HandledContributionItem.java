@@ -29,6 +29,7 @@ import org.eclipse.core.commands.IStateListener;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.State;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
@@ -38,7 +39,6 @@ import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.bindings.EBindingService;
-import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.IUpdateService;
 import org.eclipse.e4.ui.internal.workbench.swt.Policy;
@@ -57,7 +57,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolItem;
-import org.osgi.service.log.LogService;
 
 public class HandledContributionItem extends AbstractContributionItem {
 	/**
@@ -246,10 +245,11 @@ public class HandledContributionItem extends AbstractContributionItem {
 		String keyBindingText = null;
 		if (parmCmd != null) {
 			if (text == null || text.isEmpty()) {
+				String localizedCommandName = getModel().getCommand().getLocalizedCommandName();
 				try {
-					text = parmCmd.getName(getModel().getCommand().getLocalizedCommandName());
+					text = parmCmd.getName(localizedCommandName);
 				} catch (NotDefinedException e) {
-					Activator.log(LogService.LOG_DEBUG, e.getMessage(), e);
+					ILog.get().warn("not found: " + localizedCommandName, e); //$NON-NLS-1$
 				}
 			}
 			if (bindingService != null) {

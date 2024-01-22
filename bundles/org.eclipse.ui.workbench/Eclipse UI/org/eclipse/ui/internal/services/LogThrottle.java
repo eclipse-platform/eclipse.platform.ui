@@ -16,7 +16,7 @@ package org.eclipse.ui.internal.services;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.concurrent.LinkedBlockingQueue;
-import org.eclipse.e4.ui.internal.workbench.Activator;
+import org.eclipse.core.runtime.ILog;
 import org.osgi.service.log.LogLevel;
 
 /**
@@ -50,19 +50,18 @@ public class LogThrottle {
 	/**
 	 * Logs a message with flood protection.
 	 *
-	 * @param logLevel any ordinal of @link(LogLevel)
 	 * @param message  the message to log, may not be null.
 	 * @param e        the exception to log or {@code null}
 	 * @return true if the message was logged, false otherwise.
 	 * @see LogLevel
 	 */
-	public boolean log(int logLevel, String message, Throwable e) {
+	public boolean error(String message, Throwable e) {
 		int store = store(message);
 		if (store <= fThrottleValue) {
-			Activator.log(logLevel, message, e);
+			ILog.get().error(message, e);
 		}
 		if (store == fThrottleValue) {
-			Activator.log(LogLevel.WARN.ordinal(), fThrottleMessage);
+			ILog.get().warn(fThrottleMessage);
 		}
 		return store <= fThrottleValue;
 	}

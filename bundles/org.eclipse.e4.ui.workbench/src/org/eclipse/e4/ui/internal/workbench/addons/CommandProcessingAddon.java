@@ -28,6 +28,7 @@ import org.eclipse.core.commands.ICommandManagerListener;
 import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.commands.ParameterType;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -163,8 +164,7 @@ public class CommandProcessingAddon {
 									categoryModel);
 							application.getCommands().add(createdCommand);
 						} catch (NotDefinedException e) {
-							Activator.getDefault().getLogService()
-									.log(0, "Failed to create command " + commandId, e); //$NON-NLS-1$
+							ILog.get().error("Failed to create command " + commandId, e); //$NON-NLS-1$
 						}
 					}
 				}
