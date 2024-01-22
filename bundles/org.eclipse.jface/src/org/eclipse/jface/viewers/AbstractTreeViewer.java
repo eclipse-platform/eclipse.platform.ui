@@ -2555,6 +2555,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		Assert.isNotNull(elementOrTreePath);
 		if (checkBusy())
 			return;
+
 		Widget item = internalExpand(elementOrTreePath, false);
 		if (item instanceof Item it) {
 			if (expanded) {

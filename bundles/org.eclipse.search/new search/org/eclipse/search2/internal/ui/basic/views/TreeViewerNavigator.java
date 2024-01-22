@@ -108,6 +108,11 @@ public class TreeViewerNavigator implements INavigate {
 			return child;
 		TreeItem nextSibling= getNextSibling(currentItem, true);
 		if (nextSibling != null) {
+			// expand the node first and fetch the sibling again.
+			if (fViewer.isExpandableNode(nextSibling.getData())) {
+				fViewer.setExpandedState(nextSibling.getData(), true);
+				nextSibling = getNextSibling(currentItem, true);
+			}
 			if (hasMatches(nextSibling))
 				return nextSibling;
 			return getFirstChildWithMatches(nextSibling);
@@ -116,6 +121,11 @@ public class TreeViewerNavigator implements INavigate {
 		while (parent != null) {
 			nextSibling= getNextSibling(parent, true);
 			if (nextSibling != null) {
+				// expand the node first and fetch the sibling again.
+				if (fViewer.isExpandableNode(nextSibling.getData())) {
+					fViewer.setExpandedState(nextSibling.getData(), true);
+					nextSibling = getNextSibling(parent, true);
+				}
 				if (hasMatches(nextSibling))
 					return nextSibling;
 				return getFirstChildWithMatches(nextSibling);
