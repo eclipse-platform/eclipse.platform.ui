@@ -80,6 +80,7 @@ public class ArchiveFileManipulations {
 	 * @param shell
 	 *            The shell to display any possible Dialogs in
 	 */
+	@SuppressWarnings("resource")
 	public static void closeStructureProvider(ILeveledImportStructureProvider structureProvider, Shell shell) {
 		if (structureProvider instanceof ZipLeveledStructureProvider) {
 			closeZipFile(((ZipLeveledStructureProvider) structureProvider).getZipFile(), shell);
