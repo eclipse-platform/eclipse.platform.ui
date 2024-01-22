@@ -334,7 +334,9 @@ public class TrimStack {
 			for (ToolItem item : trimStackTB.getItems()) {
 				item.setSelection(false);
 			}
-		} else if (isEditorStack() || minimizedElement instanceof MPlaceholder) {
+		} else if ((isEditorStack() || minimizedElement instanceof MPlaceholder)
+				&& trimStackTB.getItemCount() > 1) {
+
 			trimStackTB.getItem(1).setSelection(true);
 		} else if (isPerspectiveStack()) {
 			MPerspectiveStack pStack = (MPerspectiveStack) minimizedElement;
