@@ -77,6 +77,9 @@ public class WorkbenchWindowExpression extends Expression {
 		return false;
 	}
 
+	/**
+	 * @throws CoreException may be thrown by overrides
+	 */
 	@Override
 	public EvaluationResult evaluate(final IEvaluationContext context) throws CoreException {
 		if (window != null) {

@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IPreferenceFilter;
@@ -57,7 +56,6 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.dialogs.PatternFilter;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.preferences.PreferenceTransferElement;
 import org.eclipse.ui.internal.preferences.PreferenceTransferManager;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -578,11 +576,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements Listen
 			filters = new IPreferenceFilter[transferElements.length];
 			for (int j = 0; j < transferElements.length; j++) {
 				PreferenceTransferElement element = transferElements[j];
-				try {
-					filters[j] = element.getFilter();
-				} catch (CoreException e) {
-					WorkbenchPlugin.log(e.getMessage(), e);
-				}
+				filters[j] = element.getFilter();
 			}
 		} else {
 			filters = new IPreferenceFilter[0];

@@ -20,7 +20,6 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.ParameterizedCommand;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.AbstractTableInformationControl;
@@ -796,7 +795,11 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 		return null;
 	}
 
-	/** Set the filter text entered by the User, does nothing by default */
+	/**
+	 * Set the filter text entered by the User, does nothing by default
+	 *
+	 * @param pattern may be used in overrides
+	 */
 	protected void setMatcherString(String pattern) {
 	}
 
@@ -880,6 +883,8 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 	 * Get TableHeader, return title for non-filtered lists. By default returns an
 	 * empty String. Subclasses can use the active part to detect the type of
 	 * object.
+	 *
+	 * @param activePart may be used in overrides
 	 */
 	protected String getTableHeader(IWorkbenchPart activePart) {
 		return EMPTY_STRING;
@@ -902,8 +907,7 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 	}
 
 	@Override
-	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
-			throws CoreException {
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) {
 		// true by default, but depends on data
 		gotoDirection = data == null || "true".equals(data); //$NON-NLS-1$
 	}

@@ -16,7 +16,6 @@
 
 package org.eclipse.ui.internal;
 
-import java.lang.reflect.InvocationTargetException;
 import java.text.Bidi;
 import java.text.MessageFormat;
 import java.util.Collection;
@@ -1175,7 +1174,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 * @since 3.4
 	 */
 	public static Shell getSplashShell(Display display)
-			throws NumberFormatException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+			throws NumberFormatException, IllegalArgumentException {
 		Shell splashShell = (Shell) display.getData(DATA_SPLASH_SHELL);
 		if (splashShell != null)
 			return splashShell;

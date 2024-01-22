@@ -20,7 +20,6 @@ import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -56,7 +55,7 @@ public class CloseEditorHandler extends AbstractEvaluationHandler {
 		if (enabledWhen == null) {
 			enabledWhen = new Expression() {
 				@Override
-				public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
+				public EvaluationResult evaluate(IEvaluationContext context) {
 					IEditorPart part = InternalHandlerUtil.getActiveEditor(context);
 					if (part != null) {
 						return EvaluationResult.TRUE;

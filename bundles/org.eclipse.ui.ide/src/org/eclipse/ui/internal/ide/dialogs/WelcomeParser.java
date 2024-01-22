@@ -92,6 +92,9 @@ public class WelcomeParser extends DefaultHandler {
 		public void endDocument() {
 		}
 
+		/**
+		 * @throws SAXException may be thrown by overrides
+		 */
 		@Override
 		public void endElement(String namespaceURI, String localName,
 				String qName) throws SAXException {
@@ -121,6 +124,9 @@ public class WelcomeParser extends DefaultHandler {
 		public void startDocument() {
 		}
 
+		/**
+		 * @throws SAXException may be thrown by overrides
+		 */
 		@Override
 		public void startElement(String namespaceURI, String localName,
 				String qName, Attributes atts) throws SAXException {

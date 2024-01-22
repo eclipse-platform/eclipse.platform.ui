@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.bindings.EBindingService;
@@ -1586,13 +1585,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		bars.getMenuManager().setVisible(true);
 		PluginActionSetBuilder builder = new PluginActionSetBuilder();
 		PluginActionSet actionSet = null;
-		try {
-			actionSet = (PluginActionSet) actionSetDesc.createActionSet();
-			actionSet.init(null, bars);
-		} catch (CoreException ex) {
-			WorkbenchPlugin.log("Unable to create action set " + actionSetDesc.getId(), ex); //$NON-NLS-1$
-			return null;
-		}
+		actionSet = (PluginActionSet) actionSetDesc.createActionSet();
+		actionSet.init(null, bars);
 		builder.buildMenuAndToolBarStructure(actionSet, window);
 		return actionSet;
 	}

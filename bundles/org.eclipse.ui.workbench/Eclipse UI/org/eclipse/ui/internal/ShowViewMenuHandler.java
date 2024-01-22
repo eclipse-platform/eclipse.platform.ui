@@ -16,12 +16,10 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
@@ -48,8 +46,6 @@ import org.eclipse.ui.handlers.HandlerUtil;
  * <p>
  * Replacement for: ShowViewMenuAction
  * </p>
- *
- * @since 3.3
  */
 public class ShowViewMenuHandler extends AbstractEvaluationHandler {
 
@@ -60,7 +56,7 @@ public class ShowViewMenuHandler extends AbstractEvaluationHandler {
 	}
 
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
+	public Object execute(ExecutionEvent event) {
 		IWorkbenchPart part = HandlerUtil.getActivePart(event);
 		if (part != null) {
 			IWorkbenchPartSite site = part.getSite();
@@ -134,7 +130,7 @@ public class ShowViewMenuHandler extends AbstractEvaluationHandler {
 		if (enabledWhen == null) {
 			enabledWhen = new Expression() {
 				@Override
-				public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
+				public EvaluationResult evaluate(IEvaluationContext context) {
 					// IWorkbenchPart part = InternalHandlerUtil
 					// .getActivePart(context);
 					// if (part != null) {

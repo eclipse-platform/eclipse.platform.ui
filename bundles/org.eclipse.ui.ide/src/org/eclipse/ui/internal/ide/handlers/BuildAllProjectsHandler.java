@@ -15,7 +15,6 @@ package org.eclipse.ui.internal.ide.handlers;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -27,13 +26,11 @@ import org.eclipse.ui.internal.ide.actions.BuildUtilities;
 
 /**
  * Default handler for 'Build All' command.
- *
- * @since 3.6
  */
 public class BuildAllProjectsHandler extends AbstractHandler {
 
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
+	public Object execute(ExecutionEvent event) {
 		if (isEnabled()) {
 			IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
 			if (window != null) {

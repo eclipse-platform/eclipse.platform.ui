@@ -16,7 +16,6 @@ package org.eclipse.ui.internal.handlers;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
@@ -24,15 +23,12 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.internal.dialogs.PropertyDialog;
 
-/**
- * @since 3.4
- */
 public class PropertyDialogHandler extends AbstractHandler {
 
 	private String initialPageId = null;
 
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
+	public Object execute(ExecutionEvent event) {
 		PreferenceDialog dialog;
 		Object element = null;
 		IStructuredSelection currentSelection = HandlerUtil.getCurrentStructuredSelection(event);

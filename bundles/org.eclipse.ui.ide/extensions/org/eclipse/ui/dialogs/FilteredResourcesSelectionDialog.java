@@ -51,6 +51,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -84,7 +85,6 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.model.ResourceFactory;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.FrameworkUtil;
 
@@ -925,7 +925,7 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 		 * Creates new ResourceProxyVisitor instance.
 		 */
 		public ResourceProxyVisitor(AbstractContentProvider contentProvider, ResourceFilter resourceFilter,
-				IProgressMonitor progressMonitor) throws CoreException {
+				IProgressMonitor progressMonitor) {
 			super();
 			this.proxyContentProvider = contentProvider;
 			this.resourceFilter = resourceFilter;
