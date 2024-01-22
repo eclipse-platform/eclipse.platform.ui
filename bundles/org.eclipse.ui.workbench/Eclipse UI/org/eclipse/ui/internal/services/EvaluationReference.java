@@ -14,8 +14,6 @@
 
 package org.eclipse.ui.internal.services;
 
-import static org.osgi.service.log.LogLevel.ERROR;
-
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -78,7 +76,7 @@ public class EvaluationReference extends RunAndTrack implements IEvaluationRefer
 				cache = expression.evaluate(context) != EvaluationResult.FALSE;
 			} catch (CoreException e) {
 				String message = "Failed to evaluate: " + expression; //$NON-NLS-1$
-				boolean logged = logThrottle.log(ERROR.ordinal(), message, e);
+				boolean logged = logThrottle.error(message, e);
 				if (!logged && Policy.DEBUG_CMDS) {
 					Activator.trace(Policy.DEBUG_CMDS_FLAG, message, e);
 				}

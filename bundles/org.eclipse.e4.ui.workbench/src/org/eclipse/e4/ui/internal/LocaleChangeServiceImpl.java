@@ -17,8 +17,8 @@ package org.eclipse.e4.ui.internal;
 import jakarta.inject.Inject;
 import java.util.List;
 import java.util.Locale;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.internal.services.ResourceBundleHelper;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.nls.ILocaleChangeService;
@@ -34,7 +34,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
-import org.osgi.service.log.LogService;
 
 /**
  * Default implementation of {@link ILocaleChangeService} that changes the {@link Locale} in the
@@ -50,9 +49,6 @@ public class LocaleChangeServiceImpl implements ILocaleChangeService {
 	@Inject
 	IEventBroker broker;
 
-	@Inject
-	@Optional
-	LogService logService;
 
 	/**
 	 * Create a new {@link LocaleChangeServiceImpl} for the given {@link IEclipseContext}.
@@ -97,9 +93,7 @@ public class LocaleChangeServiceImpl implements ILocaleChangeService {
 		} catch (Exception e) {
 			// performing a locale update failed
 			// there is no locale change performed
-			if (logService != null)
-				logService.log(LogService.LOG_ERROR, e.getMessage()
-						+ " - No Locale change will be performed."); //$NON-NLS-1$
+			ILog.get().error("No Locale change performed.", e); //$NON-NLS-1$
 		}
 	}
 
