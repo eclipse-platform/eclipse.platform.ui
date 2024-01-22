@@ -31,7 +31,7 @@ import java.util.zip.GZIPInputStream;
  * @since 3.1
  */
 public class TarFile implements AutoCloseable {
-	private File file;
+	private final File file;
 	private TarInputStream entryEnumerationStream;
 	private TarEntry curEntry;
 	private TarInputStream entryStream;

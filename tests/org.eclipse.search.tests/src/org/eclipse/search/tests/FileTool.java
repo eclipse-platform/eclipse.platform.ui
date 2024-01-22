@@ -51,30 +51,22 @@ public class FileTool {
 	public static void unzip(ZipFile zipFile, File dstDir) throws IOException {
 		Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
-		try {
-			while(entries.hasMoreElements()){
-				ZipEntry entry = entries.nextElement();
-				if(entry.isDirectory()){
-					continue;
-				}
-				String entryName = entry.getName();
-				if (!new File(dstDir, entryName).toPath().normalize().startsWith(dstDir.toPath().normalize())) {
-					throw new RuntimeException("Bad zip entry: " + entryName); //$NON-NLS-1$
-				}
-				File file = new File(dstDir, changeSeparator(entryName, '/', File.separatorChar));
-				file.getParentFile().mkdirs();
-
-				try (
-						InputStream src = zipFile.getInputStream(entry);
-						OutputStream dst = new FileOutputStream(file)
-					) {
-					transferData(src, dst);
-				}
+		while (entries.hasMoreElements()) {
+			ZipEntry entry= entries.nextElement();
+			if (entry.isDirectory()) {
+				continue;
 			}
-		} finally {
-			try {
-				zipFile.close();
-			} catch(IOException e){
+			String entryName= entry.getName();
+			if (!new File(dstDir, entryName).toPath().normalize().startsWith(dstDir.toPath().normalize())) {
+				throw new RuntimeException("Bad zip entry: " + entryName); //$NON-NLS-1$
+			}
+			File file= new File(dstDir, changeSeparator(entryName, '/', File.separatorChar));
+			file.getParentFile().mkdirs();
+
+			try (
+					InputStream src= zipFile.getInputStream(entry);
+					OutputStream dst= new FileOutputStream(file)) {
+				transferData(src, dst);
 			}
 		}
 	}

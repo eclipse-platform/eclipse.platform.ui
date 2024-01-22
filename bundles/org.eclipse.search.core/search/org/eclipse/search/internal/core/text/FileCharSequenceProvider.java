@@ -291,8 +291,10 @@ public class FileCharSequenceProvider {
 						int bytesRead= 0;
 						do {
 							int bytes= contents.read(bomStore, bytesRead, bomLength - bytesRead);
-							if (bytes == -1)
+							if (bytes == -1) {
+								contents.close();
 								throw new IOException();
+							}
 							bytesRead += bytes;
 						} while (bytesRead < bomLength);
 

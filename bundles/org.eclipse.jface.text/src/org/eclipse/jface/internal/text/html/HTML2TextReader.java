@@ -349,6 +349,7 @@ public class HTML2TextReader extends SubstitutionTextReader {
 		return tagLen >= 5 && "--".equals(buf.substring(tagLen - 2)); //$NON-NLS-1$
 	}
 
+	@SuppressWarnings("resource")
 	private void unread(int ch) throws IOException {
 		((PushbackReader) getReader()).unread(ch);
 	}

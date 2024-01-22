@@ -171,8 +171,9 @@ public class ResourceHelper {
 
 	public static IProject createJUnitSourceProject(String projectName) throws CoreException, ZipException, IOException {
 		IProject project= ResourceHelper.createProject(projectName);
-		ZipFile zip= new ZipFile(FileTool.getFileInPlugin(SearchTestPlugin.getDefault(), IPath.fromOSString("testresources/junit37-noUI-src.zip"))); //$NON-NLS-1$
-		FileTool.unzip(zip, project.getLocation().toFile());
+		try (ZipFile zip= new ZipFile(FileTool.getFileInPlugin(SearchTestPlugin.getDefault(), IPath.fromOSString("testresources/junit37-noUI-src.zip")))) { //$NON-NLS-1$
+			FileTool.unzip(zip, project.getLocation().toFile());
+		}
 		project.refreshLocal(IResource.DEPTH_INFINITE, null);
 		return project;
 	}

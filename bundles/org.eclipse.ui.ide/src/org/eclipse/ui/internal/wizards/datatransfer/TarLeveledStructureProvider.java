@@ -173,11 +173,12 @@ public class TarLeveledStructureProvider implements
 
 	@Override
 	public boolean closeArchive(){
-		try {
-			getTarFile().close();
+		TarFile tf = getTarFile();
+		try (tf) {
+			// autoclose
 		} catch (IOException e) {
 			IDEWorkbenchPlugin.log(DataTransferMessages.ZipImport_couldNotClose
-					+ getTarFile().getName(), e);
+					+ tf.getName(), e);
 			return false;
 		}
 		return true;

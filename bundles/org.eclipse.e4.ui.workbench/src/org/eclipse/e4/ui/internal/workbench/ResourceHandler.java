@@ -24,6 +24,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -290,7 +291,9 @@ public class ResourceHandler implements IModelResourceHandler {
 			// The DataArea.assertLocationInitialized is called by ResourceSetImpl.getResource(URI,
 			// boolean)
 			resource = resourceSet.createResource(uri);
-			resource.load(new URL(uri.toString()).openStream(), resourceSet.getLoadOptions());
+			try (InputStream openStream = new URL(uri.toString()).openStream()) {
+				resource.load(openStream, resourceSet.getLoadOptions());
+			}
 		}
 
 		return resource;
