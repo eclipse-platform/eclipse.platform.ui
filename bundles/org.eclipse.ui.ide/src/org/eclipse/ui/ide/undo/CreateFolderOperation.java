@@ -27,7 +27,6 @@ import org.eclipse.core.resources.IResourceFilterDescription;
 import org.eclipse.core.resources.undo.snapshot.IContainerSnapshot;
 import org.eclipse.core.resources.undo.snapshot.IResourceSnapshot;
 import org.eclipse.core.resources.undo.snapshot.ResourceSnapshotFactory;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.ide.dialogs.UIResourceFilterDescription;
 
@@ -120,7 +119,7 @@ public class CreateFolderOperation extends AbstractCreateResourcesOperation {
 			}
 
 			@Override
-			public void delete(int updateFlags, IProgressMonitor monitor) throws CoreException {
+			public void delete(int updateFlags, IProgressMonitor monitor) {
 			}
 		};
 	}

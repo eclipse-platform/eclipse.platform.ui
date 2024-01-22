@@ -77,7 +77,7 @@ public class ActionSetDescriptor implements IActionSetDescriptor, IAdaptable, IW
 	 * @return the action set
 	 */
 	@Override
-	public IActionSet createActionSet() throws CoreException {
+	public IActionSet createActionSet() {
 		return new PluginActionSet(this);
 	}
 

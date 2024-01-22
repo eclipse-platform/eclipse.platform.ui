@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
-import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
@@ -471,13 +470,9 @@ public class ProgressManagerUtil {
 		if (nonModalShell != null && nonModalShell.isVisible())
 			return nonModalShell;
 
-		try {
-			Shell splashShell = WorkbenchPlugin.getSplashShell(PlatformUI.getWorkbench().getDisplay());
-			if (splashShell != null && splashShell.isVisible()) {
-				return splashShell;
-			}
-		} catch (IllegalAccessException | InvocationTargetException e) {
-			// Use non-modal shell
+		Shell splashShell = WorkbenchPlugin.getSplashShell(PlatformUI.getWorkbench().getDisplay());
+		if (splashShell != null && splashShell.isVisible()) {
+			return splashShell;
 		}
 
 		return nonModalShell;

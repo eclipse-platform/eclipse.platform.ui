@@ -194,7 +194,7 @@ public class NewPropertySheetHandlerTest extends AbstractPropertySheetTest {
 	 */
 	@Test
 	public final void testFindPropertySheetWithoutActivePart()
-			throws PartInitException, ExecutionException {
+			throws PartInitException {
 		hideAndAssertNoParts();
 
 		try {

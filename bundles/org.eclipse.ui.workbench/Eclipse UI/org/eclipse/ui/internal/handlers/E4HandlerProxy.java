@@ -146,7 +146,7 @@ public class E4HandlerProxy implements IHandler2, IHandlerListener, IElementUpda
 	}
 
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
+	public Object execute(ExecutionEvent event) {
 		if (logExecute) {
 			logExecute = false;
 			Status status = new Status(IStatus.WARNING, "org.eclipse.ui", //$NON-NLS-1$

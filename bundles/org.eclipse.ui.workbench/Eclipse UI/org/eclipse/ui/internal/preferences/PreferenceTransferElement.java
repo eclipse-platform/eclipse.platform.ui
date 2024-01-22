@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.preferences.IPreferenceFilter;
 import org.eclipse.core.runtime.preferences.PreferenceFilterEntry;
@@ -64,7 +63,7 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements IPlug
 	 *
 	 * @return a preference filter
 	 */
-	public IPreferenceFilter getFilter() throws CoreException {
+	public IPreferenceFilter getFilter() {
 		if (filter == null) {
 			IConfigurationElement[] mappingConfigurations = PreferenceTransferRegistryReader
 					.getMappings(configurationElement);
