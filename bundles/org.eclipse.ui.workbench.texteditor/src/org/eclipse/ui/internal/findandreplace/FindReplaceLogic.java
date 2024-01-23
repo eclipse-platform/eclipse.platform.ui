@@ -122,7 +122,10 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	 *
 	 * @return <code>true</code> if the search is restricted to whole words
 	 */
-	private boolean isWholeWordSearchAvailableAndActive() {
+	private boolean isWholeWordSearchAvailableAndActive(String findString) {
+		if (findString.contains(" ")) { //$NON-NLS-1$
+			return false;
+		}
 		return isActive(SearchOptions.WHOLE_WORD) && !isRegExSearchAvailableAndActive();
 	}
 
@@ -494,10 +497,12 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	public int findAndSelect(int offset, String findString) {
 		if (target instanceof IFindReplaceTargetExtension3)
 			return ((IFindReplaceTargetExtension3) target).findAndSelect(offset, findString,
-					isActive(SearchOptions.FORWARD), isActive(SearchOptions.CASE_SENSITIVE),
-					isWholeWordSearchAvailableAndActive(), isActive(SearchOptions.REGEX));
+					isActive(SearchOptions.FORWARD),
+					isActive(SearchOptions.CASE_SENSITIVE), isWholeWordSearchAvailableAndActive(findString),
+					isActive(SearchOptions.REGEX));
 		return target.findAndSelect(offset, findString, isActive(SearchOptions.FORWARD),
-				isActive(SearchOptions.CASE_SENSITIVE), isWholeWordSearchAvailableAndActive());
+				isActive(SearchOptions.CASE_SENSITIVE),
+				isWholeWordSearchAvailableAndActive(findString));
 	}
 
 	/**

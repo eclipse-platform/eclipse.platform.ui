@@ -220,6 +220,18 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * </p>
 	 */
 	public final static String EDITOR_LINE_NUMBER_RULER= "lineNumberRuler"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that controls whether the modern "Find/Replace"-Overlay is used in place
+	 * of the classical Find/Replace-Dialog.
+	 * 
+	 * <p>
+	 * The preference value is of type <code>Boolean</code>
+	 * </p>
+	 * 
+	 * @since 3.17
+	 */
+	public final static String EDITOR_USE_FIND_REPLACE_OVERLAY= "usefindreplaceoverlay"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls if the caret offset is shown in the status line.
@@ -723,6 +735,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	* @param store the preference store to be initialized
 	*/
 	public static void initializeDefaultValues(IPreferenceStore store) {
+		store.setDefault("usefindreplaceoverlay", false); //$NON-NLS-1$
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.USE_ANNOTATIONS_PREFERENCE_PAGE, false);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.USE_QUICK_DIFF_PREFERENCE_PAGE, false);
 
@@ -736,6 +749,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE, 200);
 
+		store.setDefault("usefindreplaceoverlay", false);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, false);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, 80);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_ALLOW_OVERRIDE, false);
