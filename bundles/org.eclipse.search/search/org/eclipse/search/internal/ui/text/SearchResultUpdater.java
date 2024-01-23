@@ -34,8 +34,6 @@ public class SearchResultUpdater implements IResourceChangeListener, IQueryListe
 
 	public SearchResultUpdater(AbstractTextSearchResult result) {
 		fResult= result;
-		NewSearchUI.addQueryListener(this);
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 	}
 
 	@Override

@@ -241,7 +241,8 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 				for (FilterAction fFilterAction : fFilterActions) {
 					new ActionContributionItem(fFilterAction).fill(fMenu, -1);
 				}
-				new MenuItem(fMenu, SWT.SEPARATOR);
+				@SuppressWarnings("unused")
+				MenuItem menuItem= new MenuItem(fMenu, SWT.SEPARATOR);
 			}
 			new ActionContributionItem(fHideDerivedAction).fill(fMenu, -1);
 			return fMenu;

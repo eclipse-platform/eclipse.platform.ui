@@ -39,13 +39,16 @@ public class LinkedPositionTest {
 
 	@Test
 	public void testCreate() {
-		new LinkedPosition(fDoc, 1, 9);
-		new LinkedPosition(new Document(), 123, 234);
+		@SuppressWarnings("unused")
+		LinkedPosition linkedPosition = new LinkedPosition(fDoc, 1, 9);
+		@SuppressWarnings("unused")
+		LinkedPosition linkedPosition2 = new LinkedPosition(new Document(), 123, 234);
 	}
 
 	@Test(expected=Throwable.class)
 	public void testNullCreate() {
-		new LinkedPosition(null, 1, 9);
+		@SuppressWarnings("unused")
+		LinkedPosition linkedPosition = new LinkedPosition(null, 1, 9);
 	}
 
 	/*

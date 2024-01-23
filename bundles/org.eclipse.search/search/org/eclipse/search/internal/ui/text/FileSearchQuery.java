@@ -40,6 +40,7 @@ import org.eclipse.search.internal.ui.Messages;
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
+import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.FileTextSearchScope;
 import org.eclipse.search.ui.text.Match;
@@ -334,7 +335,9 @@ public class FileSearchQuery implements ISearchQuery {
 	public ISearchResult getSearchResult() {
 		if (fResult == null) {
 			fResult= new FileSearchResult(this);
-			new SearchResultUpdater(fResult);
+			SearchResultUpdater listener = new SearchResultUpdater(fResult);
+			NewSearchUI.addQueryListener(listener);
+			ResourcesPlugin.getWorkspace().addResourceChangeListener(listener);
 		}
 		return fResult;
 	}

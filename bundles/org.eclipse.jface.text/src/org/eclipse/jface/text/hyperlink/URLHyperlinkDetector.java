@@ -153,7 +153,8 @@ public class URLHyperlinkDetector extends AbstractHyperlinkDetector {
 		// Set and validate URL string
 		try {
 			urlString= line.substring(urlOffsetInLine, urlOffsetInLine + urlLength);
-			new URL(urlString);
+			@SuppressWarnings("unused")
+			URL validated= new URL(urlString);
 		} catch (MalformedURLException ex) {
 			urlString= null;
 			return null;

@@ -197,7 +197,8 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		fShareHistoryButton.setLayoutData(data);
 		fShareHistoryButton.setSelection(hasSharedRefactoringHistory());
 
-		new Label(composite, SWT.NONE);
+		@SuppressWarnings("unused")
+		Label label= new Label(composite, SWT.NONE);
 
 		final IProject project= getCurrentProject();
 		if (project != null) {

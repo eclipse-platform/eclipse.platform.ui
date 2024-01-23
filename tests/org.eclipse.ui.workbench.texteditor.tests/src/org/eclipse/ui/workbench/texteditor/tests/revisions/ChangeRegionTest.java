@@ -13,7 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.workbench.texteditor.tests.revisions;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Date;
 import java.util.List;
@@ -68,19 +70,22 @@ public class ChangeRegionTest {
 	@Test
 	public void testCreation() throws Exception {
 		try {
-			new ChangeRegion(fRevision, null);
+			@SuppressWarnings("unused")
+			ChangeRegion changeRegion= new ChangeRegion(fRevision, null);
 			fail();
 		} catch (Exception e) {
 		}
 
 		try {
-			new ChangeRegion(null, new LineRange(12, 3));
+			@SuppressWarnings("unused")
+			ChangeRegion changeRegion= new ChangeRegion(null, new LineRange(12, 3));
 			fail();
 		} catch (Exception e) {
 		}
 
 		try {
-			new ChangeRegion(null, null);
+			@SuppressWarnings("unused")
+			ChangeRegion changeRegion= new ChangeRegion(null, null);
 			fail();
 		} catch (Exception e) {
 		}

@@ -62,7 +62,8 @@ public class ChangeExceptionHandler {
 			Control result= super.createMessageArea(parent);
 
 			// Panic code: use 'parent' instead of 'result' in case super implementation changes in the future
-			new Label(parent, SWT.NONE); // filler as parent has 2 columns (icon and label)
+			@SuppressWarnings("unused")
+			Label filler= new Label(parent, SWT.NONE); // filler as parent has 2 columns (icon and label)
 			Label label= new Label(parent, SWT.NONE);
 			label.setText(RefactoringUIMessages.ChangeExceptionHandler_button_explanation);
 			label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
