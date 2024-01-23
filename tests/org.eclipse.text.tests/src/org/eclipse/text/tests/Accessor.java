@@ -161,9 +161,15 @@ public class Accessor {
 	public Object invoke(String methodName, Class<?>[] types, Object[] arguments) {
 		Method method= null;
 		try {
-			method= fClass.getDeclaredMethod(methodName, types);
-		} catch (SecurityException | NoSuchMethodException e) {
-			throw (AssertionFailedException) new AssertionFailedException(e.getLocalizedMessage()).initCause(e);
+			method = fClass.getDeclaredMethod(methodName, types);
+			Assert.isNotNull(method);
+			method.setAccessible(true);
+		} catch (SecurityException | NoSuchMethodException __) {
+			try {
+				method = fClass.getMethod(methodName, types);
+			} catch (SecurityException | NoSuchMethodException e) {
+				throw (AssertionFailedException) new AssertionFailedException(e.getLocalizedMessage()).initCause(e);
+			}
 		}
 		Assert.isNotNull(method);
 		method.setAccessible(true);

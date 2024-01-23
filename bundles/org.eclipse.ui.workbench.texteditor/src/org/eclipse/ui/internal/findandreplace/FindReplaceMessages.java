@@ -60,5 +60,18 @@ final public class FindReplaceMessages extends NLS {
 	public static String FindReplace_SelectAllButton_label;
 	public static String FindReplace_CloseButton_label;
 
-
+	public static String FindReplaceOverlay_downSearchButton_toolTip;
+	public static String FindReplaceOverlay_upSearchButton_toolTip;
+	public static String FindReplaceOverlay_searchAllButton_toolTip;
+	public static String FindReplaceOverlay_searchInSelectionButton_toolTip;
+	public static String FindReplaceOverlay_regexSearchButton_toolTip;
+	public static String FindReplaceOverlay_caseSensitiveButton_toolTip;
+	public static String FindReplaceOverlay_wholeWordsButton_toolTip;
+	public static String FindReplaceOverlay_replaceButton_toolTip;
+	public static String FindReplaceOverlay_replaceAllButton_toolTip;
+	public static String FindReplaceOverlay_searchBar_message;
+	public static String FindReplaceOverlay_replaceBar_message;
+	public static String FindReplaceOverlay_replaceToggle_toolTip;
+	public static String FindReplaceOverlayFirstTimePopup_FindReplaceOverlayFirstTimePopup_message;
+	public static String FindReplaceOverlayFirstTimePopup_FindReplaceOverlayFirstTimePopup_title;
 }
