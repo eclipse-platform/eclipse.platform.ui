@@ -35,6 +35,8 @@ final class TextEditorMessages extends NLS {
 	public static String LinkedModeConfigurationBlock_DASHED_BOX;
 	public static String TextEditorPreferencePage_displayedTabWidth;
 	public static String TextEditorPreferencePage_lineSpacing;
+	public static String TextEditorPreferencePage_useFindReplaceOverlay;
+	public static String TextEditorPreferencePage_showFindReplaceOverlayAtBottom;
 	public static String TextEditorPreferencePage_enableWordWrap;
 	public static String TextEditorPreferencePage_convertTabsToSpaces;
 	public static String TextEditorPreferencePage_undoHistorySize;

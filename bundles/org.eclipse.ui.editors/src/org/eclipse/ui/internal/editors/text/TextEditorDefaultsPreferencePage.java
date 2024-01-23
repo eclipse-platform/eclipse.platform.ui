@@ -428,6 +428,8 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			ArrayList<OverlayKey> overlayKeys= new ArrayList<>();
 
 			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_LEADING_SPACES));
+			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_USE_FIND_REPLACE_OVERLAY));
+			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_FIND_REPLACE_OVERLAY_AT_BOTTOM));
 			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_ENCLOSED_SPACES));
 			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TRAILING_SPACES));
 			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_LEADING_IDEOGRAPHIC_SPACES));
@@ -729,6 +731,8 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractTextEditor.PREFERENCE_COLOR_FIND_SCOPE));
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_USE_FIND_REPLACE_OVERLAY));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_FIND_REPLACE_OVERLAY_AT_BOTTOM));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE));
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH));
@@ -858,6 +862,15 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		Preference lineSpacing= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_SPACING, label, null);
 		IntegerDomain lineSpaceDomain= new IntegerDomain(0, 1000);
 		addTextField(appearanceComposite, lineSpacing, lineSpaceDomain, 15, 0);
+
+		label= TextEditorMessages.TextEditorPreferencePage_useFindReplaceOverlay;
+		Preference useFindReplaceOverlay= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_USE_FIND_REPLACE_OVERLAY, label, null);
+		final Button useOverlay= addCheckBox(appearanceComposite, useFindReplaceOverlay, new BooleanDomain(), 0);
+
+		label= TextEditorMessages.TextEditorPreferencePage_showFindReplaceOverlayAtBottom;
+		Preference findReplaceOverlayAtBottom= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_FIND_REPLACE_OVERLAY_AT_BOTTOM, label, null);
+		final Button overlayAtBottom= addCheckBox(appearanceComposite, findReplaceOverlayAtBottom, new BooleanDomain(), 0);
+		createDependency(useOverlay, useFindReplaceOverlay, new Control[] { overlayAtBottom });
 
 		label= TextEditorMessages.TextEditorPreferencePage_enableWordWrap;
 		Preference enableWordWrap= new Preference(AbstractTextEditor.PREFERENCE_WORD_WRAP_ENABLED, label, null);

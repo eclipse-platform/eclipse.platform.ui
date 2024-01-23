@@ -34,7 +34,6 @@ import org.eclipse.ui.workbench.texteditor.tests.rulers.RulerTestSuite;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-		FindReplaceDialogTest.class,
 		HippieCompletionTest.class,
 		RangeTest.class,
 		ChangeRegionTest.class,
@@ -47,6 +46,8 @@ import org.eclipse.ui.workbench.texteditor.tests.rulers.RulerTestSuite;
 		MinimapWidgetTest.class,
 		TextEditorPluginTest.class,
 		TextViewerDeleteLineTargetTest.class,
+		FindReplaceDialogTest.class,
+		FindReplaceOverlayTest.class,
 		FindReplaceLogicTest.class,
 })
 public class WorkbenchTextEditorTestSuite {
