@@ -1268,6 +1268,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	 */
 	protected void applyFilter(boolean force) {
 		QuickTextQuery newFilter = createFilter();
+		getShell().setText(Messages.QuickSearchDialog_title + " - " + pattern.getText()); //$NON-NLS-1$
 		if (this.searcher==null) {
 			if (!newFilter.isTrivial()) {
 				//Create the QuickTextSearcher with the inital query.
