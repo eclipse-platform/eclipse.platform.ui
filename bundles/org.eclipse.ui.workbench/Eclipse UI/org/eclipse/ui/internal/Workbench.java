@@ -265,11 +265,11 @@ import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
 import org.eclipse.ui.wizards.IWizardRegistry;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleEvent;
 import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceEvent;
+import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceRegistration;
-import org.osgi.framework.SynchronousBundleListener;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -294,7 +294,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	public static final String PROP_EXIT_CODE = "eclipse.exitcode"; //$NON-NLS-1$
 	private static final String CMD_DATA = "-data"; //$NON-NLS-1$
 
-	private static final class StartupProgressBundleListener implements SynchronousBundleListener {
+	private static final class StartupProgressBundleListener implements ServiceListener {
 
 		private final SubMonitor subMonitor;
 		private Display displayForStartupListener;
@@ -306,13 +306,9 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 		}
 
 		@Override
-		public void bundleChanged(BundleEvent event) {
-			int eventType = event.getType();
-			if (eventType == BundleEvent.STARTED) {
-				subMonitor.setWorkRemaining(5).worked(1);
-				spinEventQueueToUpdateSplash(displayForStartupListener);
-
-			}
+		public void serviceChanged(ServiceEvent event) {
+			subMonitor.setWorkRemaining(5).worked(1);
+			spinEventQueueToUpdateSplash(displayForStartupListener);
 		}
 	}
 
@@ -605,7 +601,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 						properties);
 
 				// listener for updating the splash screen
-				SynchronousBundleListener bundleListener = null;
+				ServiceListener serviceListener = null;
 				createSplash = WorkbenchPlugin.isSplashHandleSpecified();
 				if (createSplash) {
 
@@ -627,8 +623,8 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 
 					if (handler != null && showProgress) {
 						IProgressMonitor progressMonitor = SubMonitor.convert(handler.getBundleProgressMonitor());
-						bundleListener = new Workbench.StartupProgressBundleListener(progressMonitor, display);
-						WorkbenchPlugin.getDefault().addBundleListener(bundleListener);
+						serviceListener = new Workbench.StartupProgressBundleListener(progressMonitor, display);
+						WorkbenchPlugin.getDefault().getBundleContext().addServiceListener(serviceListener);
 					}
 
 				}
@@ -639,8 +635,8 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 
 				if (returnCode[0] == PlatformUI.RETURN_OK) {
 					// run the e4 event loop and instantiate ... well, stuff
-					if (bundleListener != null) {
-						WorkbenchPlugin.getDefault().removeBundleListener(bundleListener);
+					if (serviceListener != null) {
+						WorkbenchPlugin.getDefault().getBundleContext().removeServiceListener(serviceListener);
 					}
 					e4Workbench.createAndRunUI(e4Workbench.getApplication());
 				}
@@ -2523,12 +2519,12 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 			// fall back to starting without showing progress.
 			runnable.run();
 		} else {
-			SynchronousBundleListener bundleListener = new StartupProgressBundleListener(progressMonitor, display);
-			WorkbenchPlugin.getDefault().addBundleListener(bundleListener);
+			ServiceListener serviceListener = new StartupProgressBundleListener(progressMonitor, display);
+			WorkbenchPlugin.getDefault().getBundleContext().addServiceListener(serviceListener);
 			try {
 				runnable.run();
 			} finally {
-				WorkbenchPlugin.getDefault().removeBundleListener(bundleListener);
+				WorkbenchPlugin.getDefault().getBundleContext().removeServiceListener(serviceListener);
 			}
 		}
 	}
