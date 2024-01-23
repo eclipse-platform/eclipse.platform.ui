@@ -122,8 +122,9 @@ public class MarkerGroup {
 		/**
 		 * Test the attribute of the marker to find a grouping.
 		 *
-		 * @return MarkerGroupingEntry or <code>null</code> if there is not
-		 *         entry.
+		 * @param marker unused but used in overrides
+		 *
+		 * @return MarkerGroupingEntry or <code>null</code> if there is not entry.
 		 */
 		public MarkerGroupingEntry testAttribute(IMarker marker) {
 			return null;

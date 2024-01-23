@@ -29,7 +29,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchContentProvider;
@@ -62,23 +61,19 @@ public class WizardArchiveFileResourceImportPage1 extends
 
 	/**
 	 *	Creates an instance of this class
-	 * @param aWorkbench IWorkbench
 	 * @param selection IStructuredSelection
 	 */
-	public WizardArchiveFileResourceImportPage1(IWorkbench aWorkbench,
-			IStructuredSelection selection) {
-		this(aWorkbench, selection, null);
+	public WizardArchiveFileResourceImportPage1(IStructuredSelection selection) {
+		this(selection, null);
 	}
 
 	/**
 	 *	Creates an instance of this class
-	 * @param aWorkbench IWorkbench
 	 * @param selection IStructuredSelection
 	 * @param fileImportMask != null: override default mask
 	 */
-	public WizardArchiveFileResourceImportPage1(IWorkbench aWorkbench,
-			IStructuredSelection selection, String[] fileImportMask) {
-		super("zipFileImportPage1", aWorkbench, selection); //$NON-NLS-1$
+	public WizardArchiveFileResourceImportPage1(IStructuredSelection selection, String[] fileImportMask) {
+		super("zipFileImportPage1", selection); //$NON-NLS-1$
 
 		setTitle(DataTransferMessages.ArchiveExport_exportTitle);
 		setDescription(DataTransferMessages.ArchiveImport_description);

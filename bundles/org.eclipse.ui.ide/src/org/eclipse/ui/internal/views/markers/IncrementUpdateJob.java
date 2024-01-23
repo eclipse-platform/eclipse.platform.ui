@@ -133,15 +133,15 @@ class IncrementUpdateJob extends MarkerUpdateJob {
 			// so locking between gathering of markers and
 			// marker deltas is not possible
 			size = markerEntries.size();
-			handleRemovedEntries(markerEntries, next.removed, monitor);
+			handleRemovedEntries(markerEntries, next.removed);
 			newSize = markerEntries.size();
 			removedCount += size - newSize;
 
-			handleChangedEntries(markerEntries, next.changed, monitor);
+			handleChangedEntries(markerEntries, next.changed);
 			changedCount += next.changed.size();
 
 			size = newSize;
-			handleAddedEntries(markerEntries, next.added, monitor);
+			handleAddedEntries(markerEntries, next.added);
 			newSize = markerEntries.size();
 			removedCount += newSize - size;
 		} while (next != null);
@@ -156,8 +156,7 @@ class IncrementUpdateJob extends MarkerUpdateJob {
 		return false;
 	}
 
-	private void handleAddedEntries(Collection<MarkerEntry> markerEntries, Collection<MarkerEntry> added,
-			IProgressMonitor monitor) {
+	private void handleAddedEntries(Collection<MarkerEntry> markerEntries, Collection<MarkerEntry> added) {
 		MarkerContentGenerator generator = builder.getGenerator();
 		Iterator<MarkerEntry> iterator = added.iterator();
 		while (iterator.hasNext()) {
@@ -169,7 +168,7 @@ class IncrementUpdateJob extends MarkerUpdateJob {
 	}
 
 	private void handleChangedEntries(Collection<MarkerEntry> markerEntries,
-			Collection<MarkerEntry> changed, IProgressMonitor monitor) {
+			Collection<MarkerEntry> changed) {
 		MarkerContentGenerator generator = builder.getGenerator();
 		Iterator<MarkerEntry> iterator = changed.iterator();
 		while (iterator.hasNext()) {
@@ -189,7 +188,7 @@ class IncrementUpdateJob extends MarkerUpdateJob {
 	}
 
 	private void handleRemovedEntries(Collection<MarkerEntry> markerEntries,
-			Collection<MarkerEntry> removed, IProgressMonitor monitor) {
+			Collection<MarkerEntry> removed) {
 		boolean found = false;
 		Iterator<MarkerEntry> iterator = markerEntries.iterator();
 		while (iterator.hasNext()) {

@@ -220,8 +220,7 @@ public class KeyController {
 	private void addSetKeySequenceListener() {
 		addPropertyChangeListener(event -> {
 			if (BindingElement.PROP_TRIGGER.equals(event.getProperty())) {
-				updateTrigger((BindingElement) event.getSource(), (KeySequence) event.getOldValue(),
-						(KeySequence) event.getNewValue());
+				updateTrigger((BindingElement) event.getSource(), (KeySequence) event.getNewValue());
 			}
 		});
 	}
@@ -253,12 +252,12 @@ public class KeyController {
 	private void addSetSchemeListener() {
 		addPropertyChangeListener(event -> {
 			if (event.getSource() == fSchemeModel && CommonModel.PROP_SELECTED_ELEMENT.equals(event.getProperty())) {
-				changeScheme((SchemeElement) event.getOldValue(), (SchemeElement) event.getNewValue());
+				changeScheme((SchemeElement) event.getNewValue());
 			}
 		});
 	}
 
-	protected void changeScheme(SchemeElement oldScheme, SchemeElement newScheme) {
+	protected void changeScheme(SchemeElement newScheme) {
 		if (newScheme == null || newScheme.getModelObject() == fBindingManager.getActiveScheme()) {
 			return;
 		}
@@ -303,7 +302,7 @@ public class KeyController {
 		}
 	}
 
-	public void updateTrigger(BindingElement activeBinding, KeySequence oldSequence, KeySequence keySequence) {
+	private void updateTrigger(BindingElement activeBinding, KeySequence keySequence) {
 		if (activeBinding == null) {
 			return;
 		}

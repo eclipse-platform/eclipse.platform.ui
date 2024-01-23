@@ -298,7 +298,7 @@ public final class ServiceLocator implements IDisposable, INestable, IServiceLoc
 	 * (because the plug-in containing the AbstractServiceFactory is no longer
 	 * available). Notify the owner of the locator about this.
 	 */
-	public void unregisterServices(String[] serviceNames) {
+	public void unregisterServices() {
 		if (owner != null) {
 			owner.dispose();
 		}

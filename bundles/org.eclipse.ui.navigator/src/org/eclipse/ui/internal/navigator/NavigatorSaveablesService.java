@@ -92,8 +92,7 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 			} else if (event.getType() == BundleEvent.STOPPED) {
 				// System.out.println("bundle stopped: " + event.getBundle().getSymbolicName()); //$NON-NLS-1$
 				for (NavigatorSaveablesService instance : instances) {
-					instance.handleBundleStopped(event.getBundle()
-							.getSymbolicName());
+					instance.handleBundleStopped();
 				}
 			}
 		}
@@ -537,7 +536,7 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 		}
 	}
 
-	private synchronized void handleBundleStopped(String symbolicName) {
+	private synchronized void handleBundleStopped() {
 		if (!isDisposed()) {
 			recomputeSaveablesAndNotify(true, null);
 		}

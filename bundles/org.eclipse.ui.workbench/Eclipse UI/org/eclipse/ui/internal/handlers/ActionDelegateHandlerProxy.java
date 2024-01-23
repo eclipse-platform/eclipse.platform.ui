@@ -399,10 +399,6 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener, ISe
 		return null;
 	}
 
-	public void handleStateChange(final State state, final Object oldValue) {
-		// TODO What should we do here?
-	}
-
 	/**
 	 * Initialize the action delegate by calling its lifecycle method.
 	 */

@@ -954,7 +954,7 @@ public class LinkedResourceEditor {
 		return true;
 	}
 
-	public void setEnabled(boolean enableLinking) {
+	void setEnabled(boolean enableLinking) {
 	}
 
 	public void reloadContent() {

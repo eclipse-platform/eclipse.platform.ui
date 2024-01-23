@@ -532,16 +532,9 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 		}
 
 		// for dynamic UI
-		protected void revokeContribution(WorkbenchWindow window, IActionBars bars, String id) {
+		private void revokeContribution(WorkbenchWindow window, String id) {
 			revokeActionSetFromMenu(window.getMenuManager(), id);
-			// IMenuManager menuMgr = bars.getMenuManager();
-			// if (menuMgr != null)
-			// revokeActionSetFromMenu(menuMgr, id);
-
 			revokeActionSetFromCoolbar(window.getCoolBarManager2(), id);
-			// IToolBarManager toolBarMgr = bars.getToolBarManager();
-			// if (toolBarMgr != null && toolBarMgr instanceof CoolItemToolBarManager)
-			// revokeActionSetFromToolbar(toolBarMgr, id);
 		}
 
 		// for dynamic UI
@@ -697,7 +690,7 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 		if (cache != null) {
 			for (Object element : cache) {
 				ActionSetContribution contribution = (ActionSetContribution) element;
-				contribution.revokeContribution((WorkbenchWindow) window, actionSet.getBars(), id);
+				contribution.revokeContribution((WorkbenchWindow) window, id);
 				if (contribution.isAdjunctContributor()) {
 					for (ActionDescriptor adjunctAction : contribution.adjunctActions) {
 						contribution.revokeAdjunctCoolbarAction(adjunctAction, actionSet.getBars());

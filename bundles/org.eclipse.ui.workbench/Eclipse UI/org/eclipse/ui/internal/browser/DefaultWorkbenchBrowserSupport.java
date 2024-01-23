@@ -51,11 +51,6 @@ public class DefaultWorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupp
 		return browsers.get(id);
 	}
 
-	protected IWebBrowser doCreateBrowser(int style, String browserId, String name, String tooltip)
-	{
-		return new DefaultWebBrowser(this, browserId);
-	}
-
 	@Override
 	public IWebBrowser createBrowser(int style, String browserId, String name, String tooltip)
 	{
@@ -63,7 +58,7 @@ public class DefaultWorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupp
 		if (browser != null) {
 			return browser;
 		}
-		browser = doCreateBrowser(style, browserId, name, tooltip);
+		browser = new DefaultWebBrowser(this, browserId);
 		registerBrowser(browser);
 		return browser;
 	}

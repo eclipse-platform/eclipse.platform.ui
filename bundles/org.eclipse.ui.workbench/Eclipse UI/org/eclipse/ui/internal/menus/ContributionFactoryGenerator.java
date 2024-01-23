@@ -16,7 +16,6 @@
 package org.eclipse.ui.internal.menus;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.core.expressions.Expression;
@@ -34,7 +33,6 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.menus.AbstractContributionFactory;
-import org.eclipse.ui.menus.IMenuService;
 
 public class ContributionFactoryGenerator extends ContextFunction {
 	private AbstractContributionFactory factoryImpl;
@@ -66,8 +64,7 @@ public class ContributionFactoryGenerator extends ContextFunction {
 	@Override
 	public Object compute(IEclipseContext context, String contextKey) {
 		AbstractContributionFactory factory = getFactory();
-		final IMenuService menuService = context.get(IMenuService.class);
-		final ContributionRoot root = new ContributionRoot(menuService, new HashSet<>(), null, factory);
+		final ContributionRoot root = new ContributionRoot(factory);
 		ServiceLocator sl = new ServiceLocator();
 		sl.setContext(context);
 		try {

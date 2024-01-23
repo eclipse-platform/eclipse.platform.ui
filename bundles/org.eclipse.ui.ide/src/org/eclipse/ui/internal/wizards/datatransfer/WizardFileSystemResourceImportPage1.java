@@ -62,7 +62,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FileSystemElement;
 import org.eclipse.ui.dialogs.WizardResourceImportPage;
@@ -154,20 +153,17 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 	/**
 	 *	Creates an instance of this class
 	 */
-	protected WizardFileSystemResourceImportPage1(String name,
-			IWorkbench aWorkbench, IStructuredSelection selection) {
+	protected WizardFileSystemResourceImportPage1(String name, IStructuredSelection selection) {
 		super(name, selection);
 	}
 
 	/**
 	 *	Creates an instance of this class
 	 *
-	 * @param aWorkbench IWorkbench
 	 * @param selection IStructuredSelection
 	 */
-	public WizardFileSystemResourceImportPage1(IWorkbench aWorkbench,
-			IStructuredSelection selection) {
-		this("fileSystemImportPage1", aWorkbench, selection);//$NON-NLS-1$
+	public WizardFileSystemResourceImportPage1(IStructuredSelection selection) {
+		this("fileSystemImportPage1", selection);//$NON-NLS-1$
 		setTitle(DataTransferMessages.DataTransfer_fileSystemTitle);
 		setDescription(DataTransferMessages.FileImport_importFileSystem);
 	}

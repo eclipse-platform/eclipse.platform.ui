@@ -121,6 +121,22 @@ public class Theme extends EventManager implements ITheme {
 		}
 	}
 
+	private static String[] splitPropertyName(String property) {
+		IThemeDescriptor[] descriptors = WorkbenchPlugin.getDefault().getThemeRegistry().getThemes();
+		for (IThemeDescriptor themeDescriptor : descriptors) {
+			String id = themeDescriptor.getId();
+			if (property.startsWith(id + '.')) { // the property starts with
+													// a known theme ID -
+													// extract and return it and
+													// the remaining property
+				return new String[] { property.substring(0, id.length()), property.substring(id.length() + 1) };
+			}
+		}
+
+		// default is simply return the default theme ID and the raw property
+		return new String[] { IThemeManager.DEFAULT_THEME, property };
+	}
+
 	/**
 	 * Listener that is responsible for responding to preference changes.
 	 *
@@ -132,7 +148,7 @@ public class Theme extends EventManager implements ITheme {
 
 				@Override
 				public void propertyChange(PropertyChangeEvent event) {
-					String[] split = ThemeElementHelper.splitPropertyName(Theme.this, event.getProperty());
+					String[] split = splitPropertyName(event.getProperty());
 					String key = split[1];
 					String theme = split[0];
 					if (key.equals(IWorkbenchPreferenceConstants.CURRENT_THEME_ID)) {

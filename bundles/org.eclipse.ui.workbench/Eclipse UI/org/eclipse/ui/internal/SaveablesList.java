@@ -809,8 +809,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 		};
 
 		// Do the save.
-		return !SaveableHelper.runProgressMonitorOperation(WorkbenchMessages.Save_All, progressOp, runnableContext,
-				shellProvider);
+		return !SaveableHelper.runProgressMonitorOperation(WorkbenchMessages.Save_All, progressOp, runnableContext);
 	}
 
 	private static class PostCloseInfo {

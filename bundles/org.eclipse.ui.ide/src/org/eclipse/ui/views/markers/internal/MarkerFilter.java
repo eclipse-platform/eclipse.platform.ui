@@ -167,6 +167,8 @@ public class MarkerFilter implements Cloneable {
 	 * Subclasses should override to determine if the given marker passes the
 	 * filter.
 	 *
+	 * @param marker unused, but can be used in overrides
+	 *
 	 * @return <code>true</code> if the marker passes the filter and
 	 *         <code>false</code> otherwise
 	 */

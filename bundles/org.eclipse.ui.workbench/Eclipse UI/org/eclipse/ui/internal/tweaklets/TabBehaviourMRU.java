@@ -19,23 +19,15 @@ package org.eclipse.ui.internal.tweaklets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.e4.compatibility.E4Util;
-import org.eclipse.ui.internal.registry.EditorDescriptor;
 
 /**
  * @since 3.3
  */
 public class TabBehaviourMRU extends TabBehaviour {
-
-	@Override
-	public boolean alwaysShowPinAction() {
-		return false;
-	}
 
 	@Override
 	public IEditorReference findReusableEditor(WorkbenchPage page) {
@@ -100,14 +92,5 @@ public class TabBehaviourMRU extends TabBehaviour {
 		}
 
 		return null;
-
 	}
-
-	@Override
-	public IEditorReference reuseInternalEditor(WorkbenchPage page, Object manager, Object editorPresentation,
-			EditorDescriptor desc, IEditorInput input, IEditorReference reusableEditorRef) {
-		E4Util.unsupported("reuseInternalEditor: we reuse nothing"); //$NON-NLS-1$
-		return reusableEditorRef;
-	}
-
 }

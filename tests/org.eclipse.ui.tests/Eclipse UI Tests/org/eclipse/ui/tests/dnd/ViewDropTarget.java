@@ -49,8 +49,7 @@ public class ViewDropTarget extends WorkbenchWindowDropTarget {
 
 	@Override
 	public Point getLocation() {
-		return DragOperations.getLocation(DragOperations.getPane(getPart()),
-				side);
+		return DragOperations.getLocation(side);
 	}
 
 	@Override

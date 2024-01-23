@@ -14,7 +14,6 @@
 
 package org.eclipse.ui.internal;
 
-import java.util.ArrayList;
 import java.util.Objects;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
@@ -127,7 +126,7 @@ public class NavigationHistoryEntry {
 	/**
 	 * Saves the state of this entry and its location.
 	 */
-	void saveState(IMemento mem, ArrayList<NavigationHistoryEntry> entries) {
+	final void saveState(IMemento mem) {
 		mem.putString(IWorkbenchConstants.TAG_HISTORY_LABEL, getHistoryText());
 		if (locationMemento != null) {
 			IMemento childMem = mem.createChild(IWorkbenchConstants.TAG_POSITION);

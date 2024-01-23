@@ -121,15 +121,6 @@ public class WizardsRegistryReader extends RegistryReader {
 		plugin = pluginId;
 	}
 
-	/*
-	 * <p> This implementation uses a defering strategy. For more info see
-	 * <code>readWizards</code>. </p>
-	 */
-	protected void addNewElementToResult(WorkbenchWizardElement element, IConfigurationElement config) {
-		// TODO: can we remove the config parameter?
-		deferWizard(element);
-	}
-
 	/**
 	 *
 	 * @since 3.1
@@ -421,7 +412,7 @@ public class WizardsRegistryReader extends RegistryReader {
 			}
 			WorkbenchWizardElement wizard = createWizardElement(element);
 			if (wizard != null) {
-				addNewElementToResult(wizard, element);
+				deferWizard(wizard);
 			}
 			return true;
 		}

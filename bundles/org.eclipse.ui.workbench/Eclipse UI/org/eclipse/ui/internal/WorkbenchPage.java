@@ -1996,7 +1996,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	private void firePropertyChange(String changeId, Object oldValue, Object newValue) {
 
-		UIListenerLogging.logPagePropertyChanged(this, changeId, oldValue, newValue);
+		UIListenerLogging.logPagePropertyChanged(this, changeId, newValue);
 
 		PropertyChangeEvent event = new PropertyChangeEvent(this, changeId, oldValue, newValue);
 

@@ -314,22 +314,6 @@ public final class ThemeElementHelper {
 		return cssThemePrefix + createPreferenceKey(theme, id);
 	}
 
-	public static String[] splitPropertyName(Theme theme, String property) {
-		IThemeDescriptor[] descriptors = WorkbenchPlugin.getDefault().getThemeRegistry().getThemes();
-		for (IThemeDescriptor themeDescriptor : descriptors) {
-			String id = themeDescriptor.getId();
-			if (property.startsWith(id + '.')) { // the property starts with
-													// a known theme ID -
-													// extract and return it and
-													// the remaining property
-				return new String[] { property.substring(0, id.length()), property.substring(id.length() + 1) };
-			}
-		}
-
-		// default is simply return the default theme ID and the raw property
-		return new String[] { IThemeManager.DEFAULT_THEME, property };
-	}
-
 	/**
 	 * Not intended to be instantiated.
 	 */

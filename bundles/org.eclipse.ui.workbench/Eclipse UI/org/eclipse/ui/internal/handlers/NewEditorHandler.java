@@ -24,7 +24,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.dialogs.DialogUtil;
 
@@ -60,7 +59,7 @@ public class NewEditorHandler extends AbstractHandler {
 				page.openEditor(editor.getEditorInput(), editorId, true, matchFlags);
 			}
 		} catch (PartInitException e) {
-			DialogUtil.openError(activeWorkbenchWindow.getShell(), WorkbenchMessages.Error, e.getMessage(), e);
+			DialogUtil.openError(e.getMessage(), e);
 		}
 		return null;
 	}

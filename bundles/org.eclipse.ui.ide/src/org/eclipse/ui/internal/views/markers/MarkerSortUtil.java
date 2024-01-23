@@ -118,7 +118,7 @@ public class MarkerSortUtil {
 		MarkerEntry hole = array[position];
 		int holeIndex = position;
 		holeIndex = leafSearch(array, first, holeIndex, last, comparator);
-		holeIndex = bottomUpSearch(array, first, holeIndex,position,hole,last, comparator);
+		holeIndex = bottomUpSearch(array, first, holeIndex, position, hole, comparator);
 		array[holeIndex] = hole;
 	}
 
@@ -157,8 +157,7 @@ public class MarkerSortUtil {
 	 * @return new holeIndex
 	 */
 	private static int bottomUpSearch(MarkerEntry[] array, int first, int fromIndex,
- int toIndex, MarkerEntry hole,
-			int last, Comparator<MarkerItem> comparator) {
+			int toIndex, MarkerEntry hole, Comparator<MarkerItem> comparator) {
 		int holeOffset = fromIndex - first;
 		int parent = (holeOffset - 1) / 2;
 		int top = toIndex - first;
