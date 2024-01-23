@@ -186,8 +186,6 @@ public class StackDropAgent extends DropAgent {
 		}
 
 		tabArea = null;
-
-		super.dragLeave(dragElement, info);
 	}
 
 	/**
@@ -418,5 +416,10 @@ public class StackDropAgent extends DropAgent {
 			}
 		}
 		return true;
+	}
+
+	@Override
+	void dragEnter(MUIElement dragElement, DnDInfo info) {
+		// do nothing
 	}
 }

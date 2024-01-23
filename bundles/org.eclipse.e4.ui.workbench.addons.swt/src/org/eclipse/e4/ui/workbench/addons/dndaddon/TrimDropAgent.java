@@ -138,8 +138,6 @@ public class TrimDropAgent extends DropAgent {
 
 	@Override
 	public void dragEnter(MUIElement dragElement, DnDInfo info) {
-		super.dragEnter(dragElement, info);
-
 		MTrimmedWindow window = (MTrimmedWindow) dndManager.getDragWindow();
 		trimBar = dndManager.getModelService().getTrim(window, side);
 		trimBar.setToBeRendered(true);
@@ -156,7 +154,6 @@ public class TrimDropAgent extends DropAgent {
 		side = null;
 
 		dndManager.setCursor(Display.getCurrent().getSystemCursor(SWT.CURSOR_NO));
-		super.dragLeave(dragElement, info);
 	}
 
 	@Override

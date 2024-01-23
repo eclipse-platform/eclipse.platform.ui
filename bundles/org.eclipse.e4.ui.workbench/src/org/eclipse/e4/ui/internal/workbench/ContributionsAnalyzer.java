@@ -79,9 +79,8 @@ public final class ContributionsAnalyzer {
 		trace(msg + ": " + menu + ": " + menuModel, null); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	public static void gatherTrimContributions(MTrimBar trimModel,
-			List<MTrimContribution> trimContributions, String elementId,
-			ArrayList<MTrimContribution> toContribute, ExpressionContext eContext) {
+	public static void gatherTrimContributions(List<MTrimContribution> trimContributions, String elementId,
+			ArrayList<MTrimContribution> toContribute) {
 		if (elementId == null || elementId.isEmpty()) {
 			return;
 		}
@@ -95,24 +94,9 @@ public final class ContributionsAnalyzer {
 	}
 
 
-	public static void XXXgatherToolBarContributions(final MToolBar toolbarModel,
-			final List<MToolBarContribution> toolbarContributionList, final String id,
+	public static void XXXgatherToolBarContributions(final List<MToolBarContribution> toolbarContributionList,
+			final String id,
 			final ArrayList<MToolBarContribution> toContribute) {
-		if (id == null || id.isEmpty()) {
-			return;
-		}
-		for (MToolBarContribution toolBarContribution : toolbarContributionList) {
-			String parentID = toolBarContribution.getParentId();
-			if (!id.equals(parentID) || !toolBarContribution.isToBeRendered()) {
-				continue;
-			}
-			toContribute.add(toolBarContribution);
-		}
-	}
-
-	public static void gatherToolBarContributions(final MToolBar toolbarModel,
-			final List<MToolBarContribution> toolbarContributionList, final String id,
-			final ArrayList<MToolBarContribution> toContribute, final ExpressionContext eContext) {
 		if (id == null || id.isEmpty()) {
 			return;
 		}
@@ -127,8 +111,7 @@ public final class ContributionsAnalyzer {
 
 	public static void XXXgatherMenuContributions(final MMenu menuModel,
 			final List<MMenuContribution> menuContributionList, final String id,
-			final ArrayList<MMenuContribution> toContribute, final ExpressionContext eContext,
-			boolean includePopups) {
+			final ArrayList<MMenuContribution> toContribute, boolean includePopups) {
 		if (id == null || id.isEmpty()) {
 			return;
 		}
@@ -148,19 +131,18 @@ public final class ContributionsAnalyzer {
 		for (MMenuContribution menuContribution : menuContributionList) {
 			String parentID = menuContribution.getParentId();
 			if (parentID == null) {
-				// it doesn't make sense for this to be null, temporary workaround for bug 320790
+				// it doesn't make sense for this to be null, temporary workaround for bug
+				// 320790
 				continue;
 			}
 			boolean popupTarget = includePopups && popupIds.contains(parentID);
-			boolean popupAny = includePopups && menuModel instanceof MPopupMenu
-					&& POPUP_PARENT_ID.equals(parentID);
+			boolean popupAny = includePopups && menuModel instanceof MPopupMenu && POPUP_PARENT_ID.equals(parentID);
 			boolean filtered = isFiltered(menuModel, menuContribution, includePopups);
 			if (!filtered && menuContribution.isToBeRendered() && popupAny) {
 				// process POPUP_ANY first
 				toContribute.add(menuContribution);
 			} else {
-				if (filtered || (!popupTarget && !parentID.equals(id))
-				|| !menuContribution.isToBeRendered()) {
+				if (filtered || (!popupTarget && !parentID.equals(id)) || !menuContribution.isToBeRendered()) {
 					continue;
 				}
 				includedPopups.add(menuContribution);

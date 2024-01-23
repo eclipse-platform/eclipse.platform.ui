@@ -14,8 +14,6 @@
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import jakarta.inject.Inject;
-import java.lang.reflect.Method;
-import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -26,7 +24,6 @@ import org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -34,28 +31,11 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Widget;
 
 public class MenuManagerServiceFilter implements Listener {
-	public static final String NUL_MENU_ITEM = "(None Applicable)"; //$NON-NLS-1$
-
 	private static final String TMP_ORIGINAL_CONTEXT = "MenuServiceFilter.original.context"; //$NON-NLS-1$
 
 	private static void trace(String msg, Widget menu, MMenu menuModel) {
 		WorkbenchSWTActivator.trace(Policy.DEBUG_MENUS_FLAG, msg + ": " + menu + ": " //$NON-NLS-1$ //$NON-NLS-2$
 				+ menuModel, null);
-	}
-
-	private static Method aboutToShow;
-
-	public static Method getAboutToShow() {
-		if (aboutToShow == null) {
-			try {
-				aboutToShow = MenuManager.class
-						.getDeclaredMethod("handleAboutToShow"); //$NON-NLS-1$
-				aboutToShow.setAccessible(true);
-			} catch (SecurityException | NoSuchMethodException e) {
-				ILog.get().error(e.getMessage(), e);
-			}
-		}
-		return aboutToShow;
 	}
 
 	@Inject
@@ -95,7 +75,6 @@ public class MenuManagerServiceFilter implements Listener {
 		final Menu menu = (Menu) event.widget;
 		if (event.type == SWT.Dispose) {
 			trace("handleMenu.Dispose", menu, null); //$NON-NLS-1$
-			cleanUp(menu);
 		}
 		Object obj = menu.getData(AbstractPartRenderer.OWNING_ME);
 		if (obj == null && menu.getParentItem() != null) {
@@ -104,20 +83,17 @@ public class MenuManagerServiceFilter implements Listener {
 		if (obj instanceof MPopupMenu) {
 			handleContextMenu(event, menu, (MPopupMenu) obj);
 		} else if (obj instanceof MMenu) {
-			handleMenu(event, menu, (MMenu) obj);
+			handleMenu(event, menu);
 		}
 	}
 
-	private void handleMenu(final Event event, final Menu menu,
-			final MMenu menuModel) {
+	private void handleMenu(final Event event, final Menu menu) {
 		if ((menu.getStyle() & SWT.BAR) != 0) {
 			// don't process the menu bar, it's not fair :-)
 			return;
 		}
 		switch (event.type) {
 		case SWT.Show:
-			cleanUp(menu);
-			showMenu(event, menu, menuModel);
 			break;
 		case SWT.Hide:
 			// TODO we'll clean up on show
@@ -125,26 +101,20 @@ public class MenuManagerServiceFilter implements Listener {
 		}
 	}
 
-	public void showMenu(final Event event, final Menu menu,
-			final MMenu menuModel) {
-		// System.err.println("showMenu: " + menuModel + "\n\t" + menu);
-	}
 
 	private void handleContextMenu(final Event event, final Menu menu,
 			final MPopupMenu menuModel) {
 		switch (event.type) {
 		case SWT.Show:
-			cleanUp(menu);
-			showPopup(event, menu, menuModel);
+			showPopup(menuModel);
 			break;
 		case SWT.Hide:
-			hidePopup(event, menu, menuModel);
+			hidePopup(menu, menuModel);
 			break;
 		}
 	}
 
-	public void hidePopup(Event event, Menu menu, MPopupMenu menuModel) {
-		// System.err.println("hidePopup: " + menuModel + "\n\t" + menu);
+	private void hidePopup(Menu menu, MPopupMenu menuModel) {
 		final IEclipseContext popupContext = menuModel.getContext();
 		final IEclipseContext originalChild = (IEclipseContext) popupContext
 				.get(TMP_ORIGINAL_CONTEXT);
@@ -160,8 +130,7 @@ public class MenuManagerServiceFilter implements Listener {
 		}
 	}
 
-	public void showPopup(final Event event, final Menu menu,
-			final MPopupMenu menuModel) {
+	private void showPopup(final MPopupMenu menuModel) {
 		// System.err.println("showPopup: " + menuModel + "\n\t" + menu);
 		// we need some context foolery here
 		final IEclipseContext popupContext = menuModel.getContext();
@@ -169,14 +138,5 @@ public class MenuManagerServiceFilter implements Listener {
 		final IEclipseContext originalChild = parentContext.getActiveChild();
 		popupContext.activate();
 		popupContext.set(TMP_ORIGINAL_CONTEXT, originalChild);
-
-	}
-
-	public void cleanUp(final Menu menu) {
-		// System.err.println("cleanUp: " + menu);
-	}
-
-	public void dispose() {
-		// System.err.println("dispose");
 	}
 }

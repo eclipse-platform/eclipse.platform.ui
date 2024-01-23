@@ -217,7 +217,7 @@ public class ToolControlRenderer extends SWTPartRenderer {
 	@Inject
 	@Optional
 	private void subscribeTopicAppStartup(
-			@UIEventTopic(UIEvents.UILifeCycle.APP_STARTUP_COMPLETE) Event event) {
+			@SuppressWarnings("unused") @UIEventTopic(UIEvents.UILifeCycle.APP_STARTUP_COMPLETE) Event event) {
 		List<MToolControl> toolControls = modelService.findElements(
 				application, null, MToolControl.class, null);
 		for (MToolControl toolControl : toolControls) {

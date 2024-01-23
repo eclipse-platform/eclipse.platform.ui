@@ -482,7 +482,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		}
 		final ArrayList<MMenuContribution> toContribute = new ArrayList<>();
 		ContributionsAnalyzer.XXXgatherMenuContributions(menuModel, application.getMenuContributions(), elementId,
-				toContribute, null, isPopup);
+				toContribute, isPopup);
 		generateContributions(menuModel, toContribute, isMenuBar);
 		for (MMenuElement element : menuModel.getChildren()) {
 			if (element instanceof MMenu) {
