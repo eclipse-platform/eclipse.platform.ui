@@ -87,8 +87,10 @@ public class FileLabelProvider extends LabelProvider implements IStyledLabelProv
 			return new StyledString();
 
 		IResource resource= (IResource) element;
-		if (!resource.exists())
-			new StyledString(SearchMessages.FileLabelProvider_removed_resource_label);
+		if (!resource.exists()) {
+			StyledString str = new StyledString(SearchMessages.FileLabelProvider_removed_resource_label);
+			return getColoredLabelWithCounts(resource, str);
+		}
 
 		String name= BasicElementLabels.getResourceName(resource);
 		if (fOrder == SHOW_LABEL) {

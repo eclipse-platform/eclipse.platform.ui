@@ -526,7 +526,8 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	}
 
 	private void initializePageSwitcher() {
-		new PageSwitcher(this) {
+		@SuppressWarnings("unused")
+		PageSwitcher pageSwitcher = new PageSwitcher(this) {
 			@Override
 			public void activatePage(Object page) {
 				ISearchResult searchResult= ((ISearchQuery) page).getSearchResult();

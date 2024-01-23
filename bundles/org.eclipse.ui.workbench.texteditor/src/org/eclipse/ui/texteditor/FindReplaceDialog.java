@@ -316,7 +316,8 @@ class FindReplaceDialog extends Dialog {
 				});
 		setGridData(fSelectAllButton, SWT.FILL, true, SWT.FILL, false);
 
-		new Label(panel, SWT.NONE); // filler
+		@SuppressWarnings("unused")
+		Label filler = new Label(panel, SWT.NONE); // filler
 
 		fReplaceFindButton = makeButton(panel, FindReplaceMessages.FindReplace_ReplaceFindButton_label, 103, false,
 				new SelectionAdapter() {

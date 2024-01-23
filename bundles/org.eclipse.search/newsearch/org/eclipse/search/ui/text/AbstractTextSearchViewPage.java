@@ -273,6 +273,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * Flag (<code>value 2</code>) denoting tree layout.
 	 */
 	public static final int FLAG_LAYOUT_TREE = 2;
+	private OpenAndLinkWithEditorHelper openAndLinkWithEditorHelper;
 
 
 	/**
@@ -741,7 +742,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		fillToolbar(tbm);
 		tbm.update(false);
 
-		new OpenAndLinkWithEditorHelper(fViewer) {
+		openAndLinkWithEditorHelper = new OpenAndLinkWithEditorHelper(fViewer) {
 
 			@Override
 			protected void activate(ISelection selection) {
@@ -1135,6 +1136,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			AnnotationManagers.removeSearchResult(getSite().getWorkbenchWindow(), oldSearch);
 		super.dispose();
 		NewSearchUI.removeQueryListener(fQueryListener);
+		openAndLinkWithEditorHelper.dispose();
 	}
 
 	@Override
