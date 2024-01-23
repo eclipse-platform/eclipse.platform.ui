@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Objects;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -557,7 +558,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				// copying the documents as we want to re-inject them later on to become consistent.
 
 				IDocument right= fRightDocument; // fRightDocument, but not subject to change
-				IDocument actual= null; // the copy of the actual (right) document
+				IDocument actual; // the copy of the actual (right) document
 				IDocument reference= null; // the copy of the reference (left) document
 
 				synchronized (DocumentLineDiffer.this) {
@@ -635,6 +636,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 								break;
 						}
 					} while (true);
+					Objects.requireNonNull(actual); // fulfilled by break condition
 				}
 
 				IHashFunction hash= new DJBHashFunction();

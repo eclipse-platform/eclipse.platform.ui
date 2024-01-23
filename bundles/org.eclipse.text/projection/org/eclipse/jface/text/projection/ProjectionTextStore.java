@@ -80,21 +80,17 @@ class ProjectionTextStore implements ITextStore {
 		fMapping= mapping;
 	}
 
-	private void internalError() {
-		throw new IllegalStateException();
-	}
-
 	@Override
 	public void set(String contents) {
 
 		IRegion masterRegion= fMapping.getCoverage();
 		if (masterRegion == null)
-			internalError();
+			throw new IllegalStateException();
 
 		try {
 			fMasterDocument.replace(masterRegion.getOffset(), masterRegion.getLength(), contents);
 		} catch (BadLocationException e) {
-			internalError();
+			throw new IllegalStateException(e);
 		}
 	}
 
@@ -105,7 +101,7 @@ class ProjectionTextStore implements ITextStore {
 			IRegion masterRegion= fMapping.toOriginRegion(fReusableRegion);
 			fMasterDocument.replace(masterRegion.getOffset(), masterRegion.getLength(), text);
 		} catch (BadLocationException e) {
-			internalError();
+			throw new IllegalStateException(e);
 		}
 	}
 
@@ -120,11 +116,8 @@ class ProjectionTextStore implements ITextStore {
 			int originOffset= fMapping.toOriginOffset(offset);
 			return fMasterDocument.getChar(originOffset);
 		} catch (BadLocationException e) {
-			internalError();
+			throw new IllegalStateException(e);
 		}
-
-		// unreachable
-		return (char) 0;
 	}
 
 	@Override
@@ -137,10 +130,7 @@ class ProjectionTextStore implements ITextStore {
 			}
 			return buffer.toString();
 		} catch (BadLocationException e) {
-			internalError();
+			throw new IllegalStateException(e);
 		}
-
-		// unreachable
-		return null;
 	}
 }

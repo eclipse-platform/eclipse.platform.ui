@@ -762,7 +762,8 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 						int annotationEnd= Math.min(p.getOffset() + p.getLength(), visible.getOffset() + visible.getLength());
 						annotationLength= annotationEnd - annotationOffset;
 					} else {
-						widgetRegion= extension.modelRange2WidgetRange(new Region(annotationOffset, annotationLength));
+						ITextViewerExtension5 ext= extension;
+						widgetRegion= ext.modelRange2WidgetRange(new Region(annotationOffset, annotationLength));
 						if (widgetRegion == null)
 							continue;
 					}
@@ -774,6 +775,7 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 					}
 
 					try {
+						@SuppressWarnings("null")
 						int startOffset= visible != null ? annotationOffset - visible.getOffset() : widgetRegion.getOffset();
 						int startLine= textWidget.getLineAtOffset(startOffset);
 

@@ -399,9 +399,9 @@ public class DocumentCommand {
 		Position caretPosition= null;
 		try {
 			if (updateCaret()) {
+				caretPosition= new Position(caretOffset);
 				document.addPositionCategory(getCategory());
 				document.addPositionUpdater(updater);
-				caretPosition= new Position(caretOffset);
 				document.addPosition(getCategory(), caretPosition);
 			}
 
@@ -414,7 +414,7 @@ public class DocumentCommand {
 		} catch (BadPositionCategoryException e) {
 			// ignore
 		} finally {
-			if (updateCaret()) {
+			if (caretPosition != null) { // i.e. updateCaret()
 				document.removePositionUpdater(updater);
 				try {
 					document.removePositionCategory(getCategory());

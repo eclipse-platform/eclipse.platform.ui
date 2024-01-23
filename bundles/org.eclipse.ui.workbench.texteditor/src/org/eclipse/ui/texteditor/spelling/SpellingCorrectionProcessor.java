@@ -48,9 +48,11 @@ public final class SpellingCorrectionProcessor implements IQuickAssistProcessor 
 	@Override
 	public ICompletionProposal[] computeQuickAssistProposals(IQuickAssistInvocationContext quickAssistContext) {
 		ISourceViewer viewer= quickAssistContext.getSourceViewer();
-		int documentOffset= quickAssistContext.getOffset();
-
-		int length= viewer != null ? viewer.getSelectedRange().y : -1;
+		if (viewer == null) {
+			return fgNoSuggestionsProposal;
+		}
+		int documentOffset = quickAssistContext.getOffset();
+		int length = viewer.getSelectedRange().y;
 		TextInvocationContext context= new TextInvocationContext(viewer, documentOffset, length);
 
 
@@ -62,7 +64,7 @@ public final class SpellingCorrectionProcessor implements IQuickAssistProcessor 
 		if (proposals.isEmpty())
 			return fgNoSuggestionsProposal;
 
-		return proposals.toArray(new ICompletionProposal[proposals.size()]);
+		return proposals.toArray(ICompletionProposal[]::new);
 	}
 
 	private boolean isAtPosition(int offset, Position pos) {

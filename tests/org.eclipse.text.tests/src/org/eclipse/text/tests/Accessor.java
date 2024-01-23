@@ -68,7 +68,7 @@ public class Accessor {
 		try {
 			fClass= Class.forName(className, true, classLoader);
 		} catch (ClassNotFoundException | ExceptionInInitializerError e) {
-			fail(e);
+			throw (AssertionFailedException) new AssertionFailedException(e.getLocalizedMessage()).initCause(e);
 		}
 	}
 
@@ -100,20 +100,20 @@ public class Accessor {
 		try {
 			fClass= Class.forName(className, true, classLoader);
 		} catch (ClassNotFoundException | ExceptionInInitializerError e) {
-			fail(e);
+			throw (AssertionFailedException) new AssertionFailedException(e.getLocalizedMessage()).initCause(e);
 		}
 		Constructor<?> constructor= null;
 		try {
 			constructor= fClass.getDeclaredConstructor(constructorTypes);
 		} catch (SecurityException | NoSuchMethodException e) {
-			fail(e);
+			throw (AssertionFailedException) new AssertionFailedException(e.getLocalizedMessage()).initCause(e);
 		}
 		Assert.isNotNull(constructor);
 		constructor.setAccessible(true);
 		try {
 			fInstance= constructor.newInstance(constructorArgs);
 		} catch (IllegalArgumentException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-			fail(e);
+			throw (AssertionFailedException) new AssertionFailedException(e.getLocalizedMessage()).initCause(e);
 		}
 	}
 
@@ -130,7 +130,7 @@ public class Accessor {
 		try {
 			fClass= Class.forName(className, true, classLoader);
 		} catch (ClassNotFoundException | ExceptionInInitializerError e) {
-			fail(e);
+			throw (AssertionFailedException) new AssertionFailedException(e.getLocalizedMessage()).initCause(e);
 		}
 	}
 
@@ -163,16 +163,15 @@ public class Accessor {
 		try {
 			method= fClass.getDeclaredMethod(methodName, types);
 		} catch (SecurityException | NoSuchMethodException e) {
-			fail(e);
+			throw (AssertionFailedException) new AssertionFailedException(e.getLocalizedMessage()).initCause(e);
 		}
 		Assert.isNotNull(method);
 		method.setAccessible(true);
 		try {
 			return method.invoke(fInstance, arguments);
 		} catch (IllegalArgumentException | InvocationTargetException | IllegalAccessException e) {
-			fail(e);
+			throw (AssertionFailedException) new AssertionFailedException(e.getLocalizedMessage()).initCause(e);
 		}
-		return null;
 	}
 
 	/**
@@ -186,7 +185,7 @@ public class Accessor {
 		try {
 			field.set(fInstance, value);
 		} catch (IllegalArgumentException | IllegalAccessException e) {
-			fail(e);
+			throw (AssertionFailedException) new AssertionFailedException(e.getLocalizedMessage()).initCause(e);
 		}
 	}
 
@@ -201,7 +200,7 @@ public class Accessor {
 		try {
 			field.setBoolean(fInstance, value);
 		} catch (IllegalArgumentException | IllegalAccessException e) {
-			fail(e);
+			throw (AssertionFailedException) new AssertionFailedException(e.getLocalizedMessage()).initCause(e);
 		}
 	}
 
@@ -216,7 +215,7 @@ public class Accessor {
 		try {
 			field.setInt(fInstance, value);
 		} catch (IllegalArgumentException | IllegalAccessException e) {
-			fail(e);
+			throw (AssertionFailedException) new AssertionFailedException(e.getLocalizedMessage()).initCause(e);
 		}
 	}
 
@@ -231,10 +230,8 @@ public class Accessor {
 		try {
 			return field.get(fInstance);
 		} catch (IllegalArgumentException | IllegalAccessException e) {
-			fail(e);
+			throw (AssertionFailedException) new AssertionFailedException(e.getLocalizedMessage()).initCause(e);
 		}
-		// Unreachable code
-		return null;
 	}
 
 	/**
@@ -248,10 +245,8 @@ public class Accessor {
 		try {
 			return field.getBoolean(fInstance);
 		} catch (IllegalArgumentException | IllegalAccessException e) {
-			fail(e);
+			throw (AssertionFailedException) new AssertionFailedException(e.getLocalizedMessage()).initCause(e);
 		}
-		// Unreachable code
-		return false;
 	}
 
 	/**
@@ -265,21 +260,19 @@ public class Accessor {
 		try {
 			return field.getInt(fInstance);
 		} catch (IllegalArgumentException | IllegalAccessException e) {
-			fail(e);
+			throw (AssertionFailedException) new AssertionFailedException(e.getLocalizedMessage()).initCause(e);
 		}
-		// Unreachable code
-		return 0;
 	}
 
 	public Field getField(String fieldName) {
-		Field field= null;
+		Field field;
 		try {
 			field= fClass.getDeclaredField(fieldName);
+			field.setAccessible(true);
+			return field;
 		} catch (SecurityException | NoSuchFieldException e) {
-			fail(e);
+			throw (AssertionFailedException) new AssertionFailedException(e.getLocalizedMessage()).initCause(e);
 		}
-		field.setAccessible(true);
-		return field;
 	}
 
 	private static Class<?>[] getTypes(Object[] objects) {
@@ -293,11 +286,5 @@ public class Accessor {
 			classes[i]= objects[i].getClass();
 		}
 		return classes;
-	}
-
-	private void fail(Throwable e) {
-		AssertionFailedException afe= new AssertionFailedException(e.getLocalizedMessage());
-		afe.initCause(e);
-		throw afe;
 	}
 }

@@ -78,16 +78,16 @@ public class ChildDocumentTest {
 		assertEquals("Child document store and child line tracker are inconsistent", trackerLines, textLines);
 
 		for (int i= 0; i < trackerLines; i++) {
-			IRegion trackerLine= null;
-			IRegion textLine= null;
 			try {
-				trackerLine= fDocument.getLineInformation(i);
-				textLine= textTracker.getLineInformation(i);
+				IRegion trackerLine = fDocument.getLineInformation(i);
+				IRegion textLine = textTracker.getLineInformation(i);
+				assertEquals("Child document store and child line tracker are inconsistent", trackerLine.getOffset(),
+						textLine.getOffset());
+				assertEquals("Child document store and child line tracker are inconsistent", trackerLine.getLength(),
+						textLine.getLength());
 			} catch (BadLocationException e) {
-				assertTrue("BadLocationException thrown", false);
+				throw new AssertionError("BadLocationException thrown", e);
 			}
-			assertEquals("Child document store and child line tracker are inconsistent", trackerLine.getOffset(), textLine.getOffset());
-			assertEquals("Child document store and child line tracker are inconsistent", trackerLine.getLength(), textLine.getLength());
 		}
 	}
 

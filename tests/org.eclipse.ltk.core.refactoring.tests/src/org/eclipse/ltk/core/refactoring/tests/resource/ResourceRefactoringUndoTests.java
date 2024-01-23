@@ -190,17 +190,16 @@ public class ResourceRefactoringUndoTests {
 
 	@Test
 	public void testProjectRenameUndoRedoLTK() throws ExecutionException, CoreException {
-		IProject renamedProject= null;
-		try {
-			RefactoringContribution renameContribution= RefactoringCore.getRefactoringContribution(RenameResourceDescriptor.ID);
-			RenameResourceDescriptor desc= (RenameResourceDescriptor) renameContribution.createDescriptor();
-			desc.setResourcePath(fProject.getProject().getFullPath());
-			desc.setNewName(TEST_NEWPROJECT_NAME);
-			PerformRefactoringOperation op= new PerformRefactoringOperation(desc.createRefactoringContext(new RefactoringStatus()), CheckConditionsOperation.ALL_CONDITIONS);
+		RefactoringContribution renameContribution= RefactoringCore.getRefactoringContribution(RenameResourceDescriptor.ID);
+		RenameResourceDescriptor desc= (RenameResourceDescriptor) renameContribution.createDescriptor();
+		desc.setResourcePath(fProject.getProject().getFullPath());
+		desc.setNewName(TEST_NEWPROJECT_NAME);
+		PerformRefactoringOperation op= new PerformRefactoringOperation(desc.createRefactoringContext(new RefactoringStatus()), CheckConditionsOperation.ALL_CONDITIONS);
 
-			ProjectSnapshot snap= new ProjectSnapshot(fProject.getProject());
-			execute(op);
-			renamedProject= getWorkspaceRoot().getProject(TEST_NEWPROJECT_NAME);
+		ProjectSnapshot snap= new ProjectSnapshot(fProject.getProject());
+		execute(op);
+		IProject renamedProject= getWorkspaceRoot().getProject(TEST_NEWPROJECT_NAME);
+		try {
 			assertTrue("Project rename failed", renamedProject.exists());
 			snap.name= TEST_NEWPROJECT_NAME;
 			assertTrue("Project CONTENT was altered on rename", snap.isValid());

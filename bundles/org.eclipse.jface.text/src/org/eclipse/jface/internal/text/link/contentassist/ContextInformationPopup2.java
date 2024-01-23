@@ -116,18 +116,14 @@ class ContextInformationPopup2 implements IContentAssistListener2 {
 			int position= fViewer.getSelectedRange().x;
 
 			IContextInformation[] contexts= computeContextInformation(position);
-			int count= (contexts == null ? 0 : contexts.length);
-			if (count == 1) {
-
+			if (contexts != null && contexts.length == 1) {
 				// Show context information directly
 				internalShowContextInfo(contexts[0], position);
-
-			} else if (count > 0) {
+			} else if (contexts != null && contexts.length > 0) {
 				// Precise context must be selected
-
-				if (fLineDelimiter == null)
+				if (fLineDelimiter == null) {
 					fLineDelimiter= styledText.getLineDelimiter();
-
+				}
 				createContextSelector();
 				setContexts(contexts);
 				displayContextSelector();

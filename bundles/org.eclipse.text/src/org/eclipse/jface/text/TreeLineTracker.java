@@ -229,7 +229,7 @@ abstract class TreeLineTracker implements ILineTracker {
 		Node node= fRoot;
 		while (true) {
 			if (node == null)
-				fail(offset);
+				throw new BadLocationException(Integer.toString(offset));
 
 			if (remaining < node.offset) {
 				node= node.left;
@@ -265,7 +265,7 @@ abstract class TreeLineTracker implements ILineTracker {
 
 		while (true) {
 			if (node == null)
-				fail(offset);
+				throw new BadLocationException(Integer.toString(offset));
 
 			if (remaining < node.offset) {
 				node= node.left;
@@ -299,7 +299,7 @@ abstract class TreeLineTracker implements ILineTracker {
 
 		while (true) {
 			if (node == null)
-				fail(line);
+				throw new BadLocationException(Integer.toString(line));
 
 			if (remaining == node.line)
 				break;
@@ -332,7 +332,7 @@ abstract class TreeLineTracker implements ILineTracker {
 
 		while (true) {
 			if (node == null)
-				fail(line);
+				throw new BadLocationException(Integer.toString(line));
 
 			if (remaining == node.line)
 				return offset + node.offset;
@@ -605,7 +605,7 @@ abstract class TreeLineTracker implements ILineTracker {
 
 		while (true) {
 			if (first == null)
-				fail(offset);
+				throw new BadLocationException(Integer.toString(offset));
 
 			if (remaining < first.offset) {
 				first= first.left;
@@ -653,7 +653,7 @@ abstract class TreeLineTracker implements ILineTracker {
 
 		DelimiterInfo info= text == null ? null : nextDelimiterInfo(text, 0);
 
-		if (info == null || info.delimiter == null) {
+		if (info == null || info.delimiter == null || text == null) {
 			// a) trivial case: insert into a single node, no line mangling
 			int added= text == null ? 0 : text.length();
 			updateLength(node, added - length);
@@ -710,7 +710,7 @@ abstract class TreeLineTracker implements ILineTracker {
 
 		DelimiterInfo info= text == null ? null : nextDelimiterInfo(text, 0);
 
-		if (info == null || info.delimiter == null) {
+		if (info == null || info.delimiter == null || text == null) {
 			int added= text == null ? 0 : text.length();
 
 			// join the two lines if there are no lines added
@@ -1045,16 +1045,6 @@ abstract class TreeLineTracker implements ILineTracker {
 	/* miscellaneous */
 
 	/**
-	 * Throws an exception.
-	 *
-	 * @param offset the illegal character or line offset that caused the exception
-	 * @throws BadLocationException always
-	 */
-	private void fail(int offset) throws BadLocationException {
-		throw new BadLocationException();
-	}
-
-	/**
 	 * Returns the information about the first delimiter found in the given
 	 * text starting at the given offset.
 	 *
@@ -1131,7 +1121,7 @@ abstract class TreeLineTracker implements ILineTracker {
 
 		while (true) {
 			if (node == null)
-				fail(offset);
+				throw new BadLocationException(Integer.toString(offset));
 
 			if (remaining < node.offset) {
 				node= node.left;
@@ -1160,7 +1150,7 @@ abstract class TreeLineTracker implements ILineTracker {
 
 			while (true) {
 				if (node == null)
-					fail(line);
+					throw new BadLocationException(Integer.toString(line));
 
 				if (remaining == node.line) {
 					offset += node.offset;
@@ -1191,7 +1181,7 @@ abstract class TreeLineTracker implements ILineTracker {
 
 				while (true) {
 					if (node == null)
-						fail(line);
+						throw new BadLocationException(Integer.toString(line));
 
 					if (remaining == node.line) {
 						offset+= node.offset;
