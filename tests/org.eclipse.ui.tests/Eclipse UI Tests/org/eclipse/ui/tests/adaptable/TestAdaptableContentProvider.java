@@ -47,22 +47,10 @@ public class TestAdaptableContentProvider implements ITreeContentProvider,
 		}
 	}
 
-	/**
-	 * Returns the implementation of IWorkbenchAdapter for the given
-	 * object.  Returns null if the adapter is not defined or the
-	 * object is not adaptable.
-	 */
-	protected IWorkbenchAdapter getAdapter(Object o) {
-		return TestAdaptableWorkbenchAdapter.getInstance();
-	}
-
 	@Override
 	public Object[] getChildren(Object element) {
-		IWorkbenchAdapter adapter = getAdapter(element);
-		if (adapter != null) {
-			return adapter.getChildren(element);
-		}
-		return new Object[0];
+		IWorkbenchAdapter adapter = TestAdaptableWorkbenchAdapter.getInstance();
+		return adapter.getChildren(element);
 	}
 
 	@Override
@@ -72,11 +60,8 @@ public class TestAdaptableContentProvider implements ITreeContentProvider,
 
 	@Override
 	public Object getParent(Object element) {
-		IWorkbenchAdapter adapter = getAdapter(element);
-		if (adapter != null) {
-			return adapter.getParent(element);
-		}
-		return null;
+		IWorkbenchAdapter adapter = TestAdaptableWorkbenchAdapter.getInstance();
+		return adapter.getParent(element);
 	}
 
 	@Override

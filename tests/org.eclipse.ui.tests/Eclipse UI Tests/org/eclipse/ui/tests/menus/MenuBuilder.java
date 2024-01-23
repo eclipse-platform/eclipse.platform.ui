@@ -269,13 +269,8 @@ public class MenuBuilder {
 	}
 
 	private static class ObjectClassExpression extends Expression {
-		public ObjectClassExpression(String c) {
-
-		}
-
 		@Override
 		public EvaluationResult evaluate(IEvaluationContext context) {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
@@ -284,8 +279,7 @@ public class MenuBuilder {
 	public static void addFileContribution() {
 		final IMenuService menuService = PlatformUI
 				.getWorkbench().getService(IMenuService.class);
-		final ObjectClassExpression ifileExpression = new ObjectClassExpression(
-				"org.eclipse.core.resources.IFile");
+		final ObjectClassExpression ifileExpression = new ObjectClassExpression();
 
 		final ImageDescriptor postIcon = ResourceLocator
 				.imageDescriptorFromBundle("org.eclise.ui.tests", "icons/full/elcl16/post_wiki.gif").orElse(null);

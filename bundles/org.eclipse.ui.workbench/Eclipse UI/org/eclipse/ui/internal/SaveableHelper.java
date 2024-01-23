@@ -251,20 +251,11 @@ public class SaveableHelper {
 	}
 
 	/**
-	 * Runs a progress monitor operation. Returns true if success, false if
-	 * canceled.
-	 */
-	static boolean runProgressMonitorOperation(String opName, IRunnableWithProgress progressOp,
-			IWorkbenchWindow window) {
-		return runProgressMonitorOperation(opName, progressOp, window, window);
-	}
-
-	/**
 	 * Runs a progress monitor operation. Returns true if success, false if canceled
 	 * or an error occurred.
 	 */
 	static boolean runProgressMonitorOperation(String opName, final IRunnableWithProgress progressOp,
-			final IRunnableContext runnableContext, final IShellProvider shellProvider) {
+			final IRunnableContext runnableContext) {
 		final boolean[] success = new boolean[] { false };
 		IRunnableWithProgress runnable = monitor -> {
 			progressOp.run(monitor);

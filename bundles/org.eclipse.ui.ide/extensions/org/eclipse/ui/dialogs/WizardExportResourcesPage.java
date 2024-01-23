@@ -308,7 +308,7 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
 	 * @deprecated Only retained for backwards compatibility.
 	 */
 	@Deprecated
-	protected boolean ensureResourcesLocal(List resources) {
+	protected boolean ensureResourcesLocal(@SuppressWarnings("unused") List resources) {
 		return true;
 	}
 

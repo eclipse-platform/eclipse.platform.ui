@@ -440,7 +440,7 @@ public class TreeViewer extends AbstractTreeViewer {
 			if (index < tree.getItemCount()) {
 				TreeItem item = tree.getItem(index);
 				if (!insidePreservingSelection) {
-					selection = adjustSelectionForReplace(selectedItems, selection, item, element, getRoot());
+					selection = adjustSelectionForReplace(selectedItems, selection, item, element);
 				}
 				// disassociate any different item that represents the
 				// same element under the same parent (the tree)
@@ -469,8 +469,7 @@ public class TreeViewer extends AbstractTreeViewer {
 				if (index < parentItem.getItemCount()) {
 					TreeItem item = parentItem.getItem(index);
 					if (!insidePreservingSelection) {
-						selection = adjustSelectionForReplace(selectedItems, selection, item, element,
-								parentItem.getData());
+						selection = adjustSelectionForReplace(selectedItems, selection, item, element);
 					}
 					// disassociate any different item that represents the
 					// same element under the same parent (the tree)
@@ -513,7 +512,7 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * @return the adjusted selection
 	 */
 	private TreeSelection adjustSelectionForReplace(Item[] selectedItems,
-			TreeSelection selection, TreeItem item, Object element, Object parentElement) {
+			TreeSelection selection, TreeItem item, Object element) {
 		if (item.getData() != null) {
 			// Don't do anything - we are not seeing an instance of bug 185673
 			return selection;

@@ -59,8 +59,6 @@ import org.osgi.framework.FrameworkUtil;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ZipFileImportWizard extends Wizard implements IImportWizard {
-	private IWorkbench workbench;
-
 	private IStructuredSelection selection;
 
 	private WizardArchiveFileResourceImportPage1 mainPage;
@@ -83,8 +81,7 @@ public class ZipFileImportWizard extends Wizard implements IImportWizard {
 	@Override
 	public void addPages() {
 		super.addPages();
-		mainPage = new WizardArchiveFileResourceImportPage1(workbench,
-				selection, getFileImportMask());
+		mainPage = new WizardArchiveFileResourceImportPage1(selection, getFileImportMask());
 		addPage(mainPage);
 	}
 
@@ -101,7 +98,6 @@ public class ZipFileImportWizard extends Wizard implements IImportWizard {
 
 	@Override
 	public void init(IWorkbench currentWorkbench, IStructuredSelection currentSelection) {
-		this.workbench = currentWorkbench;
 		this.selection = currentSelection;
 		List<IResource> selectedResources = IDE.computeSelectedResources(currentSelection);
 		if (!selectedResources.isEmpty()) {

@@ -357,10 +357,6 @@ public abstract class WizardPreferencesPage extends WizardPage implements Listen
 		deselectAllButton.setFont(parentFont);
 	}
 
-	protected void setAllChecked(boolean bool) {
-		transferAllButton.setSelection(false);
-	}
-
 	/**
 	 * Create the export destination specification widgets
 	 *

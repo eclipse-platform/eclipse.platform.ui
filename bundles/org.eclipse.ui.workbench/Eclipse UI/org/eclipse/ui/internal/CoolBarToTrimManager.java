@@ -554,7 +554,7 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 
 	@Override
 	public void resetItemOrder() {
-		updateAll(true);
+		updateAll();
 	}
 
 	@Override
@@ -616,7 +616,7 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 		}
 	}
 
-	public void updateAll(boolean force) {
+	private void updateAll() {
 		final List<MToolBar> children = modelService.findElements(window, null, MToolBar.class, null);
 		for (MToolBar mToolbar : children) {
 			if (mToolbar == null) {

@@ -687,7 +687,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 		return (IApplicationContext) instanceAppContext.getService();
 	}
 
-	static Object getApplication(String[] args) {
+	static Object getApplication(@SuppressWarnings("unused") String[] args) {
 		// Find the name of the application as specified by the PDE JUnit
 		// launcher.
 		// If no application is specified, the 3.0 default workbench application

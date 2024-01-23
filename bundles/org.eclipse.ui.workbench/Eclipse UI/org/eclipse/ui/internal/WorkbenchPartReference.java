@@ -213,6 +213,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 		return part;
 	}
 
+	/** @param source used for IPropertyListener */
 	protected void partPropertyChanged(Object source, int propId) {
 		firePropertyChange(propId);
 

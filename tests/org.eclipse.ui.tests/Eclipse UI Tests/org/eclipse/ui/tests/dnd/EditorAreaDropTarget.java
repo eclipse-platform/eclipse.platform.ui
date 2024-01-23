@@ -33,7 +33,7 @@ public class EditorAreaDropTarget extends WorkbenchWindowDropTarget {
 
 	@Override
 	public Point getLocation() {
-		return DragOperations.getPointInEditorArea(getPage(), side);
+		return DragOperations.getPointInEditorArea();
 	}
 
 }

@@ -162,8 +162,6 @@ public class AdaptedResourceNavigator extends ViewPart {
 
 		// Update the global action enable state to match
 		// the current selection.
-		IStructuredSelection selection = viewer.getStructuredSelection();
-		actionGroup.updateGlobalActions(selection);
 
 		viewer.addSelectionChangedListener(this::handleSelectionChanged);
 		viewer.addDoubleClickListener(this::handleDoubleClick);
@@ -178,8 +176,6 @@ public class AdaptedResourceNavigator extends ViewPart {
 				handleKeyReleased(event);
 			}
 		});
-
-		actionGroup.fillActionBars(selection);
 
 		getSite().setSelectionProvider(viewer);
 
@@ -335,13 +331,13 @@ public class AdaptedResourceNavigator extends ViewPart {
 	protected void handleSelectionChanged(SelectionChangedEvent event) {
 		IStructuredSelection sel = event.getStructuredSelection();
 		updateStatusLine(sel);
-		actionGroup.updateGlobalActions(sel);
-		actionGroup.selectionChanged(sel);
 		linkToEditor(sel);
 	}
 
 	/**
 	 * Handles a key press in viewer. By default do nothing.
+	 *
+	 * @param event the KeyEvent to handle
 	 */
 	protected void handleKeyPressed(KeyEvent event) {
 
@@ -349,6 +345,8 @@ public class AdaptedResourceNavigator extends ViewPart {
 
 	/**
 	 * Handles a key release in viewer.
+	 *
+	 * @param event the KeyEvent to handle
 	 */
 	protected void handleKeyReleased(KeyEvent event) {
 
@@ -418,8 +416,9 @@ public class AdaptedResourceNavigator extends ViewPart {
 	}
 
 	/**
-	 * Restore the state of the receiver to the state described in
-	 * momento.
+	 * Restore the state of the receiver to the state described in momento.
+	 *
+	 * @param memento the IMemento to restore
 	 * @since 2.0
 	 */
 

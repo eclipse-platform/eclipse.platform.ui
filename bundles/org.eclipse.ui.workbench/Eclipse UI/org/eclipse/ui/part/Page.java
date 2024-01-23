@@ -89,6 +89,7 @@ public abstract class Page implements IPageBookViewPage {
 	 * This method exists for backward compatibility. Subclasses should reimplement
 	 * <code>init</code>.
 	 */
+	@SuppressWarnings("unused")
 	public void makeContributions(IMenuManager menuManager, IToolBarManager toolBarManager,
 			IStatusLineManager statusLineManager) {
 	}

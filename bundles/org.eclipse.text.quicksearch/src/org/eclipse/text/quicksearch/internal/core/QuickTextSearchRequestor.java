@@ -28,6 +28,7 @@ public class QuickTextSearchRequestor {
 
 	/**
 	 * Called when a line of text containing the search text is found.
+	 * @param match the LineItem found
 	 */
 	public void add(LineItem match) {}
 
@@ -35,12 +36,14 @@ public class QuickTextSearchRequestor {
 	 * Called when a previously added line of text needs to be redisplayed (this happens if
 	 * the query has changed but still matches the line. I.e. the line is still a match, but
 	 * the highlighting of the search term is different.
+	 * @param match the line to be redisplayed
 	 */
 	public void update(LineItem match) {}
 
 	/**
 	 * Called when a line of text previously added is no longer a match for the current query.
 	 * I.e. the line should no longer be displayed.
+	 * @param line the line that is no longer a match
 	 */
 	public void revoke(LineItem line) {}
 

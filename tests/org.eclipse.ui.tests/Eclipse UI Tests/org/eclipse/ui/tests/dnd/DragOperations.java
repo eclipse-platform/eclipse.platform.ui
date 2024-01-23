@@ -22,8 +22,6 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
-import org.eclipse.ui.internal.PartPane;
-import org.eclipse.ui.internal.WorkbenchPage;
 import org.junit.Assert;
 
 /**
@@ -38,8 +36,8 @@ public class DragOperations {
 	 * This method should eventually replace the original one once the Workbench has been updated
 	 * to handle Views and Editors without distincton.
 	 */
-	public static void drag(IWorkbenchPart part, TestDropLocation target,
-			boolean wholeFolder) {
+	@SuppressWarnings("unused")
+	public static void drag(IWorkbenchPart part, TestDropLocation target, boolean wholeFolder) {
 //        DragUtil.forceDropLocation(target);
 
 //        PartSite site = (PartSite) part.getSite();
@@ -61,29 +59,15 @@ public class DragOperations {
 		return ref.getPartName();
 	}
 
-	public static PartPane getPane(IEditorPart editor) {
-		return null;
-	}
-
-	public static PartPane getPane(IViewPart view) {
-		return null;
-	}
-
-	public static Rectangle getDisplayBounds(PartPane pane) {
-//        LayoutPart parent = ((LayoutPart) (pane.getContainer()));
-//        Rectangle bounds = DragUtil.getDisplayBounds(parent.getControl());
-
+	public static Rectangle getDisplayBounds() {
 		return new Rectangle(0, 0, 0, 0);
 	}
 
-	public static Point getLocation(PartPane pane, int side) {
-
-		return DragOperations.getPoint(getDisplayBounds(pane), side);
+	public static Point getLocation(int side) {
+		return DragOperations.getPoint(getDisplayBounds(), side);
 	}
 
-	public static Point getPointInEditorArea(WorkbenchPage page, int side) {
-//        return DragOperations.getPoint(DragUtil.getDisplayBounds(page
-//                .getEditorPresentation().getLayoutPart().getControl()), side);
+	public static Point getPointInEditorArea() {
 		return new Point(0, 0);
 	}
 
@@ -121,14 +105,5 @@ public class DragOperations {
 
 	public static String getName(IViewPart targetPart) {
 		return targetPart.getTitle();
-	}
-
-	public static String getLayoutDescription(WorkbenchPage page) {
-		StringBuilder buf = new StringBuilder();
-
-		//page.getActivePerspective().describeLayout(buf);
-		buf.append("this layout still not quite described - TODO");
-		// Test result -- this will be a value in the resulting map
-		return buf.toString();
 	}
 }

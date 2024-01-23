@@ -249,6 +249,7 @@ public class DragTest extends UITestCaseWithResult {
 		// Uncomment the following line to 'stall' the tests here...
 		//stallTest();
 
-		return DragOperations.getLayoutDescription(page);
+		// Test result -- this will be a value in the resulting map
+		return "this layout still not quite described - TODO";
 	}
 }

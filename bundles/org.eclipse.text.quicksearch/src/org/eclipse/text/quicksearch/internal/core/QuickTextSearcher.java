@@ -203,7 +203,7 @@ public class QuickTextSearcher {
 			} else {
 				query = nq;
 				forceRefresh = false;
-				performRestart(monitor);
+				performRestart();
 			}
 			return monitor.isCanceled()?Status.CANCEL_STATUS:Status.OK_STATUS;
 		}
@@ -227,7 +227,7 @@ public class QuickTextSearcher {
 			}
 		}
 
-		private void performRestart(IProgressMonitor mon) {
+		private void performRestart() {
 			//walker may be null if dialog got closed already before we managed to
 			// 'performRestart'.
 			if (walker!=null) {

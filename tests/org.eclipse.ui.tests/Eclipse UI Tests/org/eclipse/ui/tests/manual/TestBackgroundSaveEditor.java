@@ -200,7 +200,7 @@ public class TestBackgroundSaveEditor extends EditorPart implements ISaveablesSo
 
 
 		createInputGroup(parent, dbc, inputObservable);
-		createOptionsGroup(parent, realm, dbc);
+		createOptionsGroup(parent, dbc);
 		createOutputGroup(parent, dbc, outputObservable);
 
 		GridLayoutFactory.swtDefaults().numColumns(3).equalWidth(true)
@@ -221,8 +221,7 @@ public class TestBackgroundSaveEditor extends EditorPart implements ISaveablesSo
 		GridLayoutFactory.swtDefaults().generateLayout(outputGroup);
 	}
 
-	private void createOptionsGroup(Composite parent, Realm realm,
-			final DataBindingContext dbc) {
+	private void createOptionsGroup(Composite parent, final DataBindingContext dbc) {
 		Group optionsGroup = new Group(parent, SWT.NONE);
 		optionsGroup.setText("Options");
 
@@ -233,13 +232,6 @@ public class TestBackgroundSaveEditor extends EditorPart implements ISaveablesSo
 
 		dbc.bindValue(WidgetProperties.buttonSelection().observe(dirtyButton),
 				dirtyObservable, null, null);
-		// IObservableValue inputAndOutputDiffer = new ComputedValue(realm) {
-		// protected Object calculate() {
-		// return Boolean.valueOf(!Util.equals(inputObservable.getValue(),
-		// outputObservable.getValue()));
-		// }
-		// };
-		// dbc.bindValue(dirtyObservable, inputAndOutputDiffer, null);
 
 		Button saveInBackgroundButton = new Button(optionsGroup, SWT.CHECK);
 		new Label(optionsGroup, SWT.NONE)

@@ -236,7 +236,7 @@ public class WorkbenchServiceRegistry implements IExtensionChangeHandler {
 				for (ServiceLocator locator : locators) {
 					ServiceLocator serviceLocator = locator;
 					if (!serviceLocator.isDisposed()) {
-						serviceLocator.unregisterServices(handle.serviceNames);
+						serviceLocator.unregisterServices();
 					}
 				}
 				handle.factory = null;

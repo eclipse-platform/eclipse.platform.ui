@@ -71,9 +71,10 @@ public abstract class QuickAccessProvider {
 	 * input.
 	 *
 	 * @param filter  user input
+	 * @param monitor IProgressMonitor unused, but can be used by overrides
 	 * @return this provider's elements
 	 */
-	public QuickAccessElement[] getElements(String filter, IProgressMonitor monitor) {
+	protected QuickAccessElement[] getElements(String filter, IProgressMonitor monitor) {
 		return new QuickAccessElement[0];
 	}
 

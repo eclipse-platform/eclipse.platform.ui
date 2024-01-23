@@ -250,7 +250,7 @@ public abstract class AbstractColumnLayout extends Layout {
 		Rectangle area = composite.getClientArea();
 		Scrollable table = getControl(composite);
 		int tableWidth = table.getSize().x;
-		int trim = computeTrim(area, table, tableWidth);
+		int trim = computeTrim(table, tableWidth);
 		int width = Math.max(0, area.width - trim);
 
 		if (width > 1)
@@ -269,7 +269,7 @@ public abstract class AbstractColumnLayout extends Layout {
 	 *
 	 * @return int
 	 */
-	private int computeTrim(Rectangle area, Scrollable scrollable,
+	private int computeTrim(Scrollable scrollable,
 			int currentWidth) {
 		int trim;
 

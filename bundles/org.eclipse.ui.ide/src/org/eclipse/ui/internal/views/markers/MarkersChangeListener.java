@@ -135,7 +135,7 @@ class MarkersChangeListener implements IResourceChangeListener {
 			// }
 
 			if (!builder.isIncremental()) {
-				handleMarkerChange(event);
+				builder.getUpdateScheduler().scheduleUpdate();
 				return;
 			}
 			handleIncrementalChange(event);
@@ -157,13 +157,6 @@ class MarkersChangeListener implements IResourceChangeListener {
 	 */
 	void setReceivingChange(boolean receiving) {
 		this.receiving = receiving;
-	}
-
-	/**
-	 * Handle marker change event
-	 */
-	private void handleMarkerChange(IResourceChangeEvent event) {
-		builder.getUpdateScheduler().scheduleUpdate();
 	}
 
 	/**

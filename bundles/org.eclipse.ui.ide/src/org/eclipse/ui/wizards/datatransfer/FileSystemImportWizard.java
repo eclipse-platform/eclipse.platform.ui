@@ -56,8 +56,6 @@ import org.osgi.framework.FrameworkUtil;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class FileSystemImportWizard extends Wizard implements IImportWizard {
-	private IWorkbench workbench;
-
 	private IStructuredSelection selection;
 
 	private WizardFileSystemResourceImportPage1 mainPage;
@@ -80,14 +78,13 @@ public class FileSystemImportWizard extends Wizard implements IImportWizard {
 	@Override
 	public void addPages() {
 		super.addPages();
-		mainPage = new WizardFileSystemResourceImportPage1(workbench, selection);
+		mainPage = new WizardFileSystemResourceImportPage1(selection);
 		addPage(mainPage);
 	}
 
 
 	@Override
 	public void init(IWorkbench currentWorkbench, IStructuredSelection currentSelection) {
-		this.workbench = currentWorkbench;
 		this.selection = currentSelection;
 
 		List<IResource> selectedResources = IDE.computeSelectedResources(currentSelection);

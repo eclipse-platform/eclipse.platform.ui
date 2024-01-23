@@ -15,6 +15,12 @@ package org.eclipse.jface.text.source.inlined;
 
 import java.util.function.Consumer;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension5;
@@ -23,11 +29,6 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.GC;
 
 /**
  * Abstract class for inlined annotation.
@@ -178,6 +179,9 @@ public abstract class AbstractInlinedAnnotation extends Annotation {
 		styledText.setCursor(null);
 	}
 
+	/**
+	 * @param e MouseEvent to be used by overrides
+	 */
 	public Consumer<MouseEvent> getAction(MouseEvent e) {
 		return null;
 	}

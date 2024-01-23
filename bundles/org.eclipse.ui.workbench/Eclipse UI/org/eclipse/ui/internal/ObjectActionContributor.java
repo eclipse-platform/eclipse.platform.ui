@@ -339,7 +339,7 @@ public class ObjectActionContributor extends PluginActionBuilder implements IObj
 					return result;
 				}
 			} else if (filterTest != null) {
-				result = result && filterTest.matches(object, true);
+				result = result && filterTest.matches(object);
 				if (!result) {
 					return result;
 				}

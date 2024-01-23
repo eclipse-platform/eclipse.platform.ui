@@ -831,6 +831,8 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 	 * resource matches the current pattern string, this method will be called. If
 	 * this method answers false, the resource will not be included in the list of
 	 * matches and the resource's children will NOT be considered for matching.
+	 *
+	 * @param resource to be used by overrides
 	 */
 	protected boolean select(IResource resource) {
 		return true;

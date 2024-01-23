@@ -196,8 +196,7 @@ public class UIListenerLogging {
 	/**
 	 * Log an event fired from the workbench page
 	 */
-	public static final void logPagePropertyChanged(IWorkbenchPage page, String changeId, Object oldValue,
-			Object newValue) {
+	public static final void logPagePropertyChanged(IWorkbenchPage page, String changeId, Object newValue) {
 		if (isEnabled(PAGE_PROPERTY_EVENTS)) {
 			System.out.println(PAGE_PROPERTY_EVENTS + " page " //$NON-NLS-1$
 					+ Util.safeString(page.getLabel()) + ", " + changeId + " = " + Util.safeString(newValue.toString()) //$NON-NLS-1$ //$NON-NLS-2$
