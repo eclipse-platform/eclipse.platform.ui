@@ -169,7 +169,7 @@ abstract class AbstractMultiSelectionHandler extends AbstractHandler {
 
 	private void initAnchorRegion() {
 		IRegion[] regions = getSelectedRegions();
-		if ((regions != null && regions.length == 1) || !contains(regions, getAnchorRegion())) {
+		if (regions != null && (regions.length == 1 || !contains(regions, getAnchorRegion()))) {
 			setAnchorRegion(regions[0]);
 		}
 	}

@@ -2030,21 +2030,23 @@ public class TextViewer extends Viewer implements
 
 	@Override
 	public void setIndentPrefixes(String[] indentPrefixes, String contentType) {
-
 		int i= -1;
-		boolean ok= (indentPrefixes != null);
-		while (ok &&  ++i < indentPrefixes.length)
-			ok= (indentPrefixes[i] != null);
+		boolean ok= false;
+		if (indentPrefixes != null) {
+			ok= true;
+			while (ok && ++i < indentPrefixes.length) {
+				ok= (indentPrefixes[i] != null);
+			}
+		}
 
 		if (ok) {
-
-			if (fIndentChars == null)
+			if (fIndentChars == null) {
 				fIndentChars= new HashMap<>();
-
+			}
 			fIndentChars.put(contentType, indentPrefixes);
-
-		} else if (fIndentChars != null)
+		} else if (fIndentChars != null) {
 			fIndentChars.remove(contentType);
+		}
 	}
 
 	@Override

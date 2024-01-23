@@ -186,7 +186,7 @@ class ProjectionSummary {
 				return;
 		}
 
-		if (bags != null && !bags.isEmpty()) {
+		if (bags != null && !bags.isEmpty() && extension != null) {
 			Annotation[] deletions= new Annotation[bags.size()];
 			bags.toArray(deletions);
 			if (!isCanceled(monitor))

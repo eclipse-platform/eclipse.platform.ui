@@ -189,17 +189,14 @@ class ContextInformationPopup implements IContentAssistListener {
 			int offset= fContentAssistSubjectControlAdapter.getSelectedRange().x;
 
 			IContextInformation[] contexts= computeContextInformation(offset);
-			int count= (contexts == null ? 0 : contexts.length);
-			if (count == 1) {
-
+			if (contexts != null && contexts.length == 1) {
 				ContextFrame frame1= createContextFrame(contexts[0], offset);
 				if (isDuplicate(frame1))
 					validateContextInformation();
 				else
 					// Show context information directly
 					internalShowContextInfo(frame1);
-
-			} else if (count > 0) {
+			} else if (contexts != null && contexts.length > 0) {
 
 				// if any of the proposed context matches any of the contexts on the stack,
 				// assume that one (so, if context info is invoked repeatedly, the current

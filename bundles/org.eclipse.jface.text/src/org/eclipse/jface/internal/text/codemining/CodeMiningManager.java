@@ -158,7 +158,7 @@ public class CodeMiningManager implements Runnable {
 	}
 
 	private static void logCodeMiningProviderException(Throwable e) {
-		if (e != null && (e instanceof CancellationException || (e.getCause() != null && e.getCause() instanceof CancellationException))) {
+		if (e instanceof CancellationException || e.getCause() instanceof CancellationException) {
 			return;
 		}
 		String PLUGIN_ID= "org.eclipse.jface.text"; //$NON-NLS-1$

@@ -304,10 +304,7 @@ public class TextPresentation {
 				if (start >= currentEnd)
 					continue;
 
-				StyleRange currentCopy= null;
-				if (end < currentEnd)
-					currentCopy= (StyleRange)current.clone();
-
+				StyleRange currentCopy= (end < currentEnd) ? (StyleRange) current.clone() : null;
 				if (start < currentStart) {
 					// Apply style to new default range and add it
 					StyleRange defaultRange= getDefaultStyleRange();
@@ -341,7 +338,7 @@ public class TextPresentation {
 					current.length= Math.min(end, currentEnd) - start;
 				}
 
-				if (end < currentEnd) {
+				if (currentCopy != null) { // i.e. end < currentEnd
 					// Add rest of current range
 					currentCopy.start= end;
 					currentCopy.length= currentEnd - end;

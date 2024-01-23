@@ -583,6 +583,7 @@ public class LinkedModeModelTest {
 			LinkedPosition e_next= i == exp.length ? null : exp[i];
 			LinkedPosition a_next= i == exp.length ? null : act[i];
 
+			@SuppressWarnings("null")
 			IDocument e_doc= e_prev != null ? e_prev.getDocument() : e_next.getDocument();
 			if (e_next != null && e_next.getDocument() != e_doc) {
 				// split at document boundaries

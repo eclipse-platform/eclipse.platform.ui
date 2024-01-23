@@ -4148,13 +4148,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	protected void doSetInput(IEditorInput input) throws CoreException {
 		ISaveablesLifecycleListener listener= getSite().getService(ISaveablesLifecycleListener.class);
-		if (listener == null)
+		if (listener == null) {
 			fSavable= null;
+		}
 
 		if (input == null) {
 			close(isSaveOnCloseNeeded());
 
-			if (fSavable != null) {
+			if (fSavable != null && listener != null) {
 				listener.handleLifecycleEvent(new SaveablesLifecycleEvent(this,	SaveablesLifecycleEvent.POST_CLOSE,	getSaveables(), false));
 				fSavable.disconnectEditor();
 				fSavable= null;
@@ -4162,7 +4163,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		} else {
 			boolean mustSendLifeCycleEvent= false;
-			if (fSavable != null) {
+			if (fSavable != null && listener != null) {
 				listener.handleLifecycleEvent(new SaveablesLifecycleEvent(this,	SaveablesLifecycleEvent.POST_CLOSE,	getSaveables(), false));
 				fSavable.disconnectEditor();
 				fSavable= null;
@@ -6980,7 +6981,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				continue;
 
 			if (forward && p.offset == offset || !forward && p.offset + p.getLength() == offset + length) {// || p.includes(offset)) {
-				if (containingAnnotation == null || (forward && p.length >= containingAnnotationPosition.length || !forward && p.length >= containingAnnotationPosition.length)) {
+				if (containingAnnotationPosition == null || (forward && p.length >= containingAnnotationPosition.length
+						|| !forward && p.length >= containingAnnotationPosition.length)) {
 					containingAnnotation= a;
 					containingAnnotationPosition= p;
 					currentAnnotation= p.length == length;

@@ -950,6 +950,9 @@ public class LinkedModeUI {
 				}
 			}
 			if (target != fCurrentTarget) {
+				if (target == null) {
+					throw new IllegalStateException("target not found"); //$NON-NLS-1$
+				}
 				disconnect();
 				fCurrentTarget= target;
 				target.linkingFocusLost(fFramePosition, target);

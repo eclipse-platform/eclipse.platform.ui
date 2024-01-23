@@ -1661,7 +1661,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 				if (count == 0 && hideWhenNoProposals(false))
 					return;
 
-				if (count == 1 && canAutoInsert(proposals.get(0))) {
+				if (proposals != null && proposals.size() == 1 && canAutoInsert(proposals.get(0))) {
 					insertProposal(proposals.get(0), (char) 0, 0, fInvocationOffset);
 					hide();
 				} else {
@@ -1793,7 +1793,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 		if (rightCase.size() == 1) {
 			ICompletionProposal proposal= rightCase.get(0);
-			if (canAutoInsert(proposal) && rightCasePostfix.length() > 0) {
+			if (canAutoInsert(proposal) && rightCasePostfix != null && rightCasePostfix.length() > 0) {
 				insertProposal(proposal, (char) 0, 0, fInvocationOffset);
 				hide();
 				return true;

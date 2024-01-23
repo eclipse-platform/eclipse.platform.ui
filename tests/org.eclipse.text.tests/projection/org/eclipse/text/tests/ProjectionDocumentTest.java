@@ -1637,9 +1637,10 @@ public class ProjectionDocumentTest {
 	}
 
 	private void assertSlaveEvents(DocumentEvent[] expected, DocumentEvent[] received) {
-		if (expected == null)
-			assertNull(received);
-
+		if (expected == received) { // for example both null
+			return;
+		}
+		assertNotNull(received);
 		assertTrue(expected.length == received.length);
 
 		for (int i= 0; i < received.length; i++)
