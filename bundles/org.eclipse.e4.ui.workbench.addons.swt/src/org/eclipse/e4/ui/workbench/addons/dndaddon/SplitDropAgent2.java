@@ -227,8 +227,6 @@ public class SplitDropAgent2 extends DropAgent {
 
 	@Override
 	public void dragEnter(final MUIElement dragElement, DnDInfo info) {
-		super.dragEnter(dragElement, info);
-
 		where = setRelToInfo(info);
 
 		showFeedback();
@@ -279,8 +277,6 @@ public class SplitDropAgent2 extends DropAgent {
 		relToElement = null;
 
 		reactivatePart(dragElement);
-
-		super.dragLeave(dragElement, info);
 	}
 
 	@Override

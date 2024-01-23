@@ -24,9 +24,13 @@ import org.eclipse.swt.widgets.Composite;
  * This is a specialized tool control used by the TrimBarLayout to modify the
  * layout mechanisms.
  */
+/*
+ * class is referenced by
+ * org.eclipse.ui.ide.application/LegacyIDE_fragment.e4xmi
+ */
 public class LayoutModifierToolControl {
 	@PostConstruct
-	void createWidget(Composite parent, MToolControl tc) {
+	void createWidget(Composite parent, @SuppressWarnings("unused") MToolControl tc) {
 		Composite comp = new Composite(parent, SWT.NONE) {
 			@Override
 			public Point computeSize(int wHint, int hHint, boolean flushCache) {

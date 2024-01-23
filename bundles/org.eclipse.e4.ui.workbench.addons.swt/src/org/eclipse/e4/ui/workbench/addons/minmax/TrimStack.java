@@ -26,7 +26,6 @@ import java.util.Map.Entry;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
-import org.eclipse.e4.ui.internal.workbench.swt.CSSRenderingUtils;
 import org.eclipse.e4.ui.internal.workbench.swt.ShellActivationListener;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
@@ -574,7 +573,7 @@ public class TrimStack {
 	}
 
 	@PostConstruct
-	void createWidget(Composite parent, MToolControl me, CSSRenderingUtils cssUtils) {
+	void createWidget(Composite parent, MToolControl me) {
 		if (minimizedElement == null) {
 			minimizedElement = findElement();
 		}

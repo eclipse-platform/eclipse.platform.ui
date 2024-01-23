@@ -17,7 +17,6 @@
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import jakarta.inject.Inject;
-import java.util.HashMap;
 import java.util.HashSet;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.expressions.ExpressionInfo;
@@ -57,8 +56,6 @@ import org.eclipse.swt.widgets.Widget;
 public class MenuManagerRendererFilter implements Listener {
 	private static final String MMRF_STATIC_CONTEXT = "HCI-staticContext"; //$NON-NLS-1$
 
-	public static final String NUL_MENU_ITEM = "(None Applicable)"; //$NON-NLS-1$
-
 	static final String TMP_ORIGINAL_CONTEXT = "MenuServiceFilter.original.context"; //$NON-NLS-1$
 
 	private static void trace(String msg, Widget menu, MMenu menuModel) {
@@ -74,8 +71,6 @@ public class MenuManagerRendererFilter implements Listener {
 
 	@Inject
 	private MenuManagerRenderer renderer;
-
-	private HashMap<Menu, Runnable> pendingCleanup = new HashMap<>();
 
 	@Override
 	public void handleEvent(final Event event) {
@@ -114,7 +109,7 @@ public class MenuManagerRendererFilter implements Listener {
 			if (Policy.DEBUG_MENUS) {
 				trace("handleMenu.Dispose", menu, null); //$NON-NLS-1$
 			}
-			cleanUp(menu, null, null);
+			cleanUp(menu);
 			return;
 		}
 
@@ -249,50 +244,10 @@ public class MenuManagerRendererFilter implements Listener {
 		}
 	}
 
-	void setEnabled(MHandledMenuItem item) {
-		if (!item.isToBeRendered() || !item.isVisible()
-				|| item.getWidget() == null) {
-			return;
-		}
-		ParameterizedCommand cmd = item.getWbCommand();
-		if (cmd == null) {
-			return;
-		}
-		final IEclipseContext lclContext = renderer.getContext(item);
-		EHandlerService service = lclContext.get(EHandlerService.class);
-		final IEclipseContext staticContext = EclipseContextFactory
-				.create(MMRF_STATIC_CONTEXT);
-		ContributionsAnalyzer.populateModelInterfaces(item, staticContext, item
-				.getClass().getInterfaces());
-		try {
-			item.setEnabled(service.canExecute(cmd, staticContext));
-		} finally {
-			staticContext.dispose();
-		}
-	}
-
-	public void cleanUp(final Menu menu, MMenu menuModel,
-			MenuManager menuManager) {
+	private void cleanUp(final Menu menu) {
 		if (Policy.DEBUG_MENUS) {
 			trace("cleanUp", menu, null); //$NON-NLS-1$
 		}
-		if (pendingCleanup.isEmpty()) {
-			return;
-		}
-		Runnable cleanUp = pendingCleanup.remove(menu);
-		if (cleanUp != null) {
-			if (Policy.DEBUG_MENUS) {
-				trace("cleanUp.run()", menu, null); //$NON-NLS-1$
-			}
-			cleanUp.run();
-		}
-	}
-
-	public void dispose() {
-		Menu[] keys = pendingCleanup.keySet().toArray(
-				new Menu[pendingCleanup.size()]);
-		for (Menu menu : keys) {
-			cleanUp(menu, null, null);
-		}
+		return;
 	}
 }

@@ -2028,34 +2028,4 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 		return result.toString();
 	}
 
-	public String getLocalLabel() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void setLocalLabel(String value) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public String getLocalTooltip() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void setLocalTooltip(String value) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public Object getLocalImage() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void setLocalImage(Object value) {
-		// TODO Auto-generated method stub
-
-	}
-
 } // TestHarnessImpl

@@ -292,7 +292,8 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 
 	@Inject
 	@Optional
-	private void subscribeTopicDirtyChanged(@UIEventTopic(UIEvents.Dirtyable.TOPIC_DIRTY) Event eventData) {
+	private void subscribeTopicDirtyChanged(
+			@SuppressWarnings("unused") @UIEventTopic(UIEvents.Dirtyable.TOPIC_DIRTY) Event eventData) {
 		getUpdater().updateContributionItems(ALL_SELECTOR);
 	}
 
@@ -340,7 +341,8 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 
 	@Inject
 	@Optional
-	private void subscribeTopicAppStartup(@UIEventTopic(UIEvents.UILifeCycle.APP_STARTUP_COMPLETE) Event event) {
+	private void subscribeTopicAppStartup(
+			@SuppressWarnings("unused") @UIEventTopic(UIEvents.UILifeCycle.APP_STARTUP_COMPLETE) Event event) {
 		List<MToolBar> toolBars = modelService.findElements(application, null, MToolBar.class);
 		for (MToolBar mToolBar : toolBars) {
 			if (mToolBar.getTags().contains(IPresentationEngine.HIDDEN_EXPLICITLY)) {
@@ -445,8 +447,8 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		}
 
 		final ArrayList<MToolBarContribution> toContribute = new ArrayList<>();
-		ContributionsAnalyzer.XXXgatherToolBarContributions(toolbarModel,
-				application.getToolBarContributions(), elementId, toContribute);
+		ContributionsAnalyzer.XXXgatherToolBarContributions(application.getToolBarContributions(), elementId,
+				toContribute);
 		generateContributions(toolbarModel, toContribute);
 	}
 

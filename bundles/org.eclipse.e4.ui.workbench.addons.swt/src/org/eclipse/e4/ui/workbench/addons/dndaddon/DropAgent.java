@@ -20,10 +20,6 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Display;
 
 abstract class DropAgent {
 	protected DnDManager dndManager;
@@ -75,19 +71,9 @@ abstract class DropAgent {
 
 	public abstract boolean track(MUIElement dragElement, DnDInfo info);
 
-	public Cursor getCursor(Display display, MUIElement dragElement, DnDInfo info) {
-		return display.getSystemCursor(SWT.CURSOR_HAND);
-	}
+	abstract void dragEnter(MUIElement dragElement, DnDInfo info);
 
-	public Rectangle getRectangle(MUIElement dragElement, DnDInfo info) {
-		return null;
-	}
-
-	public void dragEnter(MUIElement dragElement, DnDInfo info) {
-	}
-
-	public void dragLeave(MUIElement dragElement, DnDInfo info) {
-	}
+	abstract void dragLeave(MUIElement dragElement, DnDInfo info);
 
 	/**
 	 * This agent is being disposed
