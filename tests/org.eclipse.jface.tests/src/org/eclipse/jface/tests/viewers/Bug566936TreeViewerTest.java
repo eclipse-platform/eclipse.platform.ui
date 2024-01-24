@@ -188,7 +188,7 @@ public class Bug566936TreeViewerTest {
 		viewerColumn.setLabelProvider(new MyColumnLabelProvider(v.getTree(), columnIndex));
 	}
 
-	private List<MyModel> createModel() {
+	private static List<MyModel> createModel() {
 		List<MyModel> elements = new ArrayList<>();
 
 		for (int i = 0; i < 10; i++) {
