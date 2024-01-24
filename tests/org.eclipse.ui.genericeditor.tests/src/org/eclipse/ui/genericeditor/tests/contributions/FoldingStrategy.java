@@ -143,6 +143,8 @@ public class FoldingStrategy implements IReconcilingStrategy, IReconcilingStrate
 						searchingFor = SearchingFor.START_OF_TAG;
 					}
 					break;
+				default:
+					throw new IllegalStateException(searchingFor.toString());
 				}
 				currentCharIndex++;
 			}
