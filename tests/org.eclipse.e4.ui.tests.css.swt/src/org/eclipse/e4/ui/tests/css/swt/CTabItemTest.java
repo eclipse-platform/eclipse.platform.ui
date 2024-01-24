@@ -151,9 +151,7 @@ public class CTabItemTest extends CSSSWTTestCase {
 		assertEquals(SWT.BOLD, fontData.getStyle());
 
 		// verify retrieval
-		assertEquals("bold",
-				engine.retrieveCSSProperty(item,
-						"font-weight", null));
+		assertEquals("bold", engine.retrieveCSSProperty(item, "font-weight", null));
 
 		// make sure child controls are styled
 		Control button = item.getControl();
@@ -210,8 +208,7 @@ public class CTabItemTest extends CSSSWTTestCase {
 		CTabFolder folder = createTestTabFolder("CTabItem { font-weight: normal; font-style: italic }\n"
 				+ "CTabItem:selected { font-weight: bold }");
 		spinEventLoop();
-		for (int i = 0; i < folder.getItemCount(); i++) {
-			CTabItem item = folder.getItem(i);
+		for (CTabItem item : folder.getItems()) {
 			FontData fd = item.getFont().getFontData()[0];
 			if (item == folder.getSelection()) {
 				assertEquals(SWT.BOLD | SWT.ITALIC, fd.getStyle());
@@ -226,8 +223,7 @@ public class CTabItemTest extends CSSSWTTestCase {
 		CTabFolder folder = createTestTabFolder("CTabItem { font-style: italic }\n"
 				+ "CTabItem:selected { font-weight: bold }");
 		spinEventLoop();
-		for (int i = 0; i < folder.getItemCount(); i++) {
-			CTabItem item = folder.getItem(i);
+		for (CTabItem item : folder.getItems()) {
 			FontData fd = item.getFont().getFontData()[0];
 			if (item == folder.getSelection()) {
 				assertEquals(SWT.BOLD | SWT.ITALIC, fd.getStyle());
@@ -239,11 +235,10 @@ public class CTabItemTest extends CSSSWTTestCase {
 
 	@Test
 	void testSelectedFontMerged3() {
-		CTabFolder folder = createTestTabFolder("CTabItem { font-weight: bold }\n"
-				+ "CTabItem:selected { font-style: italic; font-weight: normal }");
+		CTabFolder folder = createTestTabFolder(
+				"CTabItem { font-weight: bold }\n" + "CTabItem:selected { font-style: italic; font-weight: normal }");
 		spinEventLoop();
-		for (int i = 0; i < folder.getItemCount(); i++) {
-			CTabItem item = folder.getItem(i);
+		for (CTabItem item : folder.getItems()) {
 			FontData fd = item.getFont().getFontData()[0];
 			if (item == folder.getSelection()) {
 				assertEquals(SWT.ITALIC, fd.getStyle());
@@ -254,13 +249,10 @@ public class CTabItemTest extends CSSSWTTestCase {
 	}
 
 	private void testShowClose(boolean showClose) {
-		CTabFolder folder = createTestTabFolder("CTabItem { show-close: "
-				+ showClose + " }");
-		CTabItem[] items = folder.getItems();
-		for (CTabItem item : items) {
+		CTabFolder folder = createTestTabFolder("CTabItem { show-close: " + showClose + " }");
+		for (CTabItem item : folder.getItems()) {
 			assertEquals(showClose, item.getShowClose());
-			assertEquals(Boolean.toString(showClose), engine
-					.retrieveCSSProperty(item, "show-close", null));
+			assertEquals(Boolean.toString(showClose), engine.retrieveCSSProperty(item, "show-close", null));
 		}
 	}
 
@@ -277,15 +269,14 @@ public class CTabItemTest extends CSSSWTTestCase {
 	@Test
 	void testShowClose() {
 		CTabFolder folder = createTestTabFolder("CTabItem { show-close: true }");
-		for (int i = 0; i < folder.getItemCount(); i++) {
-			assertEquals(true, folder.getItem(i).getShowClose());
+		for (CTabItem item : folder.getItems()) {
+			assertTrue(item.getShowClose());
 		}
 
-		engine = createEngine("CTabItem { show-close: false }", folder
-				.getDisplay());
+		engine = createEngine("CTabItem { show-close: false }", folder.getDisplay());
 		engine.applyStyles(folder.getShell(), true);
-		for (int i = 0; i < folder.getItemCount(); i++) {
-			assertEquals(false, folder.getItem(i).getShowClose());
+		for (CTabItem item : folder.getItems()) {
+			assertFalse(item.getShowClose());
 		}
 	}
 
@@ -293,25 +284,23 @@ public class CTabItemTest extends CSSSWTTestCase {
 	void testShowClose2() {
 		CTabFolder folder = createTestTabFolder();
 		CTabFolder folder2 = createFolder(folder.getShell());
-		engine = createEngine("CTabItem { swt-show-close: true }", folder
-				.getDisplay());
+		engine = createEngine("CTabItem { swt-show-close: true }", folder.getDisplay());
 		engine.applyStyles(folder.getShell(), true);
 
-		for (int i = 0; i < folder.getItemCount(); i++) {
-			assertEquals(true, folder.getItem(i).getShowClose());
+		for (CTabItem item : folder.getItems()) {
+			assertTrue(item.getShowClose());
 		}
-		for (int i = 0; i < folder2.getItemCount(); i++) {
-			assertEquals(true, folder2.getItem(i).getShowClose());
+		for (CTabItem item : folder2.getItems()) {
+			assertTrue(item.getShowClose());
 		}
 
-		engine = createEngine("CTabItem { show-close: false }", folder
-				.getDisplay());
+		engine = createEngine("CTabItem { show-close: false }", folder.getDisplay());
 		engine.applyStyles(folder.getShell(), true);
-		for (int i = 0; i < folder.getItemCount(); i++) {
-			assertEquals(false, folder.getItem(i).getShowClose());
+		for (CTabItem item : folder.getItems()) {
+			assertFalse(item.getShowClose());
 		}
 		for (int i = 0; i < folder.getItemCount(); i++) {
-			assertEquals(false, folder2.getItem(i).getShowClose());
+			assertFalse(folder2.getItem(i).getShowClose());
 		}
 	}
 
@@ -322,13 +311,11 @@ public class CTabItemTest extends CSSSWTTestCase {
 
 		for (int i = 0; i < items.length; i++) {
 			if (i == index) {
-				assertEquals(true, items[i].getShowClose());
-				assertEquals("true", engine.retrieveCSSProperty(items[i],
-						"show-close", null));
+				assertTrue(items[i].getShowClose());
+				assertEquals("true", engine.retrieveCSSProperty(items[i], "show-close", null));
 			} else {
-				assertEquals(false, items[i].getShowClose());
-				assertEquals("false", engine.retrieveCSSProperty(items[i],
-						"show-close", null));
+				assertFalse(items[i].getShowClose());
+				assertEquals("false", engine.retrieveCSSProperty(items[i], "show-close", null));
 			}
 		}
 	}
@@ -342,8 +329,8 @@ public class CTabItemTest extends CSSSWTTestCase {
 
 		engine = createEngine("CTabItem:selected { show-close: false }", folder.getDisplay());
 		engine.applyStyles(folder.getShell(), true);
-		for (int i = 0; i < folder.getItemCount(); i++) {
-			assertFalse(folder.getItem(i).getShowClose());
+		for (CTabItem item : folder.getItems()) {
+			assertFalse(item.getShowClose());
 		}
 	}
 
@@ -365,8 +352,8 @@ public class CTabItemTest extends CSSSWTTestCase {
 		CSSEngine engine = createEngine("CTabFolder.editorStack CTabItem { show-close: true }", folder.getDisplay());
 		engine.applyStyles(folder.getShell(), true);
 
-		for (int i = 0; i < folder.getItemCount(); i++) {
-			assertTrue(folder.getItem(i).getShowClose());
+		for (CTabItem item : folder.getItems()) {
+			assertTrue(item.getShowClose());
 		}
 	}
 
@@ -390,8 +377,7 @@ public class CTabItemTest extends CSSSWTTestCase {
 		assertNotNull(folder.getSelection());
 		assertNull(folder2.getSelection());
 
-		for (int i = 0; i < folder.getItemCount(); i++) {
-			CTabItem item = folder.getItem(i);
+		for (CTabItem item : folder.getItems()) {
 			FontData data = item.getFont().getFontData()[0];
 
 			if (item == folder.getSelection()) {
@@ -403,8 +389,7 @@ public class CTabItemTest extends CSSSWTTestCase {
 			}
 		}
 
-		for (int i = 0; i < folder2.getItemCount(); i++) {
-			CTabItem item = folder2.getItem(i);
+		for (CTabItem item : folder2.getItems()) {
 			FontData data = item.getFont().getFontData()[0];
 
 			assertEquals(11, data.getHeight());
@@ -414,8 +399,7 @@ public class CTabItemTest extends CSSSWTTestCase {
 		folder2.setSelection(0);
 		spinEventLoop();
 
-		for (int i = 0; i < folder2.getItemCount(); i++) {
-			CTabItem item = folder2.getItem(i);
+		for (CTabItem item : folder2.getItems()) {
 			FontData data = item.getFont().getFontData()[0];
 			if (item == folder2.getSelection()) {
 				assertEquals(13, data.getHeight());
@@ -450,8 +434,7 @@ public class CTabItemTest extends CSSSWTTestCase {
 		assertNotNull(folder.getSelection());
 		assertNull(folder2.getSelection());
 
-		for (int i = 0; i < folder.getItemCount(); i++) {
-			CTabItem item = folder.getItem(i);
+		for (CTabItem item : folder.getItems()) {
 			FontData data = item.getFont().getFontData()[0];
 
 			if (item == folder.getSelection()) {
@@ -463,8 +446,7 @@ public class CTabItemTest extends CSSSWTTestCase {
 			}
 		}
 
-		for (int i = 0; i < folder2.getItemCount(); i++) {
-			CTabItem item = folder2.getItem(i);
+		for (CTabItem item : folder2.getItems()) {
 			FontData data = item.getFont().getFontData()[0];
 
 			assertEquals(11, data.getHeight());
@@ -474,8 +456,7 @@ public class CTabItemTest extends CSSSWTTestCase {
 		folder2.setSelection(0);
 		spinEventLoop();
 
-		for (int i = 0; i < folder2.getItemCount(); i++) {
-			CTabItem item = folder2.getItem(i);
+		for (CTabItem item : folder2.getItems()) {
 			FontData data = item.getFont().getFontData()[0];
 			if (item == folder2.getSelection()) {
 				assertEquals(13, data.getHeight());
@@ -506,8 +487,7 @@ public class CTabItemTest extends CSSSWTTestCase {
 		assertNotNull(folder.getSelection());
 		assertNull(folder2.getSelection());
 
-		for (int i = 0; i < folder.getItemCount(); i++) {
-			CTabItem item = folder.getItem(i);
+		for (CTabItem item : folder.getItems()) {
 			if (item == folder.getSelection()) {
 				assertTrue(item.getShowClose());
 			} else {
@@ -515,16 +495,14 @@ public class CTabItemTest extends CSSSWTTestCase {
 			}
 		}
 
-		for (int i = 0; i < folder2.getItemCount(); i++) {
-			CTabItem item = folder2.getItem(i);
+		for (CTabItem item : folder2.getItems()) {
 			assertTrue(item.getShowClose());
 		}
 
 		folder2.setSelection(0);
 		spinEventLoop();
 
-		for (int i = 0; i < folder2.getItemCount(); i++) {
-			CTabItem item = folder2.getItem(i);
+		for (CTabItem item : folder2.getItems()) {
 			assertTrue(item.getShowClose());
 		}
 	}
@@ -549,8 +527,7 @@ public class CTabItemTest extends CSSSWTTestCase {
 		assertNotNull(folder.getSelection());
 		assertNull(folder2.getSelection());
 
-		for (int i = 0; i < folder.getItemCount(); i++) {
-			CTabItem item = folder.getItem(i);
+		for (CTabItem item : folder.getItems()) {
 			if (item == folder.getSelection()) {
 				assertTrue(item.getShowClose());
 			} else {
@@ -558,8 +535,7 @@ public class CTabItemTest extends CSSSWTTestCase {
 			}
 		}
 
-		for (int i = 0; i < folder2.getItemCount(); i++) {
-			CTabItem item = folder2.getItem(i);
+		for (CTabItem item : folder2.getItems()) {
 			assertFalse(item.getShowClose());
 		}
 
@@ -581,8 +557,8 @@ public class CTabItemTest extends CSSSWTTestCase {
 		CTabFolder folder = createTestTabFolder("CTabItem { background-color: #0000ff }", false);
 		assertEquals(new RGB(0, 0, 255), folder.getBackground().getRGB());
 
-		for (int i = 0; i < folder.getItemCount(); i++) {
-			assertEquals("#0000ff", engine.retrieveCSSProperty(folder.getItem(i), "background-color", null));
+		for (CTabItem item : folder.getItems()) {
+			assertEquals("#0000ff", engine.retrieveCSSProperty(item, "background-color", null));
 		}
 	}
 
@@ -605,8 +581,8 @@ public class CTabItemTest extends CSSSWTTestCase {
 
 		assertEquals(rgb, folder.getBackground().getRGB());
 
-		for (int i = 0; i < folder.getItemCount(); i++) {
-			assertEquals(colour, engine.retrieveCSSProperty(folder.getItem(i), "background-color", null));
+		for (CTabItem item : folder.getItems()) {
+			assertEquals(colour, engine.retrieveCSSProperty(item, "background-color", null));
 		}
 
 		assertEquals(preStyledSelectionBackground.getRGB(), folder.getSelectionBackground().getRGB());
@@ -617,8 +593,8 @@ public class CTabItemTest extends CSSSWTTestCase {
 		CTabFolder folder = createTestTabFolder("CTabItem:selected { background-color: #00ff00 }", false);
 		assertEquals(new RGB(0, 255, 0), folder.getSelectionBackground().getRGB());
 
-		for (int i = 0; i < folder.getItemCount(); i++) {
-			assertEquals("#00ff00", engine.retrieveCSSProperty(folder.getItem(i), "background-color", "selected"));
+		for (CTabItem item : folder.getItems()) {
+			assertEquals("#00ff00", engine.retrieveCSSProperty(item, "background-color", "selected"));
 		}
 	}
 
@@ -627,8 +603,8 @@ public class CTabItemTest extends CSSSWTTestCase {
 		CTabFolder folder = createTestTabFolder("CTabItem { color: #0000ff }", false);
 		assertEquals(new RGB(0, 0, 255), folder.getForeground().getRGB());
 
-		for (int i = 0; i < folder.getItemCount(); i++) {
-			assertEquals("#0000ff", engine.retrieveCSSProperty(folder.getItem(i), "color", null));
+		for (CTabItem item : folder.getItems()) {
+			assertEquals("#0000ff", engine.retrieveCSSProperty(item, "color", null));
 		}
 	}
 
@@ -652,8 +628,8 @@ public class CTabItemTest extends CSSSWTTestCase {
 
 		assertEquals(rgb, folder.getForeground().getRGB());
 
-		for (int i = 0; i < folder.getItemCount(); i++) {
-			assertEquals(colour, engine.retrieveCSSProperty(folder.getItem(i), "color", null));
+		for (CTabItem item : folder.getItems()) {
+			assertEquals(colour, engine.retrieveCSSProperty(item, "color", null));
 		}
 
 		assertEquals(preStyledSelectionForeground.getRGB(), folder.getSelectionForeground().getRGB());
@@ -664,16 +640,16 @@ public class CTabItemTest extends CSSSWTTestCase {
 		CTabFolder folder = createTestTabFolder("CTabItem:selected { color: #00ff00 }", false);
 		assertEquals(new RGB(0, 255, 0), folder.getSelectionForeground().getRGB());
 
-		for (int i = 0; i < folder.getItemCount(); i++) {
-			assertEquals("#00ff00", engine.retrieveCSSProperty(folder.getItem(i), "color", "selected"));
+		for (CTabItem item : folder.getItems()) {
+			assertEquals("#00ff00", engine.retrieveCSSProperty(item, "color", "selected"));
 		}
 	}
 
 	@Test
 	void testParent() {
 		CTabFolder folder = createTestTabFolder("CTabItem:selected { color: #00ff00 }", false);
-		for (int i = 0; i < folder.getItemCount(); i++) {
-			CTabItemElement element = (CTabItemElement) engine.getElement(folder.getItem(i));
+		for (CTabItem item : folder.getItems()) {
+			CTabItemElement element = (CTabItemElement) engine.getElement(item);
 			assertNotNull(element.getParentNode());
 		}
 	}
