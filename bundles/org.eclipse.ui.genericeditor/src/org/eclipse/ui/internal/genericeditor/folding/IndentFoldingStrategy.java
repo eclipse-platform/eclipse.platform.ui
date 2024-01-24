@@ -489,7 +489,7 @@ public class IndentFoldingStrategy implements IReconcilingStrategy, IReconciling
 		}
 	}
 
-	protected List<FoldingAnnotation> getAllAnnotationsForDeletion(Iterator<Annotation> iter) {
+	private static List<FoldingAnnotation> getAllAnnotationsForDeletion(Iterator<Annotation> iter) {
 		List<FoldingAnnotation> deletions = new ArrayList<>();
 		if (iter != null) {
 			while (iter.hasNext()) {
