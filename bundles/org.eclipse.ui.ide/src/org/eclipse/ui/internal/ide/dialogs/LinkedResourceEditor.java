@@ -954,9 +954,6 @@ public class LinkedResourceEditor {
 		return true;
 	}
 
-	void setEnabled(boolean enableLinking) {
-	}
-
 	public void reloadContent() {
 		refreshContent();
 		fTree.refresh();
