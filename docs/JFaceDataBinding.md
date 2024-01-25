@@ -18,6 +18,7 @@ Contents
 *   [10 TrackedGetter](#TrackedGetter)
 *   [11 Master Detail](#Master-Detail)
 *   [12 Runtime Dependencies](#Runtime-Dependencies)
+*   [13 Conformance Tests](#Conformance-Tests)
 
 # Introduction
 
@@ -544,6 +545,197 @@ The data binding framework will run without OSGi. There are optional dependencie
 There are parts of Data Binding that depend on SWT/JFace but these have been broken out into a separate plug-in, org.eclipse.jface.databinding.
 
 For background and historical information, refer to [bug 153630 comment 9](https://bugs.eclipse.org/bugs/show_bug.cgi?id=153630#c9) and [bug 179305](https://bugs.eclipse.org/bugs/show_bug.cgi?id=179305).
+
+
+# Conformance Tests
+
+The JFace Data Binding Conformance Suite (TCK) is a suite of tests and other files that allow for asserting the conformance of implementations to the abstractions provided by the library. The conformance tests can be found in the org.eclipse.jface.tests.databinding.conformance project in the Eclipse CVS. The tests are available for public consumption but will not be released as 1.0 until the Eclipse 3.4 release.
+
+Contents
+--------
+
+*   [1 Observables](#Observables)
+    *   [1.1 Delegates](#Delegates)
+    *   [1.2 Integration into Tests](#Integration-into-Tests)
+        *   [1.2.1 Subclassing](#Subclassing)
+        *   [1.2.2 JUnit suite()](#JUnit-suite.28.29)
+
+Observables
+-----------
+
+The TCK provides tests for the assertion of conformance to the observable specifications. Tests are currently provided for implementations of:
+
+*   IObservable
+*   IObservableValue
+*   IObservableCollection
+*   IObservableList
+*   IObservableSet
+
+Tests are broken up into mutable and immutable test cases (e.g. ObservableValueContractTest and MutableObservableValueContractTest). The reason for this is that not all implementations allow for a consumer to mutate the observable via its API. The TCK tests assert the following when appropriate:
+
+*   Change events and their diffs
+*   Realm checking
+*   ObservableTracker.getterCalled(IObservable) invocations
+*   Values and value types
+
+The TCK tests don't assert the observed object state. Because the observed object can be of any type and the value can be in any form this isn't something that we feel we can reliably provide. It would be more straightforward for these to remain in your own tests.
+
+### Delegates
+
+In order to take advantage of the tests developers will need to create a contract delegate. 
+The delegates allow for implementation specific details to be provided to the TCK. 
+The IObservableContractDelegate is provided below as an example:
+
+    public interface IObservableContractDelegate {
+    	/**
+    	 * Notifies the delegate of the start of a test.
+    	 */
+    	public void setUp();
+    
+    	/**
+    	 * Notifies the delegate of the end of a test.
+    	 */
+    	public void tearDown();
+    
+    	/**
+    	 * Invokes an operation to set the stale state of the provided
+    	 * observable.
+    	 * 
+    	 * @param observable
+    	 * @param stale
+    	 */
+    	public void setStale(IObservable observable, boolean stale);
+    
+    	/**
+    	 * Creates a new observable.
+    	 * 
+    	 * @param realm realm of the observable
+    	 * @return observable
+    	 */
+    	public IObservable createObservable(Realm realm);
+    
+    	/**
+    	 * Invokes a change operation on the observable resulting in a change event
+    	 * being fired from the observable.
+    	 * 
+    	 * @param observable
+    	 */
+    	public void change(IObservable observable);
+    }
+    
+
+ 
+
+The delegate API follows the standard JUnit conventions of setUp() and tearDown(). The other methods will be invoked when necessary by the tests.
+
+The delegates provided are:
+
+*   org.eclipse.jface.databinding.conformance.delegate.IObservableContractDelegate
+*   org.eclipse.jface.databinding.conformance.delegate.IObservableValueContractDelegate
+*   org.eclipse.jface.databinding.conformance.delegate.IObservableCollectionContractDelegate
+
+Your observable implementation will determine which delegate to construct. Abstract implementations are provided to simplify implementing a delegate.
+
+### Integration into Tests
+
+Since the tests are JUnit3 tests you can integrate them into your tests in standard ways. The two most common ways are by subclassing or creating a suite.
+
+#### Subclassing
+
+    public class ButtonObservableValueTest extends SWTObservableValueContractTest {
+    	public ButtonObservableValueTest() {
+    		super(new Delegate());
+    	}
+    	
+    	/* package */ static class Delegate extends AbstractObservableValueContractDelegate {
+    		private Shell shell;
+    		private Button button;
+    
+    		public void setUp() {
+    			shell = new Shell();
+    			button = new Button(shell, SWT.CHECK);
+    		}
+    		
+    		public void tearDown() {
+    			shell.dispose();
+    		}
+    		
+    		public IObservableValue createObservableValue(Realm realm) {
+    			return new ButtonObservableValue(realm, button);
+    		}
+    		
+    		public void change(IObservable observable) {
+    			boolean value = button.getSelection();
+    			button.setSelection(!value);
+    			button.notifyListeners(SWT.Selection, null);
+    		}
+    		
+    		public Object createValue(IObservableValue observable) {
+    			return (Boolean.TRUE.equals(observable.getValue()) ? Boolean.FALSE : Boolean.TRUE);
+    		}
+    		
+    		public Object getValueType(IObservableValue observable) {
+    			return Boolean.TYPE;
+    		}
+    	}
+    }
+    
+
+ 
+
+When subclassing, because of single inheritance, you will will have to create multiple implementations to test the mutable and immutable use cases (e.g. there would need to be a ButtonMutableObservableValueTest as well to test the mutable cases). The rest of the implementation should be straightforward. The only thing we ask is that you don't depend upon API other than the constructors. Tests are public because JUnit requires them to be, not because we want to commit to them as API. Over time we would like to have the opportunity to rename, add, remove, or optimize the test methods to ensure that we're getting the best coverage as possible. Because of the issues outlined above the preferred method is creating a JUnit suite.
+
+#### JUnit suite()
+
+    public class ButtonObservableValueTest extends TestCase {
+    	public static Test suite() {
+    		TestSuite suite = new TestSuite(ButtonObservableValueTest.class.getName());
+    		suite.addTestSuite(ButtonObservableValueTest.class);
+    		suite.addTest(SWTMutableObservableValueContractTest.suite(new Delegate());
+    		return suite;
+    	}
+    
+    	/* package */ static class Delegate extends AbstractObservableValueContractDelegate {
+    		private Shell shell;
+    		private Button button;
+    
+    		public void setUp() {
+    			shell = new Shell();
+    			button = new Button(shell, SWT.CHECK);
+    		}
+    		
+    		public void tearDown() {
+    			shell.dispose();
+    		}
+    		
+    		public IObservableValue createObservableValue(Realm realm) {
+    			return new ButtonObservableValue(realm, button);
+    		}
+    		
+    		public void change(IObservable observable) {
+    			boolean value = button.getSelection();
+    			button.setSelection(!value);
+    			button.notifyListeners(SWT.Selection, null);
+    		}
+    		
+    		public Object createValue(IObservableValue observable) {
+    			return (Boolean.TRUE.equals(observable.getValue()) ? Boolean.FALSE : Boolean.TRUE);
+    		}
+    		
+    		public Object getValueType(IObservableValue observable) {
+    			return Boolean.TYPE;
+    		}
+    	}
+    } 
+    
+
+
+By creating a suite() method you can create a custom suite of tests to run. 
+This will allow you to run multiple TestCases from a single test eliminating the need to create multiple implementations for the mutable and immutable cases. 
+The `SuiteBuilder` implementation allows for a straightforward way to build these suites. 
+The downside to building tests in this fashion is that when ran they don't contain the context of a parent class. 
+In the JUnit view in Eclipse they are children of a junit.framework.TestSuite rather than a named test. 
+As a way around this the failure message contains information about the context of the failure (e.g. Test class name and delegate name).
 
 
 
