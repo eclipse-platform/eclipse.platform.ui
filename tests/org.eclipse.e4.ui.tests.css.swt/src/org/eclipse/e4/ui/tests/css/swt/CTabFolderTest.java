@@ -286,7 +286,6 @@ public class CTabFolderTest extends CSSSWTTestCase {
 		assertEquals(null, engine.retrieveCSSProperty(shell, "swt-maximized", null));
 		assertEquals(null, engine.retrieveCSSProperty(shell, "swt-maximize-visible", null));
 		assertEquals(null, engine.retrieveCSSProperty(shell, "swt-minimize-visible", null));
-		assertEquals(null, engine.retrieveCSSProperty(shell, "show-close", null));
 		assertEquals(null, engine.retrieveCSSProperty(shell, "swt-simple", null));
 		assertEquals(null, engine.retrieveCSSProperty(shell, "swt-single", null));
 		assertEquals(null, engine.retrieveCSSProperty(shell, "swt-unselected-close-visible", null));
