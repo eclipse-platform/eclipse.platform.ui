@@ -340,7 +340,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			if (e.character == 0 && (e.keyCode & SWT.KEYCODE_BIT) == 0)
 				return;
 
-			if (e.character != 0 && (e.stateMask == SWT.ALT))
+			if (e.character != 0 && (e.stateMask == SWT.ALT || e.stateMask == SWT.CONTROL || e.stateMask == SWT.COMMAND))
 				return;
 
 			TriggerType triggerType= getAutoActivationTriggerType(e.character);
