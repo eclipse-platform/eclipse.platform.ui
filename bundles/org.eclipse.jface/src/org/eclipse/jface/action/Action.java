@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Menu;
  * Subclasses must implement the <code>IAction.run</code> method to carry out
  * the action's semantics.
  * </p>
+ * <p>
  */
 public abstract class Action extends AbstractAction {
 
