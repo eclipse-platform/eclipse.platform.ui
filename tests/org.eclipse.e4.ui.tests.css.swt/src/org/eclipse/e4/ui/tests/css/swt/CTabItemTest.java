@@ -80,10 +80,6 @@ public class CTabItemTest extends CSSSWTTestCase {
 		return folderToTest;
 	}
 
-	private CTabFolder createTestTabFolder() {
-		return createTestTabFolder(true);
-	}
-
 	private CTabFolder createTestTabFolder(boolean open) {
 
 		// Create widgets
