@@ -57,15 +57,19 @@ public class MinimapPageTest {
 						Composite parent= new Shell();
 						return required.cast(new TextViewer(parent, SWT.NONE));
 					}
+					break;
 				case ITextOperationTarget:
 					if (ITextOperationTarget.class.equals(required)) {
 						Composite parent= new Shell();
 						return required.cast(new TextViewer(parent, SWT.NONE));
 					}
+					break;
 				case None:
+					break;
 				default:
-					return null;
+					break;
 			}
+			return null;
 		}
 	}
 
