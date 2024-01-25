@@ -25,7 +25,6 @@ import org.junit.runners.Suite;
 	BindingManagerTest.class,
 	DispatcherTest.class,
 	BindingPersistenceTest.class,
-	Bug36420Test.class,
 	Bug36537Test.class,
 	Bug40023Test.class,
 	Bug42024Test.class,

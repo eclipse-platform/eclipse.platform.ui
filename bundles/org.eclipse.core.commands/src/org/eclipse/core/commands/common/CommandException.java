@@ -32,12 +32,6 @@ public abstract class CommandException extends Exception {
 	private static final long serialVersionUID = 5389763628699257234L;
 
 	/**
-	 * This member variable is required here to allow us to compile against JCL
-	 * foundation libraries.  The value may be <code>null</code>.
-	 */
-	private Throwable cause;
-
-	/**
 	 * Creates a new instance of this class with the specified detail message.
 	 *
 	 * @param message
@@ -57,20 +51,7 @@ public abstract class CommandException extends Exception {
 	 *            the cause; may be <code>null</code>.
 	 */
 	public CommandException(final String message, final Throwable cause) {
-		super(message);
-		// don't pass the cause to super, to allow compilation against JCL Foundation
-		this.cause = cause;
-	}
-
-	/**
-	 * Returns the cause of this throwable or <code>null</code> if the
-	 * cause is nonexistent or unknown.
-	 *
-	 * @return the cause or <code>null</code>
-	 */
-	@Override
-	public Throwable getCause() {
-		return cause;
+		super(message, cause);
 	}
 
 }

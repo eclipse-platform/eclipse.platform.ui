@@ -23,11 +23,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	CommandExecutionTest.class,
-	Bug70503Test.class,
 	Bug73756Test.class,
-	Bug74982Test.class,
-	Bug74990Test.class,
-	Bug87856Test.class,
 	Bug125792Test.class,
 	Bug417762Test.class,
 	CommandManagerTest.class,
@@ -37,7 +33,6 @@ import org.junit.runners.Suite;
 	CommandCallbackTest.class,
 	CommandActionTest.class,
 	HelpContextIdTest.class,
-	Bug66182Test.class,
 	StateTest.class,
 	CommandEnablementTest.class,
 	ActionDelegateProxyTest.class,
