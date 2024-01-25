@@ -17,7 +17,6 @@ package org.eclipse.ui.tests.keys;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 
@@ -25,11 +24,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.commands.CommandException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.tests.harness.util.AutomationUtil;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
@@ -54,13 +51,9 @@ public class Bug53489Test {
 	/**
 	 * Tests that pressing delete in a styled text widget (in a running Eclipse)
 	 * does not cause a double delete.
-	 *
-	 * @throws CommandException If execution of the handler fails.
-	 * @throws CoreException    If the test project cannot be created and opened.
-	 * @throws IOException      If the file cannot be read.
 	 */
 	@Test
-	public void testDoubleDelete() throws CommandException, CoreException, IOException {
+	public void testDoubleDelete() throws Exception {
 		IWorkbenchWindow window = UITestCase.openTestWindow();
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IProject testProject = workspace.getRoot().getProject("DoubleDeleteestProject"); //$NON-NLS-1$

@@ -305,6 +305,7 @@ public final class HandlerPersistence extends RegistryPersistence {
 	 *                                  should be added; must not be
 	 *                                  <code>null</code>.
 	 */
+	@Deprecated
 	private void readHandlerSubmissionsFromRegistry(final IConfigurationElement[] configurationElements,
 			final int configurationElementCount) {
 		final List<IStatus> warningsToLog = new ArrayList<>(1);
@@ -318,9 +319,8 @@ public final class HandlerPersistence extends RegistryPersistence {
 			if (commandId == null) {
 				continue;
 			}
-
-			handlerActivations.add(handlerService.activateHandler(commandId,
-					new LegacyHandlerWrapper(new LegacyHandlerProxy(configurationElement))));
+			throw new UnsupportedOperationException(
+					"org.eclipse.ui.commands.IHandler support removed: " + configurationElement.toString()); //$NON-NLS-1$
 		}
 
 		logWarnings(warningsToLog,
