@@ -824,6 +824,7 @@ public final class BindingManager extends HandleObjectManager<Scheme>
 		while (contextIdItr.hasNext()) {
 			String contextId = (String) contextIdItr.next();
 			Context context = contextManager.getContext(contextId);
+			Objects.requireNonNull(context);
 			try {
 				String parentId = context.getParentId();
 				while (parentId != null) {
@@ -856,21 +857,13 @@ public final class BindingManager extends HandleObjectManager<Scheme>
 				contextIdItr.remove();
 
 				// This is a logging optimization, only log the error once.
-				if (context == null || !bindingErrors.contains(context.getId())) {
-					if (context != null) {
-						bindingErrors.add(context.getId());
-					}
+				if (!bindingErrors.contains(context.getId())) {
+					bindingErrors.add(context.getId());
 
 					// now log like you've never logged before!
-					Policy
-							.getLog()
-							.log(
-									new Status(
-											IStatus.ERROR,
-											Policy.JFACE,
-											IStatus.OK,
-											"Undefined context while filtering dialog/window contexts", //$NON-NLS-1$
-											e));
+					Status status = new Status(IStatus.ERROR, Policy.JFACE, IStatus.OK,
+							"Undefined context while filtering dialog/window contexts", e); //$NON-NLS-1$
+					Policy.getLog().log(status);
 				}
 			}
 		}
