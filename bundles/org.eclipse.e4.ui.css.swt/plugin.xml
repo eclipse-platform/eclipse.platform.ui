@@ -291,17 +291,6 @@
          </property-name>
       </handler>
       <handler
-            adapter="org.eclipse.e4.ui.css.swt.dom.CTabItemElement"
-            composite="false"
-            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyShowCloseHandler">
-         <property-name
-               name="swt-show-close">
-         </property-name>
-             <property-name
-               name="show-close" deprecated="renamed as swt-show-close">
-         </property-name>
-      </handler>
-      <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
             composite="false"
             handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertySimpleSWTHandler">
