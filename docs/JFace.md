@@ -1,13 +1,19 @@
-
-
 JFace
 =====
 
-[Template:Platform UI](/index.php?title=Template:Platform_UI&action=edit&redlink=1 "Template:Platform UI (page does not exist)") JFace is a UI toolkit with classes for handling many common UI programming tasks. JFace is window-system-independent in both its API and implementation, and is designed to work with [SWT](/SWT "SWT") without hiding it. JFace includes the usual UI toolkit components of image and font registries, text, dialog, preference and wizard frameworks, and progress reporting for long running operations. Two of its more interesting features are actions and viewers. The action mechanism allows user commands to be defined independently from their exact whereabouts in the UI. Viewers are model based adapters for certain SWT widgets, simplifying the presentation of application data structured as lists, tables or trees.
+JFace is a UI toolkit with classes for handling many common UI programming tasks. 
+JFace is window-system-independent in both its API and implementation, and is designed to work with SWT without hiding it. 
+JFace includes the usual UI toolkit components of image and font registries, text, dialog, preference and wizard frameworks, and progress reporting for long running operations. 
+Two of its more interesting features are actions and viewers. 
+The action mechanism allows user commands to be defined independently from their exact whereabouts in the UI. 
+Viewers are model based adapters for certain SWT widgets, simplifying the presentation of application data structured as lists, tables or trees.
 
-More information on JFace is available in the [JFace](/The_Official_Eclipse_FAQs#JFace "The Official Eclipse FAQs") section of [The Official Eclipse FAQs](/The_Official_Eclipse_FAQs "The Official Eclipse FAQs").
+More information on JFace is available in the [JFace section](https://wiki.eclipse.org/The_Official_Eclipse_FAQs#JFace) of [The Official Eclipse FAQs](https://wiki.eclipse.org/The_Official_Eclipse_FAQs).
 
-The [JFace data binding framework](/JFace_Data_Binding "JFace Data Binding") was introduced in Eclipse 3.2. Data binding allows linking UI elements and models so that users can edit or view the data in the model. The framework makes it easy to connect data sources to widgets such as text fields, combos, tables and trees, for viewing and editing. Using it relieves developers from writing and registering listeners with widgets and model objects.
+The [JFace data binding framework](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/JFaceDataBinding.md) was introduced in Eclipse 3.2. 
+Data binding allows linking UI elements and models so that users can edit or view the data in the model. 
+The framework makes it easy to connect data sources to widgets such as text fields, combos, tables and trees, for viewing and editing. 
+Using it relieves developers from writing and registering listeners with widgets and model objects.
 
 Contents
 --------
@@ -27,24 +33,26 @@ More information
 ----------------
 
 *   [The JFace UI framework](http://help.eclipse.org/helios/topic/org.eclipse.platform.doc.isv/guide/jface.htm) section, within the [Eclipse Platform Plug-In Developer's Guide](http://help.eclipse.org/helios/nav/2) \- also available from Eclipse online help, in Eclipse platforms with the plug-in development documentation installed
-*   [JFace Section](/The_Official_Eclipse_FAQs#JFace "The Official Eclipse FAQs") of [The Official Eclipse FAQs](/The_Official_Eclipse_FAQs "The Official Eclipse FAQs")
-*   [Platform UI home page](http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/platform-ui-home/main.html)
+*   [JFace section](https://wiki.eclipse.org/The_Official_Eclipse_FAQs#JFace) of [The Official Eclipse FAQs](https://wiki.eclipse.org/The_Official_Eclipse_FAQs)
 *   Plug-in Developer's Guide: [JFace](http://help.eclipse.org/galileo/topic/org.eclipse.platform.doc.isv/guide/jface.htm)
-*   [Workbench and JFace Articles](http://eclipse.org/articles/)
-*   [JFace code snippets](/JFaceSnippets "JFaceSnippets")
+*   [Workbench and JFace Articles](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Eclipse_Corner.md)
+*   [JFace code snippets](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/JFaceSnippets.md)
 
 Using JFace outside the Eclipse platform
 ----------------------------------------
 
-JFace can be used in standalone [SWT](/SWT "SWT")+JFace apps, without requiring the Eclipse Runtime or other parts of the Eclipse Platform. This was made easier to do in 3.2, with the only prerequisites for JFace being reduced to [SWT](/SWT "SWT"), the new **org.eclipse.equinox.common** plug-in, and **org.eclipse.core.commands** plug-in.
+JFace can be used in standalone SWT + JFace apps, without requiring the Eclipse Runtime or other parts of the Eclipse Platform. 
+This was made easier to do in 3.2, with the only prerequisites for JFace being reduced to SWT, the new **org.eclipse.equinox.common** plug-in, and **org.eclipse.core.commands** plug-in.
 
 For more details, see [Bug 49497](https://bugs.eclipse.org/bugs/show_bug.cgi?id=49497#c55).
 
-In 3.3 an optional dependency on the **org.osgi.framework** package was added which is defined in the **org.eclipse.osgi**. If this plug-in is absent JFace will continue to function but without the benefit of internationalization support for its images.
+In 3.3 an optional dependency on the **org.osgi.framework** package was added which is defined in the **org.eclipse.osgi**. 
+If this plug-in is absent JFace will continue to function but without the benefit of internationalization support for its images.
 
 ### Setting Up an Eclipse Project to use SWT and JFace
 
-This section contains detailed instructions for creating an Eclipse project for developing a stand-alone Java program that uses SWT and JFace. This will be broken down into three steps, as follows:
+This section contains detailed instructions for creating an Eclipse project for developing a stand-alone Java program that uses SWT and JFace. 
+This will be broken down into three steps, as follows:
 
 1.  Identify the required external JAR files for JFace.
 2.  Create an Eclipse project (called org.eclipse.swt) that will have all of the required SWT and JFace JAR files on its build path and configure the Order and Export tab of the Build Path to export these files. This project will supply the required JAR files to any other Eclipse project that needs them.
@@ -54,9 +62,14 @@ Detailed instructions for each of these steps are outlined below.
 
 ### Identify the Required External JAR Files for SWT and JFace
 
-A JFace project requires the SWT classes, JFace classes, and other Eclipse classes that JFace is dependent on. The SWT classes will be provided in the file we download from the SWT Project Website. The JFace file, and the files the JFace is dependent upon, need to be added to the project manually.
+A JFace project requires the SWT classes, JFace classes, and other Eclipse classes that JFace is dependent on. 
+The SWT classes will be provided in the file we download from the SWT Project Website. 
+The JFace file, and the files the JFace is dependent upon, need to be added to the project manually.
 
-The first step is to identify the required JAR files for JFace. The primary file is called org.eclipse.jface, followed by specific version information. In addition, this file requires classes from other Eclipse JAR files. For Eclipse version 3.3.1.1, the required JAR files for JFace are as follows (where <version info> is the specific version information):
+The first step is to identify the required JAR files for JFace. 
+The primary file is called org.eclipse.jface, followed by specific version information. 
+In addition, this file requires classes from other Eclipse JAR files. 
+For Eclipse version 3.3.1.1, the required JAR files for JFace are as follows (where <version info> is the specific version information):
 
 *   org.eclipse.core.commands_<version info>.jar
 *   org.eclipse.equinox.common_<version info>.jar
@@ -64,9 +77,11 @@ The first step is to identify the required JAR files for JFace. The primary file
 *   org.eclipse.osgi_<version info>.jar
 *   org.eclipse.ui.workbench_<version info>.jar
 
-The file org.eclipse.ui.workbench_<version info>.jar is not required to run the standard JFace classes. However, since it adds a number of very useful Dialogs (such as ListDialog, ListSelectionDialog, and others), it is included here as well.
+The file org.eclipse.ui.workbench_<version info>.jar is not required to run the standard JFace classes. 
+However, since it adds a number of very useful Dialogs (such as ListDialog, ListSelectionDialog, and others), it is included here as well.
 
-You can find the JFace dependencies for any Eclipse version if you have the Plug-in Development Environment, which includes the Plug-ins and Plug-in Dependencies views. To do this:
+You can find the JFace dependencies for any Eclipse version if you have the Plug-in Development Environment, which includes the Plug-ins and Plug-in Dependencies views. 
+To do this:
 
 1.  Select Window/Show View/PDE/Plug-ins. (Note, if you don't have a PDE view folder, it means you don't have the Plug-in Developer Environment plug-in in your Eclipse installation.)
 2.  Select the org.eclipse.jface plug-in from the list.
@@ -82,7 +97,8 @@ You can find the JFace dependencies for any Eclipse version if you have the Plug
 
 ### Create the Eclipse SWT/JFace Project
 
-In this step, we will create one project that will point to all of the JAR files needed for SWT and JFace development. Here are the steps:
+In this step, we will create one project that will point to all of the JAR files needed for SWT and JFace development. 
+Here are the steps:
 
 1.  Download the SWT stable release for your Eclipse version and your operating system from [Eclipse SWT Project Page](http://www.eclipse.org/swt/). For example, for Eclipse version 3.3 and Windows, select the Windows link under Releases / Stable, as shown in the screenshot below.
     
@@ -203,7 +219,7 @@ Deploying a SWT / JFace application is similar to deploying any Java application
 #### Step by Step Instructions
 
 1.  Create a runtime folder for the desired runtime target on your system (e.g., c:\\jface\\runtime-linux). Note that the target platform does not need to be the same as your development platform.
-2.  Find the correct SWT JAR file for the desired target platform. You can download the desired ZIP file from [the SWT Project Page](http://www.eclipse.org/swt%7C). For example, for Eclipse 3.3 and a target platform of Linux, download the file swt-3.3.1.1-gtk-linux-x86.zip. Expand this ZIP file and copy the swt.jar file to the runtime folder.
+2.  Find the correct SWT JAR file for the desired target platform. You can download the desired ZIP file from [the SWT Project Page](http://www.eclipse.org/swt). For example, for Eclipse 3.3 and a target platform of Linux, download the file swt-3.3.1.1-gtk-linux-x86.zip. Expand this ZIP file and copy the swt.jar file to the runtime folder.
 3.  Copy the JAR files that JFace needs to the runtime folder. They are found in the Eclipse plugins subfolder under your Eclipse installation. For Eclipse version 3.3, these files are as follows:
     *   org.eclipse.core.commands_<version info>.jar
     *   org.eclipse.equinox.common_<version info>.jar
