@@ -21,7 +21,7 @@ You can ask questions on the [Eclipse JFace newsgroup](http://www.eclipse.org/ne
 
 ### How do I report a bug?
 
-On the [Eclipse bugzilla](https://bugs.eclipse.org/bugs) log a bug to Eclipse > Platform > UI with "\[DataBinding\]" in the summary.
+Create an issue on [Github](https://github.com/eclipse-platform/eclipse.platform.ui/issues).
 
 ### Where can I find examples of how to use data binding?
 
