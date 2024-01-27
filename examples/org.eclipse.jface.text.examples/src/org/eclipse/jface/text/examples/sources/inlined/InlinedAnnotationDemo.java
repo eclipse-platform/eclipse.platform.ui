@@ -31,6 +31,7 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.AnnotationPainter;
 import org.eclipse.jface.text.source.IAnnotationAccess;
+import org.eclipse.jface.text.source.IAnnotationAccessExtension;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.inlined.AbstractInlinedAnnotation;
@@ -41,7 +42,10 @@ import org.eclipse.jface.text.source.inlined.Positions;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -106,6 +110,58 @@ public class InlinedAnnotationDemo {
 	}
 
 	/**
+	 * Create annotation access by implementing annotation access extension.
+	 * 
+	 * @return annotation access.
+	 */
+	private static class AnnotationAccessExtension implements IAnnotationAccess, IAnnotationAccessExtension {
+
+		@Override
+		public String getTypeLabel(Annotation annotation) {
+			return annotation.getText();
+		}
+
+		@Override
+		public int getLayer(Annotation annotation) {
+			return IAnnotationAccessExtension.DEFAULT_LAYER;
+		}
+
+		@Override
+		public void paint(Annotation annotation, GC gc, Canvas canvas, Rectangle bounds) {
+		}
+
+		@Override
+		public boolean isPaintable(Annotation annotation) {
+			return true;
+		}
+
+		@Override
+		public boolean isSubtype(Object annotationType, Object potentialSupertype) {
+			return false;
+		}
+
+		@Override
+		public Object[] getSupertypes(Object annotationType) {
+			return null;
+		}
+
+		@Override
+		public Object getType(Annotation annotation) {
+			return annotation.getType();
+		}
+
+		@Override
+		public boolean isMultiLine(Annotation annotation) {
+			return true;
+		}
+
+		@Override
+		public boolean isTemporary(Annotation annotation) {
+			return true;
+		}
+
+	}
+	/**
 	 * Create annotation painter.
 	 *
 	 * @param viewer
@@ -113,24 +169,7 @@ public class InlinedAnnotationDemo {
 	 * @return annotation painter.
 	 */
 	private static AnnotationPainter createAnnotationPainter(ISourceViewer viewer) {
-		IAnnotationAccess annotationAccess = new IAnnotationAccess() {
-			@Override
-			public Object getType(Annotation annotation) {
-				return annotation.getType();
-			}
-
-			@Override
-			public boolean isMultiLine(Annotation annotation) {
-				return true;
-			}
-
-			@Override
-			public boolean isTemporary(Annotation annotation) {
-				return true;
-			}
-
-		};
-		AnnotationPainter painter = new AnnotationPainter(viewer, annotationAccess);
+		AnnotationPainter painter = new AnnotationPainter(viewer, new AnnotationAccessExtension());
 		((ITextViewerExtension2) viewer).addPainter(painter);
 		return painter;
 	}
