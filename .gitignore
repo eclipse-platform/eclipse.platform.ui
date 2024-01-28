@@ -19,3 +19,5 @@ Snap.*
 target/
 .DS_Store
 .metadata
+apiAnalyzer-workspace/
+results/
