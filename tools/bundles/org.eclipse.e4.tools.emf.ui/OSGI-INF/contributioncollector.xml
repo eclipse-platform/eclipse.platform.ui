@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="org.eclipse.e4.tools.emf.ui">
-   <implementation class="org.eclipse.e4.tools.emf.ui.internal.common.ClassContributionCollector"/>
-   <reference bind="addContributor" cardinality="0..n" interface="org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider" name="IClassContributionProvider" policy="dynamic" unbind="removeContributor"/>
-   <service>
-      <provide interface="org.eclipse.e4.tools.emf.ui.internal.common.ClassContributionCollector"/>
-   </service>
-   <reference bind="addModelElementContributor" cardinality="0..n" interface="org.eclipse.e4.tools.emf.ui.common.IModelElementProvider" name="IModelElementProvider" policy="dynamic" unbind="removeModelElementContributor"/>
-</scr:component>
