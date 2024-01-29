@@ -205,6 +205,5 @@ public class ProjectLinkedResourcePage extends PropertyPage implements
 	protected void updateWidgetState(boolean enableLinking) {
 		topLabel.setEnabled(enableLinking);
 		pathVariablesGroup.setEnabled(enableLinking);
-		linkedResourceEditor.setEnabled(enableLinking);
 	}
 }

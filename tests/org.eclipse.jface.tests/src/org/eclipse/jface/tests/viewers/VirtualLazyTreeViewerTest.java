@@ -48,7 +48,8 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
 	@Override
 	public void setUp() {
 		super.setUp();
-		// process events because the content provider uses an asyncExec to set the item count of the tree
+		// process events because the content provider uses an asyncExec to set the item
+		// count of the tree
 		processEvents();
 	}
 
@@ -239,5 +240,17 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
 			return;
 		}
 		super.testWorldChanged();
+	}
+
+	@Override
+	public void testContains() {
+		if (disableTestsBug347491) {
+			return;
+		}
+		if (setDataCalls == 0) {
+			System.err.println("SWT.SetData is not received. Cancelled test " + testName.getMethodName());
+			return;
+		}
+		super.testContains();
 	}
 }

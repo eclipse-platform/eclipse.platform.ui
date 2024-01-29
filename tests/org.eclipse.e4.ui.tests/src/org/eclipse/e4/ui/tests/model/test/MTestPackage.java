@@ -496,6 +496,7 @@ public interface MTestPackage extends EPackage {
 		 * @see org.eclipse.e4.ui.tests.model.test.impl.TestPackageImpl#getTestHarness()
 		 * @generated
 		 */
+		@SuppressWarnings("hiding")
 		EClass TEST_HARNESS = eINSTANCE.getTestHarness();
 
 	}

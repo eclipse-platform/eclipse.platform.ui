@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="org.eclipse.e4.tools.emf.ui.resourceprovider">
-   <implementation class="org.eclipse.e4.tools.emf.ui.internal.ResourceProvider"/>
-   <service>
-      <provide interface="org.eclipse.e4.tools.services.IResourceProviderService"/>
-   </service>
-   <properties entry="OSGI-INF/resources.properties"/>
-</scr:component>

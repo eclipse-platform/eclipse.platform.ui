@@ -80,7 +80,8 @@
     </targlet>
   </setupTask>
   <setupTask
-      xsi:type="setup.workingsets:WorkingSetTask">
+      xsi:type="setup.workingsets:WorkingSetTask"
+      id="platform.ui.workingsets">
     <workingSet
         name="Platform UI">
       <predicate
@@ -90,7 +91,7 @@
             project="org.eclipse.ui"/>
         <operand
             xsi:type="workingsets:ExclusionPredicate"
-            excludedWorkingSet="//@setupTasks.3/@workingSets[name='Platform%20UI%20Examples'] //@setupTasks.3/@workingSets[name='Platform%20UI%20Tests'] //@setupTasks.3/@workingSets[name='Platform%20UI%20Tools']"/>
+            excludedWorkingSet="//'platform.ui.workingsets'/@workingSets[name='Platform%20UI%20Examples'] //'platform.ui.workingsets'/@workingSets[name='Platform%20UI%20Tests']"/>
       </predicate>
     </workingSet>
     <workingSet
@@ -103,18 +104,6 @@
         <operand
             xsi:type="predicates:NamePredicate"
             pattern=".*\.test.*|.*\.tests.*|org\.eclipse\.ui\.dynamicCode"/>
-      </predicate>
-    </workingSet>
-    <workingSet
-        name="Platform UI Tools">
-      <predicate
-          xsi:type="predicates:AndPredicate">
-        <operand
-            xsi:type="predicates:RepositoryPredicate"
-            project="org.eclipse.ui"/>
-        <operand
-            xsi:type="predicates:NamePredicate"
-            pattern="org\.eclipse\.e4\.(tools|core\.tools).*"/>
       </predicate>
     </workingSet>
     <workingSet
