@@ -1,50 +1,49 @@
 Rich Client Platform/FAQ
 ======================== 
 
-The following are **Frequently Asked Questions** (**FAQs**) about the Eclipse Rich Client Platform. For relevant tutorials, help topics, newsgroups, examples, and other resources, see the main [RCP page](/Rich_Client_Platform "Rich Client Platform").
+The following are **Frequently Asked Questions** (**FAQs**) about the Eclipse Rich Client Platform. 
+For relevant tutorials, help topics, newsgroups, examples, and other resources, see the main [RCP page](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Rich_Client_Platform.md).
 
-For general Eclipse FAQs, which address many RCP issues, see [The Official Eclipse FAQs](/The_Official_Eclipse_FAQs "The Official Eclipse FAQs"). For Eclipse 4, see the [Eclipse 4 RCP FAQ](/Eclipse4/RCP/FAQ "Eclipse4/RCP/FAQ").
+For general Eclipse FAQs, which address many RCP issues, see [The Official Eclipse FAQs](https://wiki.eclipse.org/The_Official_Eclipse_FAQs). 
+For Eclipse 4, see the [Eclipse 4 RCP FAQ](/Eclipse4/RCP/FAQ "Eclipse4/RCP/FAQ").
 
 Contents
 --------
 
-*   [1 What is the Eclipse Rich Client Platform?](#What-is-the-Eclipse-Rich-Client-Platform.3F)
-*   [2 Why should I build my application on the Eclipse Rich Client Platform?](#Why-should-I-build-my-application-on-the-Eclipse-Rich-Client-Platform.3F)
-*   [3 What is included in the Rich Client Platform?](#What-is-included-in-the-Rich-Client-Platform.3F)
-*   [4 What is the disk footprint for the Rich Client Platform?](#What-is-the-disk-footprint-for-the-Rich-Client-Platform.3F)
-*   [5 Is the resources plug-in (org.eclipse.core.resources) considered part of the Rich Client Platform?](#Is-the-resources-plug-in-.28org.eclipse.core.resources.29-considered-part-of-the-Rich-Client-Platform.3F)
-*   [6 Is the IDE plug-in (org.eclipse.ui.ide) considered part of the Rich Client Platform?](#Is-the-IDE-plug-in-.28org.eclipse.ui.ide.29-considered-part-of-the-Rich-Client-Platform.3F)
-*   [7 What other Eclipse components can be used in constructing RCP applications?](#What-other-Eclipse-components-can-be-used-in-constructing-RCP-applications.3F)
-*   [8 How do I get started with RCP?](#How-do-I-get-started-with-RCP.3F)
-*   [9 What is the recommended target platform setup? Or: How can I build and run my RCP app against a different version of the Eclipse base?](#What-is-the-recommended-target-platform-setup.3F-Or:-How-can-I-build-and-run-my-RCP-app-against-a-different-version-of-the-Eclipse-base.3F)
-*   [10 How can I change the window icon in my application?](#How-can-I-change-the-window-icon-in-my-application.3F)
-*   [11 How can I change the embedded app icon in my application?](#How-can-I-change-the-embedded-app-icon-in-my-application.3F)
-*   [12 How can I change the default UI settings for the perspective bar location, fast view bar location, etc?](#How-can-I-change-the-default-UI-settings-for-the-perspective-bar-location.2C-fast-view-bar-location.2C-etc.3F)
-*   [13 How can I get action set menus to appear in the right order, between my app's main menus?](#How-can-I-get-action-set-menus-to-appear-in-the-right-order.2C-between-my-app.27s-main-menus.3F)
-*   [14 Can multiple instances of the same view be made to appear at the same time?](#Can-multiple-instances-of-the-same-view-be-made-to-appear-at-the-same-time.3F)
-*   [15 How can I deploy my RCP app?](#How-can-I-deploy-my-RCP-app.3F)
-*   [16 When I try running, nothing happens, or it complains that the application could not be found in the registry, or that other plug-ins are missing. How can I track the problem down?](#When-I-try-running.2C-nothing-happens.2C-or-it-complains-that-the-application-could-not-be-found-in-the-registry.2C-or-that-other-plug-ins-are-missing.-How-can-I-track-the-problem-down.3F)
-*   [17 My own RCP plug-ins are contributed by a feature. Why is the update manager complaining that my configuration is invalid?](#My-own-RCP-plug-ins-are-contributed-by-a-feature.-Why-is-the-update-manager-complaining-that-my-configuration-is-invalid.3F)
-*   [18 Are editors tied to the workspace resource model or to the broader notion of files?](#Are-editors-tied-to-the-workspace-resource-model-or-to-the-broader-notion-of-files.3F)
-*   [19 How can I integrate my existing Swing components into an RCP application?](#How-can-I-integrate-my-existing-Swing-components-into-an-RCP-application.3F)
-*   [20 How can I define key bindings for commands?](#How-can-I-define-key-bindings-for-commands.3F)
-*   [21 How can I get my views and editors to coordinate with each other?](#How-can-I-get-my-views-and-editors-to-coordinate-with-each-other.3F)
-*   [22 Which plug-ins are needed for the Eclipse Help system?](#Which-plug-ins-are-needed-for-the-Eclipse-Help-system.3F)
-*   [23 How can I add the Eclipse Update Manager to my application?](#How-can-I-add-the-Eclipse-Update-Manager-to-my-application.3F)
-*   [24 How can I add the Eclipse p2 to my application?](#How-can-I-add-the-Eclipse-p2-to-my-application.3F)
-*   [25 What is ICU4J and is it required?](#What-is-ICU4J-and-is-it-required.3F)
-*   [26 How to bundle the JRE's for Windows and for Linux in my RCP application?](#How-to-bundle-the-JRE.27s-for-Windows-and-for-Linux-in-my-RCP-application.3F)
-*   [27 How to add menu item, command and handler?](#How-to-add-menu-item.2C-command-and-handler.3F)
-*   [28 How can I show line numbers by default in my RCP application?](#How-can-I-show-line-numbers-by-default-in-my-RCP-application.3F)
+*   [1 What is the Eclipse Rich Client Platform?](#What-is-the-Eclipse-Rich-Client-Platform)
+*   [2 Why should I build my application on the Eclipse Rich Client Platform?](#Why-should-I-build-my-application-on-the-Eclipse-Rich-Client-Platform)
+*   [3 What is included in the Rich Client Platform?](#What-is-included-in-the-Rich-Client-Platform)
+*   [4 What is the disk footprint for the Rich Client Platform?](#What-is-the-disk-footprint-for-the-Rich-Client-Platform)
+*   [5 Is the resources plug-in (org.eclipse.core.resources) considered part of the Rich Client Platform?](#Is-the-resources-plug-in-.28org.eclipse.core.resources.29-considered-part-of-the-Rich-Client-Platform)
+*   [6 Is the IDE plug-in (org.eclipse.ui.ide) considered part of the Rich Client Platform?](#Is-the-IDE-plug-in-.28org.eclipse.ui.ide.29-considered-part-of-the-Rich-Client-Platform)
+*   [7 What other Eclipse components can be used in constructing RCP applications?](#What-other-Eclipse-components-can-be-used-in-constructing-RCP-applications)
+*   [8 How do I get started with RCP?](#How-do-I-get-started-with-RCP)
+*   [9 What is the recommended target platform setup? Or: How can I build and run my RCP app against a different version of the Eclipse base?](#What-is-the-recommended-target-platform-setup-Or-How-can-I-build-and-run-my-RCP-app-against-a-different-version-of-the-Eclipse-base)
+*   [10 How can I change the window icon in my application?](#How-can-I-change-the-window-icon-in-my-application)
+*   [11 How can I change the embedded app icon in my application?](#How-can-I-change-the-embedded-app-icon-in-my-application)
+*   [12 How can I change the default UI settings for the perspective bar location, fast view bar location, etc?](#How-can-I-change-the-default-UI-settings-for-the-perspective-bar-location.2C-fast-view-bar-location.2C-etc)
+*   [13 How can I get action set menus to appear in the right order, between my app's main menus?](#How-can-I-get-action-set-menus-to-appear-in-the-right-order.2C-between-my-app.27s-main-menus)
+*   [14 Can multiple instances of the same view be made to appear at the same time?](#Can-multiple-instances-of-the-same-view-be-made-to-appear-at-the-same-time)
+*   [15 How can I deploy my RCP app?](#How-can-I-deploy-my-RCP-app)
+*   [16 When I try running, nothing happens, or it complains that the application could not be found in the registry, or that other plug-ins are missing. How can I track the problem down?](#When-I-try-running.2C-nothing-happens.2C-or-it-complains-that-the-application-could-not-be-found-in-the-registry.2C-or-that-other-plug-ins-are-missing.-How-can-I-track-the-problem-down)
+*   [17 My own RCP plug-ins are contributed by a feature. Why is the update manager complaining that my configuration is invalid?](#My-own-RCP-plug-ins-are-contributed-by-a-feature.-Why-is-the-update-manager-complaining-that-my-configuration-is-invalid)
+*   [18 Are editors tied to the workspace resource model or to the broader notion of files?](#Are-editors-tied-to-the-workspace-resource-model-or-to-the-broader-notion-of-files)
+*   [19 How can I integrate my existing Swing components into an RCP application?](#How-can-I-integrate-my-existing-Swing-components-into-an-RCP-application)
+*   [20 How can I define key bindings for commands?](#How-can-I-define-key-bindings-for-commands)
+*   [21 How can I get my views and editors to coordinate with each other?](#How-can-I-get-my-views-and-editors-to-coordinate-with-each-other)
+*   [22 Which plug-ins are needed for the Eclipse Help system?](#Which-plug-ins-are-needed-for-the-Eclipse-Help-system)
+*   [23 How can I add the Eclipse Update Manager to my application?](#How-can-I-add-the-Eclipse-Update-Manager-to-my-application)
+*   [24 What is ICU4J and is it required?](#What-is-ICU4J-and-is-it-required)
+*   [25 How to bundle the JRE's for Windows and for Linux in my RCP application?](#How-to-bundle-the-JRE.27s-for-Windows-and-for-Linux-in-my-RCP-application)
+*   [26 How to add menu item, command and handler?](#How-to-add-menu-item.2C-command-and-handler)
+*   [27 How can I show line numbers by default in my RCP application?](#How-can-I-show-line-numbers-by-default-in-my-RCP-application)
 
 What is the Eclipse Rich Client Platform?
 -----------------------------------------
 
 While the Eclipse platform is designed to serve as an open tools platform, it is architected so that its components could be used to build just about any client application. The minimal set of plug-ins needed to build a rich client application is collectively known as the **Rich Client Platform**.
 
-For more details, see the main [RCP page](/Rich_Client_Platform "Rich Client Platform").
-
-Also note that Part 1 of the original [Eclipse whitepaper](http://eclipse.org/whitepapers/eclipse-overview.pdf) also applies, and is a good high-level overview of what is available in the Rich Client Platform. Although it speaks of the Eclipse IDE (which is itself an RCP application), almost all of the functionality described in Part 1 is available in the RCP. Exceptions are the Workspace model and Team support, which are components in the IDE, not the RCP. Part 2's discussion of JDT is specific to the Eclipse IDE, however it is a good illustration of how an application would be structured on top of the RCP.
+For more details, see the main [RCP page](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Rich_Client_Platform.md).
 
 Why should I build my application on the Eclipse Rich Client Platform?
 ----------------------------------------------------------------------
@@ -62,13 +61,13 @@ The Eclipse Rich Client Platform consists of the following components:
 
 | Component    | Description    | Plug-ins    | Documentation    |
 | --- | --- | --- | --- |
-| Eclipse Runtime    | Provides the foundational support for plug-ins, extension points and extensions (among other facilities).  The Eclipse runtime is built on top of the [OSGi framework](http://osgi.org/osgi_technology). | org.eclipse.core.runtime    org.eclipse.osgi   org.eclipse.osgi.services   | [Platform Core home page](http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/platform-core-home/main.html)    Dev guide: [Runtime overview](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/runtime.htm)   Article: [Notes on the Eclipse Plug-in Architecture](http://eclipse.org/articles/Article-Plug-in-architecture/plugin_architecture.html)      |
-| SWT    | The Standard Widget Toolkit. SWT is designed to provide efficient, portable access to the user-interface facilities of the operating systems on which it is implemented | org.eclipse.swt    \+ platform-specific fragments      | [Platform SWT home page](http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/platform-swt-home/main.html)    Dev guide: [SWT](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/swt.htm)   [Getting Started](http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/platform-swt-home/SWT_Resources.html)   [SWT FAQ](http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/platform-swt-home/faq.html)   [SWT code snippets](http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/platform-swt-home/dev.html#snippets)   [SWT Articles](http://eclipse.org/articles/main.html#SWT)   |
-| JFace    | A UI framework, layered on top of SWT, for handling many common UI programming tasks. | org.eclipse.jface | [JFace](/JFace "JFace") |
-| Workbench | The Workbench builds on top of the Runtime, SWT and JFace to provide a highly scalable, open-ended, multi-window environment for managing views, editors, perspectives (task-oriented layouts), actions, wizards, preference pages, and more.    The Workbench is sometimes called the Generic Workbench, to distinguish it from the IDE Workbench facilities defined in the org.eclipse.ui.ide plug-in.   | org.eclipse.ui    org.eclipse.ui.workbench   | [Platform UI home page](http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/platform-ui-home/main.html)    Dev guide: [Plugging into the workbench](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/workbench.htm),[Dialogs and wizards](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/dialogs.htm), [Advanced workbench concepts](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/wrkAdv.htm)   [Workbench and JFace Articles](http://eclipse.org/articles/main.html#ui)      |
+| Eclipse Runtime    | Provides the foundational support for plug-ins, extension points and extensions (among other facilities).  The Eclipse runtime is built on top of the [OSGi framework](https://www.osgi.org/resources/where-to-start/). | org.eclipse.core.runtime    org.eclipse.osgi   org.eclipse.osgi.services   | Dev guide: [Runtime overview](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/runtime.htm)   Article: [Notes on the Eclipse Plug-in Architecture](http://eclipse.org/articles/Article-Plug-in-architecture/plugin_architecture.html)      |
+| SWT    | The Standard Widget Toolkit. SWT is designed to provide efficient, portable access to the user-interface facilities of the operating systems on which it is implemented | org.eclipse.swt    \+ platform-specific fragments      | [Platform SWT home page](https://www.eclipse.org/swt/) |
+| JFace    | A UI framework, layered on top of SWT, for handling many common UI programming tasks. | org.eclipse.jface | [JFace](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/JFace.md) |
+| Workbench | The Workbench builds on top of the Runtime, SWT and JFace to provide a highly scalable, open-ended, multi-window environment for managing views, editors, perspectives (task-oriented layouts), actions, wizards, preference pages, and more.    The Workbench is sometimes called the Generic Workbench, to distinguish it from the IDE Workbench facilities defined in the org.eclipse.ui.ide plug-in.   | org.eclipse.ui    org.eclipse.ui.workbench   | Dev guide: [Plugging into the workbench](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/workbench.htm),[Dialogs and wizards](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/dialogs.htm), [Advanced workbench concepts](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/wrkAdv.htm)      |
 |   Other prerequisites for the Workbench   | Support for XML expressions language, commands, and help core content model.    | org.eclipse.core.expressions    org.eclipse.core.commands   org.eclipse.help   |     |
 
-Note that as of Eclipse 3.3M6, org.eclipse.help requires [com.ibm.icu](#What-is-ICU4J-and-is-it-required.3F) which takes a sizeable amount of footprint (that [can be reduced](#What-is-ICU4J-and-is-it-required.3F)). [Bug 183761](https://bugs.eclipse.org/bugs/show_bug.cgi?id=183761) has been filed to investigate removing this dependency from org.eclipse.help.
+Note that as of Eclipse 3.3M6, org.eclipse.help requires [com.ibm.icu](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Rich_Client_Platform/Rich_Client_Platform_FAQ.md#What-is-ICU4J-and-is-it-required) which takes a sizeable amount of footprint (that [can be reduced](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Rich_Client_Platform/Rich_Client_Platform_FAQ.md#What-is-ICU4J-and-is-it-required)). [Bug 183761](https://bugs.eclipse.org/bugs/show_bug.cgi?id=183761) has been filed to investigate removing this dependency from org.eclipse.help.
 
 What is the disk footprint for the Rich Client Platform?
 --------------------------------------------------------
@@ -96,29 +95,33 @@ Here is a list of some of the reusable components in the broader Eclipse codebas
 
 | Component    | Description    | Plug-ins    | Documentation    |
 | --- | --- | --- | --- |
-| Help    | Web-app-based Help UI, with support for dynamic content.    | org.apache.lucene    org.eclipse.help.appserver   org.eclipse.help.base   org.eclipse.help.ui   org.eclipse.help.webapp   org.eclipse.tomcat   org.eclipse.ui.forms   | [Platform Help home page](http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/platform-help-home/main.html)    Dev guide: [Plugging in help](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/help.htm)      |
-| Update Manager    | Allows users to discover and install updated versions of products and extensions. | org.eclipse.update.configurator    org.eclipse.update.core   org.eclipse.update.scheduler   org.eclipse.update.ui   \+ platform-specific fragments      | [Platform Update home page](http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/platform-update-home/main.html)    Dev guide: [Updating a product or extension](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/product_update.htm)      |
-| Text    | Framework for building high-function text editors.    | org.eclipse.text    org.eclipse.jface.text   org.eclipse.workbench.texteditor   | [Platform Text home page](http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/platform-text-home/main.html)    Dev guide: [Text editors and platform text](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/editors_jface.htm)      |
+| Help    | Web-app-based Help UI, with support for dynamic content.    | org.apache.lucene    org.eclipse.help.appserver   org.eclipse.help.base   org.eclipse.help.ui   org.eclipse.help.webapp   org.eclipse.tomcat   org.eclipse.ui.forms   | Dev guide: [Plugging in help](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/help.htm)      |
+| Update Manager    | Allows users to discover and install updated versions of products and extensions. | org.eclipse.update.configurator    org.eclipse.update.core   org.eclipse.update.scheduler   org.eclipse.update.ui   \+ platform-specific fragments      | Dev guide: [Updating a product or extension](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/product_update.htm)      |
+| Text    | Framework for building high-function text editors.    | org.eclipse.text    org.eclipse.jface.text   org.eclipse.workbench.texteditor   | Dev guide: [Text editors and platform text](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/editors_jface.htm)      |
 | Forms    | Flat look control library and multi-page editor framework (used in PDE editors).    | org.eclipse.ui.forms | Article: [Eclipse Forms: Rich UI for the Rich Client](http://www.eclipse.org/articles/Article-Forms/article.html) |
 | Welcome Page (aka Intro) | Initial welcome experience and guided assistance.    | org.eclipse.ui.intro    | Dev guide: [Intro support](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/workbench_advext_intro.htm) |
 | Cheat Sheets    | A Cheat Sheet guides the user through a long-running, multi-step task.    | org.eclipse.ui.cheatsheets    | Dev guide: [Cheat Sheets](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/workbench_advext_cheatsheets.htm) |
 | Resources    | Workspace resource model, with managed projects, folders and files.    | org.eclipse.core.resources    | [Platform Core home page](http://www.eclipse.org/eclipse/platform-core/)   Dev guide: [Resources overview](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/resInt.htm) |
 | Console | Extensible console view.    | org.eclipse.ui.console    | Javadoc: [org.eclipse.ui.console](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/console/package-summary.html), [org.eclipse.ui.console.actions](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/console/actions/package-summary.html) |
 | Outline and Properties views | Outline and Properties views    | org.eclipse.ui.views    | TBD |
-| Graphical Editing Framework (GEF) | Framework for building graphical editors. Includes Draw2D, a vector graphics framework.    | org.eclipse.draw2d    org.eclipse.gef      | [GEF home page](http://www.eclipse.org/gef)    [Overview](http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/gef-home/overview.html?cvsroot=Tools_Project), [FAQ](http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/gef-home/developer/faq.html?cvsroot=Tools_Project)      |
+| Graphical Editing Framework (GEF) | Framework for building graphical editors. Includes Draw2D, a vector graphics framework.    | org.eclipse.draw2d    org.eclipse.gef      | [GEF home page](http://www.eclipse.org/gef)      |
 | Eclipse Modeling Framework (EMF) and Service Data Objects (SDO) | EMF is a modeling framework and code generation facility for building tools and other applications based on a structured data model.  SDO is a framework that simplifies and unifies data application development in a service oriented architecture (SOA). | [EMF plug-in list from CVS](http://dev.eclipse.org/viewcvs/indextools.cgi/org.eclipse.emf/plugins/)    | [EMF home page](http://www.eclipse.org/emf/)   Overviews:[EMF, EMF Edit, EMF Validation ...](http://www.eclipse.org/modeling/emf/docs/#overviews), [SDO](http://www-106.ibm.com/developerworks/java/library/j-sdo/) |
 
 How do I get started with RCP?
 ------------------------------
 
-The [Eclipse RCP tutorials](/Rich_Client_Platform#Tutorials "Rich Client Platform") are a good starting points. See also the [examples](/Rich_Client_Platform#examples "Rich Client Platform") and the [suggested help topics](/Rich_Client_Platform#help "Rich Client Platform").
+The [Eclipse RCP tutorials](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Rich_Client_Platform.md) are a good starting points. 
+See also the [examples](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Rich_Client_Platform.md#Examples) and the [suggested help topics](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Rich_Client_Platform.md#Help-Topics).
 
 What is the recommended target platform setup? Or: How can I build and run my RCP app against a different version of the Eclipse base?
 --------------------------------------------------------------------------------------------------------------------------------------
 
-With the default setup of the Eclipse SDK, plug-ins are developed against the same plug-in configuration used by the IDE itself. However, it is possible to configure the IDE to build, run and deploy against a different version of the eclipse base, via the Plug-in Development > Target Platform preference page. Configuring the target platform is highly recommended in order to avoid introducing unwanted dependencies on IDE plug-ins into your RCP app.
+With the default setup of the Eclipse SDK, plug-ins are developed against the same plug-in configuration used by the IDE itself. 
+However, it is possible to configure the IDE to build, run and deploy against a different version of the eclipse base, via the Plug-in Development > Target Platform preference page. 
+Configuring the target platform is highly recommended in order to avoid introducing unwanted dependencies on IDE plug-ins into your RCP app.
 
-For more details, see the ["Target Platform Preferences"](http://help.eclipse.org/ganymede/topic/org.eclipse.pde.doc.user/guide/tools/preference_pages/target_platform.htm) help topic in the PDE Guide. The tutorial in the [RCP Book](/RCP_Book "RCP Book") also walks you through this process.
+For more details, see the ["Target Platform Preferences"](http://help.eclipse.org/ganymede/topic/org.eclipse.pde.doc.user/guide/tools/preference_pages/target_platform.htm) help topic in the PDE Guide. 
+The tutorial in the [RCP Book](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Rich_Client_Platform/Rich_Client_Platform_Book.md) also walks you through this process.
 
 For a recommended setup, use the following steps. We assume the Eclipse SDK (aka the IDE) is already installed, e.g. in c:\\eclipse.
 
@@ -260,29 +263,32 @@ If you're using a feature only for the plug-ins you write, the update manager do
 Are editors tied to the workspace resource model or to the broader notion of files?
 -----------------------------------------------------------------------------------
 
-No. The concept of an editor in the workbench and the corresponding types (IEditorPart, EditorPart, IEditorInput) are not tied to the workspace resource model, or even to the notion of files (whether in the workspace or the file system). Editors can be used for any kind of model, and can be textual or graphical.
+No. 
+The concept of an editor in the workbench and the corresponding types (IEditorPart, EditorPart, IEditorInput) are not tied to the workspace resource model, or even to the notion of files (whether in the workspace or the file system). 
+Editors can be used for any kind of model, and can be textual or graphical.
 
-The Text component provides support for text editors. See the entry for the Text component in the [list of optional components](#otherComponents) above. See also the [RCP text editor example](/Rich_Client_Platform#Examples "Rich Client Platform").
-
-Eugene Ostroukhov has published [a useful blog entry](http://www.jroller.com/page/Zhou/20040215#eclipse_editors_not_tied_to) describing how to create a non-file-based editor that connects to a database. See also [this update](http://www.jroller.com/page/Zhou/20040414#update_on_custom_editor_inputs).
+The Text component provides support for text editors. 
+See the entry for the Text component in the list of optional components above. 
+See also the [RCP text editor example](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Rich_Client_Platform.md#Examples).
 
 How can I integrate my existing Swing components into an RCP application?
 -------------------------------------------------------------------------
 
 See [this SWT FAQ entry](http://www.eclipse.org/swt/faq.php#swinginswt). Note, however, that the SWT_AWT bridge does not currently work on all platforms, e.g. Mac ([bug 67384](https://bugs.eclipse.org/bugs/show_bug.cgi?id=67384)).
 
-See also the EclipseZone discussion ["Integrating Swing into Eclipse RCPs"](http://www.eclipsezone.com/eclipse/forums/t45697.html).
-
 Also take a look at [SwingWT](http://swingwt.sourceforge.net/), an SWT-based implementation of the Swing API.
 
 How can I define key bindings for commands?
 -------------------------------------------
 
-As of 3.3, the preferred means of binding keys is to use commands, handlers, and contexts. See [Platform Command Framework#KeyBindings](/Platform_Command_Framework#KeyBindings "Platform Command Framework") for the extension points.
+As of 3.3, the preferred means of binding keys is to use commands, handlers, and contexts. 
+See [Platform Command Framework#KeyBindings](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/PlatformCommandFramework.md#KeyBindings) for the extension points.
 
-There are some wrinkles for the RCP case. See [Keybindings for Eclipse Commands](http://www.vogella.de/articles/EclipseCommands/article.html#keybinding) for a tutorial.
+There are some wrinkles for the RCP case. 
+See [Keybindings for Eclipse Commands](https://www.vogella.com/tutorials/EclipseCommands/article.html) for a tutorial.
 
-The key binding system is designed with the general idea that it is under the control of the user, not the program. If you want to control key bindings in an RCP application, you have to decide whether to expose the preference system or whether to be inflexible.
+The key binding system is designed with the general idea that it is under the control of the user, not the program. 
+If you want to control key bindings in an RCP application, you have to decide whether to expose the preference system or whether to be inflexible.
 
 To begin with, note that each org.eclipse.ui.binding is a member of a scheme. Unless you interact with the preference system, or replace the BindingService with your own class, you must put all your bindings in org.eclipse.ui.defaultAcceleratorConfiguration. If you put them in some other scheme, you will find that here is no simple API to activate your scheme.
 
@@ -296,8 +302,6 @@ At the lowest level, you can obtain the IBindingService has no 'set' functions, 
 
 How can I get my views and editors to coordinate with each other?
 -----------------------------------------------------------------
-
-See the article ["Make your Eclipse applications richer with view linking"](http://www-128.ibm.com/developerworks/java/library/os-ecllink/index.html) by Chinmay Pandit.
 
 You can also track part activation and other lifecycle using [IPartService](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/IPartService.html), [IPartListener](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/IPartListener.html) and [IPartListener2](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/IPartListener2.html).
 
@@ -315,13 +319,15 @@ Be sure to remove the part listener in the appropriate dispose method.
 Which plug-ins are needed for the Eclipse Help system?
 ------------------------------------------------------
 
-See ["What other Eclipse components can be used in constructing RCP applications?"](#What-other-Eclipse-components-can-be-used-in-constructing-RCP-applications.3F). Be sure to include the **org.eclipse.tomcat** plug-in since the dependency on it is indirect. The **org.eclipse.help.ui** plug-in requires the **org.eclipse.help.appserver** plug-in, which defines the **org.eclipse.help.appserver.server** extension point. The **org.eclipse.tomcat** plug-in adds an extension to this extension point. So although **org.eclipse.tomcat** is required, it's not found by adding all prerequisites of **org.eclipse.help.ui**, and needs to be added manually.
-
-See also section 8 of the ["Developing Eclipse Rich Client Applications" tutorial](http://www.eclipsecon.org/2005/presentations/EclipseCon2005_Tutorial8.pdf) from EclipseCon 2005.
+See ["What other Eclipse components can be used in constructing RCP applications?"](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Rich_Client_Platform/Rich_Client_Platform_FAQ.md#What-other-Eclipse-components-can-be-used-in-constructing-RCP-applications). 
+Be sure to include the **org.eclipse.tomcat** plug-in since the dependency on it is indirect. 
+The **org.eclipse.help.ui** plug-in requires the **org.eclipse.help.appserver** plug-in, which defines the **org.eclipse.help.appserver.server** extension point. 
+The **org.eclipse.tomcat** plug-in adds an extension to this extension point. 
+So although **org.eclipse.tomcat** is required, it's not found by adding all prerequisites of **org.eclipse.help.ui**, and needs to be added manually.
 
 See also the ["Plugging in help"](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/help.htm) help topic.
 
-See also the "Adding Help" chapter in the [RCP Book](/RCP_Book "RCP Book").
+See also the "Adding Help" chapter in the [RCP Book](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Rich_Client_Platform/Rich_Client_Platform_Book.md).
 
 How can I add the Eclipse Update Manager to my application?
 -----------------------------------------------------------
@@ -332,19 +338,15 @@ See also the ["Updating a product or extension"](http://help.eclipse.org/help31/
 
 See also the "Adding Update" chapter of the [RCP Book](/RCP_Book "RCP Book").
 
-How can I add the Eclipse p2 to my application?
------------------------------------------------
-
-See the tutorial ["Adding Self-Update to an RCP Application"](http://wiki.eclipse.org/Equinox/p2/Adding_Self-Update_to_an_RCP_Application) at the p2 Wiki.
-
 What is ICU4J and is it required?
 ---------------------------------
 
-[ICU4J](/ICU4J "ICU4J") is a set of Java libraries that provides more comprehensive support for Unicode, software globalization, and internationalization. In order to provide this functionality to the Eclipse community, ICU4J was added to the Eclipse platform in 3.2. You will see it in the build as a plug-in named com.ibm.icu.
+ICU4J is a set of Java libraries that provides more comprehensive support for Unicode, software globalization, and internationalization. 
+In order to provide this functionality to the Eclipse community, ICU4J was added to the Eclipse platform in 3.2. 
+You will see it in the build as a plug-in named com.ibm.icu.
 
-The ICU4J plug-in has a non-negligable footprint of ~3M, which is a significant fraction of the RCP base footprint. If reduced footprint is more important for your application than the enhancements provided by ICU4J, it can be replaced with a plug-in that is about 100KB in size and that simply calls through to the java.* packages (default JDK implementation) of the most commonly used classes and APIs in ICU4J.
-
-For more details, see the [ICU4J](/ICU4J "ICU4J") page.
+The ICU4J plug-in has a non-negligable footprint of ~3M, which is a significant fraction of the RCP base footprint. 
+If reduced footprint is more important for your application than the enhancements provided by ICU4J, it can be replaced with a plug-in that is about 100KB in size and that simply calls through to the java.* packages (default JDK implementation) of the most commonly used classes and APIs in ICU4J.
 
 How to bundle the JRE's for Windows and for Linux in my RCP application?
 ------------------------------------------------------------------------
