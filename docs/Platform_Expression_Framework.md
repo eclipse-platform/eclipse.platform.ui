@@ -21,7 +21,7 @@ Contents
     *   [3.2 Additional Variables](#Additional-Variables)
 *   [4 Operators of the expressions framework](#Operators-of-the-expressions-framework)
     *   [4.1 adapt](#adapt)
-    *   [4.2 and / or / not](#and-.2F-or-.2F-not)
+    *   [4.2 and / or / not](#and--or--not)
     *   [4.3 count](#count)
     *   [4.4 equals](#equals)
     *   [4.5 instanceof](#instanceof)
@@ -38,7 +38,8 @@ Where they are useful
 =====================
 
 Expressions are used in extension points that have to decide things based on a context, but without loading the plugin implementing that decision. 
-The most popular examples where they are used are the [Platform Command Framework](/Platform_Command_Framework "Platform Command Framework"), and the [Common Navigator Framework](/Common_Navigator_Framework "Common Navigator Framework"). 
+The most popular examples where they are used are the [Platform Command Framework](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/PlatformCommandFramework.md), and the 
+[Common Navigator Framework](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Common_Navigator_Framework.md"). 
 Depending on the extension implementation, expressions are used to decide any number of things. 
 Examples:
 
@@ -140,7 +141,7 @@ An evaluation context contains:
 Usually, expressions check the default variable in the evaluation context. 
 However, it is possible for an expression to select a specific variable from the context using the `<with>` element (examples below).
 
-A common source for confusion are the different default variables provided by the [Common Navigator Framework](/Common_Navigator_Framework "Common Navigator Framework") and the [Platform Command Framework](/Platform_Command_Framework "Platform Command Framework"). 
+A common source for confusion are the different default variables provided by the [Common Navigator Framework](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Common_Navigator_Framework.md) and the [Platform Command Framework](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/PlatformCommandFramework.md). 
 While the command framework provides a _collection containing the current selection_ as the default variable, the navigator framework just uses _the current object in the tree_. 
 For this reason, you cannot use the same expression for both frameworks.
 
