@@ -100,7 +100,7 @@ public interface IHandler {
 	 *
 	 * @return name of the Handler, can be null
 	 *
-	 * @since 3.11
+	 * @since 3.12
 	 */
 	default String getHandlerLabel() {
 		return null;
