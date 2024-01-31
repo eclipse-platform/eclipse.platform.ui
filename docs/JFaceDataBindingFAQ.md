@@ -11,9 +11,8 @@ Contents
 *   [5 What is a Realm, and do I need to care?](#What-is-a-Realm.2C-and-do-I-need-to-care)
 *   [6 Does Data Binding depend on Eclipse and the OSGi runtime?](#Does-Data-Binding-depend-on-Eclipse-and-the-OSGi-runtime)
 *   [7 Does Data Binding depend on SWT?](#Does-Data-Binding-depend-on-SWT)
-*   [8 How do I bind to the ValidationError of a Binding or DataBindingContext?](#How-do-I-bind-to-the-ValidationError-of-a-Binding-or-DataBindingContext)
-*   [9 How do I run the tests?](#How-do-I-run-the-tests)
-*   [10 Can JFace Data Binding run against older versions of Eclipse?](#Can-JFace-Data-Binding-run-against-older-versions-of-Eclipse)
+*   [8 How do I run the tests?](#How-do-I-run-the-tests)
+*   [9 Can JFace Data Binding run against older versions of Eclipse?](#Can-JFace-Data-Binding-run-against-older-versions-of-Eclipse)
 
 ### Where can I ask a question?
 
@@ -90,10 +89,6 @@ See also [JFace Data Binding/Runtime Dependencies](https://github.com/eclipse-pl
 ### Does Data Binding depend on SWT?
 
 No. Data Binding is meant to be UI toolkit agnostic and more specifically UI agnostic. There is default support for SWT and JFace but this is in the org.eclipse.jface.databinding project which is separate from the core Data Binding APIs that live in org.eclipse.core.databinding. For background and when the separation occurred in see [bug 153630](https://bugs.eclipse.org/bugs/show_bug.cgi?id=153630).
-
-### How do I bind to the ValidationError of a Binding or DataBindingContext?
-
-See [Snippet 004](http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet004DataBindingContextErrorLabel.java?rev=HEAD&content-type=text/vnd.viewcvs-markup) and [Snippet 014](http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet014WizardDialog.java?rev=HEAD&content-type=text/vnd.viewcvs-markup).
 
 ### How do I run the tests?
 
