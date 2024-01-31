@@ -21,7 +21,7 @@ Contents
 Expressions and the Command Framework
 =====================================
 
-The [Platform Command Framework](/Platform_Command_Framework "Platform Command Framework") uses [core expressions](/Platform_Expression_Framework "Platform Expression Framework") for enabledWhen and activeWhen for handlers, programmatic activation of contexts, and for visibleWhen for menu contributions. 
+The [Platform Command Framework](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/PlatformCommandFramework.md) uses [core expressions](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Platform_Expression_Framework.md) for enabledWhen and activeWhen for handlers, programmatic activation of contexts, and for visibleWhen for menu contributions. 
 The command framework provides the IEvaluationContext that command core expressions are evaluate against.
 
 The IEvaluationContext provides a default variable for evaluations, and a number of named variables. 
