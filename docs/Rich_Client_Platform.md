@@ -15,7 +15,7 @@ Contents
 
 *   [1 Case Studies](#Case-Studies)
 *   [2 FAQs](#FAQs)
-*   [3 Books on Eclipse RCP using 4.x API](#Books-on-Eclipse-RCP-using-4.x-API)
+*   [3 Books on Eclipse RCP using 4.x API](#books-on-eclipse-rcp-using-4x-api)
 *   [4 Tutorials for Eclipse RCP with Eclipse 4 API](#Tutorials-for-Eclipse-RCP-with-Eclipse-4-API)
 *   [5 Tutorials covering older API levels](#Tutorials-covering-older-API-levels)
 *   [6 Presentations](#Presentations)
@@ -24,8 +24,7 @@ Contents
 *   [9 Applications](#Applications)
 *   [10 Blogs](#Blogs)
 *   [11 Other Resources](#Other-Resources)
-*   [12 Elsewhere at eclipse.org](#Elsewhere-at-eclipse.org)
-*   [13 Original Design Documents](#Original-Design-Documents)
+*   [12 Original Design Documents](#Original-Design-Documents)
 
 Case Studies
 ------------
@@ -85,12 +84,9 @@ The following are relevant help topics from the Platform Plug-in Developer Guide
 Examples
 --------
 
-The following are some examples showing how to build applications using RCP:
+The usage of SWT and JFace is demonstrated in the following snippets:
 
-*   [RCP Browser Example](/RCP_Browser_Example "RCP Browser Example")
-*   [RCP Text Editor Examples](/RCP_Text_Editor_Examples "RCP Text Editor Examples")[  
-    ](/index.php?title=RCP_Web_UI_integration_Examples&action=edit&redlink=1 "RCP Web UI integration Examples (page does not exist)")
-*   See also [SWT Snippets](http://www.eclipse.org/swt/snippets/) and [JFace Snippets](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/JFaceSnippets.md).
+*   [SWT Snippets](http://www.eclipse.org/swt/snippets/) and [JFace Snippets](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/JFaceSnippets.md).
 
 Applications
 ------------
@@ -111,8 +107,6 @@ Other Resources
 
 The following are other resources describing the Eclipse Rich Client Platform, or related subjects:
 
-*   [EclipseZone](http://eclipsezone.org)
-*   [RCP page](http://eclipsewiki.editme.com/RichClientPlatform) on the Eclipse Community Wiki
 *   [Eclipse Tutorials](http://www.vogella.de/eclipse.html) Articles around Eclipse and Eclipse RCP
 *   [ProgramCreek](http://www.programcreek.com) Articles and tutorials on the Eclipse RCP Topic
 
