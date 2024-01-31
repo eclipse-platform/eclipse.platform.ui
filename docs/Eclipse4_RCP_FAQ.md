@@ -44,10 +44,9 @@ Contents
     *   [4.9 What is the difference between IEclipseContext#set and IEclipseContext#modify?](#what-is-the-difference-between-ieclipsecontextset-and-ieclipsecontextmodify)
     *   [4.10 Why aren't my _@EventTopic_ or _@UIEventTopic_ methods being called?](#why-arent-my-eventtopic-or-uieventtopic-methods-being-called)
 *   [5 Commands and Handlers](#Commands-and-Handlers)
-    *   [5.1 Why is my handler's @Execute not being triggered?](#Why-is-my-handler.27s-.40Execute-not-being-triggered)
-    *   [5.2 Why aren't my handler fields being re-injected?](#Why-aren.27t-my-handler-fields-being-re-injected)
-    *   [5.3 Why is my parameterized handler not triggered?](#Why-is-my-parameterized-handler-not-triggered)
-    *   [5.4 Why does org.eclipse.core.commands.Command's isEnabled() and getHandler() not work?](#why-does-orgeclipsecorecommandscommands-isenabled-and-gethandler-not-work)
+    *   [5.1 Why aren't my handler fields being re-injected?](#Why-aren.27t-my-handler-fields-being-re-injected)
+    *   [5.2 Why is my parameterized handler not triggered?](#Why-is-my-parameterized-handler-not-triggered)
+    *   [5.3 Why does org.eclipse.core.commands.Command's isEnabled() and getHandler() not work?](#why-does-orgeclipsecorecommandscommands-isenabled-and-gethandler-not-work)
 *   [6 UI](#UI)
     *   [6.1 How do I enable Drag N Drop (DND) of parts?](#how-do-i-enable-drag-n-drop-dnd-of-parts)
     *   [6.2 Why are my CSS theming not taking effect?](#Why-are-my-CSS-theming-not-taking-effect)
@@ -314,7 +313,7 @@ Two approaches to help diagnose such problems:
 
 ### What services are available for injection?
 
-See the [list of provided services](/Eclipse4/RCP/EAS/List_of_All_Provided_Services "Eclipse4/RCP/EAS/List of All Provided Services")
+See the [list of provided services](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Eclipse4_RCP_EAS_List_of_All_Provided_Services.md)
 
 ### How can I override a provided object?
 
@@ -444,12 +443,6 @@ This problem usually occurs in testing, where an object is created explictly via
 
 Commands and Handlers
 ---------------------
-
-### Why is my handler's @Execute not being triggered?
-
-See ["Why isn't my @Inject-able method being injected?"](#Why-isn.27t-my-.40Inject-able-method-being-injected) above.
-
-  
 
 ### Why aren't my handler fields being re-injected?
 
