@@ -39,6 +39,7 @@ public class ImageRegistryTest {
 		assertNull("Registry should handle null", result);
 	}
 
+	@SuppressWarnings("removal")
 	@Test
 	public void testGetString() {
 
