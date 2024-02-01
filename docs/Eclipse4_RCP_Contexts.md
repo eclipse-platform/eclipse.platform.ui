@@ -2,7 +2,7 @@ Eclipse4/RCP/Contexts
 =====================
 
 The Eclipse 4 Application Platform manages state and services using a set of _contexts_; this information is used for injection. 
-Contexts are used as the sources for [Dependency Injection](/Eclipse4/RCP/Dependency_Injection "Eclipse4/RCP/Dependency Injection"). 
+Contexts are used as the sources for [Dependency Injection](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Eclipse4_RCP_Dependency_Injection.md). 
 In this respect, they are somewhat analogous to _modules_ in Guice. 
 Normally code should not have to use or know about the context.
 
@@ -72,7 +72,7 @@ Or the app could continue to set the normal master server in the application's c
 Context Variables
 -----------------
 
-Being able to resolve a value from somewhere in the context hierarchyis very powerful. 
+Being able to resolve a value from somewhere in the context hierarchy is very powerful. 
 But to change the value, we need to know where in the context hierarchy the value should be set. 
 Rather than hard code this location, we can instead declare a _context variable_: we declare the variable at the appropriate context, and instead _modify_, rather than _set_, the context value: the context then looks up the chain to find the variable declaration and sets the value there. 
 This separates defining _where_ a context value should be placed from the code that actually _sets_ it.
@@ -138,7 +138,7 @@ See the section on _Run And Tracks_ below.
 Run And Tracks
 --------------
 
-_RunAndTrack_s, affectionally called _RATs_, are a special form of a _Runnable_. 
+_RunAndTracks_ , affectionally called _RATs_, are a special form of a _Runnable_. 
 RATs are executed within a context, and the context tracks all of the values accessed. 
 When any of these values are changed, the runnable is automatically re-evaluated. 
 The following example will print _20.9895_ and then _20.12993_:
@@ -177,7 +177,7 @@ There are a few techniques.
 
 ### Context Functions
 
-A [Context Function](/Eclipse4/RCP/Contexts#Context_Functions "Eclipse4/RCP/Contexts") is provided both the key that was requested and the source context, where the retrieval began. 
+A [Context Function](#context-functions) is provided both the key that was requested and the source context, where the retrieval began. 
 The context function can return an instance created for that particular context, or set a value in that context — or elsewhere. 
 This approach is very useful for computing results based on the active part (_IEclipseContext#getActiveLeaf()_).
 
