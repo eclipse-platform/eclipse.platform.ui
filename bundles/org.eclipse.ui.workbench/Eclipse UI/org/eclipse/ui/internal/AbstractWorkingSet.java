@@ -15,8 +15,8 @@
 
 package org.eclipse.ui.internal;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
@@ -40,7 +40,7 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet, Clo
 
 	private String name;
 
-	protected ArrayList<IAdaptable> elements;
+	protected List<IAdaptable> elements;
 
 	private IWorkingSetManager manager;
 
@@ -145,13 +145,12 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet, Clo
 	protected void internalSetElements(IAdaptable[] newElements) {
 		Assert.isNotNull(newElements, "Working set elements array must not be null"); //$NON-NLS-1$
 
-		elements = new ArrayList<>(newElements.length);
-		elements.addAll(Arrays.asList(newElements));
+		elements = Arrays.asList(newElements);
 	}
 
 	@Override
 	public IAdaptable[] getElements() {
-		ArrayList<IAdaptable> list = getElementsArray();
+		List<IAdaptable> list = getElementsArray();
 		return list.toArray(new IAdaptable[list.size()]);
 	}
 
@@ -161,7 +160,7 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet, Clo
 	 *
 	 * @return the elements array list
 	 */
-	protected ArrayList<IAdaptable> getElementsArray() {
+	protected List<IAdaptable> getElementsArray() {
 		if (elements == null) {
 			restoreWorkingSet();
 			workingSetMemento = null;
