@@ -88,7 +88,7 @@ After the API freeze
 
 From the perspective of code maintenance, there is really no such thing as "provisional API". 
 Either it is complete and committed platform API, or it is internal code. 
-API that is new in the current release cycle is still subject to change, but changes after this point are rare and require approval from the Eclipse project [PMC](http://www.eclipse.org/eclipse/team-leaders.html). 
+API that is new in the current release cycle is still subject to change, but changes after this point are rare and require approval from the Eclipse project [PMC](https://eclipse.dev/eclipse/team-leaders.php). 
 
 Note that there are no guarantees about the existence or shape of internal code, even if the package name or comments suggest that it may become API in the next release. 
 In particular, the API contract (binary upwards compatibility) does not apply. 
@@ -107,7 +107,10 @@ Internal packages may also exported, they must be marked as x-internal in this c
 
 ### Javadoc
 
-No special javadoc treatment for internal code is needed. Note that @since tags also have little significance for internal code at this point. If internal code is added in the 3.4 development period, but promoted to real API in the 3.5 development period, the correct tag for that API will be @since 3.5. The [experimental](/Provisional_API_Guidelines#experimental "Provisional API Guidelines") javadoc paragraph can be left in the class or interface comment, but is not required.
+No special javadoc treatment for internal code is needed. 
+Note that @since tags also have little significance for internal code at this point. 
+If internal code is added in the 3.4 development period, but promoted to real API in the 3.5 development period, the correct tag for that API will be @since 3.5. 
+The experimental javadoc paragraph can be left in the class or interface comment, but is not required.
 
 Changing provisional APIs
 -------------------------
