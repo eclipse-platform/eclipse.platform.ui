@@ -29,10 +29,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler.Save;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -56,7 +55,6 @@ import org.eclipse.ui.Saveable;
 import org.eclipse.ui.SaveablesLifecycleEvent;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
-import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.model.WorkbenchPartLabelProvider;
 
@@ -290,12 +288,8 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	}
 
 	private void logWarning(String message, Object source, Saveable model) {
-		// create a new exception
-		AssertionFailedException assertionFailedException = new AssertionFailedException("unknown saveable: " + model //$NON-NLS-1$
-				+ " from part: " + source); //$NON-NLS-1$
-		// record the current stack trace to help with debugging
-		assertionFailedException.fillInStackTrace();
-		WorkbenchPlugin.log(StatusUtil.newStatus(IStatus.WARNING, message, assertionFailedException));
+		Throwable e = new IllegalStateException("unknown saveable: " + model + " from part: " + source); //$NON-NLS-1$ //$NON-NLS-2$
+		WorkbenchPlugin.log(Status.warning(message, e));
 	}
 
 	/**
