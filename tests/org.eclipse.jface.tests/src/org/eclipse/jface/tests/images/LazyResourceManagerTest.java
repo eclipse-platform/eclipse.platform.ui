@@ -119,6 +119,7 @@ public class LazyResourceManagerTest {
 
 	}
 
+	@SuppressWarnings("removal")
 	@Test
 	public void testDefaultImage() {
 		// note, we must touch the class to ensure the static initialer runs

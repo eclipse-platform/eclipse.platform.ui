@@ -158,6 +158,7 @@ public class ImageRegistry {
 	 * @param key the key
 	 * @return the image, or <code>null</code> if none
 	 */
+	@SuppressWarnings({ "removal", "deprecation" })
 	public Image get(String key) {
 
 		// can be null
