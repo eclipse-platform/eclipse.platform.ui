@@ -1,7 +1,7 @@
 Eclipse4/RCP/EAS/List of All Provided Services
 ==============================================
 
-This page provides a listing of the services and other data values that can be injected or obtained from a [context](/Eclipse4/RCP/Contexts "Eclipse4/RCP/Contexts").
+This page provides a listing of the services and other data values that can be injected or obtained from a [context](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Eclipse4_RCP_Contexts.md).
 
 Contents
 --------
