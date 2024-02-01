@@ -207,7 +207,7 @@ public class BundleSigningInfo {
 			if (!(e instanceof X509Certificate)) {
 				continue;
 			}
-			Properties cert = parseCert(((X509Certificate) e).getSubjectDN().getName());
+			Properties cert = parseCert(((X509Certificate) e).getSubjectX500Principal().getName());
 			if (cert != null)
 				certs.add(cert);
 		}
