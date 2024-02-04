@@ -2553,7 +2553,11 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 
 	@Override
 	public boolean restart(boolean useCurrrentWorkspace) {
-		if (useCurrrentWorkspace) {
+		if (Platform.inDevelopmentMode()) {
+			// In development mode, command line parameters cannot be changed and restart
+			// will always be EXIT_RESTART. Also see setRestartArguments method
+			System.setProperty(PROP_EXIT_CODE, IApplication.EXIT_RESTART.toString());
+		} else if (useCurrrentWorkspace) {
 			URL instanceUrl = Platform.getInstanceLocation().getURL();
 			if (instanceUrl != null) {
 				try {
