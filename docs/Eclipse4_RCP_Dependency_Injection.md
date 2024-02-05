@@ -76,15 +76,15 @@ DI has some disadvantages too:
 Standard Annotations and Classes
 ================================
 
-E4AP's injector is based on the standard JSR 330 annotations:
+Eclipse injector was originally based on the annotations defined in JSR 330 and has been updated to the new jakarta.inject package name over time.
 
-@Inject (javax.inject)
+@Inject (jakarta.inject)
 ---------------------------------------------------------------------------------------------------
 
 @Inject marks a constructor, method, or field as being available for injection. 
 If you inject OSGi Services, it is possible to filter or reference multiple Services see [https://www.eclipse.org/eclipse/news/4.7/platform_isv.php#di-extension-service](https://www.eclipse.org/eclipse/news/4.7/platform_isv.php#di-extension-service)
 
-@Named (javax.inject)
+@Named (jakarta.inject)
 -------------------------------------------------------------------------------------------------
 
 Injected values are typically identified by a type. But there may be a number of available objects of a particular type (e.g., there are likely a number of available Strings). Multiple objects can be distinguished by providing a name, both on setting them as well as requesting them for injection. 
@@ -94,7 +94,7 @@ For example:
     @Named(E4Workbench.INSTANCE_LOCATION)
     private Location instanceLocation;
 
-@Singleton (javax.inject)
+@Singleton (jakarta.inject)
 ---------------------------------------------------------------------------------------------------------
 
 @Singleton is class annotation Indicating that the class should only be instantiated once per injection scope. 
@@ -106,7 +106,7 @@ Provider<T> (javax.inject)
 The Provider class defers the injection to demand-time. 
 Any value that can be injected can also be obtained through a provider.
 
-[@PostConstruct](http://download.oracle.com/javaee/5/api/javax/annotation/PostConstruct.html), [@PreDestroy](http://download.oracle.com/javaee/5/api/javax/annotation/PreDestroy.html) (javax.annotation)
+@PostConstruct (jakarta.annotation), @PreDestroy(jakarta.annotation)
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 The @PostConstruct and @PreDestroy annotations provide lifecycle notification for created objects. 
