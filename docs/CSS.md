@@ -1,4 +1,4 @@
-E4/CSS
+Eclipse 
 ======
 
 Contents
@@ -7,16 +7,15 @@ Contents
 *   [1 Overview](#Overview)
 *   [2 Sample](#Sample)
 *   [3 SWT Mapping](#SWT-Mapping)
-    *   [3.1 Widget: Control](#Widget:-Control)
-    *   [3.2 Widget: Button](#Widget:-Button)
-    *   [3.3 Widget: Label](#Widget:-Label)
-    *   [3.4 Widget: CTabFolder](#Widget:-CTabFolder)
-    *   [3.5 Widget: CTabItem](#Widget:-CTabItem)
-    *   [3.6 Widget: CTabFolder with e4Renderer](#Widget:-CTabFolder-with-e4Renderer)
+    *   [3.1 Widget: Control](#Widget-Control)
+    *   [3.2 Widget: Button](#Widget-Button)  
+    *   [3.3 Widget: Label](#Widget-Label)
+    *   [3.4 Widget: CTabFolder](#Widget-CTabFolder)
+    *   [3.5 Widget: CTabItem](#Widget-CTabItem)
+    *   [3.6 Widget: CTabFolder with e4Renderer](#Widget-CTabFolder-with-e4Renderer)
 *   [2 Pseudo classes which can be used in CSS to style SWT widgets](#Pseudo-classes-which-can-be-used-in-CSS-to-style-SWT-widgets)
-
-*   [4 Customize](#Customize)
-*   [5 Using CSS in Eclipse 3.6](#Using-CSS-in-Eclipse-3.6)
+*   [3 Customize](#Customize)
+*   [4 Using CSS in Eclipse 3.x releases](#Using-CSS-in-Eclipse-3.6)
 
 Overview
 --------
@@ -27,47 +26,15 @@ The new **CSS** declarative styling support provides developers with the flexibi
 *   CSS ID: assignable from Java
 *   CSS classname: assignable from Java
 *   Pseudo selector: some SWT widget states are captured in pseudo selectors (e.g. `Button:checked`)
-*   widget data: the key elements are available as attributes and the values as data (e.g., a widget where `widget.setData("foo", "bar")` will be matched by `*\[foo='bar'\]`)
-*   widget style bits: the style bits (normally passed through the constructor) are available through the _style_ attribute (e.g., `Button\[style~='SWT.CHECK'\]`
+*   widget data: the key elements are available as attributes and the values as data (e.g., a widget where `widget.setData("foo", "bar")` will be matched by `*[foo='bar']`)
+*   widget style bits: the style bits (normally passed through the constructor) are available through the _style_ attribute (e.g., `Button[style~='SWT.CHECK']`
 
 Note that while the support for SWT widgets is the primary focus of the current developers that are working on the CSS code, the core engine is **headless** and can be used to "style" other things such as for applying arbitrary properties to a model.
-
-For information on how CSS will be used to create a new visual style for the e4 workbench, see [E4/CSS/Visual Design](/E4/CSS/Visual_Design "E4/CSS/Visual Design")
 
 Sample
 ------
 
 The sample code below creates a simple Label within a Shell but the Label's foreground colour is styled to a blue colour by the CSS engine.
-
-Display display = new Display();
-Shell shell = new Shell();
-shell.setLayout(new GridLayout());
- 
-Label label = new Label(shell, SWT.LEAD);
-label.setText("Hello world!");
-label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
- 
-CSSEngine engine = new CSSSWTEngineImpl(display);
-engine.parseStyleSheet(new StringReader("Label { color: blue }"));
-engine.setErrorHandler(new CSSErrorHandler() {
-  public void error(Exception e) {
-    e.printStackTrace();
-  }
-});
-// applying styles to the child nodes means that the engine
-// should recurse downwards, in this example, the engine
-// should style the children of the Shell
-engine.applyStyles(shell, /\* applyStylesToChildNodes */ true);
- 
-shell.setSize(400, 300);
-shell.open();
- 
-while (!shell.isDisposed()) {
-  if (!display.readAndDispatch()) {
-    display.sleep();
-  }
-}
-display.dispose();
 
     Display display = new Display();
     Shell shell = new Shell();
@@ -203,16 +170,6 @@ Note: The following examples assume that you have first set the tab-renderer to 
 
   
 † As of yet styles are only applied when SWT UI is initially loaded, if widget state is changed afterwards, changes will not take effect
-
-
-
-
-Customize
----------
-
-*   [Add Selection](/E4/CSS/Add_Selector "E4/CSS/Add Selector")
-*   [Add Styleable Property](/E4/CSS/Add_Styleable_Property "E4/CSS/Add Styleable Property")
-
 
 
 
