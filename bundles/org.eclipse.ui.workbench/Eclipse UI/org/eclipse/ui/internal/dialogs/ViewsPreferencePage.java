@@ -76,6 +76,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.themes.IThemeDescriptor;
@@ -115,6 +116,8 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	@Override
 	protected Control createContents(Composite parent) {
 		initializeDialogUnits(parent);
+
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IWorkbenchHelpContextIds.VIEWS_PREFERENCE_PAGE);
 
 		Composite comp = new Composite(parent, SWT.NONE);
 
