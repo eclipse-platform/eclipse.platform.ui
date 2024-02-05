@@ -287,7 +287,7 @@ The setInfo() method will be triggered by a call to IEclipseContext#processWaiti
 
 The @EventTopic and @UIEventTopic annotations tag methods and fields that should be notified on event changes. 
 The @UIEventTopic ensures the event notification is performed in the UI thread. Both the event's DATA object and the actual OSGi Event object (org.osgi.service.event.Event) is available. 
-See the [Events](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Eclipse4_RCP_Event_Model.md) section for more details about events.
+See the [Events](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Event_Model.md) section for more details about events.
 
     @Inject
     public void setSelection(@EventTopic(REFRESH_EVENT) Object data) {
