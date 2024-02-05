@@ -1,27 +1,5 @@
 Eclipse4/RCP/Dependency Injection
 =================================
-
-With 10 years of experience with the Eclipse platform, a number of difficulties were observed.
-
-1.  Code frequently uses global singleton accessors (e.g., Platform, PlatformUI) or required navigating a deep chain of dependencies (e.g., obtaining an _IStatusLineManager_). Singleton services is particularly problematic for app servers like RAP/Riena.
-2.  The use of singletons tightly coupled consumers of "things" to their producer/provider, and inhibits reuse.
-3.  Mechanisms are not very dynamic — plugins react to context changes drastically rather than incrementally (just close the affected controls)
-4.  ~~IEvaluationContext has global state that gets swapped according to context change (such as the focus control)~~
-5.  ~~Current solutions are not multi-threadable - they assume evaluation occurs in the UI thread~~
-6.  Scaling granularity
-    *   Current solutions don't scale down to services with brief lifetimes
-    *   Current solutions may not scale up to very large numbers of services
-7.  Currently don't track service consumers to notify when services come/go
-8.  Client code needs to know the internals of the Eclipse code base
-9.  No support for services lookup that are composed out of other services on the fly
-
-These difficulties are seen in other frameworks and are not unique to the Eclipse application platform. 
-The Eclipse 4 Application Platform has adopted the use of [Dependency Injection (DI)](http://en.wikipedia.org/wiki/Dependency_injection) to circumvent these problems: rather than require client code to know how to access a service, the client instead describes the service required, and the platform is responsible for configuring the object with an appropriate service. 
-DI shields the client code from knowing the provenance of the injected objects.
-
-The Eclipse 4 Application Platform provides a [JSR 330](http://jcp.org/en/jsr/detail?id=330)-compatible, annotation-based dependency injection (DI) framework, similar to [Spring](http://springframework.org/) or [Guice](http://code.google.com/p/google-guice). 
-The injector is defined in several plugins: org.eclipse.e4.core.di, org.eclipse.e4.core.di.extensions, and org.eclipse.e4.ui.di.
-
   
 
 Contents
@@ -51,6 +29,7 @@ Contents
 *   [5 Debugging](#Debugging)
 *   [6 Considerations](#Considerations)
 *   [7 Current Caveats](#Current-Caveats)
+*   [8 Design Decisions](#Design-Decisions)
 *   [8 References](#References)
 
 Overview
@@ -399,8 +378,26 @@ This means that if the service is not available at time of initial injection, bu
 Nor are receivers notified should the service disappear. 
 This work is being tracked across several bugs: [bug 331235](https://bugs.eclipse.org/bugs/show_bug.cgi?id=331235), [bug 330865](https://bugs.eclipse.org/bugs/show_bug.cgi?id=330865), [bug 317706](https://bugs.eclipse.org/bugs/show_bug.cgi?id=317706).
 
-References
-==========
 
-Dhanji Prasanna's _Dependency Injection_ provides guidance on best practices on using DI in your application.
+Design Decisions
+================
 
+DI was introduced make development more modern and easier.
+In Eclipse 3.x after 10 years of experience with the Eclipse platform, a number of difficulties were observed.
+
+1.  Code frequently uses global singleton accessors (e.g., Platform, PlatformUI) or required navigating a deep chain of dependencies (e.g., obtaining an _IStatusLineManager_). 
+2.  The use of singletons tightly coupled consumers of "things" to their producer/provider, and inhibits reuse.
+3.  Mechanisms are not very dynamic — plugins react to context changes drastically rather than incrementally (just close the affected controls)
+4.  Scaling granularity
+    *   Current solutions don't scale down to services with brief lifetimes
+    *   Current solutions may not scale up to very large numbers of services
+5.  Currently don't track service consumers to notify when services come/go
+6.  Client code needs to know the internals of the Eclipse code base
+7.  No support for services lookup that are composed out of other services on the fly
+
+These difficulties are seen in other frameworks and are not unique to the Eclipse application platform. 
+The Eclipse 4 Application Platform has adopted the use of [Dependency Injection (DI)](http://en.wikipedia.org/wiki/Dependency_injection) to circumvent these problems: rather than require client code to know how to access a service, the client instead describes the service required, and the platform is responsible for configuring the object with an appropriate service. 
+DI shields the client code from knowing the provenance of the injected objects.
+
+The Eclipse 4 Application Platform provides a [JSR 330](http://jcp.org/en/jsr/detail?id=330)-compatible, annotation-based dependency injection (DI) framework, similar to [Spring](http://springframework.org/) or [Guice](http://code.google.com/p/google-guice). 
+The injector is defined in several plugins: org.eclipse.e4.core.di, org.eclipse.e4.core.di.extensions, and org.eclipse.e4.ui.di.
