@@ -74,9 +74,9 @@ Whenever possible you should use dependency injection to register and respond to
 
 A quick note on the visibility of the injected handler methods.
 
-A best practice would be to mark your handler methods as private. This makes it clear to users that the method should not be called directly. The dependency injection mechanism can inject into private fields and methods so this does not cause a problem.
-
-However, there are currently two outstanding Eclipse defects ([365455](https://bugs.eclipse.org/bugs/show_bug.cgi?id=365455) and [365437](https://bugs.eclipse.org/bugs/show_bug.cgi?id=365437)) that can pose problems when injecting into private methods. You can declare your handler methods as package private, as in the example, to avoid these problems. If you really want to declare your methods private, please take a look at [problems injecting into private methods](/Eclipse4/DI/Problems "Eclipse4/DI/Problems") to see what you should be aware of until the defects are fixed.
+A best practice would be to mark your handler methods as private. 
+This makes it clear to users that the method should not be called directly. 
+The dependency injection mechanism can inject into private fields and methods so this does not cause a problem.
 
 Subscribing Using IEventBroker
 ------------------------------
