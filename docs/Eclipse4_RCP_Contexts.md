@@ -260,9 +260,3 @@ ACTIVE_PART, on the other hand, looks for the active leaf as constrained by the 
 ACTIVE_SHELL is _(needs some work)_
 
 The moral: the implementation of _active X_ is not necessarily as straightforward as might appear.
-
-References
-----------
-
-The old E4 wiki pages provides background \[E4/Contexts|on the influences on IEclipseContext\].
-
