@@ -67,7 +67,28 @@ General Development
 
 ### How do I find a class from Eclipse?
 
-See [here](/FAQ_How_do_I_find_a_particular_class_from_an_Eclipse_plug-in%3F "FAQ How do I find a particular class from an Eclipse plug-in?").
+
+
+You  need to set up your workspace so that all Eclipse plug-ins are found by the Java search engine. This can be accomplished by loading all the Eclipse plug-ins into your workspace, but this quickly results in a cluttered workspace in which it is difficult to find your own projects. There are two easier approaches to adding Eclipse plug-ins to the Java search engine's index.
+
+**Option 1**
+
+In Eclipse 3.5 (Galileo) or later
+
+*   Open the Plug-in Development Preference Page by going to **Window > Preferences > Plug-in Development**.
+*   Check the box marked **Include all plug-ins from target in Java search**.
+
+**Option 2**
+
+*   Activate the 'Plug-ins' view by going to **Window > Show View > Other > PDE > Plug-ins**.
+*   Select all plug-ins in the view.
+*   From the context menu, select **Add to Java Search**.
+
+Once you have done this, switch back to the Java perspective and use **Navigate > Open Type** (or press Ctrl + Shift + T) and start typing the name of the class or interface you are looking for. You will now be able to quickly open an editor on any Java type in the Eclipse Platform. If you are searching for the plug-in that contains that class, you will find that information in the bottom of the 'Open Type' dialog. Please note that a class that's in package x.y.z is not guaranteed to be in plug-in x.y.z, it may be contributed by another plug-in.
+
+In case you are curious, this works by creating in your workspace a Java project called External Plug-in Libraries. This project will have all the Eclipse plug-ins you selected on its build path, which ensures that they will be consulted by the Java search engine when searching for and opening Java types. You can use a similar technique to add other Java libraries to the search index. Simply add the JARs you want to be able to search to the build path of any Java project in your workspace, and they will automatically be included in the search.
+
+
 
 ### I see these $NON-NLS-1$ tags all over the place when I'm browsing Eclipse's source code? What do they mean?
 
@@ -584,7 +605,46 @@ You should return true when you receive the proper notifications through [Abstra
 
 ### How do I close one/all of my editors upon workbench shutdown so that it won't appear upon workbench restart?
 
-See [here](/FAQ_Close_All_Editors_On_Shutdown "FAQ Close All Editors On Shutdown").
+The snippet below will close all Editors in the workbench when you close the eclipse application.
+
+    IWorkbench workbench = PlatformUI.getWorkbench();
+    final IWorkbenchPage activePage = workbench.getActiveWorkbenchWindow().getActivePage();
+     
+    workbench.addWorkbenchListener( new IWorkbenchListener()
+    {
+        public boolean preShutdown( IWorkbench workbench, boolean forced )
+        {                            
+            activePage.closeEditors( activePage.getEditorReferences(), true);
+            return true;
+        }
+     
+        public void postShutdown( IWorkbench workbench )
+        {
+     
+        }
+    });
+
+  
+The example below shows how to close an editor that is programmatically opened.
+
+    IWorkbench workbench = PlatformUI.getWorkbench();
+    final IWorkbenchPage activePage = workbench.getActiveWorkbenchWindow().getActivePage();
+     
+    final IEditorPart editorPart = IDE.openEditorOnFileStore( activePage, fileStore );
+     
+    workbench.addWorkbenchListener( new IWorkbenchListener() {
+        public boolean preShutdown( IWorkbench workbench, boolean forced )     {                            
+            activePage.closeEditor(editorPart, true);
+            return true;
+        }
+     
+        public void postShutdown( IWorkbench workbench )
+        {
+     
+        }
+    });
+
+
 
 ### How do I prevent a particular editor from being restored on the next workbench startup?
 
@@ -668,7 +728,56 @@ Now you can either run it directly in Eclipse...
 
     config.doSave();
 
-See also [FAQ How do I launch a Java program?](http://wiki.eclipse.org/FAQ_How_do_I_launch_a_Java_program%3F)
+
+
+JDT has support for launching Java programs. First, add the following plug-ins to your dependent list:
+
+
+*   org.eclipse.debug.core
+*   org.eclipse.jdt.core
+*   org.eclipse.jdt.launching
+
+With those plug-ins added to your dependent plug-in list, your Java program can be launched using the JDT in two ways. In the first approach, an IVMRunner uses the currently installed VM, sets up its classpath, and asks the VM runner to run the program: 
+
+       void launch(IJavaProject proj, String main) {
+          IVMInstall vm = JavaRuntime.getVMInstall(proj);
+          if (vm == null) vm = JavaRuntime.getDefaultVMInstall();
+          IVMRunner vmr = vm.getVMRunner(ILaunchManager.RUN_MODE);
+          String[] cp = JavaRuntime.
+             computeDefaultRuntimeClassPath(proj);
+          VMRunnerConfiguration config = 
+             new VMRunnerConfiguration(main, cp);
+          ILaunch launch = new Launch(null, 
+             ILaunchManager.RUN_MODE, null);
+          vmr.run(config, launch, null);
+       }
+    
+
+The second approach is to create a new launch configuration, save it, and run it. The cfg parameter to this method is the name of the launch configuration to use:
+
+
+       void launch(IJavaProject proj, String cfg, String main) {
+          DebugPlugin plugin = DebugPlugin.getDefault();
+          ILaunchManager lm = plugin.getLaunchManager();
+          ILaunchConfigurationType t = lm.getLaunchConfigurationType(
+            IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
+          ILaunchConfigurationWorkingCopy wc = t.newInstance(
+            null, cfg);
+          wc.setAttribute(
+            IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, 
+            proj.getElementName());
+          wc.setAttribute(
+            IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, 
+            main);
+          ILaunchConfiguration config = wc.doSave();   
+          config.launch(ILaunchManager.RUN_MODE, null);
+       }
+    
+
+
+
+More information is available at **Help > Help Contents > JDT Plug-in Developer Guide** \> JDT Debug > Running Java code**.**
+
 
 Release
 -------
