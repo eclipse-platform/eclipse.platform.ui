@@ -5,7 +5,7 @@ Eclipse Plug-in Development FAQ
 
 This page is a collection of FAQs that is intended to help a developer write Eclipse plug-ins.
 
-This FAQ is intended to be complimentary to the [Official Eclipse FAQ](/The_Official_Eclipse_FAQs "The Official Eclipse FAQs") and [RCP FAQ](/RCP_FAQ "RCP FAQ") wiki pages. If you cannot find your question here, you should try checking those other two pages.
+This FAQ is intended to be complimentary to the [RCP FAQ](/https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Rich_Client_Platform/Rich_Client_Platform_FAQ.md), the [Eclipse 4 RCP FAQ](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Eclipse4_RCP_FAQ.md) and the [FAQ](https://wiki.eclipse.org/The_Official_Eclipse_FAQs) pages. 
 
 Contents
 --------
@@ -81,7 +81,7 @@ They are meant to mark a string literal as not needing to be externalized (as in
 
 ### I need help debugging my plug-in...
 
-Are you getting errors like "Unhandled loop event exception" messages in your console with nothing useful after it? Make sure you have [-consoleLog](http://wiki.eclipse.org/Graphical_Eclipse_FAQs#I_get_an_unhandled_event_loop_exception_in_my_console._What_gives.3F) as a **Program Argument** in your launch configuration. You may also want to take a look at these [runtime tools](/Core_Tools "Core Tools").
+Are you getting errors like "Unhandled loop event exception" messages in your console with nothing useful after it? Make sure you have [-consoleLog](http://wiki.eclipse.org/Graphical_Eclipse_FAQs#I_get_an_unhandled_event_loop_exception_in_my_console._What_gives.3F) as a **Program Argument** in your launch configuration. 
 
 ### I'm using third party jar files and my plug-in is not working
 
@@ -157,7 +157,8 @@ The articles below may be of your interest.
 
 ### How do I read from a file that I've included in my bundle/plug-in?
 
-The [FileLocator](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/FileLocator.html) class should be able to do most of the things that you want. It can open up a java.io.InputStream as well as provide a java.io.File. You should keep in mind that the java.io.File approach is not going to work if your bundle is packaged as a jar file. To get a reference to your bundle's [Bundle](http://www.osgi.org/javadoc/r4/org/osgi/framework/Bundle.html) instance, you can use [Platform](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/Platform.html)'s [getBundle(String)](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/Platform.html#getBundle(java.lang.String)) method. Alternatively, if your bundle's activator subclasses [Plugin](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/Plugin.html) or [AbstractUIPlugin](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/plugin/AbstractUIPlugin.html), then you can just call [getBundle()](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/Plugin.html#getBundle()) from it directly. If your activator simply implements the [BundleActivator](http://www.osgi.org/javadoc/r4v41/org/osgi/framework/BundleActivator.html) interface, then from your implementation of the [start(BundleContext)](http://www.osgi.org/javadoc/r4v41/org/osgi/framework/BundleActivator.html#start(org.osgi.framework.BundleContext)) method, you can just call [getBundle()](http://www.osgi.org/javadoc/r4v41/org/osgi/framework/BundleContext.html#getBundle()) on the passed in [BundleContext](http://www.osgi.org/javadoc/r4v41/org/osgi/framework/BundleContext.html) to store the Bundle instance in a field for retrieval later. You can also query for Bundle instances from the [PackageAdmin](http://www.osgi.org/javadoc/r4v41/org/osgi/service/packageadmin/PackageAdmin.html) service.
+The [FileLocator](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/FileLocator.html) class should be able to do most of the things that you want. It can open up a java.io.InputStream as well as provide a java.io.File. 
+You should keep in mind that the java.io.File approach is not going to work if your bundle is packaged as a jar file. To get a reference to your bundle's [Bundle](http://www.osgi.org/javadoc/r4/org/osgi/framework/Bundle.html) instance, you can use [Platform](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/Platform.html)'s [getBundle(String)](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/Platform.html#getBundle(java.lang.String)) method. Alternatively, if your bundle's activator subclasses [Plugin](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/Plugin.html) or [AbstractUIPlugin](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/plugin/AbstractUIPlugin.html), then you can just call [getBundle()](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/Plugin.html#getBundle()) from it directly. If your activator simply implements the [BundleActivator](http://www.osgi.org/javadoc/r4v41/org/osgi/framework/BundleActivator.html) interface, then from your implementation of the [start(BundleContext)](http://www.osgi.org/javadoc/r4v41/org/osgi/framework/BundleActivator.html#start(org.osgi.framework.BundleContext)) method, you can just call [getBundle()](http://www.osgi.org/javadoc/r4v41/org/osgi/framework/BundleContext.html#getBundle()) on the passed in [BundleContext](http://www.osgi.org/javadoc/r4v41/org/osgi/framework/BundleContext.html) to store the Bundle instance in a field for retrieval later. You can also query for Bundle instances from the [PackageAdmin](http://www.osgi.org/javadoc/r4v41/org/osgi/service/packageadmin/PackageAdmin.html) service.
 
     // your BundleActivator implementation will probably look something
     // like the following
@@ -210,8 +211,6 @@ Edit your MANIFEST.MF manually by adding the following lines
      /libs/yourlib.dll; 
      /libs/someotherlib.dll; 
      osname=win32; processor=x86
-
-(Also see [here](http://litrik.blogspot.com/2007/08/secrets-of-bundle-nativecode.html))
 
 Afterwards, explicitly load all libraries manually using System.loadLibrary().
 
@@ -406,7 +405,8 @@ Add an extension to the extension point [org.eclipse.ui.navigator.navigatorConte
 
 Often when catching exceptions, it's puzzling as to what one is suppose to do with them.
 
-The following code solves this dilemma. It is reccomended to put this into your activator.
+The following code solves this dilemma. 
+It is recomended to put this into your activator.
 
 It produces a message box as such:
 
