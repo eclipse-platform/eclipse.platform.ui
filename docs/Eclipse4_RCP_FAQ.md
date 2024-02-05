@@ -14,12 +14,7 @@ Contents
         *   [1.2.2 Associating help context with a control](#Associating-help-context-with-a-control)
         *   [1.2.3 Handling errors and exceptions](#Handling-errors-and-exceptions)
         *   [1.2.4 Accessing preference values](#Accessing-preference-values)
-        *   [1.2.5 How to use Sleak in e4AP](#How-to-use-Sleak-in-e4AP)
-            *   [1.2.5.1 Setup of the Java Build Path Libraries](#Setup-of-the-Java-Build-Path-Libraries)
-            *   [1.2.5.2 Setup for testing just a Java Class in the Eclipse IDE](#Setup-for-testing-just-a-Java-Class-in-the-Eclipse-IDE)
-            *   [1.2.5.3 Setup of the e4AP IDE](#Setup-of-the-e4AP-IDE)
-            *   [1.2.5.4 Setup for a e4AP RCP](#Setup-for-a-e4AP-RCP)
-            *   [1.2.5.5 Open the "Sleak" view](#open-the-sleak-view)
+        *   [1.2.5 How to I find ressource leaks in plug-ins](#How-to-find-resource-leaks)
 *   [2 The E4 Model](#The-E4-Model)
     *   [2.1 What is an _xmi:id_? How is it different from the _elementId_?](#what-is-an-xmiid-how-is-it-different-from-the-elementid)
     *   [2.2 How do I reference an object defined in another .e4xmi?](#how-do-i-reference-an-object-defined-in-another-e4xmi)
@@ -106,90 +101,15 @@ The following snippets show how to access various services from pure E4 componen
 | <pre>IPreferenceStore store =<br>   IDEWorkbenchPlugin.getDefault()<br>      .getPreferenceStore();<br>store.putBoolean(SAVE_BEFORE_BUILD, false);</pre>|  <pre>@Inject @Preference<br>IEclipsePreferences prefs;<br>...<br>prefs.setBoolean(SAVE\_BEFORE\_BUILD, false);</pre> |
 
 
-#### How to use Sleak in e4AP
+#### How to find resource leaks
 
-In e3 the following code snippet needed to be included in the code to be tested.
+SWT provides a way to trace resource leaks and report them.
+For example, if you create an image you you do not dispose it, this is a resource leak, as the native handler for this resource is not released.
+If you see the no more handlers exception, you should check for resource leaks.
 
-       DeviceData data = new DeviceData();
-       data.tracking = true;
-       display = new Display(data);
-       display = new Display();
-       Sleak sleak = new Sleak();
-       sleak.open();
-    
-That is no longer the case in e4AP. In e4AP Sleak is a eclipse view under the "SWT Tools" category.
+To active the SWT tracing for resource leaks, add the following as VM parameter to your application.
 
-##### Setup of the Java Build Path Libraries
-
-1.  Add the "org.eclipse.swt.tools_x.xxx.x.v.jar"
-2.  If running MS Windows operating system also add the following
-    1.  org.eclipse.swt.win32.win32.x86\_64\_3.104.0.v20150528-0211.jar
-    2.  _If not running MS Windows operating system I don't know what, if any, additional jar is needed. I don't have a Apple workstation or a Linux workstation to test. (maybe some kind soul will see this and update as needed.)_
-
-##### Setup for testing just a Java Class in the Eclipse IDE
-
-**Setup at the Operating System Command line.**
-
-1.  Add "-debug" to the command line.
-
-**Before**
-
-        eclipse.exe -data "C:\EWS\sandbox00"
-
-**After**
-
-        eclipse.exe -debug -data "C:\EWS\sandbox00"
-
-1.  The addition of "-debug" will now cause a second command line window to appeared.
-
-**Before**  
-Only this one window appeared.
-
-![Eclipse.exe command window.jpg](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Eclipse.exe_command_window.jpg)
-
-**After**  
-Now these two windows will appeared.
-
-![Eclipse.exe command window.jpg](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Eclipse.exe_command_window.jpg)
-
-![Debug output window.jpg](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Debug_output_window.jpg)
-
-##### Setup of the e4AP IDE
-
-*   Add a file named ".options" to the current working directory when eclipse.exe is invoked.
-*   Using the -Dosgi.debug {location of the .options file} method did not work for me.
-*   At this time the help is wrong in saying to put the ".options" file "under the install directory". An error will occur saying the ".options" file could not be found. Populate ".options" with the following two lines.
-
-`org.eclipse.ui/debug=true`  
-`org.eclipse.ui/trace/graphics=true`
-
-*   Read the debug log and make sure the ".options" file was found. If the ".options" was found a "loaded" message is in the debug log. The below screen capture shows a debug log with the "loaded" message that the ".options" file could was found.
-
-![Debug options file found.jpg](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Debug_options_file_found.jpg)
-
-*   If the ".options" was not found a "not found" error is in the debug log. The below screen capture shows a debug log with the "not found" error that the ".options" file could not be found.
-
-![Debug options file not found.jpg](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Debug_options_file_not_found.jpg)
-
-##### Setup for a e4AP RCP
-
-**Setup of the Launch Configuration**
-
-1.  Navigate to the "Tracing" tab of the "Run Configurations" panel. (Run -> Run Configurations.)
-2.  Check the "Enable tracing" check box.
-3.  Find "org.eclipse.ui(x.xxx.x.vxxxxxxxx-xxxx)" in the list on the left hand side of the split panel and check the check box on the same line.
-4.  Find the "debug" in the list on the right hand side of the split panel and check the check box on the same line.
-5.  Find the "trace/graphics" in the list on the right hand side of the split panel and check the check box on the same line.
-
-![RunConfiguration.jpg](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/RunConfiguration.jpg)
-
-1.  Press the "Apply" button.
-2.  Press the "Run" button.
-
-##### Open the "Sleak" view
-
-1.  Window -> Show View -> Other -> SWT Tools -> Sleak
-2.  Use Sleak as normal.
+-Dorg.eclipse.swt.graphics.Resource.reportNonDisposed=true
 
 The E4 Model
 ------------
