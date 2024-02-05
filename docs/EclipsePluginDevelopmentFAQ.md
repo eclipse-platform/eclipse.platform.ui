@@ -5,7 +5,7 @@ Eclipse Plug-in Development FAQ
 
 This page is a collection of FAQs that is intended to help a developer write Eclipse plug-ins.
 
-This FAQ is intended to be complimentary to the [RCP FAQ](/https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Rich_Client_Platform/Rich_Client_Platform_FAQ.md), the [Eclipse 4 RCP FAQ](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Eclipse4_RCP_FAQ.md) and the [FAQ](https://wiki.eclipse.org/The_Official_Eclipse_FAQs) pages. 
+This FAQ is intended to be complimentary to the [RCP FAQ](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Rich_Client_Platform/Rich_Client_Platform_FAQ.md), the [Eclipse 4 RCP FAQ](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Eclipse4_RCP_FAQ.md) and the [FAQ](https://wiki.eclipse.org/The_Official_Eclipse_FAQs) pages. 
 
 Contents
 --------
