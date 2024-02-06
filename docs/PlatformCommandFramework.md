@@ -19,7 +19,7 @@ Contents
 Eclipse Commands Tutorial
 =========================
 
-[https://www.vogella.com/tutorials/EclipseCommands/article.html](https://www.vogella.com/tutorials/EclipseCommands/article.html) Tutorial about using Eclipse Commands by Lars Vogel
+[Tutorial about using Eclipse Commands](https://www.vogella.com/tutorials/EclipseCommands/article.html) 
 
 Other Resources
 ===============
