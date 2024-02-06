@@ -426,7 +426,7 @@ Validation in the context of bindings can only look at one value at a time. For 
 
 # Realm
 
-Realm (["Kingdom"](http://en.wikipedia.org/wiki/Realm)) is the core concept of JFace Data Binding in regards to synchronization. A realm can be thought of as a special thread, or a lock, that serializes access to a set of [observables](#Observable) in that realm. Each observable belongs to a Realm. It can only be accessed from that realm, and it will always fire change events on that realm. One important example of a realm is the SWT UI thread. Like for the SWT UI thread, you can execute code within a realm by using Realm.asyncExec(); in fact, the SWT realm implementation just delegates to Display.asyncExec(). This means that while the data binding framework can be used in a multi-threaded environment, each observable is essentially single-threaded. Java bean observables implement this contract on the observable side, but don't require it on the Java beans side: Even if a bean fires a PropertyChangeEvent on a different thread, the change events originating from the observable will happen within its realm. To bridge between observables in different realms, use a data binding context - you can bind two observables even if they belong to different realms and the bindings take care of this for you by using Realm.asyncExec() where necessary.
+Realm (["Kingdom"](https://en.wikipedia.org/wiki/Realm) is the core concept of JFace Data Binding in regards to synchronization. A realm can be thought of as a special thread, or a lock, that serializes access to a set of [observables](#Observable) in that realm. Each observable belongs to a Realm. It can only be accessed from that realm, and it will always fire change events on that realm. One important example of a realm is the SWT UI thread. Like for the SWT UI thread, you can execute code within a realm by using Realm.asyncExec(); in fact, the SWT realm implementation just delegates to Display.asyncExec(). This means that while the data binding framework can be used in a multi-threaded environment, each observable is essentially single-threaded. Java bean observables implement this contract on the observable side, but don't require it on the Java beans side: Even if a bean fires a PropertyChangeEvent on a different thread, the change events originating from the observable will happen within its realm. To bridge between observables in different realms, use a data binding context - you can bind two observables even if they belong to different realms and the bindings take care of this for you by using Realm.asyncExec() where necessary.
 
 Unit Testing
 ------------
@@ -513,15 +513,6 @@ Note that without having to register any listeners from client code, the 'format
 
 The data binding framework has internal classes that work similar to ComputedValue and ComputedList, but instead of producing a value or a list, they update widgets. For example, look for ControlUpdater, TableUpdater. These classes are not API yet because we haven't received enough feedback from early adopters yet. If you would like to see this as API, please push for it by filing enhancement requests in bugzilla.
 
-### Related Work
-
-This idea is not new. It has been around for (at least) 10 years. Here are some pointers to related work.
-
-*   [Designing object-oriented synchronous groupware with COAST (1996)](http://citeseer.ist.psu.edu/195548.html), see section 5.1 on 'virtual slots'.
-*   [Cells - A dataflow extension to CLOS (2001?)](http://www.tilton-technology.com/cells_top.html)
-*   [PyCells, a Python port of Cells (2006)](http://pycells.pdxcb.net/)
-*   [JavaFX Script (2007)](http://www.sun.com/software/javafx/script/) \- not quite the same but very close, look for 'incremental evaluation'.
-*   _Please add more links if you know of other related work._
 
 # Master Detail
 

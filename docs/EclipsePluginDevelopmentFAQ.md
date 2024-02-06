@@ -169,7 +169,7 @@ It talks about how adding a 3rd party jar removes the default "." classpath, and
 
 Also, Eclipse can handle jars within jars. It expands them into a temporary location during runtime.
 
-### What is the [IAdaptable](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/IAdaptable.html) interface?
+### What is the [IAdaptable](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/IAdaptable.html) interface?
 
 The articles below may be of your interest.
 
@@ -177,8 +177,8 @@ The articles below may be of your interest.
 
 ### How do I read from a file that I've included in my bundle/plug-in?
 
-The [FileLocator](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/FileLocator.html) class should be able to do most of the things that you want. It can open up a java.io.InputStream as well as provide a java.io.File. 
-You should keep in mind that the java.io.File approach is not going to work if your bundle is packaged as a jar file. To get a reference to your bundle's [Bundle](http://www.osgi.org/javadoc/r4/org/osgi/framework/Bundle.html) instance, you can use [Platform](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/Platform.html)'s [getBundle(String)](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/Platform.html#getBundle(java.lang.String)) method. Alternatively, if your bundle's activator subclasses [Plugin](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/Plugin.html) or [AbstractUIPlugin](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/plugin/AbstractUIPlugin.html), then you can just call [getBundle()](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/Plugin.html#getBundle()) from it directly. If your activator simply implements the [BundleActivator](http://www.osgi.org/javadoc/r4v41/org/osgi/framework/BundleActivator.html) interface, then from your implementation of the [start(BundleContext)](http://www.osgi.org/javadoc/r4v41/org/osgi/framework/BundleActivator.html#start(org.osgi.framework.BundleContext)) method, you can just call [getBundle()](http://www.osgi.org/javadoc/r4v41/org/osgi/framework/BundleContext.html#getBundle()) on the passed in [BundleContext](http://www.osgi.org/javadoc/r4v41/org/osgi/framework/BundleContext.html) to store the Bundle instance in a field for retrieval later. You can also query for Bundle instances from the [PackageAdmin](http://www.osgi.org/javadoc/r4v41/org/osgi/service/packageadmin/PackageAdmin.html) service.
+The [FileLocator](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/FileLocator.html) class should be able to do most of the things that you want. It can open up a java.io.InputStream as well as provide a java.io.File. 
+You should keep in mind that the java.io.File approach is not going to work if your bundle is packaged as a jar file. To get a reference to your bundle's [Bundle](https://docs.osgi.org/javadoc/r4v43/core/org/osgi/framework/Bundle.html) instance, you can use [Platform](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/Platform.html)'s [getBundle(String)](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/Platform.html#getBundle(java.lang.String)) method. Alternatively, if your bundle's activator subclasses [Plugin](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/Plugin.html) or [AbstractUIPlugin](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/plugin/AbstractUIPlugin.html), then you can just call [getBundle()](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/Plugin.html#getBundle()) from it directly. If your activator simply implements the [BundleActivator](http://www.osgi.org/javadoc/r4v41/org/osgi/framework/BundleActivator.html) interface, then from your implementation of the [start(BundleContext)](http://www.osgi.org/javadoc/r4v41/org/osgi/framework/BundleActivator.html#start(org.osgi.framework.BundleContext)) method, you can just call [getBundle()](http://www.osgi.org/javadoc/r4v41/org/osgi/framework/BundleContext.html#getBundle()) on the passed in [BundleContext](http://www.osgi.org/javadoc/r4v41/org/osgi/framework/BundleContext.html) to store the Bundle instance in a field for retrieval later. You can also query for Bundle instances from the [PackageAdmin](http://www.osgi.org/javadoc/r4v41/org/osgi/service/packageadmin/PackageAdmin.html) service.
 
     // your BundleActivator implementation will probably look something
     // like the following
@@ -282,19 +282,19 @@ User Interface
 
 ### There's a view / editor that I want to model. How do I find out what its source looks like and how it was designed?
 
-Views and editors generally extend [ViewPart](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/part/ViewPart.html) and [EditorPart](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/part/EditorPart.html) respectively. Placing a breakpoint in its constructor when you show the view or editor or invoking the "Plug-in Spy" with the Alt+Shift+F1 keybinding will tell you what the name of that class is. From there, you can inspect the class's code to see how it works. In the case of the user interface elements, you should look at its implementation of the [createPartControl(Composite)](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/part/WorkbenchPart.html#createPartControl(org.eclipse.swt.widgets.Composite)) method.
+Views and editors generally extend [ViewPart](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/part/ViewPart.html) and [EditorPart](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/part/EditorPart.html) respectively. Placing a breakpoint in its constructor when you show the view or editor or invoking the "Plug-in Spy" with the Alt+Shift+F1 keybinding will tell you what the name of that class is. From there, you can inspect the class's code to see how it works. In the case of the user interface elements, you should look at its implementation of the [createPartControl(Composite)](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/part/WorkbenchPart.html#createPartControl(org.eclipse.swt.widgets.Composite)) method.
 
 If you cannot get "Plug-in Spy" to run, you may not have [PDE](/PDE "PDE") installed.
 
 ### There's a preference / property page that I want to model. How do I find out what its source looks like and how it was designed?
 
-Put a breakpoint in the constructors of the [PreferencePage](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/jface/preference/PreferencePage.html) / [PropertyPage](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/dialogs/PropertyPage.html) class. Open the preferences / properties dialog, and then select the page you are interested about. Now you can identify which class is constructing that page based on the stack trace.
+Put a breakpoint in the constructors of the [PreferencePage](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/jface/preference/PreferencePage.html) / [PropertyPage](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/dialogs/PropertyPage.html) class. Open the preferences / properties dialog, and then select the page you are interested about. Now you can identify which class is constructing that page based on the stack trace.
 
 You can also invoke the "Plug-in Spy" with the Alt+Shift+F1 keybinding to retrieve information about the page that your mouse is currently hovering over. If you cannot get "Plug-in Spy" to run, you may not have [PDE](/PDE "PDE") installed.
 
 ### There's a window / dialog / popup that I want to model. How do I find out what its source looks like and how it was designed?
 
-There are two usual suspects, an SWT [Shell](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/swt/widgets/Shell.html) or a JFace [Window](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/jface/window/Window.html). Generally, most developers subclass's JFace's [Dialog](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/jface/dialogs/Dialog.html) class (which is a subclass of Window) for their dialog needs. So you should first try and put a breakpoint in Window's [open()](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/jface/window/Window.html#open()) method and see if the window you're trying to model stops at that breakpoint when it has been opened (shown). If not, try Shell's [open()](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/swt/widgets/Shell.html#open()) or [setVisible(boolean)](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/swt/widgets/Shell.html#setVisible(boolean)) methods.
+There are two usual suspects, an SWT [Shell](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/swt/widgets/Shell.html) or a JFace [Window](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/jface/window/Window.html). Generally, most developers subclass's JFace's [Dialog](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/jface/dialogs/Dialog.html) class (which is a subclass of Window) for their dialog needs. So you should first try and put a breakpoint in Window's [open()](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/jface/window/Window.html#open()) method and see if the window you're trying to model stops at that breakpoint when it has been opened (shown). If not, try Shell's [open()](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/swt/widgets/Shell.html#open()) or [setVisible(boolean)](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/swt/widgets/Shell.html#setVisible(boolean)) methods.
 
 You can also invoke the "Plug-in Spy" with the Alt+Shift+F1 keybinding to retrieve information about the window that your mouse is currently hovering over. If you cannot get "Plug-in Spy" to run, you may not have [PDE](/PDE "PDE") installed.
 
@@ -302,13 +302,13 @@ Wayne's [blog post](http://dev.eclipse.org/blogs/wayne/2008/06/18/does-anybody-k
 
 ### There's a wizard page that I want to model. How do I find out what its source looks like and how it was designed?
 
-Wizard pages usually extend the [WizardPage](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/jface/wizard/WizardPage.html) class. Putting a breakpoint in its constructor will help you identify the class that is creating that page.
+Wizard pages usually extend the [WizardPage](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/jface/wizard/WizardPage.html) class. Putting a breakpoint in its constructor will help you identify the class that is creating that page.
 
 You can also invoke the "Plug-in Spy" with the Alt+Shift+F1 keybinding to retrieve information about the wizard that your mouse is currently hovering over. If you cannot get "Plug-in Spy" to run, you may not have [PDE](/PDE "PDE") installed.
 
 ### How can I leverage the 'Outline' view?
 
-In your [IWorkbenchPart](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/IWorkbenchPart.html)'s implementation, you should override the [getAdapter(Class)](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/IAdaptable.html#getAdapter(java.lang.Class)) method and return your own implementation of [IContentOutlinePage](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/views/contentoutline/IContentOutlinePage.html) or you can choose to subclass [ContentOutlinePage](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/views/contentoutline/ContentOutlinePage.html).
+In your [IWorkbenchPart](https://help.eclipse.org/latest/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/IWorkbenchPart.html) implementation, you should override the [getAdapter(Class)](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/IAdaptable.html#getAdapter(java.lang.Class)) method and return your own implementation of [IContentOutlinePage](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/views/contentoutline/IContentOutlinePage.html) or you can choose to subclass [ContentOutlinePage](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/views/contentoutline/ContentOutlinePage.html).
 
     public Object getAdapter(Class adapter) {
         if (adapter.equals(IContentOutlinePage.class)) {
@@ -320,7 +320,7 @@ In your [IWorkbenchPart](http://help.eclipse.org/stable/nftopic/org.eclipse.plat
 
 ### How can I show the perspective bar in my RCP application?
 
-In your concrete subclass of [WorkbenchWindowAdvsior](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/application/WorkbenchWindowAdvisor.html), you should override its [preWindowOpen()](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/application/WorkbenchWindowAdvisor.html#preWindowOpen()) method and then call [setShowPerspectiveBar(boolean)](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/application/IWorkbenchWindowConfigurer.html#setShowPerspectiveBar(boolean)) on your [IWorkbenchWindowConfigurer](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/application/IWorkbenchWindowConfigurer.html) (which you retrieve by invoking [getWindowConfigurer()](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/application/WorkbenchWindowAdvisor.html#getWindowConfigurer())).
+In your concrete subclass of [WorkbenchWindowAdvsior](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/application/WorkbenchWindowAdvisor.html), you should override its [preWindowOpen()](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/application/WorkbenchWindowAdvisor.html#preWindowOpen()) method and then call [setShowPerspectiveBar(boolean)](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/application/IWorkbenchWindowConfigurer.html#setShowPerspectiveBar(boolean)) on your [IWorkbenchWindowConfigurer](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/application/IWorkbenchWindowConfigurer.html) (which you retrieve by invoking [getWindowConfigurer()](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/application/WorkbenchWindowAdvisor.html#getWindowConfigurer())).
 
 ### How do I get the perspective bar to show on the top right corner?
 
@@ -332,7 +332,7 @@ PlatformUI.getPreferenceStore().setValue(IWorkbenchPreferenceConstants.DOCK\_PER
 
 ### How do I warn the user that a workbench part that is not currently visible has changed?
 
-From your [WorkbenchPart](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/part/WorkbenchPart.html) subclass, you can use the code below. Please note that the code below currently only works on views. For notification support in editors, please see [bug 86221](https://bugs.eclipse.org/bugs/show_bug.cgi?id=86221).
+From your [WorkbenchPart](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/part/WorkbenchPart.html) subclass, you can use the code below. Please note that the code below currently only works on views. For notification support in editors, please see [bug 86221](https://bugs.eclipse.org/bugs/show_bug.cgi?id=86221).
 
     IWorkbenchSiteProgressService service = (IWorkbenchSiteProgressService) part.getSite().getService(IWorkbenchSiteProgressService.class);
     // notify the user by turning the workbench part's title bold
@@ -340,7 +340,7 @@ From your [WorkbenchPart](http://help.eclipse.org/stable/nftopic/org.eclipse.pla
 
 ### How can I make use of the workbench's browser capabilities?
 
-To leverage the workbench's browser capabilities, you will have to interact with the [IWorkbenchBrowserSupport](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/browser/IWorkbenchBrowserSupport.html) class. The code below will show you how to retrieve an implementation of this interface and open a website with the external browser:
+To leverage the workbench's browser capabilities, you will have to interact with the [IWorkbenchBrowserSupport](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/browser/IWorkbenchBrowserSupport.html) class. The code below will show you how to retrieve an implementation of this interface and open a website with the external browser:
 
     try {
         IWorkbenchBrowserSupport browserSupport = PlatformUI.getWorkbench().getBrowserSupport();
@@ -411,7 +411,7 @@ You can retrieve the selection from the ISelectionService or get it directly fro
 
 ### How do I get progress feedback in the status bar in my RCP application?
 
-Try adding the following piece of code in your [WorkbenchWindowAdvisor](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/application/WorkbenchWindowAdvisor.html)'s [preWindow()](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/application/WorkbenchWindowAdvisor.html#preWindowOpen%28%29) implementation:
+Try adding the following piece of code in your [WorkbenchWindowAdvisor](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/application/WorkbenchWindowAdvisor.html)'s [preWindow()](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/application/WorkbenchWindowAdvisor.html#preWindowOpen%28%29) implementation:
 
     public void preWindowOpen() {
         getWindowConfigurer().setShowProgressIndicator(true);
@@ -419,7 +419,7 @@ Try adding the following piece of code in your [WorkbenchWindowAdvisor](http://h
 
 ### How do I make a New / Import / Export Wizard appear in the context menu of the Project Explorer?
 
-Add an extension to the extension point [org.eclipse.ui.navigator.navigatorContent](http://help.eclipse.org/helios/index.jsp?topic=/org.eclipse.platform.doc.isv/reference/extension-points/org_eclipse_ui_navigator_navigatorContent.html) with a commonWizard element that points to the ID of your wizard.
+Add an extension to the extension point [org.eclipse.ui.navigator.navigatorContent](https://help.eclipse.org/helios/index.jsp?topic=/org.eclipse.platform.doc.isv/reference/extension-points/org_eclipse_ui_navigator_navigatorContent.html) with a commonWizard element that points to the ID of your wizard.
 
 ### How do I show a message dialogue for exceptions and log them?
 
@@ -524,21 +524,21 @@ Editors
 
 ### How do I add those rectangles in my source editor like what JDT does for parameter names during code completion?
 
-To achieve this, you will need to use a [LinkedModeModel](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/jface/text/link/LinkedModeModel.html) and a [LinkedModeUI](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/jface/text/link/LinkedModeUI.html). Open the 'Call Hierarchy' on either of the two constructors to find out how to use those two classes.
+To achieve this, you will need to use a [LinkedModeModel](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/jface/text/link/LinkedModeModel.html) and a [LinkedModeUI](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/jface/text/link/LinkedModeUI.html). Open the 'Call Hierarchy' on either of the two constructors to find out how to use those two classes.
 
 ### How do I implement a 'Quick Outline' for my editor?
 
 JDT's implementing class is named 'org.eclipse.jdt.internal.ui.text.JavaOutlineInformationControl', you should take a look at that.
 
-### How do I get an editor's [StyledText](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/swt/custom/StyledText.html) widget?
+### How do I get an editor's [StyledText](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/swt/custom/StyledText.html) widget?
 
-Since you cannot access the editor's [ITextViewer](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/jface/text/ITextViewer.html), you will have to try using the code below.
+Since you cannot access the editor's [ITextViewer](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/jface/text/ITextViewer.html), you will have to try using the code below.
 
     StyledText text = (StyledText) editor.getAdapter(Control.class);
 
-### How can I get the [IDocument](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/jface/text/IDocument.html) from an editor?
+### How can I get the [IDocument](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/jface/text/IDocument.html) from an editor?
 
-Assuming the editor adapts to the [ITextEditor](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/texteditor/ITextEditor.html) interface, you can try the code below.
+Assuming the editor adapts to the [ITextEditor](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/texteditor/ITextEditor.html) interface, you can try the code below.
 
     ITextEditor editor = (ITextEditor) editorPart.getAdapter(ITextEditor.class):
     if (editor != null) {
@@ -548,7 +548,7 @@ Assuming the editor adapts to the [ITextEditor](http://help.eclipse.org/stable/n
 
 This code should work on most text editors.
 
-### How do I get an [IFile](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/resources/IFile.html) given an [IEditorPart](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/IEditorPart.html) or [IEditorInput](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/IEditorInput.html)?
+### How do I get an [IFile](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/resources/IFile.html) given an [IEditorPart](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/IEditorPart.html) or [IEditorInput](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/IEditorInput.html)?
 
 The code below will demonstrate how to do this.
 
@@ -557,9 +557,9 @@ The code below will demonstrate how to do this.
         // do stuff
     }
 
-Note that [IFile](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/resources/IFile.html)s are meant to represent files within the workspace and will not work if the file that has been opened is not contained within the workspace. Instead, a [FileStoreEditorInput](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/ide/FileStoreEditorInput.html) is usually passed into the editor when the editor is opening a file outside the workspace.
+Note that [IFile](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/resources/IFile.html)s are meant to represent files within the workspace and will not work if the file that has been opened is not contained within the workspace. Instead, a [FileStoreEditorInput](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/ide/FileStoreEditorInput.html) is usually passed into the editor when the editor is opening a file outside the workspace.
 
-### How do I hide the tabs of a [MultiPageEditorPart](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/part/MultiPageEditorPart.html) if it only has one page?
+### How do I hide the tabs of a [MultiPageEditorPart](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/part/MultiPageEditorPart.html) if it only has one page?
 
 Adding the code below into your MultiPageEditorPart's subclass should do the trick.
 
@@ -575,13 +575,13 @@ Adding the code below into your MultiPageEditorPart's subclass should do the tri
 
 ### How do I change the editor that is being opened when a marker has been opened?
 
-You can associate the string ID of your editor onto your marker with [IMarker](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/resources/IMarker.html)'s [setAttribute(String, Object)](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/resources/IMarker.html#setAttribute(java.lang.String,%20java.lang.Object)) method by using the [EDITOR\_ID\_ATTR](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/ide/IDE.html#EDITOR_ID_ATTR) string constant defined in the [IDE](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/ide/IDE.html) class as the attribute name.
+You can associate the string ID of your editor onto your marker with [IMarker](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/resources/IMarker.html)'s [setAttribute(String, Object)](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/resources/IMarker.html#setAttribute(java.lang.String,%20java.lang.Object)) method by using the [EDITOR\_ID\_ATTR](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/ide/IDE.html#EDITOR_ID_ATTR) string constant defined in the [IDE](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/ide/IDE.html) class as the attribute name.
 
     marker.setAttribute(IDE.EDITOR_ID_ATTR, "com.example.xyz.editorID");
 
 ### How can I make my editor respond to a user opening a marker?
 
-When a marker has been opened, the Eclipse Platform tries to help the user out via the [IGotoMarker](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/ide/IGotoMarker.html) interface. Your editor should either implement the interface or respond to this class by returning an implementation via the [getAdapter(Class)](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/IAdaptable.html#getAdapter(java.lang.Class)) method.
+When a marker has been opened, the Eclipse Platform tries to help the user out via the [IGotoMarker](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/ide/IGotoMarker.html) interface. Your editor should either implement the interface or respond to this class by returning an implementation via the [getAdapter(Class)](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/IAdaptable.html#getAdapter(java.lang.Class)) method.
 
     public Object getAdapter(Class adapter) {
         if (adapter.equals(IGotoMarker.class)) {
@@ -590,17 +590,17 @@ When a marker has been opened, the Eclipse Platform tries to help the user out v
         return super.getAdapter(adapter);
     }
 
-IGotoMarker's [gotoMarker(IMarker)](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/ide/IGotoMarker.html#gotoMarker(org.eclipse.core.resources.IMarker)) method will be called accordingly on the corresponding interface implementation and it is in that method implementation that you can react to a user opening a marker.
+IGotoMarker's [gotoMarker(IMarker)](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/ide/IGotoMarker.html#gotoMarker(org.eclipse.core.resources.IMarker)) method will be called accordingly on the corresponding interface implementation and it is in that method implementation that you can react to a user opening a marker.
 
 ### Why does the workbench keep opening a new editor every time I open a marker?
 
-Are you using a custom [IEditorInput](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/IEditorInput.html) implementation for your editor? You should override Object's equals(Object) method to return true if your custom implementation is equal to another IEditorInput.
+Are you using a custom [IEditorInput](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/IEditorInput.html) implementation for your editor? You should override Object's equals(Object) method to return true if your custom implementation is equal to another IEditorInput.
 
 _Clients implementing this editor input interface should override Object.equals(Object) to answer true for two inputs that are the same. The IWorbenchPage.openEditor APIs are dependent on this to find an editor with the same input._
 
 ### How should I let my editor know that its syntax colours have changed?
 
-You should return true when you receive the proper notifications through [AbstractTextEditor](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/texteditor/AbstractTextEditor.html)'s [affectsTextPresentation(PropertyChangeEvent)](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/texteditor/AbstractTextEditor.html#affectsTextPresentation(org.eclipse.jface.util.PropertyChangeEvent)) method.
+You should return true when you receive the proper notifications through [AbstractTextEditor](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/texteditor/AbstractTextEditor.html)'s [affectsTextPresentation(PropertyChangeEvent)](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/texteditor/AbstractTextEditor.html#affectsTextPresentation(org.eclipse.jface.util.PropertyChangeEvent)) method.
 
 ### How do I close one/all of my editors upon workbench shutdown so that it won't appear upon workbench restart?
 
@@ -647,18 +647,18 @@ The example below shows how to close an editor that is programmatically opened.
 
 ### How do I prevent a particular editor from being restored on the next workbench startup?
 
-In your [IEditorInput](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/IEditorInput.html) implementation, you can return `null` for [getPersistable()](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/IEditorInput.html#getPersistable()) or `false` for [exists()](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/IEditorInput.html#exists()).
+In your [IEditorInput](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/IEditorInput.html) implementation, you can return `null` for [getPersistable()](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/IEditorInput.html#getPersistable()) or `false` for [exists()](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/IEditorInput.html#exists()).
 
 Debug
 -----
 
 ### How do I invoke a process and have its output managed by the 'Console' view?
 
-Use [DebugPlugin](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/DebugPlugin.html)'s [newProcess(ILaunch, Process, String)](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/DebugPlugin.html#newProcess(org.eclipse.debug.core.ILaunch,%20java.lang.Process,%20java.lang.String)) or [newProcess(ILaunch, Process, String, Map)](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/DebugPlugin.html#newProcess(org.eclipse.debug.core.ILaunch,%20java.lang.Process,%20java.lang.String,%20java.util.Map)) method. You will probably be calling this in your [ILaunchConfigurationDelegate](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/model/ILaunchConfigurationDelegate.html) implementation.
+Use [DebugPlugin](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/DebugPlugin.html)'s [newProcess(ILaunch, Process, String)](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/DebugPlugin.html#newProcess(org.eclipse.debug.core.ILaunch,%20java.lang.Process,%20java.lang.String)) or [newProcess(ILaunch, Process, String, Map)](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/DebugPlugin.html#newProcess(org.eclipse.debug.core.ILaunch,%20java.lang.Process,%20java.lang.String,%20java.util.Map)) method. You will probably be calling this in your [ILaunchConfigurationDelegate](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/model/ILaunchConfigurationDelegate.html) implementation.
 
 ### How do I associate my executed process with its command line counterpart?
 
-Your [IProcess](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/model/IProcess.html) implementation must return a valid string that corresponds to the [IProcess.ATTR_CMDLINE](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/model/IProcess.html#ATTR_CMDLINE) attribute. The sample code below will demonstrate how this is done with the [DebugPlugin](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/DebugPlugin.html)'s [newProcess(ILaunch, Process, String, Map)](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/DebugPlugin.html#newProcess(org.eclipse.debug.core.ILaunch,%20java.lang.Process,%20java.lang.String,%20java.util.Map)) method.
+Your [IProcess](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/model/IProcess.html) implementation must return a valid string that corresponds to the [IProcess.ATTR_CMDLINE](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/model/IProcess.html#ATTR_CMDLINE) attribute. The sample code below will demonstrate how this is done with the [DebugPlugin](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/DebugPlugin.html)'s [newProcess(ILaunch, Process, String, Map)](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/DebugPlugin.html#newProcess(org.eclipse.debug.core.ILaunch,%20java.lang.Process,%20java.lang.String,%20java.util.Map)) method.
 
     String commandLine = "/usr/bin/make";
     Map attributes = new HashMap();
@@ -669,7 +669,7 @@ Your [IProcess](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.
 
 ### How do I capture the output of my launched application like the 'Console' view?
 
-If the underlying [IProcess](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/model/IProcess.html) allows for the retrieval of its [IStreamsProxy](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/model/IStreamsProxy.html), you can retrieve a corresponding [IStreamMonitor](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/model/IStreamMonitor.html) and attach an [IStreamListener](http://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/IStreamListener.html) onto it to monitor changes to the stream.
+If the underlying [IProcess](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/model/IProcess.html) allows for the retrieval of its [IStreamsProxy](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/model/IStreamsProxy.html), you can retrieve a corresponding [IStreamMonitor](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/model/IStreamMonitor.html) and attach an [IStreamListener](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/IStreamListener.html) onto it to monitor changes to the stream.
 
 The sample code below will demonstrate how to read the [InputStream](http://java.sun.com/j2se/1.4.2/docs/api/java/io/InputStream.html) of an executed process:
 
@@ -686,12 +686,12 @@ The sample code below will demonstrate how to read the [InputStream](http://java
 
 Let us say you want to contribute to the PackageExplorer and run a CompilationUnit using a context menu. This is how you would run a Java Application using a dynamic launch configuration.
 
-First, an [ILaunchConfiguration](http://help.eclipse.org/galileo/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/ILaunchConfiguration.html) is created by using its [ILaunchConfigurationType](http://help.eclipse.org/galileo/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/ILaunchConfigurationType.html). Already existing types can be obtained via the [ILaunchManager](http://help.eclipse.org/galileo/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/ILaunchManager.html):
+First, an [ILaunchConfiguration](https://help.eclipse.org/galileo/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/ILaunchConfiguration.html) is created by using its [ILaunchConfigurationType](https://help.eclipse.org/galileo/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/ILaunchConfigurationType.html). Already existing types can be obtained via the [ILaunchManager](https://help.eclipse.org/galileo/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/ILaunchManager.html):
 
     ILaunchConfigurationType javaType = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
     ILaunchConfigurationWorkingCopy config = javaType.newInstance(null, name);
 
-Then you need so set each attribute to complete your launch configuration. Check out [JavaRuntime](http://help.eclipse.org/ganymede/index.jsp?topic=/org.eclipse.jdt.doc.isv/reference/api/org/eclipse/jdt/launching/JavaRuntime.html) for further methods, e.g. variable entries.
+Then you need so set each attribute to complete your launch configuration. Check out [JavaRuntime](https://help.eclipse.org/ganymede/index.jsp?topic=/org.eclipse.jdt.doc.isv/reference/api/org/eclipse/jdt/launching/JavaRuntime.html) for further methods, e.g. variable entries.
 
     List<String> classpath = new ArrayList<String>();
     classpath.add(JavaRuntime.newArchiveRuntimeClasspathEntry(new Path("/project.web/src/main/java")).getMemento());
@@ -826,7 +826,7 @@ Here is the Ant build file for generating artifacts.xml
 
 ### How do I add files to the root of the installation directory?
 
-You can include [\[1\]](http://help.eclipse.org/indigo/index.jsp?topic=/org.eclipse.pde.doc.user/tasks/pde_rootfiles.htm) with your build.
+You can include [\[1\]](https://help.eclipse.org/indigo/index.jsp?topic=/org.eclipse.pde.doc.user/tasks/pde_rootfiles.htm) with your build.
 
 PDE/Build will take the feature root files and generate p2 artifacts with touchpoint stuff to do the right thing at install time.
 
