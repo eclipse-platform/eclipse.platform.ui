@@ -72,7 +72,7 @@ Here is an example for an enablement expression in the common navigator framewor
 Note how the `<or>` element contains three elements: two `<instanceof>` and one `<adapt>`. 
 The `<adapt>` contains one further `<test>` element; what they all do will be explained later. 
 For now just focus on the structure of the expression: when it is evaluated, the result of the instanceof and the adapt tests will be logically or-ed because they are nested in a `<or>` element. 
-The same expression could also be written as follows in a [polish pseudo-notation](https://en.wikipedia.org/wiki/Polish_notation):
+The same expression could also be written as follows in a [polish pseudo-notation](https://en.wikipedia.org/wiki/Polish_notation).
 
     or (
         instanceof com.acme.navigator.ContainerObject,
