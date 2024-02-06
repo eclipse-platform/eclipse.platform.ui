@@ -36,12 +36,12 @@ FAQs
 ----
 
 *   The [RCP FAQ](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Rich_Client_Platform/Rich_Client_Platform_FAQ.md)
-*   The [SWT FAQ](http://www.eclipse.org/swt/faq.php)
+*   The [SWT FAQ](https://www.eclipse.org/swt/faq.php)
 
 Books on Eclipse RCP using 4.x API
 ----------------------------------
 
-*   [Eclipse 4 RCP](http://www.vogella.com/books/eclipsercp.html) by Lars Vogel.
+*   [Eclipse 4 RCP](https://www.vogella.com/books/eclipsercp.html) by Lars Vogel.
 
 Tutorials for Eclipse RCP with Eclipse 4 API
 --------------------------------------------
@@ -52,8 +52,8 @@ Tutorials for Eclipse RCP with Eclipse 4 API
 Tutorials covering older API levels
 -----------------------------------
 
-*   [Eclipse 3.x RCP Tutorial](http://www.vogella.com/tutorials/Eclipse3RCP/article.html), Tutorials by Lars Vogel
-*   [Eclipse RCP Tutorials](http://www.programcreek.com/develop-plug-ins-using-rcp/), Eclipse RCP Tutorials from Program Creek
+*   [Eclipse 3.x RCP Tutorial](https://www.vogella.com/tutorials/Eclipse3RCP/article.html), Tutorials by Lars Vogel
+*   [Eclipse RCP Tutorials](https://www.programcreek.com/develop-plug-ins-using-rcp/), Eclipse RCP Tutorials from Program Creek
 
 Presentations
 -------------
@@ -66,27 +66,14 @@ Presentations
 Help Topics
 -----------
 
-The following are relevant help topics from the Platform Plug-in Developer Guide (from within the Eclipse IDE: Help > Help Contents > Platform Plug-in Developer Guide). The links below are to the online [Eclipse 3.1 help](http://help.eclipse.org/help31).
-
-*   [Building a Rich Client Platform application](http://help.eclipse.org/help33/topic/org.eclipse.platform.doc.isv/guide/rcp.htm)
-*   [Defining a Product](http://help.eclipse.org/help33/topic/org.eclipse.platform.doc.isv/guide/product_def.htm)
-*   [Plugging into the workbench](http://help.eclipse.org/help33/topic/org.eclipse.platform.doc.isv/guide/workbench.htm)
-*   [Runtime overview](http://help.eclipse.org/help33/topic/org.eclipse.platform.doc.isv/guide/runtime.htm)
-*   [SWT - Standard Widget Toolkit](http://help.eclipse.org/help33/topic/org.eclipse.platform.doc.isv/guide/swt.htm)
-*   [JFace UI Framework](http://help.eclipse.org/help33/topic/org.eclipse.platform.doc.isv/guide/jface.htm)
-*   [Dialogs and wizards](http://help.eclipse.org/help33/topic/org.eclipse.platform.doc.isv/guide/dialogs.htm)
-*   [Advanced Workbench Concepts](http://help.eclipse.org/help33/topic/org.eclipse.platform.doc.isv/guide/wrkAdv.htm)
-*   [API rules of engagement](http://help.eclipse.org/help33/topic/org.eclipse.platform.doc.isv/reference/misc/api-usage-rules.html)
-*   [Runtime options](http://help.eclipse.org/help33/topic/org.eclipse.platform.doc.isv/reference/misc/runtime-options.html)
-*   [Map of Platform Plug-ins](http://help.eclipse.org/help33/topic/org.eclipse.platform.doc.isv/reference/misc/overview-platform.html)
-*   Eclipse [2.1->3.0](http://help.eclipse.org/help33/topic/org.eclipse.platform.doc.isv/porting/eclipse_3_0_porting_guide.html) and [3.0->3.1](http://help.eclipse.org/help33/topic/org.eclipse.platform.doc.isv/porting/eclipse_3_1_porting_guide.html) Plug-in Migration Guides
+You find additional information in the Platform Plug-in Developer Guide (from within the Eclipse IDE: Help > Help Contents > Platform Plug-in Developer Guide) in the online [Eclipse help](https://help.eclipse.org/latest).
 
 Examples
 --------
 
 The usage of SWT and JFace is demonstrated in the following snippets:
 
-*   [SWT Snippets](http://www.eclipse.org/swt/snippets/) and [JFace Snippets](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/JFaceSnippets.md).
+*   [SWT Snippets](https://www.eclipse.org/swt/snippets/) and [JFace Snippets](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/JFaceSnippets.md).
 
 Applications
 ------------
@@ -96,19 +83,11 @@ Several applications have been built using the Rich Client Platform.
 *   The RCP Catalog section of the [Eclipse Community page](http://eclipse.org/community) lists several apps, including case studies of a few.
 *   NASA/JPL is using Eclipse RCP as the foundation of their next version of Maestro, and more. See the [case study](http://eclipse.org/community/casestudies/NASAfinal.pdf), session [11.3 - "A Martian Eclipse"](http://www.eclipsecon.org/2005/sessions.php) at EclipseCon 2005. Jeff Norris from NASA/JPL also wrote a nice foreword to the [RCP Book](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Rich_Client_Platform/Rich_Client_Platform_Book.md).
 
-Blogs
------
+Blogs and other Resources
+-------------------------
 
-*   [PlanetEclipse.org](http://planeteclipse.org/planet/)
-*   [Java and Eclipse Tips](http://javarevisited.blogspot.de)
-
-Other Resources
----------------
-
-The following are other resources describing the Eclipse Rich Client Platform, or related subjects:
-
-*   [Eclipse Tutorials](http://www.vogella.de/eclipse.html) Articles around Eclipse and Eclipse RCP
-*   [ProgramCreek](http://www.programcreek.com) Articles and tutorials on the Eclipse RCP Topic
+*   [PlanetEclipse.org](https://planeteclipse.org/planet/)
+*   [Eclipse Tutorials](https://www.vogella.com/eclipse.html) Articles around Eclipse and Eclipse RCP
 
 Original Design Documents
 -------------------------
