@@ -82,7 +82,7 @@ Eclipse injector was originally based on the annotations defined in JSR 330 and 
 ---------------------------------------------------------------------------------------------------
 
 @Inject marks a constructor, method, or field as being available for injection. 
-If you inject OSGi Services, it is possible to filter or reference multiple Services see [https://www.eclipse.org/eclipse/news/4.7/platform_isv.php#di-extension-service](https://www.eclipse.org/eclipse/news/4.7/platform_isv.php#di-extension-service)
+If you inject OSGi Services, it is possible to filter or reference multiple Services see [here](https://www.eclipse.org/eclipse/news/4.7/platform_isv.php#di-extension-service) for more information
 
 @Named (jakarta.inject)
 -------------------------------------------------------------------------------------------------

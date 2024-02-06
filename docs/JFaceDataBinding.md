@@ -301,7 +301,9 @@ Use the following URL to clone the repository via File -> Import -> Git reposito
 
 *   [http://anonymous@git.eclipse.org/gitroot/platform/eclipse.platform.ui.git](http://anonymous@git.eclipse.org/gitroot/platform/eclipse.platform.ui.git)
 
-After you cloned the project the clone wizard will allow you to import the included projects. For the databinding examples you only have to import the "org.eclipse.jface.examples.databinding" project. For an introduction into EGit please see [EGit](http://www.vogella.de/articles/EGit/article.html)
+After you cloned the project the clone wizard will allow you to import the included projects. 
+For the databinding examples you only have to import the "org.eclipse.jface.examples.databinding" project. 
+For an introduction into EGit please see [EGit](https://www.vogella.com/tutorials/EclipseGit/article.html)
 
 Most of the examples provide a main method, you can run it as a Java Application to see what happens.  
 

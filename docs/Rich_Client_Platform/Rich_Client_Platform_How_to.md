@@ -39,7 +39,7 @@ Contents
 IDE
 ---
 
-[http://www.eclipse.org/downloads/](http://www.eclipse.org/downloads/)
+[Eclipse Download site](http://www.eclipse.org/downloads/)
 
 Link "Eclipse for RCP/Plug-in Developers"
 
@@ -52,16 +52,17 @@ Open PDE (Plug-in Development Environment) perspective: Window > Open Perspectiv
 Target
 ------
 
-Target Platform is used to run the applications/plugins you build with Eclipse RCP. Although it is possible to run your applications/plugins using your Eclipse IDE installation, this is not recommended.
+Target Platform is used to run the applications/plugins you build with Eclipse RCP. 
+Although it is possible to run your applications/plugins using your Eclipse IDE installation, this is not recommended.
 
 Create directory _target_ in a folder of your choice.
 
-[http://download.eclipse.org/eclipse/downloads](http://download.eclipse.org/eclipse/downloads)
+[The Eclipse Project Downloads](http://download.eclipse.org/eclipse/downloads)
 
 Download and unzip in _target_: eclipse-RCP-SDK-*.zip, eclipse-*-delta-pack.zip
 
 *   Delta pack is needed for building to other platforms, or for automated [build](#Build).
-*   If Help or Update feature is needed, either replace RCP-SDK with platform-SDK, or download individual features from [http://www.eclipse.org/platform/](http://www.eclipse.org/platform/)
+*   If Help or Update feature is needed, either replace RCP-SDK with platform-SDK, or download individual features from [here](http://www.eclipse.org/platform/)
 *   eclipse-RCP-SDK-*.zip is needed rather than eclipse-RCP-*.zip else extensions won't work in plug-in editor.
 
 Window > Preferences > Plug-in Development > Target Platform > Browse > _target_/eclipse > OK > Reload
@@ -222,7 +223,7 @@ Alternately (tested under Helios 3.6), you can run the Externalize Strings Wizar
 
 Move the various .properties files from that project fragment to the source project (e.g. move "myproject.nl1/plugin\_fr.properties" to "myproject/plugin\_fr.properties", and likewise for any .properties files in subfolders such as OSGI-INF or src). You should then have essentially nothing left in the project fragment, so you can delete it.
 
-Now install the Resource Bundle Editor (RBE) plug-in (from [http://sourceforge.net/projects/eclipse-rbe/](http://sourceforge.net/projects/eclipse-rbe/)) by unzipping its plugins directory into your eclipse/plugins directory (restart Eclipse once this is done). Go to Window: Preferences: General: Editors: File Associations, and assign RBE as the default editor for .properties files.
+Now install the Resource Bundle Editor (RBE) plug-in (from [here](http://sourceforge.net/projects/eclipse-rbe/)) by unzipping its plugins directory into your eclipse/plugins directory (restart Eclipse once this is done). Go to Window: Preferences: General: Editors: File Associations, and assign RBE as the default editor for .properties files.
 
 You will now be able to open the .properties files that need localization and edit them accordingly. By keeping matching .properties files co-located, RBE is able to display the original (English) and target language string values side by side, which makes translation less of a chore. RBE is being integrated into Eclipse's Babel project, so it will eventually no longer be necessary to move the .properties files as described earlier: you'll be able to edit them right in the project fragments. Project fragments are nice if you do not want to ship your project with all the various localizations in it (strings, icons, images, help files, etc.), but would rather ship each localization separately.
 
@@ -230,7 +231,7 @@ If you do not use RBE, be aware that .properties files _must_ use ISO 8859-1 cha
 
 ### RCP
 
-[http://download.eclipse.org/technology/babel/babel\_language\_packs/](http://download.eclipse.org/technology/babel/babel_language_packs/)
+[Download Eclipse](http://download.eclipse.org/technology/babel/babel_language_packs/)
 
 Unzip BabelLanguagePack-eclipse-*.zip into _target_
 
@@ -247,7 +248,7 @@ Preferences
 
 If no need for preference scopes
 
-[http://www.eclipse.org/eclipse/platform-core/documents/user_settings/faq.html](http://www.eclipse.org/eclipse/platform-core/documents/user_settings/faq.html)
+See [User Settings FAQ](https://eclipse.dev/eclipse/platform-core/documents/user_settings/faq.html)
 
 Get preference value:
 

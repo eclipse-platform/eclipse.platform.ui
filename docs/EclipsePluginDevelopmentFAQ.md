@@ -173,7 +173,6 @@ Also, Eclipse can handle jars within jars. It expands them into a temporary loca
 
 The articles below may be of your interest.
 
-*   [What is IAdaptable](http://www.eclipsezone.com/articles/what-is-iadaptable/)
 *   [Adapters](http://www.eclipse.org/articles/article.php?file=Article-Adapters/index.html)
 
 ### How do I read from a file that I've included in my bundle/plug-in?

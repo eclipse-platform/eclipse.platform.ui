@@ -4,49 +4,29 @@ Platform Command Framework
 Contents
 --------
 
-*   [1 Architecture Overview](#Architecture-Overview)
-*   [2 Eclipse Commands Tutorial](#Eclipse-Commands-Tutorial)
-*   [3 Other Resources](#Other-Resources)
-*   [4 Commands](#Commands)
-    *   [4.1 Executing a command with parameters](#Executing-a-command-with-parameters)
-    *   [4.2 Using an IActionDelegate to execute a command](#Using-an-IActionDelegate-to-execute-a-command)
-        *   [4.2.1 Generic Command Action Delegate](#Generic-Command-Action-Delegate)
-*   [5 Handlers](#Handlers)
-*   [6 KeyBindings](#KeyBindings)
-*   [7 Contexts](#Contexts)
-*   [8 Menu Contributions](#Menu-Contributions)
-*   [9 Tracing Option](#Tracing-Option)
+*   [1 Eclipse Commands Tutorial](#Eclipse-Commands-Tutorial)
+*   [2 Other Resources](#Other-Resources)
+*   [3 Commands](#Commands)
+    *   [3.1 Executing a command with parameters](#Executing-a-command-with-parameters)
+    *   [3.2 Using an IActionDelegate to execute a command](#Using-an-IActionDelegate-to-execute-a-command)
+        *   [3.2.1 Generic Command Action Delegate](#Generic-Command-Action-Delegate)
+*   [4 Handlers](#Handlers)
+*   [5 KeyBindings](#KeyBindings)
+*   [6 Contexts](#Contexts)
+*   [7 Tracing Option](#Tracing-Option)
 
-Architecture Overview
-=====================
-
-[http://dev.eclipse.org/viewcvs/index.cgi/~checkout~/platform-ui-home/R3\_1/contributions-proposal/requestForComments\_html_m41374bdb.png](http://dev.eclipse.org/viewcvs/index.cgi/~checkout~/platform-ui-home/R3_1/contributions-proposal/requestForComments_html_m41374bdb.png)
-
-Figure 1: High Level Architecture
 
 Eclipse Commands Tutorial
 =========================
 
-[http://www.vogella.de/articles/EclipseCommands/article.html](http://www.vogella.de/articles/EclipseCommands/article.html) Tutorial about using Eclipse Commands by Lars Vogel
+[https://www.vogella.com/tutorials/EclipseCommands/article.html](https://www.vogella.com/tutorials/EclipseCommands/article.html) Tutorial about using Eclipse Commands by Lars Vogel
 
 Other Resources
 ===============
 
-[Commands in Action](http://blog.eclipse-tips.com/search/label/Commands) by [Prakash G.R.](http://blog.eclipse-tips.com/):
+[Command Core Expressions](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Command_Core_Expressions.md)
 
-*   [Commands Part 1: Actions Vs Commands](http://blog.eclipse-tips.com/2009/01/commands-part-1-actions-vs-commands.html)
-*   [Commands Part 2: Selection and Enablement of IHandlers](http://blog.eclipse-tips.com/2009/01/commands-part-2-selection-and.html)
-*   [Commands Part 3: Parameters for Commands](http://blog.eclipse-tips.com/2008/12/commands-part-3-parameters-for-commands.html)
-*   [Commands Part 4: Misc items ...](http://blog.eclipse-tips.com/2009/01/commands-part-4-misc-items.html)
-*   [Commands Part 5: Authentication in RCP applications](http://blog.eclipse-tips.com/2009/02/commands-part-5-authentication-in-rcp.html)
-*   [Commands Part 6: Toggle & Radio menu contributions](http://blog.eclipse-tips.com/2009/03/commands-part-6-toggle-radio-menu.html)
-*   [Commands Part 7: Adding standard commands](http://blog.eclipse-tips.com/2009/05/commands-part-7-adding-standard.html)
-*   [Keyboard accessibility thru Command Framework](http://blog.eclipse-tips.com/2009/06/keyboard-accessibility-thru-command.html)
-*   [Toggle Commands the toggle other contributions](http://blog.eclipse-tips.com/2009/12/toggle-commands-toggle-other.html)
-
-[Command Core Expressions](http://wiki.eclipse.org/Command_Core_Expressions)
-
-[Platform Expression Framework](http://wiki.eclipse.org/Platform_Expression_Framework)
+[Platform Expression Framework](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Platform_Expression_Framework.md)
 
 Commands
 ========
@@ -423,7 +403,11 @@ We'll need a more robust implementation, but in 3.2 your action delegate needs t
 Handlers
 ========
 
-Handlers are managed by the **org.eclipse.ui.handlers** extension point and the IHandlerService. Many Handlers can register for a command. At any give time, either 0 or 1 handlers will be active for the command. A handler's active state and enabled state can be controlled declaratively. See [Command Core Expressions](/Command_Core_Expressions "Command Core Expressions") for a more complex description of the declarative expressions. Handlers are responsible for interpreting any optional command parameters using the ExecutionEvent parameter.
+Handlers are managed by the **org.eclipse.ui.handlers** extension point and the IHandlerService. 
+Many Handlers can register for a command. At any give time, either 0 or 1 handlers will be active for the command. 
+A handler's active state and enabled state can be controlled declaratively. 
+See [Command Core Expressions](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Command_Core_Expressions.md) for a more complex description of the declarative expressions. 
+Handlers are responsible for interpreting any optional command parameters using the ExecutionEvent parameter.
 
     <extension
            point="org.eclipse.ui.handlers">
@@ -533,11 +517,6 @@ Programmatically, you can create contexts:
     }
 
 Note, however, that a plugin that programmatically defines contexts is responsible for cleaning them up if the plugin is ever unloaded.
-
-Menu Contributions
-==================
-
-See [Menu Contributions](/Menu_Contributions "Menu Contributions")
 
 Tracing Option
 ==============

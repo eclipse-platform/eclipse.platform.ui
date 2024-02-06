@@ -39,7 +39,7 @@ Where they are useful
 
 Expressions are used in extension points that have to decide things based on a context, but without loading the plugin implementing that decision. 
 The most popular examples where they are used are the [Platform Command Framework](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/PlatformCommandFramework.md), and the 
-[Common Navigator Framework](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Common_Navigator_Framework.md"). 
+[Common Navigator Framework](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Common_Navigator_Framework.md). 
 Depending on the extension implementation, expressions are used to decide any number of things. 
 Examples:
 
@@ -373,11 +373,4 @@ This allows for two plugins (siblings) to define the same property without ambig
 
 The concrete implementation of the property tester has to extend `PropertyTester`. 
 Look around, you will find existing property testers to get you started with your own.
-
-  
-
-Links
-=====
-
-*   [http://help.eclipse.org/index.jsp?topic=/org.eclipse.platform.doc.isv/guide/workbench\_cmd\_expressions.htm](http://help.eclipse.org/index.jsp?topic=/org.eclipse.platform.doc.isv/guide/workbench_cmd_expressions.htm)
 

@@ -29,7 +29,7 @@ Author: Lars Vogel
 More Information
 ----------------
 
-[http://www.vogella.com/books/eclipsercp.html](http://www.vogella.com/books/eclipsercp.html)
+[Eclipse RCP book](https://www.vogella.com/books/eclipsercp.html)
 
 Book: "Eclipse Rich Client Platform : Designing, Coding, and Packaging Java™ Applications, Second Edition"
 ==========================================================================================================
@@ -40,7 +40,7 @@ Date of publication: April 15, 2010 (second edition), October 11, 2005 (first ed
 
 Purchase on Amazon and reviews: [Eclipse Rich Client Platform, Second Edition on Amazon.com](http://amzn.to/fK3Tky)
 
-Publisher: Addison-Wesley Professional ([AW book page](http://www.awprofessional.com/title/0321334612))
+Publisher: Addison-Wesley Professional
 
 In Eclipse Rich Client Platform, Second Edition, three Eclipse Rich Client Platform (RCP) project leaders show how to use Eclipse 3.5 to rapidly deliver cross-platform applications with rich, native-feel GUIs.
 
