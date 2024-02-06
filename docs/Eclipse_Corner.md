@@ -116,7 +116,7 @@ Eclipse setup instructions on a new Linux (or other OS) computer
 ----------------------------------------------------------------
 
 *   Direct download link is here: [Eclipse setup instructions on a new Linux (or other OS) computer.pdf](https://github.com/ElectricRCAircraftGuy/eRCaGuy_dotfiles/blob/master/eclipse/Eclipse%20setup%20instructions%20on%20a%20new%20Linux%20(or%20other%20OS)%20computer.pdf) (PDF).
-*   It is part of this larger project here: [https://github.com/ElectricRCAircraftGuy/eRCaGuy_dotfiles](https://github.com/ElectricRCAircraftGuy/eRCaGuy_dotfiles).
+*   It is part of this larger project [here](https://github.com/ElectricRCAircraftGuy/eRCaGuy_dotfiles).
 
   
 Getting started with Eclipse as a beginner is difficult. This document _significantly_ eases that transition. Even for experienced Eclipse users, getting it to work perfectly and bug-free on large projects requires several advanced tricks, all of which are documented carefully in this document with the words "\[IMPORTANT TO PREVENT FREEZES\]". This is unofficial documentation to help Eclipse users get Eclipse installed and configured on any operating system, with a particular emphasis on using Eclipse on Linux. It details getting it to work well and crash-free on any OS when working with small or gigantic projects.
@@ -624,7 +624,6 @@ Designing Accessible Plug-ins in Eclipse
 
 Accessibility for disabled users is now a priority in application development as advances in techniques and support within operating systems have now made this possible. This article covers the Eclipse accessibility support, general tips for creating accessible plug-ins, and the types of disabilities that the Eclipse accessibility support assists. This is all illustrated using an example of making a view accessible.
 
-*   [Original article](http://www.eclipse.org/articles/Article-Accessibility/accessibility.html)
 *   [Updated for Eclipse Platform 3.5](http://www.eclipse.org/articles/article.php?file=Article-Accessibility351/index.html)
 
   

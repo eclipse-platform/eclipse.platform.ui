@@ -6,7 +6,7 @@ Accessibility Best Practises in the Eclipse UI
 
 Since Eclipse 2.0 the Eclipse UI has tried to be as accessible as possible. There are two focusses here - making the IDE accessible and making it possible to write an accessible application using the Eclipse API with a minimum of work. This entry will focus on what you get without any extra work to be done on your part.
 
-Most of the accessibility support comes direct from SWT. If you don't use any custom widgets and follow good accessibility practises (see the [IBM Accessibility checklist](http://w3-03.ibm.com/able/devtest/software.html)) then you will get thier support as well.
+Most of the accessibility support comes direct from SWT. If you don't use any custom widgets and follow good accessibility practises then you will get thier support as well.
 
 Having said that there are places within the Platform UI that have been given some accessibility features.
 

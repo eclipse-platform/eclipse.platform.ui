@@ -101,7 +101,8 @@ Demonstrates usage of Icons in Buttons of Dialogs
 
 Drop these icons also in the same package
 
-![Filesave.png](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Filesave.png)![Cancel.png](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Cancel.png)
+![Filesave.png](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Filesave.png)
+![Cancel.png](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Cancel.png)
 
 ### [Snippet082 - Color Selector](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/dialogs/Snippet082ColorSelectDialog.java)
 
@@ -136,7 +137,9 @@ Layout
   
 Demonstrates usage of the GridLayoutFactory to enhance readability
 
-![Snippet013 Shell1.png](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Snippet013_Shell1.png)![Snippet013 Shell2.png](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Snippet013_Shell2.png)![Snippet013 Shell3.png](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Snippet013_Shell3.png)
+![Snippet013 Shell1.png](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Snippet013_Shell1.png)
+![Snippet013 Shell2.png](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Snippet013_Shell2.png)
+![Snippet013 Shell3.png](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Snippet013_Shell3.png)
 
 ### [Snippet016 - Table Layout](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/layout/Snippet016TableLayout.java)
 
@@ -258,18 +261,18 @@ Demonstrates usage of custom tooltip support in 3.3 used to provide a tooltip fo
 
 ![Snippet011.png](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Snippet011.png)
 
-### [Snippet013 - Table Viewer No Mandatory Label Provider](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/viewers/Snippet013TableViewerNoMandatoryLabelProvider.java)\]
+### [Snippet013 - Table Viewer No Mandatory Label Provider](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/viewers/Snippet013TableViewerNoMandatoryLabelProvider.java)
 
-*   [Snippet013 - Table Viewer No Mandatory Label Provider](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/viewers/Snippet013TableViewerNoMandatoryLabelProvider.java)\]
+*   [Snippet013 - Table Viewer No Mandatory Label Provider](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/viewers/Snippet013TableViewerNoMandatoryLabelProvider.java)
 
   
 Demonstrates usage of none mandatory LabelProviders in TableViewers to set colors and fonts with 3.2-API
 
 ![Jfacesnippet013.png](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Jfacesnippet013.png)
 
-### [Snippet014 - Tree Viewer No Mandatory Label Provider](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/viewers/Snippet014TreeViewerNoMandatoryLabelProvider.java)\]
+### [Snippet014 - Tree Viewer No Mandatory Label Provider](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/viewers/Snippet014TreeViewerNoMandatoryLabelProvider.java)
 
-*   [Snippet014 - Tree Viewer No Mandatory Label Provider](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/viewers/Snippet014TreeViewerNoMandatoryLabelProvider.java)\]
+*   [Snippet014 - Tree Viewer No Mandatory Label Provider](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/viewers/Snippet014TreeViewerNoMandatoryLabelProvider.java)
 
   
 Demonstrates usage of none mandatory LabelProviders in TreeViewers to set colors and font with 3.2-API
@@ -355,9 +358,9 @@ Demonstrates usage of JFace-Viewers in "virtual" mode with an ordinary content p
   
 Demonstrates usage of JFace-Viewer virtual mode with a lazy content provider
 
-### [Snippet031 - Table Viewer Custom Tooltips Multi Selection](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/viewers/Snippet031TableViewerCustomTooltipsMultiSelection.java)\]
+### [Snippet031 - Table Viewer Custom Tooltips Multi Selection](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/viewers/Snippet031TableViewerCustomTooltipsMultiSelection.java)
 
-*   [Snippet031 - Table Viewer Custom Tooltips Multi Selection](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/viewers/Snippet031TableViewerCustomTooltipsMultiSelection.java)\]
+*   [Snippet031 - Table Viewer Custom Tooltips Multi Selection](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/viewers/Snippet031TableViewerCustomTooltipsMultiSelection.java)
 
   
 Demonstrates creation of tooltips for cells for pre 3.3 users
@@ -493,7 +496,7 @@ Demonstrates the usage of ILazyContentProvider in conjunction with a Virtual-Tre
   
 Demonstrates how to overcome a limitation when it comes to key-navigation and CheckBoxEditors in 3.3.1.
 
-This is a workaround for bug [https://bugs.eclipse.org/bugs/show_bug.cgi?id=198502](https://bugs.eclipse.org/bugs/show_bug.cgi?id=198502)
+This is a workaround for [Bug #198502](https://bugs.eclipse.org/bugs/show_bug.cgi?id=198502)
 
 ![Snippet048TreeViewerTabWithCheckboxFor3 3.png](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Snippet048TreeViewerTabWithCheckboxFor3_3.png)
 

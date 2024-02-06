@@ -52,7 +52,7 @@ Many people that have built, or are building, RCP applications state that the ma
 
 For a nice description of the benefits of RCP, see [Jeff Norris' forward on NASA/JPL's use of RCP](http://web.archive.org/web/20100307050224/eclipsercp.org/book/chapters/RCP_Foreward2.pdf) (archived link), a free excerpt from the [RCP Book](/RCP_Book "RCP Book").
 
-See also the case studies available on the [RCP Community page](http://www.eclipse.org/community/rcp.php).
+See also the case studies available on the [RCP Community page](https://www.eclipse.org/community/).
 
 What is included in the Rich Client Platform?
 ---------------------------------------------
@@ -222,7 +222,9 @@ Note that views with a secondaryId will not match placeholders specifying just t
 How can I deploy my RCP app?
 ----------------------------
 
-[Lars Vogel's RCP tutorial](http://www.vogella.de/articles/EclipseRCP/article.html) discusses this in the section entitled _Products and Branding_.
+The currently best way to deploy your RCP app is to use [Tycho](https://github.com/eclipse-tycho/tycho). 
+See [Tycho tutorial](https://www.vogella.com/tutorials/EclipseTycho/article.html) for an example.
+
 
 When I try running, nothing happens, or it complains that the application could not be found in the registry, or that other plug-ins are missing. How can I track the problem down?
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -372,7 +374,7 @@ TIP: the contents of the `jre_linux/` directory is a single directory called `jr
 
 Conclusion: With this configuration the "jre/" directory tree is copied to the root of my distribution and the java executable at jre/bin/java is run by default, even if my system has other java's on its $PATH. And it wasn't necessary to set any "-vm path" to the launcher.
 
-More options for the build.properties file can be found at [http://help.eclipse.org/help32/index.jsp?topic=/org.eclipse.pde.doc.user/reference/pde\_feature\_generating_build.htm](http://help.eclipse.org/help32/index.jsp?topic=/org.eclipse.pde.doc.user/reference/pde_feature_generating_build.htm)
+More options for the build.properties file can be found [here](http://help.eclipse.org/help32/index.jsp?topic=/org.eclipse.pde.doc.user/reference/pde_feature_generating_build.htm)
 
 How to add menu item, command and handler?
 ------------------------------------------
