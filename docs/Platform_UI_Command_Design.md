@@ -3,7 +3,7 @@ Platform UI Command Design
 
 Starting point for menu and toolbar placement of commands in 3.3. 
 Please contribute comments and suggestions in the discussion area or on [Bug 154130 -KeyBindings- Finish re-work of commands and key bindings](https://bugs.eclipse.org/bugs/show_bug.cgi?id=154130). 
-Here is a page with concrete example cases: [Menu Item Placement Examples](/Menu_Item_Placement_Examples "Menu Item Placement Examples")
+Here is a page with concrete example cases: [Menu Item Placement Examples](./Menu_Contributions.md)
 
   
 
