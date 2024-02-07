@@ -4,3 +4,4 @@ Bug 521182 - [compiler] method reference on null object should throw NPE at runt
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1184
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1378
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1659
+https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1781

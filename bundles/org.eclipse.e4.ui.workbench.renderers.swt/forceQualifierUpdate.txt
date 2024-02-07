@@ -5,3 +5,4 @@ Bug 492759 - Code changed due to change in compiler
 Bug 511251 - Comparator errors in I20170127-2200
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1184
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1378
+https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1781

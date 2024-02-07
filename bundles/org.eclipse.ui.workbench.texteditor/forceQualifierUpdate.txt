@@ -2,3 +2,4 @@
 Bug 509931: Comparator errors in M20170104-0545
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1184
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1659
+https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1781
