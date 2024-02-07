@@ -25,11 +25,7 @@ Contents
 *   [4 Updating the menu and toolbar appearance](#Updating-the-menu-and-toolbar-appearance)
     *   [4.1 UIElements represent each UI visible instance of a command](#UIElements-represent-each-UI-visible-instance-of-a-command)
     *   [4.2 State associated with the command is propogated to UI visible elements](#State-associated-with-the-command-is-propogated-to-UI-visible-elements)
-*   [5 Work](#Work)
-    *   [5.1 Available in 3.3](#Available-in-33)
-    *   [5.2 Available in 3.3M5](#Available-in-33M5)
-    *   [5.3 Available in 3.3M4](#Available-in-33M4)
-    *   [5.4 Work still to be done](#Work-still-to-be-done)
+
 
 Placement and visibility
 ========================
@@ -409,95 +405,4 @@ To allow handlers to update the label for the menu/toolbar items, we also add th
         <state id="STYLE" class="org.eclipse.jface.commands.ToggleState:true" />
       </command>
     </extension>
-
-Work
-====
-
-Progress in 3.3.
-
-Available in 3.3
-----------------
-
-*   ![Ok green.gif](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Ok_green.gif)the editor action bar contributor solution. EditorActionBarContributor will not be deprecated, but is not used in the commands/handler story. Menu Contributions have visibility tied to an active editor id, and editor specific handlers can be created in the editor init(*) or createPartControl(*) method using the handler service from getPartSite().getService(IHandlerService.class).
-*   ![Ok green.gif](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Ok_green.gif)Attributes for `<command/>`: **helpContextId**, **style** to support radio buttons and check boxes
-*   ![Ok green.gif](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Ok_green.gif)action sets as contexts - action sets are still defined using org.eclipse.ui.actionSets, and each actionSet generates an equivalent context. showing/hiding actionSets activates/deactivates the equivalent context.
-*   ![Ok green.gif](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Ok_green.gif)How do we give Trim widgets/toolbar widgets "focus" for command and handlers? There was an IFocusService added in 3.3 that allows a trim control to register itself. When that control has focus, the control and the ID it registered with are provided in the global application context to core expressions and handlers. This is available, but might not be the optimal solution if you just want cut, copy, and paste to work.
-*   ![Ok green.gif](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Ok_green.gif)Shortcuts to define reusable core expressions for `<activeWhen/>`, `<enabledWhen/>`, and `<visibleWhen/>`. This has been added as the org.eclipse.core.expressions.definitions extension point and the core expression `<reference/>` element.
-*   ![Ok green.gif](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Ok_green.gif)the mnemonic field for `<command/>` elements (decorating)
-*   ![Ok green.gif](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Ok_green.gif)display any keybinding for `<command/>` elements (decorating)
-*   ![Ok green.gif](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Ok_green.gif)toolbar `<visibleWhen/>` expressions
-
-Available in 3.3M5
-------------------
-
-There is an example of the RCP Mail application template updated for 3.3M5 and converted to use the org.eclipse.ui.menus extension point as much as possible at [Contribution Example](http://dev.eclipse.org/viewcvs/index.cgi/platform-ui-home/R3_3/contributions-proposal/).
-
-*   ![Ok green.gif](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Ok_green.gif)changing the menu item or tool item state from a handler, like updating the label or tooltip or checked state. Commands can contain `<state/>` elements, but that is not appropriate to use for providing feedback to the user. This will be done by adapting a callback provided by the UI element.
-*   ![Ok green.gif](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Ok_green.gif)the `<separator/>` element should have a **name** not an **id**
-*   ![Ok green.gif](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Ok_green.gif)support creating radio button or checked menu items
-*   ![Ok green.gif](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Ok_green.gif)creating new toolbars in the main coolbar/trim declaratively
-*   ![Ok green.gif](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Ok_green.gif)creating new toolbars in the main coolbar/trim programmatically
-*   ![Ok green.gif](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Ok_green.gif)org.eclipse.ui.popup.any as a context menu contribution
-*   ![Ok green.gif](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Ok_green.gif)Drop down toolbar items
-
-We also have action sets activating and de-activating contexts in **3.3M5**, but we'll need to decide the proper action set story for **3.3M6**
-
-We are still working on the EditorActionBarContributor story. 
-It seems like we might be able to deprecate it. 
-Editor instances can instantiate handlers upon creation for each command they support.
-
-Available in 3.3M4
-------------------
-
-The basic menu API will be available in 3.3M4. 
-It includes both declarative **org.eclipse.ui.menus** extension point with core expression support for visibility, and a programmatic interface accessed through the `IMenuService`.
-
-  
-We support contributing to the main menu, and the view menu, view toolbar, and any IDed context menu. 
-We support contributing to existing toolbars in the main coolbar, and contributing trim widgets.
-
-Programmatically we support the following types of contributions:
-
-*   MenuManager
-*   CommandContributionItem
-*   CompoundContributionItem
-*   ControlContribution (in 3.3M5)
-*   Separator
-*   GroupMarker
-
-There are some specific mappings of elements and attributes on [Menus Extension Mapping](/Menus_Extension_Mapping "Menus Extension Mapping").
-
-  
-
-Work still to be done
----------------------
-
-A list of behaviours not supported or shipped with **3.3**.
-
-*   validate and possibly optimize the context menu population story and lifecycle. Many context menus set remove all when shown.
-*   migrate Marker views
-*   migrate standard workbench actions - a few were done
-*   Check enabled visibleWhen support
-*   Shortcuts placed on submenu items (like CTRL+N) (decorating)
-*   ensure full visibleWhen support in the MenuManagers - i.e. should empty menus display **(empty)**
-*   do we want to manage trim with a TrimContributionManager? This removes the coolbar, but has RCP implications.
-*   the menu override capability - does this tie into the Customize Perspective dialog and action sets
-*   A set of default programmatic core expressions. For example, ActionContextExpression or ActivePartExpression
-*   deprecate the 4 extension: actionSets, viewActions, editorActions, popupMenus
-*   read old extensions in terms of new extension
-*   convert platform UI extensions to new extension
-*   migration guide - what are the most common migration paths for Action and IActionDelegate to Command/IHandler.
-*   Attributes for `<command/>: **state**` for checkboxes and radio buttons
-*   possibly provide an plugin.xml converter for actionSets to menus
-*   possibly provide an Action -> Handler converter
-*   ![Error.gif](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Error.gif)status manager contributions
-
-  
-Legend:
-
-*   nothing - TBD
-*   ![Glass.gif](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Glass.gif)\- investigating
-*   ![Progress.gif](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Progress.gif)\- in progress
-*   ![Ok green.gif](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Ok_green.gif)\- completed
-*   ![Error.gif](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Error.gif)\- dropped
 
