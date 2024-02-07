@@ -54,6 +54,14 @@ CTabFolder.MArea {
 	padding: 0px;
 }
 
+CTabFolder {
+    swt-selected-tab-highlight: none;
+}
+
+CTabFolder.active {
+    swt-selected-tab-highlight: rgb(103,145,230);
+    swt-selected-highlight-top: false;
+}
 
 .MPartStack.active.noFocus > CTabItem:selected {
 	color: '#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_TEXT_COLOR';
