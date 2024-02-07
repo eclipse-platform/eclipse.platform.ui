@@ -117,7 +117,7 @@ There will be constants defined for the ids that the eclipse workbench provides,
 ### Using Expressions in `<visibleWhen/>`
 
 In **3.3M6** an org.eclipse.core.expressions.definitions extension point was added. 
-Used to define a [core expression](/Platform_Expression_Framework "Platform Expression Framework"), the definition can then be referenced from other locations.
+Used to define a [core expression](./Platform_Expression_Framework.md), the definition can then be referenced from other locations.
 
     <extension point="org.eclipse.core.expressions.definitions">
       <definition id="com.example.context">
