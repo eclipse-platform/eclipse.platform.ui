@@ -627,7 +627,7 @@ Just use paths of the form `/type/id/path`. They'll be IPath elements within ecl
 *   An object contribution additions group marker: `/popup/org.eclipse.ui.menu.any/additions`
 
   
-The usecases are being moved to [Menu Item Placement Examples](/Menu_Item_Placement_Examples "Menu Item Placement Examples")
+The usecases are being moved to [Menu Item Placement Examples](./Menu_Contributions.md)
 
 Menu Proposal 3
 ---------------
@@ -641,8 +641,6 @@ We would also go through all of the programmatic code in the workbench and make 
 
 Historical Information
 ======================
-
-The Contribution proposal started a couple of releases ago with the original RFC [Contribution RFC](http://dev.eclipse.org/viewcvs/index.cgi/~checkout~/platform-ui-home/R3_1/contributions-proposal/requestForComments.html)
 
 There are discussions in a number of places:
 
@@ -660,7 +658,7 @@ Original Requirements
 
 1.  Provide a single concept for contributing to the workbench. Right now, there are two distinct ontologies: actions and contribution items; and commands and handlers.
 2.  Support the addition and removal of plug-ins.
-3.  Separate model and behaviour from visual presentation. Adhere more closely to the Model-View-Controller pattern. Model and user interface separation.
+3.  Separate model and behavior from visual presentation. Adhere more closely to the Model-View-Controller pattern. Model and user interface separation.
 4.  Extensibility. Every group of items in the user interface (e.g., menu, tool bar, etc.) should be extensible – both in structure and content.
 5.  Universal keyboard shortcuts. A user should be able to add a keyboard shortcut to any item that appears in the user interface (e.g., menu item, tool item, menu, etc.).
 6.  Separation of structure and content. The structure of the menus (e.g., groups) should be defined independently from the items.
@@ -668,10 +666,10 @@ Original Requirements
 8.  Fine-grained control over visibility.
 9.  More intelligent updating of elements within the user interface. Support for lazy updating for elements that are not showing within the user interface. This lazy updating should be handled automatically – without the elements needing to understand whether they are showing.
 10.  Improved control over menu definition and item ordering. This will affect the “Search” and “Run” menus.
-11.  The selection should be capable of overriding the behaviour of a user action. For example, if a Java element is selected in the Resource Navigator, a rename should be a refactoring rename.
+11.  The selection should be capable of overriding the behavior of a user action. For example, if a Java element is selected in the Resource Navigator, a rename should be a refactoring rename.
 12.  Address the difficulty in determining the keyboard shortcuts to show for context menu items.
 13.  Support dynamic entries in top-level menus. For example, the recently opened files in the “File” menu should be possible using only public API.
-14.  There should be an easy way to define the default behaviour in response to a user action (i.e., default handler for a command).
+14.  There should be an easy way to define the default behavior in response to a user action (i.e., default handler for a command).
 15.  Provide localized control of the model, view and controller elements talked about in this proposal. This includes such concepts as automatic addition/removal as parts are become active/inactive, and automatic removal as parts are destroyed.
 16.  Allow the same user interface element to be placed in multiple locations. Reduce duplication in the syntax, and try to reduce memory usage.
 17.  Provide facilities for finding and triggering elements within the user interface. This is intended to provide better support for the welcome facilities, cheat sheets, macros and scripting.

@@ -110,11 +110,15 @@ The StatusManager singleton is accessed using
 
  
 
-The `int` parameter are for supplying style for handling. See [Acceptable styles](/Platform_UI_Error_Handling#Styles "Platform UI Error Handling").
+The `int` parameter are for supplying style for handling. See [Acceptable styles](#styles).
 
-**NOTE!** the style is a suggestion and may not be honoured by the current handler. For instance a handler may choose to not show the user anything when the SHOW flag is sent. See [Status handlers](/Platform_UI_Error_Handling#Status_handlers "Platform UI Error Handling") for more details.
+**NOTE!** the style is a suggestion and may not be honored by the current handler. 
+For instance a handler may choose to not show the user anything when the SHOW flag is sent. 
+See [Status handlers](#Status_handlers) for more details.
 
-The StatusManager gets it's list of handlers from the extension point `org.eclipse.ui.statusHandlers`. Should none of those handlers process the status it will fall through to the default handler (the the SDk this is `WorkbenchAdvisor#getWorkbenchErrorHandler()`). If a handler is associated with a product, it is used instead of this defined in advisor.
+The StatusManager gets it's list of handlers from the extension point `org.eclipse.ui.statusHandlers`. 
+Should none of those handlers process the status it will fall through to the default handler (the the SDk this is `WorkbenchAdvisor#getWorkbenchErrorHandler()`). 
+If a handler is associated with a product, it is used instead of this defined in advisor.
 
 ### Styles
 
@@ -127,7 +131,12 @@ Below is a list of StatusManager styles which can be combined with logical OR.
 
 ### Status handlers
 
-Status handlers are part of the status handling facility. The handlers are responsible for presenting statuses by logging or showing appropriate feedback to the user (generally dialogs). All status handlers extend `org.eclipse.ui.statushandlers.AbstractStatusHandler` which requires each handler to implement `handle(StatusAdapter status, int style)`. This method handles statuses based on a handling style. The style indicates how status handler should handle a status. See [Acceptable styles](/Platform_UI_Error_Handling#Styles "Platform UI Error Handling").
+Status handlers are part of the status handling facility. 
+The handlers are responsible for presenting statuses by logging or showing appropriate feedback to the user (generally dialogs). 
+All status handlers extend `org.eclipse.ui.statushandlers.AbstractStatusHandler` which requires each handler to implement `handle(StatusAdapter status, int style)`. 
+This method handles statuses based on a handling style. 
+The style indicates how status handler should handle a status. 
+See [Acceptable styles](#Styles).
 
 There are two ways for adding handlers to the handling flow.
 
@@ -140,7 +149,9 @@ If a handler is associated with a product, it is used instead of this defined in
 A status handler has the id and a set of parameters. The handler can use them during handling. If the handler is added as an extension, both are set during initialization of the handler using elements and attributes of `statusHandler` element.
 
   
-**WARNING!** We have to take the extra action when something has to be logged using the default logging mechanism, because the facility is hooked into it. See [Hooking the facility into Platform](/Platform_UI_Error_Handling#Hooking_the_facility_into_Platform "Platform UI Error Handling"). For this special case the status manager provides API.
+**WARNING!** We have to take the extra action when something has to be logged using the default logging mechanism, because the facility is hooked into it. 
+See [Hooking the facility into Platform](#Hooking_the_facility_into_Platform). 
+For this special case the status manager provides API.
 
  
 
@@ -368,11 +379,11 @@ The basic idea is that even unexperienced user should be able to understand what
 
 after pressing bug icon:
 
-[![Statusdialogwithsupportopened.JPG](/images/a/ab/Statusdialogwithsupportopened.JPG)](/File:Statusdialogwithsupportopened.JPG)
+![Statusdialogwithsupportopened.JPG](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Statusdialogwithsupportopened.JPG)
 
 and many statuses. The selected in the list Status is a base for support area.
 
-[![Manystatuseswithsupportopened.JPG](/images/f/fe/Manystatuseswithsupportopened.JPG)](/File:Manystatuseswithsupportopened.JPG)
+![Manystatuseswithsupportopened.JPG](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Manystatuseswithsupportopened.JPG)
 
 #### Use cases
 
