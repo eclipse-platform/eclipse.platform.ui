@@ -91,7 +91,7 @@ Applications
 Several applications have been built using the Rich Client Platform.
 
 *   The RCP Catalog section of the [Eclipse Community page](http://eclipse.org/community) lists several apps, including case studies of a few.
-*   NASA/JPL is using Eclipse RCP as the foundation of their next version of Maestro, and more. See the [case study](http://eclipse.org/community/casestudies/NASAfinal.pdf), session [11.3 - "A Martian Eclipse"](http://www.eclipsecon.org/2005/sessions.php) at EclipseCon 2005. Jeff Norris from NASA/JPL also wrote a nice foreword to the [RCP Book](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Rich_Client_Platform/Rich_Client_Platform_Book.md).
+*   NASA/JPL is using Eclipse RCP as the foundation of their next version of Maestro, and more. See the [case study](http://eclipse.org/community/casestudies/NASAfinal.pdf). Jeff Norris from NASA/JPL also wrote a nice foreword to the [RCP Book](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Rich_Client_Platform/Rich_Client_Platform_Book.md).
 
 Blogs and other Resources
 -------------------------
