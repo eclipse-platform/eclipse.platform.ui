@@ -13,12 +13,15 @@ Contents
 Add ProblemView menus
 =====================
 
-Add the Problems view menus. The Problems view has one toolbar action and in the view menu, 3 actions and 2 dynamic submenus. It also has a dynamic menu and another bunch of actions in its context menu.
+Add the Problems view menus. 
+The Problems view has one toolbar action and in the view menu, 3 actions and 2 dynamic submenus. 
+It also has a dynamic menu and another bunch of actions in its context menu.
 
 Commands
 --------
 
-First define commands that are specific to the view. Since these are view commands, we can specify a default handler ... we're unlikely to replace it.
+First define commands that are specific to the view. 
+Since these are view commands, we can specify a default handler ... we're unlikely to replace it.
 
         <extension point="org.eclipse.ui.commands">
             <category id="org.eclipse.ui.views.problems"
@@ -60,7 +63,9 @@ First define commands that are specific to the view. Since these are view comman
 Handlers
 --------
 
-We can also use a number of global commands, like copy, paste, delete, quick fix, and properties. For these, we just need to define our handlers. We need to add them with <activeWhen/> clauses to restrict them to being active when the view is active.
+We can also use a number of global commands, like copy, paste, delete, quick fix, and properties. 
+For these, we just need to define our handlers. 
+We need to add them with `<activeWhen/>` clauses to restrict them to being active when the view is active.
 
         <extension point="org.eclipse.ui.handlers">
             <handler commandId="org.eclipse.ui.edit.copy"
@@ -145,16 +150,19 @@ We can also use a number of global commands, like copy, paste, delete, quick fix
 
 Or we can programmatically activate them through the IHandlerService which we would retrieve from the ProblemView site.
 
-IHandlerService handlerServ = (IHandlerService)getSite().getService(IHandlerService.class);
-CopyMarkerHandler copy = new CopyMarkerHandler();
-handlerServ.activateHandler("org.eclipse.ui.edit.copy", copy);
+		IHandlerService handlerServ = (IHandlerService)getSite().getService(IHandlerService.class);
+		CopyMarkerHandler copy = new CopyMarkerHandler();
+		handlerServ.activateHandler("org.eclipse.ui.edit.copy", copy);
 
-Using the ProblemView site to access the IHandlerService handles the <activeWhen/> clause for us, and our programmatic handler would manage its own enablement state.
+Using the ProblemView site to access the IHandlerService handles the `<activeWhen/>` clause for us, and our programmatic handler would manage its own enablement state.
 
 Menus
 -----
 
-Then we would define the ProblemView menu structures. We are using 3 **roots**: the view menu, the view toolbar, and the view context menu. This is an example of an "in-place" menu definition. The <menuContribution/> location attribute is a URI that defines the starting point for inserting the menu elements. The XML hierarchy mirrors the menu hierarchy, in that you can define items and menus within the body of other menus.
+Then we would define the ProblemView menu structures. 
+We are using 3 **roots**: the view menu, the view toolbar, and the view context menu. 
+This is an example of an "in-place" menu definition. The `<menuContribution/>` location attribute is a URI that defines the starting point for inserting the menu elements. 
+The XML hierarchy mirrors the menu hierarchy, in that you can define items and menus within the body of other menus.
 
         <extension point="org.eclipse.ui.menus">
             <menuContribution locationURI="menu:org.eclipse.ui.views.ProblemView">
@@ -349,5 +357,6 @@ The above example can be done for the view menus:
             menuService.addContributionFactory(viewMenuAddition);
         }
 
-The `AbstractContributionFactory` creates new contribution items every time `createContributionItems(List)` is called. The factory location tells the framework where to insert the contributions when populating `ContributionManager`s.
+The `AbstractContributionFactory` creates new contribution items every time `createContributionItems(List)` is called. 
+The factory location tells the framework where to insert the contributions when populating `ContributionManager`s.
 
