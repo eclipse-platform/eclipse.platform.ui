@@ -40,19 +40,19 @@ A (hopefully) growing list of menu contribution examples.
 
 | Example | comments |
 | --- | --- |
-| [Menu Contributions/Dropdown Command](/Menu_Contributions/Dropdown_Command "Menu Contributions/Dropdown Command") | Dropdown tool items can have their menus filled in using menu contributions |
-| [Menu Contributions/Problems View Example](/Menu_Contributions/Problems_View_Example "Menu Contributions/Problems View Example") | An example showing how the Problems View might be converted |
-| [Menu Contributions/Populating a dynamic submenu](/Menu_Contributions/Populating_a_dynamic_submenu "Menu Contributions/Populating a dynamic submenu") | A menu contribution to populate a Problems View dynamic submenu |
-| [Menu Contributions/Toggle Mark Occurrences](/Menu_Contributions/Toggle_Mark_Occurrences "Menu Contributions/Toggle Mark Occurrences") | Placing the toggle mark occurrences button |
-| [Menu Contributions/Toggle Button Command](/Menu_Contributions/Toggle_Button_Command "Menu Contributions/Toggle Button Command") | Contribute a toggle state menu item thru commands |
-| [Menu Contributions/Radio Button Command](/Menu_Contributions/Radio_Button_Command "Menu Contributions/Radio Button Command") | Similar to updating toggle state, you can create radio buttons using menu contributions |
-| [Menu Contributions/Update checked state](/Menu_Contributions/Update_checked_state "Menu Contributions/Update checked state") | The active handler can update the checked state (and other attributes) of its button |
-| [Menu Contributions/Search Menu](/Menu_Contributions/Search_Menu "Menu Contributions/Search Menu") | Adding the Java Search options to the Search menu |
-| [Menu Contributions/IFile objectContribution](/Menu_Contributions/IFile_objectContribution "Menu Contributions/IFile objectContribution") | A menu contribution for context menus when the selection is an IFile |
-| [Menu Contributions/TextEditor viewerContribution](/Menu_Contributions/TextEditor_viewerContribution "Menu Contributions/TextEditor viewerContribution") | A menu contribution for the text editor context menu |
-| [Menu Contributions/Widget in a toolbar](/Menu_Contributions/Widget_in_a_toolbar "Menu Contributions/Widget in a toolbar") | A menu contribution adding a control into the main toolbar |
-| [Menu Contributions/RCP removes the Project menu](/Menu_Contributions/RCP_removes_the_Project_menu "Menu Contributions/RCP removes the Project menu") | An RCP application removes the Project menu. Note: this will probably not be in 3.3 |
-| [Menu Contributions/Workbench wizard contribution](/Menu_Contributions/Workbench_wizard_contribution "Menu Contributions/Workbench wizard contribution") | Contributing workbench wizards to Menu |
+| [Menu Contributions/Dropdown Command](./Menu_Contributions/Dropdown_Command.md "Menu Contributions/Dropdown Command") | Dropdown tool items can have their menus filled in using menu contributions |
+| [Menu Contributions/Problems View Example](./Menu_Contributions/Problems_View_Example.md "Menu Contributions/Problems View Example") | An example showing how the Problems View might be converted |
+| [Menu Contributions/Populating a dynamic submenu](./Menu_Contributions/Populating_a_dynamic_submenu.md "Menu Contributions/Populating a dynamic submenu") | A menu contribution to populate a Problems View dynamic submenu |
+| [Menu Contributions/Toggle Mark Occurrences](./Menu_Contributions/Toggle_Mark_Occurrences.md "Menu Contributions/Toggle Mark Occurrences") | Placing the toggle mark occurrences button |
+| [Menu Contributions/Toggle Button Command](./Menu_Contributions/Toggle_Button_Command.md "Menu Contributions/Toggle Button Command") | Contribute a toggle state menu item thru commands |
+| [Menu Contributions/Radio Button Command](./Menu_Contributions/Radio_Button_Command.md "Menu Contributions/Radio Button Command") | Similar to updating toggle state, you can create radio buttons using menu contributions |
+| [Menu Contributions/Update checked state](./Menu_Contributions/Update_checked_state.md "Menu Contributions/Update checked state") | The active handler can update the checked state (and other attributes) of its button |
+| [Menu Contributions/Search Menu](./Menu_Contributions/Search_Menu.md "Menu Contributions/Search Menu") | Adding the Java Search options to the Search menu |
+| [Menu Contributions/IFile objectContribution](./Menu_Contributions/IFile_objectContribution.md "Menu Contributions/IFile objectContribution") | A menu contribution for context menus when the selection is an IFile |
+| [Menu Contributions/TextEditor viewerContribution](./Menu_Contributions/TextEditor_viewerContribution.md "Menu Contributions/TextEditor viewerContribution") | A menu contribution for the text editor context menu |
+| [Menu Contributions/Widget in a toolbar](./Menu_Contributions/Widget_in_a_toolbar.md "Menu Contributions/Widget in a toolbar") | A menu contribution adding a control into the main toolbar |
+| [Menu Contributions/RCP removes the Project menu](./Menu_Contributions/RCP_removes_the_Project_menu.md "Menu Contributions/RCP removes the Project menu") | An RCP application removes the Project menu. Note: this will probably not be in 3.3 |
+| [Menu Contributions/Workbench wizard contribution](./Menu_Contributions/Workbench_wizard_contribution.md "Menu Contributions/Workbench wizard contribution") | Contributing workbench wizards to Menu |
 
 Menu XML
 ========
