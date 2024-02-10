@@ -99,6 +99,9 @@ public interface IPreferenceConstants {
 	// Preference key for default editors
 	String DEFAULT_EDITORS_CACHE = "defaultEditorsCache"; //$NON-NLS-1$
 
+	// Preference key prefix for default editor associated with a content type
+	String DEFAULT_EDITOR_FOR_CONTENT_TYPE = "defaultEditorForContentType_"; //$NON-NLS-1$
+
 	// Tab width = tab height * scalar value
 	String EDITOR_TAB_WIDTH = "EDITOR_TAB_WIDTH"; //$NON-NLS-1$
 

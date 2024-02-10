@@ -753,6 +753,30 @@
          <contentTypeBinding contentTypeId="org.eclipse.ui.tests.content-type2"/>
       </editor>
       <editor
+            class="org.eclipse.ui.tests.api.MockEditorPart"
+            default="false"
+            icon="icons/anything.gif"
+            id="org.eclipse.ui.tests.contentType3Editor1"
+            name="org.eclipse.ui.tests.contentType3Editor1">
+         <contentTypeBinding contentTypeId="org.eclipse.ui.tests.content-type3"/>
+      </editor>
+      <editor
+            class="org.eclipse.ui.tests.api.MockEditorPart"
+            default="false"
+            icon="icons/anything.gif"
+            id="org.eclipse.ui.tests.contentType3Editor2"
+            name="org.eclipse.ui.tests.contentType3Editor2">
+         <contentTypeBinding contentTypeId="org.eclipse.ui.tests.content-type3"/>
+      </editor>
+      <editor
+            class="org.eclipse.ui.tests.api.MockEditorPart"
+            default="false"
+            icon="icons/anything.gif"
+            id="org.eclipse.ui.tests.contentType3Editor3"
+            name="org.eclipse.ui.tests.contentType3Editor3">
+         <contentTypeBinding contentTypeId="org.eclipse.ui.tests.content-type3"/>
+      </editor>
+      <editor
             class="org.eclipse.ui.tests.multieditor.TiledEditor"
             default="false"
             icon="icons/binary_co.gif"
@@ -1199,6 +1223,13 @@
              <describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
 				<parameter name="element" value="contentType1" />
 			</describer>
+       </content-type>
+       <content-type
+             file-extensions="content-type3"
+             file-names="content-type3.blah"
+             id="content-type3"
+             name="org.eclipse.ui.tests.content-type3"
+             priority="normal">
        </content-type>
        <content-type
              file-extensions="defaultedContentType"
