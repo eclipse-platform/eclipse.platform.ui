@@ -1335,17 +1335,43 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 	 * @since 3.1
 	 */
 	private IEditorDescriptor getEditorForContentType(String filename, IContentType contentType) {
-		IEditorDescriptor desc = null;
-		Object[] contentTypeResults = findRelatedObjects(contentType, filename, relatedRegistry);
-		if (contentTypeResults != null && contentTypeResults.length > 0) {
-			desc = (IEditorDescriptor) contentTypeResults[0];
+		List<IEditorDescriptor> contentTypeResults = findRelatedObjects(contentType, filename, relatedRegistry);
+		if (contentTypeResults.isEmpty()) {
+			return null;
 		}
-		return desc;
+		if (contentTypeResults.size() == 1 || contentType == null) {
+			return contentTypeResults.get(0);
+		}
+		return selectDefaultEditor(contentTypeResults, contentType);
+	}
+
+	/**
+	 * Selects preferred editor from the list, based on user preferences
+	 *
+	 * @param descriptors non empty list with editor descriptors for given type
+	 * @param contentType non null content type
+	 * @return user preferred editor for content type, or just the first editor from
+	 *         given list if no preferences are set
+	 */
+	private IEditorDescriptor selectDefaultEditor(List<IEditorDescriptor> descriptors, IContentType contentType) {
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		String key = IPreferenceConstants.DEFAULT_EDITOR_FOR_CONTENT_TYPE + contentType.getId();
+		String defaultEditorId = store.getString(key);
+		IEditorDescriptor descriptor = null;
+		if (defaultEditorId != null && !defaultEditorId.isBlank()) {
+			descriptor = descriptors.stream().filter(d -> defaultEditorId.equals(d.getId())).findFirst().orElse(null);
+		}
+		if (descriptor != null) {
+			// There is some editor set as default for this content type by user
+			return descriptor;
+		}
+		// Just return the first one as before
+		return descriptors.get(0);
 	}
 
 	@Override
 	public IEditorDescriptor[] getEditors(String fileName, IContentType contentType) {
-		return findRelatedObjects(contentType, fileName, relatedRegistry);
+		return findRelatedObjects(contentType, fileName, relatedRegistry).toArray(IEditorDescriptor[]::new);
 	}
 
 	@Override
@@ -1412,7 +1438,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 	 *
 	 * @return the related objects
 	 */
-	private IEditorDescriptor[] findRelatedObjects(IContentType type, String fileName, RelatedRegistry registry) {
+	private List<IEditorDescriptor> findRelatedObjects(IContentType type, String fileName, RelatedRegistry registry) {
 		List<IEditorDescriptor> allRelated = new ArrayList<>();
 		List<IEditorDescriptor> nonDefaultFileEditors = new ArrayList<>();
 
@@ -1488,6 +1514,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 			}
 		}
 
+
 		// add all non-default editors to the list
 		for (IEditorDescriptor editor : nonDefaultFileEditors) {
 			if (editor != null && !allRelated.contains(editor) && !WorkbenchActivityHelper.filterItem(editor)) {
@@ -1495,7 +1522,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 			}
 		}
 
-		return allRelated.toArray(new IEditorDescriptor[allRelated.size()]);
+		return allRelated;
 	}
 
 	/**

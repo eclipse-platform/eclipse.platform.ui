@@ -38,6 +38,7 @@ import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.program.Program;
 import org.eclipse.ui.IEditorDescriptor;
@@ -45,6 +46,8 @@ import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.ExternalProgramImageDescriptor;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.EditorRegistry;
@@ -390,6 +393,53 @@ public class IEditorRegistryTest {
 		assertNotNull(descriptor);
 		assertEquals("org.eclipse.ui.tests.contentType1Editor-fallback",
 				descriptor.getId());
+	}
+
+	/**
+	 * Assert that the "right" content type based editor (depending on user choice)
+	 * is chosen for multiple editors linked to same content type.
+	 */
+	@Test
+	public void testGetDefaultEditorForContentType() {
+		IContentType contentType = Platform.getContentTypeManager()
+				.getContentType("org.eclipse.ui.tests.content-type3");
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		final String key = IPreferenceConstants.DEFAULT_EDITOR_FOR_CONTENT_TYPE + contentType.getId();
+		final String defaultValue = store.getString(key);
+		final String fileName = "content-type3.blah";
+		final String defaultDefaultEditor = "org.eclipse.ui.tests.contentType3Editor1";
+		IEditorDescriptor descriptor = fReg.getDefaultEditor(fileName, contentType);
+		assertNotNull(descriptor);
+		try {
+			// nothing in preferences: just first one found in registry expected
+			assertEquals("Should be empty", IPreferenceStore.STRING_DEFAULT_DEFAULT, defaultValue);
+			assertEquals("Wrong editor chosen with no default configured", defaultDefaultEditor, descriptor.getId());
+
+			// select third one
+			String defaultEditor = "org.eclipse.ui.tests.contentType3Editor3";
+			store.setValue(key, defaultEditor);
+			descriptor = fReg.getDefaultEditor(fileName, contentType);
+			assertEquals("Wrong editor chosen", defaultEditor, descriptor.getId());
+
+			// select first one again
+			defaultEditor = "org.eclipse.ui.tests.contentType3Editor1";
+			store.setValue(key, defaultEditor);
+			descriptor = fReg.getDefaultEditor(fileName, contentType);
+			assertEquals("Wrong editor chosen", defaultEditor, descriptor.getId());
+
+			// select second one
+			defaultEditor = "org.eclipse.ui.tests.contentType3Editor2";
+			store.setValue(key, defaultEditor);
+			descriptor = fReg.getDefaultEditor(fileName, contentType);
+			assertEquals("Wrong editor chosen", defaultEditor, descriptor.getId());
+
+			// reset to defaults
+			store.setValue(key, defaultValue);
+			descriptor = fReg.getDefaultEditor(fileName, contentType);
+			assertEquals("Wrong editor chosen with no default configured", defaultDefaultEditor, descriptor.getId());
+		} finally {
+			store.setValue(key, defaultValue);
+		}
 	}
 
 	/**
