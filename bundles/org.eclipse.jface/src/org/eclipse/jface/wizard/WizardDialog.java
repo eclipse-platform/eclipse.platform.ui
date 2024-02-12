@@ -397,7 +397,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 			Display d = getShell().getDisplay();
 			setDisplayCursor(d.getSystemCursor(SWT.CURSOR_WAIT));
 
-			if (useCustomProgressMonitorPart) {
+			if (useCustomProgressMonitorPart && cancelButton != null) {
 				cancelButton.removeSelectionListener(cancelListener);
 				// Set the arrow cursor to the cancel component.
 				cancelButton.setCursor(d.getSystemCursor(SWT.CURSOR_ARROW));
@@ -409,7 +409,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 				savedState.put(FOCUS_CONTROL, focusControl);
 			}
 			// Activate cancel behavior.
-			if (needsProgressMonitor) {
+			if (needsProgressMonitor && progressMonitorPart != null) {
 				if (enableCancelButton || useCustomProgressMonitorPart) {
 					progressMonitorPart.attachToCancelComponent(cancelButton);
 				}
@@ -1293,14 +1293,14 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 	 */
 	private void stopped(Map<String, Object> savedState) {
 		if (getShell() != null && !getShell().isDisposed()) {
-			if (wizard.needsProgressMonitor()) {
+			if (wizard.needsProgressMonitor() && progressMonitorPart != null) {
 				progressMonitorPart.setVisible(false);
 				progressMonitorPart.removeFromCancelComponent(cancelButton);
 			}
 
 			restoreUIState(savedState);
 			setDisplayCursor(null);
-			if (useCustomProgressMonitorPart) {
+			if (useCustomProgressMonitorPart && cancelButton != null) {
 				cancelButton.addSelectionListener(cancelListener);
 				cancelButton.setCursor(null);
 			}
