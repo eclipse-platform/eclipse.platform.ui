@@ -740,28 +740,17 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 	protected void update(boolean force, boolean recursive) {
 		if (isDirty() || force) {
 			if (menuExist()) {
-				// clean contains all active items without double separators
 				IContributionItem[] items = getItems();
+
+				// clean contains all active items
 				List<IContributionItem> clean = new ArrayList<>(items.length);
-				IContributionItem separator = null;
+
 				for (IContributionItem item : items) {
 					IContributionItem ci = item;
 					if (!isChildVisible(ci)) {
 						continue;
 					}
-					if (ci.isSeparator()) {
-						// delay creation until necessary
-						// (handles both adjacent separators, and separator at end)
-						separator = ci;
-					} else {
-						if (separator != null) {
-							if (clean.size() > 0) {
-								clean.add(separator);
-							}
-							separator = null;
-						}
-						clean.add(ci);
-					}
+					clean.add(ci);
 				}
 
 				// remove obsolete (removed or non active)
@@ -831,6 +820,28 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 				// remove any old menu items not accounted for
 				for (; srcIx < mi.length; srcIx++) {
 					mi[srcIx].dispose();
+				}
+
+				mi = getMenuItems();
+
+				// Remove double Separator
+				for (int i = 1; i < mi.length; i++) {
+					if (mi[i].getData() instanceof Separator && mi[i - 1].getData() instanceof Separator) {
+						mi[i - 1].dispose();
+					}
+				}
+
+				mi = getMenuItems();
+				if (mi.length > 0) {
+					// Remove leading Separator if present
+					if (mi[0].getData() instanceof Separator) {
+						mi[0].dispose();
+					}
+
+					// Remove trailing Separator if present
+					if (mi[mi.length - 1].getData() instanceof Separator) {
+						mi[mi.length - 1].dispose();
+					}
 				}
 
 				setDirty(false);
