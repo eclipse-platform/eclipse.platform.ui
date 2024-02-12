@@ -42,7 +42,7 @@ Contents
 Current Framework
 =================
 
-See [Platform\_Command\_Framework](https://github.com/vogellacompany/eclipse.platform.ui/blob/master/docs/PlatformCommandFramework.md)
+See [Platform Command Framework](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/PlatformCommandFramework.md)
 
 Menus and ToolBars
 ==================
