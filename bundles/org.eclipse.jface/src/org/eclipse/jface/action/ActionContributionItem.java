@@ -15,8 +15,6 @@
  *******************************************************************************/
 package org.eclipse.jface.action;
 
-import java.util.Arrays;
-
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.jface.action.ExternalActionManager.IBindingManagerCallback;
@@ -1170,22 +1168,7 @@ public class ActionContributionItem extends ContributionItem {
 		if (holdMenu == null) {
 			return;
 		}
-
-		// for backwards compatibility (in case the menu is NOT calculated asynchronously)
 		copyMenu(holdMenu, proxy);
-
-		// in case the menu is populated asynchronously by the menu creator, this listener will update it once it's complete
-		holdMenu.addListener(SWT.Show, evt -> {
-			// This one is (currently) being triggered from ContextuaLaunchAction
-			if (evt.data == null || evt.data != holdMenu)
-				return;
-
-			// remove all items in the proxy...
-			Arrays.stream(proxy.getItems()).forEach(Widget::dispose);
-
-			// ... and replace them with the new content
-			copyMenu(holdMenu, proxy);
-		});
 	}
 
 	/**
