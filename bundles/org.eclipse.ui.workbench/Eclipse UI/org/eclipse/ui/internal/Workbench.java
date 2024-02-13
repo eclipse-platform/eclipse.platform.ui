@@ -870,7 +870,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 			 * (https://github.com/eclipse-platform/eclipse.platform.swt/issues/772) ,Splash
 			 * Screen gets flipped.As a workaround the image is flipped and returned.
 			 */
-			if (Integer.parseInt(System.getProperty("os.version").split(".")[0]) >= 14) { //$NON-NLS-1$ //$NON-NLS-2$
+			if (Integer.parseInt(System.getProperty("os.version").split("\\.")[0]) >= 14) { //$NON-NLS-1$ //$NON-NLS-2$
 				GC gc = new GC(image);
 				Transform tr = new Transform(display);
 				tr.setElements(1, 0, 0, -1, 0, 0);
