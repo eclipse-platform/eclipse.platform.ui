@@ -30,6 +30,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
@@ -83,7 +84,7 @@ public class WindowsDefenderConfigurator implements EventHandler {
 
 	@Override
 	public void handleEvent(Event event) {
-		if (isRelevant()) {
+		if (runStartupCheck()) {
 			Job job = Job.create(WorkbenchMessages.WindowsDefenderConfigurator_statusCheck, m -> {
 				SubMonitor monitor = SubMonitor.convert(m, 10);
 				if (preferences.getBoolean(PI_WORKBENCH, PREFERENCE_SKIP, PREFERENCE_SKIP_DEFAULT, null)) {
@@ -105,8 +106,14 @@ public class WindowsDefenderConfigurator implements EventHandler {
 		}
 	}
 
-	public static boolean isRelevant() {
-		return Platform.OS_WIN32.equals(Platform.getOS()) && !Platform.inDevelopmentMode();
+	private static boolean runStartupCheck() {
+		if (Platform.isRunning() && Platform.OS.isWindows() && !Platform.inDevelopmentMode()) {
+			IProduct product = Platform.getProduct();
+			if (product != null) {
+				return "org.eclipse.ui.ide.workbench".equals(product.getApplication()); //$NON-NLS-1$
+			}
+		}
+		return false;
 	}
 
 	/**

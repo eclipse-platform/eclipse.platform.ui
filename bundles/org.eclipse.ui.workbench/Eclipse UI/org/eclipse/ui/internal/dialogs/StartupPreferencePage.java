@@ -92,7 +92,7 @@ public class StartupPreferencePage extends PreferencePage implements IWorkbenchP
 	}
 
 	protected void createExtraContent(Composite composite) {
-		if (WindowsDefenderConfigurator.isRelevant()) {
+		if (Platform.OS.isWindows()) {
 			new Label(composite, SWT.NONE); // add spacer
 
 			GridDataFactory grapHorizontalSpace = GridDataFactory.swtDefaults().align(SWT.FILL, SWT.BEGINNING)
