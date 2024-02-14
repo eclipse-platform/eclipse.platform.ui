@@ -30,7 +30,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.ParameterizedCommand;
-import org.eclipse.core.commands.util.Tracing;
+import org.eclipse.core.commands.internal.util.Tracing;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.LegacyActionTools;
