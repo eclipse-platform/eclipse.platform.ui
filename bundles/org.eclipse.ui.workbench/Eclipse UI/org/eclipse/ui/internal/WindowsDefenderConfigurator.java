@@ -281,6 +281,7 @@ public class WindowsDefenderConfigurator implements EventHandler {
 		final String exclusionType = "ExclusionProcess"; //$NON-NLS-1$
 		return String.join(';' + extraSeparator, "$exclusions=@(" + extraSeparator + excludedPaths + ')', //$NON-NLS-1$
 				"$existingExclusions=[Collections.Generic.HashSet[String]](Get-MpPreference)." + exclusionType, //$NON-NLS-1$
+				"if($existingExclusions -eq $null) { $existingExclusions = New-Object Collections.Generic.HashSet[String] }", //$NON-NLS-1$
 				"$exclusionsToAdd=[Linq.Enumerable]::ToArray([Linq.Enumerable]::Where($exclusions,[Func[object,bool]]{param($ex)!$existingExclusions.Contains($ex)}))", //$NON-NLS-1$
 				"if($exclusionsToAdd.Length -gt 0){ Add-MpPreference -" + exclusionType + " $exclusionsToAdd }"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
