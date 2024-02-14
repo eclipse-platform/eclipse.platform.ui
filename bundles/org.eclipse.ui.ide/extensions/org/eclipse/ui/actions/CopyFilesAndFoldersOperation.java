@@ -737,6 +737,7 @@ public class CopyFilesAndFoldersOperation {
 	 * @see Thread#currentThread()
 	 * @since 3.6
 	 */
+	@SuppressWarnings("deprecation") // Preferences
 	public void copyOrLinkFiles(final String[] fileNames, IContainer destination, int dropOperation) {
 		IPreferenceStore store= IDEWorkbenchPlugin.getDefault().getPreferenceStore();
 		boolean targetIsVirtual= destination.isVirtual();

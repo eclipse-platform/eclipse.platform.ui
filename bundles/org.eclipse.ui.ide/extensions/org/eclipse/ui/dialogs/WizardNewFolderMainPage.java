@@ -95,6 +95,7 @@ import org.eclipse.ui.internal.ide.misc.ResourceAndContainerGroup;
  * <li><code>handleEvent</code></li>
  * </ul>
  */
+@SuppressWarnings("deprecation") // Preferences
 public class WizardNewFolderMainPage extends WizardPage implements Listener {
 	private static final int SIZING_CONTAINER_GROUP_HEIGHT = 250;
 

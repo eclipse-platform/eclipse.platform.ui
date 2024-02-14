@@ -283,6 +283,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 	 *	Create the import options specification widgets.
 	 */
 	@Override
+	@SuppressWarnings("deprecation") // org.eclipse.core.runtime.Preferences.getBoolean(String)
 	protected void createOptionsGroupButtons(Group optionsGroup) {
 
 		// overwrite... checkbox
@@ -1230,6 +1231,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 	 *	widgets currently all contain valid values.
 	 */
 	@Override
+	@SuppressWarnings("deprecation") // org.eclipse.core.runtime.Preferences.getBoolean(String)
 	protected boolean validateSourceGroup() {
 		File sourceDirectory = getSourceDirectory();
 		if (sourceDirectory == null) {

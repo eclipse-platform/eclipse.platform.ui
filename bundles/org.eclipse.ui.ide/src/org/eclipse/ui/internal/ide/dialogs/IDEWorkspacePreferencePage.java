@@ -77,6 +77,7 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  *Note:This class extends from PreferencePage,and there's no WorkspacePreferencePage class.
  *Hence when the IDE settings doesn't appear in this preference page, this page will be empty.
  */
+@SuppressWarnings("deprecation") // Preferences
 public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	private IEclipseContext e4Context;

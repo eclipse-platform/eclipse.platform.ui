@@ -45,6 +45,7 @@ import org.eclipse.ui.internal.ide.ResourceDragAndDropEditor;
  *
  * @see org.eclipse.ui.internal.ide.dialogs.PathVariableDialog
  */
+@SuppressWarnings("deprecation") // Preferences
 public class LinkedResourcesPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 	private Label topLabel;

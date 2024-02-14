@@ -67,6 +67,7 @@ import org.eclipse.ui.internal.ide.dialogs.CreateLinkedResourceGroup;
  *
  * @noextend This class is not intended to be subclassed by clients.
  */
+@SuppressWarnings("deprecation") // Preferences
 public class NewFolderDialog extends SelectionStatusDialog {
 	// widgets
 	private Text folderNameField;

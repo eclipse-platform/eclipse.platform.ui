@@ -28,6 +28,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 /**
  * ActionSetDescriptor
  */
+@SuppressWarnings("deprecation") // Preferences
 public class ActionSetDescriptor implements IActionSetDescriptor, IAdaptable, IWorkbenchAdapter, IPluginContribution {
 	private static final Object[] NO_CHILDREN = new Object[0];
 

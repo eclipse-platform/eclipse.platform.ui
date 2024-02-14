@@ -44,6 +44,7 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 /**
  * The FileStatesPage is the page used to set the file states sizes for the workbench.
  */
+@SuppressWarnings("deprecation") // Preferences
 public class FileStatesPage extends PreferencePage implements
 		IWorkbenchPreferencePage, Listener {
 

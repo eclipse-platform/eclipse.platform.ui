@@ -93,6 +93,7 @@ public final class IDEEncoding {
 	 *
 	 * @return String
 	 */
+	@SuppressWarnings("deprecation") // org.eclipse.core.runtime.Preferences.getString(String)
 	public static String getResourceEncoding() {
 		String preference = ResourcesPlugin.getPlugin().getPluginPreferences().getString(
 				ResourcesPlugin.PREF_ENCODING);

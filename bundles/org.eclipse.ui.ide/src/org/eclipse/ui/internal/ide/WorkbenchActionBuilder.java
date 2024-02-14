@@ -81,6 +81,7 @@ import org.eclipse.ui.menus.CommandContributionItemParameter;
 /**
  * Adds actions to a workbench window.
  */
+@SuppressWarnings("deprecation") // Preferences
 public class WorkbenchActionBuilder extends ActionBarAdvisor {
 
 	private final IWorkbenchWindow workbenchWindow;
