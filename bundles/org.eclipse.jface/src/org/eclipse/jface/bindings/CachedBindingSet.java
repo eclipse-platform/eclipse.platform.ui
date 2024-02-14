@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
-import org.eclipse.core.commands.util.Tracing;
+import org.eclipse.core.commands.internal.util.Tracing;
 
 /**
  * <p>

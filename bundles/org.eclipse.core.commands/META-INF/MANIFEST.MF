@@ -8,7 +8,7 @@ Bundle-Localization: plugin
 Export-Package: org.eclipse.core.commands,
  org.eclipse.core.commands.common,
  org.eclipse.core.commands.contexts,
- org.eclipse.core.commands.internal.util;x-internal:=true,
+ org.eclipse.core.commands.internal.util;x-friends:="org.eclipse.jface, org.eclipse.ui.workbench",
  org.eclipse.core.commands.operations,
  org.eclipse.core.commands.util,
  org.eclipse.core.internal.commands.operations;x-internal:=true,
