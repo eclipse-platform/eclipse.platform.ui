@@ -15,7 +15,6 @@
 package org.eclipse.ui.internal.keys;
 
 import java.util.Comparator;
-
 import org.eclipse.ui.keys.Key;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
@@ -26,6 +25,7 @@ import org.eclipse.ui.keys.KeyStroke;
  *
  * @since 3.0
  */
+@SuppressWarnings("deprecation") // org.eclipse.ui.keys
 public class FormalKeyFormatter extends AbstractKeyFormatter {
 
 	/**

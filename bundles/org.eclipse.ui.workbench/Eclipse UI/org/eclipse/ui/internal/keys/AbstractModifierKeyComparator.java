@@ -16,6 +16,7 @@ package org.eclipse.ui.internal.keys;
 import java.util.Comparator;
 import org.eclipse.ui.keys.ModifierKey;
 
+@SuppressWarnings("deprecation") // org.eclipse.ui.keys
 abstract class AbstractModifierKeyComparator implements Comparator<ModifierKey> {
 
 	@Override

@@ -16,7 +16,6 @@ package org.eclipse.ui.internal.keys;
 
 import java.util.Comparator;
 import java.util.ResourceBundle;
-
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.Key;
 import org.eclipse.ui.keys.KeySequence;
@@ -29,6 +28,7 @@ import org.eclipse.ui.keys.ModifierKey;
  *
  * @since 3.0
  */
+@SuppressWarnings("deprecation") // org.eclipse.ui.keys
 public class EmacsKeyFormatter extends AbstractKeyFormatter {
 
 	/**

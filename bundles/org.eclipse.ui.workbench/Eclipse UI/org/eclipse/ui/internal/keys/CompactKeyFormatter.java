@@ -32,6 +32,7 @@ import org.eclipse.ui.keys.NaturalKey;
  *
  * @since 3.0
  */
+@SuppressWarnings("deprecation") // org.eclipse.ui.keys
 public class CompactKeyFormatter extends NativeKeyFormatter {
 
 	@Override

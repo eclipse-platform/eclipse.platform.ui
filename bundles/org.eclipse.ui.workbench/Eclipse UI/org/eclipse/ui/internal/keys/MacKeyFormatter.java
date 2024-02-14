@@ -17,7 +17,6 @@ package org.eclipse.ui.internal.keys;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.ResourceBundle;
-
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.CharacterKey;
 import org.eclipse.ui.keys.Key;
@@ -25,6 +24,7 @@ import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.ModifierKey;
 import org.eclipse.ui.keys.SpecialKey;
 
+@SuppressWarnings("deprecation") // org.eclipse.ui.keys
 public final class MacKeyFormatter extends AbstractKeyFormatter {
 
 	private static final class MacModifierKeyComparator extends AbstractModifierKeyComparator {

@@ -22,6 +22,7 @@ import org.eclipse.ui.keys.ModifierKey;
  *
  * @since 3.0
  */
+@SuppressWarnings("deprecation") // org.eclipse.ui.keys
 public class AlphabeticModifierKeyComparator implements Comparator<ModifierKey> {
 
 	@Override
