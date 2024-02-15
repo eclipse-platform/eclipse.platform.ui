@@ -16,7 +16,6 @@ package org.eclipse.ui.keys;
 
 import java.util.SortedMap;
 import java.util.TreeMap;
-
 import org.eclipse.jface.bindings.keys.IKeyLookup;
 import org.eclipse.jface.bindings.keys.KeyLookupFactory;
 
@@ -34,7 +33,7 @@ import org.eclipse.jface.bindings.keys.KeyLookupFactory;
  *             org.eclipse.jface.bindings.keys.KeyLookupFactory
  * @since 3.0
  */
-@Deprecated
+@Deprecated(forRemoval = true, since = "2024-03")
 public final class CharacterKey extends NaturalKey {
 
 	/**

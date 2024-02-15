@@ -43,7 +43,7 @@ import org.eclipse.ui.internal.util.Util;
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.
  */
-@Deprecated
+@Deprecated(forRemoval = true, since = "2024-03")
 public abstract class Key implements Comparable {
 
 	/**

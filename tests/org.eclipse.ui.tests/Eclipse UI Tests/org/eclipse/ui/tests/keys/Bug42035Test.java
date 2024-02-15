@@ -28,6 +28,7 @@ import org.junit.Test;
  *
  * @since 3.0
  */
+@SuppressWarnings("removal")
 public class Bug42035Test {
 
 	/**

@@ -40,6 +40,7 @@ import org.junit.runners.JUnit4;
  *
  * @since 3.0
  */
+@SuppressWarnings("removal")
 @RunWith(JUnit4.class)
 @Ignore("Focus issues, see Commit c28efd634f53c9de7bb31b756ffc755b8faf0ffe")
 public class MultiPageKeyBindingTest extends UITestCase {
