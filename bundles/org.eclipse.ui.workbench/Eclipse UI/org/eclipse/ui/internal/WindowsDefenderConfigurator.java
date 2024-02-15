@@ -108,12 +108,19 @@ public class WindowsDefenderConfigurator implements EventHandler {
 
 	private static boolean runStartupCheck() {
 		if (Platform.isRunning() && Platform.OS.isWindows() && !Platform.inDevelopmentMode()) {
-			IProduct product = Platform.getProduct();
-			if (product != null) {
-				return "org.eclipse.ui.ide.workbench".equals(product.getApplication()); //$NON-NLS-1$
-			}
+			return "org.eclipse.ui.ide.workbench".equals(getRunningApplicationId()); //$NON-NLS-1$
 		}
 		return false;
+	}
+
+	private static String getRunningApplicationId() {
+		@SuppressWarnings("restriction")
+		String appId = System.getProperty(org.eclipse.core.internal.runtime.InternalPlatform.PROP_APPLICATION);
+		if (appId != null) {
+			return appId;
+		}
+		IProduct product = Platform.getProduct();
+		return product != null ? product.getApplication() : null;
 	}
 
 	/**
