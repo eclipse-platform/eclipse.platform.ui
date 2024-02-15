@@ -48,7 +48,7 @@ import org.eclipse.ui.internal.util.Util;
  * @deprecated Please use org.eclipse.jface.bindings.keys.KeySequence
  * @since 3.0
  */
-@Deprecated
+@Deprecated(forRemoval = true, since = "2024-03")
 public final class KeySequence implements Comparable {
 
 	/**

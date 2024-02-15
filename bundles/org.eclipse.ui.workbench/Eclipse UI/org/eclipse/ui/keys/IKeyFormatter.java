@@ -23,7 +23,7 @@ package org.eclipse.ui.keys;
  * @deprecated Please use org.eclipse.jface.bindings.keys.IKeyFormatter
  * @since 3.0
  */
-@Deprecated
+@Deprecated(forRemoval = true, since = "2024-03")
 public interface IKeyFormatter {
 
 	/**

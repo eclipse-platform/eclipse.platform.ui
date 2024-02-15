@@ -54,7 +54,7 @@ import org.eclipse.ui.internal.util.Util;
  * @see org.eclipse.ui.keys.ModifierKey
  * @see org.eclipse.ui.keys.NaturalKey
  */
-@Deprecated
+@Deprecated(forRemoval = true, since = "2024-03")
 public final class KeyStroke implements Comparable {
 
 	/**
