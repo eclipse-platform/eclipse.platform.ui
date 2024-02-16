@@ -78,7 +78,7 @@ import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
 import org.eclipse.jface.internal.text.InformationControlReplacer;
-import org.eclipse.jface.internal.text.TableOwnerDrawSupport;
+import org.eclipse.jface.internal.text.contentassist.CompletionTableDrawSupport;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
@@ -613,7 +613,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 		fIsColoredLabelsSupportEnabled= fContentAssistant.isColoredLabelsSupportEnabled();
 		if (fIsColoredLabelsSupportEnabled)
-			TableOwnerDrawSupport.install(fProposalTable);
+			CompletionTableDrawSupport.install(fProposalTable);
 
 		fProposalTable.setLocation(0, 0);
 		if (fAdditionalInfoController != null)
@@ -904,7 +904,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 			item.setText(displayString);
 			if (fIsColoredLabelsSupportEnabled)
-				TableOwnerDrawSupport.storeStyleRanges(item, 0, styleRanges);
+				CompletionTableDrawSupport.storeStyleRanges(item, 0, styleRanges);
 
 			item.setImage(image);
 			item.setData(current);

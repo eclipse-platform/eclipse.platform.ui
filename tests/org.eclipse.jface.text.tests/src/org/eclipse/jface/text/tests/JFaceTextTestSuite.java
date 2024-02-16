@@ -17,6 +17,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import org.eclipse.jface.internal.text.TableOwnerDrawSupportTest;
+import org.eclipse.jface.internal.text.contentassist.CompletionTableDrawSupportTest;
+
 import org.eclipse.jface.text.tests.codemining.CodeMiningProjectionViewerTest;
 import org.eclipse.jface.text.tests.codemining.CodeMiningTest;
 import org.eclipse.jface.text.tests.contentassist.AsyncContentAssistTest;
@@ -80,7 +83,10 @@ import org.eclipse.jface.text.tests.templates.persistence.TemplatePersistenceDat
 		DefaultTextDoubleClickStrategyTest.class,
 		MultiSelectionTest.class,
 		FindReplaceDocumentAdapterContentProposalProviderTest.class,
-		ProjectionViewerTest.class
+		ProjectionViewerTest.class,
+
+		TableOwnerDrawSupportTest.class,
+		CompletionTableDrawSupportTest.class
 })
 public class JFaceTextTestSuite {
 	// see @SuiteClasses

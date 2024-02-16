@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.jface.util.Policy;
+import org.eclipse.jface.viewers.internal.ColumnViewerSelectionColorListener;
 import org.eclipse.jface.viewers.internal.ExpandableNode;
 import org.eclipse.pde.api.tools.annotations.NoExtend;
 import org.eclipse.swt.SWT;
@@ -137,6 +138,7 @@ public class TreeViewer extends AbstractTreeViewer {
 		super();
 		this.tree = tree;
 		hookControl(tree);
+		overwriteSelectionColor();
 	}
 
 	@Override
@@ -1187,5 +1189,14 @@ public class TreeViewer extends AbstractTreeViewer {
 			return null;
 		}
 		return items[length - 1].getData();
+	}
+
+	/**
+	 * The color of the selected item is drawn by the OS. On some OS the color might
+	 * be not accessible. To fix this issue the background color for selected items
+	 * is drawn in a custom method.
+	 */
+	private void overwriteSelectionColor() {
+		ColumnViewerSelectionColorListener.addListenerToViewer(this);
 	}
 }
