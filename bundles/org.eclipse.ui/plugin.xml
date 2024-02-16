@@ -2054,6 +2054,74 @@
             %Color.showKeysBackgroundDesc
          </description>
       </colorDefinition>
+      <colorDefinition
+            categoryId="org.eclipse.ui.workbenchMisc"
+            id="org.eclipse.ui.workbench.SELECTED_CELL_FOREGROUND"
+            isEditable="true"
+            label="%Color.selectedCellForeground">
+         <description>
+            %Color.selectedCellForegroundDesc
+         </description>
+         <colorFactory
+               class="org.eclipse.ui.internal.themes.ColumnViewerSelectionColorFactory"
+               plugin="org.eclipse.ui">
+            <parameter
+                  name="color"
+                  value="SELECTED_CELL_FOREGROUND">
+            </parameter>
+         </colorFactory>
+      </colorDefinition>
+      <colorDefinition
+            categoryId="org.eclipse.ui.workbenchMisc"
+            id="org.eclipse.ui.workbench.SELECTED_CELL_BACKGROUND"
+            isEditable="true"
+            label="%Color.selectedCellBackground">
+         <description>
+            %Color.selectedCellBackgroundDesc
+         </description>
+         <colorFactory
+               class="org.eclipse.ui.internal.themes.ColumnViewerSelectionColorFactory"
+               plugin="org.eclipse.ui">
+            <parameter
+                  name="color"
+                  value="SELECTED_CELL_BACKGROUND">
+            </parameter>
+         </colorFactory>
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.ui.workbench.SELECTED_CELL_FOREGROUND_NO_FOCUS"
+            isEditable="true"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            label="%Color.selectedCellForegroundNoFocus">
+         <description>
+            %Color.selectedCellForegroundNoFocusDesc
+         </description>
+         <colorFactory
+               class="org.eclipse.ui.internal.themes.ColumnViewerSelectionColorFactory"
+               plugin="org.eclipse.ui">
+            <parameter
+                  name="color"
+                  value="SELECTED_CELL_FOREGROUND_NO_FOCUS">
+            </parameter>
+         </colorFactory>
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.ui.workbench.SELECTED_CELL_BACKGROUND_NO_FOCUS"
+            isEditable="true"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            label="%Color.selectedCellBackgroundNoFocus">
+         <description>
+            %Color.selectedCellBackgroundNoFocusDesc
+         </description>
+         <colorFactory
+               class="org.eclipse.ui.internal.themes.ColumnViewerSelectionColorFactory"
+               plugin="org.eclipse.ui">
+            <parameter
+                  name="color"
+                  value="SELECTED_CELL_BACKGROUND_NO_FOCUS">
+            </parameter>
+         </colorFactory>
+      </colorDefinition>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">
