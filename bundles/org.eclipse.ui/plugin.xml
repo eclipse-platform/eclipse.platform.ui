@@ -2054,6 +2054,46 @@
             %Color.showKeysBackgroundDesc
          </description>
       </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.ui.workbench.SELECTED_CELL_FOREGROUND"
+            isEditable="true"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            label="%Color.selectedCellForeground"
+            value="255,255,255">
+         <description>
+            %Color.selectedCellForegroundDesc
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.ui.workbench.SELECTED_CELL_BACKGROUND"
+            isEditable="true"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            label="%Color.selectedCellBackground"
+            value="0,90,210">
+         <description>
+            %Color.selectedCellBackgroundDesc
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.ui.workbench.SELECTED_CELL_FOREGROUND_NO_FOCUS"
+            isEditable="true"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            label="%Color.selectedCellForegroundNoFocus"
+            value="0,0,0">
+         <description>
+            %Color.selectedCellForegroundNoFocusDesc
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.ui.workbench.SELECTED_CELL_BACKGROUND_NO_FOCUS"
+            isEditable="true"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            label="%Color.selectedCellBackgroundNoFocus"
+            value="220,220,220">
+         <description>
+            %Color.selectedCellBackgroundNoFocusDesc
+         </description>
+      </colorDefinition>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">

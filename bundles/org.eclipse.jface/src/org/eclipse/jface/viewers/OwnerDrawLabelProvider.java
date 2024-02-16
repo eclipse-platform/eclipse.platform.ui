@@ -17,6 +17,8 @@ package org.eclipse.jface.viewers;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.jface.resource.ColorRegistry;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Rectangle;
@@ -166,20 +168,16 @@ public abstract class OwnerDrawLabelProvider extends CellLabelProvider {
 	}
 
 	/**
-	 * Handle the erase event. The default implementation colors the background
-	 * of selected areas with {@link SWT#COLOR_LIST_SELECTION} and foregrounds
-	 * with {@link SWT#COLOR_LIST_SELECTION_TEXT}. Note that this
-	 * implementation causes non-native behavior on some platforms. Subclasses
-	 * should override this method and <b>not</b> call the super
+	 * Handle the erase event. The default implementation colors the background of
+	 * selected areas with "org.eclipse.ui.workbench.SELECTED_CELL_BACKGROUND" and
+	 * foregrounds with "org.eclipse.ui.workbench.SELECTED_CELL_FOREGROUND". Note
+	 * that this implementation causes non-native behavior on some platforms.
+	 * Subclasses should override this method and <b>not</b> call the super
 	 * implementation.
 	 *
-	 * @param event
-	 *            the erase event
-	 * @param element
-	 *            the model object
+	 * @param event   the erase event
+	 * @param element the model object
 	 * @see SWT#EraseItem
-	 * @see SWT#COLOR_LIST_SELECTION
-	 * @see SWT#COLOR_LIST_SELECTION_TEXT
 	 */
 	protected void erase(Event event, Object element) {
 
@@ -189,11 +187,16 @@ public abstract class OwnerDrawLabelProvider extends CellLabelProvider {
 			Color oldForeground = event.gc.getForeground();
 			Color oldBackground = event.gc.getBackground();
 
-			event.gc.setBackground(event.item.getDisplay().getSystemColor(
-					SWT.COLOR_LIST_SELECTION));
-			event.gc.setForeground(event.item.getDisplay().getSystemColor(
-					SWT.COLOR_LIST_SELECTION_TEXT));
+			ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
+			if (event.widget instanceof Control control && control.isFocusControl()) {
+				event.gc.setBackground(colorRegistry.get("org.eclipse.ui.workbench.SELECTED_CELL_BACKGROUND")); //$NON-NLS-1$
+				event.gc.setForeground(colorRegistry.get("org.eclipse.ui.workbench.SELECTED_CELL_FOREGROUND")); //$NON-NLS-1$
+			} else {
+				event.gc.setBackground(colorRegistry.get("org.eclipse.ui.workbench.SELECTED_CELL_BACKGROUND_NO_FOCUS")); //$NON-NLS-1$
+				event.gc.setForeground(colorRegistry.get("org.eclipse.ui.workbench.SELECTED_CELL_FOREGROUND_NO_FOCUS")); //$NON-NLS-1$
+			}
 			event.gc.fillRectangle(bounds);
+
 			/* restore the old GC colors */
 			event.gc.setForeground(oldForeground);
 			event.gc.setBackground(oldBackground);
