@@ -106,7 +106,7 @@ public class FocusCellOwnerDrawHighlighter extends FocusCellHighlighter {
 
 	private void removeSelectionInformation(Event event, ViewerCell cell) {
 		GC gc = event.gc;
-		gc.setBackground(cell.getViewerRow().getBackground(cell.getColumnIndex()));
+		gc.setAlpha(0);// Don't draw background to keep cell coloring of theme
 		gc.setForeground(cell.getViewerRow().getForeground(cell.getColumnIndex()));
 		gc.fillRectangle(cell.getBounds());
 		event.detail &= ~SWT.SELECTED;
