@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import static org.eclipse.ui.internal.WindowsDefenderConfigurator.PREFERENCE_STARTUP_CHECK_SKIP;
+import static org.eclipse.ui.internal.WindowsDefenderConfigurator.PREFERENCE_STARTUP_CHECK_SKIP_DEFAULT;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
@@ -198,8 +201,7 @@ public class StartupPreferencePage extends PreferencePage implements IWorkbenchP
 	private void updateWindowsDefenderHandlingOptions() {
 		windowsDefenderIgnore.forEach((scope, button) -> {
 			IEclipsePreferences node = WindowsDefenderConfigurator.getPreference(scope);
-			boolean ignore = node.getBoolean(WindowsDefenderConfigurator.PREFERENCE_SKIP,
-					WindowsDefenderConfigurator.PREFERENCE_SKIP_DEFAULT);
+			boolean ignore = node.getBoolean(PREFERENCE_STARTUP_CHECK_SKIP, PREFERENCE_STARTUP_CHECK_SKIP_DEFAULT);
 			button.setSelection(ignore);
 		});
 	}
@@ -214,8 +216,7 @@ public class StartupPreferencePage extends PreferencePage implements IWorkbenchP
 		IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
 		store.setToDefault(IPreferenceConstants.PLUGINS_NOT_ACTIVATED_ON_STARTUP);
 		updateCheckState();
-		windowsDefenderIgnore.values()
-				.forEach(b -> b.setSelection(WindowsDefenderConfigurator.PREFERENCE_SKIP_DEFAULT));
+		windowsDefenderIgnore.values().forEach(b -> b.setSelection(PREFERENCE_STARTUP_CHECK_SKIP_DEFAULT));
 		updateWindowsDefenderHandlingOptions();
 	}
 
@@ -237,7 +238,7 @@ public class StartupPreferencePage extends PreferencePage implements IWorkbenchP
 		windowsDefenderIgnore.forEach((scope, button) -> {
 			try {
 				String skip = Boolean.toString(button.getSelection());
-				WindowsDefenderConfigurator.savePreference(scope, WindowsDefenderConfigurator.PREFERENCE_SKIP, skip);
+				WindowsDefenderConfigurator.savePreference(scope, PREFERENCE_STARTUP_CHECK_SKIP, skip);
 			} catch (CoreException e) {
 				WorkbenchPlugin.log("Failed to save Windows Defender exclusion check preferences", e); //$NON-NLS-1$
 			}
