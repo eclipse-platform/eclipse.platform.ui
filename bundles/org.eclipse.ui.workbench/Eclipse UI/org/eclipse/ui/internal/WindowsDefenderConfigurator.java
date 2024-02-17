@@ -76,21 +76,18 @@ import org.osgi.service.prefs.BackingStoreException;
 @EventTopics(UIEvents.UILifeCycle.APP_STARTUP_COMPLETE)
 public class WindowsDefenderConfigurator implements EventHandler {
 	private static final String PREFERENCE_EXCLUDED_INSTALLATION_PATH = "windows.defender.excluded.path"; //$NON-NLS-1$
+	private static final String PREFERENCE_STARTUP_CHECK_APP = "windows.defender.startup.check.app"; //$NON-NLS-1$
 	public static final String PREFERENCE_STARTUP_CHECK_SKIP = "windows.defender.startup.check.skip"; //$NON-NLS-1$
 	public static final boolean PREFERENCE_STARTUP_CHECK_SKIP_DEFAULT = false;
 
 	@Reference
-	private IPreferencesService preferences;
+	protected IPreferencesService preferences;
 
 	@Override
 	public void handleEvent(Event event) {
 		if (runStartupCheck()) {
 			Job job = Job.create(WorkbenchMessages.WindowsDefenderConfigurator_statusCheck, m -> {
 				SubMonitor monitor = SubMonitor.convert(m, 10);
-				if (preferences.getBoolean(PI_WORKBENCH, PREFERENCE_STARTUP_CHECK_SKIP,
-						PREFERENCE_STARTUP_CHECK_SKIP_DEFAULT, null)) {
-					return;
-				}
 				Optional<Path> installLocation = getInstallationLocation();
 				if (installLocation.isPresent()) {
 					String checkedPath = getPreference(ConfigurationScope.INSTANCE)
@@ -107,9 +104,15 @@ public class WindowsDefenderConfigurator implements EventHandler {
 		}
 	}
 
-	private static boolean runStartupCheck() {
-		if (Platform.isRunning() && Platform.OS.isWindows() && !Platform.inDevelopmentMode()) {
-			return "org.eclipse.ui.ide.workbench".equals(getRunningApplicationId()); //$NON-NLS-1$
+	protected boolean runStartupCheck() {
+		if (Platform.OS.isWindows() && !Platform.inDevelopmentMode()) {
+			if (preferences.getBoolean(PI_WORKBENCH, PREFERENCE_STARTUP_CHECK_SKIP,
+					PREFERENCE_STARTUP_CHECK_SKIP_DEFAULT, null)) {
+				return false;
+			}
+			String permittedApp = preferences.getString(PI_WORKBENCH, PREFERENCE_STARTUP_CHECK_APP,
+					"org.eclipse.ui.ide.workbench", null); //$NON-NLS-1$
+			return permittedApp.equals(getRunningApplicationId());
 		}
 		return false;
 	}
@@ -150,8 +153,8 @@ public class WindowsDefenderConfigurator implements EventHandler {
 		if (!isWindowsDefenderActive(monitor.split(1))) {
 			return Boolean.FALSE;
 		}
-
-		HandlingOption decision = askForDefenderHandlingDecision();
+		Display display = Display.getDefault();
+		HandlingOption decision = askForDefenderHandlingDecision(display);
 		if (decision != null) {
 			switch (decision) {
 			case EXECUTE_EXCLUSION -> {
@@ -160,9 +163,8 @@ public class WindowsDefenderConfigurator implements EventHandler {
 					savePreference(ConfigurationScope.INSTANCE, PREFERENCE_EXCLUDED_INSTALLATION_PATH,
 							installLocation.map(Path::toString).orElse("")); //$NON-NLS-1$
 				} catch (IOException e) {
-					PlatformUI.getWorkbench().getDisplay()
-							.syncExec(() -> MessageDialog.openError(null, "Exclusion failed", //$NON-NLS-1$
-									bindProductName(WorkbenchMessages.WindowsDefenderConfigurator_exclusionFailed)));
+					display.syncExec(() -> MessageDialog.openError(null, "Exclusion failed", //$NON-NLS-1$
+							bindProductName(WorkbenchMessages.WindowsDefenderConfigurator_exclusionFailed)));
 				}
 			}
 			case IGNORE_THIS_INSTALLATION -> savePreference(ConfigurationScope.INSTANCE, PREFERENCE_STARTUP_CHECK_SKIP,
@@ -172,12 +174,12 @@ public class WindowsDefenderConfigurator implements EventHandler {
 		return decision == HandlingOption.EXECUTE_EXCLUSION ? Boolean.TRUE : null;
 	}
 
-	private static HandlingOption askForDefenderHandlingDecision() {
+	private static HandlingOption askForDefenderHandlingDecision(Display display) {
 		String message = bindProductName(WorkbenchMessages.WindowsDefenderConfigurator_exclusionCheckMessage);
 
-		return PlatformUI.getWorkbench().getDisplay().syncCall(() -> {
+		return display.syncCall(() -> {
 			HandlingOption[] choice = new HandlingOption[] { null };
-			MessageDialog dialog = new MessageDialog(Display.getCurrent().getActiveShell(),
+			MessageDialog dialog = new MessageDialog(display.getActiveShell(),
 					WorkbenchMessages.WindowsDefenderConfigurator_statusCheck, null, message, MessageDialog.INFORMATION,
 					0, IDialogConstants.PROCEED_LABEL, IDialogConstants.CANCEL_LABEL) {
 
@@ -204,6 +206,9 @@ public class WindowsDefenderConfigurator implements EventHandler {
 							}).create(parent);
 					GridDataFactory.swtDefaults().indent(0, 5).applyTo(keepScanning);
 
+					if (!PlatformUI.isWorkbenchRunning()) {
+						return parent; // Only show the link to the preferences if the workbench is available
+					}
 					LinkFactory.newLink(SWT.WRAP)
 							.text(WorkbenchMessages.WindowsDefenderConfigurator_detailsAndOptionsLinkText)
 							.onSelect((e -> {
@@ -231,7 +236,8 @@ public class WindowsDefenderConfigurator implements EventHandler {
 	}
 
 	public static String bindProductName(String message) {
-		return NLS.bind(message, Platform.getProduct().getName());
+		String name = Optional.ofNullable(Platform.getProduct()).map(IProduct::getName).orElse("this application"); //$NON-NLS-1$
+		return NLS.bind(message, name);
 	}
 
 	public static IEclipsePreferences getPreference(IScopeContext instance) {
