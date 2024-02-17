@@ -240,7 +240,11 @@ public class WindowsDefenderConfigurator implements EventHandler {
 
 	public static void savePreference(IScopeContext scope, String key, String value) throws CoreException {
 		IEclipsePreferences preferences = getPreference(scope);
-		preferences.put(key, value);
+		if (value != null) {
+			preferences.put(key, value);
+		} else {
+			preferences.remove(key);
+		}
 		try {
 			preferences.flush();
 		} catch (BackingStoreException e) {

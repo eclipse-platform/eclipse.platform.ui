@@ -237,7 +237,8 @@ public class StartupPreferencePage extends PreferencePage implements IWorkbenchP
 
 		windowsDefenderIgnore.forEach((scope, button) -> {
 			try {
-				String skip = Boolean.toString(button.getSelection());
+				// If disabled remove the node to allow higher-level scopes to be considered
+				String skip = button.getSelection() ? Boolean.TRUE.toString() : null;
 				WindowsDefenderConfigurator.savePreference(scope, PREFERENCE_STARTUP_CHECK_SKIP, skip);
 			} catch (CoreException e) {
 				WorkbenchPlugin.log("Failed to save Windows Defender exclusion check preferences", e); //$NON-NLS-1$
