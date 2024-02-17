@@ -75,9 +75,9 @@ import org.osgi.service.prefs.BackingStoreException;
 @Component(service = EventHandler.class)
 @EventTopics(UIEvents.UILifeCycle.APP_STARTUP_COMPLETE)
 public class WindowsDefenderConfigurator implements EventHandler {
-	private static final String WINDOWS_DEFENDER_EXCLUDED_INSTALLATION_PATH = "windows.defender.excluded.path"; //$NON-NLS-1$
-	public static final String PREFERENCE_SKIP = "windows.defender.check.skip"; //$NON-NLS-1$
-	public static final boolean PREFERENCE_SKIP_DEFAULT = false;
+	private static final String PREFERENCE_EXCLUDED_INSTALLATION_PATH = "windows.defender.excluded.path"; //$NON-NLS-1$
+	public static final String PREFERENCE_STARTUP_CHECK_SKIP = "windows.defender.startup.check.skip"; //$NON-NLS-1$
+	public static final boolean PREFERENCE_STARTUP_CHECK_SKIP_DEFAULT = false;
 
 	@Reference
 	private IPreferencesService preferences;
@@ -87,13 +87,14 @@ public class WindowsDefenderConfigurator implements EventHandler {
 		if (runStartupCheck()) {
 			Job job = Job.create(WorkbenchMessages.WindowsDefenderConfigurator_statusCheck, m -> {
 				SubMonitor monitor = SubMonitor.convert(m, 10);
-				if (preferences.getBoolean(PI_WORKBENCH, PREFERENCE_SKIP, PREFERENCE_SKIP_DEFAULT, null)) {
+				if (preferences.getBoolean(PI_WORKBENCH, PREFERENCE_STARTUP_CHECK_SKIP,
+						PREFERENCE_STARTUP_CHECK_SKIP_DEFAULT, null)) {
 					return;
 				}
 				Optional<Path> installLocation = getInstallationLocation();
 				if (installLocation.isPresent()) {
 					String checkedPath = getPreference(ConfigurationScope.INSTANCE)
-							.get(WINDOWS_DEFENDER_EXCLUDED_INSTALLATION_PATH, ""); //$NON-NLS-1$
+							.get(PREFERENCE_EXCLUDED_INSTALLATION_PATH, ""); //$NON-NLS-1$
 					if (!checkedPath.isBlank() && installLocation.get().equals(Path.of(checkedPath))) {
 						return; // This installation has already been checked at the current location
 					}
@@ -156,7 +157,7 @@ public class WindowsDefenderConfigurator implements EventHandler {
 			case EXECUTE_EXCLUSION -> {
 				try {
 					WindowsDefenderConfigurator.excludeDirectoryFromScanning(monitor.split(2));
-					savePreference(ConfigurationScope.INSTANCE, WINDOWS_DEFENDER_EXCLUDED_INSTALLATION_PATH,
+					savePreference(ConfigurationScope.INSTANCE, PREFERENCE_EXCLUDED_INSTALLATION_PATH,
 							installLocation.map(Path::toString).orElse("")); //$NON-NLS-1$
 				} catch (IOException e) {
 					PlatformUI.getWorkbench().getDisplay()
@@ -164,7 +165,8 @@ public class WindowsDefenderConfigurator implements EventHandler {
 									bindProductName(WorkbenchMessages.WindowsDefenderConfigurator_exclusionFailed)));
 				}
 			}
-			case IGNORE_THIS_INSTALLATION -> savePreference(ConfigurationScope.INSTANCE, PREFERENCE_SKIP, "true"); //$NON-NLS-1$
+			case IGNORE_THIS_INSTALLATION -> savePreference(ConfigurationScope.INSTANCE, PREFERENCE_STARTUP_CHECK_SKIP,
+					"true"); //$NON-NLS-1$
 			}
 		}
 		return decision == HandlingOption.EXECUTE_EXCLUSION ? Boolean.TRUE : null;
