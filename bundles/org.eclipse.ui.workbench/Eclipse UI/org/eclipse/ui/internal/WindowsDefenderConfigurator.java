@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +30,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProduct;
@@ -156,27 +158,23 @@ public class WindowsDefenderConfigurator implements EventHandler {
 		}
 		Display display = Display.getDefault();
 		HandlingOption decision = askForDefenderHandlingDecision(display);
-		if (decision != null) {
-			switch (decision) {
-			case EXECUTE_EXCLUSION -> {
-				if (isExclusionTamperProtectionEnabled(monitor.split(1))) {
-					display.syncExec(() -> MessageDialog.openError(null, "Exclusion failed", //$NON-NLS-1$
-							bindProductName(WorkbenchMessages.WindowsDefenderConfigurator_exclusionFailed_Protected)));
-					savePreference(ConfigurationScope.INSTANCE, PREFERENCE_STARTUP_CHECK_SKIP, "true"); //$NON-NLS-1$
-					return null; // Consider selection as 'aborted' and don't show the dialog again on startup
-				}
-				try {
-					WindowsDefenderConfigurator.excludeDirectoryFromScanning(monitor.split(2));
-					savePreference(ConfigurationScope.INSTANCE, PREFERENCE_EXCLUDED_INSTALLATION_PATH,
-							installLocation.map(Path::toString).orElse("")); //$NON-NLS-1$
-				} catch (IOException e) {
-					display.syncExec(() -> MessageDialog.openError(null, "Exclusion failed", //$NON-NLS-1$
-							bindProductName(WorkbenchMessages.WindowsDefenderConfigurator_exclusionFailed)));
-				}
+		if (decision == HandlingOption.EXECUTE_EXCLUSION) {
+			if (isExclusionTamperProtectionEnabled(monitor.split(1))) {
+				display.syncExec(() -> MessageDialog.openError(null, "Exclusion failed", //$NON-NLS-1$
+						bindProductName(WorkbenchMessages.WindowsDefenderConfigurator_exclusionFailed_Protected)));
+				savePreference(ConfigurationScope.INSTANCE, PREFERENCE_STARTUP_CHECK_SKIP, "true"); //$NON-NLS-1$
+				return null; // Consider selection as 'aborted' and don't show the dialog again on startup
 			}
-			case IGNORE_THIS_INSTALLATION -> savePreference(ConfigurationScope.INSTANCE, PREFERENCE_STARTUP_CHECK_SKIP,
-					"true"); //$NON-NLS-1$
+			try {
+				WindowsDefenderConfigurator.excludeDirectoryFromScanning(monitor.split(2));
+				savePreference(ConfigurationScope.INSTANCE, PREFERENCE_EXCLUDED_INSTALLATION_PATH,
+						installLocation.map(Path::toString).orElse("")); //$NON-NLS-1$
+			} catch (IOException e) {
+				display.syncExec(() -> MessageDialog.openError(null, "Exclusion failed", //$NON-NLS-1$
+						bindProductName(WorkbenchMessages.WindowsDefenderConfigurator_exclusionFailed)));
 			}
+		} else if (decision == HandlingOption.IGNORE_THIS_INSTALLATION) {
+			savePreference(ConfigurationScope.INSTANCE, PREFERENCE_STARTUP_CHECK_SKIP, "true"); //$NON-NLS-1$
 		}
 		return decision == HandlingOption.EXECUTE_EXCLUSION ? Boolean.TRUE : null;
 	}
@@ -285,9 +283,8 @@ public class WindowsDefenderConfigurator implements EventHandler {
 	private static boolean isExclusionTamperProtectionEnabled(IProgressMonitor monitor) {
 		// https://learn.microsoft.com/en-us/microsoft-365/security/defender-endpoint/manage-tamper-protection-intune?view=o365-worldwide#how-to-determine-whether-antivirus-exclusions-are-tamper-protected-on-a-windows-device
 		try { // Query the Windows Registry
-			List<String> result = runProcess(List.of("powershell.exe", "-Command", //$NON-NLS-1$//$NON-NLS-2$
-					"Get-ItemPropertyValue -Path 'HKLM:\\SOFTWARE\\Microsoft\\Windows Defender\\Features' -Name 'TPExclusions'"), //$NON-NLS-1$
-					monitor);
+			List<String> result = runPowershell(monitor, "-Command", //$NON-NLS-1$
+					"Get-ItemPropertyValue -Path 'HKLM:\\SOFTWARE\\Microsoft\\Windows Defender\\Features' -Name 'TPExclusions'"); //$NON-NLS-1$
 			return result.size() == 1 && "1".equals(result.get(0)); //$NON-NLS-1$
 		} catch (IOException e) {
 			return false;
@@ -298,8 +295,7 @@ public class WindowsDefenderConfigurator implements EventHandler {
 		// https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.management/get-service?view=powershell-7.4
 		// https://learn.microsoft.com/en-us/dotnet/api/system.serviceprocess.servicecontrollerstatus?view=dotnet-plat-ext-8.0
 		try {
-			List<String> result = runProcess(List.of("powershell.exe", "-Command", "(Get-Service 'WinDefend').Status"), //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-					monitor);
+			List<String> result = runPowershell(monitor, "-Command", "(Get-Service 'WinDefend').Status"); //$NON-NLS-1$ //$NON-NLS-2$
 			return result.size() == 1 && "Running".equalsIgnoreCase(result.get(0)); //$NON-NLS-1$
 		} catch (IOException e) {
 			ILog.get().error("Failed to obtain 'WinDefend' service state", e); //$NON-NLS-1$
@@ -308,10 +304,9 @@ public class WindowsDefenderConfigurator implements EventHandler {
 	}
 
 	private static boolean isWindowsDefenderActive(IProgressMonitor monitor) throws CoreException {
-		// https://learn.microsoft.com/en-us/powershell/module/defender/get-mpcomputerstatus
-		List<String> command = List.of("powershell.exe", "-Command", "(Get-MpComputerStatus).AMRunningMode"); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+		// https://learn.microsoft.com/en-us/powershell/module/defender/get-mpcomputerstatus?view=windowsserver2019-ps
 		try {
-			List<String> lines = runProcess(command, monitor);
+			List<String> lines = runPowershell(monitor, "-Command", "(Get-MpComputerStatus).AMRunningMode"); //$NON-NLS-1$ //$NON-NLS-2$
 			String onlyLine = lines.size() == 1 ? lines.get(0) : ""; //$NON-NLS-1$
 			return switch (onlyLine) {
 			// Known values as listed in
@@ -329,8 +324,8 @@ public class WindowsDefenderConfigurator implements EventHandler {
 		List<Path> paths = getExecutablePath();
 		// For detailed explanations about how to read existing exclusions and how to
 		// add new ones see:
-		// https://learn.microsoft.com/en-us/powershell/module/defender/add-mppreference
-		// https://learn.microsoft.com/en-us/powershell/module/defender/get-mppreference
+		// https://learn.microsoft.com/en-us/powershell/module/defender/add-mppreference?view=windowsserver2019-ps
+		// https://learn.microsoft.com/en-us/powershell/module/defender/get-mppreference?view=windowsserver2019-ps
 		//
 		// For .NET's stream API called LINQ see:
 		// https://learn.microsoft.com/en-us/dotnet/api/system.linq.enumerable
@@ -351,7 +346,7 @@ public class WindowsDefenderConfigurator implements EventHandler {
 		// a second one with elevated rights is started and runs the
 		// add-exclusions-command. For a detailed explanation of the Start-process
 		// parameters see
-		// https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.management/start-process#parameters
+		// https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.management/start-process?view=powershell-7.4#parameters
 		//
 		// In order to avoid quoting when passing a command through multiple
 		// process-calls/command line processors, the command is passed as
@@ -360,11 +355,13 @@ public class WindowsDefenderConfigurator implements EventHandler {
 		// https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_powershell_exe#-encodedcommand-base64encodedcommand
 		String encodedCommand = Base64.getEncoder()
 				.encodeToString(exclusionsCommand.getBytes(StandardCharsets.UTF_16LE)); // encoding as specified
-		List<String> command = List.of("powershell.exe", //$NON-NLS-1$
-				// Launch child powershell with administrator privileges
+		runPowershell(monitor, // Launch child powershell with administrator privileges
 				"Start-Process", "powershell", "-Verb", "RunAs", "-Wait", //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 				"-ArgumentList", "'-EncodedCommand " + encodedCommand + "'"); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-		runProcess(command, monitor);
+	}
+
+	private static List<String> runPowershell(IProgressMonitor monitor, String... arguments) throws IOException {
+		return runProcess(Stream.concat(Stream.of("powershell.exe"), Arrays.stream(arguments)).toList(), monitor); //$NON-NLS-1$
 	}
 
 	private static List<String> runProcess(List<String> command, IProgressMonitor monitor) throws IOException {
