@@ -14,6 +14,8 @@
 package org.eclipse.ltk.core.refactoring;
 
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -76,14 +78,18 @@ public class TextFileChange extends TextChange {
 
 
 	// the file to change
-	private IFile fFile;
-	private int fSaveMode= KEEP_SAVE_STATE;
+	private final IFile fFile;
+
+	private volatile int fSaveMode= KEEP_SAVE_STATE;
 
 	// the mapped text buffer
-	private int fAcquireCount;
-	private ITextFileBuffer fBuffer;
-	private BufferValidationState fValidationState;
-	private ContentStamp fContentStamp;
+	private AtomicInteger fAcquireCount= new AtomicInteger();
+
+	private volatile ITextFileBuffer fBuffer;
+
+	private volatile BufferValidationState fValidationState;
+
+	private volatile ContentStamp fContentStamp;
 
 	/**
 	 * Creates a new <code>TextFileChange</code> for the given file.
@@ -206,17 +212,19 @@ public class TextFileChange extends TextChange {
 
 	@Override
 	protected IDocument acquireDocument(IProgressMonitor pm) throws CoreException {
-		fAcquireCount++;
-		if (fAcquireCount > 1)
-			return fBuffer.getDocument();
+		synchronized (fAcquireCount) { // wait till fBuffer is initialized
+			if (fAcquireCount.incrementAndGet() > 1) {
+				return fBuffer.getDocument();
+			}
 
-		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
-		IPath path= fFile.getFullPath();
-		manager.connect(path, LocationKind.IFILE, pm);
-		fBuffer= manager.getTextFileBuffer(path, LocationKind.IFILE);
-		IDocument result= fBuffer.getDocument();
-		fContentStamp= ContentStamps.get(fFile, result);
-		return result;
+			ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
+			IPath path= fFile.getFullPath();
+			manager.connect(path, LocationKind.IFILE, pm);
+			fBuffer= manager.getTextFileBuffer(path, LocationKind.IFILE);
+			IDocument result= fBuffer.getDocument();
+			fContentStamp= ContentStamps.get(fFile, result);
+			return result;
+		}
 	}
 
 	/**
@@ -235,12 +243,14 @@ public class TextFileChange extends TextChange {
 
 	@Override
 	protected void releaseDocument(IDocument document, IProgressMonitor pm) throws CoreException {
-		Assert.isTrue(fAcquireCount > 0);
-		if (fAcquireCount == 1) {
-			ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
-			manager.disconnect(fFile.getFullPath(), LocationKind.IFILE, pm);
+		synchronized (fAcquireCount) { // synchronize with acquireDocument
+			int acquireCount= fAcquireCount.decrementAndGet();
+			Assert.isTrue(acquireCount >= 0);
+			if (acquireCount == 0) {
+				ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
+				manager.disconnect(fFile.getFullPath(), LocationKind.IFILE, pm);
+			}
 		}
-		fAcquireCount--;
  	}
 
 	@Override
@@ -302,7 +312,7 @@ public class TextFileChange extends TextChange {
 	 * @since 3.2
 	 */
 	protected boolean isDocumentAcquired() {
-		return fAcquireCount > 0;
+		return fAcquireCount.get() > 0;
 	}
 
 	/**
@@ -315,7 +325,7 @@ public class TextFileChange extends TextChange {
 	 * @since 3.3
 	 */
 	protected boolean isDocumentModified() {
-		if (fAcquireCount > 0) {
+		if (isDocumentAcquired()) {
 			ContentStamp currentStamp= ContentStamps.get(fFile, fBuffer.getDocument());
 			return !currentStamp.equals(fContentStamp);
 		}
