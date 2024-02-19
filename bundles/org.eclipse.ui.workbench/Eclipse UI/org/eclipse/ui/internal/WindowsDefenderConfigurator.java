@@ -30,6 +30,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -149,8 +150,8 @@ public class WindowsDefenderConfigurator implements EventHandler {
 	 *         Windows Defender is inactive and null if the process was aborted.
 	 */
 	private static Boolean runExclusionCheck(IProgressMonitor m, Optional<Path> installLocation) throws CoreException {
-		SubMonitor monitor = SubMonitor.convert(m, 3);
-		if (!isWindowsDefenderActive(monitor.split(1))) {
+		SubMonitor monitor = SubMonitor.convert(m, 4);
+		if (!isWindowsDefenderServiceRunning(monitor.split(1)) || !isWindowsDefenderActive(monitor.split(1))) {
 			return Boolean.FALSE;
 		}
 		Display display = Display.getDefault();
@@ -273,6 +274,19 @@ public class WindowsDefenderConfigurator implements EventHandler {
 		@SuppressWarnings("restriction")
 		String eclipseLauncher = System.getProperty(org.eclipse.osgi.internal.location.EquinoxLocations.PROP_LAUNCHER);
 		return List.of(Path.of(eclipseLauncher));
+	}
+
+	private static boolean isWindowsDefenderServiceRunning(IProgressMonitor monitor) {
+		// https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.management/get-service?view=powershell-7.4
+		// https://learn.microsoft.com/en-us/dotnet/api/system.serviceprocess.servicecontrollerstatus?view=dotnet-plat-ext-8.0
+		try {
+			List<String> result = runProcess(List.of("powershell.exe", "-Command", "(Get-Service 'WinDefend').Status"), //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+					monitor);
+			return result.size() == 1 && "Running".equalsIgnoreCase(result.get(0)); //$NON-NLS-1$
+		} catch (IOException e) {
+			ILog.get().error("Failed to obtain 'WinDefend' service state", e); //$NON-NLS-1$
+			return false;
+		}
 	}
 
 	private static boolean isWindowsDefenderActive(IProgressMonitor monitor) throws CoreException {
