@@ -336,8 +336,8 @@ public class ErrorDialog extends IconAndMessageDialog {
 	@Override
 	public int open() {
 		if (AUTOMATED_MODE) {
-			IllegalStateException e = new IllegalStateException("Error dialog is supposed to be shown now"); //$NON-NLS-1$
-			MultiStatus ms = new MultiStatus("org.eclipse.jface", IStatus.ERROR, title + " : " + message, e); //$NON-NLS-1$ //$NON-NLS-2$
+			MultiStatus ms = new MultiStatus("org.eclipse.jface", IStatus.INFO, //$NON-NLS-1$
+					"Logging instead of opening ErorDialog for: " + title + " : " + message); //$NON-NLS-1$ //$NON-NLS-2$
 			if (status != null) {
 				ms.add(status);
 			}
