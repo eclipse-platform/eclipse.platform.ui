@@ -309,8 +309,7 @@ public abstract class TextChange extends TextEditBasedChange {
 		try{
 			result= acquireDocument(subMon.newChild(1));
 		} finally {
-			if (result != null)
-				releaseDocument(result, subMon.newChild(1));
+			releaseDocument(result, subMon.newChild(1));
 		}
 		subMon.done();
 		return result;
