@@ -365,12 +365,7 @@ import org.eclipse.swt.widgets.ToolItem;
 			if (!animated) {
 				fProgressBar.beginTask(totalWork);
 			}
-			if (name == null) {
-				fTaskName = Util.ZERO_LENGTH_STRING;
-			} else {
-				fTaskName = name;
-			}
-			setMessage(fTaskName);
+			setTaskName(name == null ? Util.ZERO_LENGTH_STRING : name);
 		});
 	}
 
@@ -400,7 +395,7 @@ import org.eclipse.swt.widgets.ToolItem;
 				fProgressBar.sendRemainingWork();
 				fProgressBar.done();
 			}
-			setMessage(null);
+			setTaskName(null);
 			hideProgress();
 		});
 	}
@@ -585,7 +580,7 @@ import org.eclipse.swt.widgets.ToolItem;
 		boolean changed = !Objects.equals(fTaskName, s);
 		if (changed) {
 			fTaskName = s;
-			setMessage(s);
+			updateMessageLabel();
 		}
 	}
 
@@ -691,11 +686,14 @@ import org.eclipse.swt.widgets.ToolItem;
 	protected void updateMessageLabel() {
 		if (fMessageLabel != null && !fMessageLabel.isDisposed()) {
 			Display display = fMessageLabel.getDisplay();
-			if ((fErrorText != null && fErrorText.length() > 0)
-					|| fErrorImage != null) {
+			if ((fErrorText != null && !fErrorText.isEmpty()) || fErrorImage != null) {
 				fMessageLabel.setForeground(JFaceColors.getErrorText(display));
 				fMessageLabel.setText(fErrorText);
 				fMessageLabel.setImage(fErrorImage);
+			} else if (fTaskName != null && !fTaskName.isEmpty()) {
+				fMessageLabel.setForeground(getForeground());
+				fMessageLabel.setText(fTaskName == null ? "" : fTaskName); //$NON-NLS-1$
+				fMessageLabel.setImage(null);
 			} else {
 				fMessageLabel.setForeground(getForeground());
 				fMessageLabel.setText(fMessageText == null ? "" : fMessageText); //$NON-NLS-1$
