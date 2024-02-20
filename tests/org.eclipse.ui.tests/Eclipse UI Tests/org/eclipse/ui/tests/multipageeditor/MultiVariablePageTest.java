@@ -150,7 +150,7 @@ public class MultiVariablePageTest extends UITestCase {
 		IPostSelectionProvider postProvider = (IPostSelectionProvider) sp;
 
 		fPostCalled = 0;
-		ISelectionChangedListener listener = event -> ++fPostCalled;
+		ISelectionChangedListener listener = event -> fPostCalled += sp != event.getSelectionProvider() ? 1 : 0;
 
 		try {
 			postProvider.addPostSelectionChangedListener(listener);
