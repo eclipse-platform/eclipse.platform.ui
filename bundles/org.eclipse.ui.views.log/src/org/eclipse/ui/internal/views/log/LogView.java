@@ -84,6 +84,8 @@ public class LogView extends ViewPart implements LogListener {
 	protected static final String P_COLUMN_2 = "column3"; //$NON-NLS-1$
 	protected static final String P_COLUMN_3 = "column4"; //$NON-NLS-1$
 	public static final String P_ACTIVATE = "activate"; //$NON-NLS-1$
+	public static final String P_ACTIVATE_WARN = "activateWarn"; //$NON-NLS-1$
+	public static final String P_ACTIVATE_ERRROR = "activateError"; //$NON-NLS-1$
 	public static final String P_SHOW_FILTER_TEXT = "show_filter_text"; //$NON-NLS-1$
 	public static final String P_ORDER_TYPE = "orderType"; //$NON-NLS-1$
 	public static final String P_ORDER_VALUE = "orderValue"; //$NON-NLS-1$
@@ -147,6 +149,8 @@ public class LogView extends ViewPart implements LogListener {
 	private Action fReadLogAction;
 	private Action fCopyAction;
 	private Action fActivateViewAction;
+	private Action fActivateViewWarnAction;
+	private Action fActivateViewErrorAction;
 	private Action fOpenLogAction;
 	private Action fExportLogAction;
 	private Action fExportLogEntryAction;
@@ -311,8 +315,14 @@ public class LogView extends ViewPart implements LogListener {
 		mgr.add(createFilterAction());
 		mgr.add(new Separator());
 
-		fActivateViewAction = createActivateViewAction();
+		fActivateViewAction = createActivateViewAction(Messages.LogView_activate, P_ACTIVATE);
 		mgr.add(fActivateViewAction);
+		fActivateViewWarnAction = createActivateViewAction(Messages.LogView_activateWarn, P_ACTIVATE_WARN);
+		mgr.add(fActivateViewWarnAction);
+		fActivateViewErrorAction = createActivateViewAction(Messages.LogView_activateError, P_ACTIVATE_ERRROR);
+		mgr.add(fActivateViewErrorAction);
+		mgr.add(new Separator());
+
 		if (fFilteredTree.getFilterControl() != null)
 			mgr.add(createShowTextFilter());
 
@@ -349,14 +359,29 @@ public class LogView extends ViewPart implements LogListener {
 		fTree.setMenu(menu);
 	}
 
-	private Action createActivateViewAction() {
-		Action action = new Action(Messages.LogView_activate) { //
+	private Action createActivateViewAction(String msg, String key) {
+		Action action = new Action(msg) {
 			@Override
 			public void run() {
-				fMemento.putString(P_ACTIVATE, isChecked() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+				if (isChecked()) {
+					// on disabling one disable the others:
+					if (P_ACTIVATE.equals(key)) {
+						fActivateViewWarnAction.setChecked(false);
+						fActivateViewErrorAction.setChecked(false);
+					} else if (P_ACTIVATE_WARN.equals(key)) {
+						fActivateViewAction.setChecked(false);
+						fActivateViewErrorAction.setChecked(false);
+					} else if (P_ACTIVATE_ERRROR.equals(key)) {
+						fActivateViewAction.setChecked(false);
+						fActivateViewWarnAction.setChecked(false);
+					}
+				}
+				fMemento.putString(P_ACTIVATE, Boolean.toString(fActivateViewAction.isChecked()));
+				fMemento.putString(P_ACTIVATE_WARN, Boolean.toString(fActivateViewWarnAction.isChecked()));
+				fMemento.putString(P_ACTIVATE_ERRROR, Boolean.toString(fActivateViewErrorAction.isChecked()));
 			}
 		};
-		action.setChecked(fMemento.getString(P_ACTIVATE).equals("true")); //$NON-NLS-1$
+		action.setChecked(Boolean.parseBoolean(fMemento.getString(key)));
 		return action;
 	}
 
@@ -746,7 +771,7 @@ public class LogView extends ViewPart implements LogListener {
 		} finally {
 			fReadLogAction.setText(Messages.LogView_readLog_reload);
 			fReadLogAction.setToolTipText(Messages.LogView_readLog_reload);
-			asyncRefresh(false);
+			asyncRefresh();
 			resetDialogButtons();
 		}
 	}
@@ -842,7 +867,7 @@ public class LogView extends ViewPart implements LogListener {
 					currentSession.removeAllChildren();
 				}
 			}
-			asyncRefresh(false);
+			asyncRefresh();
 			resetDialogButtons();
 		});
 	}
@@ -862,7 +887,7 @@ public class LogView extends ViewPart implements LogListener {
 		} finally {
 			fReadLogAction.setText(Messages.LogView_readLog_restore);
 			fReadLogAction.setToolTipText(Messages.LogView_readLog_restore);
-			asyncRefresh(false);
+			asyncRefresh();
 			resetDialogButtons();
 		}
 	}
@@ -891,6 +916,7 @@ public class LogView extends ViewPart implements LogListener {
 	}
 
 	private void updateLogViewer(List<LogEntry> entries) {
+		OptionalInt maxSeverity = entries.stream().mapToInt(LogEntry::getSeverity).max();
 		synchronized (elements) {
 			elements.clear();
 			groups.clear();
@@ -898,8 +924,7 @@ public class LogView extends ViewPart implements LogListener {
 			limitEntriesCount();
 		}
 		setContentDescription(getTitleSummary());
-
-		asyncRefresh(false);
+		maxSeverity.ifPresent(this::asyncRefreshAndActivate);
 	}
 
 	private Display getDisplay() {
@@ -1102,7 +1127,6 @@ public class LogView extends ViewPart implements LogListener {
 
 		if (shouldReadLog) {
 			readLogFile();
-			asyncRefresh(true);
 		} else {
 			LogEntry entry = betterInput != null ? createLogEntry(betterInput) : createLogEntry(input);
 
@@ -1117,7 +1141,6 @@ public class LogView extends ViewPart implements LogListener {
 			}
 			if (!useBatchedEntries) {
 				pushEntry(entry);
-				asyncRefresh(true);
 			}
 		}
 	}
@@ -1139,7 +1162,6 @@ public class LogView extends ViewPart implements LogListener {
 						}
 					}
 				}
-				asyncRefresh(true);
 				return Status.OK_STATUS;
 			}
 		};
@@ -1187,7 +1209,7 @@ public class LogView extends ViewPart implements LogListener {
 				limitEntriesCount();
 			}
 		}
-		asyncRefresh(true);
+		asyncRefreshAndActivate(entry.getSeverity());
 	}
 
 	private Throttler createMutualRefresh(Display display) {
@@ -1226,13 +1248,16 @@ public class LogView extends ViewPart implements LogListener {
 		});
 	}
 
-	private void asyncRefresh(final boolean activate) {
-		if (fTree.isDisposed())
-			return;
-		mutualRefresh.throttledExec();
-		if (activate && fActivateViewAction.isChecked()) {
+	private void asyncRefreshAndActivate(int severity) {
+		asyncRefresh();
+		if ((fActivateViewAction.isChecked()) || (severity >= IStatus.WARNING && fActivateViewWarnAction.isChecked())
+				|| (severity >= IStatus.ERROR && fActivateViewErrorAction.isChecked())) {
 			mutualActivate.throttledExec();
 		}
+	}
+
+	private void asyncRefresh() {
+		mutualRefresh.throttledExec();
 	}
 
 	@Override
@@ -1384,7 +1409,9 @@ public class LogView extends ViewPart implements LogListener {
 		this.fMemento.putInteger(P_COLUMN_1, getColumnWidth(fColumn1, 300));
 		this.fMemento.putInteger(P_COLUMN_2, getColumnWidth(fColumn2, 150));
 		this.fMemento.putInteger(P_COLUMN_3, getColumnWidth(fColumn3, 150));
-		this.fMemento.putString(P_ACTIVATE, fActivateViewAction.isChecked() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+		this.fMemento.putString(P_ACTIVATE, Boolean.toString(fActivateViewAction.isChecked()));
+		this.fMemento.putString(P_ACTIVATE_WARN, Boolean.toString(fActivateViewWarnAction.isChecked()));
+		this.fMemento.putString(P_ACTIVATE_ERRROR, Boolean.toString(fActivateViewErrorAction.isChecked()));
 		memento.putMemento(this.fMemento);
 		writeSettings();
 	}
@@ -1736,6 +1763,10 @@ public class LogView extends ViewPart implements LogListener {
 		fMemento.putInteger(P_COLUMN_2, getColumnWidthPreference(instancePrefs, defaultPrefs, P_COLUMN_2, 150));
 		fMemento.putInteger(P_COLUMN_3, getColumnWidthPreference(instancePrefs, defaultPrefs, P_COLUMN_3, 150));
 		fMemento.putBoolean(P_ACTIVATE, instancePrefs.getBoolean(P_ACTIVATE, defaultPrefs.getBoolean(P_ACTIVATE, true)));
+		fMemento.putBoolean(P_ACTIVATE_WARN,
+				instancePrefs.getBoolean(P_ACTIVATE_WARN, defaultPrefs.getBoolean(P_ACTIVATE_WARN, true)));
+		fMemento.putBoolean(P_ACTIVATE_ERRROR,
+				instancePrefs.getBoolean(P_ACTIVATE_ERRROR, defaultPrefs.getBoolean(P_ACTIVATE_ERRROR, true)));
 		fMemento.putInteger(P_ORDER_VALUE, instancePrefs.getInt(P_ORDER_VALUE, defaultPrefs.getInt(P_ORDER_VALUE, DESCENDING)));
 		fMemento.putInteger(P_ORDER_TYPE, instancePrefs.getInt(P_ORDER_TYPE, defaultPrefs.getInt(P_ORDER_TYPE, LogView.DATE)));
 		fMemento.putBoolean(P_SHOW_FILTER_TEXT, instancePrefs.getBoolean(P_SHOW_FILTER_TEXT, defaultPrefs.getBoolean(P_SHOW_FILTER_TEXT, true)));
@@ -1797,6 +1828,8 @@ public class LogView extends ViewPart implements LogListener {
 		instancePrefs.putInt(P_COLUMN_2, fMemento.getInteger(P_COLUMN_2).intValue());
 		instancePrefs.putInt(P_COLUMN_3, fMemento.getInteger(P_COLUMN_3).intValue());
 		instancePrefs.putBoolean(P_ACTIVATE, fMemento.getBoolean(P_ACTIVATE).booleanValue());
+		instancePrefs.putBoolean(P_ACTIVATE_WARN, fMemento.getBoolean(P_ACTIVATE_WARN).booleanValue());
+		instancePrefs.putBoolean(P_ACTIVATE_ERRROR, fMemento.getBoolean(P_ACTIVATE_ERRROR).booleanValue());
 		instancePrefs.putInt(P_ORDER_VALUE, fMemento.getInteger(P_ORDER_VALUE).intValue());
 		instancePrefs.putInt(P_ORDER_TYPE, fMemento.getInteger(P_ORDER_TYPE).intValue());
 		instancePrefs.putBoolean(P_SHOW_FILTER_TEXT, fMemento.getBoolean(P_SHOW_FILTER_TEXT).booleanValue());
