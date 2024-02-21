@@ -150,7 +150,7 @@ public class WindowsDefenderConfigurator implements EventHandler {
 	 *         Windows Defender is inactive and null if the process was aborted.
 	 */
 	private static Boolean runExclusionCheck(IProgressMonitor m, Optional<Path> installLocation) throws CoreException {
-		SubMonitor monitor = SubMonitor.convert(m, 4);
+		SubMonitor monitor = SubMonitor.convert(m, 5);
 		if (!isWindowsDefenderServiceRunning(monitor.split(1)) || !isWindowsDefenderActive(monitor.split(1))) {
 			return Boolean.FALSE;
 		}
@@ -159,6 +159,12 @@ public class WindowsDefenderConfigurator implements EventHandler {
 		if (decision != null) {
 			switch (decision) {
 			case EXECUTE_EXCLUSION -> {
+				if (isExclusionTamperProtectionEnabled(monitor.split(1))) {
+					display.syncExec(() -> MessageDialog.openError(null, "Exclusion failed", //$NON-NLS-1$
+							bindProductName(WorkbenchMessages.WindowsDefenderConfigurator_exclusionFailed_Protected)));
+					savePreference(ConfigurationScope.INSTANCE, PREFERENCE_STARTUP_CHECK_SKIP, "true"); //$NON-NLS-1$
+					return null; // Consider selection as 'aborted' and don't show the dialog again on startup
+				}
 				try {
 					WindowsDefenderConfigurator.excludeDirectoryFromScanning(monitor.split(2));
 					savePreference(ConfigurationScope.INSTANCE, PREFERENCE_EXCLUDED_INSTALLATION_PATH,
@@ -274,6 +280,18 @@ public class WindowsDefenderConfigurator implements EventHandler {
 		@SuppressWarnings("restriction")
 		String eclipseLauncher = System.getProperty(org.eclipse.osgi.internal.location.EquinoxLocations.PROP_LAUNCHER);
 		return List.of(Path.of(eclipseLauncher));
+	}
+
+	private static boolean isExclusionTamperProtectionEnabled(IProgressMonitor monitor) {
+		// https://learn.microsoft.com/en-us/microsoft-365/security/defender-endpoint/manage-tamper-protection-intune?view=o365-worldwide#how-to-determine-whether-antivirus-exclusions-are-tamper-protected-on-a-windows-device
+		try { // Query the Windows Registry
+			List<String> result = runProcess(List.of("powershell.exe", "-Command", //$NON-NLS-1$//$NON-NLS-2$
+					"Get-ItemPropertyValue -Path 'HKLM:\\SOFTWARE\\Microsoft\\Windows Defender\\Features' -Name 'TPExclusions'"), //$NON-NLS-1$
+					monitor);
+			return result.size() == 1 && "1".equals(result.get(0)); //$NON-NLS-1$
+		} catch (IOException e) {
+			return false;
+		}
 	}
 
 	private static boolean isWindowsDefenderServiceRunning(IProgressMonitor monitor) {

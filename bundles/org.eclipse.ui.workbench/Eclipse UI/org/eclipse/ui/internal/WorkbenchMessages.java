@@ -614,6 +614,7 @@ public class WorkbenchMessages extends NLS {
 	public static String WindowsDefenderConfigurator_statusInactive;
 	public static String WindowsDefenderConfigurator_statusCheckFailed;
 	public static String WindowsDefenderConfigurator_exclusionFailed;
+	public static String WindowsDefenderConfigurator_exclusionFailed_Protected;
 
 	// ==============================================================================
 	// Editor Framework
