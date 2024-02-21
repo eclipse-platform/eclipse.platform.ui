@@ -13,22 +13,31 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.utils;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * Class utils.
  */
 public class ClassUtils {
 
+	private static final Map<Class<?>, String> simpleNames = new ConcurrentHashMap<>();
 	/**
-	 * Return the simple name of Class <code>c</code>.
+	 * Return a simple name of Class <code>c</code>. For inner classes, the hyphen
+	 * is used, e.g., for Outer$Inner, the return value is "Outer-Inner"
 	 */
 	public static String getSimpleName(Class<?> c) {
+		return simpleNames.computeIfAbsent(c, ClassUtils::computeSimpleName);
+	}
+
+	private static String computeSimpleName(Class<?> c) {
 		String name = c.getName();
 		int index = name.lastIndexOf('.');
 		if (index > 0) {
 			name = name.substring(index + 1, name.length());
 		}
 
-		return name.replace('$', '-');
+		return name.replace('$', '-').intern();
 	}
 
 	/**
