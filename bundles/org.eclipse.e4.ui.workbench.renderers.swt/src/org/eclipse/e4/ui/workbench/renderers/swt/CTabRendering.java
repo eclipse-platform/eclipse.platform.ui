@@ -27,7 +27,11 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChange
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.ui.internal.css.swt.ICTabRendering;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
+import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolderRenderer;
@@ -88,8 +92,6 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 
 	private static int MIN_VIEW_CHARS = 1;
 	private static int MAX_VIEW_CHARS = 9999;
-
-	private static final String EditorTag = "EditorStack"; //$NON-NLS-1$
 
 	// Constants for circle drawing
 	static enum CirclePart {
@@ -1330,7 +1332,15 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 
 	private boolean isPartOfEditorStack() {
 		MUIElement element = (MUIElement) parent.getData(AbstractPartRenderer.OWNING_ME);
-		return element != null && element.getTags().contains(EditorTag);
+		EObject root = EcoreUtil.getRootContainer((EObject) element, true);
+		if (root instanceof MContext context) {
+			EModelService eModelService = context.getContext().get(EModelService.class);
+			if (eModelService != null) {
+				int location = eModelService.getElementLocation(element);
+				return (location & EModelService.IN_SHARED_AREA) != 0;
+			}
+		}
+		return false;
 	}
 
 	private boolean getHideIconsForViewTabsPreference() {
