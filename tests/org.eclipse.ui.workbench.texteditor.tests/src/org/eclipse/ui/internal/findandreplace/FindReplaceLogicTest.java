@@ -153,8 +153,8 @@ public class FindReplaceLogicTest {
 
 		findReplaceLogic.performReplaceAll("[", "", parentShell.getDisplay());
 		assertThat(textViewer.getDocument().get(), equalTo("almost@an_email"));
-		expectStatusIsMessageWithString(findReplaceLogic, "Unclosed character class near index 0\r\n"
-				+ "[\r\n"
+		expectStatusIsMessageWithString(findReplaceLogic, "Unclosed character class near index 0" + System.lineSeparator()
+				+ "[" + System.lineSeparator()
 				+ "^");
 
 	}
@@ -176,8 +176,8 @@ public class FindReplaceLogicTest {
 
 		findReplaceLogic.performReplaceAll("[", "", parentShell.getDisplay());
 		assertThat(textViewer.getDocument().get(), equalTo("almost@an_email"));
-		expectStatusIsMessageWithString(findReplaceLogic, "Unclosed character class near index 0\r\n"
-				+ "[\r\n"
+		expectStatusIsMessageWithString(findReplaceLogic, "Unclosed character class near index 0" + System.lineSeparator()
+				+ "[" + System.lineSeparator()
 				+ "^");
 	}
 

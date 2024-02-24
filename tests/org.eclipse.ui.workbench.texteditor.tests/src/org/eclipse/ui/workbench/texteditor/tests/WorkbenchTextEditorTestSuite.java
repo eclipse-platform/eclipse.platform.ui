@@ -17,6 +17,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import org.eclipse.ui.internal.findandreplace.FindReplaceLogicTest;
+
 import org.eclipse.ui.workbench.texteditor.tests.minimap.MinimapPageTest;
 import org.eclipse.ui.workbench.texteditor.tests.minimap.MinimapWidgetTest;
 import org.eclipse.ui.workbench.texteditor.tests.revisions.ChangeRegionTest;
@@ -44,7 +46,8 @@ import org.eclipse.ui.workbench.texteditor.tests.rulers.RulerTestSuite;
 		MinimapPageTest.class,
 		MinimapWidgetTest.class,
 		TextEditorPluginTest.class,
-		TextViewerDeleteLineTargetTest.class
+		TextViewerDeleteLineTargetTest.class,
+		FindReplaceLogicTest.class,
 })
 public class WorkbenchTextEditorTestSuite {
 	// see @SuiteClasses
