@@ -20,7 +20,6 @@ package org.eclipse.e4.ui.workbench.renderers.swt;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.Optional;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
@@ -1306,10 +1305,9 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 		boolean showFullText = getShowFullTextForViewTabsPreference();
 		if (!isPartOfEditorStack()) {
 			if (showFullText) {
-				Optional<Integer> lengthOfLongestItemText = Arrays.stream(parent.getItems()).map(CTabItem::getText)
-						.map(String::length)
-						.max(Integer::compare);
-				parent.setMinimumCharacters(lengthOfLongestItemText.orElseGet(() -> MAX_VIEW_CHARS));
+				int lengthOfLongestItemText = Arrays.stream(parent.getItems()).map(CTabItem::getText)
+						.map(String::length).max(Integer::compare).orElse(0);
+				parent.setMinimumCharacters(Math.max(MAX_VIEW_CHARS, lengthOfLongestItemText));
 			} else {
 				parent.setMinimumCharacters(MIN_VIEW_CHARS);
 			}
