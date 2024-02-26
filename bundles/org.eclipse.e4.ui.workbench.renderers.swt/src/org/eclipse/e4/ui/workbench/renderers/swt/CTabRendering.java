@@ -18,7 +18,6 @@
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.Objects;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
@@ -34,7 +33,6 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolderRenderer;
-import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -90,7 +88,7 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 	public static final boolean SHOW_FULL_TEXT_FOR_VIEW_TABS_DEFAULT = false;
 
 	private static int MIN_VIEW_CHARS = 1;
-	private static int MAX_VIEW_CHARS = 9999;
+	private static int MAX_VIEW_CHARS = 999999;
 
 	// Constants for circle drawing
 	static enum CirclePart {
@@ -1305,9 +1303,7 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 		boolean showFullText = getShowFullTextForViewTabsPreference();
 		if (!isPartOfEditorStack()) {
 			if (showFullText) {
-				int lengthOfLongestItemText = Arrays.stream(parent.getItems()).map(CTabItem::getText)
-						.map(String::length).max(Integer::compare).orElse(0);
-				parent.setMinimumCharacters(Math.max(MAX_VIEW_CHARS, lengthOfLongestItemText));
+				parent.setMinimumCharacters(MAX_VIEW_CHARS);
 			} else {
 				parent.setMinimumCharacters(MIN_VIEW_CHARS);
 			}
