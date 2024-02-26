@@ -226,6 +226,19 @@ public class TextViewerTest {
 		}.waitForCondition(textViewer.getControl().getDisplay(), 3000));
 	}
 
+	@Test
+	public void testSpecialCharacterSelection() {
+		fShell= new Shell();
+		final TextViewer textViewer= new TextViewer(fShell, SWT.NONE);
+		StyledText textWidget= textViewer.getTextWidget();
+		textViewer.setDocument(new Document());
+		StyledTextContent content= textViewer.getTextWidget().getContent();
+		assumeNotNull(content);
+		content.setText("Hello");
+		content.replaceTextRange(0, 5, "(");
+		assertEquals("Expected text after replacement", "(Hello)", textWidget.getText());
+	}
+
 	/**
 	 * Test if {@link TextViewer}s default {@link IDocumentAdapter} implementation adhere to
 	 * {@link IDocumentAdapter}s JavaDoc.
