@@ -322,4 +322,24 @@ public class CTabFolderTest extends CSSSWTTestCase {
 		Label labelToTest = createLabelInCTabFolder("Label { background-color: #0000FF; }\n");
 		assertEquals(BLUE, labelToTest.getBackground().getRGB());
 	}
+
+	@Test
+	void testSelectedImageVisible() {
+		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { swt-selected-image-visible: true}");
+		assertEquals(true, folderToTest.getSelectedImageVisible());
+		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "swt-selected-image-visible", null));
+		folderToTest = createTestCTabFolder("CTabFolder { swt-selected-image-visible: false}");
+		assertEquals(false, folderToTest.getSelectedImageVisible());
+		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "swt-selected-image-visible", null));
+	}
+
+	@Test
+	void testMinimumCharacters() {
+		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { swt-tab-text-minimum-characters: 1}");
+		assertEquals(1, folderToTest.getMinimumCharacters());
+		assertEquals("1", engine.retrieveCSSProperty(folderToTest, "swt-tab-text-minimum-characters", null));
+		folderToTest = createTestCTabFolder("CTabFolder { swt-tab-text-minimum-characters: 1.2}");
+		assertEquals(1, folderToTest.getMinimumCharacters());
+		assertEquals("1", engine.retrieveCSSProperty(folderToTest, "swt-tab-text-minimum-characters", null));
+	}
 }
