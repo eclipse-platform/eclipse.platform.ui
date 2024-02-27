@@ -32,7 +32,7 @@ Contents
 *   [24 Build and Test Automation for plug-ins and features](#Build-and-Test-Automation-for-plug-ins-and-features)
 *   [25 Using OpenGL with SWT](#Using-OpenGL-with-SWT)
 *   [26 Folding in Eclipse Text Editors](#Folding-in-Eclipse-Text-Editors)
-*   [27 Eclipse User Interface Guidelines: Version 2.1](#Eclipse-User-Interface-Guidelines-Version-2.1)
+*   [27 Eclipse User Interface Guidelines: Version 2.1](#Eclipse-User-Interface-Guidelines-Version-21)
 *   [28 Modeling Rule-Based Systems with EMF](#Modeling-Rule-Based-Systems-with-EMF)
 *   [29 Building Administrative Applications in Eclipse](#Building-Administrative-Applications-in-Eclipse)
 *   [30 EMF goes RCP](#EMF-goes-RCP)

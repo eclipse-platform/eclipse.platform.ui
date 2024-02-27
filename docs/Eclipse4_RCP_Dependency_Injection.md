@@ -7,11 +7,11 @@ Contents
 
 *   [1 Overview](#Overview)
 *   [2 Standard Annotations and Classes](#Standard-Annotations-and-Classes)
-    *   [2.1 @Inject (javax.inject)](#inject-javaxinject)
-    *   [2.2 @Named (javax.inject)](#named-javaxinject)
-    *   [2.3 @Singleton (javax.inject)](#singleton-javaxinject)
-    *   [2.4 Provider<T> (javax.inject)](#provider-javaxinject)
-    *   [2.5 @PostConstruct, @PreDestroy (javax.annotation)](#postconstruct-predestroy-javaxannotation)
+    *   [2.1 @Inject (jakarta.inject)](#inject-jakartainject)
+    *   [2.2 @Named (jakarta.inject)](#named-jakartainject)
+    *   [2.3 @Singleton (jakarta.inject)](#singleton-jakartainject)
+    *   [2.4 Provider (javax.inject)](#provider-javaxinject)
+    *   [2.5 @PostConstruct (jakarta.annotation), @PreDestroy(jakarta.annotation)](#postconstruct-jakartaannotation-predestroyjakartaannotation)
 *   [3 E4AP-specific Annotations](#e4ap-specific-annotations)
     *   [3.1 @Optional (org.eclipse.e4.core.di.annotations)](#optional-orgeclipsee4corediannotations)
     *   [3.2 @Active (org.eclipse.e4.core.contexts)](#active-orgeclipsee4corecontexts)
@@ -30,7 +30,6 @@ Contents
 *   [6 Considerations](#Considerations)
 *   [7 Current Caveats](#Current-Caveats)
 *   [8 Design Decisions](#Design-Decisions)
-*   [8 References](#References)
 
 Overview
 ========

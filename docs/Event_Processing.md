@@ -5,7 +5,7 @@ Contents
 --------
 
 *   [1 Event Notifications in E4](#Event-Notifications-in-Eclipse)
-*   [2 What is the Problem with the observer pattern?](#What-is-the-Problem-the-observer-pattern)
+*   [2 What is the Problem with the observer pattern?](#what-is-the-problem-with-the-observer-pattern)
 *   [3 Using publish and subscribe](#Using-publish-and-subscribe)
 *   [4 Eclipse-specific design parameters](#Eclipse-specific-design-parameters)
 *   [5 EventAdmin: pros and cons](#EventAdmin-pros-and-cons)
