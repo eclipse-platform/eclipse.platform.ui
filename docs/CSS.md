@@ -14,8 +14,7 @@ Contents
     *   [3.5 Widget: CTabItem](#Widget-CTabItem)
     *   [3.6 Widget: CTabFolder with e4Renderer](#Widget-CTabFolder-with-e4Renderer)
 *   [2 Pseudo classes which can be used in CSS to style SWT widgets](#Pseudo-classes-which-can-be-used-in-CSS-to-style-SWT-widgets)
-*   [3 Customize](#Customize)
-*   [4 Using CSS in Eclipse 3.x releases](#Using-CSS-in-Eclipse-3.6)
+*   [3 Using CSS in Eclipse 3.6](#Using-CSS-in-Eclipse-36)
 
 Overview
 --------

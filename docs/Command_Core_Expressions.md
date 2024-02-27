@@ -14,7 +14,7 @@ Contents
     *   [4.2 Package Explorer IStructuredSelection](#Package-Explorer-IStructuredSelection)
     *   [4.3 Active editor type](#Active-editor-type)
     *   [4.4 Complex nested boolean expressions](#Complex-nested-boolean-expressions)
-*   [5 New Core Expressions in 3.3](#New-Core-Expressions-in-3.3)
+*   [5 New Core Expressions in 3.3](#New-Core-Expressions-in-33)
     *   [5.1 count and iterate](#count-and-iterate)
     *   [5.2 definitions](#definitions)
 

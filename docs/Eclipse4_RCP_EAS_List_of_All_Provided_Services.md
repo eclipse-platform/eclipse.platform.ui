@@ -18,7 +18,7 @@ Contents
     *   [3.1 Model Info](#Model-Info-2)
     *   [3.2 Services](#Services-3)
 *   [4 Handler Execution](#Handler-Execution)
-*   [5 Eclipse 3.x Compatibility Layer](#Eclipse-3.x-Compatibility-Layer)
+*   [5 Eclipse 3.x Compatibility Layer](#Eclipse-3x-Compatibility-Layer)
     *   [5.1 Application Context](#Application-Context-2)
         *   [5.1.1 Application Parameters](#Application-Parameters-2)
         *   [5.1.2 Model Info](#Model-Info-3)
