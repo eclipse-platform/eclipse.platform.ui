@@ -27,6 +27,7 @@ import static org.junit.Assume.assumeFalse;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -212,16 +213,19 @@ public class CompletionTest extends AbstratGenericEditorTest {
 	}
 
 	public static Shell findNewShell(Set<Shell> beforeShells, Display display, boolean expectShell) {
-		Shell[] afterShells = Arrays.stream(display.getShells())
-				.filter(Shell::isVisible)
-				.filter(shell -> !beforeShells.contains(shell))
-				.toArray(Shell[]::new);
+		Shell[] afterShells = findNewShells(beforeShells, display).toArray(Shell[]::new);
 		if (expectShell) {
 			assertEquals("No new shell found", 1, afterShells.length);
 		}
 		return afterShells.length > 0 ? afterShells[0] : null;
 	}
-
+	public static Collection<Shell> findNewShells(Set<Shell> beforeShells, Display display) {
+		List<Shell> result= Arrays.stream(display.getShells())
+				.filter(Shell::isVisible)
+				.filter(shell -> !beforeShells.contains(shell))
+				.toList();
+		return result;
+	}
 	@Test
 	public void testCompletionFreeze_bug521484() throws Exception {
 		assumeFalse("test fails on Mac, see https://github.com/eclipse-platform/eclipse.platform.ui/issues/906", Util.isMac());
@@ -248,7 +252,7 @@ public class CompletionTest extends AbstratGenericEditorTest {
 		emulatePressLeftArrowKey();
 		final Set<Shell> beforeShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
 		DisplayHelper.sleep(editor.getSite().getShell().getDisplay(), 200);
-		this.completionShell= findNewShell(beforeShells, editor.getSite().getShell().getDisplay(), true);
+		this.completionShell= findNewShells(beforeShells, editor.getSite().getShell().getDisplay()).stream().filter(s->Arrays.stream(s.getChildren()).allMatch(w->w instanceof Table) ).findFirst().get();
 		final Table completionProposalList = findCompletionSelectionControl(this.completionShell);
 		checkCompletionContent(completionProposalList);
 	}
