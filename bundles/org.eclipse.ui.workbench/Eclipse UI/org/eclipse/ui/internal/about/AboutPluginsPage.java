@@ -22,8 +22,10 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -182,16 +184,18 @@ public class AboutPluginsPage extends ProductInfoPage {
 						return WorkbenchImages.getImage(data.isSigned() ? IWorkbenchGraphicConstants.IMG_OBJ_SIGNED_YES
 								: IWorkbenchGraphicConstants.IMG_OBJ_SIGNED_NO);
 					}
-
-					synchronized (resolveQueue) {
-						resolveQueue.add(data);
-					}
-					resolveJob.schedule();
-
+					resolve(data);
 					return WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_OBJ_SIGNED_UNKNOWN);
 				}
 			}
 			return null;
+		}
+
+		public void resolve(AboutBundleData data) {
+			synchronized (resolveQueue) {
+				resolveQueue.add(data);
+			}
+			resolveJob.schedule();
 		}
 
 		@Override
@@ -199,6 +203,15 @@ public class AboutPluginsPage extends ProductInfoPage {
 			if (element instanceof AboutBundleData) {
 				AboutBundleData data = (AboutBundleData) element;
 				switch (columnIndex) {
+				case 0:
+					if (!data.isSignedDetermined()) {
+						return "..."; //$NON-NLS-1$
+					}
+					Date signDate = data.getSignDate();
+					if (signDate != null) {
+						return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(signDate);
+					}
+					break;
 				case 1:
 					return data.getProviderName();
 				case 2:
@@ -367,9 +380,13 @@ public class AboutPluginsPage extends ProductInfoPage {
 
 		final TableComparator comparator = new TableComparator();
 		vendorInfo.setComparator(comparator);
-		int[] columnWidths = { convertHorizontalDLUsToPixels(30), // signature
-				convertHorizontalDLUsToPixels(120), convertHorizontalDLUsToPixels(120),
-				convertHorizontalDLUsToPixels(70), convertHorizontalDLUsToPixels(130), };
+		int[] columnWidths = { //
+				convertHorizontalDLUsToPixels(70), // Signed
+				convertHorizontalDLUsToPixels(130), // Provider
+				convertHorizontalDLUsToPixels(220), // Plug-in Name
+				convertHorizontalDLUsToPixels(92), // Version
+				convertHorizontalDLUsToPixels(200), // Plug-in Id
+		};
 
 		// create table headers
 		for (int i = 0; i < columnTitles.length; i++) {
@@ -558,7 +575,6 @@ public class AboutPluginsPage extends ProductInfoPage {
 	private void handleColumnsPressed() {
 		ConfigureColumns.forTable(vendorInfo.getTable(), this);
 	}
-}
 
 class TableComparator extends ViewerComparator {
 
@@ -572,7 +588,7 @@ class TableComparator extends ViewerComparator {
 		if (sortColumn == 0 && e1 instanceof AboutBundleData && e2 instanceof AboutBundleData) {
 			AboutBundleData d1 = (AboutBundleData) e1;
 			AboutBundleData d2 = (AboutBundleData) e2;
-			int diff = getSignedSortValue(d1) - getSignedSortValue(d2);
+			int diff = Long.compare(getSignedSortValue(d1), getSignedSortValue(d2));
 			// If values are different, or there is no secondary column defined,
 			// we are done
 			if (diff != 0 || lastSortColumn == 0)
@@ -611,7 +627,7 @@ class TableComparator extends ViewerComparator {
 					if (e1 instanceof AboutBundleData && e2 instanceof AboutBundleData) {
 						AboutBundleData d1 = (AboutBundleData) e1;
 						AboutBundleData d2 = (AboutBundleData) e2;
-						int diff = getSignedSortValue(d1) - getSignedSortValue(d2);
+						int diff = Long.compare(getSignedSortValue(d1), getSignedSortValue(d2));
 						return lastAscending ? diff : -diff;
 					}
 				}
@@ -626,14 +642,16 @@ class TableComparator extends ViewerComparator {
 	/**
 	 * @return a sort value depending on the signed state
 	 */
-	private int getSignedSortValue(AboutBundleData data) {
+	private long getSignedSortValue(AboutBundleData data) {
 		if (!data.isSignedDetermined()) {
-			return 0;
-		} else if (data.isSigned()) {
-			return 1;
-		} else {
-			return -1;
+			((BundleTableLabelProvider) vendorInfo.getLabelProvider()).resolve(data);
+			return Long.MIN_VALUE + 1;
 		}
+		Date signDate = data.getSignDate();
+		if (signDate == null) {
+			return Long.MIN_VALUE;
+		}
+		return signDate.getTime();
 	}
 
 	/**
@@ -668,7 +686,7 @@ class TableComparator extends ViewerComparator {
 		this.ascending = ascending;
 	}
 }
-
+}
 class BundlePatternFilter extends ViewerFilter {
 
 	private TextMatcher matcher;
