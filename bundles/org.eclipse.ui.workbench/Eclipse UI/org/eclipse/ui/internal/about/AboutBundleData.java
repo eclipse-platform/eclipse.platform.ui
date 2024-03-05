@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.ServiceCaller;
 import org.eclipse.osgi.signedcontent.SignedContent;
 import org.eclipse.osgi.signedcontent.SignedContentFactory;
+import org.eclipse.osgi.signedcontent.SignerInfo;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
@@ -38,6 +39,7 @@ public class AboutBundleData extends AboutData {
 	private boolean isSignedDetermined = false;
 
 	private boolean isSigned;
+	private Date signDate;
 
 	public AboutBundleData(Bundle bundle) {
 		this(bundle, null);
@@ -108,6 +110,14 @@ public class AboutBundleData extends AboutData {
 		if (!isSigned && info != null) {
 			isSigned = info.isSigned(bundle);
 		}
+		SignerInfo[] signers = signedContent.getSignerInfos();
+		if (signers.length == 0) {
+			if (info != null && info.isSigned(bundle)) {
+				signDate = info.getSigningTime(bundle);
+			}
+		} else {
+			signDate = signedContent.getSigningTime(signers[0]);
+		}
 		isSignedDetermined = true;
 		return isSigned;
 	}
@@ -147,6 +157,10 @@ public class AboutBundleData extends AboutData {
 			}
 		});
 		return result[0];
+	}
+
+	public Date getSignDate() {
+		return signDate;
 	}
 
 	/**
