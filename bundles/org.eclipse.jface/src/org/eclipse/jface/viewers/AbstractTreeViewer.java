@@ -93,7 +93,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * Constant indicating that no level of the tree should be expanded or collapsed
 	 *
 	 * @see #setAutoExpandOnSingleChildLevels(int)
-	 * @since 3.33
+	 * @since 3.34
 	 */
 	public static final int NO_EXPAND = 0;
 
@@ -1238,7 +1238,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * @return {@code NO_EXPAND} for disabled, {@code ALL_LEVELS} for infinite
 	 *         expansion or any integer value for a specific number of levels to
 	 *         expand.
-	 * @since 3.33
+	 * @since 3.34
 	 */
 	public int getAutoExpandOnSingleChildLevels() {
 		return autoExpandOnSingleChildLevels;
@@ -2515,7 +2515,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *              expansion is recursively applied for the given number of levels
 	 *              if the widget at each of the according levels only has a single
 	 *              child.
-	 * @since 3.33
+	 * @since 3.34
 	 */
 	public void setAutoExpandOnSingleChildLevels(int level) {
 		autoExpandOnSingleChildLevels = level;
@@ -2695,7 +2695,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *
 	 * @param elementOrTreePath the widget to expand
 	 * @param expanded          the new expanded state of {@code elementOrTreePath}
-	 * @since 3.33
+	 * @since 3.34
 	 */
 	public void setExpandedStateWithAutoExpandOnSingleChild(Object elementOrTreePath, boolean expanded) {
 		Assert.isNotNull(elementOrTreePath);
