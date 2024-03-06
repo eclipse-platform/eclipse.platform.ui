@@ -25,7 +25,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.MouseAdapter;
@@ -267,12 +267,12 @@ public class CommonViewer extends TreeViewer {
 	 *            a viewer sorter, or <code>null</code> if none
 	 */
 	@Override
-	public void setSorter(ViewerSorter sorter) {
+	public void setComparator(ViewerComparator sorter) {
 		if (sorter != null && sorter instanceof CommonViewerSorter commonSorter) {
 			commonSorter.setContentService(contentService);
 		}
 
-		super.setSorter(sorter);
+		super.setComparator(sorter);
 	}
 
 	/**

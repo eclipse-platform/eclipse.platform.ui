@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.internal.navigator.VisibilityAssistant.VisibilityListener;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptorManager;
@@ -36,8 +36,8 @@ public class NavigatorSorterService implements INavigatorSorterService, Visibili
 
 	private final NavigatorContentService contentService;
 
-	/* A map of (CommonSorterDescriptor, ViewerSorter)-pairs */
-	private final Map<CommonSorterDescriptor, ViewerSorter> sorters = new HashMap<>();
+	/* A map of (CommonSorterDescriptor, ViewerComparator)-pairs */
+	private final Map<CommonSorterDescriptor, ViewerComparator> sorters = new HashMap<>();
 
 	private INavigatorContentDescriptor[] sortOnlyDescriptors;
 
@@ -66,18 +66,18 @@ public class NavigatorSorterService implements INavigatorSorterService, Visibili
 	}
 
 	@Override
-	public ViewerSorter findSorterForParent(Object aParent) {
+	public ViewerComparator findSorterForParent(Object aParent) {
 
 		CommonSorterDescriptor[] descriptors = CommonSorterDescriptorManager
 				.getInstance().findApplicableSorters(contentService, aParent);
 		if (descriptors.length > 0) {
 			return getSorter(descriptors[0]);
 		}
-		return SkeletonViewerSorter.INSTANCE;
+		return SkeletonViewerComparator.INSTANCE;
 	}
 
-	private ViewerSorter getSorter(CommonSorterDescriptor descriptor) {
-		ViewerSorter sorter = null;
+	private ViewerComparator getSorter(CommonSorterDescriptor descriptor) {
+		ViewerComparator sorter = null;
 		synchronized (sorters) {
 			sorter = sorters.get(descriptor);
 			if (sorter == null) {
@@ -88,7 +88,7 @@ public class NavigatorSorterService implements INavigatorSorterService, Visibili
 	}
 
 	@Override
-	public synchronized ViewerSorter findSorter(INavigatorContentDescriptor source,
+	public synchronized ViewerComparator findSorter(INavigatorContentDescriptor source,
 			Object parent, Object lvalue, Object rvalue) {
 
 		CommonSorterDescriptorManager dm = CommonSorterDescriptorManager
@@ -122,7 +122,7 @@ public class NavigatorSorterService implements INavigatorSorterService, Visibili
 	public Map findAvailableSorters(INavigatorContentDescriptor theSource) {
 
 		CommonSorterDescriptor[] descriptors = CommonSorterDescriptorManager.getInstance().findApplicableSorters(theSource);
-		Map<String, ViewerSorter> sorters = new HashMap<>();
+		Map<String, ViewerComparator> sorters = new HashMap<>();
 
 		int count = 0;
 		for (CommonSorterDescriptor descriptor : descriptors) {

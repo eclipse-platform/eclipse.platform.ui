@@ -14,16 +14,13 @@
 
 package org.eclipse.ui.internal.navigator.sorters;
 
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 
-/**
- * @since 3.2
- */
-public class SkeletonViewerSorter extends ViewerSorter {
+public class SkeletonViewerComparator extends ViewerComparator {
 
 	/** The singleton instance. */
-	public static final ViewerSorter INSTANCE = new SkeletonViewerSorter();
+	public static final SkeletonViewerComparator INSTANCE = new SkeletonViewerComparator();
 
-	private SkeletonViewerSorter() {}
+	private SkeletonViewerComparator() {}
 
 }

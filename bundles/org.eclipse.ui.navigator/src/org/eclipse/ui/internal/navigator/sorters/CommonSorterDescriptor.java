@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.ui.internal.navigator.CustomAndExpression;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.internal.navigator.NavigatorSafeRunnable;
@@ -90,12 +89,11 @@ public class CommonSorterDescriptor implements INavigatorContentExtPtConstants {
 
 	/**
 	 *
-	 * @return An instance of the ViewerSorter defined by the extension. Callers
-	 *         of this method are responsible for managing the instantiated
-	 *         filter.
+	 * @return An instance of the ViewerComparator defined by the extension. Callers
+	 *         of this method are responsible for managing the instantiated filter.
 	 */
-	public ViewerSorter createSorter() {
-		final ViewerSorter[] sorter = new ViewerSorter[1];
+	public ViewerComparator createSorter() {
+		final ViewerComparator[] sorter = new ViewerComparator[1];
 
 		SafeRunner.run(new NavigatorSafeRunnable(element) {
 			@Override
@@ -105,13 +103,13 @@ public class CommonSorterDescriptor implements INavigatorContentExtPtConstants {
 		});
 		if (sorter[0] != null)
 			return sorter[0];
-		return SkeletonViewerSorter.INSTANCE;
+		return SkeletonViewerComparator.INSTANCE;
 	}
 
-	private ViewerSorter createSorterInstance() throws CoreException {
+	private ViewerComparator createSorterInstance() throws CoreException {
 		Object contributed = element.createExecutableExtension(ATT_CLASS);
-		if (contributed instanceof ViewerSorter) {
-			return (ViewerSorter) contributed;
+		if (contributed instanceof ViewerComparator) {
+			return (ViewerComparator) contributed;
 		}
 		if (contributed instanceof ViewerComparator) {
 			return new WrappedViewerComparator((ViewerComparator) contributed);
@@ -126,7 +124,7 @@ public class CommonSorterDescriptor implements INavigatorContentExtPtConstants {
 	/**
 	 * Public for tests only.
 	 */
-	public static class WrappedViewerComparator extends ViewerSorter {
+	public static class WrappedViewerComparator extends ViewerComparator {
 
 		private final ViewerComparator comparator;
 
