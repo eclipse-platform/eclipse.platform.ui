@@ -2504,11 +2504,9 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * default. Turning this behavior on should be done cautiously on trees with
 	 * lazy-loaded child-nodes.
 	 * <p>
-	 * <p>
 	 * Using {@code ALL_LEVELS} as argument will recursively expand as many levels
 	 * as possible until a widget at the according level has more than a single
 	 * child.
-	 * </p>
 	 *
 	 * @param level {@code NO_EXPAND} for disabled, {@code ALL_LEVELS} for infinite
 	 *              expansion or any positive integer value to set a level to which
