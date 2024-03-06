@@ -85,13 +85,13 @@ class MarkerComparator implements Comparator<MarkerItem> {
 	}
 
 	@Override
-	public int compare(MarkerItem arg0, MarkerItem arg1) {
+	public int compare(MarkerItem item1, MarkerItem item2) {
 		// Sort by category first
-		int value = compareCategory(arg0, arg1);
-		if (value == 0) {
-			value=compareFields(arg0, arg1);
+		int value = compareCategory(item1, item2);
+		if (value != 0) {
+			return value;
 		}
-		return value ;
+		return compareFields(item1, item2);
 	}
 
 	/**

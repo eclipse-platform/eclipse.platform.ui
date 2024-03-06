@@ -28,13 +28,10 @@ public class MarkerPathField extends MarkerField {
 
 	@Override
 	public int compare(MarkerItem item1, MarkerItem item2) {
-		if (item1.getMarker() == null && item2.getMarker() == null)
-			return 0;
-		if (item1.getMarker() == null)
-			return 1;
-		if (item2.getMarker() == null)
-			return -1;
-
+		int value = Boolean.compare(item1.getMarker() == null, item2.getMarker() == null);
+		if (value != 0) {
+			return value;
+		}
 		return item1.getPath().compareTo(item2.getPath());
 	}
 

@@ -241,11 +241,11 @@ public class QuickFixPage extends WizardPage {
 				int relevanceMarker2 = (e2 instanceof IMarkerResolutionRelevance)
 						? ((IMarkerResolutionRelevance) e2).getRelevanceForResolution()
 						: 0;
-				if (relevanceMarker1 != relevanceMarker2) {
-					return Integer.valueOf(relevanceMarker2).compareTo(Integer.valueOf(relevanceMarker1));
+				int c = Integer.compare(relevanceMarker1, relevanceMarker2);
+				if (c != 0) {
+					return c;
 				}
-				return ((IMarkerResolution) e1).getLabel().compareTo(
-						((IMarkerResolution)e2).getLabel());
+				return ((IMarkerResolution) e1).getLabel().compareTo(((IMarkerResolution) e2).getLabel());
 			}
 		});
 

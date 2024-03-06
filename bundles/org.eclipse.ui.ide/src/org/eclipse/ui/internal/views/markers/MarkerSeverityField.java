@@ -46,7 +46,7 @@ public class MarkerSeverityField extends MarkerField {
 
 	@Override
 	public int compare(MarkerItem item1, MarkerItem item2) {
-		return MarkerSupportInternalUtilities.getSeverity(item2)
-				- MarkerSupportInternalUtilities.getSeverity(item1);
+		return Integer.compare(MarkerSupportInternalUtilities.getSeverity(item1),
+				MarkerSupportInternalUtilities.getSeverity(item2));
 	}
 }
