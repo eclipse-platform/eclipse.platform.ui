@@ -42,13 +42,7 @@ public class MarkerCreationTimeField extends MarkerField {
 	public int compare(MarkerItem item1, MarkerItem item2) {
 		long time1 = ((MarkerSupportItem) item1).getCreationTime();
 		long time2 = ((MarkerSupportItem) item2).getCreationTime();
-		if (time1 < time2) {
-			return -1;
-		}
-		if (time1 > time2) {
-			return 1;
-		}
-		return 0;
+		return Long.compare(time1, time2);
 	}
 
 	@Override

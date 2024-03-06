@@ -35,12 +35,12 @@ public class MarkerSeverityAndDescriptionField extends MarkerDescriptionField {
 
 	@Override
 	public int compare(MarkerItem item1, MarkerItem item2) {
-
-		int severity1 = MarkerSupportInternalUtilities.getSeverity(item1);
-		int severity2 = MarkerSupportInternalUtilities.getSeverity(item2);
-		if (severity1 == severity2)
-			return super.compare(item1, item2);
-		return severity2 - severity1;
+		int c = Integer.compare(MarkerSupportInternalUtilities.getSeverity(item1),
+				MarkerSupportInternalUtilities.getSeverity(item2));
+		if (c != 0) {
+			return c;
+		}
+		return super.compare(item1, item2);
 	}
 
 	/**

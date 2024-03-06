@@ -67,7 +67,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 
 	// The key for the string we built for display
 	private static final String LOCATION_STRING = "LOCATION_STRING"; //$NON-NLS-1$
-	private static final Object CACHED_NULL = new Object();
+	private static final Object CACHED_NULL = new String("CACHED_NULL"); //$NON-NLS-1$
 	private MarkerCategory category;
 	private final Map<String, Object> cache = new ConcurrentHashMap<>();
 	private static Map<String, CollationKey> collationCache = new ConcurrentHashMap<>();

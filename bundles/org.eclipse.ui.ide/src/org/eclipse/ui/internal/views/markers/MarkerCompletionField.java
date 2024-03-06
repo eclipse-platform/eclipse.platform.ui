@@ -98,7 +98,7 @@ public class MarkerCompletionField extends MarkerField {
 
 	@Override
 	public int compare(MarkerItem item1, MarkerItem item2) {
-		return getDoneConstant(item2) - getDoneConstant(item1);
+		return Integer.compare(getDoneConstant(item1), getDoneConstant(item2));
 	}
 
 	@Override
