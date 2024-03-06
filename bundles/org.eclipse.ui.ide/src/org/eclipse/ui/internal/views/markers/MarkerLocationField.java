@@ -49,12 +49,15 @@ public class MarkerLocationField extends MarkerField {
 		//See if location got overridden
 		String location1 = item1.getAttributeValue(IMarker.LOCATION, MarkerItemDefaults.LOCATION_DEFAULT);
 		String location2 = item2.getAttributeValue(IMarker.LOCATION, MarkerItemDefaults.LOCATION_DEFAULT);
-
-		if (location1.isEmpty() || location2.isEmpty())
-			return item1.getAttributeValue(IMarker.LINE_NUMBER, -1)
-					- item2.getAttributeValue(IMarker.LINE_NUMBER, -1);
-
-		return location1.compareTo(location2);
-
+		int c = Boolean.compare(location1.isEmpty(), location2.isEmpty());
+		if (c != 0) {
+			return c;
+		}
+		c = location1.compareTo(location2);
+		if (c != 0) {
+			return c;
+		}
+		return Integer.compare(item1.getAttributeValue(IMarker.LINE_NUMBER, -1),
+				item2.getAttributeValue(IMarker.LINE_NUMBER, -1));
 	}
 }
