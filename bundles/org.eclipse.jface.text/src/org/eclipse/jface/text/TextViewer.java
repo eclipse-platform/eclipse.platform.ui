@@ -1541,11 +1541,6 @@ public class TextViewer extends Viewer implements
 	 */
 	private List<ISelectionChangedListener> fPostSelectionChangedListeners;
 	/**
-	 * Queued post selection changed events count.
-	 * @since 3.0
-	 */
-	private final int[] fNumberOfPostSelectionChangedEvents= new int[1];
-	/**
 	 * Last selection range sent to post selection change listeners.
 	 * @since 3.0
 	 */
@@ -2613,10 +2608,10 @@ public class TextViewer extends Viewer implements
 		Display display= getDisplay();
 		if (display == null)
 			return;
-
-		fNumberOfPostSelectionChangedEvents[0]++;
+		// no synchronization or volatile access needed
+		// because postSelectionChanged() will also run in the same (UI) thread, just later:
 		fFireEqualPostSelectionChange|= fireEqualSelection;
-		throttledPostSelection.throttledExec();
+		throttledPostSelection.throttledAsyncExec();
 	}
 
 	private void postSelectionChanged() {
