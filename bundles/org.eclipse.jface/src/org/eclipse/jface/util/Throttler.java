@@ -97,13 +97,27 @@ public class Throttler {
 	 * returning.
 	 */
 	public void throttledExec() {
+		throttledExec(true);
+	}
+
+	/**
+	 * Like {@link #throttledExec()} but if called from Display Thread guaranteed to
+	 * return before Runnable is run
+	 *
+	 * @since 3.34
+	 */
+	public void throttledAsyncExec() {
+		throttledExec(false);
+	}
+
+	private void throttledExec(boolean allowSyncExec) {
 		if (display.isDisposed()) {
 			return;
 		}
 		if (scheduled.compareAndSet(false, true)) {
 			boolean exception = true;
 			try {
-				if (Thread.currentThread() == display.getThread()) {
+				if (allowSyncExec && Thread.currentThread() == display.getThread()) {
 					timerExec.run();
 				} else {
 					display.asyncExec(timerExec);
