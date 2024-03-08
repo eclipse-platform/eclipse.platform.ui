@@ -119,6 +119,7 @@ public class TableViewer extends AbstractTableViewer {
 	public TableViewer(Table table) {
 		this.table = table;
 		hookControl(table);
+		overwriteSelectionColor();
 	}
 
 	@Override
@@ -505,6 +506,15 @@ public class TableViewer extends AbstractTableViewer {
 			setBusy(oldBusy);
 			table.setRedraw(true);
 		}
+	}
+
+	/**
+	 * The color of the selected item is drawn by the OS. On some OS the color might
+	 * be not accessible. To fix this issue the background color for selected items
+	 * is drawn in a custom method.
+	 */
+	private void overwriteSelectionColor() {
+		ColumnViewerSelectionColorListener.addListenerToViewer(this);
 	}
 
 }
