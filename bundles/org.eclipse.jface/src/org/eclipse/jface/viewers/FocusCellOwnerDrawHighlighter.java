@@ -17,6 +17,7 @@
 package org.eclipse.jface.viewers;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
@@ -106,9 +107,13 @@ public class FocusCellOwnerDrawHighlighter extends FocusCellHighlighter {
 
 	private void removeSelectionInformation(Event event, ViewerCell cell) {
 		GC gc = event.gc;
-		gc.setAlpha(0);// Don't draw background to keep cell coloring of theme
+		if (Platform.WS_GTK.equals(Platform.getWS())) {
+			// On GTK, the line is highlighted even though the SELECTED flag is removed. To
+			// fix this issue, the background must be overwridden
+			gc.setBackground(cell.getViewerRow().getBackground(cell.getColumnIndex()));
+			gc.fillRectangle(cell.getBounds());
+		}
 		gc.setForeground(cell.getViewerRow().getForeground(cell.getColumnIndex()));
-		gc.fillRectangle(cell.getBounds());
 		event.detail &= ~SWT.SELECTED;
 	}
 
