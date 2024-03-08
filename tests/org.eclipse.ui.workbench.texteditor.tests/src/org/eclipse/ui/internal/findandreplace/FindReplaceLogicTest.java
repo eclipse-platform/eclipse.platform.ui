@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IFindReplaceTarget;
+import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.TextViewer;
 
 import org.eclipse.ui.internal.findandreplace.status.FindAllStatus;
@@ -430,6 +431,25 @@ public class FindReplaceLogicTest {
 		findReplaceLogic.performSearch("get");
 		findReplaceLogic.performSearch("get");
 		expectStatusIsCode(findReplaceLogic, FindStatus.StatusCode.NO_MATCH);
+	}
+
+	@Test
+	public void testSelectInSearchScope() {
+		TextViewer textViewer= setupTextViewer("line1\nline2\nline3");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		textViewer.setSelection(new TextSelection(6, 11));
+		findReplaceLogic.deactivate(SearchOptions.GLOBAL);
+		findReplaceLogic.performReplaceAll("l", "", Display.getCurrent());
+		expectStatusIsReplaceAllWithCount(findReplaceLogic, 2);
+
+		findReplaceLogic.activate(SearchOptions.GLOBAL);
+		textViewer.setSelection(new TextSelection(0, 5));
+		findReplaceLogic.deactivate(SearchOptions.GLOBAL);
+
+		findReplaceLogic.performReplaceAll("n", "", Display.getCurrent());
+		expectStatusIsReplaceAllWithCount(findReplaceLogic, 1);
+
+		assertThat(textViewer.getTextWidget().getText(), is("lie1\nine2\nine3"));
 	}
 
 	private void expectStatusEmpty(IFindReplaceLogic findReplaceLogic) {
