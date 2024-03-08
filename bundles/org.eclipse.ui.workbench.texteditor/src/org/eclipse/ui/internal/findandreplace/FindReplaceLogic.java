@@ -50,7 +50,6 @@ import org.eclipse.ui.texteditor.IFindReplaceTargetExtension2;
 public class FindReplaceLogic implements IFindReplaceLogic {
 	private IFindReplaceStatus status;
 	private IFindReplaceTarget target;
-	private IRegion oldScope;
 	private Point incrementalBaseLocation;
 
 	private boolean isTargetSupportingRegEx;
@@ -65,7 +64,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 
 		switch (searchOption) {
 		case GLOBAL:
-			useSelectedLines(false);
+			unsetSearchScope();
 			break;
 		case FORWARD:
 		case INCREMENTAL:
@@ -73,7 +72,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 				initIncrementalBaseLocation();
 			}
 			break;
-			// $CASES-OMITTED$
+		// $CASES-OMITTED$
 		default:
 			break;
 		}
@@ -86,7 +85,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 		}
 
 		if (searchOption == SearchOptions.GLOBAL) {
-			useSelectedLines(true);
+			initializeSearchScope();
 		}
 
 		if (searchOption == SearchOptions.FORWARD && shouldInitIncrementalBaseLocation()) {
@@ -152,10 +151,8 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	/**
 	 * Tells the dialog to perform searches only in the scope given by the actually
 	 * selected lines.
-	 *
-	 * @param selectedLines <code>true</code> if selected lines should be used
 	 */
-	private void useSelectedLines(boolean selectedLines) {
+	private void initializeSearchScope() {
 		if (shouldInitIncrementalBaseLocation()) {
 			initIncrementalBaseLocation();
 		}
@@ -166,25 +163,27 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 
 		IFindReplaceTargetExtension extensionTarget = (IFindReplaceTargetExtension) target;
 
-		if (selectedLines) {
+		IRegion scope;
+		Point lineSelection = extensionTarget.getLineSelection();
+		scope = new Region(lineSelection.x, lineSelection.y);
 
-			IRegion scope;
-			if (oldScope == null) {
-				Point lineSelection = extensionTarget.getLineSelection();
-				scope = new Region(lineSelection.x, lineSelection.y);
-			} else {
-				scope = oldScope;
-				oldScope = null;
-			}
+		int offset = isActive(SearchOptions.FORWARD) ? scope.getOffset() : scope.getOffset() + scope.getLength();
 
-			int offset = isActive(SearchOptions.FORWARD) ? scope.getOffset() : scope.getOffset() + scope.getLength();
+		extensionTarget.setSelection(offset, 0);
+		extensionTarget.setScope(scope);
+	}
 
-			extensionTarget.setSelection(offset, 0);
-			extensionTarget.setScope(scope);
-		} else {
-			oldScope = extensionTarget.getScope();
-			extensionTarget.setScope(null);
+	/**
+	 * Unsets the search scope for a "Scoped"-Search.
+	 */
+	private void unsetSearchScope() {
+		if (target == null || !(target instanceof IFindReplaceTargetExtension)) {
+			return;
 		}
+
+		IFindReplaceTargetExtension extensionTarget = (IFindReplaceTargetExtension) target;
+
+		extensionTarget.setScope(null);
 	}
 
 	/**
