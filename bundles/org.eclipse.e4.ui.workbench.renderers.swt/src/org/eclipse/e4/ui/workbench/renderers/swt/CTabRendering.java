@@ -88,7 +88,7 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 	public static final boolean SHOW_FULL_TEXT_FOR_VIEW_TABS_DEFAULT = false;
 
 	private static int MIN_VIEW_CHARS = 1;
-	private static int MAX_VIEW_CHARS = 999999;
+	private static int MAX_VIEW_CHARS = Integer.MAX_VALUE;
 
 	// Constants for circle drawing
 	static enum CirclePart {
