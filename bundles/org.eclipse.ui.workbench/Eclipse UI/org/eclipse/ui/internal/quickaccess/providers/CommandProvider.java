@@ -79,6 +79,9 @@ public class CommandProvider extends QuickAccessProvider {
 	public QuickAccessElement[] getElements() {
 		if (!allCommandsRetrieved) {
 			ICommandService commandService = getCommandService();
+			if (commandService == null) {
+				return null;
+			}
 			Collection<String> commandIds = commandService.getDefinedCommandIds();
 			for (String commandId : commandIds) {
 				retrieveCommand(commandId);
