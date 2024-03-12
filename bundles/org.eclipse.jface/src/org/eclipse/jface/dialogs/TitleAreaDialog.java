@@ -685,7 +685,7 @@ public class TitleAreaDialog extends TrayDialog {
 	public void setTitleImage(Image newTitleImage) {
 
 		titleAreaImage = newTitleImage;
-		if (titleImageLabel != null) {
+		if (titleImageLabel != null && !titleImageLabel.isDisposed()) {
 			titleImageLabel.setImage(newTitleImage);
 			determineTitleImageLargest();
 			Control top;
