@@ -1075,8 +1075,12 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 
 	@Override
 	public void replace(int pos, int length, String text, long modificationStamp) throws BadLocationException {
-		if ((0 > pos) || (0 > length) || (pos + length > getLength()))
-			throw new BadLocationException();
+		if (pos + length > getLength())
+			throw new BadLocationException("end > length: " + (pos + length) + " > " + getLength());  //$NON-NLS-1$//$NON-NLS-2$
+		if (length < 0)
+			throw new BadLocationException("length < 0: " +pos);  //$NON-NLS-1$
+		if (pos < 0)
+			throw new BadLocationException("pos < 0: " +pos);  //$NON-NLS-1$
 
 		DocumentEvent e= new DocumentEvent(this, pos, length, text);
 		fireDocumentAboutToBeChanged(e);
