@@ -40,7 +40,6 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.TypedListener;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -599,10 +598,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 				if (listener == fMouseHandler)
 					super.addMouseListener(listener);
 				else {
-					TypedListener typedListener= null;
-					if (listener != null)
-						typedListener= new TypedListener(listener);
-					addListener(SWT.MouseDoubleClick, typedListener);
+					addTypedListener(listener, SWT.MouseDoubleClick);
 				}
 			}
 		};
