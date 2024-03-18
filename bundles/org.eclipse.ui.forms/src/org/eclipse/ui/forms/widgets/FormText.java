@@ -58,7 +58,6 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.TypedListener;
 import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
@@ -994,12 +993,7 @@ public class FormText extends Canvas {
 	 * @since 3.1
 	 */
 	public void addSelectionListener(SelectionListener listener) {
-		checkWidget();
-		if (listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		TypedListener typedListener = new TypedListener(listener);
-		addListener(SWT.Selection, typedListener);
+		addTypedListener(listener, SWT.Selection);
 	}
 
 	/**
@@ -1021,11 +1015,7 @@ public class FormText extends Canvas {
 	 * @since 3.1
 	 */
 	public void removeSelectionListener(SelectionListener listener) {
-		checkWidget();
-		if (listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		removeListener(SWT.Selection, listener);
+		removeTypedListener(SWT.Selection, listener);
 	}
 
 	/**
