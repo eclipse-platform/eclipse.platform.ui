@@ -92,6 +92,8 @@ public class FindReplaceDialogTest {
 
 		Button regExCheckBox;
 
+		Button replaceFindButton;
+
 		private Supplier<Shell> shellRetriever;
 
 		private Runnable closeOperation;
@@ -106,6 +108,7 @@ public class FindReplaceDialogTest {
 			wholeWordCheckBox= (Button) findReplaceDialogAccessor.get("fWholeWordCheckBox");
 			incrementalCheckBox= (Button) findReplaceDialogAccessor.get("fIncrementalCheckBox");
 			regExCheckBox= (Button) findReplaceDialogAccessor.get("fIsRegExCheckBox");
+			replaceFindButton= (Button) findReplaceDialogAccessor.get("fReplaceFindButton");
 			shellRetriever= () -> ((Shell) findReplaceDialogAccessor.get("fActiveShell"));
 			closeOperation= () -> findReplaceDialogAccessor.invoke("close", null);
 			assertInitialConfiguration();
@@ -176,10 +179,17 @@ public class FindReplaceDialogTest {
 	}
 
 	private void openTextViewerAndFindReplaceDialog(String content) {
+		openTextViewer(content);
+		openFindReplaceDialogForTextViewer();
+	}
+
+	private void openTextViewer(String content) {
 		fTextViewer= new TextViewer(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		fTextViewer.setDocument(new Document(content));
 		fTextViewer.getControl().setFocus();
+	}
 
+	private void openFindReplaceDialogForTextViewer() {
 		Accessor fFindReplaceAction;
 		fFindReplaceAction= new Accessor("org.eclipse.ui.texteditor.FindReplaceAction", getClass().getClassLoader(),
 				new Class[] { ResourceBundle.class, String.class, Shell.class, IFindReplaceTarget.class },
@@ -364,6 +374,22 @@ public class FindReplaceDialogTest {
 		simulateEnterInFindInputField(false);
 		assertEquals(0, (target.getSelection()).x);
 		assertEquals(dialog.findCombo.getText().length(), (target.getSelection()).y);
+	}
+
+	@Test
+	public void testReplaceAndFindAfterInitializingFindWithSelectedString() {
+		openTextViewer("text text text");
+		fTextViewer.setSelectedRange(0, 4);
+		openFindReplaceDialogForTextViewer();
+
+		IFindReplaceTarget target= dialog.findReplaceLogic.getTarget();
+		assertEquals(0, (target.getSelection()).x);
+		assertEquals(4, (target.getSelection()).y);
+		select(dialog.replaceFindButton);
+
+		assertEquals(" text text", fTextViewer.getDocument().get());
+		assertEquals(1, (target.getSelection()).x);
+		assertEquals(4, (target.getSelection()).y);
 	}
 
 	private static void select(Button button) {

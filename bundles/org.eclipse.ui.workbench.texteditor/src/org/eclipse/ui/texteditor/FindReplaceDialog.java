@@ -259,7 +259,7 @@ class FindReplaceDialog extends Dialog {
 		updateCombo(fReplaceField, replaceHistory.get());
 
 		// get find string
-		initFindStringFromSelection();
+		initFindString();
 
 		// set dialog position
 		if (fDialogPositionInit != null)
@@ -899,34 +899,60 @@ class FindReplaceDialog extends Dialog {
 	}
 
 	/**
+	 * Initializes the string to search for and the according text in the find field
+	 * based on either the selection in the target or, if nothing is selected, with
+	 * the newest search history entry.
+	 */
+	private void initFindString() {
+		if (!okToUse(fFindField)) {
+			return;
+		}
+
+		fFindField.removeModifyListener(fFindModifyListener);
+		if (hasTargetSelection()) {
+			initFindStringFromSelection();
+		} else {
+			initFindStringFromHistory();
+		}
+		fFindField.setSelection(new Point(0, fFindField.getText().length()));
+		fFindField.addModifyListener(fFindModifyListener);
+	}
+
+	private boolean hasTargetSelection() {
+		String selection = getCurrentSelection();
+		return selection != null && !selection.isEmpty();
+	}
+
+	/**
 	 * Initializes the string to search for and the appropriate text in the Find
 	 * field based on the selection found in the action's target.
 	 */
 	private void initFindStringFromSelection() {
-		String fullSelection = getCurrentSelection();
-		if (fullSelection != null && okToUse(fFindField)) {
-			boolean isRegEx = findReplaceLogic.isRegExSearchAvailableAndActive();
-			fFindField.removeModifyListener(fFindModifyListener);
-			if (!fullSelection.isEmpty()) {
-				String firstLine = getFirstLine(fullSelection);
-				String pattern = isRegEx ? FindReplaceDocumentAdapter.escapeForRegExPattern(fullSelection) : firstLine;
-				fFindField.setText(pattern);
-				if (!firstLine.equals(fullSelection)) {
-					// multiple lines selected
-					findReplaceLogic.deactivate(SearchOptions.GLOBAL);
-					fGlobalRadioButton.setSelection(false);
-					fSelectedRangeRadioButton.setSelection(true);
-				}
+		String selection = getCurrentSelection();
+		String searchInput = getFirstLine(selection);
+		boolean isSingleLineInput = searchInput.equals(selection);
+		if (findReplaceLogic.isRegExSearchAvailableAndActive()) {
+			searchInput = FindReplaceDocumentAdapter.escapeForRegExPattern(selection);
+		}
+		fFindField.setText(searchInput);
+
+		if (isSingleLineInput) {
+			// initialize search with current selection to allow for execution of replace
+			// operations
+			findReplaceLogic.findAndSelect(findReplaceLogic.getTarget().getSelection().x, fFindField.getText());
+		} else {
+			fGlobalRadioButton.setSelection(false);
+			fSelectedRangeRadioButton.setSelection(true);
+		}
+	}
+
+	private void initFindStringFromHistory() {
+		if ("".equals(fFindField.getText())) { //$NON-NLS-1$
+			if (!findHistory.isEmpty()) {
+				fFindField.setText(findHistory.get(0));
 			} else {
-				if ("".equals(fFindField.getText())) { //$NON-NLS-1$
-					if (!findHistory.isEmpty())
-						fFindField.setText(findHistory.get(0));
-					else
-						fFindField.setText(""); //$NON-NLS-1$
-				}
+				fFindField.setText(""); //$NON-NLS-1$
 			}
-			fFindField.setSelection(new Point(0, fFindField.getText().length()));
-			fFindField.addModifyListener(fFindModifyListener);
 		}
 	}
 
@@ -1164,7 +1190,7 @@ class FindReplaceDialog extends Dialog {
 			fReplaceField.setEnabled(targetExists && findReplaceLogic.getTarget().isEditable());
 			fReplaceAllButton.setEnabled(targetExists && findReplaceLogic.getTarget().isEditable());
 			if (initializeFindString) {
-				initFindStringFromSelection();
+				initFindString();
 				fGiveFocusToFindField = true;
 			}
 		}
