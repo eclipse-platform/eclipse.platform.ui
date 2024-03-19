@@ -182,5 +182,45 @@
             <repository location='https://download.eclipse.org/eclipse/updates/I-builds'/>
         </repositories>
     </iu>
+    <iu id='org.osgi.namespace.service' name='org.osgi.namespace.service' version='0.0.0'>
+      <repositories size='1'>
+        <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
+      </repositories>
+    </iu>
+    <iu id='org.osgi.namespace.extender' name='org.osgi.namespace.extender' version='0.0.0'>
+      <repositories size='1'>
+        <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
+      </repositories>
+    </iu>
+    <iu id='org.osgi.namespace.contract' name='org.osgi.namespace.contract' version='0.0.0'>
+      <repositories size='1'>
+        <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
+      </repositories>
+    </iu>
+    <iu id='bndtools.api' name='bndtools.api' version='0.0.0'>
+      <repositories size='1'>
+        <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
+      </repositories>
+    </iu>
+    <iu id='org.bndtools.headless.build.manager' name='org.bndtools.headless.build.manager' version='0.0.0'>
+      <repositories size='1'>
+        <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
+      </repositories>
+    </iu>
+    <iu id='org.bndtools.versioncontrol.ignores.manager' name='org.bndtools.versioncontrol.ignores.manager' version='0.0.0'>
+      <repositories size='1'>
+        <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
+      </repositories>
+    </iu>
+    <iu id='org.bndtools.headless.build.plugin.gradle' name='org.bndtools.headless.build.plugin.gradle' version='0.0.0'>
+      <repositories size='1'>
+        <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
+      </repositories>
+    </iu>
+    <iu id='org.bndtools.versioncontrol.ignores.plugin.git' name='org.bndtools.versioncontrol.ignores.plugin.git' version='0.0.0'>
+      <repositories size='1'>
+        <repository location='https://download.eclipse.org/tools/orbit/downloads/latest-I'/>
+      </repositories>
+    </iu>
   </ius>
 </p2f>
