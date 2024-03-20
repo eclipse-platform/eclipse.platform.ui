@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.resources.actions;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
@@ -80,10 +82,17 @@ import org.eclipse.ui.part.ResourceTransfer;
 	 * Returns the actual target of the paste action. Returns null
 	 * if no valid target is selected.
 	 *
+	 * @param clipboardContent current content of the clipboard
+	 *
 	 * @return the actual target of the paste action
 	 */
-	private IResource getTarget() {
+	private IResource getTarget(IResource[] clipboardContent) {
 		List<? extends IResource> selectedResources = getSelectedResources();
+
+		// selection is copied to itself => copy to parent
+		if (clipboardContent != null && areEqualsUnordered(selectedResources, Arrays.asList(clipboardContent))) {
+			return selectedResources.get(0).getParent();
+		}
 
 		for (IResource resource : selectedResources) {
 			if (resource instanceof IProject && !((IProject) resource).isOpen()) {
@@ -97,6 +106,18 @@ import org.eclipse.ui.part.ResourceTransfer;
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * @param a The first collection
+	 * @param b The second collection
+	 * @return true if both collections aren't null and they contain the exact same
+	 *         items, regardless of their order.
+	 */
+	private boolean areEqualsUnordered(Collection<? extends IResource> a, Collection<? extends IResource> b) {
+		return b != null && a != null && !a.isEmpty() // they are not empty...
+				&& a.size() == b.size() // ... and they have the same size
+				&& a.containsAll(b); // ... and all elements of A are in B
 	}
 
 	/**
@@ -133,7 +154,7 @@ import org.eclipse.ui.part.ResourceTransfer;
 				}
 			} else {
 				// enablement should ensure that we always have access to a container
-				IContainer container = getContainer();
+				IContainer container = getContainer(resourceData);
 				CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(shell);
 				operation.copyResources(resourceData, container);
 			}
@@ -146,7 +167,7 @@ import org.eclipse.ui.part.ResourceTransfer;
 
 		if (fileData != null) {
 			// enablement should ensure that we always have access to a container
-			IContainer container = getContainer();
+			IContainer container = getContainer(null);
 			CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(shell);
 			operation.copyFiles(fileData, container);
 		}
@@ -154,9 +175,17 @@ import org.eclipse.ui.part.ResourceTransfer;
 
 	/**
 	 * Returns the container to hold the pasted resources.
+	 *
+	 * @param clipboardContent current content of the clipboard
 	 */
-	private IContainer getContainer() {
+	private IContainer getContainer(IResource[] clipboardContent) {
 		List<? extends IResource> selection = getSelectedResources();
+
+		// selection is copied to itself => copy to parent
+		if (clipboardContent != null && areEqualsUnordered(selection, Arrays.asList(clipboardContent))) {
+			return selection.get(0).getParent();
+		}
+
 		if (selection.get(0) instanceof IFile) {
 			return ((IFile) selection.get(0)).getParent();
 		}
@@ -205,7 +234,7 @@ import org.eclipse.ui.part.ResourceTransfer;
 			return false;
 		}
 
-		IResource targetResource = getTarget();
+		IResource targetResource = getTarget(resourceData);
 		// targetResource is null if no valid target is selected (e.g., open project)
 		// or selection is empty
 		if (targetResource == null) {
@@ -213,13 +242,13 @@ import org.eclipse.ui.part.ResourceTransfer;
 		}
 
 		// can paste files and folders to a single selection (file, folder,
-		// open project) or multiple file selection with the same parent
+		// open project) or multiple file/folder selection with the same parent
 		List<? extends IResource> selectedResources = getSelectedResources();
 		if (selectedResources.size() > 1) {
+			if (!selectionIsOfType(IResource.FILE | IResource.FOLDER)) {
+				return false;
+			}
 			for (IResource resource : selectedResources) {
-				if (resource.getType() != IResource.FILE) {
-					return false;
-				}
 				if (!targetResource.equals(resource.getParent())) {
 					return false;
 				}
@@ -231,15 +260,6 @@ import org.eclipse.ui.part.ResourceTransfer;
 				&& targetResource.getType() != IResource.PROJECT
 				&& targetResource.getType() != IResource.FOLDER) {
 				return false;
-			}
-
-			if (targetResource.getType() == IResource.FOLDER) {
-				// don't try to copy folder to self
-				for (IResource resource : resourceData) {
-					if (targetResource.equals(resource)) {
-						return false;
-					}
-				}
 			}
 			return true;
 		}
