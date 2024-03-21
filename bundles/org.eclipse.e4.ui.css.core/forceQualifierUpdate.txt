@@ -4,3 +4,4 @@ Bug 521195 - Migrate to Batik 1.9.0
 Bug 532094 - Update releng with new hamcrest and apache batik
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1184
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1659
+https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1923
