@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -308,11 +309,11 @@ public class WindowsDefenderConfigurator implements EventHandler {
 		try {
 			List<String> lines = runPowershell(monitor, "-Command", "(Get-MpComputerStatus).AMRunningMode"); //$NON-NLS-1$ //$NON-NLS-2$
 			String onlyLine = lines.size() == 1 ? lines.get(0) : ""; //$NON-NLS-1$
-			return switch (onlyLine) {
+			return switch (onlyLine.toLowerCase(Locale.ENGLISH)) {
 			// Known values as listed in
 			// https://learn.microsoft.com/en-us/microsoft-365/security/defender-endpoint/microsoft-defender-antivirus-windows#use-powershell-to-check-the-status-of-microsoft-defender-antivirus
-			case "SxS Passive Mode", "Passive mode" -> false; //$NON-NLS-1$ //$NON-NLS-2$
-			case "Normal", "EDR Block Mode" -> true; //$NON-NLS-1$//$NON-NLS-2$
+			case "sxs passive mode", "passive mode" -> false; //$NON-NLS-1$ //$NON-NLS-2$
+			case "normal", "edr block mode" -> true; //$NON-NLS-1$//$NON-NLS-2$
 			default -> throw new IOException("Process terminated with unexpected result:\n" + String.join("\n", lines)); //$NON-NLS-1$//$NON-NLS-2$
 			};
 		} catch (IOException e) {
