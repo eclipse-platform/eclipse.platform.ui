@@ -18,6 +18,7 @@ import static org.eclipse.ui.internal.WorkbenchPlugin.PI_WORKBENCH;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -37,6 +38,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -270,7 +272,8 @@ public class WindowsDefenderConfigurator implements EventHandler {
 		// https://help.eclipse.org/latest/index.jsp?topic=%2Forg.eclipse.platform.doc.isv%2Freference%2Fmisc%2Fruntime-options.html&anchor=locations
 		try {
 			Location installLocation = Platform.getConfigurationLocation();
-			return Optional.of(Path.of(installLocation.getURL().toURI())); // assume location has a file-URL
+			URI location = URIUtil.toURI(installLocation.getURL());
+			return Optional.of(Path.of(location)); // assume location has a file-URL
 		} catch (URISyntaxException e) { // ignore
 		}
 		return Optional.empty();
