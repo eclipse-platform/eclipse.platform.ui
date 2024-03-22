@@ -602,7 +602,6 @@ public class FindReplaceOverlay extends Dialog {
 				// we want to update the base-location of where we start incremental search
 				// to the currently selected position in the target
 				// when coming back into the dialog
-				findReplaceLogic.deactivate(SearchOptions.INCREMENTAL);
 				findReplaceLogic.activate(SearchOptions.INCREMENTAL);
 			}
 
