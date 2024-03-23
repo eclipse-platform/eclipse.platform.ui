@@ -50,7 +50,6 @@ import org.eclipse.ui.texteditor.IFindReplaceTargetExtension2;
 public class FindReplaceLogic implements IFindReplaceLogic {
 	private IFindReplaceStatus status;
 	private IFindReplaceTarget target;
-	private IRegion oldScope;
 	private Point incrementalBaseLocation;
 
 	private boolean isTargetSupportingRegEx;
@@ -65,7 +64,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 
 		switch (searchOption) {
 		case GLOBAL:
-			useSelectedLines(false);
+			setSearchScope();
 			break;
 		case FORWARD:
 		case INCREMENTAL:
@@ -73,7 +72,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 				initIncrementalBaseLocation();
 			}
 			break;
-			// $CASES-OMITTED$
+		// $CASES-OMITTED$
 		default:
 			break;
 		}
@@ -86,7 +85,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 		}
 
 		if (searchOption == SearchOptions.GLOBAL) {
-			useSelectedLines(true);
+			unsetSearchScope();
 		}
 
 		if (searchOption == SearchOptions.FORWARD && shouldInitIncrementalBaseLocation()) {
@@ -123,7 +122,10 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	 *
 	 * @return <code>true</code> if the search is restricted to whole words
 	 */
-	private boolean isWholeWordSearchAvailableAndActive() {
+	private boolean isWholeWordSearchAvailableAndActive(String findString) {
+		if (findString.contains(" ")) { //$NON-NLS-1$
+			return false;
+		}
 		return isActive(SearchOptions.WHOLE_WORD) && !isRegExSearchAvailableAndActive();
 	}
 
@@ -155,7 +157,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	 *
 	 * @param selectedLines <code>true</code> if selected lines should be used
 	 */
-	private void useSelectedLines(boolean selectedLines) {
+	private void setSearchScope() {
 		if (shouldInitIncrementalBaseLocation()) {
 			initIncrementalBaseLocation();
 		}
@@ -166,25 +168,24 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 
 		IFindReplaceTargetExtension extensionTarget = (IFindReplaceTargetExtension) target;
 
-		if (selectedLines) {
+		IRegion scope;
+		Point lineSelection = extensionTarget.getLineSelection();
+		scope = new Region(lineSelection.x, lineSelection.y);
 
-			IRegion scope;
-			if (oldScope == null) {
-				Point lineSelection = extensionTarget.getLineSelection();
-				scope = new Region(lineSelection.x, lineSelection.y);
-			} else {
-				scope = oldScope;
-				oldScope = null;
-			}
+		int offset = isActive(SearchOptions.FORWARD) ? scope.getOffset() : scope.getOffset() + scope.getLength();
 
-			int offset = isActive(SearchOptions.FORWARD) ? scope.getOffset() : scope.getOffset() + scope.getLength();
+		extensionTarget.setSelection(offset, 0);
+		extensionTarget.setScope(scope);
+	}
 
-			extensionTarget.setSelection(offset, 0);
-			extensionTarget.setScope(scope);
-		} else {
-			oldScope = extensionTarget.getScope();
-			extensionTarget.setScope(null);
+	private void unsetSearchScope() {
+		if (target == null || !(target instanceof IFindReplaceTargetExtension)) {
+			return;
 		}
+
+		IFindReplaceTargetExtension extensionTarget = (IFindReplaceTargetExtension) target;
+
+		extensionTarget.setScope(null);
 	}
 
 	/**
@@ -393,8 +394,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	 * Returns the number of replacements that occur.
 	 *
 	 * @param findString    the string to search for
-	 * @param replaceString the replacement string
-	 *                      expression
+	 * @param replaceString the replacement string expression
 	 * @return the number of occurrences
 	 *
 	 */
@@ -477,8 +477,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 		if (isActive(SearchOptions.FORWARD)) {
 			index = findAndSelect(startPosition, findString);
 		} else {
-			index = startPosition == 0 ? -1
-				: findAndSelect(startPosition - 1, findString);
+			index = startPosition == 0 ? -1 : findAndSelect(startPosition - 1, findString);
 		}
 
 		if (index == -1) {
@@ -499,10 +498,11 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 		if (target instanceof IFindReplaceTargetExtension3)
 			return ((IFindReplaceTargetExtension3) target).findAndSelect(offset, findString,
 					isActive(SearchOptions.FORWARD),
-					isActive(SearchOptions.CASE_SENSITIVE), isWholeWordSearchAvailableAndActive(), isActive(SearchOptions.REGEX));
+					isActive(SearchOptions.CASE_SENSITIVE), isWholeWordSearchAvailableAndActive(findString),
+					isActive(SearchOptions.REGEX));
 		return target.findAndSelect(offset, findString, isActive(SearchOptions.FORWARD),
 				isActive(SearchOptions.CASE_SENSITIVE),
-				isWholeWordSearchAvailableAndActive());
+				isWholeWordSearchAvailableAndActive(findString));
 	}
 
 	/**
@@ -530,8 +530,8 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	 * Returns whether the specified search string can be found using the given
 	 * options.
 	 *
-	 * @param findString             the string to search for
-	 * @param forwardSearch          the direction of the search
+	 * @param findString    the string to search for
+	 * @param forwardSearch the direction of the search
 	 * @return <code>true</code> if the search string can be found using the given
 	 *         options
 	 *
