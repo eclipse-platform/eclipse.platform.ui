@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.e4.ui.internal.workbench.PartStackUtil;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -349,10 +350,11 @@ public class CleanupAddon {
 				// model)
 				final MElementContainer<MUIElement> theContainer = container;
 				if (visCount == 0) {
-				Display.getCurrent().asyncExec(() -> {
-					int visCount1 = modelService.countRenderableChildren(theContainer);
-					if (!isLastEditorStack(theContainer) && visCount1 == 0) {
-						theContainer.setToBeRendered(false);
+					Display.getCurrent().asyncExec(() -> {
+						int visCount1 = modelService.countRenderableChildren(theContainer);
+						if (!isLastEditorStack(theContainer) && visCount1 == 0) {
+							theContainer.setToBeRendered(false);
+							transferPrimaryDataStackIfRemoved(theContainer);
 						}
 					});
 				} else if (container.getParent() != null) { // omit detached windows
@@ -381,4 +383,31 @@ public class CleanupAddon {
 	boolean isLastEditorStack(MUIElement element) {
 		return modelService.isLastEditorStack(element);
 	}
+
+	private void transferPrimaryDataStackIfRemoved(MElementContainer<?> removedElement) {
+		if (!PartStackUtil.isPrimaryDataStack(removedElement)) {
+			return;
+		}
+		MPartStack newPrimaryDataStack = findFirstPartStackToBeRendered(removedElement.getParent());
+		if (newPrimaryDataStack != null) {
+			PartStackUtil.initializeAsPrimaryDataStack(newPrimaryDataStack);
+		}
+	}
+
+	private MPartStack findFirstPartStackToBeRendered(MElementContainer<?> root) {
+		for (MUIElement element : root.getChildren()) {
+			if (element.isToBeRendered()) {
+				if (element instanceof MPartStack stack) {
+					return stack;
+				} else if (element instanceof MPartSashContainer container) {
+					MPartStack stack = findFirstPartStackToBeRendered(container);
+					if (stack != null) {
+						return stack;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
 }
