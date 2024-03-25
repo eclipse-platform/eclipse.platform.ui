@@ -62,9 +62,7 @@ public class PlaceholderResolver implements EPlaceholderResolver {
 			// sharedArea.setLabel("Editor Area"); //$NON-NLS-1$
 
 			MPartStack editorStack = BasicFactoryImpl.eINSTANCE.createPartStack();
-			editorStack.getTags().add("org.eclipse.e4.primaryDataStack"); //$NON-NLS-1$
-			editorStack.getTags().add("EditorStack"); //$NON-NLS-1$
-			editorStack.setElementId("org.eclipse.e4.primaryDataStack"); //$NON-NLS-1$
+			PartStackUtil.initializeAsPrimaryDataStack(editorStack);
 			sharedArea.getChildren().add(editorStack);
 			sharedArea.setElementId(ph.getElementId());
 
