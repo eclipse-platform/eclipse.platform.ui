@@ -444,6 +444,17 @@ public class StackRendererTest {
 
 	@Test
 	public void testOnboardingIsFilled() {
+		MPerspective perspective = createPerspective();
+		partStack.getTags().add("EditorStack");
+
+		contextRule.createAndRunWorkbench(window);
+		switchToPerspective(perspective);
+
+		CTabFolder tabFolder = (CTabFolder) partStack.getWidget();
+		assertFilledOnboardingInformation(tabFolder);
+	}
+
+	private MPerspective createPerspective() {
 		MPerspective perspective = ems.createModelElement(MPerspective.class);
 		perspective.getTags().add("persp.editorOnboardingText:Onboarding text");
 		perspective.getTags().add("persp.editorOnboardingImageUri:" + PART_ICON);
@@ -457,27 +468,54 @@ public class StackRendererTest {
 		MPlaceholder placeholder = ems.createModelElement(MPlaceholder.class);
 		placeholder.setRef(partStack);
 		perspective.getChildren().add(placeholder);
+		return perspective;
+	}
 
-		partStack.getTags().add("EditorStack");
-
-		contextRule.createAndRunWorkbench(window);
-
+	private void switchToPerspective(MPerspective perspective) {
 		HashMap<String, Object> params = new HashMap<>();
 		params.put(UIEvents.EventTags.ELEMENT, perspective);
-
 		context.get(EventBroker.class).send(UIEvents.UILifeCycle.PERSPECTIVE_SWITCHED, params);
+	}
 
-		CTabFolder tabFolder = (CTabFolder) partStack.getWidget();
+	private void assertFilledOnboardingInformation(CTabFolder tabFolder) {
 		assertNotNull(tabFolder.getChildren());
-		assertEquals(3, tabFolder.getChildren().length);
-
-		Composite outerOnboardingComposite = (Composite) tabFolder.getChildren()[2];
-		Composite innerOnboardingComposite = (Composite) outerOnboardingComposite.getChildren()[0];
-		assertEquals(4, innerOnboardingComposite.getChildren().length);
+		Composite innerOnboardingComposite = null;
+		for (Control child : tabFolder.getChildren()) {
+			if (child instanceof Composite outerComposite) {
+				if (outerComposite.getChildren().length > 0 && outerComposite.getChildren()[0] instanceof Composite innerComposite) {
+					if (innerComposite.getChildren().length == 4) {
+						innerOnboardingComposite = innerComposite;
+						break;
+					}
+				}
+			}
+		}
+		assertNotNull(innerOnboardingComposite);
 		assertNotNull(((Label) innerOnboardingComposite.getChildren()[0]).getImage());
 		assertEquals("Onboarding text", ((Label) innerOnboardingComposite.getChildren()[1]).getText());
 		assertEquals("Find Actions", ((Label) innerOnboardingComposite.getChildren()[2]).getText());
 		assertEquals("STRG+3", ((Label) innerOnboardingComposite.getChildren()[3]).getText());
+	}
+
+	@Test
+	public void testOnboardingIsFilledForEveryEditorStack() {
+		MPerspective perspective = createPerspective();
+		partStack.getTags().add("EditorStack");
+
+		contextRule.createAndRunWorkbench(window);
+
+		// Create second editor stack
+		MPartStack secondPartStack = ems.createModelElement(MPartStack.class);
+		secondPartStack.getTags().add("EditorStack");
+		MPlaceholder placeholder = ems.createModelElement(MPlaceholder.class);
+		placeholder.setRef(secondPartStack);
+		perspective.getChildren().add(placeholder);
+		window.getChildren().add(secondPartStack);
+
+		switchToPerspective(perspective);
+
+		CTabFolder tabFolder = (CTabFolder) secondPartStack.getWidget();
+		assertFilledOnboardingInformation(tabFolder);
 	}
 
 	@Test
