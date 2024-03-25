@@ -33,6 +33,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -127,6 +128,8 @@ public class StackRenderer extends LazyStackRenderer {
 	private static final String ONBOARDING_IMAGE = "EditorStack.OnboardingImage"; //$NON-NLS-1$
 	private static final String ONBOARDING_TEXT = "EditorStack.OnboardingText"; //$NON-NLS-1$
 
+	private static final String EDITOR_STACK_ID = "EditorStack"; //$NON-NLS-1$
+
 	/**
 	 * Id of a a control.
 	 */
@@ -198,6 +201,8 @@ public class StackRenderer extends LazyStackRenderer {
 	 */
 	public static final int ONBOARDING_SHOW_IMAGE_HEIGHT_THRESHOLD = 450;
 
+	private MPerspective currentPerspectiveForOnboarding;
+
 	private Image viewMenuImage;
 	private String viewMenuURI = "platform:/plugin/org.eclipse.e4.ui.workbench.renderers.swt/icons/full/elcl16/view_menu.png"; //$NON-NLS-1$
 
@@ -251,18 +256,19 @@ public class StackRenderer extends LazyStackRenderer {
 	void subscribePerspectiveSwitched(
 			@UIEventTopic(UIEvents.UILifeCycle.PERSPECTIVE_SWITCHED) org.osgi.service.event.Event event) {
 		Object element = event.getProperty(EventTags.ELEMENT);
-		if (element instanceof MPerspective) {
-			setOnboarding((MPerspective) element);
+		if (element instanceof MPerspective perspective) {
+			currentPerspectiveForOnboarding = perspective;
+			getEditorTabFolders(perspective).forEach(this::initializeOnboardingInformationInEditorStack);
 		}
 	}
 
-	private void setOnboarding(MPerspective perspective) {
-		CTabFolder tabFolder = getEditorTabFolder(perspective);
-		if (tabFolder == null) {
+	private void initializeOnboardingInformationInEditorStack(CTabFolder editorStackTabFolder) {
+		MPerspective perspective = currentPerspectiveForOnboarding;
+		if (perspective == null) {
 			return;
 		}
 
-		Composite onboardingContainer = getChild(tabFolder, ONBOARDING_CONTAINER, Composite.class);
+		Composite onboardingContainer = getChild(editorStackTabFolder, ONBOARDING_CONTAINER, Composite.class);
 		if (onboardingContainer == null || onboardingContainer.isDisposed()) {
 			return;
 		}
@@ -694,6 +700,11 @@ public class StackRenderer extends LazyStackRenderer {
 			return null;
 
 		MPartStack pStack = (MPartStack) element;
+		int location = modelService.getElementLocation(element);
+		boolean isInSharedArea = (location & EModelService.IN_SHARED_AREA) != 0;
+		if (isInSharedArea) {
+			pStack.getTags().add(EDITOR_STACK_ID);
+		}
 
 		Composite parentComposite = (Composite) parent;
 
@@ -708,12 +719,12 @@ public class StackRenderer extends LazyStackRenderer {
 		CTabFolder tabFolder = new CTabFolder(parentComposite, style);
 		if (pStack.getTags().contains("EditorStack")) { //$NON-NLS-1$
 			createOnboardingControls(tabFolder);
+			initializeOnboardingInformationInEditorStack(tabFolder);
 		}
 		tabFolder.setMRUVisible(getMRUValue());
 
 		// Adjust the minimum chars based on the location
-		int location = modelService.getElementLocation(element);
-		if ((location & EModelService.IN_SHARED_AREA) != 0) {
+		if (isInSharedArea) {
 			tabFolder.setMinimumCharacters(MIN_EDITOR_CHARS);
 			tabFolder.setUnselectedCloseVisible(true);
 		} else {
@@ -1911,14 +1922,12 @@ public class StackRenderer extends LazyStackRenderer {
 		return this.imageChanged;
 	}
 
-	private CTabFolder getEditorTabFolder(MPerspective perspective) {
+	private Stream<CTabFolder> getEditorTabFolders(MPerspective perspective) {
 		Predicate<Object> tabFolders = CTabFolder.class::isInstance;
 		Function<Object, CTabFolder> toTabFolder = CTabFolder.class::cast;
 
-		List<MPartStack> elements = modelService.findElements(perspective, null, MPartStack.class,
-				List.of("EditorStack")); //$NON-NLS-1$
-		return elements.stream().map(MUIElement::getWidget).filter(tabFolders).map(toTabFolder).findFirst()
-				.orElse(null);
+		List<MPartStack> elements = modelService.findElements(perspective, null, MPartStack.class, List.of(EDITOR_STACK_ID));
+		return elements.stream().map(MUIElement::getWidget).filter(tabFolders).map(toTabFolder);
 	}
 
 	private <T extends Control> T getChild(Composite parent, String id, Class<T> type) {
